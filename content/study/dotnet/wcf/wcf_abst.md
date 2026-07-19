@@ -18,7 +18,8 @@ aliases:
 
 # Windows Communication Foundation 概要（WCF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="wcf" class="keyword">Windows Communication Foundation</strong> は .NET Framework 3.0 で追加された3つの主軸ライブラリの1つで、
 サービス志向の通信基盤ライブラリです。
 <strong id="wcf0" class="keyword">WCF</strong> と略します。
@@ -31,7 +32,8 @@ C# 3.0 の 「[LINQ](../../csharp/data/sp3_linq.md#linq)」 にしてもそう�
 普通のクラスライブラリに所定の属性を付けるだけで実装した機能を WCF サービスとして公開することができます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="service"></a>サービス指向アーキテクチャ
+## <a id="sec-generated-title-2"></a> <a id="service"></a>サービス指向アーキテクチャ
+
 サービス指向アーキテクチャ（<strong id="soa" class="keyword">SOA</strong>: service oriented architecture）というのが何かは、
 詳しくはネットで検索してもらうとして、要点だけあげると以下のような感じです。
 
@@ -50,7 +52,8 @@ ASP.NET を使った XML ウェブサービスなどは SOA の具体例の1つ�
 このような特徴は、SOA の利点の1つで、loosely-coupled（緩結合）と呼んだりします。
 
 
-###<a id="sec-generated-title-3"></a> <a id="abc"></a>サービスの ABC
+### <a id="sec-generated-title-3"></a> <a id="abc"></a>サービスの ABC
+
 サービスを作る際に考えるべき要素として、以下の3つのものがあります。
 
 * <span style="color:#800000">Address</span>
@@ -97,7 +100,8 @@ Address や Binding に関しては、以下のような要望があります。
 WCF は Contract に注力できるように設計されています。
 
 
-###<a id="sec-generated-title-4"></a> <a id="endpoint"></a>エンドポイント
+### <a id="sec-generated-title-4"></a> <a id="endpoint"></a>エンドポイント
+
 前節で上げたサービスの ABC の組み合わせを<strong id="endpoint" class="keyword">エンドポイント</strong>（endpoint: 接続の端点）といいます。
 サーバ・クライアント間の通信をケーブルに見立てたとき、ケーブルの差し込み口に相当するのがエンドポイントです。
 
@@ -116,7 +120,8 @@ WCF は Contract に注力できるように設計されています。
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="wcf"></a>WCF
+## <a id="sec-generated-title-5"></a> <a id="wcf"></a>WCF
+
 WCF では
 
 * Contract に注力。 Binding, Address はライブラリ側で面倒を見てもらえる。 設定は App.config, Web.config に。
@@ -170,7 +175,8 @@ WCF では
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-6"></a> <a id="plan"></a>予定
+
 <pre>
 クライアント側
   - Contract は単なるクラスライブラリなので、

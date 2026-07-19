@@ -18,7 +18,8 @@ aliases:
 
 # ヒープソート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 詳しくは「[優先度付き待ち行列](../collection/col_heap.md)」で説明しますが、
 ヒープというのは、
 常に最大の要素を取り出せる状態に保たれているデータ構造です。
@@ -38,7 +39,8 @@ aliases:
 
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=heap&i=0&s=0&w=300" width="304" height="332"></iframe></div>
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/HeapSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/HeapSort.cs)
 
 <pre class="source" title="ヒープソート" lang="">

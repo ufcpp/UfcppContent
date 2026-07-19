@@ -18,7 +18,8 @@ aliases:
 
 # C# の特徴（C++、Java 利用者向け）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# 1.0 は、第一印象としては「Java のぱくり？」と言った感じに見えるのですが、
 実際には「Java と C++ と VB のいいところを集めてきたような言語」と言った感じです。
 （また、C# 2.0、3.0、… と進歩するにつれ、既存言語の焼き直しにとどまらない斬新な機能が追加されています。）
@@ -32,7 +33,8 @@ C# 1.0 は、第一印象としては「Java のぱくり？」と言った感�
 「[C# 5.0 の新機能](../cheatsheet/ap_ver5.md)」、などを参照してください。
 
 
-##<a id="sec-generated-title-2"></a> <a id="gc"></a>ガーベジコレクション
+## <a id="sec-generated-title-2"></a> <a id="gc"></a>ガーベジコレクション
+
 <strong id="gc" class="keyword">ガーベジコレクション</strong>(Garbage Collection: ごみ集め) とは不要になったメモリを自動的に破棄するための機構です。
 
 オブジェクト指向プログラミングの特徴である、
@@ -60,7 +62,8 @@ Perl、Python、SmallTalk、COBOL などが提供されます。)はすべて
 ガーベジコレクション機能を利用できます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="interface"></a>インターフェースのサポート
+## <a id="sec-generated-title-3"></a> <a id="interface"></a>インターフェースのサポート
+
 オブジェクト指向の特徴の一つに継承というものがあります。
 継承はコードの再利用性を高めるなどの利点があるのですが、
 一つのクラスが複数のクラスを継承するようになると
@@ -93,7 +96,8 @@ C++ でも、まずは上にあげたような制限を設けた抽象基底ク�
 このような制限を課すことで、多重継承の問題点を回避しながら複数の振る舞いを継承することができるのです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="ref"></a>値型と参照型
+## <a id="sec-generated-title-4"></a> <a id="ref"></a>値型と参照型
+
 C# の型には大きく分けて二通りのものがあります。
 ひとつは「値型」と呼ばれ、代入がコピーによって行われるものです。
 もうひとつは「参照型」と呼ばれ、こちらは代入が参照渡しによって行われます。
@@ -112,7 +116,8 @@ C# ではさらに <code>class</code> で定義した型は参照型になり、
 C# では <code>class</code> と <code>struct</code> という2つのキーワードを用意し、値型と参照型の使い分けを可能にしています。
 
 
-##<a id="sec-generated-title-5"></a> <a id="auto"></a>変数の自動的な初期化
+## <a id="sec-generated-title-5"></a> <a id="auto"></a>変数の自動的な初期化
+
 昔からある些細なミスの1つに、変数の初期化のし忘れがあります。
 変数を宣言したのはいいけれど、一度も初期化することなく
 (この場合、値は不定になっていることが多い)変数を使ってしまうと、
@@ -138,7 +143,8 @@ C# では <code>class</code> と <code>struct</code> という2つのキーワ�
 ）
 
 
-##<a id="sec-generated-title-6"></a> <a id="if"></a>if 文の条件式は bool 値を返さなければならない
+## <a id="sec-generated-title-6"></a> <a id="if"></a>if 文の条件式は bool 値を返さなければならない
+
 もう1つ、昔からある些細なミスに、if 文の条件式で代入を行ってしまうというものもあります。
 例えば、
 
@@ -178,7 +184,8 @@ C言語などでは、慣習的に「if 文の条件式の中では定数を先�
 はコンパイル時にエラーとして検出されます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="overload"></a>演算子のオーバーロードのサポート
+## <a id="sec-generated-title-7"></a> <a id="overload"></a>演算子のオーバーロードのサポート
+
 Java は C++ をより良くした言語といわれていながら、一方では <code>C++--</code> などと陰口を言われることがあります。
 その原因の1つに演算子のオーバーロードをサポートしていないことが挙げられます。
 
@@ -219,7 +226,8 @@ C# ではそれはありえなくなったわけです。
 ）
 
 
-##<a id="sec-generated-title-8"></a> <a id="multid"></a>多次元配列
+## <a id="sec-generated-title-8"></a> <a id="multid"></a>多次元配列
+
 Java では、多次元配列は「配列の配列」を用いて表現します。
 そして、
 
@@ -325,7 +333,8 @@ jagged array はいわば、1次元配列の中に1次元配列が入ってる�
 jagged array の方が <code>int*</code> （32bit CPU ならたいてい4バイト）のサイズ× width 分だけ余計に使用します。
 
 
-##<a id="sec-generated-title-9"></a> <a id="property"></a>プロパティ
+## <a id="sec-generated-title-9"></a> <a id="property"></a>プロパティ
+
 クラスの実装が外部からは見えないようにしておくことは大切なことです
 (その理由は「[実装の隠蔽](../oop/oo_conceal.md)」をご覧ください)。
 そのため、アクセッサ(accessor)と呼ばれるもの(<code>x</code> という変数に対して <code>setX()</code> と <code>getX()</code>という
@@ -376,7 +385,8 @@ C#では、
 というように、プロパティを用いてデータの参照を行えます。
 
 
-##<a id="sec-generated-title-10"></a> <a id="delegate"></a>デリゲート
+## <a id="sec-generated-title-10"></a> <a id="delegate"></a>デリゲート
+
 <strong id="delegate" class="keyword">デリゲート</strong>(delegate: 代表、委譲、委任)とはC言語の関数ポインターをオブジェクト指向に適するように拡張したものだと思ってください。
 
 Java では、イベント処理(ボタンが押されたときや、メニューが選択されたときの処理)は
@@ -425,7 +435,8 @@ Java では、イベント処理(ボタンが押されたときや、メニュ�
 
 
 
-##<a id="sec-generated-title-11"></a> <a id="attribute"></a>属性
+## <a id="sec-generated-title-11"></a> <a id="attribute"></a>属性
+
 C++ や Java ではクラスやメソッドに対して public や private などといった<strong id="attribute" class="keyword">属性</strong>(attribute)を付加することができます。
 Java の例をあげると、
 

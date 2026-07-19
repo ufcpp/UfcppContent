@@ -19,7 +19,8 @@ aliases:
 
 # C# 3.0 の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="ver3"></a>C# 3.0
+## <a id="sec-generated-title-1"></a> <a id="ver3"></a>C# 3.0
+
 <div class="version version3">Ver. 3.0</div>
 
 <table>
@@ -62,7 +63,8 @@ C# 3.0 に追加された機能の多くは、基本的にこの LINQ を使う�
 LINQという大きな目的を、小さな機能の組み合わせで実現しています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="functional"></a>関数型言語・動的言語的機能
+## <a id="sec-generated-title-2"></a> <a id="functional"></a>関数型言語・動的言語的機能
+
 C# 3.0 の新機能には、関数型言語や動的言語が由来と思われる機能がいくつかあります。
 
 といっても、C# を関数型言語や動的言語にしようという話ではなくて、
@@ -72,6 +74,7 @@ C# 3.0 の新機能には、関数型言語や動的言語が由来と思われ�
 
 
 ##### <a id="sec-generated-title-3"></a>暗黙的型付け
+
 var キーワードを用いて、
 暗黙的に型付けされたローカル変数（Implicitly typed local variables）を定義できるようになりました。
 
@@ -83,7 +86,8 @@ var キーワードを用いて、
 
 
 
-#####<a id="sec-generated-title-4"></a> <a id="extension"></a>拡張メソッド
+##### <a id="sec-generated-title-4"></a> <a id="extension"></a>拡張メソッド
+
 以下のような構文で、
 クラスやインターフェースに対してインスタンスメソッドを擬似的に追加できるようになりました。
 
@@ -109,6 +113,7 @@ var キーワードを用いて、
 
 
 ##### <a id="sec-generated-title-5"></a>ラムダ式
+
 関数型言語でよく使うような記法で匿名メソッドを定義できるようになりました。
 この機能をラムダ式と呼びます。
 
@@ -141,6 +146,7 @@ Expression 型に代入すると式木データとしてコンパイルされま
 
 
 ##### <a id="sec-generated-title-6"></a>初期化子
+
 オブジェクトの初期化を以下のような記法でできるようになりました。
 
 <pre class="source" title="オブジェクト初期化子" lang="">
@@ -176,6 +182,7 @@ list.Add(<span class="literal">3</span>);
 
 
 ##### <a id="sec-generated-title-7"></a>匿名型
+
 匿名型（anonymous type）を作成できるようになりました。
 匿名型の作り方は以下の通りです。
 
@@ -186,6 +193,7 @@ list.Add(<span class="literal">3</span>);
 
 
 ##### <a id="sec-generated-title-8"></a>暗黙型付け配列
+
 new で配列を作成する際、
 型を省略できるようになりました。
 
@@ -195,7 +203,8 @@ new で配列を作成する際、
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="linq"></a>LINQ
+## <a id="sec-generated-title-9"></a> <a id="linq"></a>LINQ
+
 C# 3.0 の目玉となる新機能は、
 Language Integrated Query、略して LINQ と呼ばれるもので、
 リレーショナルデータベースや XML に対する操作をプログラミング言語に統合するものです。
@@ -251,12 +260,14 @@ C# 等の言語に SQL ライクなデータベース操作構文を組み込む
 詳細は「[LINQ](../data/sp3_linq.md)」と「[標準クエリ演算子（クエリ式関係）](../data/sp3_stdquery.md)」で説明します。
 
 
-##<a id="sec-generated-title-10"></a> <a id="etc"></a>その他
+## <a id="sec-generated-title-10"></a> <a id="etc"></a>その他
+
 LINQ 関連の機能以外に、
 後からさらに追加された新機能があるようです。
 
 
-###<a id="sec-generated-title-11"></a> <a id="auto"></a>自動プロパティ
+### <a id="sec-generated-title-11"></a> <a id="auto"></a>自動プロパティ
+
 「[イベント](../functional/sp_event.md#event)」は、
 「[デリゲート](../functional/sp_delegate.md#delegate)」に対する「[プロパティ](../oop/oo_property.md#property)」のようなものなわけですが、
 イベントの場合、
@@ -292,7 +303,8 @@ C# 3.0 では、
 （<code>__name</code> という変数名はプログラマが参照できるものではありません。）
 
 
-###<a id="sec-generated-title-12"></a> <a id="partial_method"></a>パーシャルメソッド
+### <a id="sec-generated-title-12"></a> <a id="partial_method"></a>パーシャルメソッド
+
 もう1つ、
 （VS 2008 β2（2007年5月公開）で追加されたみたいなんですが）
 <strong id="partial_method" class="keyword">パーシャルメソッド</strong>（partial method）という機能があります。
@@ -363,7 +375,8 @@ check post-condition
 あくまで、人手での記述とツールでの自動生成の混在開発で使うものだと思ったほうがいいです。
 
 
-##<a id="sec-generated-title-13"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-13"></a> <a id="summary"></a>まとめ
+
 C# 3.0 には LINQ（Language Integrated Query）に関連した新機能がいくつか追加されました。
 大別すると、以下のような機能です。
 

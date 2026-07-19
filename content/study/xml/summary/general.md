@@ -18,7 +18,8 @@ aliases:
 
 # 未定義タグ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 [<code>general.xsl</code>](../../../../assets/media/ufcpp2000/xml/xslfiles/general.xsl) では、未定義タグに対する template が記述されています。
 
 他の XSL スタイルシートで定義されていないタグはそのままコピーされます。

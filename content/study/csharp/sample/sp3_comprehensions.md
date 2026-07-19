@@ -18,11 +18,13 @@ aliases:
 
 # \[サンプル\] クエリ式とリスト内包
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# 3.0 の「[LINQ](../data/sp3_linq.md#linq)」を使うと、リスト内包（list comprehensions）のようなことが可能。
 
 
-##<a id="sec-generated-title-2"></a> <a id="in_ex"></a>内包と外延
+## <a id="sec-generated-title-2"></a> <a id="in_ex"></a>内包と外延
+
 ここでいう内包ってのは、元々は公理的集合論の用語で、
 
 * 内包（intension）記法： {f(x) | x ∈ A} みたいな書き方。
@@ -55,7 +57,8 @@ C# 3.0 の「[LINQ](../data/sp3_linq.md#linq)」を使うと、リスト内包�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="list_init"></a>リストの初期化
+## <a id="sec-generated-title-3"></a> <a id="list_init"></a>リストの初期化
+
 具体例を挙げてみましょう。
 0 以上 10未満の偶数の集合といわれると、
 数学的には以下の2通りの書き方ができます。
@@ -134,7 +137,8 @@ List&lt;<span class="reserved">int</span>&gt; evens = <span class="reserved">new
 「先にリストを作ってからそれに値を Add する形で初期化する」って形になるのが少々不恰好。
 
 
-##<a id="sec-generated-title-4"></a> <a id="comprehension"></a>リスト内包
+## <a id="sec-generated-title-4"></a> <a id="comprehension"></a>リスト内包
+
 いくつかの言語では、数学の内包記法に似た書き方でリストを初期化できる構文を持っています。
 この構文を<strong id="comprehension" class="keyword">リスト内包</strong>（list comprehensions）と呼びます。
 （intension と comprehension はほぼ同義語。日本語訳的にはどっちも内包。）
@@ -179,7 +183,8 @@ for n in ten :
 これは、前節の最後で書いたような C# のコードに近いです。
 
 
-##<a id="sec-generated-title-5"></a> <a id="linq"></a>クエリ式とリスト内包
+## <a id="sec-generated-title-5"></a> <a id="linq"></a>クエリ式とリスト内包
+
 さて、前節の Python コード
 
 <pre class="source" title="Python のリスト内包" lang="">
@@ -212,11 +217,13 @@ if が where に変わっていますが、
 より高機能なんですが。
 
 
-##<a id="sec-generated-title-6"></a> <a id="projection"></a>具体例： 3次元格子点の平面への投影
+## <a id="sec-generated-title-6"></a> <a id="projection"></a>具体例： 3次元格子点の平面への投影
+
 リスト内包表記っぽいものを実際に C# 3.0 のクエリ式で書いてみましょう。
 
 
 ##### <a id="sec-generated-title-7"></a>題材
+
 ここでの例として、3次元上の格子点を平面に投影してみた結果がどういう点を描くかというのをやってみます。
 3次元の格子点って言うと、数学の記号を使って書くと以下のような感じです。
 <div class="math">
@@ -265,6 +272,7 @@ if が where に変わっていますが、
     </div>
 
 ##### <a id="sec-generated-title-8"></a>コーディング
+
 まず、3次元上の格子点は C# 3.0 的に書くと以下のような感じ。
 
 <pre class="source" title="3次元上の格子点" lang="">
@@ -360,6 +368,7 @@ WIDTH が表示可能な範囲の幅を表す定数です。
 
 
 ##### <a id="sec-generated-title-9"></a>結果
+
 さて、投影結果ですが、
 法線の向きを変えていくつかプロットしたものを見てみましょう。
 

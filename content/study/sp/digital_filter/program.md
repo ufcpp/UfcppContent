@@ -18,7 +18,8 @@ aliases:
 
 # ディジタルフィルタプログラミング
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 ディジタルフィルタの実装の例として、
 C# 言語による実装を示します。
  
@@ -39,7 +40,8 @@ C# 言語による実装を示します。
 サンプルプログラムを掲載（予定）。
 
 
-##<a id="sec-generated-title-2"></a> <a id="interface"></a>ディジタルフィルタインターフェース
+## <a id="sec-generated-title-2"></a> <a id="interface"></a>ディジタルフィルタインターフェース
+
 まあ、とりあえず、先に C# のソースを示します。
 （プログラミングの知識に関しては、
 「[インターフェース](../../csharp/oop/oo_interface.md)」辺りを参照してください。）
@@ -83,7 +85,8 @@ GetValue メソッドです。
 そのための操作用に Clear メソッドも用意しておきます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="amplifier"></a>増幅器
+## <a id="sec-generated-title-3"></a> <a id="amplifier"></a>増幅器
+
 最も単純な作りのディジタルフィルタの例として、
 増幅器という物を考えて見ます。
 <strong id="amplifier" class="keyword">増幅器</strong>（amplifier）は、
@@ -123,7 +126,8 @@ GetValue メソッドです。
 [Amplifier.cs](../../../../assets/media/ufcpp2000/sp/src/Amplifier.cs)
 
 
-##<a id="sec-generated-title-4"></a> <a id="buffer"></a>過去の信号の記憶
+## <a id="sec-generated-title-4"></a> <a id="buffer"></a>過去の信号の記憶
+
 もう1つの基本中の基本となるフィルタである遅延器の説明に入る前に、
 過去の信号の記憶について実装例を示します。
  
@@ -296,7 +300,8 @@ GetValue メソッドです。
 [Util.cs](../../../../assets/media/ufcpp2000/sp/src/Util.cs)
 
 
-##<a id="sec-generated-title-5"></a> <a id="delay"></a>遅延器
+## <a id="sec-generated-title-5"></a> <a id="delay"></a>遅延器
+
 「[循環バッファ](#cbuffer)」さえ出来れば、
 遅延器の実装は簡単です。
 過去数サンプル分のデータを循環バッファに記憶しておいて、
@@ -330,6 +335,7 @@ GetValue メソッドです。
 完全版: 
 [Delay.cs](../../../../assets/media/ufcpp2000/sp/src/Delay.cs)
 ### <a id="sec-generated-title-6"></a>ソースファイルリスト
+
 * 
 [IFilter.cs](../../../../assets/media/ufcpp2000/sp/src/IFilter.cs)
 * 

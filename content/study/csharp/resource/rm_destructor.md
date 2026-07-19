@@ -14,7 +14,8 @@ aliases:
 
 # ファイナライザー
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 (※本項で説明するファイナライザーは、かつてはデストラクター(destructor)と呼ばれていました。
 うちのサイト内でもかつてはその表記だったため、今でも痕跡が残っている箇所があるかもしれません。
 参考ブログ: [ファイナライザー](../../../blog/2025/5/ファイナライザー/index.md))
@@ -32,11 +33,13 @@ aliases:
 その場合はファイナライザーも呼ばれないため、かなりまずいです。)
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * `~` + クラス名で、ファイナライザーと呼ばれる特殊なメソッドが定義できます
 * ファイナライザーはオブジェクトがガベージ コレクションで回収される際に呼ばれます
 * リソースの破棄を確実にするためには、`Dispose`メソッドに加えてファイナライザーも定義します
 
-##<a id="sec-generated-title-3"></a> <a id="dtor"></a>ファイナライザー
+## <a id="sec-generated-title-3"></a> <a id="dtor"></a>ファイナライザー
+
 [コンストラクター](../oop/oo_construct.md)とは逆に、インスタンスが破棄されるときに呼び出されるのがファイナライザーです。
 ファイナライザーは以下のように、クラス名の前に <code>~</code> を付けた名前のメソッドを書くことで定義できます。
 
@@ -55,7 +58,8 @@ aliases:
 ファイナライザーはコンストラクターと違って、引数を持つことができません。
 また、[アクセシビリティ](../oop/oo_conceal.md#level)も指定できず、[`static`](../oop/oo_static.md)にもできません。
 
-###<a id="sec-generated-title-4"></a> <a id="when-to-destruct"></a>注意: ファイナライザーの呼び出しタイミング
+### <a id="sec-generated-title-4"></a> <a id="when-to-destruct"></a>注意: ファイナライザーの呼び出しタイミング
+
 .NET Framework では、インスタンスの寿命は .NET Framework 自体が管理していて、
 いつインスタンスの破棄が行われるのかは分かりません。
 （C++ 言語に慣れている人は注意が必要。）
@@ -111,7 +115,8 @@ Test クラスのファイナライザーが呼ばれました
 後述する 「[using ステートメント](oo_dispose.md#using)」というものを使った Dispose を行います。
 
 
-###<a id="sec-generated-title-5"></a> <a id="finalize"></a>注意: Finalize
+### <a id="sec-generated-title-5"></a> <a id="finalize"></a>注意: Finalize
+
 かつてのデストラクターという呼び名と、~ 記号を使う構文は C++ の構文を参考にしたものです。
 しかし、C++ のデストラクター(変数のスコープを抜けたとき、もしくは、delete 演算子を呼んだタイミングで呼ばれる)とは呼び出されるタイミングが全然違うので注意してください。
 

@@ -18,7 +18,8 @@ aliases:
 
 # 線積分
 
-##<a id="sec-generated-title-1"></a> <a id="lineint"></a>線積分とは
+## <a id="sec-generated-title-1"></a> <a id="lineint"></a>線積分とは
+
 <figure>
 	[![線積分](../../../../assets/media/ufcpp2000/math/lineint1.png)](../../../../assets/media/ufcpp2000/math/lineint1.png)
 	<figcaption>線積分</figcaption>
@@ -44,7 +45,8 @@ aliases:
 と書きます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル場の線積分
+## <a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル場の線積分
+
 ベクトル場<span class="math">
         <span class="vector">F</span>
       </span>を考えます。
@@ -82,7 +84,8 @@ aliases:
       </span>の曲線<span class="math">C</span>上での線積分ということもあります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="cartesian"></a>線積分の直交座標系での表現
+## <a id="sec-generated-title-3"></a> <a id="cartesian"></a>線積分の直交座標系での表現
+
 <span class="math">
         <span class="normal">d</span><span class="vector">l</span>
       </span>は接線方向を向き、微小線分の長さと同じ絶対値を持つベクトルですから、
@@ -110,7 +113,8 @@ aliases:
 となります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="root"></a>積分経路
+## <a id="sec-generated-title-4"></a> <a id="root"></a>積分経路
+
 線積分は一般には始点<span class="math">P</span>と終点<span class="math">Q</span>が同じでも経路が異なればまったく異なる値となります。
 しかし、詳しくは「[回転とは](rotation.md#rot)」で説明しますが、<em>
         <span class="math">

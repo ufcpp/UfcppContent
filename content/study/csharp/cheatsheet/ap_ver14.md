@@ -33,7 +33,8 @@ aliases:
 
 執筆予定: [C# 14.0 トラッキング issue](https://github.com/ufcpp/UfcppSample/issues/487)
 
-##<a id="sec-generated-title-1"></a> <a id="field-keyword">field キーワード</a>
+## <a id="sec-generated-title-1"></a> <a id="field-keyword">field キーワード</a>
+
 `field` という文脈キーワードが追加されました。
 プロパティの `get`/`set` の中に `field` と書くと、
 バッキング フィールドを生成した上で、そのフィールドの読み書きができます。
@@ -76,7 +77,8 @@ aliases:
 
 詳しくは「[field キーワード](../oop/oo_property.md#field-keyword)」で説明します。
 
-##<a id="sec-generated-title-2"></a> <a id="null-conditional-assignment">null 条件代入</a>
+## <a id="sec-generated-title-2"></a> <a id="null-conditional-assignment">null 条件代入</a>
+
 代入演算の左側で `?.` や `?[]` を書くことで「null じゃないときだけ代入」ができるようになりました。
 これを null 条件代入(null conditional assignment)といいます。
 
@@ -109,11 +111,13 @@ aliases:
 
 詳しくは「[null の取り扱い - null じゃないときだけ代入](../resource/rm_nullusage.md#null-conditional-assignment)」で説明します。
 
-##<a id="sec-generated-title-3"></a> <a id="first-class-span">First-class Span</a>
+## <a id="sec-generated-title-3"></a> <a id="first-class-span">First-class Span</a>
+
 `Span<T>`/`ReadOnlySpan<T>` 構造体を言語構文的に特別扱いするようなりました。
 
 詳しくは「[First-class Span](../resource/span.md#first-class-span)」で説明します。
-##<a id="sec-generated-title-4"></a> <a id="overload-compound">複合代入演算子のオーバーロード</a>
+## <a id="sec-generated-title-4"></a> <a id="overload-compound">複合代入演算子のオーバーロード</a>
+
 複合代入演算子を直接オーバーロードできるようになりました。
 
 <pre class="source" title="複合代入演算子のオーバーロードの例">
@@ -146,7 +150,8 @@ aliases:
 
 詳しくは「[複合代入演算子のオーバーロード](../oop/oo_operator.md#overload-compound)」で説明します。
 
-##<a id="sec-generated-title-5"></a> <a id="simple-param-with-modifier">修飾子付きの引数の型名省略</a>
+## <a id="sec-generated-title-5"></a> <a id="simple-param-with-modifier">修飾子付きの引数の型名省略</a>
+
 `ref` や `out` などの修飾子が必須の引数でも、ラムダ式引数の型名を省略できるようになりました。
 
 <pre class="source" title="修飾子が必須でも引数の型名を省略できるように">
@@ -158,8 +163,10 @@ aliases:
 
 詳しくは「[修飾子付きの引数の型名省略](../functional/fun_localfunctions.md#simple-param-with-modifier)」で説明します。
 
-##<a id="sec-generated-title-6"></a> <a id="others">その他</a>
-###<a id="sec-generated-title-7"></a> <a id="partial-event">部分イベントと部分コンストラクター</a>
+## <a id="sec-generated-title-6"></a> <a id="others">その他</a>
+
+### <a id="sec-generated-title-7"></a> <a id="partial-event">部分イベントと部分コンストラクター</a>
+
 [部分プロパティ](../misc/partial-type.md#partial_property) (C# 13)に続いて、
 C# 14 では[イベント](../functional/sp_event.md)と[コンストラクター](../oop/oo_construct.md)も部分定義できるようになりました。
 
@@ -188,7 +195,8 @@ C# 14 では[イベント](../functional/sp_event.md)と[コンストラクタ�
 }
 </pre>
 
-###<a id="sec-generated-title-8"></a> <a id="unbount-type-in-nameof">unbound な型に対する nameof</a>
+### <a id="sec-generated-title-8"></a> <a id="unbount-type-in-nameof">unbound な型に対する nameof</a>
+
 `T<>` みたいに型引数を埋めていないジェネリック型(これを unbound (未束縛)とか open (開きっぱなし) な型といいます)に対して `nameof` 演算子を使えるようになりました。
 
 <pre class="source" title="unbound なジェネリック型に対する nameof 演算子">
@@ -199,7 +207,8 @@ C# 14 では[イベント](../functional/sp_event.md)と[コンストラクタ�
 
 詳しくは「[unbound な型に対する nameof](../start/st_string.md#unbount-type-in-nameof)」で説明します。
 
-###<a id="sec-generated-title-9"></a> <a id="file-based-app">ファイル ベース実行</a>
+### <a id="sec-generated-title-9"></a> <a id="file-based-app">ファイル ベース実行</a>
+
 .NET 10 (C# 14 と同世代)で単独の `.cs` ファイルだけで C# プログラムを実行できるようになりました。
 
 それに伴って、C# 的にも `#!` と `#:` (無視ディレクティブ)という機能が追加されています。

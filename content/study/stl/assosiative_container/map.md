@@ -18,7 +18,8 @@ aliases:
 
 # map, multimap
 
-##<a id="sec-generated-title-1"></a> <a id="d27e4"></a>map, multimapとは
+## <a id="sec-generated-title-1"></a> <a id="d27e4"></a>map, multimapとは
+
 Perlを勉強したことある人ならmapは連想配列に似ていると言えば分かると思います。
  
 連想配列とはキーと値の組み合わせを記憶しておくものです。
@@ -77,7 +78,8 @@ STLで2分探索木はxtreeというヘッダーファイル中に<code>tree</co
 したがってユーザーが直接このクラスを使う必要はありません。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d27e113"></a>mapの特徴
+## <a id="sec-generated-title-2"></a> <a id="d27e113"></a>mapの特徴
+
 * 要素の追加、キーによる検索、削除が O(log n) で行える
 
 * キーの重複を許さない
@@ -88,7 +90,8 @@ STLで2分探索木はxtreeというヘッダーファイル中に<code>tree</co
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="d27e134"></a>multimapの特徴
+## <a id="sec-generated-title-3"></a> <a id="d27e134"></a>multimapの特徴
+
 * 要素の追加、キーによる検索、削除が O(log n) で行える
 
 * キーの重複を許す

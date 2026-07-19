@@ -27,6 +27,7 @@ test
 <script src="https://gist.github.com/ufcpp/03dd6fc45b643e580d20.js"></script>
 
 ## <a id="sec-generated-title-1"></a>MathJax MathML
+
 <pre class="xsource" title="">
 <code><attvalue></span><span class="attvalue">&lt;</span>math <span class="attribute">xmlns</span><span class="attvalue">="http://www.w3.org/1998/Math/MathML"&gt;</span>
     <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;</span>
@@ -79,6 +80,7 @@ test
 
 
 ## <a id="sec-generated-title-2"></a>MathJax Tex
+
 `$\displaystyle \lim_{x \to 0} g(x) = 0$`
 
 ↓
@@ -87,20 +89,24 @@ $\displaystyle \lim_{x \to 0} g(x) = 0$
 
 
 ## <a id="sec-generated-title-3"></a>Simple tables
+
 a | b | c
 --- | --- | ---
 x | y | z
 
 ## <a id="sec-generated-title-4"></a>figures
+
 ![enter image description here](../../../../assets/media/1033/eto.png "テスト用")
 ^^^テスト用
 
 ## <a id="sec-generated-title-5"></a>embedded tags
+
 <div>
 <script async class="speakerdeck-embed" data-id="27b8ed9f16104ccaa98b2132e2e5306d" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
 </div>
 
 ## <a id="sec-generated-title-6"></a>versions
+
 元々 h5 使ってたけど
 
 <h5 class="version version2">Ver. 2.0</h5>
@@ -141,6 +147,7 @@ div に変えようかな。
 <div class="version version19">Ver. 19</div>
 
 ### <a id="sec-generated-title-7"></a>source code
+
 <pre class="source" title="">
 <span class="reserved">var</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">"abcあいう😊😀😁"u8</span>;
 
@@ -232,6 +239,7 @@ div に変えようかな。
 </code></pre>
 
 ### <a id="sec-generated-title-8"></a>source code (抜粋)
+
 Program.cs へのコピペで動くソースコードと、「一部分抜粋」でそれだけだと動かないやつ、css 変えようかな。
 
 <pre class="source partial" title="WinForms アプリで、Visual Studio が生成するコード">
@@ -262,6 +270,7 @@ Program.cs へのコピペで動くソースコードと、「一部分抜粋」
 
 
 ## <a id="sec-generated-title-9"></a>Blazor (外部)
+
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=quick&i=0&s=0&w=300" width="304" height="332"></iframe></div>
 
 ↑のソースコード: [https://github.com/ufcpp/StaticWebApps/tree/main/BlazorWasm/SortVisualizer](https://github.com/ufcpp/StaticWebApps/tree/main/BlazorWasm/SortVisualizer)

@@ -15,7 +15,8 @@ aliases:
 
 # \[雑記\] 識別子のスコープとオブジェクトの寿命
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 ローカル変数、メンバー名(メソッドなどの名前)、型名など、開発者が自由につけれる名前のことを<strong id="identifier" class="keyword">識別子</strong>(identifier)と言います。「識別」(identify)の名のとおり、一意に区別するためにつける名前なので、基本的には複数のものに同じ名前は付けれません。
 
 ただし、識別子には有効は範囲があります。この範囲を識別子の<strong id="scope" class="keyword">スコープ</strong>(scope)と言い、スコープ内では識別子名は一意でなければならず、逆に、スコープが違えば、別のものに同じ名前を付けることができます。
@@ -33,14 +34,16 @@ aliases:
 
 本稿では、これらについて説明して行きます。
 
-##<a id="sec-generated-title-2"></a> <a id="scope"></a>識別子のスコープ
+## <a id="sec-generated-title-2"></a> <a id="scope"></a>識別子のスコープ
+
 C#の識別子のスコープは、原則として、<em>その識別子の定義場所を囲むブロック内</em>です。例えば以下のようになります。
 
 ![識別子のスコープ = 囲むブロック内](../../../../assets/media/1059/scope1.png)
 
 この範囲では、基本的に同じ名前は使えないということになります。
 
-###<a id="sec-generated-title-3"></a> <a id="nested-block"></a>入れ子のブロック
+### <a id="sec-generated-title-3"></a> <a id="nested-block"></a>入れ子のブロック
+
 スコープの範囲は、ブロックが入れ子になっている個所も含めます。
 すなわち、以下のようなコードはコンパイル エラーになります。
 
@@ -102,7 +105,8 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 2つ目の`x`(`string`の方)は下の方で定義されていますが、これのスコープはブロックの先頭からになります。
 その結果、1つ目の`x`は「スコープ被り」で、同名が許されず、コンパイル エラーになります。
 
-###<a id="sec-generated-title-4"></a> <a id="member-local"></a>例外1: メンバーとローカル変数
+### <a id="sec-generated-title-4"></a> <a id="member-local"></a>例外1: メンバーとローカル変数
+
 「入れ子のもの含めて、スコープ内では同名不可」の原則には例外もあります。
 1つは、以下のように、メンバーとローカル変数には同じ名前をつけれるということです。
 
@@ -123,7 +127,8 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 
 この場合、ローカル変数側が優先されます。フィールドの方を使うためには`this.`を付けるのが必須になります。
 
-###<a id="sec-generated-title-5"></a> <a id="type-member"></a>例外2: 型と名前空間
+### <a id="sec-generated-title-5"></a> <a id="type-member"></a>例外2: 型と名前空間
+
 もう1つの例外は、型と名前空間です。外で定義された型の名前と同名のメンバーやローカル変数が作れます。
 
 <pre class="source" title="型や名前空間と同じ名前のフィールド・ローカル変数">
@@ -196,7 +201,8 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="parameter"></a>引数
+### <a id="sec-generated-title-6"></a> <a id="parameter"></a>引数
+
 メソッドの引数のスコープは、そのメソッド本体内全域です。ほぼ、ローカル変数と扱いは一緒です。
 メソッド内で、引数と同名のローカル変数は作れません。
 
@@ -222,7 +228,8 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 }
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="loop"></a>ループ変数
+### <a id="sec-generated-title-7"></a> <a id="loop"></a>ループ変数
+
 `for`ステートメントや、`foreach`ステートメントの場合、ループ変数があります。ループ変数のスコープはステートメントの内側になります。
 
 <pre class="source" title="ループ変数のスコープ">
@@ -241,6 +248,7 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 </code></pre>
 
 ## <a id="sec-generated-title-8"></a>変数を使える範囲
+
 変数を使える範囲は、スコープよりもやや厳しくなります。
 前節の通り、スコープは、その識別子を囲うブロック全体になりますが、
 変数の場合はそのブロック全体でから使えるわけではありません。
@@ -314,7 +322,8 @@ C#では、変数が確実に初期化されているかどうかを結構真面
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-9"></a> <a id="lifetime"></a>オブジェクトの寿命
+## <a id="sec-generated-title-9"></a> <a id="lifetime"></a>オブジェクトの寿命
+
 オブジェクトは、誰からも参照されなくなったら[ガベージ コレクション](../resource/rm_gc.md#garbage-collection)の対象になります。この時点をもって、オブジェクトの寿命は尽きていると考えます。
 
 この「誰かが参照している」というのは、以下のように判定します。
@@ -368,7 +377,8 @@ Scope終了
 SampleがGCされました
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="closure"></a>ラムダ式と変数の昇格
+### <a id="sec-generated-title-10"></a> <a id="closure"></a>ラムダ式と変数の昇格
+
 通常、ローカル変数に格納したオブジェクトの寿命は非常に短いです。戻り値で返したりしない限り、ブロック内だけで寿命を終えます。
 ただ、C#にはいくつか、ただのローカル変数を、もう少し寿命の長いものに「昇格」(elevation)させてしまう構文があります。
 
@@ -414,7 +424,8 @@ SampleがGCされました
 
 詳細は「[匿名デリゲートのコンパイル結果](../functional/sp2_anonymousmethod.md)」で説明していますが、匿名関数から外部のローカル変数を参照すると、実際にはクラスが自動生成されて、フィールドが作られます。すなわち、ローカル変数だったものがフィールドに昇格します。この昇格により、格納されているインスタンスの寿命が延びます。
 
-###<a id="sec-generated-title-11"></a> <a id="for-loop-variable"></a>forステートメントのループ変数
+### <a id="sec-generated-title-11"></a> <a id="for-loop-variable"></a>forステートメントのループ変数
+
 ラムダ式の外部変数補足と合わせると、ループ変数のスコープに関して注意が必要になります。
 
 まず、`for`ステートメントですが、これのループ変数は、全ループで1つ、同じ変数扱いになります。
@@ -469,7 +480,8 @@ a();
 a();
 </code></pre>
 
-###<a id="sec-generated-title-12"></a> <a id="foreach-loop-variable"></a>foreachステートメントのループ変数
+### <a id="sec-generated-title-12"></a> <a id="foreach-loop-variable"></a>foreachステートメントのループ変数
+
 <h5 class="version version5">Ver. 5.0</h5>
 
 同様の件について、`foreach`ステートメントでは、C# 5.0を境に仕様変更がありました。
@@ -535,7 +547,8 @@ a();
 便利になる方向への変更なので概ね問題は起こしませんが、もしも、C# 4.0以前を使う必要がある場合には注意が必要です。
 最新のコンパイラーと同じ感覚で上記のようなコードを書くと、C# 4.0以前のコンパイラーではバグになったりします。
 
-###<a id="sec-generated-title-13"></a> <a id="iterator"></a>イテレーターと非同期メソッド
+### <a id="sec-generated-title-13"></a> <a id="iterator"></a>イテレーターと非同期メソッド
+
 ローカル変数がフィールドに昇格してしまうものがあと2つあります。[イテレーター](../data/sp2_iterator.md#complied)と[非同期メソッド](../async/sp5_awaitable.md)です。
 
 これらは、結構大々的なクラスの自動生成を行っていて、ローカル変数がフィールドに格上げされます。
@@ -639,7 +652,8 @@ SampleがGCされました
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-14"></a> <a id="csharp7"></a>C# 7での新しいスコープ ルール
+## <a id="sec-generated-title-14"></a> <a id="csharp7"></a>C# 7での新しいスコープ ルール
+
 <h5 class="version version7">Ver. 7</h5>
 
 [C# 7](../cheatsheet/ap_ver7.md)では、新機能の導入に伴って、それ以前にはなかったスコープ関連のルールが発生しています。
@@ -655,7 +669,8 @@ SampleがGCされました
 これに対して、C# 7.3からはこの制限がなくなり、
 クエリ式や[コンストラクター初期化子](../oop/oo_construct.md#initializer)などの中でも変数宣言できるようになりました。
 
-###<a id="sec-generated-title-15"></a> <a id="declaration-expressions"></a>式中での変数宣言
+### <a id="sec-generated-title-15"></a> <a id="declaration-expressions"></a>式中での変数宣言
+
 C# 6以前であれば、変数の宣言は宣言ステートメントでしかできませんでした。
 そして、その宣言ステートメントを囲うブロックが、変数のスコープになります。
 
@@ -786,7 +801,8 @@ C# 6以前であれば、変数の宣言は宣言ステートメントでしか�
 }
 </code></pre>
 
-###<a id="sec-generated-title-16"></a> <a id="lambda"></a>ラムダ式
+### <a id="sec-generated-title-16"></a> <a id="lambda"></a>ラムダ式
+
 [ラムダ式](../functional/sp3_lambda.md)では、ブロックを使った `() => { }` というようなものと、
 `=>` に続けて式を直接書く `() => x` というようなものの2パターンの記法が使えます。
 後者であっても、この中で宣言した変数のスコープはラムダ式内に限られます。
@@ -798,7 +814,8 @@ f(<span class="string">"123"</span>);
 <span class="type">Console</span>.WriteLine(<span class="error">x</span>); <span class="comment">// ここで x は使えない</span>
 </code></pre>
 
-###<a id="sec-generated-title-17"></a> <a id="is-operator"></a>余談: is 演算子で新しい変数を導入
+### <a id="sec-generated-title-17"></a> <a id="is-operator"></a>余談: is 演算子で新しい変数を導入
+
 Swift など、他のプログラミング言語の一部では、(C#風に書くと)以下のような構文を持っているものがあります。
 
 <pre class="source" title="is 演算子">
@@ -848,7 +865,8 @@ is演算子の拡張は、C# 7でもこういう「型による分岐」機能�
 }
 </code></pre>
 
-###<a id="sec-generated-title-18"></a> <a id="local-functions"></a>ローカル関数を使える範囲
+### <a id="sec-generated-title-18"></a> <a id="local-functions"></a>ローカル関数を使える範囲
+
 [ローカル関数](../structured/st_function.md#sec-local)はどう扱うべきでしょうか。
 ローカル変数のようなものだと考えると、宣言より前では使えないはずです。
 一方で、メソッドのようなものだと考えると、通常、メソッドは宣言よりも前で使えます。
@@ -910,7 +928,8 @@ is演算子の拡張は、C# 7でもこういう「型による分岐」機能�
 }
 </code></pre>
 
-###<a id="sec-generated-title-19"></a> <a id="query-expression"></a>クエリ式
+### <a id="sec-generated-title-19"></a> <a id="query-expression"></a>クエリ式
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 C# 7.3までは、クエリ式中では式中での変数宣言ができませんでした。
@@ -942,7 +961,8 @@ C# 7.3で、これが許されるようになりました。
 クエリ式は句ごとに1つのラムダ式が作られるので、それとの整合性を取った結果が「句ごとに別スコープ」です。
 句をまたいだ変数を宣言したい場合は[`let`句](../data/sp3_stdquery.md#let)を使ってください。
 
-###<a id="sec-generated-title-20"></a> <a id="initializer"></a>コンストラクター初期子、フィールド初期化子、プロパティ初期化子
+### <a id="sec-generated-title-20"></a> <a id="initializer"></a>コンストラクター初期子、フィールド初期化子、プロパティ初期化子
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 ラムダ式同様、スコープをどうするか悩ましくて保留になっていたものに初期化子があります。

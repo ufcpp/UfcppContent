@@ -18,24 +18,28 @@ aliases:
 
 # 記号
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 記号類。
 （短縮形: sym）
 主に、MS IME の変換で出せない文字。
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;symbol name="name"&gt;&lt;/symbol&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;symbol n="forall"/&gt;x s.t. &lt;symbol n="vtheta"/&gt;&lt;paren&gt;x&lt;/paren&gt; &lt;op&gt;=&lt;/op&gt; 0
 
 </pre><div class="math"><span class="normal">∀</span>x s.t. <span class="normal">ϑ</span><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span> <op>=</op> 0
 
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:math//ufcpp:symbol|ufcpp:math//ufcpp:sym|ufcpp:Math//ufcpp:symbol|ufcpp:Math//ufcpp:sym"&gt;
 &lt;xsl:variable name="n"&gt;&lt;xsl:choose&gt;&lt;xsl:when test="@name != ''"&gt;&lt;xsl:value-of select="@name"/&gt;&lt;/xsl:when&gt;&lt;xsl:otherwise&gt;&lt;xsl:value-of select="@n"/&gt;&lt;/xsl:otherwise&gt;&lt;/xsl:choose&gt;&lt;/xsl:variable&gt;
 
@@ -85,7 +89,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>span.normal
 {
   font-weight:normal;

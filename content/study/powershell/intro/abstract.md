@@ -18,7 +18,8 @@ aliases:
 
 # Windows PowerShell 概要
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>PowerShell 概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>PowerShell 概要
+
 Windows <strong id="powershell" class="keyword">PowerShell</strong> は、
 2006年末頃に登場した、
 主にシステム管理者を対象としたシェルです。
@@ -35,8 +36,10 @@ OS の中心部分を貝殻（shell）のように覆う部分という意味か
 PowerShell はまさに次世代のシェルといっていいほど洗練された高性能なシェル環境です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="character"></a>PowerShell の特徴
-###<a id="sec-generated-title-3"></a> <a id="consistency"></a>一貫したインターフェース
+## <a id="sec-generated-title-2"></a> <a id="character"></a>PowerShell の特徴
+
+### <a id="sec-generated-title-3"></a> <a id="consistency"></a>一貫したインターフェース
+
 PowerShell のコマンドは一貫した命名規則を持ちます。
 また、引数の渡し方も一貫しています。
 
@@ -75,7 +78,8 @@ Alias           pwd          Get-Location
 
 
 
-###<a id="sec-generated-title-4"></a> <a id="pipeline"></a>オブジェクトパイプライン
+### <a id="sec-generated-title-4"></a> <a id="pipeline"></a>オブジェクトパイプライン
+
 多くのシェルには、
 あるコマンドの出力を別のあるコマンドの入力につなぐパイプラインという機能があります。
 
@@ -113,7 +117,8 @@ Select-Object はこの出力を FileInfo 型のまま受け取って処理を�
 （上の例では、FileInfo 型の Name プロパティを読み出しています。）
 
 
-###<a id="sec-generated-title-5"></a> <a id="script"></a>新しいスクリプト言語
+### <a id="sec-generated-title-5"></a> <a id="script"></a>新しいスクリプト言語
+
 これまで Windows では、
 WSH というスクリプトベースのシステム管理環境がありましたが、
 元々シェル用のスクリプト言語ではない VB Script や JavaScript を使っていたので、
@@ -148,7 +153,8 @@ Perl 的な雰囲気もあったりします。
 （あと、JavaScript 的な雰囲気も少し。）
 
 
-##<a id="sec-generated-title-6"></a> <a id="forDeveloper"></a>開発者にとっての PowerShell
+## <a id="sec-generated-title-6"></a> <a id="forDeveloper"></a>開発者にとっての PowerShell
+
 「PowerShell の主なターゲットはシステム管理者」といっても、
 それ以外の層にとってのメリットがないわけではありません。
 .NET 開発者にとっても大きなメリットを持っていると思います。
@@ -182,7 +188,8 @@ C# プログラマーなら尚のこと相性がいいです。）
 ということで、PowerShell は .NET 開発者にとって非常に魅力的なシェル環境になると思います。
 
 
-##<a id="sec-generated-title-7"></a> <a id="link"></a>リンク
+## <a id="sec-generated-title-7"></a> <a id="link"></a>リンク
+
 [Windows PowerShell でのスクリプティング](http://www.microsoft.com/japan/technet/scriptcenter/hubs/msh.mspx)
 : 日本語公式サイト。
 

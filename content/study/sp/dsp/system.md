@@ -18,7 +18,8 @@ aliases:
 
 # システム
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <pre>
 入力→[システム]→出力
 </pre>
@@ -27,7 +28,8 @@ aliases:
 <span class="math">y<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span> という信号を得るようなブラックボックス。
 
 
-##<a id="sec-generated-title-2"></a> <a id="expression"></a>システムの数学的表現
+## <a id="sec-generated-title-2"></a> <a id="expression"></a>システムの数学的表現
+
 通常、システムの入出力の関係は、微分方程式を用いて表します。
 ある関数 <span class="math">H</span> を用いて、
 <div class="math">
@@ -53,7 +55,8 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 線形時不変なシステムはこのような形で表すことができます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="class"></a>分類
+## <a id="sec-generated-title-3"></a> <a id="class"></a>分類
+
 システムは、その性質からいくつかの種類に分類できます。
  
 この節では、システムの分類について説明していきますが、
@@ -91,7 +94,8 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 <span class="math">a, b, c</span> などの文字は（<span class="math">t</span> によらない）定数をさすものとします。
 
 
-###<a id="sec-generated-title-4"></a> <a id="linear"></a>線形性
+### <a id="sec-generated-title-4"></a> <a id="linear"></a>線形性
+
 システム <span class="math">S</span> の入力と出力が以下のような関係を持つとき、
 システムは線形である（linear）、あるいは、<strong id="linear" class="keyword">線形性</strong>（linearity）を持つと言います。
 （その逆は非線形（non-linear）と言う。）
@@ -127,7 +131,8 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 と表せるとき、このシステムは線形になります。
 
 
-###<a id="sec-generated-title-5"></a> <a id="time_invariant"></a>時不変性
+### <a id="sec-generated-title-5"></a> <a id="time_invariant"></a>時不変性
+
 システム <span class="math">S</span> の入力と出力が以下のような関係を持つとき、
 システムは時不変である（time-invariant）、あるいは、<strong id="ti" class="keyword">時不変性</strong>（time-invariance）を持つと言います。
 （その逆は時変（time-variant）と言う。）
@@ -150,7 +155,8 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 と表せるとき、このシステムは時不変になります。
 
 
-###<a id="sec-generated-title-6"></a> <a id="lti"></a>線形時不変
+### <a id="sec-generated-title-6"></a> <a id="lti"></a>線形時不変
+
 システムが線形性と時不変性を両方持っているとき、
 システムは線形時不変であるといいます。
 線形時不変なシステムは、
@@ -167,7 +173,8 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 このとき、関数 <span class="math">H</span> をシステムの伝達関数と呼びます。
 
 
-###<a id="sec-generated-title-7"></a> <a id="stable"></a>安定性
+### <a id="sec-generated-title-7"></a> <a id="stable"></a>安定性
+
 任意の時刻 <span class="math">t</span> において、
 信号 <span class="math">x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span> が有限の値を持つとき、
 その信号は安定（stable）であると言います。
@@ -181,13 +188,15 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 （マイク→アンプ→スピーカという音の伝達経路が）不安定になっているということです。
 
 
-###<a id="sec-generated-title-8"></a> <a id="causal"></a>因果性
+### <a id="sec-generated-title-8"></a> <a id="causal"></a>因果性
+
 システムのインパルス応答が時刻 <span class="math">t ＜ 0</span> において 0。
  
 現実には因果的でないシステムは作れない。
 
 
-##<a id="sec-generated-title-9"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-9"></a> <a id="plan"></a>執筆予定
+
 <pre>
   通常、微分方程式(離散信号の場合、差分方程式)で表される。
 

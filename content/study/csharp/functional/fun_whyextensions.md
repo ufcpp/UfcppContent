@@ -18,7 +18,8 @@ aliases:
 
 # クラスの機能拡張
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 あるクラスに新しい機能を足したい場合にどうするべきかという話。
 
 クラス自体にインスタンス メソッドを足すべきか、拡張メソッドを作るべきか。
@@ -26,6 +27,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 拡張メソッドを使うと、クラスとメソッドが分離する。
 
 * なので、分離する方がよければ拡張メソッド、そうでないなら普通にインスタンス メソッドとして実装すべき。
@@ -34,7 +36,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="how-to-extend"></a>新しい機能の追加
+## <a id="sec-generated-title-3"></a> <a id="how-to-extend"></a>新しい機能の追加
+
 クラスに新しい機能を追加したいとします。
 単に機能追加といっても、以下のように、いろいろな要件があったりします。
 
@@ -48,7 +51,8 @@ aliases:
 まず、いろいろ機能追加のやり方を示して、それぞれが上記の要件のうち何を満たせるかについて考えてみましょう。
 
 
-###<a id="sec-generated-title-4"></a> <a id="in-class"></a>クラス自身に新メンバーを足す
+### <a id="sec-generated-title-4"></a> <a id="in-class"></a>クラス自身に新メンバーを足す
+
 例として、以下のようなクラスに、新メンバー、Norm() （x, y の二乗和を計算）を足してみましょう。
 
 <pre class="source" title="例として使う、拡張したい対象" lang="">
@@ -86,7 +90,8 @@ aliases:
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="partial"></a>クラス自身に新メンバーを足す（partial）
+### <a id="sec-generated-title-5"></a> <a id="partial"></a>クラス自身に新メンバーを足す（partial）
+
 前節の X クラスが、例えば自動生成したコードだったとしましょう。
 自動生成は最初の1回きりではなく、定期的にやるものとします。
 この場合、X クラスを定義しているファイルは修正できません（修正しても、自動生成の際に修正内容が消える）。
@@ -137,7 +142,8 @@ private なものも含めて、全メンバーにアクセスできる代わり
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="static"></a>静的メソッドでいいよ
+### <a id="sec-generated-title-6"></a> <a id="static"></a>静的メソッドでいいよ
+
 正直なところ、クラスの public なメンバーを参照して何か値を計算するだけなら、静的メソッドで十分です。
 
 <pre class="source" title="" lang="">
@@ -164,7 +170,8 @@ private なものも含めて、全メンバーにアクセスできる代わり
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="extensions"></a>拡張メソッド
+### <a id="sec-generated-title-7"></a> <a id="extensions"></a>拡張メソッド
+
 C# の場合、単なる静的メソッドを、インスタンス メソッドと同じ記法で呼びだせる機能があります。
 すなわち、「[拡張メソッド](sp3_extension.md#exmethod)」。
 
@@ -190,7 +197,8 @@ C# の場合、単なる静的メソッドを、インスタンス メソッド�
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="inheritance"></a>継承
+### <a id="sec-generated-title-8"></a> <a id="inheritance"></a>継承
+
 さて、ここから先は正直なところ、<em>かなりの下策</em>。
 
 クラスの拡張というと、クラスの継承ですね。
@@ -227,7 +235,8 @@ C# の場合、単なる静的メソッドを、インスタンス メソッド�
 「オブジェクト指向言語だから継承」みたいな安易な考え方は危険なので気を付けましょう。
 
 
-###<a id="sec-generated-title-9"></a> <a id="cast"></a>型変換
+### <a id="sec-generated-title-9"></a> <a id="cast"></a>型変換
+
 もう1つ、「なくはない」方法。
 （C# では普通やらないし、やっても大しておいしくない。
 一方、他の言語ではたまにこれに類する方法を見る。）
@@ -263,7 +272,8 @@ C# の場合、単なる静的メソッドを、インスタンス メソッド�
 ここまでの自動型変換は将来的にも載ることはないと思われます。
 
 
-##<a id="sec-generated-title-10"></a> <a id="why-exntensions"></a>拡張メソッドの使いどころ
+## <a id="sec-generated-title-10"></a> <a id="why-exntensions"></a>拡張メソッドの使いどころ
+
 機能拡張のやり方ですが、継承とか型変換でやるのはあまり筋がよくなくて、
 結局、普通にインスタンス メソッドを足すか、拡張メソッドで作るかの2択になります。
 この2つ利点・欠点の比較をまとめてみましょう。
@@ -300,7 +310,8 @@ C# の場合、単なる静的メソッドを、インスタンス メソッド�
 従って、クラスとメソッドを分離すべき状況というものについて考える必要があります。
 
 
-###<a id="sec-generated-title-11"></a> <a id="who-implement"></a>実装者がわかれる
+### <a id="sec-generated-title-11"></a> <a id="who-implement"></a>実装者がわかれる
+
 クラスの実装者と違う人がクラスへの操作・アルゴリズムを作りたい時
 規約とアルゴリズムは直交概念
 普通、別の人が作りたくなるもの
@@ -312,7 +323,8 @@ C# の場合、単なる静的メソッドを、インスタンス メソッド�
 
 
 
-###<a id="sec-generated-title-12"></a> <a id="dependency"></a>アセンブリの依存解消
+### <a id="sec-generated-title-12"></a> <a id="dependency"></a>アセンブリの依存解消
+
 <pre class="source" title="" lang="">
 <code><span class="reserved">class</span> <span class="type">A</span>
 {

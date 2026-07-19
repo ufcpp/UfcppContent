@@ -18,7 +18,8 @@ aliases:
 
 # 組込み型変換
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# には <code>int</code> 型から <code>double</code> 型というように、
 ある型から別の型に変換する機能があります。
 
@@ -28,6 +29,7 @@ C# には <code>int</code> 型から <code>double</code> 型というように�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * C# では、ほとんどの場合、型変換は自動的には行われません
 
 * short x = (short)5; というように、明示的に型変換します
@@ -36,7 +38,8 @@ C# には <code>int</code> 型から <code>double</code> 型というように�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="implicit"></a>暗黙的な型変換
+## <a id="sec-generated-title-3"></a> <a id="implicit"></a>暗黙的な型変換
+
 暗黙的(implicit)な型変換とは、ある型の変数を別の型の変数に代入するだけで自動的に型を変換してくれる機能です。
 以下に暗黙的な型変換の例を挙げます。
 
@@ -109,7 +112,8 @@ C# における暗黙的な型変換の基本的なルールは以下のとお�
 ただし、<code>int, uint, long</code> から <code>float</code> への変換、および <code>long</code> から <code>double</code> への変換では有効桁数が落ちる場合があります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="explicit"></a>明示的な型変換
+## <a id="sec-generated-title-4"></a> <a id="explicit"></a>明示的な型変換
+
 暗黙的に変換を行えない型同士の変換は以下のように明示的(explicit)に行う必要があります。
 
 <pre class="source" title="明示的な型変換" lang="">

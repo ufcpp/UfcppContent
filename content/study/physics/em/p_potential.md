@@ -18,7 +18,8 @@ aliases:
 
 # 電磁ポテンシャル
 
-##<a id="sec-generated-title-1"></a> <a id="potential"></a>電磁ポテンシャル
+## <a id="sec-generated-title-1"></a> <a id="potential"></a>電磁ポテンシャル
+
 <table summary="">
 
 	<tr>
@@ -107,7 +108,8 @@ aliases:
 と表せることが分かります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="metaphysics"></a>電磁ポテンシャルの物理的意味
+## <a id="sec-generated-title-2"></a> <a id="metaphysics"></a>電磁ポテンシャルの物理的意味
+
 スカラーポテンシャル<span class="math">
         <a href="variable.md#phi" title="スカラーポテンシャル">φ</a>
       </span>はその勾配が電場となり、
@@ -133,7 +135,8 @@ aliases:
       </em>。
 
 
-##<a id="sec-generated-title-3"></a> <a id="gauge"></a>ゲージ変換
+## <a id="sec-generated-title-3"></a> <a id="gauge"></a>ゲージ変換
+
 <span class="math">
         <a href="variable.md#phi" title="スカラーポテンシャル">φ</a>
       </span>および<span class="math">
@@ -175,7 +178,8 @@ aliases:
       </span>となるように<span class="math">χ</span>を選んだりすることも出来きます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="lorentz"></a>ローレンツ条件
+## <a id="sec-generated-title-4"></a> <a id="lorentz"></a>ローレンツ条件
+
 <span class="math">
         <a href="variable.md#E" title="電場ベクトル"><span class="vector">E</span></a> = −<span class="vector">∇</span><a href="variable.md#phi" title="スカラーポテンシャル">φ</a> − <table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂t</td></tr></table><a href="variable.md#A" title="ベクトルポテンシャル"><span class="vector">A</span></a>
       </span>および<span class="math">

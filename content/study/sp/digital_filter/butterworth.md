@@ -18,7 +18,8 @@ aliases:
 
 # バターワースフィルタ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="butterworth" class="keyword">バターワースフィルタ</strong>（Butterworth filter）は、
 通過域で最大平坦な振幅特性を示すローパスフィルタです。
 位相特性も線形に近いという特徴があります。
@@ -30,7 +31,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="property"></a>周波数特性
+## <a id="sec-generated-title-2"></a> <a id="property"></a>周波数特性
+
 バターワースフィルタは以下のような周波数特性を持ちます。
 <div class="math"><span class="normal">|</span>H<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">|</span><sup>2</sup>
 ＝
@@ -49,8 +51,10 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="analog"></a>アナログプロトタイプの設計
-###<a id="sec-generated-title-4"></a> <a id="zp"></a>極配置
+## <a id="sec-generated-title-3"></a> <a id="analog"></a>アナログプロトタイプの設計
+
+### <a id="sec-generated-title-4"></a> <a id="zp"></a>極配置
+
 <span class="normal">|</span>H<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">|</span><sup>2</sup>の分母は<span class="math">2n</span>次の多項式なので、
 <span class="normal">|</span>H<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">|</span><sup>2</sup>は<span class="math">2n</span>個の極を持ちます。
 この<span class="math">2n</span>個の極は、
@@ -70,7 +74,8 @@ s ＝
 ただし、<span class="math">k</span>は<span class="math">0～(n－1) / 2</span>までの整数です。
 
 
-###<a id="sec-generated-title-5"></a> <a id="aptf"></a>アナログプロトタイプ伝達関数
+### <a id="sec-generated-title-5"></a> <a id="aptf"></a>アナログプロトタイプ伝達関数
+
 決定された極配置から、バターワースフィルタの伝達関数<span class="math">H<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span></span>は以下のようになります。
 <div class="math">
 H<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span>
@@ -88,7 +93,8 @@ H<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="f
 2
 <span class="normal">cos</span><span class="paren" style="font-size:1.5em;">(</span><table class="frac" summary="fraction"><tr><td class="num">n － 2 k － 1</td></tr><tr><td>2 n</td></tr></table>π<span class="paren" style="font-size:1.5em;">)</span></div>
 
-###<a id="sec-generated-title-6"></a> <a id="spec"></a>設計仕様
+### <a id="sec-generated-title-6"></a> <a id="spec"></a>設計仕様
+
 透過域/阻止域の周波数/リプル
 （<span class="math">A<sub>p</sub>, r<sub>s</sub>, ω<sub>p</sub>, ω<sub>s</sub></span>）
 を仕様として与えたとき、
@@ -159,7 +165,8 @@ N ≧
 この不等式を満たすような最小の <span class="math">N</span> を選びます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="digital"></a>ディジタルフィルタ設計
+## <a id="sec-generated-title-7"></a> <a id="digital"></a>ディジタルフィルタ設計
+
 「[アナログプロトタイプの設計](#analog)」で得られた式を、
 カットオフ周波数<span class="math">ω<sub>c</sub></span>で双1次変換することで以下の式が得られます。
 <div class="math">
@@ -196,7 +203,8 @@ z<sup>－2</sup></td></tr></table>
 ＝
 s <span class="normal">cos</span><span class="paren" style="font-size:2em;">(</span><table class="frac" summary="fraction"><tr><td class="num">n － 2k ＋ 1</td></tr><tr><td>2n</td></tr></table>π<span class="paren" style="font-size:2em;">)</span></div>
 
-##<a id="sec-generated-title-8"></a> <a id="highpass"></a>ハイパスフィルタ
+## <a id="sec-generated-title-8"></a> <a id="highpass"></a>ハイパスフィルタ
+
 「[周波数変換](transform.md)」で説明したように、
 ローパスフィルタのアナログ伝達関数の変数 <span class="math">s</span> を <span class="math">s → <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>s</td></tr></table></span> に入れ替えると、
 ハイパスフィルタになります。

@@ -18,7 +18,8 @@ aliases:
 
 # シェルソート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="d24e8" class="keyword">シェルソート</strong>（Shell sort）は、
 「[挿入ソート](sort_insert.md#insert)」を改良した物で、
 挿入ソートの「概ねソート済みの配列に対しては高速」という性質を最大限生かすアルゴリズムです。
@@ -37,7 +38,8 @@ aliases:
 
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=shell&i=0&s=0&w=300" width="304" height="332"></iframe></div>
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/ShellSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/ShellSort.cs)
 
 <pre class="source" title="シェルソート" lang="">

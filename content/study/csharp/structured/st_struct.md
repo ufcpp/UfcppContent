@@ -18,10 +18,12 @@ aliases:
 
 # データの構造化(複合型)
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# では、複数の異なるデータ型の変数を1まとめにして管理するため、クラスや構造体と呼ばれるものを定義して使うことが出来ます。
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 複合型: 複数のデータを1つにまとめて使うための型
 * C# の複合型にはクラスと構造体の2種類ある
   * クラス: `class 型名 { メンバー定義 }`
@@ -30,7 +32,8 @@ C# では、複数の異なるデータ型の変数を1まとめにして管理�
   * (C# 9.0 ではもう1つ[レコード型](../datatype/record.md)というものも追加)
 * 例えば、「2次元中の点」を表す複合型なら `class Point { public int X; public int Y; }`
 
-##<a id="sec-generated-title-3"></a> <a id="about"></a>複合型
+## <a id="sec-generated-title-3"></a> <a id="about"></a>複合型
+
 今まで <code>int</code> や <code>double</code> などの組込み型だけを使ってきましたが、
 組込み型だけでは複雑なデータを扱うことはできません。
 例えば、名簿を管理するプログラムを作りたいとします。
@@ -114,6 +117,7 @@ p.address = <span class="literal">"http://www.tiyu.to"</span>;
 複合型、特にクラスの機能の詳細については、「[オブジェクト指向](../index.md#oop)」で説明して行きます。
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 <pre class="source" title="構造体のサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -164,7 +168,8 @@ p.address = <span class="literal">"http://www.tiyu.to"</span>;
 (100, 0) と (400, 400) の間の距離は 500
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="anonymous"></a>匿名の複合型
+## <a id="sec-generated-title-5"></a> <a id="anonymous"></a>匿名の複合型
+
 <h5 class="version version3">Ver. 3.0</h5>
 <h5 class="version version7">Ver. 7.0</h5>
 

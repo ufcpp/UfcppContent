@@ -19,14 +19,16 @@ aliases:
 
 # ジェネリクスの共変性・反変性
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4.0 で、ジェネリクスの型引数に共変性・反変性を持たせることが可能になりました。
 （共変性・反変性という言葉の意味は「[covariance と contravariance](../functional/sp_delegate.md#co-contra)」参照。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="variance"></a>ジェネリックの共変性・反変性
+## <a id="sec-generated-title-2"></a> <a id="variance"></a>ジェネリックの共変性・反変性
+
 ジェネリクスの共変性・反変性というものがどういうものかというのを説明する前に、まず背景を。
 ジェネリックコレクションに関して、昔から以下のようなことをしたいという要望がありました。
 
@@ -78,7 +80,8 @@ Action&lt;<span class="reserved">string</span>&gt; strAction = objAction;
 
 ![ジェネリックの共変性・反変性](../../../../assets/media/1081/genericvariance.png)
 
-##<a id="sec-generated-title-3"></a> <a id="in_out"></a>in/out 修飾子
+## <a id="sec-generated-title-3"></a> <a id="in_out"></a>in/out 修飾子
+
 ということで、C# 4.0 から、ジェネリックなインターフェース、もしくは、デリゲートに対して、
 共変性・反変性を実現するための仕組みが追加されました。
 
@@ -141,7 +144,8 @@ Func&lt;<span class="reserved">string</span>, <span class="reserved">string</spa
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="implementation"></a>余談1： in/out の内部実装
+## <a id="sec-generated-title-4"></a> <a id="implementation"></a>余談1： in/out の内部実装
+
 型引数の in/out のような仕組みの実現には 「[IL](../abstract/ab_dotnet.md#il)」 レベルでの対応が必要になります。
 というか、IL レベルでは、.NET Framework 2.0 の時点で in/out 相当のフラグを設定する機能がありました。
 （今回、C# からそのフラグを立てれるようになっただけ。）
@@ -179,7 +183,8 @@ C# 3.0 以前でも共変性・反変性を使えたりします。
 （一度 object にしてから無理やりキャストする必要はある。）
 
 
-##<a id="sec-generated-title-5"></a> <a id="value"></a>余談2： 値型は　invariant
+## <a id="sec-generated-title-5"></a> <a id="value"></a>余談2： 値型は　invariant
+
 ちなみに、値型（int とかの組み込み整数型や、struct、enum）には共変性・反変性は使えません。
 （「[IL](../abstract/ab_dotnet.md#il)」 の実装上の制約。）
 
@@ -192,7 +197,8 @@ IEnumerable&lt;<span class="reserved">object</span>&gt; e2 = <span class="reserv
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-6"></a> <a id="covariant-array"></a>余談3: C#の配列は共変
+## <a id="sec-generated-title-6"></a> <a id="covariant-array"></a>余談3: C#の配列は共変
+
 C#の配列には共変性があります。つまり、以下のコードがコンパイルできます。
 
 <pre class="source" title="C#の配列は共変">
@@ -232,7 +238,8 @@ baseItems[1] = 100;
 本当はコンパイル自体できてはいけないコードですが、実行してみるまでエラーになりません。
 `IEnumerable<T>`や`IReadOnlyCollection<T>`などのジェネリックなインターフェイスを介してのアクセスであれば、こういう問題のあるコードは書けません。
 
-##<a id="sec-generated-title-7"></a> <a id="paramter-delegate"></a>引数でインターフェイスやデリゲートを受け取る場合
+## <a id="sec-generated-title-7"></a> <a id="paramter-delegate"></a>引数でインターフェイスやデリゲートを受け取る場合
+
 ジェネリックなインターフェイスやデリゲートを引数として渡す場合、in/outの向きが逆転します。
 (戻り値の場合は逆転しません。)
 例えば以下のようになります。

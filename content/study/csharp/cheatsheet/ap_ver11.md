@@ -33,7 +33,8 @@ aliases:
 
 執筆予定: [C# 11.0 トラッキング issue](https://github.com/ufcpp/UfcppSample/issues/387)
 
-##<a id="sec-generated-title-1"></a> <a id="utf8-literal"></a>UTF-8 リテラル
+## <a id="sec-generated-title-1"></a> <a id="utf8-literal"></a>UTF-8 リテラル
+
 `"abc"u8` みたいに、文字列リテラルの後ろに u8 接尾辞を付けることで、UTF-8 な byte 列を文字列リテラルの形で書けるようになりました。
 
 <pre class="source" title="u8 リテラルの例">
@@ -48,7 +49,8 @@ aliases:
 
 詳しくは「[UTF-8 リテラル](../start/st_string.md#utf8-literal)」で説明します。
 
-##<a id="sec-generated-title-2"></a> <a id="raw-string">生文字列リテラル</a>
+## <a id="sec-generated-title-2"></a> <a id="raw-string">生文字列リテラル</a>
+
 C# 11 で、3つ以上の連続した `"` を使うことで、「一切エスケープが必要ない文字列リテラル」を書けるようになりました。
 
 <pre class="source" title="raw string literal">
@@ -76,7 +78,8 @@ C# 11 で、3つ以上の連続した `"` を使うことで、「一切エス�
 
 詳しくは「[生文字列リテラル](../start/st_string.md#raw-string)」で説明します。
 
-##<a id="sec-generated-title-3"></a> <a id="required">required メンバー</a>
+## <a id="sec-generated-title-3"></a> <a id="required">required メンバー</a>
+
 プロパティとフィールドに対する `required` 修飾子というものが追加されました。
 これを使うと、[オブジェクト初期化子](../oop/oo_construct.md#member_initializer)で何らかの値を代入することを義務付けられます。
 例えば以下のようなコードを書いたとき、`a1` 以外の `new A` はエラーになります。
@@ -98,7 +101,8 @@ C# 11 で、3つ以上の連続した `"` を使うことで、「一切エス�
 
 詳しくは「[required メンバー](../oop/oo_property.md#required)」で説明します。
 
-##<a id="sec-generated-title-4"></a> <a id="list">リスト パターン</a>
+## <a id="sec-generated-title-4"></a> <a id="list">リスト パターン</a>
+
 C# 11で、`[]` を使ってリスト(配列や `List<T>` など)に対するパターン マッチングができるようになりました。
 例えば以下のような `switch` を書けます。
 
@@ -115,7 +119,8 @@ C# 11で、`[]` を使ってリスト(配列や `List<T>` など)に対するパ
 
 詳しくは「[リスト パターン](../datatype/patterns.md#list)」で説明します。
 
-##<a id="sec-generated-title-5"></a> <a id="generic-math">Generic Math</a>
+## <a id="sec-generated-title-5"></a> <a id="generic-math">Generic Math</a>
+
 インターフェイスの静的メンバーを仮想・抽象にできるようになりました。
 
 この機能の一番の用途は、数値型(`int` や `float` など)に対するアルゴリズムを[ジェネリクス](../oop/sp2_generics.md)を使って書けるようにすることです。
@@ -129,7 +134,8 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 * [checked 演算子オーバーロード](#checked-operator-overload)
 * [シフト演算子の右オペランドの制限撤廃](#relaxing-shift)
 
-###<a id="sec-generated-title-6"></a> <a id="static-abstract">インターフェイスの静的抽象メンバー</a>
+### <a id="sec-generated-title-6"></a> <a id="static-abstract">インターフェイスの静的抽象メンバー</a>
+
 まず、インターフェイスの静的メンバーについてですが、
 例えば以下のようなコードが書けるようになりました。
 
@@ -156,7 +162,8 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 
 (詳しくは「[インターフェイスの静的抽象メンバー](../oop/oo_interface.md#static-abstract)」で説明します。)
 
-###<a id="sec-generated-title-7"></a> <a id="unsigned-right-shift">符号なし右シフト</a>
+### <a id="sec-generated-title-7"></a> <a id="unsigned-right-shift">符号なし右シフト</a>
+
 符号付き整数(`int` とか `sbyte` とか)でも符号なし整数(`uint` とか `byte` とか)でも無関係に、
 常に「符号なし右シフト(論理シフト)」をするための `>>>`演算子 (`>` の数が3つ)が追加されました。
 
@@ -181,7 +188,8 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 
 詳しくは「[【Generic Math】 C# 11 での演算子の新機能](../oop/generic-math-operators.md#unsigned-right-shift)」で説明します。
 
-###<a id="sec-generated-title-8"></a> <a id="checked-operator-overload">checked 演算子オーバーロード</a>
+### <a id="sec-generated-title-8"></a> <a id="checked-operator-overload">checked 演算子オーバーロード</a>
+
 `operator` キーワードの後ろに `checked` を付けることで、
 「`checked` 演算子」を定義できるようになりました。
 これにより、ユーザー定義の演算子オーバーロードでも `checked`(オーバーフロー時に例外を投げる)と `unchecked` (オーバーフローしても例外を投げない)を切り替えられるようになります。
@@ -202,7 +210,8 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 
 詳しくは「[【Generic Math】 C# 11 での演算子の新機能](../oop/generic-math-operators.md#checked-operator-overload)」で説明します。
 
-###<a id="sec-generated-title-9"></a> <a id="relaxing-shift">シフト演算子の右オペランドの制限撤廃</a>
+### <a id="sec-generated-title-9"></a> <a id="relaxing-shift">シフト演算子の右オペランドの制限撤廃</a>
+
 シフト演算子の右オペランドに `int` 以外の型を使えるようになりました。
 
 <pre class="source" title="C# 11 で operator &lt;&lt;(A x, A y) とかが書けるように">
@@ -218,7 +227,8 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 
 詳しくは「[【Generic Math】 C# 11 での演算子の新機能](../oop/generic-math-operators.md#relaxing-shift)」で説明します。
 
-##<a id="sec-generated-title-10"></a> <a id="file-local"></a>file ローカル型
+## <a id="sec-generated-title-10"></a> <a id="file-local"></a>file ローカル型
+
 `file` という修飾子を使って「書いたファイル内からだけアクセスできる型」を作れるようになりました。
 
 <pre class="source" title="file 修飾付きの型を使う例">
@@ -241,7 +251,8 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 
 詳しくは「[file ローカル型](../misc/file-local.md)」で説明します。
 
-##<a id="sec-generated-title-11"></a> <a id="ref-field">ref フィールド</a>
+## <a id="sec-generated-title-11"></a> <a id="ref-field">ref フィールド</a>
+
 [ref 構造体](../resource/refstruct.md#key-refstruct)のフィールドを [`ref` (参照渡し)](../resource/sp_ref.md#byref)で持てるようになりました。
 
 ref フィールドの書き方は参照引数や参照戻り値と同じく、型の前に `ref` 修飾を付けます。
@@ -255,8 +266,10 @@ ref フィールドの書き方は参照引数や参照戻り値と同じく、�
 
 詳しくは「[ref フィールド](../resource/refstruct.md#ref-field)」で説明します。
 
-##<a id="sec-generated-title-12"></a> <a id="others">その他</a>
-###<a id="sec-generated-title-13"></a> <a id="span">ReadOnlySpan に対するパターンマッチ</a>
+## <a id="sec-generated-title-12"></a> <a id="others">その他</a>
+
+### <a id="sec-generated-title-13"></a> <a id="span">ReadOnlySpan に対するパターンマッチ</a>
+
 C# 11 で、`ReadOnlySpan<char>` に対して[文字列リテラルによる定数パターン](../datatype/patterns.md#span)が使えるようになりました。
 
 <pre class="source" title="">
@@ -281,7 +294,8 @@ C# 11 で、`ReadOnlySpan<char>` に対して[文字列リテラルによる定�
 };
 </pre>
 
-###<a id="sec-generated-title-14"></a> <a id="nameof-parameter"></a>nameof(引数) のスコープ変更
+### <a id="sec-generated-title-14"></a> <a id="nameof-parameter"></a>nameof(引数) のスコープ変更
+
 [`nameof`](../start/st_string.md#nameof-parameter) にちょっとだけ変更が掛かりました。
 以下のように、メソッドに対する属性の中で、そのメソッドの引数の名前が参照できるようになりました。
 
@@ -293,7 +307,8 @@ C# 11 で、`ReadOnlySpan<char>` に対して[文字列リテラルによる定�
 <span class="reserved">static</span> <span class="reserved">string</span><span class="operator">?</span> <span class="method">m</span>(<span class="reserved">string</span><span class="operator">?</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span>;
 </code></pre>
 
-###<a id="sec-generated-title-15"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a>
+### <a id="sec-generated-title-15"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a>
+
 C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
 クラスと同じく、明示的に代入しなかったフィールド・自動プロパティには既定値が入ります。
 
@@ -320,7 +335,8 @@ C# 11 では、構造体でもフィールドの明示的な初期化が不要�
 詳しくは「[構造体](../resource/rm_struct.md#auto-default)」や「[既定値](../resource/rm_default.md#auto-default)」で説明します。
 
 
-###<a id="sec-generated-title-16"></a> <a id="generic-attribute">ジェネリックな属性</a>
+### <a id="sec-generated-title-16"></a> <a id="generic-attribute">ジェネリックな属性</a>
+
 [属性をジェネリック クラスにできるようになりました](../dynamic/sp_attribute.md#generic-attribute
 )。
 
@@ -333,7 +349,8 @@ C# 11 では、構造体でもフィールドの明示的な初期化が不要�
 <span class="reserved">class</span> <span class="type">MyClass</span> { }
 </code></pre>
 
-###<a id="sec-generated-title-17"></a> <a id="newline-in-interpolation">文字列補間中の改行</a>
+### <a id="sec-generated-title-17"></a> <a id="newline-in-interpolation">文字列補間中の改行</a>
+
 [文字列補間](../start/st_string.md#string-interpolation)で、以下のようなコードが書けるようになりました
 (`{}` の中で改行を入れれるようになりました)。
 
@@ -358,7 +375,8 @@ C# 11 では、構造体でもフィールドの明示的な初期化が不要�
 「`$""` の場合だけダメだった理由は今となっては思い出せない」というレベルだそうで、
 仕様漏れ・バグ修正の類にギリギリの「新機能」になります。
 
-###<a id="sec-generated-title-18"></a> <a id="numeric-intptr">Numeric IntPtr</a>
+### <a id="sec-generated-title-18"></a> <a id="numeric-intptr">Numeric IntPtr</a>
+
 「C# の新機能」と言っていいのかどうか微妙なラインですが、
 [`nint`](ap_ver9.md#nint) に関してちょっとした変更がありました。
 
@@ -391,7 +409,8 @@ C# 9.0 の頃には、`IntPtr`、`UIntPtr` 型に算術演算子の定義がな�
 }
 </pre>
 
-###<a id="sec-generated-title-19"></a> <a id="cache-static-method-group">静的メソッドをデリゲート化するときのキャッシュ化</a>
+### <a id="sec-generated-title-19"></a> <a id="cache-static-method-group">静的メソッドをデリゲート化するときのキャッシュ化</a>
+
 [Numeric IntPtr](#numeric-intptr) の話以上に「C# の新機能と言っていいのかどうか微妙」な話(文法的には何も変わっていないし、挙動も大差ない)ですが、
 `Func<int, int> f = Method;` みたいな書き方をしたときに、デリゲートのインスタンスをキャッシュするようになりました。
 
@@ -445,7 +464,8 @@ C# 10 までは、おおむね以下のようなコードに展開されてい�
 <span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">square</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="variable local">x</span>;
 </pre>
 
-###<a id="sec-generated-title-20"></a> <a id="CS9029">補足: required, scoped, file キーワードと型名</a>
+### <a id="sec-generated-title-20"></a> <a id="CS9029">補足: required, scoped, file キーワードと型名</a>
+
 これまでずっと、C# に新しいキーワードを足したいときには、文脈キーワード(特定の状況下でだけキーワード扱いを受ける)にしてきました。
 
 C# 11 で追加される `required`, `scoped`, `file` の3つも文脈キーワードです。
@@ -478,7 +498,8 @@ C# 11 で追加される `required`, `scoped`, `file` の3つも文脈キーワ�
 <span class="reserved">class</span> <span class="type">@class</span> { }
 </pre>
 
-###<a id="sec-generated-title-21"></a> <a id="pointer-of-managed-types">マネージ型のポインター</a>
+### <a id="sec-generated-title-21"></a> <a id="pointer-of-managed-types">マネージ型のポインター</a>
+
 C# 11 から、マネージ型のポインターを使えるようになりました。
 
 <pre class="source" title="マネージ型のポインター型/アドレス取得">

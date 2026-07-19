@@ -19,7 +19,8 @@ aliases:
 
 # 例外処理
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="exc" class="keyword">例外</strong>（exception）とは、
 本来ならばプログラム中で起こってはいけないことが起こってしまうことをいいます。
 堅牢なプログラムを作成するためには、
@@ -31,6 +32,7 @@ C# では、例外処理を行うための専用の構文が用意されてい�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 例外: 「開こうとしたファイルが存在しなかった」など、特別な対処が必要な状況。
 
 * 例外への対処には、例外用の構文があるのでそれを使いましょう。
@@ -39,7 +41,8 @@ C# では、例外処理を行うための専用の構文が用意されてい�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="exception"></a>例外処理とは
+## <a id="sec-generated-title-3"></a> <a id="exception"></a>例外処理とは
+
 例外の例を挙げると、ユーザーが想定外の文字列を入力してきたときや、
 プログラムに必要なファイルが開けなかったときなどがあります。
 
@@ -154,7 +157,8 @@ C# では、例外処理を行うための専用の構文が用意されてい�
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="syntax"></a>例外処理構文
+## <a id="sec-generated-title-4"></a> <a id="syntax"></a>例外処理構文
+
 上述したように、例外処理専用の構文を用いなくても例外処理を行えます。
 しかし、上述したような方法にはいくつか欠点があります。
 その欠点を以下に挙げます。
@@ -174,6 +178,7 @@ C# では、例外処理を行うための専用の構文が用意されてい�
 
 
 ##### <a id="sec-generated-title-5"></a>throw
+
 まず、関数定義側、すなわち、例外が発生する可能性のある側では、
 <strong id="throw" class="keyword">throw 文</strong>を使って例外が起こったことを利用側に知らせます。
 throw 文は以下のようにして使用します。
@@ -220,6 +225,7 @@ throw 文によって投げられる例外は、
 
 
 ##### <a id="sec-generated-title-6"></a>try-catch-finally
+
 次に、関数利用側、すなわち、例外を処理する側では、
 <strong id="try" class="keyword">try-catch-finally 文</strong>を使って例外を処理します。
 try-catch-finally 文は以下のようにして使用します。
@@ -270,6 +276,7 @@ try-catch-finally 文は以下のようにして使用します。
 `finally`が必要になる頻度は少なめです。
 
 ##### <a id="sec-generated-title-7"></a>複数の catch
+
 `catch`句は複数並べて書けます。
 
 こちらも例として、先ほどの文字列→整数変換関数利用側コードを try-catch 文を使って書き直してみましょう。
@@ -309,6 +316,7 @@ try-catch-finally 文は以下のようにして使用します。
 </code></pre>
 
 ##### <a id="sec-generated-title-8"></a>try-catch 文の利点
+
 try-catch 文を使った例外処理には以下のような利点があります。
 
 * 正常動作部と例外処理部の区別が明確になります。
@@ -327,7 +335,8 @@ try-catch 文を使った例外処理には以下のような利点がありま�
     * 同じような処理を何か所も書く必要がなくなります。
 
 
-###<a id="sec-generated-title-9"></a> <a id="throwexpr"></a>throw 式
+### <a id="sec-generated-title-9"></a> <a id="throwexpr"></a>throw 式
+
 <h5 class="version version7">Ver. 7</h5>
 
 `throw`はこれまでステートメントでしか書けませんでした。
@@ -381,7 +390,8 @@ C# 6ではバージョン アップとともに、式として書けるものや
 <span class="reserved">var</span> y = <span class="reserved">true</span> ? <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>() : <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NotSupportedException</span>();
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="std"></a>標準で用意されている例外クラス
+### <a id="sec-generated-title-10"></a> <a id="std"></a>標準で用意されている例外クラス
+
 .NET Frameowrk が標準で提供する例外クラスのうち、よく出てくるもの/よく使うものをいくつか例に挙げます。
 
 <table summary="">
@@ -485,7 +495,8 @@ C# 6ではバージョン アップとともに、式として書けるものや
 	</tr>
 </table>
 
-##<a id="sec-generated-title-11"></a> <a id="propagation"></a>例外の伝搬
+## <a id="sec-generated-title-11"></a> <a id="propagation"></a>例外の伝搬
+
 例外は、`catch`句でキャッチされるまで、どんどん上位の呼び出し元に伝搬していきます。
 
 <pre class="source" title="例外は上位に伝搬する">
@@ -550,7 +561,8 @@ C# 6ではバージョン アップとともに、式として書けるものや
 
 <sup>※</sup> GUI アプリの場合、GUI フレームワーク内で例外がキャッチされていて、未処理例外があっても即座にアプリが停止することはありません。代わりに、エラー ダイアログ画面が表示されたりします。
 
-##<a id="sec-generated-title-12"></a> <a id="guide"></a>例外処理の指針
+## <a id="sec-generated-title-12"></a> <a id="guide"></a>例外処理の指針
+
 一般に、tyr-catch を用いた例外処理は、
 if 文などを使った値のチェックに比べて、
 実行速度が遅いといわれています。
@@ -562,7 +574,8 @@ try ブロックで囲んだだけでは（例外が発生しなければ）ほ�
 
 ということで、例外の使い方（特に、避けれる例外を避ける方法）について別ページで説明をします → 「[[雑記] 例外の使い方](misc_exception.md)」。
 
-##<a id="sec-generated-title-13"></a> <a id="exception-filter"></a>例外フィルター
+## <a id="sec-generated-title-13"></a> <a id="exception-filter"></a>例外フィルター
+
 <h5 class="version version6">Ver. 6</h5>
 
 C# 6で、例外のcatch句に続けてwhenと書くことで、catchしたい例外の条件を書けるようになりました。

@@ -18,12 +18,14 @@ aliases:
 
 # オーバーフローのチェック
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C#では<code>checked, unchecked</code>というキーワードを用いることで、
 数値演算のオーバーフローをチェックするかどうかを明示的に選択することが出来ます。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * checked (式)： 式中でオーバーフローが発生したら例外を投げます。
 
 * unchecked (式)： 式中で起きたオーバーフローはすべて無視します。
@@ -32,7 +34,8 @@ C#では<code>checked, unchecked</code>というキーワードを用いるこ�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="overflow"></a>オーバーフロー
+## <a id="sec-generated-title-3"></a> <a id="overflow"></a>オーバーフロー
+
 「[組込み型](st_embeddedtype.md)」で説明したとおり、
 コンピュータの内部で扱える値の範囲は限られています。
 そのため、計算を行っている途中で計算結果がこの範囲を超えてしまうことがあり、
@@ -51,7 +54,8 @@ Console.Write(<span class="literal">"{0} + {1} = {2}"</span>, a, b, c); <span cl
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="checked"></a>checked キーワード
+## <a id="sec-generated-title-4"></a> <a id="checked"></a>checked キーワード
+
 オーバーフローを起こされるとまずい場合、
 何らかの方法でオーバーフローを検出する必要があります。
 C#では、コンパイル時に <code>/checked+</code> というオプションを付けることで、
@@ -110,7 +114,8 @@ checked演算子の後の式の中でオーバーフローが起きた場合、
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="unchecked"></a>unchecked キーワード
+## <a id="sec-generated-title-5"></a> <a id="unchecked"></a>unchecked キーワード
+
 checked のときとは逆に、オーバーフローをあえて無視したい場合もあります。
 そのため、<code>unchecked</code> というキーワードも用意されています。
 <code>unchecked</code> キーワードは以下のようにして使用します。
@@ -162,7 +167,8 @@ unchecked演算子の後の式の中ではオーバーフローは無視され�
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="float"></a>浮動小数点数型の場合のオーバーフロー
+## <a id="sec-generated-title-6"></a> <a id="float"></a>浮動小数点数型の場合のオーバーフロー
+
 浮動小数点数型の場合、オーバーフローを起こした場合、値は無限大(infinity)になります。
 また、絶対値が浮動小数点数で表せる値の範囲を下回った場合(このような状況を<em>アンダーフロー</em>と呼ぶ)、
 値は0になります。

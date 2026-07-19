@@ -18,14 +18,16 @@ aliases:
 
 # メイン・メモリ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 前項「[CPU](cpu.md)」に引き続き、汎用コンピューターの構成要素の1つである<strong id="main-memory" class="keyword">メイン・メモリ</strong>について説明していきます。
 
 C 言語のポインターや、C#・Java の参照型・参照渡しといった仕組みは、
 ここで説明するようなメモリの「アドレス」と密接に関係しています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="address"></a>メモリとアドレス
+## <a id="sec-generated-title-2"></a> <a id="address"></a>メモリとアドレス
+
 前項からの再掲となりますが、汎用コンピューター内の記憶領域には、図1に示すのように、
 高速な代わりに小容量なレジスターと、低速な代わりに大容量なメイン・メモリがあります。
 
@@ -64,7 +66,8 @@ CPU内のレジスターはデータの読み書きが高速な代わりに小�
 
 
 
-###<a id="sec-generated-title-3"></a> <a id="selector"></a>メモリの作り方
+### <a id="sec-generated-title-3"></a> <a id="selector"></a>メモリの作り方
+
 メモリというものは、「たくさんのマスがあって、各マスにアドレスが振られている」と説明しました。
 ということは、マス（記憶素子: memory element）とアドレスに応じたマスを選ぶもの（セレクター: selector）があればメモリを作れることになります。
 
@@ -76,7 +79,8 @@ DRAMはまた別の構成。）
 セレクターについては別途「[汎用コンピューターの作り方](generalcomputercircuit.md)」にて説明します。
 
 
-###<a id="sec-generated-title-4"></a> <a id="tradeoff"></a>容量と速度
+### <a id="sec-generated-title-4"></a> <a id="tradeoff"></a>容量と速度
+
 大容量で低速なメイン・メモリと、小容量で高速なレジスターというように、容量と速度にはトレードオフがあります。このトレードオフには以下のような2つの要因があります
 
 * 素子自体の違い: 省面積な代わりに低速な素子があります。
@@ -93,7 +97,8 @@ DRAMはまた別の構成。）
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="pointer"></a>ポインター
+## <a id="sec-generated-title-5"></a> <a id="pointer"></a>ポインター
+
 通常、メイン・メモリのアドレスは連番の数値で（物理的な故障で部分的に使えない領域ができている場合などは除いて）、
 あるアドレスxの隣はx+1というアドレスで読み書きできます。
 

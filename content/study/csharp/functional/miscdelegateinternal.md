@@ -14,18 +14,21 @@ aliases:
 
 # \[雑記\] デリゲートの内部
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 [デリゲート](sp_delegate.md)は、内部実装的には「インスタンスと関数ポインターをペアで管理しているクラス」になっています。
 
 ここではデリゲートの内部挙動と、
 それを踏まえたパフォーマンス上の注意点を説明します。
 
-##<a id="sec-generated-title-2"></a> <a id="delegate-internal"></a>デリゲートの内部
+## <a id="sec-generated-title-2"></a> <a id="delegate-internal"></a>デリゲートの内部
+
 デリゲートは .NET ランタイム内で特殊な扱いをされていて、
 デリゲート内部で起こっていることをそのまま C# で書くことはできないので、
 ここでの説明は疑似コード的なものになります。
 
-###<a id="sec-generated-title-3"></a> <a id="delegate-type"></a>型定義
+### <a id="sec-generated-title-3"></a> <a id="delegate-type"></a>型定義
+
 例えば、以下のようなデリゲートがあったとします。
 
 <pre class="source" title="例として使うデリゲート">
@@ -56,7 +59,8 @@ aliases:
 1つは[マルチキャスト](sp_delegate.md#malticast)用、
 もう1つは[後述](#static-method)する静的メソッドのために使うフィールドです。
 
-###<a id="sec-generated-title-4"></a> <a id="new-delegate"></a>デリゲートのインスタンス生成
+### <a id="sec-generated-title-4"></a> <a id="new-delegate"></a>デリゲートのインスタンス生成
+
 C# では(C# 2.0 以降)、以下のように、デリゲート型の変数に対してメソッドを直接渡すような形でデリゲートを作ります。
 
 <pre class="source" title="デリゲートの作り方(C# 2.0 以降)">
@@ -100,7 +104,8 @@ C# では(C# 2.0 以降)、以下のように、デリゲート型の変数に�
 最終的にはインスタンス メソッド・静的メソッドそれぞれ専用の別処理が呼ばれるようです。
 静的メソッドの場合には、後述する「ちょっとしたトリック」のための追加の処理が掛かります。
 
-###<a id="sec-generated-title-5"></a> <a id="invoke-delegate"></a>呼び出し側(Invokeの中身)
+### <a id="sec-generated-title-5"></a> <a id="invoke-delegate"></a>呼び出し側(Invokeの中身)
+
 デリゲートの呼び出しは以下のように書きます。
 
 <pre class="source" title="デリゲートの呼び出し">
@@ -122,7 +127,8 @@ s.Invoke(20);
 - 引数の`int` (上記の例の 10 や 20)を読み込む
 - デリゲートの `FunctionPointer` に格納してあるアドレスにジャンプ
 
-##<a id="sec-generated-title-6"></a> <a id="static-method"></a>静的メソッドを渡すと遅い
+## <a id="sec-generated-title-6"></a> <a id="static-method"></a>静的メソッドを渡すと遅い
+
 インスタンス メソッドと静的メソッドは、内部的には実のところだいぶ異なる引数の受け取り方をしています。
 インスタンス メソッドは、以下のように、静的メソッドよりも暗黙的に1引数多く受け取っています。
 
@@ -176,7 +182,8 @@ s.Invoke(20);
 C# ではインスタンス メソッドの方が圧倒的に利用頻度が高いので、
 インスタンス メソッドに対して最適化した方が、全体としてのパフォーマンスは上がります。
 
-##<a id="sec-generated-title-7"></a> <a id="curried-delegate"></a>カリー化デリゲート
+## <a id="sec-generated-title-7"></a> <a id="curried-delegate"></a>カリー化デリゲート
+
 前節の「静的メソッドに対するトリック」を回避して、
 デリゲート越しの静的メソッドの呼び出しを速くする方法が1つあります。
 「[拡張メソッドのデリゲートへの代入](sp3_extension.md#delegate)」で説明しているカリー化デリゲートという手段を使うと、インスタンス メソッドと同じコストで静的メソッドを呼べます。
@@ -230,7 +237,8 @@ C# ではインスタンス メソッドの方が圧倒的に利用頻度が高�
 呼び出しの際にもインスタンス メソッドと同じ処理になるため、
 カリー化デリゲートは呼び出しは高速になっています。
 
-###<a id="sec-generated-title-8"></a> <a id="optimization-static"></a>(最適化手法1) 普通の静的メソッドを拡張メソッドに置き換え
+### <a id="sec-generated-title-8"></a> <a id="optimization-static"></a>(最適化手法1) 普通の静的メソッドを拡張メソッドに置き換え
+
 ちなみに、こういう内部挙動の結果、
 以下のように、静的メソッドに対してダミー引数を1つ増やしてわざわざ拡張メソッド化する高速化手法が使えたりします。
 
@@ -260,7 +268,8 @@ C# ではインスタンス メソッドの方が圧倒的に利用頻度が高�
 }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="optimization-static"></a>(最適化手法2) 匿名関数を拡張メソッドに置き換え
+### <a id="sec-generated-title-9"></a> <a id="optimization-static"></a>(最適化手法2) 匿名関数を拡張メソッドに置き換え
+
 ちょっとした変換処理などに対して、匿名関数を使うよりも拡張メソッドを挟んだ方が速くなることもあります。
 
 単純な例として、あるインスタンスを返すだけのラムダ式を、

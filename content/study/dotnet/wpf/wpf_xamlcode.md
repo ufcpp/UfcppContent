@@ -18,7 +18,8 @@ aliases:
 
 # XAML とプログラムコード（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 XAML で記述した GUI に対して、
 C# などのプログラミング言語を用いてイベント処理を記述することができます。
 
@@ -33,7 +34,8 @@ WPF と比べるとかなり機能は制限されていますが、
 XAML ベースの GUI アプリケーション開発という点に関しては WPF と同じコンセプトです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="event"></a>イベント処理
+## <a id="sec-generated-title-2"></a> <a id="event"></a>イベント処理
+
 「[プロパティ](../../csharp/oop/oo_property.md#property)」と同様に、
 「[イベント](../../csharp/functional/sp_event.md#event)」も
 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 や
@@ -75,7 +77,8 @@ x:Code タグ中のプログラムコードは CDATA セクションにしてく
 ビジュアル/ロジック分離の考え方からするとあまり得策ではありません。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="codebehind"></a>コードビハインド
+## <a id="sec-generated-title-3"></a> <a id="codebehind"></a>コードビハインド
+
 イベント処理などのプログラムコードは、先ほどの例のように XAML 中に記述するのではなく、
 XAML とは別ファイルにすることが可能です。
 このように、XAML で記述した GUI のイベント処理などを別ファイルで与えることを
@@ -121,7 +124,8 @@ C# コード側では、同名のクラスを partial クラスを使って定�
 （partial クラスに関しては、「[クラスの分割定義](../../csharp/oop/oo_class.md#partial)」参照。）
 
 
-##<a id="sec-generated-title-4"></a> <a id="name"></a>GUI 要素の参照
+## <a id="sec-generated-title-4"></a> <a id="name"></a>GUI 要素の参照
+
 Windows.Forms プログラム（「[GUI アプリケーション](../../csharp/lib/lib_forms.md)」参照）で
 <code>this.text1.Text="表示テキスト"</code>
 などと記述していたように、
@@ -182,7 +186,8 @@ XAML 中の Name 属性値は、（変数名としてだけでなく）Name プ�
 このような場合、Name 属性の変わりに x:Name 属性を使います。
 
 
-##<a id="sec-generated-title-5"></a> <a id="routed"></a>ルーティングイベント
+## <a id="sec-generated-title-5"></a> <a id="routed"></a>ルーティングイベント
+
 Windows.Forms（「[GUI アプリケーション](../../csharp/lib/lib_forms.md)」参照）では、
 ボタンを押されたときとかの処理（イベント処理）は、
 C# の「[イベント](../../csharp/functional/sp_event.md#event)」を使って実現していました。
@@ -249,7 +254,8 @@ XML ツリーを上にたどってイベントが送られていく（route: 送
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="style"></a>スタイル中でのイベントハンドラの設定
+## <a id="sec-generated-title-6"></a> <a id="style"></a>スタイル中でのイベントハンドラの設定
+
 （書きかけ）
 
 スタイル中で、
@@ -257,7 +263,8 @@ Setter を使ってプロパティの値を設定できたのと同様に、
 EventSetter を使ってイベントハンドラを設定できます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="resource"></a>リソース
+## <a id="sec-generated-title-7"></a> <a id="resource"></a>リソース
+
 （書きかけ）
 
 (TypeName)this.FindResource("Rosource Key");

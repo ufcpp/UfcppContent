@@ -193,7 +193,8 @@ public sealed class ContentMigration
     private void WriteMarkdown(ContentNode node)
     {
         var body = BuildBody(node);
-        var markdown = BuildFrontMatter(node) + "\n# " + EscapeMarkdown(PageTitle(node)) + "\n\n" + body;
+        var markdown = TextUtilities.NormalizeMarkdownHeadingSpacing(
+            BuildFrontMatter(node) + "\n# " + EscapeMarkdown(PageTitle(node)) + "\n\n" + body);
         var outputPath = Path.Combine(
             _options.OutputRoot,
             _outputPaths[node.Id].Replace('/', Path.DirectorySeparatorChar));

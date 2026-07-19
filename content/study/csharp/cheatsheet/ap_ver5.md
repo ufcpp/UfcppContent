@@ -19,7 +19,8 @@ aliases:
 
 # C# 5.0 の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="ver5"></a>C# 5.0
+## <a id="sec-generated-title-1"></a> <a id="ver5"></a>C# 5.0
+
 <div class="version version5">Ver. 5.0</div>
 
 <table>
@@ -58,7 +59,8 @@ PDC 10 では、「C# 5.0 / VB 11」という形での発表ではなく、
 2011年9月の BUILD でも、少し C# 5.0 の追加機能、Caller Info 属性についての情報が公開されました。
 
 
-##<a id="sec-generated-title-2"></a> <a id="async"></a>非同期処理
+## <a id="sec-generated-title-2"></a> <a id="async"></a>非同期処理
+
 async/await キーワードを使うことで、非同期処理を簡単に行えるようになります。
 
 * 「[非同期処理](../async/sp5_async.md)」
@@ -68,7 +70,8 @@ async/await キーワードを使うことで、非同期処理を簡単に行�
 このようなタイプのものに対しては、async/await を使うことによって、同期処理とほぼ同じコードで非同期処理を行えます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="CallerInfo"></a>Caller Info 属性
+## <a id="sec-generated-title-3"></a> <a id="CallerInfo"></a>Caller Info 属性
+
 C++ でいうところの __FILE__ や __LINE__ マクロに相当するデバッグ用診断を実現するための機能です。
 
 以下のように、メソッドの引数に属性をつけておくと、その引数に対して、コンパイラーが診断情報を渡してくれます。
@@ -104,7 +107,8 @@ C++ でいうところの __FILE__ や __LINE__ マクロに相当するデバ�
 詳しくは「[呼び出し元情報(caller info)](../start/miscreservedattribute.md#CallerInfo)」で説明します。
 
 
-##<a id="sec-generated-title-4"></a> <a id="foreach"></a>foreach の仕様変更
+## <a id="sec-generated-title-4"></a> <a id="foreach"></a>foreach の仕様変更
+
 C# 5.0 で、foreach の仕様が少しだけ変わるそうです。
 （一応、破壊的変更になります（既存のコードが動かなくなる可能性が0ではない）。）
 

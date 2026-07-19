@@ -18,7 +18,8 @@ aliases:
 
 # ラプラス変換
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 ラプラス変換とは、「[フーリエ変換](fourier.md#f-trans)」とよく似た式で表される積分変換
 （積分の形で表される、関数→関数の変換）の一種です。
  
@@ -29,7 +30,8 @@ aliases:
 ラプラス変換は過渡応答や安定性の解析に使われます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="definition"></a>ラプラス変換の定義
+## <a id="sec-generated-title-2"></a> <a id="definition"></a>ラプラス変換の定義
+
 連続関数 <span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span> に対して、
 <div class="math">
 F<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span> ＝
@@ -71,7 +73,8 @@ F<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="f
 （制御やシステムなどの分野で使う用語。言葉の意味は「システム」で説明します。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="example"></a>ラプラス変換の例
+## <a id="sec-generated-title-3"></a> <a id="example"></a>ラプラス変換の例
+
 いくつか代表的な初等関数のラプラス変換の例を挙げておきます。
 
 <table summary="初等関数のラプラス変換結果">
@@ -124,13 +127,15 @@ F<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="f
 （多項式は部分積分を繰り返して、sin, cos は <span class="math"><span class="normal">sin</span> ＝ <span class="script">Im</span><span class="normal">exp</span>, <span class="normal">cos</span> ＝ <span class="script">Re</span><span class="normal">exp</span></span> であることを利用して計算すると楽です。）
 
 
-##<a id="sec-generated-title-4"></a> <a id="property"></a>ラプラス変換の性質
+## <a id="sec-generated-title-4"></a> <a id="property"></a>ラプラス変換の性質
+
 ラプラス変換は、以下に示すように、フーリエ変換と非常によく似た性質を持っています。
 （「[フーリエ変換の性質](fourier.md#property)」を参照。）
 積分範囲を片側に限ってしまったために、ところどころ性質が異なっているので注意が必要です。
 
 
-###<a id="sec-generated-title-5"></a> <a id="linear"></a>線形性
+### <a id="sec-generated-title-5"></a> <a id="linear"></a>線形性
+
 <div class="math">
         <span class="normal">ℒ</span><span class="paren" style="font-size:2em;">[</span>
 a f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
@@ -146,7 +151,8 @@ b
 <span class="normal">ℒ</span><span class="paren" style="font-size:2em;">[</span>
 g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span></div>
 
-###<a id="sec-generated-title-6"></a> <a id="differential"></a>微分 ⇔ 多項式
+### <a id="sec-generated-title-6"></a> <a id="differential"></a>微分 ⇔ 多項式
+
 微分演算子は <span class="math">s</span> に変換されます。
 <div class="math">
         <span class="normal">ℒ</span><span class="paren" style="font-size:2em;">[</span>
@@ -190,7 +196,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 ただし、微分→<span class="math">s</span>のときと違って、－ 符号が付くので注意。
 
 
-###<a id="sec-generated-title-7"></a> <a id="integral"></a>積分
+### <a id="sec-generated-title-7"></a> <a id="integral"></a>積分
+
 積分は <span class="math"><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>s</td></tr></table></span> に変換されます。
 <div class="math">
         <span class="normal">ℒ</span><span class="paren" style="font-size:2em;">[</span>
@@ -214,7 +221,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 積分→<span class="math"><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>s</td></tr></table></span> のときとは積分範囲が逆なので注意。
 
 
-###<a id="sec-generated-title-8"></a> <a id="timeshift"></a>時間シフト
+### <a id="sec-generated-title-8"></a> <a id="timeshift"></a>時間シフト
+
 時間シフトは指数関数倍に変換されます。
 <div class="math">
         <span class="normal">ℒ</span><span class="paren" style="font-size:2em;">[</span>
@@ -236,7 +244,8 @@ f<span class="paren" style="font-size:em;">(</span>t － a<span class="paren" st
 シフト→指数関数倍のときとは <span class="math">a</span> の符号が逆になるので注意。
 
 
-###<a id="sec-generated-title-9"></a> <a id="convolution"></a>畳み込み積
+### <a id="sec-generated-title-9"></a> <a id="convolution"></a>畳み込み積
+
 フーリエ変換と同様に、畳み込み積のラプラス変換はただの積になります。
 <div class="math">
         <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
@@ -258,8 +267,10 @@ f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="
 g<span class="paren" style="font-size:em;">(</span>t－τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
 </div>
 
-##<a id="sec-generated-title-10"></a> <a id="inverse"></a>逆変換
-###<a id="sec-generated-title-11"></a> <a id="d23e763"></a>逆変換の式
+## <a id="sec-generated-title-10"></a> <a id="inverse"></a>逆変換
+
+### <a id="sec-generated-title-11"></a> <a id="d23e763"></a>逆変換の式
+
 基本的に、ラプラス変換はフーリエ変換の式において <span class="math">iω ＝ s</span> としたものなので、
 逆ラプラス変換も逆フーリエ変換の式に <span class="math">iω ＝ s</span> を入れて OK かというと、
 実はそうもいきません。
@@ -276,7 +287,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 では、実際どうするかというのをこれから説明していきます。
 
 
-###<a id="sec-generated-title-12"></a> <a id="d23e805"></a>変換公式を頼りに逆変換
+### <a id="sec-generated-title-12"></a> <a id="d23e805"></a>変換公式を頼りに逆変換
+
 「[ラプラス変換の例](#example)」で説明したように、
 <span class="math"><span class="normal">e</span><sup>a t</sup></span> → <span class="math"><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>s － a</td></tr></table></span>
 などといった変換公式が成り立ちます。
@@ -348,7 +360,8 @@ c<sub>i, j</sub><table class="frac" summary="fraction"><tr><td class="num"><span
 複雑な式になると、部分分数分解がちょっと面倒な作業になりますが、理論上はどんな有理式でも逆ラプラス変換することが可能です。
 
 
-###<a id="sec-generated-title-13"></a> <a id="d23e1076"></a>留数を使った逆変換
+### <a id="sec-generated-title-13"></a> <a id="d23e1076"></a>留数を使った逆変換
+
 最初に述べた逆ラプラス変換の式の計算は、
 「[留数](../../math/analysis/residue.md#residue)」というものを使うと多少楽に計算することができます。
 これもここでは公式を示すのみにとどめ、詳細な説明はしません。
@@ -366,7 +379,8 @@ s<sub>i</sub><span class="paren" style="font-size:em;">]</span></div>
 先ほど説明した公式による手法とかかる手間はあまり変わらなかったりします。
 
 
-##<a id="sec-generated-title-14"></a> <a id="differential"></a>微分方程式への応用
+## <a id="sec-generated-title-14"></a> <a id="differential"></a>微分方程式への応用
+
 ラプラス変換を用いることで、線形時不変常微分方程式を簡単に解くことができます。
  
 線形時不変常微分方程式は、一般に以下のように書き表されます。
@@ -401,7 +415,8 @@ F<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="f
 さらにこれを逆ラプラス変換することで <span class="math">f</span> が求まります。
 
 
-##<a id="sec-generated-title-15"></a> <a id="stability"></a>安定性
+## <a id="sec-generated-title-15"></a> <a id="stability"></a>安定性
+
 線形時不変微分方程式の解 <span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span> は、基本的に
 <div class="math">
 c t<sup>n</sup><span class="normal">e</span><sup>s<sub>0</sub> t</sup></div>
@@ -457,7 +472,8 @@ n 位の「[極](../../math/analysis/residue.md#pole)」を持っていると、
 
 
 
-##<a id="sec-generated-title-16"></a> <a id="spectrum"></a>周波数特性
+## <a id="sec-generated-title-16"></a> <a id="spectrum"></a>周波数特性
+
 最初に述べたように、
 計算上、ラプラス変換は「[フーリエ変換](fourier.md#f-trans)」の <span class="math">iω</span> を
 <span class="math">s</span> で置き換えたものです。
@@ -485,7 +501,8 @@ n 位の「[極](../../math/analysis/residue.md#pole)」を持っていると、
 
 
 
-##<a id="sec-generated-title-17"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-17"></a> <a id="plan"></a>執筆予定
+
 <pre>
 s 平面上の安定な領域を図示。
 

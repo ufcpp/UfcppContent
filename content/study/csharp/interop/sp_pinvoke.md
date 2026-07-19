@@ -18,7 +18,8 @@ aliases:
 
 # プラットフォーム呼び出し
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 .NET Frameworkには豊富なライブラリが提供されていて、C#やVisual Basicなどの.NET Framework上で動くプログラミング言語だけを使ってたいていのことができます。
 しかし、その他のプログラミング言語との相互運用をしたい場面も出てくるでしょう。
 
@@ -29,23 +30,28 @@ aliases:
 ここでは、C#から、このP/Invokeを使う(ネイティブ コードを呼び出す)方法について説明します。
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * .NET Framework はネイティブ ライブラリ呼び出し用の命令を持っている。
 * C# でネイティブコード呼び出しをするには、DllImport 属性とかを使う。
 
 ##### <a id="sec-generated-title-3"></a>サンプル
+
 - [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Interop/NativeInterop](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Interop/NativeInterop)
 
-##<a id="sec-generated-title-4"></a> <a id="native"></a>ネイティブ コード
+## <a id="sec-generated-title-4"></a> <a id="native"></a>ネイティブ コード
+
 C# から呼び出せるネイティブ コードには以下のようなものがあります。
 
 - C-Style 関数
 - COM オブジェクト
 - WinRT コンポーネント
 
-##<a id="sec-generated-title-5"></a> <a id="c-style-function"></a>C-Style 関数
+## <a id="sec-generated-title-5"></a> <a id="c-style-function"></a>C-Style 関数
+
 C-Style 関数は、C言語で書いた関数や、C++ で「`extern "C"`」内に書いた関数です。Unix系OSのAPIや、初期のWindows API (Win32 APIと呼ばれています)はこの形式で提供されています。
 
-###<a id="sec-generated-title-6"></a> <a id="dllimport"></a>DllImport
+### <a id="sec-generated-title-6"></a> <a id="dllimport"></a>DllImport
+
 C# から C-Stlye 関数を呼び出すには、`DllImport`属性(`System.Runtime.InteropServices`名前空間)を使います。
 例えば、以下のように書きます。
 
@@ -101,12 +107,14 @@ C# から C-Stlye 関数を呼び出すには、`DllImport`属性(`System.Runtim
 
 - [http://pinvoke.net/](http://pinvoke.net/)
 
-###<a id="sec-generated-title-7"></a> <a id="extern-modifier"></a>extern 修飾子
+### <a id="sec-generated-title-7"></a> <a id="extern-modifier"></a>extern 修飾子
+
 ちなみに、この`DllImport`では、「実装が外にあるメソッド」を書くことになります。
 この例の場合、`GetLocalTime`には実装(メソッドの本体)がない代わりに、<strong id="extern-modifier" class="keyword">`extern`修飾子</strong>がついています。
 `extern`は実装が外にあることを示すための修飾子で、P/Invoke 用の機能です。
 
-###<a id="sec-generated-title-8"></a> <a id="marshaling"></a>マーシャリング
+### <a id="sec-generated-title-8"></a> <a id="marshaling"></a>マーシャリング
+
 `DllImport`属性を使った P/Invoke の手順の中に、
 「C# 側の型とネイティブ側の型には対応関係があるので、適切に置き換えて戻り値や引数を並べる」
 というものがありました。
@@ -120,6 +128,7 @@ C# とネイティブの境界では、そういう「誰かが責任を持っ�
 C# とネイティブの間に限らず、C# 同士であっても、セキュリティ的に隔離したい2つのプログラムの間では、同様にマーシャリングと呼ばれる過程(誰かが責任をもってデータを受け渡しする)を通したデータの受け渡しが必要になります。
 
 #### <a id="sec-generated-title-9"></a>サンプル
+
 - [KeyLogger](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Old/KeyLogger)
 
 キー入力を全部記録して、それをマクロ的に再生するプログラム。
@@ -134,14 +143,16 @@ C# とネイティブの間に限らず、C# 同士であっても、セキュ�
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-10"></a> <a id="COM"></a><a id="com"></a>COM オブジェクト
+## <a id="sec-generated-title-10"></a> <a id="COM"></a><a id="com"></a>COM オブジェクト
+
 COM (Component Object Model)は、かなり端折って言うと、プログラミング言語をまたいでクラスやメソッドを使うための規格です。
 マイクロソフトが作った規格で、ほぼWindows用(規格はオープンだし、Unix上での利用ガイドもあるものの、Windows以外ではあまり使われない)です。
 DirectXなど新し目のWindows APIはCOMで実装されています。また、OfficeやInternet ExplorerなどのWindowsアプリはCOMを介して、自作のプログラムからアプリ中の機能を呼び出すことができます。
 
 .NET Frameworkの型システムは、このCOMの発展形です。
 
-###<a id="sec-generated-title-11"></a> <a id="com-reference"></a>COM 参照
+### <a id="sec-generated-title-11"></a> <a id="com-reference"></a>COM 参照
+
 C# からの COM 利用は、Visual Studio を使えば簡単にできます。
 Visual Studio 上で、下図のように、「参照の追加」→「COM」→参照したいDLLを選んで「OK」という手順を踏みます。
 
@@ -202,7 +213,8 @@ c = 3
 d = 4
 </code></pre>
 
-###<a id="sec-generated-title-12"></a> <a id="rcw-ccw"></a>RCW と CCW
+### <a id="sec-generated-title-12"></a> <a id="rcw-ccw"></a>RCW と CCW
+
 前節の「COM参照」をすると、コンパイラーが以下のようなクラスを生成します。
 
 <pre class="source" title="「COM参照」でで生成されるクラス">
@@ -250,7 +262,8 @@ COM オブジェクトに対しては `ComImport` という属性を使います
 
 逆に、詳細はここでは省略しますが、C# で書いたクラスを COM 側から使う手段もあって、そちらは<strong id="ccw" class="keyword">CCW</strong> (COM Callable Wrapper)と呼ばれます。
 
-####<a id="sec-generated-title-13"></a> <a id="no-pia"></a>No PIA
+#### <a id="sec-generated-title-13"></a> <a id="no-pia"></a>No PIA
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 .NET Framework 3.5以前では、RCW を介してのCOM呼び出しに少し問題がありました。
@@ -267,7 +280,8 @@ PIAは、まじめに作ると結構馬鹿でかいファイルになってし�
 それが嫌で、.NET Framework 4からは、アセンブリやメンバー定義が違っていても、RCW の GUIDが同じなら同じ型とみなして扱うという特殊処理が入りました(この処理は No PIA と呼ばれています)。
 この処理によって、PIAなしでも複数のライブラリからCOMオブジェクトの参照ができるようになりました。
 
-##<a id="sec-generated-title-14"></a> <a id="dynamic"></a>dynamic と COM 呼び出し
+## <a id="sec-generated-title-14"></a> <a id="dynamic"></a>dynamic と COM 呼び出し
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4.0の `dynamic` (参考: 「[動的型付け変数](../dynamic/sp4_dynamic.md#dynamic)」)を使えば、「COM 参照」すらなしで COM オブジェクトを呼び出せます。
@@ -313,7 +327,8 @@ C# 4.0の `dynamic` (参考: 「[動的型付け変数](../dynamic/sp4_dynamic.m
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-15"></a> <a id="WinRT"></a>WinRT コンポーネント
+## <a id="sec-generated-title-15"></a> <a id="WinRT"></a>WinRT コンポーネント
+
 WinRT (Windows Runtime)は、Windows 8以降で実装された、新しいWindows APIです。
 WinRTコンポーネント(WinRT APIが提供するクラスなど)は、COMの進化版(COMの上位互換)に、
 .NET Frameworkの型情報を加えたような形式になっています。
@@ -327,7 +342,8 @@ Visual Studio 上では、下図のように、「参照の追加」→「Window
 
 ![WinRTコンポーネントの参照](../../../../assets/media/1031/winrtreference.png)
 
-###<a id="sec-generated-title-16"></a> <a id="universal-windows"></a>Windows アプリ
+### <a id="sec-generated-title-16"></a> <a id="universal-windows"></a>Windows アプリ
+
 WinRT は前述のとおり、Windows 8世代の新APIです。
 Windows 8から Windows 10にかけて紆余曲折ありましたが、要は、以下のタイプのアプリから使う前提のものです。
 
@@ -338,7 +354,8 @@ Windows 8から Windows 10にかけて紆余曲折ありましたが、要は、
 
 これらに関連したプロジェクトを作ると、標準の状態で WinRT コンポーネントの参照ができます。
 
-###<a id="sec-generated-title-17"></a> <a id="classic-desktop"></a>従来のデスクトップ アプリ
+### <a id="sec-generated-title-17"></a> <a id="classic-desktop"></a>従来のデスクトップ アプリ
+
 標準の状態では無理ですが、少し手を入れることで、従来のデスクトップ アプリからもWinRTコンポーネントを参照できます。
 
 csproj を手書きで書き換える必要があります。以下のように、`TargetPlatformVersion`というタグを1行追加します。

@@ -15,7 +15,8 @@ aliases:
 
 # null 許容参照型
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# くらいの世代(1990年代後半～2000年代前半)のプログラミング言語では、
@@ -50,7 +51,8 @@ C# 7.X の頃と 8.0 で何が変わったかというと、
 
 <sup>※</sup> annotation。「単なる注釈」という意味で、この場合は「コンパイラーがソースコード解析するために使うヒントとなる情報」くらいの意味合い。
 
-##<a id="sec-generated-title-2"></a> <a id="opt-in"></a>null許容参照型の有効化
+## <a id="sec-generated-title-2"></a> <a id="opt-in"></a>null許容参照型の有効化
+
 無条件に「参照型でも null を拒否する」としてしまうと、既存の C# コードの挙動を壊します。
 
 <pre class="source" title="opt-in した瞬間に警告">
@@ -91,7 +93,8 @@ opt-in 方式で `T` の意味が変わるnull許容参照型もだいぶ悩ん�
 それだけnull参照問題が深刻だということです。
 おそらく、C# 史上最初で最後の大きな「分岐」になると思われます。
 
-###<a id="sec-generated-title-3"></a> <a id="nullable-directive"></a>#nullable ディレクティブ
+### <a id="sec-generated-title-3"></a> <a id="nullable-directive"></a>#nullable ディレクティブ
+
 それなりの規模のソースコードを保守している場合、いきなりnull許容参照型を全面的に有効化してしまうと結構大変なことになります。
 (筆者の経験的な話で言うと、少なくとも50行に1個くらいは警告が出ます。何万行ものソースコードを持っている場合、とてもじゃないけど直して回れるものではありません。)
 
@@ -138,7 +141,8 @@ null 許容参照型を有効にしたければ`#nullable enable`、
 }
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="nullable-option"></a>Nullable オプション
+### <a id="sec-generated-title-4"></a> <a id="nullable-option"></a>Nullable オプション
+
 一方で、これから新規に作成するプログラムの場合、最初から全部null許容参照型を有効化してしまう方がいいでしょう。
 そのくらい、null参照問題は避けたいものです。
 
@@ -166,7 +170,8 @@ csproj (C# プロジェクト)ファイル中でオプション指定する場�
 指定できる値は `enable`(有効)、`disable` (無効)、`warnings` (警告のみ有効)、`annotations` (アノテーションのみ有効)の4種類です。
 `warnings` と `annotations` については次節で説明します。
 
-###<a id="sec-generated-title-5"></a> <a id="nullable-directive"></a>warnings/annotations
+### <a id="sec-generated-title-5"></a> <a id="nullable-directive"></a>warnings/annotations
+
 null 許容参照型には以下の2つの側面があります。
 
 - アノテーション: 型に `?` を付けて null 許容か非 null かを明示する
@@ -241,7 +246,8 @@ null のチェック漏れがあっても警告は出ない状態です。
 }
 </code></pre>
 
-##<a id="sec-generated-title-6"></a> <a id="flow-analysis"></a>フロー解析
+## <a id="sec-generated-title-6"></a> <a id="flow-analysis"></a>フロー解析
+
 null 許容参照型は、フロー解析(flow analysis)で成り立っています。
 フロー解析というのは、コードの流れ(flow)を追って、
 「使っている場所より前で正しく代入・チェックが行われるか」を C# コンパイラーが調べるものです。
@@ -353,6 +359,7 @@ null 許容(`?` が付いてる)変数・引数の場合はメンバー アク�
 </code></pre>
 
 #### <a id="sec-generated-title-7"></a>注意: 別スレッドでの書き換え
+
 フィールドやプロパティに対するフロー解析では、利便性を優先して、シングルスレッド動作を前提としたフロー解析をしています。
 例えば、以下のように、マルチスレッド動作をしていて、他のスレッドで書き換えられてしまうと、本来 null が来るはずがなく警告も出ない場面で null 参照例外が起こることがあります。
 
@@ -396,7 +403,8 @@ null 許容(`?` が付いてる)変数・引数の場合はメンバー アク�
 }
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="initialize-field"></a>フィールドやプロパティの初期化
+### <a id="sec-generated-title-8"></a> <a id="initialize-field"></a>フィールドやプロパティの初期化
+
 非 null 型のフィールドやプロパティは、コンストラクター内で必ず初期化しなければなりません。
 例えば以下のコードはフィールド `X`、プロパティ `Y` のところに警告が出ます。
 
@@ -443,7 +451,8 @@ null 許容(`?` が付いてる)変数・引数の場合はメンバー アク�
 }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="oblivious"></a>oblivious
+### <a id="sec-generated-title-9"></a> <a id="oblivious"></a>oblivious
+
 opt-in にしたので、null 許容(nullable)、非 null (non-nullable, not null)の他に、
 「アノテーションが付いていない、未指定」という状態があり得ます。
 この未指定状態を oblivious (忘れてる、気づかない)と呼びます。
@@ -476,7 +485,8 @@ oblivious な型の変数は一切フロー解析の対象になりません。
 }
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="nvt-defference"></a>null 許容値型との違い
+### <a id="sec-generated-title-10"></a> <a id="nvt-defference"></a>null 許容値型との違い
+
 null 許容<em>参照</em>型は、
 `?` を使う文法こそ[null 許容<em>値</em>型](sp2_nullable.md)と同じですが、
 内部的にはだいぶ違う実装になっています。
@@ -534,7 +544,8 @@ null 許容参照型は `typeof` 演算子に対しても使えません。
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-11"></a> <a id="compile"></a>アノテーションのコンパイル結果
+## <a id="sec-generated-title-11"></a> <a id="compile"></a>アノテーションのコンパイル結果
+
 null 許容参照型のアノテーションのコンパイル結果は、
 `NullableContext`と`Nullable` という2つの属性(いずれも`System.Runtime.CompilerServices`名前空間)を使って表現されます。
 
@@ -667,7 +678,8 @@ null 許容参照型のアノテーションのコンパイル結果は、
 }
 </code></pre>
 
-###<a id="sec-generated-title-12"></a> <a id="generic-annotation"></a>型引数に対するアノテーション
+### <a id="sec-generated-title-12"></a> <a id="generic-annotation"></a>型引数に対するアノテーション
+
 [ジェネリクス](../oop/sp2_generics.md)が絡むともう少し複雑になります。
 [`dynamic`型の場合](../dynamic/sp4_callsite.md#DynamicAttribute)と同じなんですが、
 `Nullable`属性の引数が配列になります。
@@ -707,7 +719,8 @@ null 許容参照型のアノテーションのコンパイル結果は、
 - 配列中のすべて要素が同じ値のとき、配列ではなく1要素に置き換える
 - タプルには元となる`ValueTuple`構造体に準じた属性を付ける
 
-###<a id="sec-generated-title-13"></a> <a id="reflection"></a>Nullable 属性とリフレクション
+### <a id="sec-generated-title-13"></a> <a id="reflection"></a>Nullable 属性とリフレクション
+
 これで、プログラムのサイズはだいぶ小さくなっています。
 しかし、すでに察している人もいるかもしれませんが、
 その分、[リフレクション](../dynamic/sp_reflection.md)で null 許容かどうかを取るのがだいぶ面倒になります。
@@ -742,7 +755,8 @@ null 許容参照型のアノテーションのコンパイル結果は、
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-14"></a> <a id="null-forgiving"></a>! 演算子
+## <a id="sec-generated-title-14"></a> <a id="null-forgiving"></a>! 演算子
+
 null 許容なものを、`is null` や `== null` などによるチェック抜きで、
 強制的に非 null 扱いしたい場合があります。
 原因としては2つあって、以下のような場面で「強制非 null 扱い」が必要になります。
@@ -875,7 +889,8 @@ null suppression (null 抑止) 演算子などと呼ばれています。
 }
 </code></pre>
 
-##<a id="sec-generated-title-15"></a> <a id="type-constraints"></a>ジェネリクス
+## <a id="sec-generated-title-15"></a> <a id="type-constraints"></a>ジェネリクス
+
 [前述の通り](#nvt-defference)、
 null 許容型の `T?` は参照型と値型でだいぶ実装方法が違います。
 これで特に問題になるのは[ジェネリクス](../oop/sp2_generics.md)です。
@@ -965,7 +980,8 @@ null 許容型の `T?` は参照型と値型でだいぶ実装方法が違いま
 }
 </code></pre>
 
-###<a id="sec-generated-title-16"></a> <a id="notnull"></a>notnull 制約
+### <a id="sec-generated-title-16"></a> <a id="notnull"></a>notnull 制約
+
 また、新たに `notnull` 制約というものが追加されて、
 非 null 参照型もしくは非 null 値型のみを受け付けることができます。
 
@@ -1038,7 +1054,8 @@ null 許容型の `T?` は参照型と値型でだいぶ実装方法が違いま
 }
 </code></pre>
 
-###<a id="sec-generated-title-17"></a> <a id="unconstrained-generics"></a>制約なしジェネリック型引数
+### <a id="sec-generated-title-17"></a> <a id="unconstrained-generics"></a>制約なしジェネリック型引数
+
 <h5 class="version version9">Ver. 9</h5>
 
 C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` と書けるようになりました。
@@ -1082,7 +1099,8 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 ただ、これはこれで、[`??` 演算子](rm_nullusage.md#null-coalesce)との区別が付かなくて困る場面があるということで断念されました。
 他に新しい記号を導入するのも微妙で、結局、「`T?` で defaultable 扱い」という決定が下りました。
 
-##<a id="sec-generated-title-18"></a> <a id="default-constraint"></a>default 制約
+## <a id="sec-generated-title-18"></a> <a id="default-constraint"></a>default 制約
+
 <h5 class="version version9">Ver. 9</h5>
 
 [前節の制約なし型引数](#unconstrained-generics)のせいなんですが、
@@ -1143,7 +1161,8 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-19"></a> <a id="annotation-attributes"></a>アノテーション属性
+## <a id="sec-generated-title-19"></a> <a id="annotation-attributes"></a>アノテーション属性
+
 [前節](#type-constraints)のジェネリクスの問題を筆頭に、
 いくつか、`T?` という記法だけでは解決できない問題があります。
 ジェネリックな型でなくても例えば以下のような場合に、`?` の有無だけではフロー解析がうまく働きません。
@@ -1223,10 +1242,12 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 <sup>※</sup> [`out`引数](sp_ref.md#out)に対しては「メソッド内で非 null な値を代入している」、
 通常の引数や[`in`引数](sp_ref.md#in)に対しては「もし null が渡ってきたら例外を出すなど、それ以降の処理を続行させない」という扱い。
 
-###<a id="sec-generated-title-20"></a> <a id="attribute-usage"></a>アノテーション属性の利用例
+### <a id="sec-generated-title-20"></a> <a id="attribute-usage"></a>アノテーション属性の利用例
+
 これらの属性が必要になる具体例をいくつか紹介していきましょう。
 
 #### <a id="sec-generated-title-21"></a>Array.Resize (NotNull)
+
 まず、[`Array.Resize`](https://docs.microsoft.com/ja-jp/dotnet/api/system.array.resize) は配列の長さを変更するメソッドですが、参照引数で null を受け付けはするものの、絶対に非 null なインスタンスを作って渡します。そこで、以下のように、`NotNull` 属性が付いています。
 
 <pre class="source" title="ref の入力と出力で null 許容性が違う例">
@@ -1257,6 +1278,7 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 </code></pre>
 
 #### <a id="sec-generated-title-22"></a>TextWriter.NewLine (AllowNull)
+
 [`TextWriter.NewLine`](https://docs.microsoft.com/ja-jp/dotnet/api/system.io.textwriter.newline) は get で null を返すことはありません。
 しかし、「null を set すると [`Environment.NewLine`](https://docs.microsoft.com/ja-jp/dotnet/api/system.io.textwriter.newline) を使う」という仕様があって、set だけが null 許容です。
 そこで、以下のように、`AllowNull` が付いています。
@@ -1275,6 +1297,7 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 </code></pre>
 
 #### <a id="sec-generated-title-23"></a>ジェネリック型引数に対するアノテーション (MeybeNull)
+
 ジェネリクス都合で `T?` と書けない問題を `MaybeNull` 属性で回避している例としては
 [`StrongBox<T>.Value`](https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.compilerservices.strongbox-1.value)や[`ThreadLocal<T>.Value`](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.threadlocal-1.value)などがあります。
 
@@ -1291,6 +1314,7 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 </code></pre>
 
 #### <a id="sec-generated-title-24"></a>Try メソッド (NotNullWhen)
+
 .NET には名前が `Try` から始まって、処理の成否を `bool` で返すメソッドが結構多いですが、
 こういう場合「戻り値が true の時だけ null でない値を取れる」ということが多いです。
 例えば、[Version.TryParse](https://docs.microsoft.com/ja-jp/dotnet/api/system.version.tryparse)が該当します。
@@ -1314,6 +1338,7 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 </code></pre>
 
 #### <a id="sec-generated-title-25"></a>null 伝搬 (NotNullIfNotNull)
+
 [Path.GetFileName](https://docs.microsoft.com/ja-jp/dotnet/api/system.io.path.getfilename)など、単純に null を伝搬する(null が来たら素通しで null を返す)ようなメソッドも多いです。
 また、[Volatile.Read](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.volatile.read)/[Write](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.volatile.write)のように、引数の値を戻り値や他の参照引数に伝搬するものがあって、値の伝搬によって null 許容性も伝搬します。
 こういう場合に使うのが `NotNullIfNotNull` 属性です。
@@ -1341,6 +1366,7 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 この `NotNullIfNotNull` 属性によってそれなりに強い需要が生じてしまったので修正が入る可能性はありますが、破壊的変更になりそうなのであんまり期待はできません。)
 
 #### <a id="sec-generated-title-26"></a>FailFast (DoesNotReturn)
+
 一部のメソッドは、そのメソッドを呼んだら最後、もう絶対に正常には戻ってこないものがあります。例えば[Environment.FailFast](https://docs.microsoft.com/ja-jp/dotnet/api/system.environment.failfast)はプログラムを即座に止めてしまう(おかしな状態のままプログラムが進むよりは、一思いにクラッシュした方がマシな場面で使う)メソッドなので、このメソッドの呼び出しから後ろが実行されることは絶対にありません。
 こういう場合、フロー解析もそのメソッドまでで止めてしまいたく、そのために使う属性が `DoesNotReturn` です。
 
@@ -1387,6 +1413,7 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 </code></pre>
 
 #### <a id="sec-generated-title-27"></a>Assert (DoesNotReturnIf)
+
 同じプログラムのクラッシュでも、条件付きな場合があります。
 [`Debug.Assert`](https://docs.microsoft.com/ja-jp/dotnet/api/system.diagnostics.debug.assert)がわかりやすいでしょう。
 このメソッドは引数が false の時に限ってプログラムを止めます。
@@ -1405,7 +1432,8 @@ null 許容性の他に[確実な初期化](rm_struct.md#definite-assignment)で
 (確実な初期化の方がシビアな判定をすべき(でないとセキュリティ ホールになりえる)もので、
 C# コンパイラーのフロー解析だけじゃなく .NET ランタイムのレベルでも検証をしたいけど、そこまで実装する余裕がないからという理由。)
 
-##<a id="sec-generated-title-28"></a> <a id="special-treatment"></a>特殊扱いされるメソッド
+## <a id="sec-generated-title-28"></a> <a id="special-treatment"></a>特殊扱いされるメソッド
+
 前節で紹介した属性を使うことで、いろいろな状況に対応可能です。
 しかし、「属性を使って汎用的に解決するほどの需要がない」ということで、
 1つ1つ特別扱いすることでフロー解析しているメソッドがいくつかあります。
@@ -1438,7 +1466,8 @@ C# コンパイラーのフロー解析だけじゃなく .NET ランタイム�
 }
 </code></pre>
 
-##<a id="sec-generated-title-29"></a> <a id="gradual"></a>段階的な改善
+## <a id="sec-generated-title-29"></a> <a id="gradual"></a>段階的な改善
+
 null 許容参照型はそれなりの期間を掛けて徐々に完成していく予定です。
 以下の2つの意味で、少しずつ警告が増えたり減ったりします。
 
@@ -1452,7 +1481,8 @@ null 許容参照型はそれなりの期間を掛けて徐々に完成してい
 ほとんどの場合は「過剰に警告が出てしまっていて、それを `!` 演算子で抑止している状態」が解消できるもので、
 精度が上がれるほど警告が減る方に変化すると思われます。
 
-###<a id="sec-generated-title-30"></a> <a id="array-element"></a>配列の要素のフロー解析
+### <a id="sec-generated-title-30"></a> <a id="array-element"></a>配列の要素のフロー解析
+
 しかし一部は、もしかすると<em>警告が増える</em>ことが考えられます。
 
 例えば今「抜け穴になっていることはわかっているけど見逃している」状態なのが配列の要素の初期化です。
@@ -1494,12 +1524,14 @@ null 許容参照型はそれなりの期間を掛けて徐々に完成してい
 }
 </code></pre>
 
-###<a id="sec-generated-title-31"></a> <a id="patch-version-up"></a>C# バージョン変更なしでのフロー解析の改善
+### <a id="sec-generated-title-31"></a> <a id="patch-version-up"></a>C# バージョン変更なしでのフロー解析の改善
+
 フロー解析の改善は、
 C# の文法に追加があるわけではなく単に警告の増減なこともあって、
 C# のバージョン変更なし(パッチ バージョンアップ)で機能が増えたりします。
 
-####<a id="sec-generated-title-32"></a> <a id="attribute-affect"></a>アノテーション属性のメソッド内への影響
+#### <a id="sec-generated-title-32"></a> <a id="attribute-affect"></a>アノテーション属性のメソッド内への影響
+
 C# 8.0 のリリース直後の時点では、
 null 許容性に関する属性はメソッドの外に対してだけ影響を及ぼしていました。
 以下のように、メソッド内ではフロー解析に寄与していませんでした。
@@ -1533,7 +1565,8 @@ null 許容性に関する属性はメソッドの外に対してだけ影響を
 (ちゃんと、`MaybeNull` 属性を解釈して `null` 戻り値を許す)。
 「C# 8.1」になったとかではなく、「C# 8.0」のまま、フロー解析だけ改善されています。
 
-####<a id="sec-generated-title-33"></a> <a id="MemberNotNull"></a>MemberNotNull 属性の追加
+#### <a id="sec-generated-title-33"></a> <a id="MemberNotNull"></a>MemberNotNull 属性の追加
+
 `MemberNotNull`と `MemberNotNullWhen` 属性のフロー解析も Visual Studio 16.6 (2020年5月リリース)で追加されています。
 
 `MemberNotNull` 属性は、あるメンバー(メソッドやプロパティ)を呼んだ時点で、
@@ -1584,7 +1617,8 @@ null 許容性に関する属性はメソッドの外に対してだけ影響を
 </code></pre>
 
 
-###<a id="sec-generated-title-34"></a> <a id="over-a-period"></a>移行期間
+### <a id="sec-generated-title-34"></a> <a id="over-a-period"></a>移行期間
+
 .NET Core 側としても、基本クラス ライブラリに膨大な数のクラス、メソッドがあり、
 1度のリリースですべてにアノテーションを付けることは不可能です。
 なので、段階的にアノテーションが増える予定です。

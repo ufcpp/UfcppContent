@@ -18,7 +18,8 @@ aliases:
 
 # 四元数と3次元空間中の回転
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 3次元空間中での回転は、回転軸と回転角で表すことができます。
 実用上、回転軸
 <span class="math">
@@ -74,7 +75,8 @@ aliases:
 この形式を四元数といいます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="quaternion"></a>四元数
+## <a id="sec-generated-title-2"></a> <a id="quaternion"></a>四元数
+
 四元数なんていうたいそうな名前が付いているは、
 元をただせば数学的な意味があるからなんですが、
 四元数の数学的意味は、画像処理・3D CG の分野では大して役に立ちません。
@@ -133,7 +135,8 @@ aliases:
 という形式で持っているものとだけ覚えておけば十分。
 
 
-##<a id="sec-generated-title-3"></a> <a id="rotation"></a>3次元空間上の回転
+## <a id="sec-generated-title-3"></a> <a id="rotation"></a>3次元空間上の回転
+
 まず、3次元空間上の回転を定式化します。
 
 3次元空間上の回転を表すためには、回転軸ベクトル <span class="math">
@@ -271,7 +274,8 @@ aliases:
 と表すことができるので、先ほど示した式を導き出すことができます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="matrix"></a>行列を使った3次元空間上の回転
+## <a id="sec-generated-title-4"></a> <a id="matrix"></a>行列を使った3次元空間上の回転
+
 前節で示した式で3次元空間中の回転が表現できるんですが、
 実際には、この式をそのまま使うのではなく、行列演算に変形してから使います。
 (行列にすることで、拡大縮小や平行移動などと一緒に、まとめて扱えるため。）
@@ -511,7 +515,8 @@ aliases:
           </td></tr></table><span class="paren" style="font-size:4em;">]</span>
     </div>
 
-##<a id="sec-generated-title-5"></a> <a id="q_to_m"></a>四元数から回転行列を計算
+## <a id="sec-generated-title-5"></a> <a id="q_to_m"></a>四元数から回転行列を計算
+
 ここで話を四元数に戻します。
 
 四元数は、

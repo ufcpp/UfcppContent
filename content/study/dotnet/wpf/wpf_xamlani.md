@@ -18,7 +18,8 @@ aliases:
 
 # アニメーション（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[XAML とプログラムコード（WPF）](wpf_xamlcode.md)」では、
 <code>x:Code</code> タグかコードビハインド中にイベントハンドラを記述することで、
 イベント処理を行っていました。
@@ -26,12 +27,14 @@ aliases:
 （コードを含まない）XAML だけでもかなり多彩なイベント処理が可能です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="review"></a>おさらい
+## <a id="sec-generated-title-2"></a> <a id="review"></a>おさらい
+
 本題のアニメーションの話に入る前に、
 「[スタイル](wpf_xamladv.md#style)」とか「[メディア](wpf_uielement.md#Media)」辺りの話を復習。
 
 
-###<a id="sec-generated-title-3"></a> <a id="Style"></a>Style
+### <a id="sec-generated-title-3"></a> <a id="Style"></a>Style
+
 複数の要素に一律同じ見た目を適用したい場合、
 スタイルというものを使います。
 
@@ -59,7 +62,8 @@ aliases:
 <span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="Brush"></a>Brush
+### <a id="sec-generated-title-4"></a> <a id="Brush"></a>Brush
+
 Shapes なら Fill 属性、
 Controls なら Background 属性で、
 背景色を指定できるわけですが
@@ -135,7 +139,8 @@ SolidColorBrush, LinearGradientBrush, RadialGradientBrush を使って説明す�
 <span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="Transform"></a>Transform
+### <a id="sec-generated-title-5"></a> <a id="Transform"></a>Transform
+
 「[メディア](wpf_uielement.md#Media)」で説明したように、
 WPF の GUI 要素は、
 RenderTransform 属性によって、
@@ -195,7 +200,8 @@ x 軸, y 軸方向の拡大を表す ScaleTransform、
 <span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-6"></a> <a id="animation"></a>アニメーション
+## <a id="sec-generated-title-6"></a> <a id="animation"></a>アニメーション
+
 WPF のアニメーションには、
 大まかに分けて以下の三つのものがあります。
 
@@ -220,7 +226,8 @@ XAML のアニメーションはいろいろ複雑ではあるんですが、
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="trigger"></a>イベントトリガ
+## <a id="sec-generated-title-7"></a> <a id="trigger"></a>イベントトリガ
+
 <strong id="trigger" class="keyword">トリガ</strong>というのは、
 「プロパティの値が変わった瞬間」とか、
 「イベントが発生した瞬間」とかの、
@@ -286,7 +293,8 @@ Binding で設定した値をトリガにする DataTrigger や、
 複数の条件がそろったときに初めてトリガする MultiTrigger などもあります。
 
 
-##<a id="sec-generated-title-8"></a> <a id="triggerInStyle"></a>スタイル中のイベントトリガ
+## <a id="sec-generated-title-8"></a> <a id="triggerInStyle"></a>スタイル中のイベントトリガ
+
 イベントトリガはスタイル中にも記述できます。
 
 例えば、以下のようにすると、
@@ -329,7 +337,8 @@ Binding で設定した値をトリガにする DataTrigger や、
 <span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-9"></a> <a id="action"></a>トリガアクション
+## <a id="sec-generated-title-9"></a> <a id="action"></a>トリガアクション
+
 「処理開始のきっかけ」である EventTrigger の中身には、
 「処理の内容」である <strong id="TriggerAction" class="keyword">TriggerAction</strong> というものを指定します。
 
@@ -395,7 +404,8 @@ XAML では、ストーリーボードというものを使ってアニメーシ
 <span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-10"></a> <a id="storyboard"></a>ストーリーボード
+## <a id="sec-generated-title-10"></a> <a id="storyboard"></a>ストーリーボード
+
 さて、ようやくアニメーション本体であるストーリーボードの話になります。
 ちなみに、<strong id="storyboard" class="keyword">ストーリーボード</strong>（story board）という単語は、
 映画やアニメの画コンテ・絵コンテのことです。
@@ -446,6 +456,7 @@ BeginTime 属性を指定します。
 
 
 ##### <a id="sec-generated-title-11"></a>TargetName
+
 上記の場合、
 Rectangle 内でトリガしたイベント内で、
 Rectangle のプロパティの値を変更していますが、
@@ -495,6 +506,7 @@ Rectangle のプロパティの値を変更していますが、
 
 
 ##### <a id="sec-generated-title-12"></a>TergetProperty を階層的に指定
+
 この例では、
 ボタンクリック後の Rectangle の色を、
 Storyboard.TargetProperty="Fill.Color"
@@ -515,6 +527,7 @@ Shape.Fill に 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 で色を設
 
 
 ##### <a id="sec-generated-title-13"></a>複数のアニメーションを設定
+
 ストーリーボード内には、複数のアニメーションを同時に指定できます。
 
 以下の例では、色の変化と回転を同時に行っています。
@@ -581,6 +594,7 @@ Rectangle を4×4で並べたらちょっと面白かった。
 
 
 ##### <a id="sec-generated-title-14"></a>TergetProperty で配列的にアクセス
+
 RenderTransform 属性で、拡大・傾斜・回転などの変形をかけたい場合、
 TransformGroup 内に ScaleTransform や RotateTransform などを複数並べることになります。
 
@@ -645,6 +659,7 @@ LinearGradientBrush の GradientStops なんかも配列的にアクセス。
 
 
 ##### <a id="sec-generated-title-15"></a>その他のアニメーション方式
+
 DoubleAnimation などを使うと、
 From から To の値に線形に値が変化します。
 これに対して、もう少し凝った値の変化のさせ方もできます。
@@ -662,7 +677,8 @@ DoubleAnimationUsingPath
 パス（複数の点をベジエ補間やスプライン補間で滑らかにつないだもの）に沿って値を変化させることができます。
 
 
-##<a id="sec-generated-title-16"></a> <a id="beginanimation"></a>BeginAnimation
+## <a id="sec-generated-title-16"></a> <a id="beginanimation"></a>BeginAnimation
+
 XAML だけでアニメーション設定を完結させるには、
 これまでに説明したような、イベントトリガ→イベントアクション→ストーリーボードという手順を踏む必要がありますが、
 コードビハインド中では、BeginAnimation メソッドを呼び出してアニメーションを開始させることもできます。
@@ -711,7 +727,8 @@ Contorol や Shape などは Animatable のサブクラス。）
 
 
 
-##<a id="sec-generated-title-17"></a> <a id="CompositionTarget"></a>CompositionTarget.Rendering
+## <a id="sec-generated-title-17"></a> <a id="CompositionTarget"></a>CompositionTarget.Rendering
+
 ストーリーボードや BeginAnimation によるアニメーションは、
 「タイムラインベース」です。
 

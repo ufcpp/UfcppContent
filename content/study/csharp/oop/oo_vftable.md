@@ -18,7 +18,8 @@ aliases:
 
 # \[雑記\] 仮想関数テーブル
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[仮想メソッド](oo_polymorphism.md#virtual_method)」というものがどういう仕組みで実現されているのかを説明します。
 
 （C / C++ の知識がある程度必要なので、
@@ -48,7 +49,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="theme"></a>題材と元ソース
+## <a id="sec-generated-title-2"></a> <a id="theme"></a>題材と元ソース
+
 ここでは、「[多態性](oo_polymorphism.md)」の演習問題と同じような題材
 （Shape クラスを継承した Rectangle と Circle クラスを作る）
 で説明をします。
@@ -130,7 +132,8 @@ Circle::Circle(<span class="reserved">double</span> r)
 Rectangle、Circle はそれぞれ、矩形・円を表すクラスです。
 
 
-##<a id="sec-generated-title-3"></a> <a id="method"></a>メンバー関数と仮想関数テーブル
+## <a id="sec-generated-title-3"></a> <a id="method"></a>メンバー関数と仮想関数テーブル
+
 まず、Shape クラスの宣言に相当する C 言語コードを作ってみます。
 
 <pre class="source" title="Shape クラスの宣言に相当する C 言語コード" lang="">
@@ -209,7 +212,8 @@ void* の配列になっていて、
 0（ヌルポインター、実体がないことを示す）になっています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="ctor"></a>コンストラクタ
+## <a id="sec-generated-title-4"></a> <a id="ctor"></a>コンストラクタ
+
 ShapeCtor, ShapeDtor はそれぞれコンストラクタ、デストラクタに相当する関数です。
 （当然、Ctor, Dtor は Constructor, Destructor の略。）
 C++ とは違って、これらを自動的に読んでくれる仕組みは持っていないので、
@@ -257,7 +261,8 @@ Shape の vftable メンバー変数に代入します。
 この vftable は、仮想関数呼び出しの際に利用します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="inherit"></a>クラスの継承
+## <a id="sec-generated-title-5"></a> <a id="inherit"></a>クラスの継承
+
 続いて、Rectangle クラスの宣言に相当する C 言語コードを示します。
 
 <pre class="source" title="Rectangle クラスの宣言に相当する C 言語コード" lang="">
@@ -309,7 +314,8 @@ Shape* s = (Shape*)r;
 （&amp;r と &amp;r-&gt;base が同じアドレスを表している。）
 
 
-##<a id="sec-generated-title-6"></a> <a id="inherit_impl"></a>派生クラスの実装
+## <a id="sec-generated-title-6"></a> <a id="inherit_impl"></a>派生クラスの実装
+
 Rectangle クラスの仮想関数テーブルの実体 RectangleVftable は以下のようになります。
 
 <pre class="source" title="Rectangle クラスの仮想関数テーブル" lang="">
@@ -371,7 +377,8 @@ C++ と違って基底クラスのコンストラクタを自動的に呼んで�
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="call"></a>仮想関数の呼び出し
+## <a id="sec-generated-title-7"></a> <a id="call"></a>仮想関数の呼び出し
+
 Circle クラスの実装は Rectangle とほぼ同様なので説明は省略。
 次は、仮想関数呼び出しの C 言語化を行います。
 
@@ -487,8 +494,10 @@ s は Shape のポインター型の変数ですが、
 正しく RectangleGetArea を呼び出すことができます。
 
 
-##<a id="sec-generated-title-8"></a> <a id="cost"></a>仮想関数呼び出しのコスト
-###<a id="sec-generated-title-9"></a> <a id="computationalcost"></a>演算コスト
+## <a id="sec-generated-title-8"></a> <a id="cost"></a>仮想関数呼び出しのコスト
+
+### <a id="sec-generated-title-9"></a> <a id="computationalcost"></a>演算コスト
+
 ここで、通常の関数呼び出しと仮想関数呼び出しの比較をしてみましょう。
 
 もし、GetArea が仮想関数ではなかった場合、
@@ -538,7 +547,8 @@ r.GetArea();
 状況による使い分けが必要です。
 
 
-###<a id="sec-generated-title-10"></a> <a id="memorycost"></a>メモリコスト
+### <a id="sec-generated-title-10"></a> <a id="memorycost"></a>メモリコスト
+
 メモリの観点から見ると、
 仮想関数を使うためには仮想関数テーブル分のメモリが必要になります。
 具体的なメモリの量は、
@@ -563,7 +573,8 @@ vftable が自動生成されます。
 と言えます。
 
 
-###<a id="sec-generated-title-11"></a> <a id="csharp"></a>C# や Java では
+### <a id="sec-generated-title-11"></a> <a id="csharp"></a>C# や Java では
+
 C# や Java では、
 型情報の取得のために、仮想メソッド（C++ でいうと仮想関数）が1つもない場合でも、
 有無を言わせず vftable 相当の物が自動生成されます。

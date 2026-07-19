@@ -18,15 +18,18 @@ aliases:
 
 # 微分
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 d/dx や ∂/∂x 等を表示する
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;dd var="x" func="y"/&gt; &lt;pdd var="x" func="y/&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;dd var="s"/&gt;f
 ＝
 &lt;pdd var="x" func="f"/&gt;&lt;d/&gt;x
@@ -43,7 +46,8 @@ d/dx や ∂/∂x 等を表示する
 <table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂</td></tr></table><span class="normal">d</span>x
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:dd"&gt;
   &lt;table class="frac" summary="differential"&gt;
     &lt;tr&gt;&lt;td class="num"&gt;&lt;span class="normal"&gt;d&lt;/span&gt;&lt;xsl:value-of select="@func"/&gt;&lt;/td&gt;&lt;/tr&gt;
@@ -77,7 +81,8 @@ d/dx や ∂/∂x 等を表示する
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>table.frac
 {
   display:inline;

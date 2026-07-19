@@ -18,20 +18,24 @@ aliases:
 
 # Π
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 積の記号Πを表示
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;Pi&gt;&lt;sub&gt;Πの下にくる式&lt;/sub&gt;&lt;sup&gt;Πの上にくる式&lt;/sup&gt;&lt;/Pi&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>n&lt;factorial/&gt; = &lt;Pi&gt;&lt;sub&gt;k=0&lt;/sub&gt;&lt;sup&gt;n&lt;/sup&gt;&lt;/Pi&gt;k
 </pre><div class="math">n<span class="normal">!</span> = <table class="sigma" summary="product"><tr><td class="sigmasub">n</td></tr><tr><td class="sigma">∏</td></tr><tr><td class="sigmasub">k=0</td></tr></table>k
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:Pi"&gt;
   &lt;table class="sigma" summary="product"&gt;
     &lt;tr&gt;&lt;td class="sigmasub"&gt;&lt;xsl:apply-templates select="ufcpp:sup"/&gt;&lt;/td&gt;&lt;/tr&gt;
@@ -46,7 +50,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>table.sigma
 {
   display:inline;

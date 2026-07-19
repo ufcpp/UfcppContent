@@ -18,14 +18,16 @@ aliases:
 
 # 有理数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 有理数は整数環から作った商体です。
 自然数から整数を作る際、<span class="math">a － b</span> という形で表される数を考えましたが、
 それと同様に、有理数は、
 2つの整数 <span class="math">m, n</span> を用いて <span class="math">m/n</span> という形で表される数として定義します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="rational"></a>有理数の定義
+## <a id="sec-generated-title-2"></a> <a id="rational"></a>有理数の定義
+
 <strong id="rational" class="keyword">有理数</strong>（rational number）は以下のような手順で定義します。
 
 * 整数の対<span class="math"><span class="paren" style="font-size:em;">(</span>a, b<span class="paren" style="font-size:em;">)</span> ∈ <span class="bold">Z</span>×<span class="bold">Z</span></span>を用意する。
@@ -51,8 +53,10 @@ aliases:
 すなわち、<span class="math">a × <span class="paren" style="font-size:em;">(</span>a<sup>－1</sup><span class="paren" style="font-size:em;">)</span> ＝ 1</span> が成り立ちます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="operation"></a>有理数の間の関係・演算
-###<a id="sec-generated-title-4"></a> <a id="order"></a>有理数の順序
+## <a id="sec-generated-title-3"></a> <a id="operation"></a>有理数の間の関係・演算
+
+### <a id="sec-generated-title-4"></a> <a id="order"></a>有理数の順序
+
 有理数 <span class="math">p ＝ a/b, q</span> の順序関係は
 <div class="math">
 ab ＞ 0 ⇔ a/b <span class="normal">は正の有理数</span></div><div class="math">
@@ -64,7 +68,8 @@ p － q <span class="normal">が正</span> ⇔ p ＞ q
 で定義します。
 
 
-###<a id="sec-generated-title-5"></a> <a id="sum"></a>有理数の和・積
+### <a id="sec-generated-title-5"></a> <a id="sum"></a>有理数の和・積
+
 2つの有理数 <span class="math">p ＝ <span class="paren" style="font-size:em;">(</span>a, b<span class="paren" style="font-size:em;">)</span>, q ＝ <span class="paren" style="font-size:em;">(</span>c, d<span class="paren" style="font-size:em;">)</span></span> の間の和・積を、
 <div class="math">
 p ＋ q ＝ <span class="paren" style="font-size:em;">(</span>ad ＋ bc, bd<span class="paren" style="font-size:em;">)</span></div><div class="math">
@@ -72,7 +77,8 @@ p × q ＝ <span class="paren" style="font-size:em;">(</span>ac, bd<span class="
 で定義します。
 
 
-###<a id="sec-generated-title-6"></a> <a id="algebra"></a>代数系としての有理数
+### <a id="sec-generated-title-6"></a> <a id="algebra"></a>代数系としての有理数
+
 有理数は、和に関しても積に関しても可換「[群](../group/group.md#group)」となり、
 和と積の間に分配法則が成り立つので、「[体](../group/field.md#field)」となります。
 体であることを明示的に表すために、有理数を<em>有理数体</em>と呼ぶこともあります。

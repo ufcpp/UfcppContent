@@ -19,7 +19,8 @@ aliases:
 
 # \[雑記\] O/R インピーダンスミスマッチ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 「[LINQ](sp3_linq.md#linq)」 を用いることで、
@@ -33,7 +34,8 @@ IEnumerable や XML、リレーショナルデータベースなど、
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="gui-data"></a>ほとんどのアプリケーション ＝ GUI ＋ データ処理
+## <a id="sec-generated-title-2"></a> <a id="gui-data"></a>ほとんどのアプリケーション ＝ GUI ＋ データ処理
+
 近年、ほとんどのアプリケーションは、何らかのデータに対する操作と表示が主な仕事となっています。
 すなわち、データ処理（読み出しや更新）と表示用の GUI 構築がプログラムの行う処理です。
 
@@ -55,7 +57,8 @@ C# は 1.0 の頃から、オブジェクト指向とイベント駆動に関す
 C# 3.0 で導入された機能で、のような OOP を基本とするプログラミング言語内で、RDB 的なデータ処理を実現するものです。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="impedance_mismatch"></a>インピーダンス ミスマッチ
+## <a id="sec-generated-title-3"></a> <a id="impedance_mismatch"></a>インピーダンス ミスマッチ
+
 インピーダンス ミスマッチ（impedance mismatch）という言葉は、元々は電気工学の言葉で、
 直訳するなら「抵抗の不一致」ということになります。
 図1に示すように、抵抗の異なる素材の間に電磁波を通そうとすると、
@@ -97,7 +100,8 @@ C# 3.0 で導入された機能で、のような OOP を基本とするプロ�
 ）
 
 
-##<a id="sec-generated-title-4"></a> <a id="or_impedance_mismatch"></a>O/R インピーダンスミスマッチ
+## <a id="sec-generated-title-4"></a> <a id="or_impedance_mismatch"></a>O/R インピーダンスミスマッチ
+
 要するに、<em>コンセプトの異なる2つの分野を繋ごうとする際に起こる困難</em>をさして、
 インピーダンス ミスマッチという言葉を使います。
 そして、インピーダンス ミスマッチがあると「伝達ロス」が発生するので、このミスマッチは極力解消したいものです。
@@ -112,7 +116,8 @@ OOP と RDB でそれぞれどういうコンセプトでデータを表すか�
 LINQ でどう解決されるのかを説明したいと思います。
 
 
-##<a id="sec-generated-title-5"></a> <a id="class_vs_table"></a>OOP のクラスと RDB のテーブル
+## <a id="sec-generated-title-5"></a> <a id="class_vs_table"></a>OOP のクラスと RDB のテーブル
+
 ここでは例として、本のシリーズと作家のデータベースを考えます。
 この例では、
 シリーズは名前と出版社と作者を、
@@ -124,6 +129,7 @@ LINQ でどう解決されるのかを説明したいと思います。
 
 
 ##### <a id="sec-generated-title-6"></a>OOP（クラス）
+
 まず、OOP の例として C# のコードを挙げますが、
 C# の場合、以下のようなクラスを定義して、
 List や Dictionary を使ってデータを格納します。
@@ -184,6 +190,7 @@ List や Dictionary を使ってデータを格納します。
 
 
 ##### <a id="sec-generated-title-7"></a>RDB（テーブル）
+
 一方、RDB では、
 以下のように、テーブルとしてデータの構造定義・格納します。
 
@@ -275,7 +282,8 @@ List や Dictionary を使ってデータを格納します。
 いずれも、1行1行データが書かれているだけです。
 
 
-##<a id="sec-generated-title-8"></a> <a id="hierarchy_vs_join"></a>OOP の階層的データ構造と RDB のテーブル結合
+## <a id="sec-generated-title-8"></a> <a id="hierarchy_vs_join"></a>OOP の階層的データ構造と RDB のテーブル結合
+
 まあ、前節のように、データテーブルが独立しているうちは OOP と RDB にはそれほど大きな差は生まれません。
 問題は、2つのテーブルの関係性を表すときに生じます。
 
@@ -284,6 +292,7 @@ List や Dictionary を使ってデータを格納します。
 
 
 ##### <a id="sec-generated-title-9"></a>OOP（クラスの階層化）
+
 OOP では、通常、階層的なデータ構造を持っています。
 作家が複数のシリーズを持っているなら、作家クラスは以下のように書かれます。
 
@@ -341,6 +350,7 @@ OOP では、通常、階層的なデータ構造を持っています。
 
 
 ##### <a id="sec-generated-title-10"></a>RDB（テーブル間の関係）
+
 一方、RDB では、階層的にデータを持つことはできません。
 データ上は、以下のように、ID 情報（Series テーブルの Author_Id 列）だけを持っておきます。
 
@@ -454,7 +464,8 @@ ID を元に2つのテーブルを結合してから所望のデータを取り�
 このように、OOP と RDB には、階層的データ構造とテーブル結合という方法論の差があります。
 
 
-##<a id="sec-generated-title-11"></a> <a id="orm"></a>O/R マッパー
+## <a id="sec-generated-title-11"></a> <a id="orm"></a>O/R マッパー
+
 前節のおさらいになりますが、
 OOP では階層的データ構造を、
 
@@ -488,6 +499,7 @@ RDB ではテーブル結合という方法を用いて関連性のあるデー�
 
 
 ##### <a id="sec-generated-title-12"></a>LINQ で O/R マッピング
+
 「[LINQ](sp3_linq.md#linq)」は、様々な種類のデータに対して、統一的な問い合わせを行うための仕組みです。
 この「さまざまな種類のデータ」にはデータベースも含まれています。
 すなわち、O/R マッピング用の LINQ が存在します。
@@ -509,8 +521,10 @@ Entity Framework が使えない環境でも LINQ to SQL なら使える（移�
 例えば、Windows Phone 7 向けの O/R マッパーは LINQ to SQL がベースとなっています。
 
 
-##<a id="sec-generated-title-13"></a> <a id="linq"></a>LINQ の利用
-###<a id="sec-generated-title-14"></a> <a id="entity"></a>エンティティ
+## <a id="sec-generated-title-13"></a> <a id="linq"></a>LINQ の利用
+
+### <a id="sec-generated-title-14"></a> <a id="entity"></a>エンティティ
+
 まず、データベース上のテーブルに相当するクラス（これをエンティティ（entity: 本質、実体）と呼びます）を定義します。
 
 <em>※以下、ADO.NET Entity Framework 4.1（2011年時点の最新版）を使った説明をします。</em>
@@ -624,6 +638,7 @@ LINQ to SQL では、これらの属性をみて、
                 
 
 ##### <a id="sec-generated-title-15"></a>DataContext
+
 次に、データベースサーバに接続するためのクラス（DataContext）を作ります。
 
                 
@@ -657,7 +672,8 @@ DataContext を継承するクラスに、Table 型のメンバーを書くだ�
 </div>
 
 
-###<a id="sec-generated-title-16"></a> <a id="query"></a>IQueryable とクエリ式
+### <a id="sec-generated-title-16"></a> <a id="query"></a>IQueryable とクエリ式
+
 例えば、Author テーブルに対するクエリは以下のように書けます。
 
 <pre class="source" title="クエリの例" lang="">
@@ -746,7 +762,8 @@ WHERE [Extent1].[Name] IN (N'島本和彦',N'赤松健')
 
 
 
-###<a id="sec-generated-title-17"></a> <a id="association"></a>エンティティ間の関係性
+### <a id="sec-generated-title-17"></a> <a id="association"></a>エンティティ間の関係性
+
 それでは次に、
 Author と Series エンティティ間の関係性を記述します。
 
@@ -889,7 +906,8 @@ WHERE [Extent1].[Name] LIKE N'%先生%'
 
 
 
-##<a id="sec-generated-title-18"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-18"></a> <a id="summary"></a>まとめ
+
 * オブジェクト指向プログラミング（OOP）言語とリレーショナルデータベース（RDB）の間には、
     * OOP： 階層的データ構造
 

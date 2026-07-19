@@ -18,7 +18,8 @@ aliases:
 
 # 数学C
 
-##<a id="sec-generated-title-1"></a> <a id="d24e4"></a>行列とその応用
+## <a id="sec-generated-title-1"></a> <a id="d24e4"></a>行列とその応用
+
 * 行列 - 行列とその演算、行列の積と逆行列
 
 * 行列の応用 - 連立一次方程式、点の移動（一次変換）
@@ -36,7 +37,8 @@ aliases:
 参考： 「[行列と線形写像](../linear/matrix.md)」。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d24e27"></a>式と曲線
+## <a id="sec-generated-title-2"></a> <a id="d24e27"></a>式と曲線
+
 * 二次曲線 - 放物線、楕円と双曲線
 
 * 媒介変数表示と極座標 - 曲線の媒介変数表示、極座標と極方程式、焦点、準線
@@ -52,7 +54,8 @@ x, y で表すにしろ、媒介変数を使うにしろ、
 参考： 「[数学](../index.md)」。
 
 
-##<a id="sec-generated-title-3"></a> <a id="d24e50"></a>確率分布
+## <a id="sec-generated-title-3"></a> <a id="d24e50"></a>確率分布
+
 * 確率の計算
 
 * 確率分布 - 確率変数と確率分布、二項分布

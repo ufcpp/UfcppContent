@@ -18,7 +18,8 @@ aliases:
 
 # 有限体
 
-##<a id="sec-generated-title-1"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-1"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・素体
 

@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] 大富豪
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 [http://d.hatena.ne.jp/ufcpp/20090103/1230986920](http://d.hatena.ne.jp/ufcpp/20090103/1230986920) と

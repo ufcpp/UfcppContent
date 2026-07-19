@@ -14,7 +14,8 @@ aliases:
 
 # インデックス/範囲処理
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 で、配列などに対して以下のような書き方をできるようになります。
@@ -59,8 +60,10 @@ C# 8.0 で、配列などに対して以下のような書き方をできるよ�
 C# 8.0 で導入されたものは配列などのインデックス用途に特化していて、
 `Index`型と`Range`型からなるので、index/range (インデックス/範囲)構文と言ったりもします。
 
-##<a id="sec-generated-title-2"></a> <a id="background"></a>背景
-###<a id="sec-generated-title-3"></a> <a id="span"></a>Span
+## <a id="sec-generated-title-2"></a> <a id="background"></a>背景
+
+### <a id="sec-generated-title-3"></a> <a id="span"></a>Span
+
 C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)が導入されました。
 配列や文字列中の一定範囲を抜き出して効率的に読み書きするための型です。
 (単純な機能なのでもっと昔からあってもよさそうなものですが、
@@ -91,7 +94,8 @@ C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)が導入されました�
 }
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="unification"></a>範囲のルール統一
+### <a id="sec-generated-title-4"></a> <a id="unification"></a>範囲のルール統一
+
 配列の一定範囲を抜き出すという処理は、`array.AsSpan(x, y)` というように、単なるメソッド呼び出しでもできます。
 ただ、ここで問題となるのは、引数の意味がメソッドによってぶれている点です。
 `x`、`y` にそれぞれ3、5を渡した場合、どういう意味になるでしょう。
@@ -143,7 +147,8 @@ C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)が導入されました�
 構文になっていれば意味がぶれることがなくなります。
 C# では、`i..j` で「i番目からj番目(j は含まない)」となる構文を採用しました。
 
-###<a id="sec-generated-title-5"></a> <a id="index-usage"></a>インデックス用途
+### <a id="sec-generated-title-5"></a> <a id="index-usage"></a>インデックス用途
+
 `i..j` と書いたとき、j を含むかどうかは難しい問題です。
 実際、あるプログラミング言語では j を含みますし、別のある言語では含みません。
 `..=` や `..<` などで含む・含まないを選ぶようになっている言語もありますが、
@@ -163,7 +168,8 @@ C# では、`i..j` で「i番目からj番目(j は含まない)」となる構�
 
 C# の `i..j` で「j は含まない」の方を採用したのは、明確にインデックス用途を意図したものです。
 
-##<a id="sec-generated-title-6"></a> <a id="index"></a>Index
+## <a id="sec-generated-title-6"></a> <a id="index"></a>Index
+
 配列や文字列からの一定範囲の抜き出しではよく「末尾から i 番目」という場所を取りたいことがあります。
 C# 8.0 では、そのために単項 `^` 演算子を使います。
 
@@ -193,7 +199,8 @@ C# 8.0 では、そのために単項 `^` 演算子を使います。
 (第2引数の `true` が「末尾から」の意味です)。
 `int` からの暗黙的な変換もあって、それは素直に「先頭から i 番目」の意味になります。
 
-###<a id="sec-generated-title-7"></a> <a id="non-negative"></a>補足: インデックスは0以上の整数
+### <a id="sec-generated-title-7"></a> <a id="non-negative"></a>補足: インデックスは0以上の整数
+
 C# では、[配列のインデックスは0以上(非負)という前提](../../../blog/2018/12/arrayindex/index.md)があります。
 なので、`Index` 構造体も以下のような作りになっています。
 
@@ -202,7 +209,8 @@ C# では、[配列のインデックスは0以上(非負)という前提](../..
 - 内部的には `int` 1つだけ持っていて、負の数を「末尾から」の意味で使っている
   - 構造体のサイズは `int` と同じ4バイト
 
-##<a id="sec-generated-title-8"></a> <a id="range"></a>Range
+## <a id="sec-generated-title-8"></a> <a id="range"></a>Range
+
 C# 8.0 で `..` という新しい構文が追加されました。
 
 <pre class="source" title=".. 構文">
@@ -257,7 +265,8 @@ _ = 2..3 <span class="control">switch</span> <span class="comment">// 2..3 と�
 _ = (1 + 2)..(3 + 4); <span class="comment">// 足し算とかを優先したければ () 必須</span>
 </code></pre>
 
-##<a id="sec-generated-title-9"></a> <a id="indexer"></a>Index/Range とインデクサー
+## <a id="sec-generated-title-9"></a> <a id="indexer"></a>Index/Range とインデクサー
+
 `Index`/`Range`型に対するインデクサーは、
 以下で説明するように、
 一定のパターンで `int` に対するインデクサーや`Slice`メソッドに展開されます。
@@ -300,7 +309,8 @@ C# のコレクションは長さを `Length` で取るものと `Count` で取�
 `Slice` メソッドではなく、それぞれ `GetSubArray`、`Substring` メソッドが呼ばれます
 (`GetSubArray`は`RuntimeHelpers`クラス(`System.Runtime.CompilerServices` 名前空間)の静的メソッド)。
 
-###<a id="sec-generated-title-10"></a> <a id="avoid-copy"></a>コピーの回避
+### <a id="sec-generated-title-10"></a> <a id="avoid-copy"></a>コピーの回避
+
 配列と文字列に対する `Range`型インデクサー `a[i..j]` 
 (展開結果的には `GetSubArray` と `Substring`)は、
 それぞれ配列、文字列を返します。
@@ -338,6 +348,7 @@ C# のコレクションは長さを `Length` で取るものと `Count` で取�
 </code></pre>
 
 ##### <a id="sec-generated-title-11"></a>サンプル
+
 「一定範囲を抜き出す」という処理は、テキスト処理でよく使います。
 
 例として、書式が決まっているテキストの中から一部分を取り出してみましょう。

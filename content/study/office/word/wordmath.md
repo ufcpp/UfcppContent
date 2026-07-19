@@ -18,7 +18,8 @@ aliases:
 
 # 数式入力
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 Word 2007 以降の数式エディターは結構優秀。
 数式入力で TeX を駆逐できる日も近いかもしれない。
 
@@ -35,7 +36,8 @@ Word 2007 以降の数式エディターは結構優秀。
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="noMouse"></a>デモ： キーボードだけで入力可能
+## <a id="sec-generated-title-2"></a> <a id="noMouse"></a>デモ： キーボードだけで入力可能
+
 マウスで数式入力するのってなんであんなにストレスフルなんでしょうね。
 でも、安心を。
 Word 2007 で一新された数式エディターは、キーボードだけで数式を入力できます。
@@ -43,7 +45,8 @@ Word 2007 で一新された数式エディターは、キーボードだけで�
 入力しているところを撮影した動画↓。
 <iframe width="480" height="390" src="http://www.youtube.com/embed/15mTBajM9QM" frameborder="0" allowfullscreen=""></iframe><iframe width="480" height="390" src="http://www.youtube.com/embed/k5dxDqpz0qs" frameborder="0" allowfullscreen=""></iframe>
 
-##<a id="sec-generated-title-3"></a> <a id="linear"></a>行形式
+## <a id="sec-generated-title-3"></a> <a id="linear"></a>行形式
+
 Word 2007 以降の数式エディターでは、<strong id="linear_format" class="keyword">行形式</strong>（linear format）と呼ばれる素のテキストで数式を入力することができます。
 行形式は以下のような特徴を持っています。
 
@@ -103,7 +106,8 @@ Word 2007 以降の数式エディターでは、<strong id="linear_format" clas
 また、テイラー展開式の行形式の ▒ となっているところは Unicode の MEDIUM SHADE 文字（U+2592）です。
 
 
-##<a id="sec-generated-title-4"></a> <a id="latexNext"></a>今風の LaTeX
+## <a id="sec-generated-title-4"></a> <a id="latexNext"></a>今風の LaTeX
+
 この行形式ですが、結構 TeX っぽいと思うかもしれません。
 割とその通りで、かなり LaTeX を研究して作っているそうです。
 
@@ -111,6 +115,7 @@ Word 2007 以降の数式エディターでは、<strong id="linear_format" clas
 
 
 ##### <a id="sec-generated-title-5"></a>Unicode で書き直した LaTeX
+
 ただ、LaTeX っぽい記述を、対応する Unicode 文字に変換してしまうところが実はポイント。
 元の ASCII テキストが残らないのを嫌う人もいるとは思いますが、\alpha/\beta よりは α/β の方が、行形式の可読性高いよねという。
 大元の発想は、「TeX って Unicode 文字使って書き直したら可読性高くなるんじゃね？」ということらしいです。
@@ -122,6 +127,7 @@ Word 2007 以降の数式エディターでは、<strong id="linear_format" clas
 
 
 ##### <a id="sec-generated-title-6"></a>ヒューリスティック
+
 LaTeX だと厳密に {} 指定しないといけないのが結構面倒なんですよね。
 Word のは、経験則に則って、() を省略した時の挙動が文脈で変わるようにできてて、
 それが（余計なお世話と感じるかもしれないけど）慣れると案外気持ちよく数式書けるようになります。
@@ -131,11 +137,13 @@ Word のは、経験則に則って、() を省略した時の挙動が文脈で
 
 
 ##### <a id="sec-generated-title-7"></a>リアルタイムレンダリング
+
 あと、やっぱり一番大きいのはこれですかね。打ってるそばから変換されていくところ。
 書いてるところと表示されてるところが離れてると、なんだかんだ言ってストレスですからねぇ。
 
 
-##<a id="sec-generated-title-8"></a> <a id="ref"></a>参考
+## <a id="sec-generated-title-8"></a> <a id="ref"></a>参考
+
 1. [Unicode Nearly Plain-Text Encoding of Mathematics](http://www.unicode.org/notes/tn28/UTN28-PlainTextMath-v2.pdf)（数式エディター開発者が Unicode コンソーシアムで発表した論文）
 
 2. [Murray Sargent: Math in Office](http://blogs.msdn.com/murrays/)（数式エディター開発者ブログ）

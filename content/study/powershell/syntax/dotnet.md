@@ -18,7 +18,8 @@ aliases:
 
 # .NET Framework オブジェクト
 
-##<a id="sec-generated-title-1"></a> <a id="new"></a>オブジェクトの作成
+## <a id="sec-generated-title-1"></a> <a id="new"></a>オブジェクトの作成
+
 これまでに説明した通り、
 1 は System.Int32 だし、 "test" は System.String で、
 全部 .NET Framework のオブジェクトです。
@@ -38,7 +39,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="dot"></a>プロパティ、メソッドのアクセス
+## <a id="sec-generated-title-2"></a> <a id="dot"></a>プロパティ、メソッドのアクセス
+
 あと、まあ、説明するまでもなく今まで散々つかっちゃっていますが、
 . を使ってオブジェクトのプロパティやメソッドにアクセスできます。
 
@@ -72,7 +74,8 @@ static メソッドも
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="ref"></a>ref, out
+## <a id="sec-generated-title-3"></a> <a id="ref"></a>ref, out
+
 .NET Framework には引数の参照渡しのために、
 引数に ref とか out とかを指定できるんですが
 （参考： 「[引数の参照渡し](../../csharp/resource/sp_ref.md)」）、
@@ -90,7 +93,8 @@ True
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="note_method"></a>メソッド呼び出しの注意点
+## <a id="sec-generated-title-4"></a> <a id="note_method"></a>メソッド呼び出しの注意点
+
 1つ気をつけないといけない点があります。
 コマンドや function、スクリプトブロック等では a b c と括弧なしのスペース区切りで引数を渡すのに対して、
 メソッドコールは (a, b, c) と () 付き , 区切りで引数を渡します。
@@ -163,11 +167,13 @@ New-Object Cmdlet では、以下のように、一見 , 区切りで引数を�
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="load_assemblly"></a>アセンブリのロード
+## <a id="sec-generated-title-5"></a> <a id="load_assemblly"></a>アセンブリのロード
+
 System.Reflection.Assembly の Load とか LoadFile を使ってアセンブリをロード。
 
 
 ##### <a id="sec-generated-title-6"></a>自作 DLL のロード
+
 <pre class="source" title="" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -198,6 +204,7 @@ System.Reflection.Assembly の Load とか LoadFile を使ってアセンブリ�
 
 
 ##### <a id="sec-generated-title-7"></a>標準アセンブリのロード
+
 標準アセンブリで、
 PowerShell がデフォルトでロードしていないもののロード。
 
@@ -211,7 +218,8 @@ System.Drawing のロードが必要で、
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="cast"></a>型変換
+## <a id="sec-generated-title-8"></a> <a id="cast"></a>型変換
+
 どうも、[型名] を使った型変換は、コンストラクタを呼んでるっぽい。
 
 （
@@ -232,7 +240,8 @@ abstest
 その他、Collection クラス同士の相互型変換が出来たり。
 
 
-##<a id="sec-generated-title-9"></a> <a id="com"></a>COM の利用
+## <a id="sec-generated-title-9"></a> <a id="com"></a>COM の利用
+
 .NET Framework では、
 過去の資産を活用するために、
 .NET から COM オブジェクトを利用する機構が用意されていました。
@@ -253,6 +262,7 @@ COM オブジェクトは、New-Object コマンドに -Com オプションを�
 
 
 ##### <a id="sec-generated-title-10"></a>サンプル
+
 ビットマップを読み出して、
 ビットマップのドットに応じてExcel のセルの背景色塗りつぶしでドット絵を描く PowerShell スクリプト。
 

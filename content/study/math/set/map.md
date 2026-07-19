@@ -18,7 +18,8 @@ aliases:
 
 # 写像
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 数学には関数（function）という概念があります。
 関数とは「ある変数に依存して決まる値」の事を指します。
 集合論的には、「ある2つの変数の間の対応関係」が関数になります。
@@ -38,7 +39,8 @@ aliases:
 （現在でも辞書などには「くわん」という読み方が書かれています。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="ordered"></a>順序対
+## <a id="sec-generated-title-2"></a> <a id="ordered"></a>順序対
+
 写像について述べる前に、いくつか下準備が必要になります。
 まず最初に、順序対というものについて説明します。
 
@@ -80,7 +82,8 @@ aliases:
 要するに、対（非順序対）とは異なり、中身が順序も含めて一致している場合にのみ同じ集合になります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="directprod"></a>直積
+## <a id="sec-generated-title-3"></a> <a id="directprod"></a>直積
+
 次に、<strong id="directprod" class="keyword">直積</strong>（direct product）と呼ばれる集合を定義します。
 直積とは、<span class="math">a</span> の元 <span class="math">x</span> と <span class="math">b</span> の元 <span class="math">y</span> の順序対 <span class="math">
         <span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span>
@@ -177,7 +180,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="relation"></a>対応
+## <a id="sec-generated-title-4"></a> <a id="relation"></a>対応
+
 直積を使って2つの集合 <span class="math">a, b</span> の間の元の対応関係を定義することが出来ます。
 
 直積 <span class="math">a<span class="normal">×</span>b</span> とその部分集合 <span class="math">f</span> の順序対 <span class="math">
@@ -327,7 +331,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="morph"></a>写像
+## <a id="sec-generated-title-5"></a> <a id="morph"></a>写像
+
 対応 <span class="math">
         f : a <span class="normal">→</span> b
       </span> のうちで、
@@ -391,7 +396,8 @@ aliases:
 （<span class="math">w</span> に値がない。<span class="math">x</span> が値を2つ持っている。）
 
 
-###<a id="sec-generated-title-6"></a> <a id="spectial"></a>特殊な写像
+### <a id="sec-generated-title-6"></a> <a id="spectial"></a>特殊な写像
+
 いくつか特殊な写像の例を挙げます。
 
 集合 <span class="math">a</span> に対して、
@@ -438,7 +444,8 @@ aliases:
         </span> も定義できます。）
 
 
-###<a id="sec-generated-title-7"></a> <a id="surjection"></a>全写・単写
+### <a id="sec-generated-title-7"></a> <a id="surjection"></a>全写・単写
+
 写像 <span class="math">
           f : a <span class="normal">→</span> b
         </span> が、<span class="math">
@@ -482,7 +489,8 @@ aliases:
 互いに同値な集合というのは、集合的に完全に対等な関係にあると考えることが出来ます。
 
 
-###<a id="sec-generated-title-8"></a> <a id="inverse"></a>逆写像
+### <a id="sec-generated-title-8"></a> <a id="inverse"></a>逆写像
+
 対応 <span class="math">
           f : a <span class="normal">→</span> b
         </span> が与えられたとき、
@@ -518,7 +526,8 @@ aliases:
         </span> を <span class="math">f</span> の<strong id="inverse" class="keyword">逆写像</strong>（inverse mapping）と呼びます。
 
 
-###<a id="sec-generated-title-9"></a> <a id="whole"></a>写像全体の集合
+### <a id="sec-generated-title-9"></a> <a id="whole"></a>写像全体の集合
+
 <span class="math">a</span> から <span class="math">b</span> への写像 <span class="math">
           f: a <span class="normal">→</span> b
         </span> のグラフ全体の集合を
@@ -528,7 +537,8 @@ aliases:
 で表します。
 
 
-##<a id="sec-generated-title-10"></a> <a id="num"></a>元の個数
+## <a id="sec-generated-title-10"></a> <a id="num"></a>元の個数
+
 ある集合 <span class="math">a</span> に対して同値となるような自然数 <span class="math">n</span> が存在するとき、
 集合 <span class="math">a</span> を<strong id="finite" class="keyword">有限集合</strong>（finite set）と呼びます。
 逆に、そのような自然数が存在しないとき集合は<strong id="infinite" class="keyword">無限集合</strong>（infinite set）と呼びます。

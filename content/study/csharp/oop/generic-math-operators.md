@@ -14,7 +14,8 @@ aliases:
 
 # 【Generic Math】 C# 11 での演算子の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 <h5 class="version version11">Ver. 11</h5>
 
 C# 11 で、数値型の演算子関連で3つ新機能が追加されています。
@@ -23,7 +24,8 @@ C# 11 で、数値型の演算子関連で3つ新機能が追加されていま�
 * [checked 演算子オーバーロード](#checked-operator-overload)
 * [シフト演算子の右オペランドの制限撤廃](#relaxing-shift)
 
-##<a id="sec-generated-title-2"></a> <a id="generic-math">背景: Generic Math</a>
+## <a id="sec-generated-title-2"></a> <a id="generic-math">背景: Generic Math</a>
+
 C# 11 / .NET 7 でインターフェイスの静的メンバーを仮想・抽象にできる (static abstract members in interfaces)ようになります。
 (この機能自体については「[インターフェイスの静的抽象メンバー](oo_interface.md#static-abstract)」で説明しています。)
 
@@ -71,7 +73,8 @@ C# 11 / .NET 7 でインターフェイスの静的メンバーを仮想・抽�
 * checked 演算子オーバーロード
 * シフト演算子の右オペランドの制限撤廃
 
-##<a id="sec-generated-title-3"></a> <a id="unsigned-right-shift">符号なし右シフト</a>
+## <a id="sec-generated-title-3"></a> <a id="unsigned-right-shift">符号なし右シフト</a>
+
 右シフト演算には符号付き右シフト(算術シフト)と符号なし右シフト(論理シフト)があって、
 右シフトしたときに、最上位ビットの 1 が残るかどうかの差になります。
 
@@ -183,7 +186,8 @@ C# の場合、基本的に、
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="checked-operator-overload">checked 演算子オーバーロード</a>
+## <a id="sec-generated-title-4"></a> <a id="checked-operator-overload">checked 演算子オーバーロード</a>
+
 C# では、[整数演算のオーバーフロー時に何もしないか、それとも例外を投げるかを選べる機能](../start/sp_checked.md)があります。
 
 * `checked` コンパイラー オプション: プログラム全域でオーバーフローを例外にする
@@ -276,7 +280,8 @@ C# 10 以前では、`checked` な演算ができるのは組み込み整数だ�
 「`checked` だけでなく `unchecked` も明示的に書けるようにするかどうか」みたいなことも検討されたんですが、経験上「ほとんどの人が `unchecked` なコードしか書かない」という事がわかっているので、
 「`checked` だけ追加して、何も書かない場合(regular)を `unchecked` 扱い」ということになっています。
 
-###<a id="sec-generated-title-5"></a> <a id="checked-only">注意: checked 演算子のみの定義はエラー</a>
+### <a id="sec-generated-title-5"></a> <a id="checked-only">注意: checked 演算子のみの定義はエラー</a>
+
 ちなみに、通常演算子なしで `checked` 演算子だけを定義することはできません。
 
 <pre class="source" title="checked のみの定義はコンパイル エラーになる">
@@ -295,7 +300,8 @@ C# 10 以前では、`checked` な演算ができるのは組み込み整数だ�
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="checked-cast">注意: キャスト演算</a>
+### <a id="sec-generated-title-6"></a> <a id="checked-cast">注意: キャスト演算</a>
+
 [キャスト](oo_operator.md#cast)も `checked` にできます。
 ただし、`explicit` (明示的型変換)のみ OK で、`implicit` (暗黙的型変換)には `checked` は使えません。
 
@@ -312,7 +318,8 @@ C# 10 以前では、`checked` な演算ができるのは組み込み整数だ�
 }
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="checked-responsibility">注意: あくまでユーザー裁量</a>
+### <a id="sec-generated-title-7"></a> <a id="checked-responsibility">注意: あくまでユーザー裁量</a>
+
 あくまでユーザー定義なので、悪意を持って実装すれば「通常演算子で例外を投げて、checked 演算子で投げない」みたいなこともできてしまいます。
 
 <pre class="source" title="逆に実装">
@@ -330,13 +337,15 @@ C# 10 以前では、`checked` な演算ができるのは組み込み整数だ�
 
 
 ### <a id="sec-generated-title-8"></a>コンパイル結果
+
 (`>>>` のとこにも同様の話を)
 
 通常演算子は `op_Addition` みたいな名前のメソッドになってる。
 
 checked 演算子は `op_AdditionChecked` みたいに、通常演算子の後ろに `Checked` が付いた名前に
 
-##<a id="sec-generated-title-9"></a> <a id="relaxing-shift">シフト演算子の右オペランドの制限撤廃</a>
+## <a id="sec-generated-title-9"></a> <a id="relaxing-shift">シフト演算子の右オペランドの制限撤廃</a>
+
 C# ではこれまで、シフト演算子の右オペランド(何ビットシフトするかを決める方)には `int` しか使えないという制限がありました。
 `<<` や `>>` という記号をシフト以外の意味で使わせるつもりはないのと、
 であれば、シフトの右オペランドに `int` 以外のものを使いたい場面がほとんどないためです。
@@ -407,7 +416,8 @@ generic math で使えるメソッドの中にはシフト演算の右オペラ�
 }
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="shift-guideline">注意: シフト以外の用途で << を使わせたくはない</a>
+### <a id="sec-generated-title-10"></a> <a id="shift-guideline">注意: シフト以外の用途で << を使わせたくはない</a>
+
 思想的な話でいうと、
 「`<<` や `>>` という記号をシフト以外の意味で使わせるつもりはない」という方針はこれまで通りです。
 

@@ -14,7 +14,8 @@ aliases:
 
 # 非同期ストリーム
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 で、[非同期メソッド](sp5_async.md)が大幅に拡張されます。
@@ -24,7 +25,8 @@ C# 8.0 で、[非同期メソッド](sp5_async.md)が大幅に拡張されます
 同期的な処理であれば、これまでも[イテレーター](../data/sp2_iterator.md)と[`foreach`](../data/sp_foreach.md)という機能がありました。
 非同期ストリームはこれらの非同期版([非同期メソッド](sp5_awaitable.md)との混在)になります。
 
-##<a id="sec-generated-title-2"></a> <a id="iasyncenumerable"></a>IAsyncEnumerable
+## <a id="sec-generated-title-2"></a> <a id="iasyncenumerable"></a>IAsyncEnumerable
+
 [イテレーター](../data/sp2_iterator.md)と[`foreach`](../data/sp_foreach.md)では、[`IEnumerable<T>`](https://docs.microsoft.com/ja-jp/dotnet/api/system.collections.generic.ienumerable-1)インターフェイス(`System.Collections.Generic`名前空間)が中心的な役割を担います。
 
 - イテレーターの戻り値は`IEnumerable<T>`もしくは[`IEnumerator<T>`](https://docs.microsoft.com/ja-jp/dotnet/api/system.collections.generic.ienumerator-1)である必要がある
@@ -65,7 +67,8 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 ちなみに、同期版とは違って、非ジェネリックな`IAsyncEnumerable`、`IAsyncEnumerator`インターフェイスはありません。
 (非ジェネリックな`IEnumerable`は[ジェネリクス](../oop/sp2_generics.md)導入前の名残で、互換性のためだけに残されているものです。)
 
-##<a id="sec-generated-title-3"></a> <a id="await-foreach"></a>非同期foreach
+## <a id="sec-generated-title-3"></a> <a id="await-foreach"></a>非同期foreach
+
 仕組みが単純なので、データの消費側(非同期`foreach`)の方を先に説明します。
 以下のように、`await foreach` と書くことで、
 `IAsyncEnumerable<T>` (と同じパターンを持つ型)の列挙ができます。
@@ -112,7 +115,8 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 - enumerator (上記の例で言う `e`)が構造体なら null チェックは挟まらない
 - `DisposeAsync` を持っていない場合は`finally`内の処理自体消える
 
-###<a id="sec-generated-title-4"></a> <a id="pattern-based-await-foreach"></a>パターン ベース
+### <a id="sec-generated-title-4"></a> <a id="pattern-based-await-foreach"></a>パターン ベース
+
 パターン ベースなので、インターフェイスを実装していなくても、
 所定のメソッドさえ持っていれば非同期`foreach`で使えます。
 以下はその一例です。
@@ -184,7 +188,8 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 }
 </code></pre>
 
-##<a id="sec-generated-title-5"></a> <a id="await-using"></a>非同期using
+## <a id="sec-generated-title-5"></a> <a id="await-using"></a>非同期using
+
 前節の非同期`foreach`の展開結果には`DisposeAsync`の呼び出しが含まれていました。
 また、`IAsyncEnumerator<T>`は`IAsyncDisposable`から派生しています。
 
@@ -228,7 +233,8 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="pattern-based-await-using"></a>パターン ベース
+### <a id="sec-generated-title-6"></a> <a id="pattern-based-await-using"></a>パターン ベース
+
 「[パターン ベースな構文](../misc/miscpatternbased.md#converse)」で説明していますが、同期版の`using`は数少ない「インターフェイス実装が必須な構文」です。
 
 一方、非同期`using`はパターン ベースになっています。
@@ -339,7 +345,8 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="await-using-declaration"></a>using変数宣言との併用
+### <a id="sec-generated-title-7"></a> <a id="await-using-declaration"></a>using変数宣言との併用
+
 [`using`変数宣言](../resource/oo_dispose.md#using-declaration)との併用も可能です。
 以下のような書き方ができます。
 
@@ -362,7 +369,8 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 }
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="sync-and-async"></a>DisposeとDisposeAsyncの混在
+### <a id="sec-generated-title-8"></a> <a id="sync-and-async"></a>DisposeとDisposeAsyncの混在
+
 ちなみに、`Dispose`(`IDisposable`インターフェイス)と`DisposeAsync`(`IAsyncDisposable`インターフェイス)の両方を実装をしている場合、それぞれ同期版`using`、非同期`using`でしか呼ばれません。
 非同期版が同期版を兼ねたりはしませんし、その逆もまたしかり。
 
@@ -398,7 +406,8 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 }
 </code></pre>
 
-##<a id="sec-generated-title-9"></a> <a id="async-iterator"></a>非同期イテレーター
+## <a id="sec-generated-title-9"></a> <a id="async-iterator"></a>非同期イテレーター
+
 [非同期`foreach`](#await-foreach)とは逆の、データの生成側の機能が非同期イテレーターです。
 簡単に言うと、[`yield`](../data/sp2_iterator.md#block)と[`await`](sp5_async.md#async)の混在ができるようになりました。
 
@@ -432,7 +441,8 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 - メソッドに`async`修飾子が付いている
   - メソッド内に`await`演算子を書ける
 
-###<a id="sec-generated-title-10"></a> <a id="compiled"></a>非同期イテレーターのコンパイル結果
+### <a id="sec-generated-title-10"></a> <a id="compiled"></a>非同期イテレーターのコンパイル結果
+
 非同期イテレーターの仕組みは、同期版のイテレーターや非同期メソッドの延長線上にあります。
 それぞれについては以下のページで説明しています。
 
@@ -463,7 +473,8 @@ _taskSource.<span class="method">SetResult</span>(<span class="reserved">true</s
 パフォーマンス最適化のために導入された構造体です。
 (パフォーマンスはいいですが、使い勝手は少し煩雑になります。)
 
-###<a id="sec-generated-title-11"></a> <a id="contextual-keyword"></a>余談: 文脈キーワード
+### <a id="sec-generated-title-11"></a> <a id="contextual-keyword"></a>余談: 文脈キーワード
+
 [C# は後方互換性を非常に重要視する言語](../misc/ap_compatibility.md)なので、
 `yield`や`await`は[文脈キーワード](../misc/ap_compatibility.md#contextual-keyword)になっています。
 例えば、以下のようなコードでは`yield`や`await`がキーワード扱いされず、
@@ -491,7 +502,8 @@ _taskSource.<span class="method">SetResult</span>(<span class="reserved">true</s
 そのため、「イテレーターにも`iterator`修飾子みたいなものを足そうか」という話が出たこともあります。
 しかし、「同じ用途の別文法」を作ってしまう混乱を起こしてまで実現する課題ではないという判断になり、結局2方式の混在が採用されました。
 
-###<a id="sec-generated-title-12"></a> <a id="EnumeratorCancellation"></a>キャンセル
+### <a id="sec-generated-title-12"></a> <a id="EnumeratorCancellation"></a>キャンセル
+
 `IAsyncEnumerable<T>`インターフェイスの`GetAsyncEnumerator`メソッドには`CancellationToken`を渡せるようになっていて、これを使って非同期処理の途中キャンセルをする想定になっています。
 
 非同期イテレーターでは、以下のように、引数に`EnumeratorCancellation`属性(`System.Runtime.CompilerServices`名前空間)を付けることでこの`CancellationToken`を受け取れるようになります。
@@ -600,7 +612,8 @@ _taskSource.<span class="method">SetResult</span>(<span class="reserved">true</s
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-13"></a> <a id="usage"></a>利用例
+## <a id="sec-generated-title-13"></a> <a id="usage"></a>利用例
+
 (予定)
 
 具体例いくつか挙げる

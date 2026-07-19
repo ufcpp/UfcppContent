@@ -19,7 +19,8 @@ aliases:
 
 # 参照渡し
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 プログラミング言語での値の受け渡しの方法には
 <strong id="byval" class="keyword">値渡し</strong>（pass by value）と<strong id="byref" class="keyword">参照渡し</strong>（pass by reference）という2つの方法があります。
 
@@ -28,13 +29,15 @@ C# では、値の受け渡しは基本的に値渡しになります。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 値渡し： メソッド内で引数の値を書きかえても、呼び出し元には影響しない。
 
 * 参照渡し（ref）： メソッド内での値の書き換えの影響が呼び出し元に伝搬する。
 
 * out： 特殊な参照渡し。戻り値以外にも値を返したいとき（複数の値を返したいとか）に使う。
 
-##<a id="sec-generated-title-3"></a> <a id="pass-by"></a>値の受け渡し
+## <a id="sec-generated-title-3"></a> <a id="pass-by"></a>値の受け渡し
+
 値の受け渡しが発生する場所は何カ所かあります。例えば以下のような場所です。
 
 - 変数から変数
@@ -77,7 +80,8 @@ C#では、通常(特に何もつけないと)、値渡しになります。
 
 ちなみに、C#には受け渡しの値渡しと参照渡しの他に、型の区分として[値型と参照型](oo_reference.md)というものもあります。結果的に、「値型の値渡し」、「値型の参照渡し」、「参照型の値渡し」、「参照型の参照渡し」というような組み合わせもできるので注意が必要です。
 
-##<a id="sec-generated-title-4"></a> <a id="sec-byval"></a>値渡し
+## <a id="sec-generated-title-4"></a> <a id="sec-byval"></a>値渡し
+
 しばらく、C# 6以前でも使える「引数の受け渡し」で説明して行きましょう。
 
 引数の値渡し(call by value)とは、メソッドを呼び出す際に値のコピーを渡すことを言います。
@@ -134,11 +138,13 @@ C# では普通にメソッドを定義すると、その引数は値渡しに�
 	<figcaption>参照型の値渡し(参照先の書き換え)</figcaption>
 </figure>
 
-##<a id="sec-generated-title-5"></a> <a id="sec-byref-param"></a>参照渡しの引数
+## <a id="sec-generated-title-5"></a> <a id="sec-byref-param"></a>参照渡しの引数
+
 引数の参照渡し(call by reference)とは、メソッドを呼び出す際に変数の参照情報を渡すことを言います。
 C# では、`ref`引数、`in`引数、`out`引数という3種類の参照渡しがあります。
 
-###<a id="sec-generated-title-6"></a> <a id="sec-byref"></a>参照引数(ref 引数)
+### <a id="sec-generated-title-6"></a> <a id="sec-byref"></a>参照引数(ref 引数)
+
 C# で単に「参照引数」という場合、`ref`引数を指します。
 後述する`in`(読み取り専用)や`out`(戻り値的に使う引数)のような制約がなく、読み書き両方できるものです。
 
@@ -201,6 +207,7 @@ C# で単に「参照引数」という場合、`ref`引数を指します。
 
 
 ##### <a id="sec-generated-title-7"></a>サンプル
+
 <pre class="source" title="ref キーワードのサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -244,7 +251,8 @@ C# で単に「参照引数」という場合、`ref`引数を指します。
   1  2  3  4  5  6  7  8  9
 </pre>
 
-###<a id="sec-generated-title-8"></a> <a id="in"></a>入力参照引数 (in 引数)
+### <a id="sec-generated-title-8"></a> <a id="in"></a>入力参照引数 (in 引数)
+
 <h5 class="version version7">Ver. 7.2</h5>
 
 C# 7.2 から、「参照渡しだけども読み取り専用」というような引数の渡し方ができるようになりました。
@@ -364,7 +372,8 @@ C# 7.2 から、「参照渡しだけども読み取り専用」というよう�
 この例でも、`+` 演算子の方はインライン展開が掛かるため、`in`引数に変えても性能は変わりません(むしろ値渡しの方が速いくらい)。
 一方、`*` 演算子の方は中身が大きく、このくらいにあるとインライン展開が掛からないため、`in`引数にした効果が結構現れます。
 
-####<a id="sec-generated-title-9"></a> <a id="in-copy"></a>注意: in 引数を使ってもコピーが発生する場合
+#### <a id="sec-generated-title-9"></a> <a id="in-copy"></a>注意: in 引数を使ってもコピーが発生する場合
+
 詳しくは「[readonly の注意点](readonlyness.md)」で説明しますが、構造体に対して`readonly`を使うと、無駄にコピーが発生してしまうことがあります。
 `readonly`なものに対してメソッドを呼ぶ際、呼び出し側は「メソッド内部で値が書き換わっていない」という保証を知る由がないため、
 メソッドを呼んだ時点で無条件にコピーを作ります。
@@ -402,7 +411,8 @@ C# 7.2 から、「参照渡しだけども読み取り専用」というよう�
 だからこそ気づきにくいバグになりがちで、
 問題視され、「隠れたコピー」(hidden copy)と呼ばれています。
 
-####<a id="sec-generated-title-10"></a> <a id="ref-readonly-param">ref readonly 引数</a>
+#### <a id="sec-generated-title-10"></a> <a id="ref-readonly-param">ref readonly 引数</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 [in 引数](#in)では、利便性のため、右辺値を渡せる仕様になっています。
@@ -509,7 +519,8 @@ ref readonly 引数というものを導入しました。
 そのメソッドを ref readonly に書き換えた時に、呼び出し側に影響が及ばないようにという配慮です。
 (こちらは [`MemoryMarshal.CreateReadOnlySpan`](https://learn.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.memorymarshal.createreadonlyspan) などが該当。)
 
-###<a id="sec-generated-title-11"></a> <a id="out"></a>出力引数 (out 引数)
+### <a id="sec-generated-title-11"></a> <a id="out"></a>出力引数 (out 引数)
+
 参照渡しを使うと、メソッド内からメソッド外にある変数を書き換えることができます。
 これを、メソッドの戻り値代わりに使うこともできます。
 特に、複数の戻り値を返す場合に有効な手段です<sup>※</sup>。
@@ -579,6 +590,7 @@ ref readonly 引数というものを導入しました。
 の2点です。
 
 ##### <a id="sec-generated-title-12"></a>サンプル
+
 メソッドで複数の値を返したい場合、
 戻り値では1つしか値を返せないので出力変数を使います。
 
@@ -649,7 +661,8 @@ ref readonly 引数というものを導入しました。
 </code></pre>
 
 
-####<a id="sec-generated-title-13"></a> <a id="out-var"></a>出力変数宣言
+#### <a id="sec-generated-title-13"></a> <a id="out-var"></a>出力変数宣言
+
 <h5 class="version version7">Ver. 7</h5>
 
 C# 7で、出力引数を受け取るのと同時に式中で変数を宣言できるようになりました。
@@ -734,7 +747,8 @@ C# 6で導入された `=>` を使った形式でメソッドを書くことが�
 
 正確にいうともう少し複雑なルールになっていますが、詳細については「[式の中で変数宣言](../start/st_scope.md#declaration-expressions)」を参照してください。
 
-###<a id="sec-generated-title-14"></a> <a id="ref-in-out"></a>in も out も内部的には ref
+### <a id="sec-generated-title-14"></a> <a id="ref-in-out"></a>in も out も内部的には ref
+
 C# コンパイラーとしては`in`引数や`out`引数を`ref`引数と区別していますが、
 .NET の型システムのレベルでは実は区別がありません。
 .NET 的には`in`引数も`out`引数も`ref`引数扱いになっています。
@@ -790,7 +804,8 @@ C# コンパイラーとしては`in`引数や`out`引数を`ref`引数と区別
 それを古いコンパイラー(Visual Studio 2017 15.4以前)で使おうとすると`ref`引数扱いされます。
 (実際のところ、`in`引数は、`ref`引数に`IsReadOnly`属性が付いているだけ。)
 
-###<a id="sec-generated-title-15"></a> <a id="byref-param-restriction"></a>参照引数の制限
+### <a id="sec-generated-title-15"></a> <a id="byref-param-restriction"></a>参照引数の制限
+
 [別項](refstruct.md#stack-only)で少し話していますが、参照はスタック上でしか使えません。
 参照引数もこの制限に引っかかります。
 その結果、参照引数(`ref`、`in`、`out`いずれも)には以下のような制限があります。
@@ -830,7 +845,8 @@ C# コンパイラーとしては`in`引数や`out`引数を`ref`引数と区別
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-16"></a> <a id="ref-returns"></a>参照戻り値と参照ローカル変数
+## <a id="sec-generated-title-16"></a> <a id="ref-returns"></a>参照戻り値と参照ローカル変数
+
 <h5 class="version version7">Ver. 7</h5>
 
 - [サンプル](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/RefReturns)
@@ -939,7 +955,8 @@ C# 7から、戻り値とローカル変数でも参照渡しを使えるよう�
 [後述](#ref-reassignment)しますが、この参照の書き換えはC# 7.3からできるようになっています
 (逆に、C# 7.0～7.2 ではこの機能は使えません)。
 
-###<a id="sec-generated-title-17"></a> <a id="flow-analysis"></a>参照戻り値で返せるもの
+### <a id="sec-generated-title-17"></a> <a id="flow-analysis"></a>参照戻り値で返せるもの
+
 もし何の制限も掛かっていないなら、参照渡しでは参照をたどった先の大元が消えしまっている可能性があって危険です。
 C#の参照渡しでは、そうならないように、参照できるものを制限しています。
 
@@ -1032,7 +1049,8 @@ C# 7では、コンパイラーが賢くなって、この「大元をたどっ�
 (こういう`X`の中身次第で変わる挙動を認めてしまうと、`X`の変更の影響が`X`利用側(この例の場合`Y`)に及び過ぎるため問題があります。
 「追ってくれない」というより、意図的に「追わない」という面もあります。)
 
-####<a id="sec-generated-title-18"></a> <a id="struct-this"></a>構造体のフィールドの参照(戻り値にできない)
+#### <a id="sec-generated-title-18"></a> <a id="struct-this"></a>構造体のフィールドの参照(戻り値にできない)
+
 C# コンパイラーが行う「参照戻り値に返して安全かどうか」の判定で、
 1つ注意が必要な点があります。
 構造体の場合、フィールドの参照を返せません。
@@ -1187,7 +1205,8 @@ C# コンパイラーが行う「参照戻り値に返して安全かどうか�
 }
 </code></pre>
 
-###<a id="sec-generated-title-19"></a> <a id="conditional-ref"></a>条件演算子での ref 利用
+### <a id="sec-generated-title-19"></a> <a id="conditional-ref"></a>条件演算子での ref 利用
+
 <h5 class="version version7">Ver. 7.2</h5>
 
 C# 7.2から、[条件演算子](../start/st_operator.md#condition)の2項目、3項目を参照にできるようになりました。
@@ -1235,7 +1254,8 @@ Console.WriteLine((x, y)); <span class="comment">// (1, 10)</span>
 (`ref` に限った話ではなく、単に演算子の優先度の問題です。
 代入と条件演算子が並んでいる場合、右から順に結合するので、`()`がなければ代入が先に解釈されます。)
 
-###<a id="sec-generated-title-20"></a> <a id="ref-readonly"></a>ref readonly
+### <a id="sec-generated-title-20"></a> <a id="ref-readonly"></a>ref readonly
+
 <h5 class="version version7">Ver. 7.2</h5>
 
 [`in`引数](#in)と併せてC# 7.2で、
@@ -1258,7 +1278,8 @@ Console.WriteLine((x, y)); <span class="comment">// (1, 10)</span>
 ちなみに、引数の`in`と、ローカル変数・戻り値の `ref readonly` は全く同じ意味です。
 提案当初は引数でも`ref readonly`と書かせる案もありましたが、`out`引数との対称性がきれいだったため、最終的には`in`の方が採用されました。
 
-###<a id="sec-generated-title-21"></a> <a id="ref-reassignment"></a>ref再代入
+### <a id="sec-generated-title-21"></a> <a id="ref-reassignment"></a>ref再代入
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 C# 7.3で、参照引数、参照ローカル変数のref再代入(ref reassignment)というものができるようになりました。
@@ -1353,7 +1374,8 @@ r = 20; <span class="comment">// y が 20 になる。</span>
 }
 </code></pre>
 
-###<a id="sec-generated-title-22"></a> <a id="ref-for"></a>for/foreach のループ変数を参照に
+### <a id="sec-generated-title-22"></a> <a id="ref-for"></a>for/foreach のループ変数を参照に
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 C# 7.3から、`for`ステートメントや`foreach`ステートメントのループ変数も、参照ローカル変数にできるようにないました。
@@ -1455,6 +1477,7 @@ C# 7.3から、`for`ステートメントや`foreach`ステートメントのル
 </code></pre>
 
 ### <a id="sec-generated-title-23"></a>余談(将来の話): let や readonly 引数・ローカル変数
+
 ローカル変数に対して `ref readonly var x`というように書くのは長ったらしくて多少しんどいものがあります。
 
 `ref readonly`だけが先に入ることになりましたが、(参照ではなく単に) `readonly` な引数やローカル変数も今後入る予定です。
@@ -1488,7 +1511,8 @@ C# 7.3から、`for`ステートメントや`foreach`ステートメントのル
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-24"></a> <a id="value-type"></a>値型の参照渡し
+## <a id="sec-generated-title-24"></a> <a id="value-type"></a>値型の参照渡し
+
 - [サンプル](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/RefReturns)
 
 最後に、参照渡しの活用場面について説明します。
@@ -1504,7 +1528,8 @@ C#には、値渡し・参照渡しと、値型・参照型という区別があ
 通常の参照引数(`ref`引数)や参照戻り値は、ほぼ値型に対して使うものです。
 ここでは、どうして値型の場合は参照渡しが必要になるかについて説明して行きましょう。
 
-###<a id="sec-generated-title-25"></a> <a id="mutate-value"></a>値型の部分書き換えに関する問題
+### <a id="sec-generated-title-25"></a> <a id="mutate-value"></a>値型の部分書き換えに関する問題
+
 前述の通り、値渡しをすると、値のコピーが発生します。
 結果として、値の書き換えは変数ごとに独立になります。
 
@@ -1620,7 +1645,8 @@ C#には、値渡し・参照渡しと、値型・参照型という区別があ
 この例を見ての通り、部分書き換えができなくなります。
 一旦コピーして、ローカル変数に対して部分書き換えをして、その結果を全体を渡しなおす必要があります。
 
-####<a id="sec-generated-title-26"></a> <a id="immutable-value-type"></a>補足: 「構造体は書き換え不能に作れ」ガイドライン
+#### <a id="sec-generated-title-26"></a> <a id="immutable-value-type"></a>補足: 「構造体は書き換え不能に作れ」ガイドライン
+
 プロパティやインデクサーを通して部分書き換えできないというのが意外と罠になるので、
 構造体は最初から部分書き換え不能に作る方がいいというガイドラインもあるくらいです。
 このガイドライン通りに`Point`構造体を作るなら、以下のようになります。
@@ -1640,7 +1666,8 @@ C#には、値渡し・参照渡しと、値型・参照型という区別があ
 `X`, `Y`のどちらかだけを書き換えたい場合でも、`X`, `Y`両方のコピーが発生するためです。
 特に、構造体のサイズが大きくなると、コピーの負担が結構深刻になってきます。
 
-###<a id="sec-generated-title-27"></a> <a id="ref-value-type"></a>参照渡しの活用
+### <a id="sec-generated-title-27"></a> <a id="ref-value-type"></a>参照渡しの活用
+
 補足で説明したような部分書き換えできない型を作る実装方法は、バグを減らす意味では有効です。
 しかしその一方で、パフォーマンス的には不利になります。
 
@@ -1727,6 +1754,7 @@ C#には、値渡し・参照渡しと、値型・参照型という区別があ
 </code></pre>
 
 ### <a id="sec-generated-title-28"></a>補足: 配列のインデクサー
+
 本節で挙げた例で、配列のインデクサーはユーザー定義のインデクサーと挙動が違うことにお気づきでしょうか。
 実は、配列のインデクサーは参照を返しています。
 
@@ -1756,7 +1784,8 @@ list[0].X = 1; <span class="comment">// コンパイル エラー</span>
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-29"></a> <a id="pointer"></a>参照渡しとポインター
+## <a id="sec-generated-title-29"></a> <a id="pointer"></a>参照渡しとポインター
+
 少し内部的な話もしておきましょう。
 内部的には、参照渡しとポインターは似たようなものです。
 
@@ -1795,7 +1824,8 @@ list[0].X = 1; <span class="comment">// コンパイル エラー</span>
 
 `ldind`はload indirect (間接ロード)の略で、 ポインターや参照ごしに値を取ってくる命令ですが、 ポインターと参照でまったく同じ命令を使います。
 
-###<a id="sec-generated-title-30"></a> <a id="as-pointer"></a>参照渡しとポインターの相互変換
+### <a id="sec-generated-title-30"></a> <a id="as-pointer"></a>参照渡しとポインターの相互変換
+
 命令上互換性があるわけで、やろうと思えば参照渡しとポインターの間で相互変換が可能です。
 C#を使って書けるコードではありませんが、[IL](../../il/index.md)を使えば書けます。
 

@@ -18,7 +18,8 @@ aliases:
 
 # バケットソート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 ソート対象となるデータの種類を仮定しない場合、
 （ほとんどの場面で）最速のソートは「[クイックソート](sort_quick.md#quick)」です。
 あるいは、「[安定](sort.md#stable)」が必要な場合、
@@ -54,7 +55,8 @@ aliases:
 
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=bucket&i=0&s=0&w=300" width="304" height="332"></iframe></div>
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/BucketSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/BucketSort.cs)
 
 値を本当に整数に限定するなら、

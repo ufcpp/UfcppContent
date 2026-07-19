@@ -18,7 +18,8 @@ aliases:
 
 # 組込み演算子
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ＋、－、×、÷のように、
 いくつかの変数に対して何らかの処理を加えるもののことを<strong id="operator" class="keyword">演算子</strong>(operator)と呼びます。
 また、演算の対象となるもの(x+y の x や y)のことを<strong id="operand" class="keyword">オペランド</strong>(operand: 被演算子)と呼びます。
@@ -33,6 +34,7 @@ C# では、算術演算や論理演算を行うための演算子が用意さ�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 演算子: 加減乗除など、数学で出てくるような演算子がいろいろと。
 
 * x = y は、数学と違って代入なので注意。
@@ -48,7 +50,8 @@ C# では、算術演算や論理演算を行うための演算子が用意さ�
 （参考: 「[演算子のオーバーロード](../oop/oo_operator.md)」。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="arithmetic"></a>算術演算子
+## <a id="sec-generated-title-3"></a> <a id="arithmetic"></a>算術演算子
+
 <code>+, -, *, /</code> を用いて加減乗除算を行えます。
 また、<code>+, -</code> を用いて数値の符号を反転することが出来ます。
 
@@ -130,7 +133,8 @@ C# では、算術演算や論理演算を行うための演算子が用意さ�
 浮動小数点数の場合は <code>x - Math.Truncate(x / y) * y</code> と同じ値になります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="inc"></a>インクリメント・デクリメント
+## <a id="sec-generated-title-4"></a> <a id="inc"></a>インクリメント・デクリメント
+
 <code>++, --</code> を用いてインクリメント、デクリメント演算を行うことが出来ます。
 インクリメント演算を行うとオペランドは 1 ずつ増加（<code>++x</code> は <code>x = x + 1</code> と同じ）し、
 デクリメント演算を行うとオペランドは 1 ずつ減少（<code>--x</code> は <code>x = x - 1</code> と同じ）します。
@@ -188,7 +192,8 @@ C# では、算術演算や論理演算を行うための演算子が用意さ�
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="shift"></a>シフト
+## <a id="sec-generated-title-5"></a> <a id="shift"></a>シフト
+
 <code>&lt;&lt;</code> は左シフトを、
 <code>&gt;&gt;</code> は右シフトを行う演算子です。
 
@@ -222,7 +227,8 @@ C# では、算術演算や論理演算を行うための演算子が用意さ�
 	</tr>
 </table>
 
-###<a id="sec-generated-title-6"></a> <a id="unsigned-right-shift"></a>符号なし右シフト
+### <a id="sec-generated-title-6"></a> <a id="unsigned-right-shift"></a>符号なし右シフト
+
 <h5 class="version version11*">Ver. 11</h5>
 
 C# では長らく、
@@ -236,7 +242,8 @@ C# では長らく、
 
 詳しくは「[【Generic Math】 C# 11 での演算子の新機能](../oop/generic-math-operators.md#unsigned-right-shift)」で説明します。
 
-##<a id="sec-generated-title-7"></a> <a id="concat"></a>文字列連結
+## <a id="sec-generated-title-7"></a> <a id="concat"></a>文字列連結
+
 文字列に対して <code>+</code> 演算子を用いることで文字列の連結を行えます。
 
 <table summary="">
@@ -257,7 +264,8 @@ C# では長らく、
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="logical"></a>論理演算子
+## <a id="sec-generated-title-8"></a> <a id="logical"></a>論理演算子
+
 AND, OR, XOR などの論理演算を行います。
 
 <code>&amp;, |, ^</code> はそれぞれ AND, OR, XOR を行う演算子です。
@@ -327,7 +335,8 @@ AND, OR, XOR などの論理演算を行います。
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="relation"></a>関係演算
+## <a id="sec-generated-title-9"></a> <a id="relation"></a>関係演算
+
 <code>==, !=</code> を用いてオペランドの等値性を判断できます。
 <code>==</code> は2つのオペランドが等しければ <code>true</code> を、
 <code>!=</code> は2つのオペランドが等しくなければ <code>true</code> を返します。
@@ -411,7 +420,8 @@ AND, OR, XOR などの論理演算を行います。
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="substitute"></a>代入演算
+## <a id="sec-generated-title-10"></a> <a id="substitute"></a>代入演算
+
 `=` を用いて代入を行えます。<code>=</code> は、右オペランドの値を左オペランドに代入します。
 
 （
@@ -435,7 +445,8 @@ C# では代入になります。
 	</tr>
 </table>
 
-###<a id="sec-generated-title-11"></a> <a id="compound-assignment"></a>複合代入演算子
+### <a id="sec-generated-title-11"></a> <a id="compound-assignment"></a>複合代入演算子
+
 <code>+=, -=, *=, /=, %=, &amp;=, |=, ^=, &lt;&lt;=, &gt;&gt;=</code> など、
 2項演算子の後ろに `=` を付けることで複合代入(compound assignment)というものになります。
 
@@ -460,7 +471,8 @@ C# では代入になります。
 	</tr>
 </table>
 
-####<a id="sec-generated-title-12"></a> <a id="null-coalescing-assignment"></a>null 合体代入
+#### <a id="sec-generated-title-12"></a> <a id="null-coalescing-assignment"></a>null 合体代入
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 では、[null合体演算子](../resource/sp2_nullable.md#coalescing) (`??`)も複合代入に使えるようになりました(`??=`)。
@@ -478,7 +490,8 @@ C# 8.0 では、[null合体演算子](../resource/sp2_nullable.md#coalescing) (`
 意味としては、`if (s == null) s = ...;` と同じになります。
 
 
-##<a id="sec-generated-title-13"></a> <a id="condition"></a>条件演算子
+## <a id="sec-generated-title-13"></a> <a id="condition"></a>条件演算子
+
 <code>?:</code> 演算子、は C# における唯一の3項演算子(trinary operator: オペランドが3つの演算子)で、
 1つ目のオペランドの結果に応じて2つ目か3つ目のどちらかのオペランドの値を返します。
 例えば、<code>cond ? x : y;</code> は
@@ -511,7 +524,8 @@ C# 8.0 では、[null合体演算子](../resource/sp2_nullable.md#coalescing) (`
 
 
 
-##<a id="sec-generated-title-14"></a> <a id="null"></a>null 合体演算子
+## <a id="sec-generated-title-14"></a> <a id="null"></a>null 合体演算子
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 無効な値（null）を許容する型（「[参照型](../resource/oo_reference.md#reftype)」 もしくは 「[Nullable 型](../resource/sp2_nullable.md#nullableType)」）に対して、
@@ -536,7 +550,8 @@ C# 8.0 では、[null合体演算子](../resource/sp2_nullable.md#coalescing) (`
 
 
 
-##<a id="sec-generated-title-15"></a> <a id="sizeof"></a>sizeof 演算子
+## <a id="sec-generated-title-15"></a> <a id="sizeof"></a>sizeof 演算子
+
 sizeof 演算子は、他の演算子と比べると少し特殊で、
 以下のように、型に対して用います。
 
@@ -559,7 +574,8 @@ sizeof(int), sizeof(byte) はそれぞれ 4, 1 を返します。
 （unsafe コードと呼ばれる特殊な状況下でのみ、もう少し広い範囲の型のサイズを取得できます。参考: 「[unsafe](../interop/sp_unsafe.md)」。）
 
 
-##<a id="sec-generated-title-16"></a> <a id="short-circuit"></a>短絡評価
+## <a id="sec-generated-title-16"></a> <a id="short-circuit"></a>短絡評価
+
 条件 AND <code>&amp;&amp;</code>、
 条件 OR <code>||</code>、
 条件演算子 <code>?:</code>、および、null 合体演算子 <code>??</code> は
@@ -655,14 +671,16 @@ a
 
 
 
-##<a id="sec-generated-title-17"></a> <a id="other"></a>その他の式
+## <a id="sec-generated-title-17"></a> <a id="other"></a>その他の式
+
 このページで紹介したような、数学でも出てくるような演算子は、
 C# の構文上は式（expression）と呼ばれるものの一種です。
 式には、その他にもいろいろな種類のものがあり、おいおい説明してくことになります。
 （参考: 「[C# の式と文の一覧](../cheatsheet/list_expression.md)」）      
 
 
-##<a id="sec-generated-title-18"></a> <a id="priority"></a>演算子の優先順位
+## <a id="sec-generated-title-18"></a> <a id="priority"></a>演算子の優先順位
+
 演算子には以下に示す優先順位があります。
 
 <table summary="">

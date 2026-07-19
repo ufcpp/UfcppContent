@@ -18,14 +18,16 @@ aliases:
 
 # \[サンプル\] SOV 型のメソッド呼び出し
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 文章って、
 動詞が最後にある方が自然らしいよ（眉つば）。
 
 ということで、メソッド（動詞に相当）名が最後に来るような構文を C# で無理やり作ってみた。
 
 
-##<a id="sec-generated-title-2"></a> <a id="cause"></a>ことの発端
+## <a id="sec-generated-title-2"></a> <a id="cause"></a>ことの発端
+
 きっかけは以下の記事。
 
 * [「英語式語順は、自然な思考の順番に反する」研究結果](http://wiredvision.jp/news/200807/2008070921.html)
@@ -44,7 +46,8 @@ SOV とか SVO とかを補足しておくと、
 ジェスチャーすると「girl, doorknob, turn」の順になると。
 
 
-###<a id="sec-generated-title-3"></a> <a id="programming"></a>OOP における語順
+### <a id="sec-generated-title-3"></a> <a id="programming"></a>OOP における語順
+
 とりあえずこの論文を信じるとすると、
 プログラミング言語における単語の語順ってどうなんでしょうか。
 
@@ -89,7 +92,8 @@ C# とかの OOP 言語は英語の文法に近いんですよね。
 上述のような SOV 構文で、<code>(shape1, shape2).CollisionDetect()</code> とか書けると結構素敵。
 
 
-##<a id="sec-generated-title-4"></a> <a id="csharpsov"></a>C# で SOV 構文
+## <a id="sec-generated-title-4"></a> <a id="csharpsov"></a>C# で SOV 構文
+
 完璧にネタなんですが、
 C# で SOV 構文でプログラミングできるようにしてみました。
 
@@ -99,7 +103,8 @@ C# で SOV 構文でプログラミングできるようにしてみました。
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="english"></a>英語版
+### <a id="sec-generated-title-5"></a> <a id="english"></a>英語版
+
 英語は語順に厳しい言語です。
 これは、日本語でいうところの「てにをは」が欠落してしまったせいなんですけども、
 ヨーロッパ言語ってものは本来、語順に自由の利く言語です。
@@ -155,6 +160,7 @@ C# で SOV 構文でプログラミングできるようにしてみました。
 
 
 ##### <a id="sec-generated-title-6"></a>感想
+
 VB の名前付き引数みたいになってきた。VSO 型になるけども。
 
 <pre class="source" title="VB の名前付き引数" lang="">
@@ -170,7 +176,8 @@ Replace( \
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="japanese"></a>日本語版
+### <a id="sec-generated-title-7"></a> <a id="japanese"></a>日本語版
+
 SOV 型言語と言えば日本語ですね、と。
 日本語プログラミングしてみましょうか。
 
@@ -220,12 +227,14 @@ Nominals.Make(
 
 
 ##### <a id="sec-generated-title-8"></a>感想
+
 皆様の言いたいことはわかります。
 
 [ひまわり](http://ja.wikipedia.org/wiki/%E3%81%B2%E3%81%BE%E3%82%8F%E3%82%8A_(%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E8%A8%80%E8%AA%9E))？
 
 
-##<a id="sec-generated-title-9"></a> <a id="in_fact"></a>そもそもほんとに SOV がいい？
+## <a id="sec-generated-title-9"></a> <a id="in_fact"></a>そもそもほんとに SOV がいい？
+
 実際のところどうなんでしょうね。
 元ネタの記事、
 そもそも「被験者は40人ってのは妥当？」とか「SOV 言語はトルコ語だけ？」とか、
@@ -270,7 +279,8 @@ Nominals.Make(
 SOVO？
 
 
-###<a id="sec-generated-title-10"></a> <a id="powersheel"></a>それってつまり・・・
+### <a id="sec-generated-title-10"></a> <a id="powersheel"></a>それってつまり・・・
+
 「話の主題が前、そして、付帯情報を後ろに付ける」っていうと、
 実のところ、PowerShell のパイプライン構文がそうなってるかも。
 

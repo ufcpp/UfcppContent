@@ -18,7 +18,8 @@ aliases:
 
 # 極限
 
-##<a id="sec-generated-title-1"></a> <a id="limit"></a>極限
+## <a id="sec-generated-title-1"></a> <a id="limit"></a>極限
+
 数（整数や実数など）の範囲で考えれば、無限というものは存在しません。
 どんなに大きな数であろうと所詮は有限の値です。
  
@@ -26,7 +27,8 @@ aliases:
 （「無限大という値」になるのではなく、あくまで「値が無限に大きくなっていく」という考え方ですが。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="unlimited"></a>限りなく
+## <a id="sec-generated-title-2"></a> <a id="unlimited"></a>限りなく
+
 極限というのは、数列や関数に対する考え方で、
 「整数 <span class="math">n</span> を限りなく大きくしたときに数列 <span class="math">a<sub>n</sub></span> の値がどうなるか」とか、
 「実数 <span class="math">x</span> の値を限りなく <span class="math">a</span> に近づけたときに関数 <span class="math">f<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span> の値がどうなるか」というものです。
@@ -58,7 +60,8 @@ aliases:
 言葉の上でも、「収束」（値が確定する）ではなく「発散」（確定しない）といいます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="indefinite"></a>∞×0 ＝ ？
+## <a id="sec-generated-title-3"></a> <a id="indefinite"></a>∞×0 ＝ ？
+
 とりあえず、極限的な状況下では∞という概念が考えられるわけですが、
 ±∞に発散するものと、有限の値に収束するものを掛けるとやはり±∞（符号は逆なることもあり）になります。
 この性質は 0 に似ています（0 には何を掛けてもやはり 0 になる）。
@@ -95,6 +98,7 @@ aliases:
 ＝ 2
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="d68e214"></a>まとめ
+## <a id="sec-generated-title-4"></a> <a id="d68e214"></a>まとめ
+
 ∞は極限的な状況下でのみ存在する概念的なもの。
 ∞や0にも強さがある。

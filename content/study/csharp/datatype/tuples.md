@@ -18,7 +18,8 @@ aliases:
 
 # タプル
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <h5 class="version version7">Ver. 7</h5>
 
 「[名前のない複合型](../structured/st_anonymoustype.md)」で説明したように、
@@ -29,10 +30,12 @@ aliases:
 関数の戻り値は引数と対になるものなので、タプルの書き心地は引数に近くなるように設計されています。
 
 #### <a id="sec-generated-title-2"></a>ポイント
+
 - `(int x, int y)`というような、引数みたいな書き方で「名前のない型」を作れます
 - この書き方をタプルと呼びます
 
-##<a id="sec-generated-title-3"></a> <a id="tuple"></a>タプル
+## <a id="sec-generated-title-3"></a> <a id="tuple"></a>タプル
+
 C# 7で導入された<strong id="key-tuple" class="keyword">タプル</strong>(tuple)は、
 `(int x, int y)`というような、引数みたいな書き方で「名前のない型」を作る機能です。
 
@@ -43,13 +46,15 @@ C# 7で導入された<strong id="key-tuple" class="keyword">タプル</strong>(
 - [System.ValueTuple](https://www.nuget.org/packages/System.ValueTuple/)
 
 
-###<a id="sec-generated-title-4"></a> <a id="name"></a>タプルという名前
+### <a id="sec-generated-title-4"></a> <a id="name"></a>タプルという名前
+
 最初に例を挙げた`(int x, int y)`という書き方は、2つの`int`の値`x`と`y`を並べたものなわけですが、こういう「データを複数並べたもの」を意味する単語がタプルです。
 
 英語では倍数を「double, triple, quadruple, ...」などという単語で表しますが、これを一般化して n-tuple (nは0以上の任意の整数)と書くことがあり、これがタプルの語源です。
 n倍、n重、n連結というような意味しかなく、まさに「名前のない複合型」にピッタリの単語です。
 
-###<a id="sec-generated-title-5"></a> <a id="denotation"></a>型の明示
+### <a id="sec-generated-title-5"></a> <a id="denotation"></a>型の明示
+
 `(int x, int y)`みたいな書き方で、1つの型を表します。
 タプルの型の書き方はメソッドの仮引数リスト(引数を受け取る側の書き方)に似ていて、`()`の中に「型名 メンバー名」を `,` 区切りで並べます。
 
@@ -87,7 +92,8 @@ n倍、n重、n連結というような意味しかなく、まさに「名前�
 <span class="type">Console</span>.WriteLine(dic[(<span class="string">"a"</span>, <span class="string">"b"</span>)]); <span class="comment">// (1, 2)</span>
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="denotation-disallowed"></a>制限事項
+### <a id="sec-generated-title-6"></a> <a id="denotation-disallowed"></a>制限事項
+
 ただ、いくつか、通常の型であれば書ける場所で、タプルのこの記法を使えないところがあります。
 以下の3つです。
 
@@ -168,7 +174,8 @@ n倍、n重、n連結というような意味しかなく、まさに「名前�
 <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>&gt; one; <span class="comment">// OK</span>
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="literal"></a>タプル リテラル
+### <a id="sec-generated-title-7"></a> <a id="literal"></a>タプル リテラル
+
 タプルは`(1, 2)`というような書き方で[リテラル](../start/st_variable.md#literal)を書くことができます。
 タプル リテラルは実引数リスト(引数を渡す側の書き方)に似ています。
 
@@ -191,7 +198,8 @@ n倍、n重、n連結というような意味しかなく、まさに「名前�
 <span class="reserved">var</span> t2 = (<span class="reserved">null</span>, 1); <span class="comment">// コンパイル エラー</span>
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="member-access"></a>メンバー参照
+### <a id="sec-generated-title-8"></a> <a id="member-access"></a>メンバー参照
+
 メンバーの参照の仕方は普通の型と変わりません。`(int x, int y)`であれば、`x`、`y`という名前でアクセスできます。
 ちなみに、タプルのメンバーは書き換え可能です。
 
@@ -237,7 +245,8 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 <span class="type">Console</span>.WriteLine(t.y); <span class="comment">// 1</span>
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="deconstruction"></a>タプルの分解
+### <a id="sec-generated-title-9"></a> <a id="deconstruction"></a>タプルの分解
+
 タプルは、各メンバーを分解して、それぞれ別の変数に受けて使うことができます。
 
 <pre class="source" title="タプルの分解">
@@ -256,10 +265,12 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 この分解は、タプル以外の型に対しても使えるものです。
 詳しくは「[複合型の分解](deconstruction.md)」で説明します。
 
-###<a id="sec-generated-title-10"></a> <a id="conversion"></a>タプル間の変換
+### <a id="sec-generated-title-10"></a> <a id="conversion"></a>タプル間の変換
+
 タプル間の代入は、一定の条件下では暗黙的変換が掛かります。
 
-####<a id="sec-generated-title-11"></a> <a id="different-names"></a>名前違いのタプル
+#### <a id="sec-generated-title-11"></a> <a id="different-names"></a>名前違いのタプル
+
 タプル間の代入は、メンバーの宣言位置に基づいて行われます。
 逆に言うと、名前は無関係で、メンバーの型の並びだけ一致していれば代入できます。
 
@@ -279,7 +290,8 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 <span class="type">Console</span>.WriteLine(t2.y); <span class="comment">// 1</span>
 </code></pre>
 
-####<a id="sec-generated-title-12"></a> <a id="different-types"></a>型違いのタプル
+#### <a id="sec-generated-title-12"></a> <a id="different-types"></a>型違いのタプル
+
 タプルのメンバーの型が違う場合、メンバーごとに調べて、すべてのメンバーで暗黙的な変換がかかる場合に限り、
 タプル間の暗黙的変換ができます。
 
@@ -303,7 +315,8 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 (<span class="reserved">string</span> x, <span class="reserved">int</span> y, <span class="reserved">int</span> z) t = (1, 1L, <span class="reserved">default</span>(<span class="reserved">int</span>?)); <span class="comment">// NG</span>
 </code></pre>
 
-####<a id="sec-generated-title-13"></a> <a id="extensions"></a>拡張メソッドの解決
+#### <a id="sec-generated-title-13"></a> <a id="extensions"></a>拡張メソッドの解決
+
 前節のような型違いのタプル間の変換は、拡張メソッドのオーバーロード解決の際にも働きます。
 
 例えば以下のように、配列×2のタプルに対して、`IEnumerable`×2のタプルの拡張メソッドを呼べます。
@@ -338,7 +351,8 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 </code></pre>
 
 
-###<a id="sec-generated-title-14"></a> <a id="nest"></a>タプルの入れ子
+### <a id="sec-generated-title-14"></a> <a id="nest"></a>タプルの入れ子
+
 タプルは入れ子にできます。
 
 <pre class="source" title="タプルの入れ子">
@@ -353,7 +367,8 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 </code></pre>
 
 
-###<a id="sec-generated-title-15"></a> <a id="anonymous-member"></a>メンバー名も匿名
+### <a id="sec-generated-title-15"></a> <a id="anonymous-member"></a>メンバー名も匿名
+
 タプルは、メンバー名もなくして、完全に匿名(名無し)にすることもできます。
 この場合、メンバーを使う際には`Item1`、`Item2`、…というような名前で参照します。
 
@@ -371,7 +386,8 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 メンバー名も持っていない完全な匿名タプルは、おそらくかなり短い寿命でしか使わないでしょう。
 例えば、すぐに別の(メンバー名のある)タプル型に代入したり、分解して変数に受けて使うことになります。
 
-###<a id="sec-generated-title-16"></a> <a id="overload"></a>オーバーロード
+### <a id="sec-generated-title-16"></a> <a id="overload"></a>オーバーロード
+
 型違いのタプルを使うのであれば、オーバーロードに使えます。
 例えば、以下のメソッド`F`は、`y`の型が違うのでオーバーロード可能です。
 
@@ -394,7 +410,8 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 1つは、次節で説明するように、内部実装的に名前だけ違うタプルを区別できないという、技術的な理由。
 もう1つは、[引数でのオーバーロード](../structured/st_function.md#overload)が名前を見ていない(引数の型だけがシグネチャに含まれる)のだから、引数に倣って設計されているタプルでも、メンバー名は区別しないのが自然という理由です。
 
-###<a id="sec-generated-title-17"></a> <a id="infer-tuple-name"></a>タプル要素名の推論
+### <a id="sec-generated-title-17"></a> <a id="infer-tuple-name"></a>タプル要素名の推論
+
 <h5 class="version version7_1">Ver. 7.1</h5>
 
 C# 7.1から、タプル構築時に渡した変数からタプルの要素名を推論できるようになりました。
@@ -459,7 +476,8 @@ C# 7.1から、タプル構築時に渡した変数からタプルの要素名�
 <span class="type">Console</span>.WriteLine(t.Length); <span class="comment">// プロパティ名からは推論される( . でも ?. でも OK)</span>
 </code></pre>
 
-###<a id="sec-generated-title-18"></a> <a id="equality"></a>==、!= での比較
+### <a id="sec-generated-title-18"></a> <a id="equality"></a>==、!= での比較
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 C# 7.3で、タプル同士を `==`、`!=` 演算子で比較できるようになりました。
@@ -552,7 +570,8 @@ C# 7.3で、タプル同士を `==`、`!=` 演算子で比較できるように�
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-19"></a> <a id="internal"></a>タプルの内部実装
+## <a id="sec-generated-title-19"></a> <a id="internal"></a>タプルの内部実装
+
 タプルがどういうコードに展開されるかについても話しておきましょう。
 
 タプルを使ったコードを古いバージョンの.NET上で動かしたり、
@@ -560,7 +579,8 @@ C# 7.3で、タプル同士を `==`、`!=` 演算子で比較できるように�
 別のプログラミング言語から参照したい場合もあります。
 そのために、タプルは、`ValueTuple`という構造体に展開されます。
 
-###<a id="sec-generated-title-20"></a> <a id="tuple-ValueTuple"></a>ValueTuple構造体への展開
+### <a id="sec-generated-title-20"></a> <a id="tuple-ValueTuple"></a>ValueTuple構造体への展開
+
 タプルは、コンパイルの結果としては`ValueTuple`構造体(`System`名前空間)に展開されます。
 
 例えば、以下のようなコードを考えます。
@@ -604,7 +624,8 @@ C# 7.3で、タプル同士を `==`、`!=` 演算子で比較できるように�
 <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">dynamic</span> Sum(<span class="reserved">dynamic</span> d) =&gt; d.x + d.y;
 </code></pre>
 
-###<a id="sec-generated-title-21"></a> <a id="TupleElementNames"></a>TupleElementNames属性
+### <a id="sec-generated-title-21"></a> <a id="TupleElementNames"></a>TupleElementNames属性
+
 とはいえ、名前をどこにも残さないと、ライブラリをまたいだ時に`x`、`y`などの名前が使えなくて困ります。
 そこで、クラスのメンバーにタプルを使う場合には、`TupleElementNames`属性(`System.Runtime.CompilerServices`名前空間)を付けて、
 C#コンパイラーには名前がわかるようにしています。
@@ -625,7 +646,8 @@ C#コンパイラーには名前がわかるようにしています。
 
 C#コンパイラーは、この情報を元に、タプルの名前を復元します。
 
-###<a id="sec-generated-title-22"></a> <a id="ValueTuple-definition"></a>ValueTuple構造体の中身
+### <a id="sec-generated-title-22"></a> <a id="ValueTuple-definition"></a>ValueTuple構造体の中身
+
 タプルの展開結果にあたる`ValueTuple`は、型引数が0～8個の合計9個の構造体があります。
 例えば、型引数2個のものは以下のような定義になっています。
 
@@ -650,7 +672,8 @@ C#コンパイラーは、この情報を元に、タプルの名前を復元し
 基本的には、publicなフィールドだけを持つ構造体です。
 それに、値の比較用の各種インターフェイスが実装されています。
 
-####<a id="sec-generated-title-23"></a> <a id="long-tuple"></a>メンバーが9個以上のタプル
+#### <a id="sec-generated-title-23"></a> <a id="long-tuple"></a>メンバーが9個以上のタプル
+
 最初に言った通り、`ValueTuple`構造体の型引数は、最大のものでも8個です。
 では、メンバーが9個以上のタプルを作るとどうなるかというと、入れ子の`ValueTuple`構造体が作られます。
 
@@ -684,7 +707,8 @@ C# 上 | コンパイル結果
 `Item16` | `Rest.Rest.Item2`
 … | …
 
-####<a id="sec-generated-title-24"></a> <a id="nupkg"></a>ValueTuple構造体の定義場所
+#### <a id="sec-generated-title-24"></a> <a id="nupkg"></a>ValueTuple構造体の定義場所
+
 C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラリに取り込まれる予定です。
 
 一方で、古い.NET (.NET Framework 4.6.2以前、.NET Standard 1.6以前)上でタプルを使いたい場合、
@@ -692,7 +716,8 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 
 - [System.ValueTuple](https://www.nuget.org/packages/System.ValueTuple/)
 
-###<a id="sec-generated-title-25"></a> <a id="0-tuple"></a>型引数0、1のValueTuple
+### <a id="sec-generated-title-25"></a> <a id="0-tuple"></a>型引数0、1のValueTuple
+
 前述の通り、タプルのメンバーは2つ以上な必要があって、`()`や`(int x)`というようなタプルは作れません。
 一方で、`ValueTuple`構造体には、型引数0個と1個のものが存在します。
 
@@ -741,7 +766,8 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-26"></a> <a id="related"></a>関連
+## <a id="sec-generated-title-26"></a> <a id="related"></a>関連
+
 タプルには、毛色の似た機能が2つあります。
 
 - [匿名型](../start/sp3_inference.md#anonymous) … タプルと同様に、名前がない型
@@ -749,7 +775,8 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 
 これらとの関連・使い分けについても話しておきましょう。
 
-###<a id="sec-generated-title-27"></a> <a id="anonymous-type"></a>匿名型との比較
+### <a id="sec-generated-title-27"></a> <a id="anonymous-type"></a>匿名型との比較
+
 タプルは、名前がない型という観点で言うと、[匿名型](../start/sp3_inference.md#anonymous)と似ています。
 しかし、「[名前のない複合型](../structured/st_anonymoustype.md)」で説明したように、
 出自・用途の違いから、内部実装は結構異なります。
@@ -778,7 +805,8 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 値型か参照型かも実装が異なりますが、これも、戻り値として使う、その後すぐに[分解](#deconstruction)して使うという想定だと、値型の方が実行性能的に有利だからです。
 用途が変われば最適な実装は変わります。
 
-###<a id="sec-generated-title-28"></a> <a id="out-params"></a>出力引数との比較
+### <a id="sec-generated-title-28"></a> <a id="out-params"></a>出力引数との比較
+
 多値戻り値という用途だと、[出力引数](../resource/sp_ref.md#out)という手段もあります。
 一般的に言うと、多値戻り値には今後タプルを使うのがおすすめです。
 出力引数の方が煩雑な書き方になりがちだからです。

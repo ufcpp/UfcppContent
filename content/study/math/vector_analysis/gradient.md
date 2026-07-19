@@ -18,7 +18,8 @@ aliases:
 
 # 勾配
 
-##<a id="sec-generated-title-1"></a> <a id="grad"></a>勾配とは
+## <a id="sec-generated-title-1"></a> <a id="grad"></a>勾配とは
+
 <em>
         勾配とはスカラー場<span class="math">φ</span>に対して、<span class="math">φ</span>がもっととも大きく変化する方向を向き、その変化量と同じ大きさを持つベクトル
       </em>で、<span class="math">
@@ -70,7 +71,8 @@ aliases:
       </span>が勾配となるからです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="lineint"></a>線積分との関係
+## <a id="sec-generated-title-2"></a> <a id="lineint"></a>線積分との関係
+
 <span class="math">φ</span>は位置<span class="math">
         <span class="vector">r</span>
       </span>に関するスカラー場で、
@@ -127,7 +129,8 @@ aliases:
 要するに、勾配とは線積分の逆演算なわけです。
 
 
-##<a id="sec-generated-title-3"></a> <a id="potential"></a>スカラーポテンシャル
+## <a id="sec-generated-title-3"></a> <a id="potential"></a>スカラーポテンシャル
+
 <em>
         ベクトル<span class="math">
           <span class="vector">F</span>

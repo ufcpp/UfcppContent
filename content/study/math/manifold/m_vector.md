@@ -18,7 +18,8 @@ aliases:
 
 # 共変ベクトルと反変ベクトル
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 詳しくは「[数学](../index.md)」を見てもらうことになりますが、
 ベクトル解析は正規直交座標を用いて表す限り、非常に美しい理論体系です。
 ところが、ベクトル解析は座標変換に弱く、
@@ -45,7 +46,8 @@ aliases:
 そこでここでは、微分形式の理論に至るまでの泥臭い過程から説明したいと思います。
 
 
-##<a id="sec-generated-title-2"></a> <a id="notation"></a>記法に関して
+## <a id="sec-generated-title-2"></a> <a id="notation"></a>記法に関して
+
 ここでは、座標を <span class="math">u, v</span> 等で表します。
 これは、太字で書かれてはいませんが、ベクトルを表しています。
 <span class="math">N</span> 次元の座標 <span class="math">u</span> を
@@ -102,7 +104,8 @@ u<table class="subsup" summary="sub / sup"><tr><td>n</td></tr><tr><td style="fon
 と略記します。
 
 
-##<a id="sec-generated-title-3"></a> <a id="conversion"></a>座標変換
+## <a id="sec-generated-title-3"></a> <a id="conversion"></a>座標変換
+
 まず、座標変換について説明します。
 
 <span class="math">N</span> 次元の座標 <span class="math">u</span> で表されている関数や微分方程式等の式を、
@@ -167,7 +170,8 @@ x <table class="frac" summary="differential"><tr><td class="num">∂</td></tr><t
 例を挙げて説明。
 </pre>
 
-###<a id="sec-generated-title-4"></a> <a id="d80e446"></a>座標変換の有効性
+### <a id="sec-generated-title-4"></a> <a id="d80e446"></a>座標変換の有効性
+
 <pre>
 執筆予定
 
@@ -202,7 +206,8 @@ x <table class="frac" summary="differential"><tr><td class="num">∂</td></tr><t
 正準変数の導入で6次元になったり。
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="total"></a>全微分
+## <a id="sec-generated-title-5"></a> <a id="total"></a>全微分
+
 前節で、微分が絡むと座標変換が難しくなると書きましたが、
 微分が絡んでいても、ある条件下では座標変換が簡潔に表されます。
 その最たる例が全微分です。
@@ -305,7 +310,8 @@ f
 微分形式というのは、この発想から生まれてくる概念です。
 
 
-##<a id="sec-generated-title-6"></a> <a id="vector"></a>ベクトル
+## <a id="sec-generated-title-6"></a> <a id="vector"></a>ベクトル
+
 前節で、
 <span class="math"><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂<denom>u<sup>i</sup></denom></td></tr></table></span>
 と
@@ -462,7 +468,8 @@ f<sub>u</sub></span>
 （いずれも、基底と反対の変換規則になる。）
 
 
-###<a id="sec-generated-title-7"></a> <a id="co_contravariant"></a>共変ベクトルと反変ベクトル
+### <a id="sec-generated-title-7"></a> <a id="co_contravariant"></a>共変ベクトルと反変ベクトル
+
 座標変数の微小差分 <span class="math"><span class="normal">d</span>u<sup>i</sup></span> と同じ変換規則という意味で、
 <span class="math"><span class="normal">d</span>u<sup>i</sup></span>
 の方を<strong id="d80e1238" class="keyword">共変ベクトル</strong>（covariant vevtor）、
@@ -530,7 +537,8 @@ f<sub>u</sub></span>
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="scalar"></a>スカラー
+### <a id="sec-generated-title-8"></a> <a id="scalar"></a>スカラー
+
 アインシュタインの記法では、
 上に付く添字と下に付く添字で同じ文字があれば和を取ると説明しました。
 また、共変ベクトルの添字は上、

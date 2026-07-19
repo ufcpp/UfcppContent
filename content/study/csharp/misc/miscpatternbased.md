@@ -14,14 +14,16 @@ aliases:
 
 # パターン ベースな構文
 
-##<a id="sec-generated-title-1"></a> <a id="abctract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abctract"></a>概要
+
 C# の言語機能のいくつか(というか結構多くのもの)は、「所定のパターンを満たしている任意の型に使える」というものになっています。
 そういう構文を指して「パターン ベース」(pattern-based)な構文と言ったりします。
 
 本項では、パターン ベースにすることのメリットや、
 実際にパターン ベースになっている構文について紹介します。
 
-##<a id="sec-generated-title-2"></a> <a id="pattern-based"></a>パターン ベース
+## <a id="sec-generated-title-2"></a> <a id="pattern-based"></a>パターン ベース
+
 例えば C# 3.0 の[クエリ式](../data/sp3_linq.md#query)がパターン ベースな構文の代表例です。
 以下のような書き方をした場合、
 
@@ -55,7 +57,8 @@ C# コンパイラーは「`select`句を見たら`Select`メソッドに置き�
 (同じ単語が入っているのでちょっと紛らわしいですが、
 [パターン マッチング](../datatype/patterns.md)とは無関係です。)
 
-###<a id="sec-generated-title-3"></a> <a id="converse"></a>パターン ベースな構文の対極
+### <a id="sec-generated-title-3"></a> <a id="converse"></a>パターン ベースな構文の対極
+
 逆に、インターフェイスの実装が必須の構文が1つだけあって、[`using` ステートメント](../resource/oo_dispose.md#using)がそうです。
 (ただし、C# 8.0 で、[`ref struct` に対してだけは緩和されています](../resource/oo_dispose.md#pattern-based-using)。)
 
@@ -89,13 +92,15 @@ C# コンパイラーだけではできない言語機能もあります。
 ランタイム側はもっと昔から(それぞれ .NET Framework 1.0、2.0 時点で)対応していました。
 なので、C# コンパイラーだけの更新で実現可能でした。
 
-##<a id="sec-generated-title-4"></a> <a id="advantage"></a>パターン ベースの利点
+## <a id="sec-generated-title-4"></a> <a id="advantage"></a>パターン ベースの利点
+
 新しい構文をパターン ベースに実装するのには2つの利点があります。
 
 - C# コンパイラーだけでできる/古い .NET ランタイム上でも動く
 - [仮想呼び出し](../oop/oo_vftable.md)が挟まらない
 
-###<a id="sec-generated-title-5"></a> <a id="syntax-sugar"></a>C# コンパイラーだけでできる
+### <a id="sec-generated-title-5"></a> <a id="syntax-sugar"></a>C# コンパイラーだけでできる
+
 パターン ベースな置き換えは C# コンパイラーだけでできる仕事になります。
 
 「[.NET プログラム](../start/st_compile.md#dotnet)」で説明しているように、
@@ -116,7 +121,8 @@ C# コンパイラーだけの修正で済むなら実装コストがだいぶ�
 (.NET Framework 1.0  は 2017年時点ですでにサポートも切れています。
 サポート外のランタイム上ですら、新しい言語機能を使えたりします。)
 
-###<a id="sec-generated-title-6"></a> <a id="non-virtual"></a>仮想呼び出しを避ける
+### <a id="sec-generated-title-6"></a> <a id="non-virtual"></a>仮想呼び出しを避ける
+
 詳細は「[[雑記] 仮想関数テーブル](../oop/oo_vftable.md)」で説明していますが、
 [`virtual` なメソッド](../oop/oo_polymorphism.md#virtual)には、一段階テーブルをはさむコストが発生します。
 
@@ -175,7 +181,8 @@ C# コンパイラーだけの修正で済むなら実装コストがだいぶ�
 
 パターン ベースである(インターフェイスを要求しない)ことで、このくらいの速度差が生じます。
 
-##<a id="sec-generated-title-7"></a> <a id="flexibility"></a>パターンの自由度
+## <a id="sec-generated-title-7"></a> <a id="flexibility"></a>パターンの自由度
+
 ということで、C# の構文の多くがパターン ベースな実装になっています。
 ただ、実装された時期によってどのくらい自由が利くかに差があったりします。
 (基本的には新しいものほど自由が利く。ただ、新しいものでも、他の構文との兼ね合いで制限が掛かる場合がある。)
@@ -237,7 +244,8 @@ C# コンパイラーだけの修正で済むなら実装コストがだいぶ�
 }
 </code></pre>
 
-##<a id="sec-generated-title-8"></a> <a id="index"></a>パターン ベースな構文一覧
+## <a id="sec-generated-title-8"></a> <a id="index"></a>パターン ベースな構文一覧
+
 以下に、パターン ベースになっている構文の一覧を示します。
 
 | 構文 | 拡張メソッド可 | オプション引数可 |

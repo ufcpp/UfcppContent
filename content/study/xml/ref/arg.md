@@ -18,27 +18,32 @@ aliases:
 
 # 偏角
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 偏角を表す記号を表示
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;arg/&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;arg/&gt;z = nπi
 </pre><div class="math"><span class="normal">arg</span>z = nπi
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:arg"&gt;
   &lt;span class="normal"&gt;arg&lt;/span&gt;
 &lt;/xsl:template&gt;
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>span.normal
 {
   font-weight:normal;

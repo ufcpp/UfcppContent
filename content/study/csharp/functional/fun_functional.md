@@ -18,7 +18,8 @@ aliases:
 
 # 関数指向
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 いわゆる「関数型言語」と呼ばれる類の言語の設計手法、

@@ -18,7 +18,8 @@ aliases:
 
 # queue
 
-##<a id="sec-generated-title-1"></a> <a id="d24e4"></a>queueとは
+## <a id="sec-generated-title-1"></a> <a id="d24e4"></a>queueとは
+
 queue(キュー)とは、「行列」という意味の単語です。
 ただ、「行列」だと、matrixと区別がつかなくなるので、日本語では待ち行列といいます。
 (ちなみに、matrixの英語本来の意味は母体・基盤・鋳型)
@@ -33,7 +34,8 @@ FIFO(first-in first-out)と呼ばれることもあります。
 普通はリングバッファや双方向循環連結リストを用いて実装します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d24e18"></a>STLにおけるqueue
+## <a id="sec-generated-title-2"></a> <a id="d24e18"></a>STLにおけるqueue
+
 STLのqueueは何を使って実装するかをdeque,listのいずれかから選べます。
 キューの要素の型をTとすると、
 

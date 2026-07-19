@@ -18,11 +18,13 @@ aliases:
 
 # 行列式
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[輪講発表資料](../../misc/list/lecture.md)」の「[プログラミングのための線形代数](../../misc/list/lecture.md#2006a)」の内容にそって説明を書く予定。
 
 
-##<a id="sec-generated-title-2"></a> <a id="notation"></a>記法に関して
+## <a id="sec-generated-title-2"></a> <a id="notation"></a>記法に関して
+
 ここでは、ベクトル・行列を以下のような記法で書きます。
 
 * ベクトルも特に太字にしない。
@@ -59,7 +61,8 @@ A x
 b
 </div>
 
-##<a id="sec-generated-title-3"></a> <a id="equation"></a>1次方程式の解法（掃き出し法）
+## <a id="sec-generated-title-3"></a> <a id="equation"></a>1次方程式の解法（掃き出し法）
+
 1次方程式の最も簡単な解法として、
 ガウスの<strong id="sweeping" class="keyword">掃き出し法</strong>（sweeping-out method）というものが知られています。
  
@@ -124,7 +127,8 @@ b
 1. の操作の際、÷0 にならないことが必要です</em>。
 
 
-##<a id="sec-generated-title-4"></a> <a id="volume"></a>体積
+## <a id="sec-generated-title-4"></a> <a id="volume"></a>体積
+
 ここで、一度話は変わりますが、面積・体積というものについて少し説明をします。
  
 n 個の n 次元ベクトルの作る図形の容量について考えます。
@@ -230,7 +234,8 @@ n 次元体積は、このような条件付きの多重線形交代形式だと
 コンピュータを使えば簡単に計算することができます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="determinant"></a>行列式
+## <a id="sec-generated-title-5"></a> <a id="determinant"></a>行列式
+
 これまでの話を1度振り返ってみましょう。
 まず、「[掃き出し法](#sweeping)」は、
 以下の操作によって1次方程式の解が不変であることを利用して、
@@ -269,7 +274,8 @@ a<sub>2</sub> ,
 ・・・, 
 a<sub>N</sub><span class="paren" style="font-size:em;">)</span></div>
 
-###<a id="sec-generated-title-6"></a> <a id="aside"></a>余談
+### <a id="sec-generated-title-6"></a> <a id="aside"></a>余談
+
 日本には、行列が整備された後に行列や行列式の理論が入ってきたんで、
 行列が先にあって、それに付随する特徴量として行列式という言葉がありますが、
 歴史的には行列式の方が先に生まれています。
@@ -279,7 +285,8 @@ a<sub>N</sub><span class="paren" style="font-size:em;">)</span></div>
 そのだいぶ後になってから、1次方程式を行列と言うものを用いて表現する手法が完成しました。
 
 
-##<a id="sec-generated-title-7"></a> <a id="well_posed"></a>良設定/不良設定
+## <a id="sec-generated-title-7"></a> <a id="well_posed"></a>良設定/不良設定
+
 1次方程式 <span class="math">A x ＝ b</span> は、
 係数行列の行列式が非0のとき（<span class="math"><span class="normal">|</span>A<span class="normal">|</span> ≠ 0</span>）<strong id="well" class="keyword">良設定問題</strong>または適切な問題（well-posed problem）、
 0のとき（<span class="math"><span class="normal">|</span>A<span class="normal">|</span> ＝ 0</span>）<strong id="ill" class="keyword">不良設定問題</strong>あるいは不適切な問題（ill-posed problem）と呼びます。
@@ -310,7 +317,8 @@ a<sub>N</sub><span class="paren" style="font-size:em;">)</span></div>
 は解なしとなります。
 
 
-##<a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+
 <pre>
 |AB| ＝ |A| |B| とかの性質を
 

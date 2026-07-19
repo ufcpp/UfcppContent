@@ -20,7 +20,8 @@ aliases:
 
 # 超関数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 簡単にまとめます。
 詳細はいずれ。
 
@@ -32,7 +33,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="idea"></a>基本アイディア
+## <a id="sec-generated-title-2"></a> <a id="idea"></a>基本アイディア
+
 「無限大の値」なんてものは実際には存在しないので、
 2つの超関数の等値性を以下のように定義します。
  
@@ -51,7 +53,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span> ＝
 <span class="paren" style="font-size:2em;">{</span><table class="branch" summary="conditional"><tr><td><span class="math">t</span>  </td><td><span class="paren">(</span><span class="math">t≠0</span><span class="paren">)</span></td></tr><tr><td><span class="math">1</span>  </td><td><span class="paren">(</span><span class="math">t＝0</span><span class="paren">)</span></td></tr></table></div>
 
-##<a id="sec-generated-title-3"></a> <a id="dirac"></a>ディラックのδ関数
+## <a id="sec-generated-title-3"></a> <a id="dirac"></a>ディラックのδ関数
+
 超関数の中で最も有名なものとして、ディラックの<strong id="delta" class="keyword">δ関数</strong>があげられます。
 δ関数は、（口語的に述べると）以下のような性質を持つ超関数です。
 
@@ -78,7 +81,8 @@ g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 3つ目はフーリエ変換を用いてδ関数を表したものになっています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="d75e251"></a>厳密な定義
+## <a id="sec-generated-title-4"></a> <a id="d75e251"></a>厳密な定義
+
 詳細は省略します（余裕があれば追加します）。
 いくつか異なる定義の仕方がありますが、
 詳しく知りたい人は以下のキーワードで検索してみてください。
@@ -129,7 +133,8 @@ D<span class="paren" style="font-size:em;">(</span>f<span class="paren" style="f
 というような汎関数<span class="math">H, D</span>がそれぞれヘヴィサイドの単位階段関数およびディラックのδ関数になります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-5"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・δ関数
 関数の極限として作れたりも。

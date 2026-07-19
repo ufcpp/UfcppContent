@@ -20,13 +20,15 @@ aliases:
 
 # 名前空間
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="namespace" class="keyword">名前空間</strong>（name space）とは、
 ファイルを種類ごとにフォルダに分けて管理するのと同じように、
 クラスを種類ごとに分けて管理するための機構です。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * namespace キーワードで名前空間を定義します。
 
 * フォルダを掘ってファイルを整理するような感覚で、名前空間を作ってクラスを整理します。
@@ -35,7 +37,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="about"></a>名前空間とは
+## <a id="sec-generated-title-3"></a> <a id="about"></a>名前空間とは
+
 名前空間は、ファイル整理のためにフォルダ分けすることに例えられます。
 
 例えば、ウェブページを作成する場合、コンテンツごとにフォルダに分けて管理すると、サイトの管理がしやすくなります。
@@ -125,11 +128,13 @@ C# では、名前空間の定義(= フォルダーを掘るようなものに) 
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="use"></a>名前空間の使い方
+## <a id="sec-generated-title-4"></a> <a id="use"></a>名前空間の使い方
+
 具体的に名前空間を使う方法を見ていきましょう。
 ここでは例として、学校の課題で文字列クラス、リストクラス、可変長配列クラス、画像クラスを作れといわれたとします(これらのものは、標準ライブラリに初めから用意されていますが、プログラムの勉強のためにわざわざ自作してみることになった)。
 
-###<a id="sec-generated-title-5"></a> <a id="namespace-declaration"></a>namespace (名前空間の定義)
+### <a id="sec-generated-title-5"></a> <a id="namespace-declaration"></a>namespace (名前空間の定義)
+
 まず、課題を出された各人の作ったクラスの名前が重ならないように、それそれ自分の名前を使って名前空間を作ります。
 文字列クラス<code>String</code>はそのすぐ下に作りましょう。
 そして、リストクラス<code>List</code>と可変長配列クラス<code>Vector</code>は、名前空間<code>Collections</code>を作ってその下に、画像クラス<code>Image</code>は名前空間<code>Drawing</code>を作ってその下に作ることにします。
@@ -221,7 +226,8 @@ C# では、名前空間の定義(= フォルダーを掘るようなものに) 
 
 <code>Ufcpp.Collections.Vector</code>というように、名前空間をすべて指定した形式の名前を<em>完全修飾名</em>(fully qualified name)と言います。
 
-###<a id="sec-generated-title-6"></a> <a id="file-scoped-namespace"></a>ファイル スコープ namespace
+### <a id="sec-generated-title-6"></a> <a id="file-scoped-namespace"></a>ファイル スコープ namespace
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定できるようになりました。
@@ -295,7 +301,8 @@ C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定
 一方でデメリットも「1ファイルに1つしか書けない」程度で、
 ほとんどの人は制限を掛けられなくても最初から「1ファイルに1つしか書かない」ので特に問題にはならないでしょう。
 
-###<a id="sec-generated-title-7"></a> <a id="using-directive"></a>using (名前空間の参照)
+### <a id="sec-generated-title-7"></a> <a id="using-directive"></a>using (名前空間の参照)
+
 また、いちいち完全修飾名を書かなくても済むように、<strong id="using" class="keyword">using ディレクティブ</strong>というものが用意されています。
 
 <pre class="source" title="usingディレクティブの例1" lang="">
@@ -403,7 +410,8 @@ Console.WriteLine(); <span class="comment">// 何か書いてしまうと…</sp
 ちなみに、[後述しますが](#priority)、
 入れ子の場合は内側優先で名前解決します。
 
-###<a id="sec-generated-title-8"></a> <a id="global-using"></a>global using
+### <a id="sec-generated-title-8"></a> <a id="global-using"></a>global using
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0 から `using` ディレクティブの前に `global` という修飾を付けることで、
@@ -468,7 +476,8 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 
 しか書けません。
 
-####<a id="sec-generated-title-9"></a> <a id="usage-global-using"></a>global using の用途
+#### <a id="sec-generated-title-9"></a> <a id="usage-global-using"></a>global using の用途
+
 前節で「using しすぎ」に注意を促しましたが、プロジェクト全域に影響を及ぼす global using ではなおの事注意が必要です。
 基本的には「むやみやたらと使うものではない」という認識でいいと思います。
 
@@ -510,7 +519,8 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 実際には「自動的に生成されているもの」なことが多くなると思います。
 詳しくはブログの「[最初の C# プログラム](../../../blog/2021/8/newprojecttemplate/index.md)」で説明しています。
 
-##<a id="sec-generated-title-10"></a> <a id="using-static"></a>補足: using static
+## <a id="sec-generated-title-10"></a> <a id="using-static"></a>補足: using static
+
 <h5 class="version version6">Ver. 6</h5>
 
 名前空間関連ではないんですが、名前空間の「[using ディレクティブ](#using)」と似たものなのでここで紹介だけしておきたい機能が、
@@ -534,7 +544,8 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 
 詳しくは、「[静的メンバー](../oop/oo_static.md)」で説明します。
 
-##<a id="sec-generated-title-11"></a> <a id="alias"></a>using エイリアス
+## <a id="sec-generated-title-11"></a> <a id="alias"></a>using エイリアス
+
 先ほど自作した<code>String</code>のテストのために、比較対象として.NET frameworkに標準で用意されている<code>System.String</code>クラスを同時に使用したいとします。
 もちろん、<code>Ufcpp.String</code>というように完全修飾名を用いれば、<code>System.String</code>と共存可能なのですが、<strong id="alias" class="keyword">エイリアス</strong>（alias：別名付け）という機能を使うことでも共存させることが出来ます。
 
@@ -569,6 +580,7 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 
 
 ##### <a id="sec-generated-title-12"></a>サンプル
+
 <pre class="source" title="">
 <code><span class="reserved">using</span> System;
  
@@ -644,7 +656,8 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 
 
 
-###<a id="sec-generated-title-13"></a> <a id="using-any-type">任意の型に対する using エイリアス</a>
+### <a id="sec-generated-title-13"></a> <a id="using-any-type">任意の型に対する using エイリアス</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 C# 12 から以下のようなコードをコンパイルできるようになりました。
@@ -686,7 +699,8 @@ C# 12 では、なぜか最上位レベルの時にだけかかっていた謎�
 ちなみに、C# 12 ではポインターや関数ポインターに対しても using エイリアスを使えるようになりました。
 詳しくは「[unsafe 型に対する using エイリアス](../interop/sp_unsafe.md#unsafe-using)」で説明します。
 
-##<a id="sec-generated-title-14"></a> <a id="alias_sp"></a>エイリアス修飾子
+## <a id="sec-generated-title-14"></a> <a id="alias_sp"></a>エイリアス修飾子
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 前節で説明したとおり、
@@ -779,7 +793,8 @@ Util と言う名前は既に存在しますと怒られるはず。）
 }
 </code></pre>
 
-###<a id="sec-generated-title-15"></a> <a id="global"></a>global 名前空間エイリアス
+### <a id="sec-generated-title-15"></a> <a id="global"></a>global 名前空間エイリアス
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 名前の付け方次第では、完全修飾名で書いても参照できない場合があります。
@@ -828,7 +843,8 @@ Util と言う名前は既に存在しますと怒られるはず。）
 `global`は、`::`の前でだけキーワード扱いされる文脈キーワードです。
 その他の場面では、`global`クラスを作ったり、`global`という名前の名前空間を作ったり、参照したりもできます。
 
-##<a id="sec-generated-title-16"></a> <a id="extern"></a>外部エイリアス
+## <a id="sec-generated-title-16"></a> <a id="extern"></a>外部エイリアス
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 C# 2.0 では、using を使ってエイリアスを定義する代わりに、
@@ -914,7 +930,8 @@ Visual Studio 上では、図1のように、参照しているライブラリ�
 }
 </code></pre>
 
-##<a id="sec-generated-title-17"></a> <a id="priority"></a>名前解決の優先度
+## <a id="sec-generated-title-17"></a> <a id="priority"></a>名前解決の優先度
+
 名前空間によって、同じ名前のものを複数作れます。
 その同じ名前のものを使い分けたければ、ちゃんと完全修飾名を使う方のが一番ですが、
 一応、`using`を並べた場合の優先度についても説明しておきます。

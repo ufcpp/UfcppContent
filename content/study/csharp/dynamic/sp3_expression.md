@@ -19,7 +19,8 @@ aliases:
 
 # 式木（Expression Trees）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 「[ラムダ式](../functional/sp3_lambda.md#lambda)」は、Expression 型の変数に代入すると、
@@ -52,7 +53,8 @@ aliases:
 。
 
 
-##<a id="sec-generated-title-2"></a> <a id="constraints"></a>式木にできるラムダ式の条件
+## <a id="sec-generated-title-2"></a> <a id="constraints"></a>式木にできるラムダ式の条件
+
 まず先に、式木を使う上での制約について。
 ラムダ式ならば何でも式木にできるというわけではありません。
 
@@ -99,7 +101,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="Expression"></a>Expression 型
+## <a id="sec-generated-title-3"></a> <a id="Expression"></a>Expression 型
+
 前節の例でちょこっと出てきた Expression.Lambda や Expression.Add メソッドによって生成されるのは、
 LambdaExpression 型や BinaryExpression 型の変数になりますが、
 これらは全て、Expression 型の派生クラスになります。
@@ -152,7 +155,8 @@ NodeType がそれぞればらばらで、少し複雑なんですが、
 メンバーアクセスは Expression.MakeMemberAccess で生成するけど、NodeType は MemberAccess。）
 
 
-##<a id="sec-generated-title-4"></a> <a id="prepare"></a>下準備
+## <a id="sec-generated-title-4"></a> <a id="prepare"></a>下準備
+
 百聞は一見にしかずということで、
 次節以降では、ラムダ式と式木の対応関係を実例を挙げて紹介していきます。
 それに先立って、いくつか補助関数や変数を用意しておきます。
@@ -226,7 +230,8 @@ NodeType がそれぞればらばらで、少し複雑なんですが、
 。
 
 
-##<a id="sec-generated-title-5"></a> <a id="lambda"></a>ラムダ式
+## <a id="sec-generated-title-5"></a> <a id="lambda"></a>ラムダ式
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の Lambda() メソッド。
@@ -299,11 +304,13 @@ SimpleCheck メソッドの1つ目の引数と2つ目の引数が同じ式木に
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="arithmetic"></a>算術演算
+## <a id="sec-generated-title-6"></a> <a id="arithmetic"></a>算術演算
+
 `+` や `-` などの C# 組込み演算子には、それぞれ対応する式木があります。
 
 
-###<a id="sec-generated-title-7"></a> <a id="unaryarithmetic"></a>単項演算
+### <a id="sec-generated-title-7"></a> <a id="unaryarithmetic"></a>単項演算
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の ArithmeticUnaryOperator() メソッド。
@@ -366,7 +373,8 @@ SimpleCheck(
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="binaryarithmetic"></a>2項演算
+### <a id="sec-generated-title-8"></a> <a id="binaryarithmetic"></a>2項演算
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の ArithmeticBinaryOperator() メソッド。
@@ -464,7 +472,8 @@ SimpleCheck(
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="comparison"></a>比較演算
+## <a id="sec-generated-title-9"></a> <a id="comparison"></a>比較演算
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の ComparisonOperator() メソッド。
@@ -512,7 +521,8 @@ SimpleCheck(
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="logical"></a>論理演算
+## <a id="sec-generated-title-10"></a> <a id="logical"></a>論理演算
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の LogicalOperator() メソッド。
@@ -565,7 +575,8 @@ bool に対する論理否定 ! と、整数型に対するビット反転 ^ は
 
 
 
-##<a id="sec-generated-title-11"></a> <a id="misc"></a>その他の2項・3項演算
+## <a id="sec-generated-title-11"></a> <a id="misc"></a>その他の2項・3項演算
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の OtherOperator() メソッド。
@@ -614,7 +625,8 @@ bool に対する論理否定 ! と、整数型に対するビット反転 ^ は
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="type"></a>型変換・判定
+## <a id="sec-generated-title-12"></a> <a id="type"></a>型変換・判定
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の () メソッド。
@@ -656,7 +668,8 @@ int から short にキャストする際などには、オーバーフローが
 
 
 
-##<a id="sec-generated-title-13"></a> <a id="memberaccess"></a>メンバー参照
+## <a id="sec-generated-title-13"></a> <a id="memberaccess"></a>メンバー参照
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の MemberAccess() メソッド。
@@ -701,7 +714,8 @@ int から short にキャストする際などには、オーバーフローが
 
 
 
-##<a id="sec-generated-title-14"></a> <a id="new"></a>インスタンス生成
+## <a id="sec-generated-title-14"></a> <a id="new"></a>インスタンス生成
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の New() メソッド。
@@ -782,7 +796,8 @@ MemberInit の Bindings は、
 になります。
 
 
-##<a id="sec-generated-title-15"></a> <a id="call"></a>メソッド・デリゲート呼び出し
+## <a id="sec-generated-title-15"></a> <a id="call"></a>メソッド・デリゲート呼び出し
+
 サンプル： 
 [ExpressionTest.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/ExpressionTest.cs)
  中の Call() メソッド。
@@ -812,7 +827,8 @@ MemberInit の Bindings は、
 
 
 
-##<a id="sec-generated-title-16"></a> <a id="ast"></a>式木 4.0（構文木）
+## <a id="sec-generated-title-16"></a> <a id="ast"></a>式木 4.0（構文木）
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 .NET Framework 4 で、式木が大幅にバージョンアップしました。
@@ -887,7 +903,8 @@ C# の仕様自体は C# 3.0 の時から変わっていなくて、
 単文のラムダ式しか式木にできません。
 
 
-##<a id="sec-generated-title-17"></a> <a id="link"></a>式木の利用例（リンク）
+## <a id="sec-generated-title-17"></a> <a id="link"></a>式木の利用例（リンク）
+
 このサイト内にある式木関連のサンプルにリンク：
 
 * 「[[サンプル] 式木の利用例](../sample/sp3_expressionsample.md)」

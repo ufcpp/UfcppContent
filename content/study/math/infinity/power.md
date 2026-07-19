@@ -18,7 +18,8 @@ aliases:
 
 # 集合の濃度
 
-##<a id="sec-generated-title-1"></a> <a id="cardinality"></a>集合の濃度
+## <a id="sec-generated-title-1"></a> <a id="cardinality"></a>集合の濃度
+
 集合論では、
 2つの集合の元の間に1対1の対応が付けられるとき、
 その2つの集合は同等の性質を持つということで
@@ -60,7 +61,8 @@ aliases:
 したがって、濃度は実数等の所謂「数」と同じ扱いをすることはできません。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d72e42"></a>まとめ
+## <a id="sec-generated-title-2"></a> <a id="d72e42"></a>まとめ
+
 自然数を拡張して、無限集合の「元の数」に相当する概念である「「[濃度](../set/cardinality.md#cardinality)」」というものが考えられています。
  
 濃度の概念を導入すると、無限の大きさの量の間で大小比較や和、積の計算が出来ますが、

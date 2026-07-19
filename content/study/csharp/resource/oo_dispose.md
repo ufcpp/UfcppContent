@@ -18,7 +18,8 @@ aliases:
 
 # リソースの破棄
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ファイルや周辺機器などのリソース(OSが管理している資源)を使用する場合、
 まずリソースを使用する権利を取得し、
 リソースに対する操作(ファイルの読み書きなど)を行った後、
@@ -37,13 +38,15 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * .NET Framework でメモリー管理は自動化されたけど、 管理外のリソース（たとえば、ファイルIO）もある。
 
 * 管理外のリソースは明示的に破棄が必要。
 
 * 例外が発生した場合でも正しくリソース破棄ができるように、try-catch-finally や using を使いましょう。
 
-##<a id="sec-generated-title-3"></a> <a id="ex"></a>リソース破棄の例
+## <a id="sec-generated-title-3"></a> <a id="ex"></a>リソース破棄の例
+
 例えば、ファイルの読み書きを行う場合、
 まずファイルを開いて、読み書きを行った後、ファイルを閉じる必要があります。
 以下に簡単な例を示します。
@@ -119,7 +122,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="using"></a>using ステートメント
+## <a id="sec-generated-title-4"></a> <a id="using"></a>using ステートメント
+
 リソースの破棄の手順をまとめると以下のようになります。
 (ただし、<code>Resource</code> はリソース管理用クラスで、
 <code>Dispose</code> メソッドによりリソースの破棄を行うものとする。)
@@ -188,7 +192,8 @@ using ステートメントを用いて上述の例を書き直したものを�
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="expression-using"></a>式だけの using ステートメント
+### <a id="sec-generated-title-5"></a> <a id="expression-using"></a>式だけの using ステートメント
+
 ちなみに、using() の中身は変数宣言だけではなく、式にすることもできます。
 
 <pre class="source" title="using(式)" lang="">
@@ -238,11 +243,13 @@ T が IDispose を実装している時だけ Dispose を呼び出したい場�
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="dtor"></a>Dispose とファイナライザー
+### <a id="sec-generated-title-6"></a> <a id="dtor"></a>Dispose とファイナライザー
+
 ちなみに、確実に解放しなければならないリソースは、`Dispose`メソッドだけでなく、ファイナライザーも使って破棄処理を行うべきです。
 詳しくは「[IDisposable インターフェイスの実装](rm_disposable.md#idisposable)」で説明します。
 
-##<a id="sec-generated-title-7"></a> <a id="using-declaration"></a>using 変数宣言
+## <a id="sec-generated-title-7"></a> <a id="using-declaration"></a>using 変数宣言
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 で、変数宣言に対して `using` 修飾を付けることで、
@@ -298,7 +305,8 @@ C# 8.0 で、変数宣言に対して `using` 修飾を付けることで、
 この例では、変数は `a`、`b` の順で宣言しているので、
 `Dispose` は `b`、`a` の順になります。
 
-###<a id="sec-generated-title-8"></a> <a id="using-declaration-pitfall"></a>using 変数宣言の注意点
+### <a id="sec-generated-title-8"></a> <a id="using-declaration-pitfall"></a>using 変数宣言の注意点
+
 `using` 変数宣言は両手放し喜べる機能ではありません。
 `Dispose` が呼ばれるタイミングを伸ばしてしまって、パフォーマンスに悪影響を及ぼす可能性があります。
 例えば以下のコードを考えます。
@@ -385,7 +393,8 @@ C# 8.0 で、変数宣言に対して `using` 修飾を付けることで、
 }
 </code></pre>
 
-##<a id="sec-generated-title-9"></a> <a id="interface-required"></a>IDispose インターフェイス必須
+## <a id="sec-generated-title-9"></a> <a id="interface-required"></a>IDispose インターフェイス必須
+
 C# の構文の多くは、C# コンパイラーによる簡単な置き換え
 (いわゆる構文糖衣(syntax sugar))になっています。
 例えば、[`foreach`ステートメント](../data/sp_foreach.md#foreach)の場合は `GetEnumerator`、`MoveNext`、`Current` などのメソッド/プロパティ呼び出しに置き換えられます。
@@ -468,7 +477,8 @@ C# の構文の多くは、C# コンパイラーによる簡単な置き換え
 disposed async
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="pattern-based-using"></a>パターン ベースな using
+### <a id="sec-generated-title-10"></a> <a id="pattern-based-using"></a>パターン ベースな using
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 `using` ステートメントで使うのにインターフェイスの実装が必須となると、
@@ -569,7 +579,8 @@ ref 構造体を使いたいような場面では `Dispose` したいリソー�
 <code>ref disposed
 </code></pre>
 
-##<a id="sec-generated-title-11"></a> <a id="await-using"></a>非同期using
+## <a id="sec-generated-title-11"></a> <a id="await-using"></a>非同期using
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0で非同期版の`using`が追加されました。

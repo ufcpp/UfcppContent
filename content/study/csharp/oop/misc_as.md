@@ -18,7 +18,8 @@ aliases:
 
 # \[雑記\] キャストと as
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 キャスト演算子と as 演算子の実行速度に関しての話を少々。
 
 ちなみに、
@@ -30,7 +31,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="compare"></a>キャストと as の実行速度
+## <a id="sec-generated-title-2"></a> <a id="compare"></a>キャストと as の実行速度
+
 普通のキャストと as は、ちゃんと型変換できるなら得られる結果は一緒で、失敗時には、
 
 * キャスト： InvalidCast 例外発生
@@ -48,6 +50,7 @@ try catch を書くだけならほとんどコストはないんですが、
 
 
 ##### <a id="sec-generated-title-3"></a>確実に型変換ができる場合
+
 じゃあ、100％確実に型変換ができるとわかっている場合はどうでしょう。
 
 ちなみに、キャスト演算子と as 演算子は、以下のような 「[IL](../abstract/ab_dotnet.md#il)」 にコンパイルされます。
@@ -83,7 +86,8 @@ Console.Write(<span class="literal">"{0}\n"</span>, sw.ElapsedTicks);
 例外が発生するとパフォーマンスは2桁3桁余裕で悪化します。）
 
 
-##<a id="sec-generated-title-4"></a> <a id="as_is"></a>as と is の実行速度
+## <a id="sec-generated-title-4"></a> <a id="as_is"></a>as と is の実行速度
+
 確実に型変換できる場合にキャストの方が早いなら、
 以下のようなコードを書けば実行速度が速くなるかというと、
 そんなことはない。

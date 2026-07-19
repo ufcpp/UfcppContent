@@ -18,7 +18,8 @@ aliases:
 
 # 順序回路
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 前節で説明した「[組み合わせ回路](combinationalcircuit.md#combinational-circuit)」組み合わせ回路は、回路の出力が入力だけに依存して決まります。
 物理的な電気信号の伝播遅延はありますが、信号が安定するのを待ってから出力を見るなら、同じ入力を与えると必ず同じ出力が得られます。
 言いかえると、回路の内部に記憶（過去の入力に依存したり、時間で変化したり）を持っていません。
@@ -34,7 +35,8 @@ aliases:
 順序回路レベルでのディジタル回路設計をレジスター転送レベル（register transfer level、略してRTL）と呼ぶこともあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="sequencial-logic"></a>順序回路
+## <a id="sec-generated-title-2"></a> <a id="sequencial-logic"></a>順序回路
+
 概要での説明の通り、組み合わせ回路に加えて記憶素子を導入することで、内部状態を持つことができる回路を順序回路と呼びます。
 通常は、次節で説明するDフリップ・フロップのような、クロック信号の立ち上がりでだけ内部状態を更新するような素子を使い、
 図1に示すような構成で回路を作ります。
@@ -53,7 +55,8 @@ aliases:
 順序回路という名前は、このような「入力の順序に依存した回路」という意味になります
 
 
-###<a id="sec-generated-title-3"></a> <a id="memory-element"></a>記憶素子の構成例
+### <a id="sec-generated-title-3"></a> <a id="memory-element"></a>記憶素子の構成例
+
 CMOS回路を用いた記憶素子の実装として、最もよくつかわれるのは<strong id="flip-flop" class="keyword">フリップ・フロップ</strong>（flip-flop: シーソーのバッタンという音をあらわす擬音語に由来する）と呼ばれる回路です。
 フリップ・フロップは、図2に示すような、NAND回路に対してフィードバック構造を作ることで、値を定常的に保持します。
 
@@ -138,7 +141,8 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 
 
 
-###<a id="sec-generated-title-4"></a> <a id="clock-frequency"></a>信号の伝播遅延と動作周波数
+### <a id="sec-generated-title-4"></a> <a id="clock-frequency"></a>信号の伝播遅延と動作周波数
+
 前節で、記憶素子は電子回路の信号の伝播遅延を吸収する役割があるという話をしました。
 その結果、順序回路のクロック信号の周期（clock cycle）は、組み合わせ回路部分の伝播遅延よりも長く設定しなければなりません
 （そうしないと、組み合わせ回路の出力がまだ不安定な時に記憶素子の状態を書き換えようとして、正しい値が得られなくなります）。
@@ -152,7 +156,8 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 横文字のまま「nサイクルかかる」というような呼び方をする場合が多いです。
 
 
-###<a id="sec-generated-title-5"></a> <a id="pipeline"></a>パイプライン処理
+### <a id="sec-generated-title-5"></a> <a id="pipeline"></a>パイプライン処理
+
 大まかな話でいうと、組み合わせ回路が複雑になればなるほど、回路の伝播遅延が大きくなります。
 そこで、Figure 28に示すように、組み合わせ回路の合間合間に記憶素子を挟んで、数サイクルかけて計算を行う回路構成もよく用いられます。
 このような構成をパイプライン（pipeline）構成と呼びます。
@@ -174,7 +179,8 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 パイプライン化によってこれを避けることができます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="design"></a>順序回路の設計
+## <a id="sec-generated-title-6"></a> <a id="design"></a>順序回路の設計
+
 順序回路の設計は、要するに、記憶素子の間に挟む組み合わせ回路の設計になります。
 したがって、以下のような手順を考えることになります。
 
@@ -189,7 +195,8 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 カウンター回路とは、クロック信号の周期ごとに出力の値を0, 1, 2, 3, …と変化させていく回路です。
 
 
-###<a id="sec-generated-title-7"></a> <a id="sample-spec"></a>仕様例
+### <a id="sec-generated-title-7"></a> <a id="sample-spec"></a>仕様例
+
 ここでは、以下のようなカウンター回路仕様を考えてみます。
 
 * 記憶素子の状態は2ビットの数値とする
@@ -211,7 +218,8 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 それでは、「[組み合わせ回路の設計](combinationalcircuit.md#design)」の例と同様に、順を追って設計していきましょう。
 
 
-##<a id="sec-generated-title-8"></a> <a id="0-1-in-out"></a>入出力と記憶素子の状態を0, 1で表現
+## <a id="sec-generated-title-8"></a> <a id="0-1-in-out"></a>入出力と記憶素子の状態を0, 1で表現
+
 仕様の段階でほぼ網羅していますが、再度、2ビット・カウンターの入出力、および、記憶素子の状態をまとめましょう。
 論理式で表すことを考えて、記号もここで決めておきます。
 
@@ -303,7 +311,8 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="to-combinational-circuit"></a>論理式化と組み合わせ回路化
+## <a id="sec-generated-title-9"></a> <a id="to-combinational-circuit"></a>論理式化と組み合わせ回路化
+
 表2の真理値表を元に、
 「[加法標準形の論理式で表す](combinationalcircuit.md#disjunctive-normal)」、
 「[論理式の簡単化](combinationalcircuit.md#simplify)」
@@ -332,7 +341,8 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="register-transfer"></a>記憶素子との接続
+## <a id="sec-generated-title-10"></a> <a id="register-transfer"></a>記憶素子との接続
+
 最後に、前節で得た組み合わせ回路に記憶素子を接続することで、図8に示すような順序回路を得ます。
 
 <figure>
@@ -342,7 +352,8 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 
 
 
-##<a id="sec-generated-title-11"></a> <a id="hardware-description"></a>余談: ハードウェア記述言語
+## <a id="sec-generated-title-11"></a> <a id="hardware-description"></a>余談: ハードウェア記述言語
+
 本稿で説明したようなレジスター転送レベルのディジタル回路設計も、信号線や記憶素子の個数が多くなってくると非常に複雑で、
 論理式の最適化などを手作業で行うことには限界があります。
 実際には、ハードウェア記述言語（hardware description language、略してHDL）と呼ばれる、

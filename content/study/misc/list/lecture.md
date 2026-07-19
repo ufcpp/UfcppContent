@@ -22,12 +22,14 @@ aliases:
 
 # 輪講発表資料
 
-##<a id="sec-generated-title-1"></a> <a id="d24e4"></a>輪講発表資料
+## <a id="sec-generated-title-1"></a> <a id="d24e4"></a>輪講発表資料
+
 研究室の輪講で時々、簡単な講義みたいなのをやっていました。
 パワーポイントのプレゼン資料をせっかく作ったのに1度きりで眠らせておくのももったいないのでここに置いておきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="2005a"></a>音声・言語の基礎と音声認識
+## <a id="sec-generated-title-2"></a> <a id="2005a"></a>音声・言語の基礎と音声認識
+
 [パワーポイント資料](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/misc/lecture/vorec.ppt)（2005年度前期）
  
 音声認識の研究を始めようと言うチャレンジングな先輩がいたので、
@@ -43,7 +45,8 @@ aliases:
 asin 番号: 4274132285</iframe>
 
 
-##<a id="sec-generated-title-3"></a> <a id="2006a"></a>プログラミングのための線形代数
+## <a id="sec-generated-title-3"></a> <a id="2006a"></a>プログラミングのための線形代数
+
 [パワーポイント資料](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/misc/lecture/linear.ppt)（2006年度前期）
  
 線形代数というと、どんな分野においても使う非常に基礎的な知識で、

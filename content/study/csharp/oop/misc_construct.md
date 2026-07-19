@@ -18,11 +18,13 @@ aliases:
 
 # \[雑記\] コンストラクター内の仮想メソッド呼び出し
 
-##<a id="sec-generated-title-1"></a> <a id="abst">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abst">概要</a>
+
 継承構造を持つクラスのコンストラクターの挙動と注意点の話を少々。
 
 
-##<a id="sec-generated-title-2"></a> <a id="ctor-order">コンストラクターの実行順序</a>
+## <a id="sec-generated-title-2"></a> <a id="ctor-order">コンストラクターの実行順序</a>
+
 派生クラスのインスタンスが生成される際、
 派生クラスのコンストラクターの前に、基底クラスのコンストラクターが呼び出されます。
 
@@ -78,7 +80,8 @@ derived
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="virtual">仮想メソッド呼び出し</a>
+## <a id="sec-generated-title-3"></a> <a id="virtual">仮想メソッド呼び出し</a>
+
 「派生クラスのコンストラクターの前に基底クラスのコンストラクターが呼ばれる」というルールは、
 たいていどの言語でも同じルールです。
 C++ でも Java でもそういうルールでコンストラクターを呼び出します。
@@ -136,7 +139,8 @@ Name というメソッドが呼ばれたときに、
 それから基底クラスのコンストラクター → 派生クラスのコンストラクターの順で処理が行われます。
 
 
-###<a id="sec-generated-title-4"></a> <a id="order">余談： 初期化子とコンストラクターの実行順序</a>
+### <a id="sec-generated-title-4"></a> <a id="order">余談： 初期化子とコンストラクターの実行順序</a>
+
 「[コンストラクター初期化子](oo_construct.md#initializer)」で説明したように、
 初期化の順序は、
 
@@ -187,7 +191,8 @@ Derived()
 このことに留意してコードを書くとトラブルになりにくいです。
 
 
-##<a id="sec-generated-title-5"></a> <a id="problem">コンストラクター中での仮想メソッド呼び出しの問題点</a>
+## <a id="sec-generated-title-5"></a> <a id="problem">コンストラクター中での仮想メソッド呼び出しの問題点</a>
+
 基底クラスのコンストラクター内から仮想メソッドを呼んだとき、
 ちゃんと動的な型に基づいて派生クラスのメソッドが呼ばれるわけですが、
 この動作には1つ問題があります。
@@ -224,7 +229,8 @@ B のコンストラクター内で Name メソッドが呼ばれた時点では
 したがって、name 変数はまだ初期化されていない（null になっている）状態で、
 結局、このコードの実行結果は何も出力されません。
 
-###<a id="sec-generated-title-6"></a> <a id="primary-constructor">プライマリ コンストラクターでの解決</a>
+### <a id="sec-generated-title-6"></a> <a id="primary-constructor">プライマリ コンストラクターでの解決</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 ちなみにこの問題はプライマリ コンストラクターで解決できたりします。
@@ -258,7 +264,8 @@ derived
 </pre>
 
 
-##<a id="sec-generated-title-7"></a> <a id="summary">まとめ</a>
+## <a id="sec-generated-title-7"></a> <a id="summary">まとめ</a>
+
 C# では、コンストラクター内での仮想メソッド呼び出しは、
 動的な型に基づいて呼び出されます。
 

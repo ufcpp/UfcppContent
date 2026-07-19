@@ -18,16 +18,19 @@ aliases:
 
 # 【雑記】弱参照
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ガベージ コレクションに関連して、弱参照というものがあります。
 めったに使うものではありませんが、使い方・使い道を説明します。
 
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/WeakReference](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/WeakReference)
 
 
-##<a id="sec-generated-title-3"></a> <a id="weak-reference"></a>弱参照とは
+## <a id="sec-generated-title-3"></a> <a id="weak-reference"></a>弱参照とは
+
 「[ガベージ コレクション](rm_gc.md#garbage-collection)」(以下、GC)では、「他のオブジェクトから参照されているものは生きてる、誰からも参照されていないものはもう不要」という判定方法で、
 不要なオブジェクトを削除します。
 逆に言うと、誰か1つでも参照を持っているオブジェクトは削除されません。
@@ -93,7 +96,8 @@ aliases:
 GC により元のオブジェクト(Target)が削除されていたら、TryGetTarget が失敗します。
 
 
-##<a id="sec-generated-title-4"></a> <a id="usage"></a>弱参照の用途
+## <a id="sec-generated-title-4"></a> <a id="usage"></a>弱参照の用途
+
 普通に C# を使っていて、WeakReference を見かけることはほとんどないと思います。
 だいたいのプログラムでは、メモリ管理について気にすることはめったにありません(GC 任せ)。
 弱参照を使うというのは、メモリ管理を自分で気にかけるということなので、当然、あまり出番はありません。
@@ -103,7 +107,8 @@ GC により元のオブジェクト(Target)が削除されていたら、TryGet
 ということで、弱参照を使う場面はほとんどありませんが、一応、いくつか用途を紹介しておきましょう。
 
 
-###<a id="sec-generated-title-5"></a> <a id="weak-key-table"></a>用途1: 弱参照キーのテーブル
+### <a id="sec-generated-title-5"></a> <a id="weak-key-table"></a>用途1: 弱参照キーのテーブル
+
 あるオブジェクトに、外から別のオブジェクトを紐づけたいとします。
 これに対する手っ取り早い実現方法は Dictionary を使ったテーブル化です。
 
@@ -197,7 +202,8 @@ ConditionalWeakTable クラスも、名前空間が CompilerServices になっ�
 (Java なんかは、同系統のクラスである WeakHashMap が java.util 名前空間にあったりしますが…)
 
 
-###<a id="sec-generated-title-6"></a> <a id="weak-event"></a>用途2: 弱イベント
+### <a id="sec-generated-title-6"></a> <a id="weak-event"></a>用途2: 弱イベント
+
 GC を持っている(ので、めったなことではメモリ リークしないはずの)プログラミング言語で、メモリ リークの温床になっているのがイベント購読です。
 「[【雑記】イベントの購読とその解除](../functional/misceventsubscribe.md)」で説明していますが、
 イベント発生側と受取側の寿命が違う場合、イベント購読解除をしないとメモリ リークになります。
@@ -374,7 +380,8 @@ Dispose 処理をかけるのが著しく困難な場面はそこまで頻出し
 自動解除がかかるタイミングにデバッグ ログを仕込んでおけば、解除漏れを探すのに役立ちます。)
 
 
-###<a id="sec-generated-title-7"></a> <a id="cache"></a>誤用: オブジェクト キャッシュ
+### <a id="sec-generated-title-7"></a> <a id="cache"></a>誤用: オブジェクト キャッシュ
+
 最後に、弱参照の用途としてたまに上がるものの、そんなによい効果を得られないものについて触れておきます。
 
 オブジェクト作成にそこそこ時間がかかるので、作成したものをしばらく保存しておきたい(キャッシュ)場面は結構あります。

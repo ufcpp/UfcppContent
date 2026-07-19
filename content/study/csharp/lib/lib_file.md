@@ -18,7 +18,8 @@ aliases:
 
 # ファイル操作
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 System.IO 名前空間以下に、ディレクトリ（フォルダ）・ファイルの作成・読み書き等を行うためのクラスが用意されています。
 
 ファイル操作などの処理は、
@@ -27,7 +28,8 @@ C# の 「[foreach 文](../data/sp_foreach.md#foreach)」 や 「[LINQ](../data/
 C# でのファイル操作の楽さには目を見張るものがあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="file"></a>Directory, File
+## <a id="sec-generated-title-2"></a> <a id="file"></a>Directory, File
+
 System.IO.Directory と System.IO.File には、
 ディレクトリやファイルを読み書きするための static メソッドがあります。
 
@@ -68,7 +70,8 @@ Test file No. 1
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="fileinfo"></a>DirectoryInfo, FileInfo
+## <a id="sec-generated-title-3"></a> <a id="fileinfo"></a>DirectoryInfo, FileInfo
+
 System.IO.DirectoryInfo と System.IO.FileInfo は、
 ディレクトリやファイルの情報を取り出すためのクラスです。
 
@@ -110,7 +113,8 @@ ext: .txt, time: 02:34:36</pre>
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="stream"></a>StreamReader, StreamWriter
+## <a id="sec-generated-title-4"></a> <a id="stream"></a>StreamReader, StreamWriter
+
 System.IO.StreamReader, System.IO.StreamWriter を用いることで、
 テキストファイルの読み書きができます。
 
@@ -154,7 +158,8 @@ WriteLine では末尾に改行文字が加えられます。
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="binary"></a>BinaryReader, BinaryWriter
+## <a id="sec-generated-title-5"></a> <a id="binary"></a>BinaryReader, BinaryWriter
+
 バイナリ形式での読み書きには、
 System.IO.BinaryReader, System.IO.BinaryWriter クラスを用います。
 

@@ -18,7 +18,8 @@ aliases:
 
 # 構造化
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 構造化とは

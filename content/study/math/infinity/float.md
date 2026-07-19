@@ -18,13 +18,15 @@ aliases:
 
 # 計算機上では
 
-##<a id="sec-generated-title-1"></a> <a id="d74e4"></a>計算機上での数値の扱い
+## <a id="sec-generated-title-1"></a> <a id="d74e4"></a>計算機上での数値の扱い
+
 <pre>
 計算机上では実数はおろか、整数ですら有限桁しか扱えない。
 実数は浮動小数点数で表現 … 精度も桁数も有限
 </pre>
 
-##<a id="sec-generated-title-2"></a> <a id="d74e10"></a>浮動小数点数における∞の定義
+## <a id="sec-generated-title-2"></a> <a id="d74e10"></a>浮動小数点数における∞の定義
+
 <pre>
 計算機上では、
 

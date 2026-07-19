@@ -18,7 +18,8 @@ aliases:
 
 # 楕円フィルタ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[チェビシェフフィルタ](chebyshev.md#chebyshev)」や「[逆チェビシェフフィルタ](chebyshev2.md#chebyshev2)」は、
 通過域または阻止域のどちらか一方で等リプルとなるようすることで、
 「[バターワースフィルタ](butterworth.md#butterworth)」よりも急峻なカットオフ特性を得ていました。
@@ -42,7 +43,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="idea"></a>基本アイディア
+## <a id="sec-generated-title-2"></a> <a id="idea"></a>基本アイディア
+
 チェビシェフ多項式 <span class="math">C<sub>n</sub><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span> や、
 その逆 <span class="math">1 / C<sub>n</sub><span class="paren" style="font-size:em;">(</span>1/ω<span class="paren" style="font-size:em;">)</span></span> の代わりに、
 表1に示すような特徴を持つ<span class="math">n</span>次有理式 <span class="math">R<sub>n, k<sub>1</sub></sub><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span> を考えます。
@@ -114,7 +116,8 @@ aliases:
 このような有理式の作り方を次節で説明します。
 
 
-##<a id="sec-generated-title-3"></a> <a id="chebyshev_rational"></a>チェビシェフ有理関数
+## <a id="sec-generated-title-3"></a> <a id="chebyshev_rational"></a>チェビシェフ有理関数
+
 以下のようにして有理式 <span class="math">R<sub>n, k<sub>1</sub></sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span> を定義することで、
 「[基本アイディア](#idea)」で述べたような特徴を持つ有利式が得られ、
 この有理式を「[チェビシェフ有理関数](ellipticrational.md#elliptic_rational)」 と呼びます。
@@ -154,7 +157,8 @@ x
 「[チェビシェフ有理関数](ellipticrational.md#abstract)」 を参照してください。
 
 
-##<a id="sec-generated-title-4"></a> <a id="property"></a>周波数特性
+## <a id="sec-generated-title-4"></a> <a id="property"></a>周波数特性
+
 以下の図に、例として、3次、5次、9次の楕円フィルタの振幅特性を示します。
 この例では、リプル幅は 0.1 で設計しています。
 
@@ -165,8 +169,10 @@ x
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="analog"></a>アナログプロトタイプの設計
-###<a id="sec-generated-title-6"></a> <a id="zero"></a>零点配置
+## <a id="sec-generated-title-5"></a> <a id="analog"></a>アナログプロトタイプの設計
+
+### <a id="sec-generated-title-6"></a> <a id="zero"></a>零点配置
+
 <span class="math">R<sub>n, k<sub>1</sub></sub><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span> の極が
 <span class="math">H<sub>E</sub><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span> の零点になります。
 <span class="math"><span class="normal">cd</span><span class="paren" style="font-size:em;">(</span>u, k<span class="paren" style="font-size:em;">)</span></span> の極は
@@ -220,7 +226,8 @@ k
 ただし、<span class="math">k</span>は<span class="math">0～(n－1) / 2</span>までの整数です。
 
 
-###<a id="sec-generated-title-7"></a> <a id="pole"></a>極配置
+### <a id="sec-generated-title-7"></a> <a id="pole"></a>極配置
+
 <span class="math">H<sub>E</sub><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span> の極は、
 <div class="math">
 R<sub>n, k<sub>1</sub></sub><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
@@ -364,7 +371,8 @@ k'
 ただし、<span class="math">k</span>は<span class="math">0～(n－1) / 2</span>までの整数です。
 
 
-###<a id="sec-generated-title-8"></a> <a id="spec"></a>設計仕様
+### <a id="sec-generated-title-8"></a> <a id="spec"></a>設計仕様
+
 透過域/阻止域の周波数/リプル
 （<span class="math">A<sub>p</sub>, r<sub>s</sub>, ω<sub>s</sub></span>）
 を仕様として与えたとき、

@@ -18,7 +18,8 @@ aliases:
 
 # 周波数特性
 
-##<a id="sec-generated-title-1"></a> <a id="property"></a>周波数特性
+## <a id="sec-generated-title-1"></a> <a id="property"></a>周波数特性
+
 信号処理の分野では、時間領域信号をフーリエ変換したもの、
 要するに周波数領域信号を<strong id="property" class="keyword">周波数特性</strong>（frequency property）と呼びます。
 周波数領域信号を、信号やシステムの周波数的な特性を表す物理量だとみなすわけです。
@@ -82,7 +83,8 @@ A<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="
 非常によく利用されます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="dB"></a>対数振幅
+## <a id="sec-generated-title-2"></a> <a id="dB"></a>対数振幅
+
 振幅特性は、周波数ごとにどのくらいの振幅＝信号の強さを持っているかを示す関数です。
 音ならば振幅が大きいほど音の強さも大きく聞こえますし、
 光ならば明るく見えます。
@@ -206,7 +208,8 @@ p<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="cut"></a>信号の切り出し
+## <a id="sec-generated-title-3"></a> <a id="cut"></a>信号の切り出し
+
 測定により、図2に示すような信号ご得られたとします。
 無限長の信号を解析することは出来ませんから、
 信号の一部分を切り出して解析することになります。
@@ -293,7 +296,8 @@ A<sub>B</sub><span class="paren" style="font-size:em;">(</span>ω<span class="pa
 測定の開始時間を表すトリガー信号を記録しておくなどの工夫をします。
 
 
-##<a id="sec-generated-title-4"></a> <a id="indefinite"></a>位相特性の不定性
+## <a id="sec-generated-title-4"></a> <a id="indefinite"></a>位相特性の不定性
+
 指数関数は、<span class="math"><span class="normal">exp</span> jx ＝ <span class="normal">exp</span> j<span class="paren" style="font-size:em;">(</span>x ＋ 2πn<span class="paren" style="font-size:em;">)</span></span>（<span class="math">n</span> は任意の整数）という性質を持っています。
 したがって、振幅および位相特性 <span class="math">A, φ</span> に関して、以下のような式が成り立ちます。
 <div class="math">
@@ -335,7 +339,8 @@ A <span class="normal">exp</span> j<span class="paren" style="font-size:em;">(</
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="delay"></a>遅延
+## <a id="sec-generated-title-5"></a> <a id="delay"></a>遅延
+
 「[周波数特性](#property)」で述べましたが、
 位相特性は正弦波信号の時間的なずれになります。
 「時間的な」と書きましたが、
@@ -351,7 +356,8 @@ A <span class="normal">exp</span> j<span class="paren" style="font-size:em;">(</
 位相遅延と呼ばれるものと、群遅延と呼ばれるものの2通りの方法があります。
 
 
-###<a id="sec-generated-title-6"></a> <a id="phasedelay"></a>位相遅延特性
+### <a id="sec-generated-title-6"></a> <a id="phasedelay"></a>位相遅延特性
+
 まず、1つ目は位相遅延と呼ばれるものです。
 先ほど述べたとおり、周波数によらない一定の遅延を与えた場合には、
 <span class="math">φ<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span> ＝ － T ω</span> という関係式が成り立ちます。
@@ -397,7 +403,8 @@ T<sub>p</sub>'<span class="paren" style="font-size:em;">(</span>ω<span class="p
 位相遅延の考え方により求めた遅延時間は必ずしも正しいものであるとはいえません。
 
 
-###<a id="sec-generated-title-7"></a> <a id="groupdelay"></a>群遅延特性
+### <a id="sec-generated-title-7"></a> <a id="groupdelay"></a>群遅延特性
+
 もう1つの遅延は群遅延と呼ばれるものです。
 位相遅延が <span class="math">ω</span> で割るという方法を取るのに対して、
 <div class="math">
@@ -488,8 +495,10 @@ F
 （微分演算をしないといけないので、多少数値計算が面倒ではありますが。）
 
 
-##<a id="sec-generated-title-8"></a> <a id="d22e1165"></a>余談
-###<a id="sec-generated-title-9"></a> <a id="d22e1167"></a>スペクトル
+## <a id="sec-generated-title-8"></a> <a id="d22e1165"></a>余談
+
+### <a id="sec-generated-title-9"></a> <a id="d22e1167"></a>スペクトル
+
 信号処理の分野に限らず、
 自然科学・数学では、一般的に、
 時間や位置（あるいはその両方）で表される関数を場（field）と呼びます。
@@ -523,7 +532,8 @@ f<span class="paren" style="font-size:em;">(</span>t, <span class="vector">r</sp
 （位置がベクトル（2次元以上）で表されるとき、空間周波数や波数もベクトルになる）。
 
 
-###<a id="sec-generated-title-10"></a> <a id="d22e1241"></a>phase と topology
+### <a id="sec-generated-title-10"></a> <a id="d22e1241"></a>phase と topology
+
 数学の集合論なんかでも位相という言葉が出てきますが、
 この数学の位相と、このページで説明した位相はまったく別物になります。
 信号処理・物理学における位相が phase なのに対して、
@@ -549,7 +559,8 @@ topology の方だけ「位相」と呼ぶ流儀もあるんですが、
 （多分、相だけだと、（音が同じなので）層（layer）とかの別の単語を連想するからだと思います）。
 
 
-##<a id="sec-generated-title-11"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-11"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・対数振幅
 [余談]

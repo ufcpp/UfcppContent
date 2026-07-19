@@ -16,7 +16,8 @@ aliases:
 
 # コレクション概要
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「データ構造」と呼ばれるものの代表格というと、
 同じ型のデータをたくさん集めたもの、すなわちコレクションと呼ばれるものでしょう。
 
@@ -35,13 +36,15 @@ C++ も、1998年に標準化された STL と呼ばれるライブラリに、
 とにかく、コレクションについての説明をしていきたいと思います。
 
 
-##<a id="sec-generated-title-2"></a> <a id="cpp"></a>C++ のコレクション
+## <a id="sec-generated-title-2"></a> <a id="cpp"></a>C++ のコレクション
+
 1998年に標準化された STL（Standard Template Library）には多数のコレクションクラスが含まれています。
 詳細は「[C++ STL](../../stl/index.md)」で説明しますが、
 C++ の STL は非常に高機能で、
 現在の C++ では、ほとんどの場合、コレクションクラスを自作する必要がありません。
 
-##<a id="sec-generated-title-3"></a> <a id="cs"></a>C# のコレクション
+## <a id="sec-generated-title-3"></a> <a id="cs"></a>C# のコレクション
+
 .NET Framework には、
 <code>System.Collections.Generic</code> 名前空間以下にコレクションクラスが用意されています。
 C++ の STL と比べると、その機能はシンプルで、
@@ -62,8 +65,10 @@ C++/CLI （.NET Framework 向けに拡張された C++）専用で、
 残念ながら C++/CLI からしか利用できません。
 
 
-##<a id="sec-generated-title-4"></a> <a id="inpl"></a>実装方法による分類
-###<a id="sec-generated-title-5"></a> <a id="sequence"></a>順序構造を保つコレクション
+## <a id="sec-generated-title-4"></a> <a id="inpl"></a>実装方法による分類
+
+### <a id="sec-generated-title-5"></a> <a id="sequence"></a>順序構造を保つコレクション
+
 <table summary="">
 
 	<tr>
@@ -95,7 +100,8 @@ C++/CLI （.NET Framework 向けに拡張された C++）専用で、
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="set"></a>検索が高速なコレクション
+### <a id="sec-generated-title-6"></a> <a id="set"></a>検索が高速なコレクション
+
 <table summary="">
 
 	<tr>
@@ -122,8 +128,10 @@ C++/CLI （.NET Framework 向けに拡張された C++）専用で、
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="usage"></a>用途による分類
-###<a id="sec-generated-title-8"></a> <a id="buffer"></a>要素の挿入・削除を一定ルールで行うコレクション
+## <a id="sec-generated-title-7"></a> <a id="usage"></a>用途による分類
+
+### <a id="sec-generated-title-8"></a> <a id="buffer"></a>要素の挿入・削除を一定ルールで行うコレクション
+
 <table summary="">
 
 	<tr>
@@ -150,7 +158,8 @@ C++/CLI （.NET Framework 向けに拡張された C++）専用で、
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="assoc"></a>連想コレクション
+### <a id="sec-generated-title-9"></a> <a id="assoc"></a>連想コレクション
+
 <table summary="">
 
 	<tr>

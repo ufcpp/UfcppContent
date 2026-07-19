@@ -18,7 +18,8 @@ aliases:
 
 # 属性
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="attribute" class="keyword">属性</strong>（attribute）とはクラスやメンバーに追加情報を与えるものです。
 例えば、<code>public</code> や <code>private</code> などといったC#のキーワードもある種の属性と考えることが出来ます。
 <code>public</code> ならば「このメンバーはクラス外からも参照可能」、
@@ -41,6 +42,7 @@ C++ などの既存の言語では、このような追加情報を定義する�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * C# では、クラスやメンバーに対して、ユーザーが自分で定義した属性を自由に付けられます。
 
 * 一部の属性は、コンパイラや Visual Studio に対する指示として利用します。 例：
@@ -52,7 +54,8 @@ C++ などの既存の言語では、このような追加情報を定義する�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="use"></a>属性の使用
+## <a id="sec-generated-title-3"></a> <a id="use"></a>属性の使用
+
 属性は以下のように <code>[]</code> でくくり、
 クラスやメンバーの前に付けて使います。
 
@@ -188,13 +191,15 @@ C++ などの既存の言語では、このような追加情報を定義する�
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="predefined"></a>定義済み属性
+## <a id="sec-generated-title-4"></a> <a id="predefined"></a>定義済み属性
+
 <code>Conditional</code> 以外にも、標準ライブラリによって提供されている定義済み属性がいくつかあります。
 そのうちのいくつかを以下に挙げます。
 「付与した属性を誰が使うか」で分類しています。
 
 
-###<a id="sec-generated-title-5"></a> <a id="compiler_attribute"></a>コンパイラが利用
+### <a id="sec-generated-title-5"></a> <a id="compiler_attribute"></a>コンパイラが利用
+
 コンパイラへの指示になっていて、コンパイル結果に影響を及ぼします。
 
 <table summary="">
@@ -219,7 +224,8 @@ C++ などの既存の言語では、このような追加情報を定義する�
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="ide_attirbute"></a>開発ツール
+### <a id="sec-generated-title-6"></a> <a id="ide_attirbute"></a>開発ツール
+
 Visual Studio などの開発ツールが利用します。
 いずれも、<code>System.ComponentModel</code> 名前空間です。
 
@@ -243,7 +249,8 @@ Visual Studio などの開発ツールが利用します。
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="ves_attribute"></a>実行エンジン
+### <a id="sec-generated-title-7"></a> <a id="ves_attribute"></a>実行エンジン
+
 .NET Framework の 「[IL](../abstract/ab_dotnet.md#il)」 実行エンジンが利用します。
 いずれも、<code>System.Runtime.InteropServices</code> 名前空間です。
 
@@ -265,12 +272,14 @@ Visual Studio などの開発ツールが利用します。
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="lib_attribute"></a>ライブラリ
+### <a id="sec-generated-title-8"></a> <a id="lib_attribute"></a>ライブラリ
+
 ライブラリが利用します。
 各ライブラリ内部で、「[リフレクション](sp_reflection.md#reflection)」を使った動的コード生成などを行っています。
 
 
 ##### <a id="sec-generated-title-9"></a>ASP.NET
+
 <table summary="">
 
 	<tr>
@@ -286,6 +295,7 @@ Visual Studio などの開発ツールが利用します。
 
 
 ##### <a id="sec-generated-title-10"></a>WCF（Windows Communication Foundation）
+
 <table summary="">
 
 	<tr>
@@ -301,6 +311,7 @@ Visual Studio などの開発ツールが利用します。
 
 
 ##### <a id="sec-generated-title-11"></a>データ検証
+
 <code>System.ComponentModel.DataAnnotations.Validator</code> クラスを使って、
 データが満たすべき条件（null であってはいけないとか、値の範囲とか）を検証します。
 いずれも、<code>System.ComponentModel.DataAnnotations</code> 名前空間です。
@@ -328,6 +339,7 @@ Visual Studio などの開発ツールが利用します。
 
 
 ##### <a id="sec-generated-title-12"></a>テスト
+
 Visual Studio 組み込みの単体テスト機能で利用します。
 いずれも、<code>Microsoft.VisualStudio.TestTools.UnitTesting</code> 名前空間です。
 
@@ -349,7 +361,8 @@ Visual Studio 組み込みの単体テスト機能で利用します。
 
 
 
-###<a id="sec-generated-title-13"></a> <a id="assembly_attribute"></a>プログラム自体に関する情報
+### <a id="sec-generated-title-13"></a> <a id="assembly_attribute"></a>プログラム自体に関する情報
+
 一部の属性は、実行ファイルのプロパティに表示されます。
 例えば、以下のようなプログラムにより、
 AssemblyDescription という属性をアセンブリに付けたとします。
@@ -381,7 +394,8 @@ explorer から参照することができます。
 
 
 
-##<a id="sec-generated-title-14"></a> <a id="target"></a>属性の対象
+## <a id="sec-generated-title-14"></a> <a id="target"></a>属性の対象
+
 属性を付ける場所によって属性の対象は変わります。
 例えば、クラスの直前に属性を付ければクラスに属性が適用されますし、
 メソッド定義の直前に属性を付ければメソッドに属性が適用されます。
@@ -487,7 +501,8 @@ explorer から参照することができます。
 メソッドそのものに対する属性と区別するために必ず付ける必要があります。
 また、<code>assembly</code> および <code>module</code> も指定が必須です。
 
-###<a id="sec-generated-title-15"></a> <a id="auto-impl"></a>プロパティ、イベントと属性の対象
+### <a id="sec-generated-title-15"></a> <a id="auto-impl"></a>プロパティ、イベントと属性の対象
+
 [プロパティ](../oop/oo_property.md)や[イベント](../functional/sp_event.md)は、
 内部的にはフィールドやメソッドも作られます。
 その結果、属性の指定先もいろいろと増えます。
@@ -569,7 +584,8 @@ C# 7.2 以前では自動プロパティでフィールドに対して属性指�
 }
 </code></pre>
 
-###<a id="sec-generated-title-16"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
+### <a id="sec-generated-title-16"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
+
 <h5 class="version version9">Ver. 9</h5>
 <h5 class="version version12">Ver. 12</h5>
 
@@ -611,7 +627,8 @@ C# 9 で導入された当初から先行してプライマリ コンストラ�
 </pre>
 
 
-##<a id="sec-generated-title-17"></a> <a id="userdefine"></a>属性の自作
+## <a id="sec-generated-title-17"></a> <a id="userdefine"></a>属性の自作
+
 <em>
         属性の実態は <code>System.Attribute</code> クラスの派生クラスです
       </em>。
@@ -710,7 +727,8 @@ false の場合には属性は継承されません。
 
 
 
-##<a id="sec-generated-title-18"></a> <a id="get"></a>属性情報の取得
+## <a id="sec-generated-title-18"></a> <a id="get"></a>属性情報の取得
+
 リフレクション機能を用いて属性情報を出得することが出来ます。
 具体的には、
 <code>Attribule</code> クラスの <code>GetCustomAttribute </code> メソッドや <code>GetCustomAttributes </code> メソッドを用いて属性を取得します。
@@ -823,7 +841,8 @@ type name: AuthorTest
   method name: GetType
 </pre>
 
-##<a id="sec-generated-title-19"></a> <a id="generic-attribute">ジェネリックな属性</a>
+## <a id="sec-generated-title-19"></a> <a id="generic-attribute">ジェネリックな属性</a>
+
 <h5 class="version version11">Ver. 11</h5>
 
 C# 11.0 で、属性をジェネリック クラスにできるようになりました。

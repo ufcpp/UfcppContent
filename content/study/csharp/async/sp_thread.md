@@ -18,13 +18,15 @@ aliases:
 
 # マルチスレッド
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 .NET Framework では、マルチスレッドプログラムを作成するためのクラスライブラリを提供しています。
 C# でマルチスレッドプログラムを作成する場合、これらライブラリ中のクラスを用いて行うことになります。
 また、C# ではスレッド間の同期を取るために lock 文という構文を用意しています。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * C# なら、Thread クラスとデリゲートで並行処理・並列処理もお手軽。
     * 実際には、スレッドを直接作らず、スレッド プールというものを介して使う。
 
@@ -36,7 +38,8 @@ C# でマルチスレッドプログラムを作成する場合、これらラ�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="about"></a>マルチスレッドとは
+## <a id="sec-generated-title-3"></a> <a id="about"></a>マルチスレッドとは
+
 まず、スレッドに関して簡単に説明しておきます。
 簡単に言うと、<strong id="thread" class="keyword">スレッド</strong>（thread: 糸、筋道）とは一連の処理の流れのことを言います。
 図1 に示すように、
@@ -64,7 +67,8 @@ C# でマルチスレッドプログラムを作成する場合、これらラ�
 複数の処理を平行して行うのがマルチスレッドプログラムです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="threading"></a>C# におけるマルチスレッドプログラミング
+## <a id="sec-generated-title-4"></a> <a id="threading"></a>C# におけるマルチスレッドプログラミング
+
 <span class="expand-button" title="展開/折畳">（古いバージョンの例）</span>
 <div class="expand-panel" markdown="1" title="（古いバージョンの例）">
       
@@ -240,6 +244,7 @@ C# でマルチ スレッド プログラムを作成する際、
 
 
 ##### <a id="sec-generated-title-5"></a>サンプル
+
 入力された数値の素因数分解を行うプログラムです。
 (値が大きくなると素因数分解は非常に時間がかかります。)
 ユーザからの入力を受け付けるスレッドと計算を行うスレッドの2つのスレッドで処理を行います。
@@ -416,7 +421,8 @@ C# でマルチ スレッド プログラムを作成する際、
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="exclusive"></a>排他制御
+## <a id="sec-generated-title-6"></a> <a id="exclusive"></a>排他制御
+
 マルチスレッドプログラムでは、複数のスレッドが1つのデータに対して操作することがあります。
 この際に、何も考えず、ただ素直にプログラミングを行うと、
 意図しない結果になる場合があります。
@@ -566,7 +572,8 @@ C# でマルチ スレッド プログラムを作成する際、
 そして、排他制御とは、複数のスレッドが同時に1つのデータの読み書きを行わないように制御することを言います。
 
 
-##<a id="sec-generated-title-7"></a> <a id="ex_in_cs"></a>C# における排他制御
+## <a id="sec-generated-title-7"></a> <a id="ex_in_cs"></a>C# における排他制御
+
 C# では排他制御のための専用の構文“lock 文”を持っています。
 ここでは lock 文について説明する前に、
 lock 文の動作の基となる <em>
@@ -674,7 +681,8 @@ Monitor クラスでは、参照型の任意の変数を同期オブジェクト
 複数のスレッドから同時に処理されることがなくなります。
 
 
-##<a id="sec-generated-title-8"></a> <a id="lock"></a>lock 文
+## <a id="sec-generated-title-8"></a> <a id="lock"></a>lock 文
+
 排他制御の手順をまとめると以下のようになります。
 
 <pre class="source" title="排他制御の手順" lang="">
@@ -761,7 +769,8 @@ lock 文を用いると、コンパイラが自動的に <code>Monitor</code> �
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="dotnet4"></a>余談: .NET Framework 4での実装変更
+### <a id="sec-generated-title-9"></a> <a id="dotnet4"></a>余談: .NET Framework 4での実装変更
+
 `lock`文がどう展開されるかは、.NET Framework 4で変更がありました。
 これまでの説明で書いてきたパターンは、.NET Framework 4以降のものです。
 
@@ -812,7 +821,8 @@ lock 文を用いると、コンパイラが自動的に <code>Monitor</code> �
 コンパイル オプションでC#のバージョンを3.0にしても、ターゲットが.NET Framework 4以降であれば`Enter(object, ref bool)`が使われます。
 逆に、C# 7でコンパイルしても、ターゲットが.NET Framework 3.5以前であれば`Enter(object)`が使われます。
 
-##<a id="sec-generated-title-10"></a> <a id="volatile"></a>volatile
+## <a id="sec-generated-title-10"></a> <a id="volatile"></a>volatile
+
 コンパイラは、コードの最適化の過程で、不要な部分を丸々削除してしまう場合があります。
 通常は、不要な部分は削除してもらった方がありがたいのですが、
 マルチスレッドプログラミングにおいては、
@@ -829,7 +839,8 @@ volatile（ヴォラタイル: 揮発性、変わりやすい）という修飾�
 volatile 修飾子の付いた変数への値の読み書きは、
 コンパイラの最適化によって削除されることはありません。
 
-##<a id="sec-generated-title-11"></a> <a id="lock-class">Lock クラス</a>
+## <a id="sec-generated-title-11"></a> <a id="lock-class">Lock クラス</a>
+
 <h5 class="version version13">Ver. 13</h5>
 
 C# の `lock` ステートメントは任意の `object` (参照型のインスタンス)に対して使えて、

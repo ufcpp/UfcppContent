@@ -18,7 +18,8 @@ aliases:
 
 # 論理演算
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[ゲート](gatelevel.md)」では、ディジタル回路の基本となるのは、0か1かを選択する回路（ゲート）だということを説明しました。
 そして次に必要になるのは、そのゲートを組み合わせて、複雑な回路を設計する手法です。
 
@@ -27,7 +28,8 @@ aliases:
 本節以降では、この論理演算の基礎と、論理演算を使ったディジタル回路設計（論理レベル設計）について説明していきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="sec-logical-operation"></a>論理演算
+## <a id="sec-generated-title-2"></a> <a id="sec-logical-operation"></a>論理演算
+
 コンピューターの内部では、値はすべて0, 1の2値で表現されます。
 この2値に対するいくつかの演算を<strong id="logical-operation" class="keyword">論理演算</strong>（logical operation）と呼びます。
 論理演算は、もともとは命題の真偽に関する演算を表していました。
@@ -258,7 +260,8 @@ Web ページ上での表示の都合で、
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="digital"></a>論理演算とディジタル回路
+## <a id="sec-generated-title-3"></a> <a id="digital"></a>論理演算とディジタル回路
+
 では、どうすれば電子回路を使って論理演算を行えるかについて見ていきましょう。
 「[ゲート](gatelevel.md)」で説明しましたが、論理演算の実現にはCMOSと呼ばれる構成の電子回路を用いることが多く、ここでもCMOSを例に挙げて説明していきます。
 
@@ -287,7 +290,8 @@ AおよびBの値に応じてスイッチが開閉し、Cの値が図3のよう�
 このような、論理演算を行うための回路を<strong id="logical-circuit" class="keyword">論理回路</strong>（logical circuit）と呼びます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="logical-circuit-sign"></a>論理回路記号
+## <a id="sec-generated-title-4"></a> <a id="logical-circuit-sign"></a>論理回路記号
+
 論理回路には表4に示すような専用の記号が取り決められています。
 
 <table summary="論理演算を表す回路記号">

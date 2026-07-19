@@ -18,7 +18,8 @@ aliases:
 
 # フーリエ級数展開
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 フーリエ級数展開の基本となる概念は19世紀の前半にフランスの数学者 フーリエ（Fourier、1764-1830）が熱伝導問題の解析の過程で考え出したものです。
 そして、その基本アイディアは「<em>任意の周期関数は三角関数の和で表される</em>」というものです。
  
@@ -26,7 +27,8 @@ aliases:
 そのため、ディジタル信号処理などの工学的な応用に必要になる部分に絞って説明していきたいと思います。
 
 
-##<a id="sec-generated-title-2"></a> <a id="idea"></a>基本アイディア
+## <a id="sec-generated-title-2"></a> <a id="idea"></a>基本アイディア
+
 フーリエは「任意の周期関数は三角関数の和で表される」という仮定の下で、
 周期関数を三角関数を使って級数展開する方法(<strong id="f-series" class="keyword">フーリエ級数展開</strong>と呼ばれています)を考案しました。
 すなわち、周期<span class="math">T</span>の関数<span class="math">f(t)</span>は
@@ -49,7 +51,8 @@ a<sub>0</sub> ＋
 以上のことから、ここでは厳密な議論は抜きにして（知りたい人は専門書を読んで自分で勉強してもらうものとして）説明していきます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="orthogonal"></a>三角関数の直交性
+## <a id="sec-generated-title-3"></a> <a id="orthogonal"></a>三角関数の直交性
+
 三角関数の性質として、任意の自然数<span class="math">m, n</span>に対して以下の式が成り立つというものがあります。
 <div class="math">
       <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> π</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－π</td></tr></table>
@@ -90,7 +93,8 @@ a<sub>0</sub> ＋
 このような性質は<em>三角関数の直交性</em>と呼ばれています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="series"></a>フーリエ級数展開
+## <a id="sec-generated-title-4"></a> <a id="series"></a>フーリエ級数展開
+
 説明を単純化するため、まずは周期<span class="math">2π</span>の関数に絞って説明していきたいと思います。
 このとき、「[基本アイディア](#idea)」で示した式は以下のようになります。
 <div class="math">
@@ -152,7 +156,8 @@ a<sub>0</sub> ＋
 となる。
 
 
-##<a id="sec-generated-title-5"></a> <a id="d18e647"></a>複素形フーリエ級数展開
+## <a id="sec-generated-title-5"></a> <a id="d18e647"></a>複素形フーリエ級数展開
+
 三角関数と指数関数の間には、
 <div class="math">
       <span class="normal">e</span>
@@ -189,11 +194,13 @@ f(t) ＝
 <span class="math">f<span class="paren" style="font-size:em;">[</span>n<span class="paren" style="font-size:em;">]</span></span>のように[]付き表記の関数は離散関数を表すものとします。
 
 
-##<a id="sec-generated-title-6"></a> <a id="exsample"></a>フーリエ級数展開の例
+## <a id="sec-generated-title-6"></a> <a id="exsample"></a>フーリエ級数展開の例
+
 いくつか、フーリエ級数展開の例を挙げます。
 
 
-###<a id="sec-generated-title-7"></a> <a id="d18e897"></a>矩形波
+### <a id="sec-generated-title-7"></a> <a id="d18e897"></a>矩形波
+
 以下のような周期関数のフーリエ変換を考えてみましょう。
 <div class="math">
 f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
@@ -250,7 +257,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="d18e1077"></a>鋸波
+### <a id="sec-generated-title-8"></a> <a id="d18e1077"></a>鋸波
+
 以下の周期関数で表される信号を（周期πの）鋸（のこぎり）波と呼びます。
 <div class="math">
 f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
@@ -300,7 +308,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="d18e1222"></a>インパルス列
+### <a id="sec-generated-title-9"></a> <a id="d18e1222"></a>インパルス列
+
 以下の周期関数で表される信号を（周期πの）インパルス列と呼びます。
 <div class="math">
 f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
@@ -333,7 +342,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="summay"></a>まとめ
+## <a id="sec-generated-title-10"></a> <a id="summay"></a>まとめ
+
 <table summary="フーリエ級数展開の公式">
 	<caption>
 		フーリエ級数展開の公式

@@ -15,7 +15,8 @@ aliases:
 
 # C# 7 の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="ver7"></a>C# 7
+## <a id="sec-generated-title-1"></a> <a id="ver7"></a>C# 7
+
 <div class="version version7">Ver. 7</div>
 
 <table>
@@ -54,7 +55,8 @@ C# 7以降のC#の大きなテーマとしては以下のようなものがあ�
 C# 7にはその最初の一歩となる機能がいろいろと追加されています。
 また、この大きなテーマ以外にも、こまごまとして改善が何点かあります。
 
-##<a id="sec-generated-title-2"></a> <a id="data-centric"></a>データ中心の設計
+## <a id="sec-generated-title-2"></a> <a id="data-centric"></a>データ中心の設計
+
 伝統的なオブジェクト指向的な発想は多くの場面で有用ですが、別の発想を持つ方が好ましい場面もあります。
 オブジェクト指向では、具体的なデータは隠蔽し、メソッド越しにデータを操作します。
 振る舞い中心(behavior-centric)な設計になります。
@@ -69,7 +71,8 @@ C#はまだまだ前者(振る舞い中心)に寄っているので、もっと�
 C# 7では、タプルや型スイッチなどの機能が入ります。
 これらは、将来的に、レコード型やパターン マッチングという、C# 8以降で検討されている機能につながっていきます。
 
-###<a id="sec-generated-title-3"></a> <a id="tuple"></a>タプル
+### <a id="sec-generated-title-3"></a> <a id="tuple"></a>タプル
+
 詳しくは「[名前のない複合型](../structured/st_anonymoustype.md)」で説明しますが、
 型には常によい名前が付くわけではなく、名無しにしておきたいことがあります。
 そういう場合に使うもののうちの1つがC# 7で導入されたタプル(tuple)です。
@@ -110,7 +113,8 @@ C# 7では、タプルや型スイッチなどの機能が入ります。
 
 詳しくは「[タプル](../datatype/tuples.md)」で説明します。
 
-###<a id="sec-generated-title-4"></a> <a id="deconstruction"></a>分解
+### <a id="sec-generated-title-4"></a> <a id="deconstruction"></a>分解
+
 タプルは、メンバー名だけ見ればその型が何を意味するか分かるからこそ型に名前が付かないわけです。 このとき、その型を受け取る変数にも、よい名前が浮かばなくなるはずです。
 実際、前節では`t`という特に意味のない名前の変数で値を受け取っています。
 
@@ -151,7 +155,8 @@ C# 7では、そのための分解構文(deconstruction)も追加されました
 詳しくは「[分解](../datatype/deconstruction.md)
 」で説明します。
 
-###<a id="sec-generated-title-5"></a> <a id="out-var"></a>出力変数宣言
+### <a id="sec-generated-title-5"></a> <a id="out-var"></a>出力変数宣言
+
 タプルが入るまで、複数の戻り値を返すためには[出力引数](../resource/sp_ref.md#out)を使っていました。
 
 タプルが複数の戻り値を返す全く新しい手法なのに対して、
@@ -200,7 +205,8 @@ C# 7では既存の出力引数にも利便性向上のための機能が追加�
 
 詳しくは「[出力変数宣言](../resource/sp_ref.md#out-var)」で説明します。
 
-###<a id="sec-generated-title-6"></a> <a id="type-switch"></a>型スイッチ
+### <a id="sec-generated-title-6"></a> <a id="type-switch"></a>型スイッチ
+
 C# 7で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステートメント](../structured/st_branch.md#switch)の`case`が拡張されて、以下のような機能が入りました。
 
 - `case`でも、`is`演算子と同じように、インスタンスの型を見ての分岐ができるようになった
@@ -236,7 +242,8 @@ C# 7で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステ�
 
 詳しくは「[型スイッチ](../datatype/typeswitch.md)」で説明します。
 
-####<a id="sec-generated-title-7"></a> <a id="var-expressions"></a>式の中での変数宣言
+#### <a id="sec-generated-title-7"></a> <a id="var-expressions"></a>式の中での変数宣言
+
 [is 演算子の拡張](../datatype/typeswitch.md#is)と[出力変数宣言](../resource/sp_ref.md#out-var)では、式の中で変数宣言ができます。
 式は割かしどこにでも書けるものなので、これまで変数宣言できなかったような場所(それも、かなり無制限)で変数を宣言できるようになりました。
 
@@ -245,7 +252,8 @@ C# 7で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステ�
 
 詳しくは「[is演算子の拡張と出力変数宣言で作った変数のスコープ](../start/st_scope.md#csharp7)」を参照してください。
 
-###<a id="sec-generated-title-8"></a> <a id="discard"></a>値の破棄
+### <a id="sec-generated-title-8"></a> <a id="discard"></a>値の破棄
+
 型スイッチや分解では、変数を宣言しつつ何らかの値を受け取るわけですが、 特に受け取る必要のない余剰の値が生まれたりします。
 
 例えば、分解では、複数の値のうち、1つだけを受け取りたい場合があったとします。
@@ -271,7 +279,8 @@ C# 7で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステ�
 
 詳しくは「[値の破棄](../datatype/patterns.md#discards)」を参照してください。
 
-##<a id="sec-generated-title-9"></a> <a id="performance"></a>パフォーマンス改善
+## <a id="sec-generated-title-9"></a> <a id="performance"></a>パフォーマンス改善
+
 C#にとって一番重要視しているのは生産性の高さで、書きやすさ、読みやすさなどが一番大事です。
 しかし、パフォーマンスへの配慮も大事です。いくら書きやすくても、出来上がったものがあまりにも遅いと言語の魅力は半減するでしょう。
 そして、近年では、C#の用途も増え、パフォーマンスが求められる場面が増えています。
@@ -287,7 +296,8 @@ OSのような低レイヤーのソフトウェアを作る以上、パフォー
 
 C# 7で入るものの多くが、値型と参照渡しを活用したメモリ管理の効率化になります。
 
-###<a id="sec-generated-title-10"></a> <a id="ref-returns"></a>参照戻り値と参照ローカル変数
+### <a id="sec-generated-title-10"></a> <a id="ref-returns"></a>参照戻り値と参照ローカル変数
+
 戻り値とローカル変数でも参照渡しを使えるようになりました。 書き方はほぼ参照引数と同じです。 戻り値の型の前、値を渡す側、値を受ける側それぞれに`ref`修飾子を付けます。
 
 <pre class="source" title="参照戻り値と参照ローカル変数の例">
@@ -321,7 +331,8 @@ C# 7で入るものの多くが、値型と参照渡しを活用したメモリ�
 
 この機能によって、大き目の値型を無駄なコピーなく取り扱えるようになって、パフォーマンスの向上が期待できます(参考: 「[値型の参照渡し](../resource/sp_ref.md#value-type)」)。
 
-###<a id="sec-generated-title-11"></a> <a id="local-functions"></a>ローカル関数
+### <a id="sec-generated-title-11"></a> <a id="local-functions"></a>ローカル関数
+
 関数の中に入れ子で関数を書ける機能が追加されました。
 入れ子の関数は、定義した関数の中でだけ使えます。
 この機能をローカル関数と呼びます。
@@ -347,7 +358,8 @@ C# 7で入るものの多くが、値型と参照渡しを活用したメモリ�
 同時に、状況によってはラムダ式よりもパフォーマンスの良いコードが生成されるよう、最適化が掛かっています
 (参考: [ローカル関数かつクロージャの場合](../functional/sp2_anonymousmethod.md#closure-local-function))。
 
-###<a id="sec-generated-title-12"></a> <a id="tasklike"></a>非同期メソッドの戻り値に任意の型を使えるように
+### <a id="sec-generated-title-12"></a> <a id="tasklike"></a>非同期メソッドの戻り値に任意の型を使えるように
+
 C# 6までは、[非同期メソッド](../async/sp5_async.md#async)の戻り値は、`void`か、`Task`、`Task<TResult>`クラス(`System.Threading.Tasks`名前空間)のいずれかである必要がありました。
 
 これに対して、C# 7では、特定の条件を満たすように作れば、任意の型を非同期メソッドの戻り値として使えるようになりました。
@@ -383,11 +395,13 @@ C# 6までは、[非同期メソッド](../async/sp5_async.md#async)の戻り値
 詳しくは、「[Task-like](../async/sp5_async.md#task-like)」を参照してください。
 
 ## <a id="sec-generated-title-13"></a>その他、利便性向上
+
 その他、こまごまとした利便性向上がいくつかあります。
 中には、C#チーム的に「要望があるのはわかるが、メリットは小さいので後回し」という位置づけになっていたものが、
 チーム外からのPull Requestによって実装されたものもあります。
 
-###<a id="sec-generated-title-14"></a> <a id="literals"></a>数値リテラルの改善
+### <a id="sec-generated-title-14"></a> <a id="literals"></a>数値リテラルの改善
+
 2進数リテラルが書けるようになりました。
 また、数値リテラルの途中に、`_` を挟んで桁区切りに使えるようになりました。
 
@@ -410,7 +424,8 @@ C# 6までは、[非同期メソッド](../async/sp5_async.md#async)の戻り値
 
 詳しくは、「[2進数リテラル](../start/stnumber.md#binary)」や「[数字区切り文字](../start/stnumber.md#digit-separator)」を参照してください。
 
-###<a id="sec-generated-title-15"></a> <a id="throw-expression"></a>throw 式
+### <a id="sec-generated-title-15"></a> <a id="throw-expression"></a>throw 式
+
 以下の3つの場面に限ってですが、式の中に`throw`を書けるようになりました。
 
 - [ラムダ式](../functional/sp3_lambda.md#lambda)や[式形式メンバー](../structured/st_function.md#sec-expression-bodied)の中(`=>` の後ろ)
@@ -435,7 +450,8 @@ C# 6までは、[非同期メソッド](../async/sp5_async.md#async)の戻り値
 
 詳しくは、「[throw式](../structured/oo_exception.md#throwexpr)」を参照してください。
 
-###<a id="sec-generated-title-16"></a> <a id="throw-expression"></a>式形式のメンバーの拡充
+### <a id="sec-generated-title-16"></a> <a id="throw-expression"></a>式形式のメンバーの拡充
+
 C# 6で、メソッド、演算子、プロパティとインデクサー(get-only)に対して、式が1つだけの場合に`=>`を使った略記法が追加されました。
 
 これが、C# 7では、コンストラクター、ファイナライザー、プロパティとインデクサー(get/set それぞれ)、イベント(add/removeそれぞれ)でも使えるようになりました。

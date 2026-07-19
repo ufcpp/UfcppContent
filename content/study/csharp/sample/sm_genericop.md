@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] ジェネリックな複素数型
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 * 
 [ソース一式（ZIP 圧縮）](../../../../assets/media/ufcpp2000/csharp/source/GenericOperator.zip)
 
@@ -79,7 +80,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="template"></a>C++ template と C# genrics の違い
+## <a id="sec-generated-title-2"></a> <a id="template"></a>C++ template と C# genrics の違い
+
 「[C++ や Java の template/generics との違い](../oop/sp2_generics.md#compare)」に書いたように、
 C++ の template と C# のジェネリクスには色々違いがありますが、
 このページで問題にするのは以下の点。
@@ -133,7 +135,8 @@ C++ の方針の方が自由は効きますが、こちらはこちらで別の�
 ）
 
 
-##<a id="sec-generated-title-3"></a> <a id="howto"></a>C# ではどうすればいいか
+## <a id="sec-generated-title-3"></a> <a id="howto"></a>C# ではどうすればいいか
+
 C# ジェネリクスでできないことも、動的コード生成などを使うことで何とかできることが多いです。
 
 1. <h5 class="version version4">Ver. 4.0</h5>C# 4.0 で導入される dynamic キーワードを使う。
@@ -227,7 +230,8 @@ C# ジェネリクスでできないことも、動的コード生成などを�
 で、今回問題になっている operator 呼び出しには、3つ目の式木を使うのがいいと思います。
 
 
-##<a id="sec-generated-title-4"></a> <a id="expression"></a>式木で動的コード生成
+## <a id="sec-generated-title-4"></a> <a id="expression"></a>式木で動的コード生成
+
 ということで、前節で出てきた3つ目、式木を使った動的コード生成について説明します。
 
 .NET Framework 3.0 で導入された式木を使うと、以下のようなことができます。

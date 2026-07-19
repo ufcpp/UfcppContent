@@ -18,7 +18,8 @@ aliases:
 
 # リンク集（WEB関連、XML/XSLT）
 
-##<a id="sec-generated-title-1"></a> <a id="web"></a>WEB関連
+## <a id="sec-generated-title-1"></a> <a id="web"></a>WEB関連
+
 [とほほのWWW入門](http://www.tohoho-web.com/)
 : HTML、JavaScript、CGI、スタイルシート、D-HTMLなど、WEB関連のリファレンスがあります。
 
@@ -36,7 +37,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="xslt"></a>XSLT
+## <a id="sec-generated-title-2"></a> <a id="xslt"></a>XSLT
+
 [今日からはじめるXSLT入門](http://www.emergence.jp/ci/publications/xslt/)
 : XML PRESS に連載されていた「今日からはじめるXSLT入門」という記事の内容が公開されています。 XSLT のクイックリファレンスやサンプルがあります。
 
@@ -45,6 +47,7 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="other"></a>その他
+## <a id="sec-generated-title-3"></a> <a id="other"></a>その他
+
 [Unicode and Multilingual Support in HTML](http://www.alanwood.net/unicode/)
 : (英語) Unicode 一覧。 Ä や ‭א 等の特殊記号を出すとき等に重宝します。

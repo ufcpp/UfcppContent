@@ -18,13 +18,15 @@ aliases:
 
 # 値型と参照型
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C#の型(組込み型、クラス、構造体、列挙型)には大きく分けて2つのタイプがあります。
 1つは値型と呼ばれるもので、もう1つは参照型と呼ばれるものです。
 ここでは、その値型と参照型の違いについて説明していきます。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * C# には値型と参照型がある。
 
 * 値型: 変数に直接値が格納される。
@@ -33,7 +35,8 @@ C#の型(組込み型、クラス、構造体、列挙型)には大きく分け�
 
 * 構造体は値型で、クラスは参照型になる。
 
-##<a id="sec-generated-title-3"></a> <a id="type-category"></a>おさらい: C# の型の分類
+## <a id="sec-generated-title-3"></a> <a id="type-category"></a>おさらい: C# の型の分類
+
 C#の型は以下のように分類されます。
 
 <figure>
@@ -43,7 +46,8 @@ C#の型は以下のように分類されます。
 
 本項では、この青い四角で囲った分類、値型と参照型の違いについて説明していきます。
 
-##<a id="sec-generated-title-4"></a> <a id="difference"></a>値型と参照型の違い
+## <a id="sec-generated-title-4"></a> <a id="difference"></a>値型と参照型の違い
+
 「[C# の型](../start/st_embeddedtype.md#type)」で概要だけ紹介していますが、
 C# の型には値型と参照型という区別があります。
 C# の型の中で、構造体とクラスは非常に似通った機能ですが、この2者を区別する一番大きなポイントが、値型か参照型かです。
@@ -214,7 +218,8 @@ c: (0, 5)
 <sup>※</sup>
 「[ヒープ](../../computer/essential-software/memorymanagement.md#heap)」と呼ばれる領域に実体を確保します。
 
-###<a id="sec-generated-title-5"></a> <a id="null"></a>null
+### <a id="sec-generated-title-5"></a> <a id="null"></a>null
+
 [「クラス」のページの「null」](../oop/oo_class.md#null)などで「有効なインスタンスを持っていない」という状態を null という」と言っていますが、この点について、「参照」という観点から改めて説明します。
 
 参照型の場合、「実体はどこか別の場所にあって、変数はそれを参照しているだけ」という状態になっています。
@@ -226,7 +231,8 @@ c: (0, 5)
 ただ、現在では、[null許容値型](sp2_nullable.md)などの機能もあり、
 参照かどうかとかは関係なく、単に「無効な値」を表すために null が使われます。
 
-##<a id="sec-generated-title-6"></a> <a id="merit"></a>値型と参照型の利点
+## <a id="sec-generated-title-6"></a> <a id="merit"></a>値型と参照型の利点
+
 値型と参照型にはそれぞれ利点・欠点があります。
 
 値型は変数ごとに別個の値を保持するため、
@@ -282,7 +288,8 @@ c: (0, 5)
       </em>
 
 
-##<a id="sec-generated-title-7"></a> <a id="classification"></a>C#の型の分類
+## <a id="sec-generated-title-7"></a> <a id="classification"></a>C#の型の分類
+
 C#には組込み型、クラス、構造体など、さまざまな型がありますが、
 これらは以下のように分類されます。
 
@@ -351,7 +358,8 @@ C#には組込み型、クラス、構造体など、さまざまな型があり
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-8"></a> <a id="performance"></a>値型の性能
+## <a id="sec-generated-title-8"></a> <a id="performance"></a>値型の性能
+
 実際のところ、値型と参照型でどのくらいの差が出るのかについても触れておきましょう。
 値型が有利に働くような計算を、あえて構造体とクラスの両方で実装してみて、差を見てみましょう。
 

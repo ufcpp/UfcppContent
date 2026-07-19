@@ -18,7 +18,8 @@ aliases:
 
 # priority_queue
 
-##<a id="sec-generated-title-1"></a> <a id="d25e4"></a>priority_queue とは
+## <a id="sec-generated-title-1"></a> <a id="d25e4"></a>priority_queue とは
+
 <strong id="priority" class="keyword">priority_queue</strong>とは優先度つき待ち行列と呼ばれるもので、
 挿入された順序どおりに要素の取り出しを行うのではなく、
 優先度の高い要素から先に取り出す待ち行列。
@@ -34,7 +35,8 @@ priority_queueはヒープと呼ばれるデータ構造が使われます。
 ヒープの実装は、ランダムアクセス(<code>[]</code>を使った添字によるアクセス)のできるデータ構造を使って行えます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d25e28"></a>STL におけるpriority_queue
+## <a id="sec-generated-title-2"></a> <a id="d25e28"></a>STL におけるpriority_queue
+
 STLのpriority_queueは何を使って実装するかをvector,queueのいずれかから選べます。<br></br>
 キューの要素の型をTとすると、
 

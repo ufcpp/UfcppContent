@@ -18,7 +18,8 @@ aliases:
 
 # 現代数学への入門
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 勢いでシリーズ全巻そろえた岩波講座「現代数学への入門」、
 せっかく全部買って全部読んだんだし、簡単にまとめを。
  
@@ -30,7 +31,8 @@ aliases:
 大体同じような流れがあるはず。
 
 
-##<a id="sec-generated-title-2"></a> <a id="list"></a>一覧
+## <a id="sec-generated-title-2"></a> <a id="list"></a>一覧
+
 岩波講座「現代数学への入門」
 全16巻。
  
@@ -71,7 +73,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="flow"></a>全体の流れ
+## <a id="sec-generated-title-3"></a> <a id="flow"></a>全体の流れ
+
 まず、全体の流れを図1に、それぞれに関連するキーワードを図2に。
 （クリックで拡大。）
 
@@ -99,7 +102,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="physics"></a>物理学との関連
+## <a id="sec-generated-title-4"></a> <a id="physics"></a>物理学との関連
+
 で、物理学との関連性を図3に。
 図1の左上辺りは基礎中の基礎なんで、どの分野でもある程度出てくるんだけど、
 直接のつながりが出てくるのは右下辺り。

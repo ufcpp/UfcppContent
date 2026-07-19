@@ -14,7 +14,8 @@ aliases:
 
 # UnsafeAccessor
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 .NET 8 から、[リフレクション](../dynamic/sp_reflection.md)なしで[アクセシビリティ](../oop/oo_conceal.md#level)を無視した(private や internal なメンバーにアクセス可能な)仕組みとして UnsafeAccessor というものが追加されました。
 
 用途が狭いですし、unsafe と付く名前通り割とデメリットもある機能なので、使い心地はそれほどよくありません。
@@ -45,7 +46,8 @@ aliases:
 
 `UnsafeAccessor` 属性(`System.Runtime.CompilerServices`)を付けた extern メソッドを書くと、.NET Runtime が静的に(JIT 時に) `_value` フィールド直参照と同等のコードを生成します。
 
-##<a id="sec-generated-title-2"></a> <a id="ignore-accessibility">アクセシビリティ無視とリフレクション</a>
+## <a id="sec-generated-title-2"></a> <a id="ignore-accessibility">アクセシビリティ無視とリフレクション</a>
+
 これまでアクセシビリティを無視したい場合、
 たとえ型情報が静的に既知であってもリフレクションを使っていました。
 例えば冒頭の例同様に `a._value = 1;` するためだけに、以下のようなコードが必要になっていました。
@@ -86,7 +88,8 @@ aliases:
 UnsafeAccessor を使った冒頭のコードなら、
 パフォーマンス的には `a._value = 1;` と同水準になります。
 
-#####<a id="sec-generated-title-3"></a> <a id="unsafe">余談: 「unsafe」</a>
+##### <a id="sec-generated-title-3"></a> <a id="unsafe">余談: 「unsafe」</a>
+
 名前に unsafe の文字が入っていますが、
 メモリ安全性や型安全性の保証はあります(この意味では普通に safe)。
 バッファー オーバー ランのようなメモリ脆弱性を起こせるような機能ではないですし、
@@ -97,7 +100,8 @@ UnsafeAccessor の「unsafe」は「private や internal な物に触れるの�
 また、C# コンパイラーのレベルでは型チェックできない(JIT 時チェックになるので実行してみる必要はある)という不利益もあります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="motivation">利用場面</a>
+## <a id="sec-generated-title-4"></a> <a id="motivation">利用場面</a>
+
 UnsafeAccessor の主な用途は以下のようなものです。
 
 1. シリアライザーや [DI](https://learn.microsoft.com/ja-jp/dotnet/core/extensions/dependency-injection/overview) などをリフレクションから Source Generator に移行したい
@@ -177,7 +181,8 @@ Source Generator は使う側にはなる一方で、作る側になることは
 単体テストの場合、ライブラリと単体テストでプロジェクトは分かれているものの、同じ人がコードを書くことが非常に多いです。
 そのため「private なものは変更されても文句が言えない」問題が軽微(変更して単体テストが失敗するようになっても、修正する義務を同じ人が負うのですぐに直すことになるだけ)なので、UnsafeAccessor とは相性がいいです。
 
-##<a id="sec-generated-title-5"></a> <a id="how-to-use">UnsafeAccessor の書き方</a>
+## <a id="sec-generated-title-5"></a> <a id="how-to-use">UnsafeAccessor の書き方</a>
+
 すでにいくつかの例を書いていますが、UnsafeAccessor を使うには
 `UnsafeAccessor` 属性(`System.Runtime.CompilerServices` 名前空間)を付けた extern メソッドを書きます。
 
@@ -196,7 +201,8 @@ Source Generator は使う側にはなる一方で、作る側になることは
 型自体が internal の時はさらにちょっと面倒な書き方が必要になります。
 この場合は、`UnsafeAccessorType` というもう1つの属性を使って、文字列で型名を指定することになります。
 
-###<a id="sec-generated-title-6"></a> <a id="constructor">コンストラクター</a>
+### <a id="sec-generated-title-6"></a> <a id="constructor">コンストラクター</a>
+
 コンストラクターへのアクセスは以下のように書きます。
 
 <pre class="source" title="コンストラクターに対する UnsafeAccessor の例">
@@ -248,7 +254,8 @@ Source Generator は使う側にはなる一方で、作る側になることは
 }
 </pre>
 
-###<a id="sec-generated-title-7"></a> <a id="method">インスタンス メソッド</a>
+### <a id="sec-generated-title-7"></a> <a id="method">インスタンス メソッド</a>
+
 インスタンス メソッドへのアクセスは以下のように、
 「先頭に1つ引数を足す」書き方をします。
 
@@ -300,7 +307,8 @@ Source Generator は使う側にはなる一方で、作る側になることは
 
 また、`UnsafeAccessor` 属性をつけるメソッドの名前とアクセス先のメソッドの名前が異なる場合には `Name` プロパティの明示が必要になります。
 
-###<a id="sec-generated-title-8"></a> <a id="field">フィールド</a>
+### <a id="sec-generated-title-8"></a> <a id="field">フィールド</a>
+
 インスタンス フィールドへのアクセスは以下のように、
 「`ref` 戻り値、引数なしのメソッド」で書きます。
 
@@ -338,7 +346,8 @@ Source Generator は使う側にはなる一方で、作る側になることは
 }
 </pre>
 
-###<a id="sec-generated-title-9"></a> <a id="static">静的メソッド、静的フィールド</a>
+### <a id="sec-generated-title-9"></a> <a id="static">静的メソッド、静的フィールド</a>
+
 静的メソッド、静的フィールドへのアクセスには `UnsafeAccessorKind` の `StaticMethod` と `StaticField` を使います。
 インスタンス メソッド、インスタン フィールドの時と同様、引数の先頭にアクセス先の型を足します(静的メンバーなのでこの第1引数は使われず、ダミー引数になります)。
 
@@ -365,7 +374,8 @@ Source Generator は使う側にはなる一方で、作る側になることは
 }
 </pre>
 
-###<a id="sec-generated-title-10"></a> <a id="property">プロパティ</a>
+### <a id="sec-generated-title-10"></a> <a id="property">プロパティ</a>
+
 `UnsafeAccessorKind` にはプロパティを指定する方法はありませんが、
 C# のプロパティは内部的にはメソッドになっているので、
 そのメソッドに対する UnsafeAccessor を作ることでプロパティにアクセスできます。
@@ -406,7 +416,8 @@ C# のプロパティは内部的にはメソッドになっているので、
 少なくとも C# コンパイラーで作ったプロパティの場合は必ずこのルールに基づくメソッド名になっています。
 ([IL アセンブラー](https://learn.microsoft.com/ja-jp/dotnet/framework/tools/ilasm-exe-il-assembler)を使えばこのルールを破れるはずですが、そんなことをやっている人は見たことがありません。)
 
-###<a id="sec-generated-title-11"></a> <a id="indexer">インデクサー</a>
+### <a id="sec-generated-title-11"></a> <a id="indexer">インデクサー</a>
+
 [プロパティ](#property)同様です。
 [C# の仕様](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153104-member-names-reserved-for-indexers)上、インデクサーからは `get_Item` / `set_Item` というメソッドが作られているはずなので、これを経由してアクセスします。
 
@@ -445,7 +456,8 @@ C# のプロパティは内部的にはメソッドになっているので、
 この場合、作られているメソッドの名前も `get_Chars` です。)
 
 
-###<a id="sec-generated-title-12"></a> <a id="operator">演算子</a>
+### <a id="sec-generated-title-12"></a> <a id="operator">演算子</a>
+
 C# のユーザー定義の演算子は public でないといけない仕様なので、わざわざ UnsafeAccessor を使う場面はより一層少ないですが、一応触れておきます。
 (後述する[型自体が internal な場合](#unsafe-accessor-type)に対して使えなくはないです。)
 
@@ -491,7 +503,8 @@ C# のユーザー定義の演算子は public でないといけない仕様な
 </pre>
 
 
-###<a id="sec-generated-title-13"></a> <a id="extension">拡張メンバーを UnsafeAccessor にする</a>
+### <a id="sec-generated-title-13"></a> <a id="extension">拡張メンバーを UnsafeAccessor にする</a>
+
 UnsafeAccessor の「静的メソッドにして第1引数を足す」という仕様が拡張メソッドと相性がよく、
 拡張メソッドをそのまま UnsafeAccessor にすることができます。
 
@@ -567,7 +580,8 @@ UnsafeAccessor の「静的メソッドにして第1引数を足す」という�
 }
 </pre>
 
-###<a id="sec-generated-title-14"></a> <a id="generics">ジェネリックな型やメンバーへのアクセス</a>
+### <a id="sec-generated-title-14"></a> <a id="generics">ジェネリックな型やメンバーへのアクセス</a>
+
 .NET 9 からはジェネリックな型に対して UnsafeAccessor を書けるようになりました。
 型引数は以下のように「型は型に、メソッドはメソッドに」というルールで書けば大丈夫です。
 
@@ -603,7 +617,8 @@ UnsafeAccessor の「静的メソッドにして第1引数を足す」という�
 上記の例とは違う書き方、
 例えば「クラス `X` にメソッド `M<T>` や `M<T, U>` を書く」みたいなことをすると実行時エラーになります。
 
-###<a id="sec-generated-title-15"></a> <a id="unsafe-accessor-type">型自体が internal な場合</a>
+### <a id="sec-generated-title-15"></a> <a id="unsafe-accessor-type">型自体が internal な場合</a>
+
 .NET 10 から「型自体が internal で参照できない」という場合に対して UnsafeAccessor を使う手段が提供されるようになりました。
 
 これまでの例で `A` 型の引数や戻り値を書いていた場所をとりあえず `object` 型にして、
@@ -732,7 +747,8 @@ UnsafeAccessor 定義側のクラス(この例だと `X<T>`)の書き方は[前�
 `A<T1, T2, T3>` の場合だと `` `3 `` になります。
 
 
-###<a id="sec-generated-title-16"></a> <a id="compiler-generated-field">コンパイラー生成のフィールド</a>
+### <a id="sec-generated-title-16"></a> <a id="compiler-generated-field">コンパイラー生成のフィールド</a>
+
 ここからは C# の言語仕様にはない話になります。
 (現在の Roslyn と呼ばれる C# コンパイラーの実装ではそうなっているけども、
 将来もずっと同じ実装が続くかとかの保証はない話です。)

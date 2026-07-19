@@ -18,12 +18,14 @@ aliases:
 
 # 定数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 全く変化しない値を、異なる場所で何度も使いたい事があります。
 このような場合、「[リテラル](st_variable.md#literal)」を何箇所にも分散させて書くのではなく、<code>const</code> というキーワードを用いて定義した定数を使うべきです。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * const キーワードを使って、定数（値が絶対に変わらない / 変えれない変数）を定義できます。
     * 見た目は変数と同じように使えますが、値の変更はできません。
 
@@ -37,7 +39,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="constant"></a>変化しない値
+## <a id="sec-generated-title-3"></a> <a id="constant"></a>変化しない値
+
 例えば、以下のようなコードを見てください。
 
 <pre class="source" title="リテラルをちりばめたコード" lang="">
@@ -103,7 +106,8 @@ Console.Write(<span class="literal">"平均: {0}\n分散: {1}\n"</span>, mean, v
 <code>int NUM = 5;</code> の1行だけの修正で解決します。
 
 
-##<a id="sec-generated-title-4"></a> <a id="const"></a>const
+## <a id="sec-generated-title-4"></a> <a id="const"></a>const
+
 ところが、このコードにもちょっとだけ問題があります。
 1つは、定数なのか、途中で値が変わるものなのかが分からないことです。
 変数なので、途中で値が書き換えられてしまってもエラーにはなりません。
@@ -168,7 +172,8 @@ NUM = 6; <span class="comment">// ここでエラーになる</span>
 インスタンスを new キーワードで生成するようなものには const キーワードは使えません。
 
 
-##<a id="sec-generated-title-5"></a> <a id="const_member"></a>const メンバー
+## <a id="sec-generated-title-5"></a> <a id="const_member"></a>const メンバー
+
 const を使った定数は、
 メソッド中（ローカル）だけでなく、
 クラスのメンバーにする事も出来ます。
@@ -188,7 +193,8 @@ const メンバーはクラスに属します。
 例えば、上述の例、<code>PI</code> の場合、<code>Math.PI</code> という形式で参照します。
 
 
-###<a id="sec-generated-title-6"></a> <a id="versioning"></a>const のバージョニング問題
+### <a id="sec-generated-title-6"></a> <a id="versioning"></a>const のバージョニング問題
+
 ちなみに、private な場合は const メンバー変数で問題ないのですが、
 public にする場合にはあまり const メンバー変数は使わない方がいいです。
 
@@ -208,7 +214,8 @@ public にする場合にはあまり const メンバー変数は使わない方
 でないと、値が変わったときに、利用側でも再コンパイルが必要になってしまいます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="readonly"></a>readonly
+## <a id="sec-generated-title-7"></a> <a id="readonly"></a>readonly
+
 クラスのメンバーに対しては、
 const 以外に、もう1つ定数のようなものを実現する方法があります。
 readonly というキーワードを用いて、<strong id="ro" class="keyword">読取り専用</strong>（read only）の変数を定義できます。
@@ -261,7 +268,8 @@ const との違いは以下のようになります。
 }
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="prefer-readonly"></a>注意: const の問題とreadonlyやプロパティ
+### <a id="sec-generated-title-8"></a> <a id="prefer-readonly"></a>注意: const の問題とreadonlyやプロパティ
+
 ちなみに、const を使った定数は、
 （コンパイル結果がリテラルを使った結果と同じく）
 プログラム中に直接値が埋め込まれてしまうため、
@@ -286,11 +294,13 @@ const との違いは以下のようになります。
 }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="struct-class-readonly"></a>readonly の注意点
+### <a id="sec-generated-title-9"></a> <a id="struct-class-readonly"></a>readonly の注意点
+
 現時点では触れられませんが、クラスや構造体を説明した後に、改めて`readonly`に関する注意点があります。
 詳細は「[readonly の注意点](../resource/readonlyness.md)」を参照してください。
 
-##<a id="sec-generated-title-10"></a> <a id="constant-expressions"></a>定数にできるもの
+## <a id="sec-generated-title-10"></a> <a id="constant-expressions"></a>定数にできるもの
+
 C# で `const` を使った定数にできるものには以下のようなものがあります。
 
 * [リテラル](st_embeddedtype.md#literal)
@@ -328,7 +338,8 @@ C# で `const` を使った定数にできるものには以下のようなも�
 <span class="reserved">const</span> <span class="reserved">string</span> B = A + <span class="reserved">nameof</span>(B); <span class="comment">// 他の const + リテラル という扱い。</span>
 </code></pre>
 
-###<a id="sec-generated-title-11"></a> <a id="constant-string-interpolation"></a>const 文字列補間
+### <a id="sec-generated-title-11"></a> <a id="constant-string-interpolation"></a>const 文字列補間
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0 からは、[文字列補間](st_string.md#string-interpolation)でも、`{}` の中身が `const` 文字列な場合に限り、補完結果も `const` にできます。

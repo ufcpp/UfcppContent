@@ -18,7 +18,8 @@ aliases:
 
 # 関連技術
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# を使う開発フレームワーク・ツール・ライブラリの説明を少し。
 
 C# のみ・標準ライブラリのみでもかなり充実したことができますが、
@@ -26,7 +27,8 @@ Microsoft は .NET Framework をコアに色々なフレームワークを構築
 その辺りを覚えるとさらに高度な開発が可能です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="aspx"></a>ASP.NET
+## <a id="sec-generated-title-2"></a> <a id="aspx"></a>ASP.NET
+
 Microsoft が開発したサーバサイトアプリケーションフレームワークです。
 HTML 中にコードを埋め込んだり（インラインコード）、
 「HTML ＋ ソースファイル」（コードビハインド）でウェブアプリケーション開発を行います。
@@ -35,6 +37,7 @@ HTML 中にコードを埋め込んだり（インラインコード）、
 
 
 ##### <a id="sec-generated-title-3"></a>リンク
+
 <!-- 以下、reflinks 要素の変換後の出力です。参照先に同じリンクが記述されている可能性があります。-->
 
 [ASP.NET Developer Center](http://www.microsoft.com/japan/msdn/asp.net/)
@@ -48,7 +51,8 @@ HTML 中にコードを埋め込んだり（インラインコード）、
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="speech"></a>音声合成・認識
+## <a id="sec-generated-title-4"></a> <a id="speech"></a>音声合成・認識
+
 .NET Framework 3.0 でひそかに音声合成・認識機能が追加されていたりします。
 .NET Framework 3.0 といえば WPF, WCF, WF, Card Space の4つが主要機能で、
 それに隠れがちですが、
@@ -63,12 +67,14 @@ System.Speech は、それの .NET 版です。
 
 
 ##### <a id="sec-generated-title-5"></a>リンク
+
 [Windows Presentation Foundation Station、Speech_Synthesis_Top](http://www.vbstation.net/wpf/index.php/Speech_Synthesis_Top)
 : 主に WPF の解説をしているページですが、 System.Speech への言及もあり。
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="robotics"></a>MS Robotics Studio
+## <a id="sec-generated-title-6"></a> <a id="robotics"></a>MS Robotics Studio
+
 .NET Framework でロボット制御プログラムの開発ができます。
 
 2004・5年ごろから、LEGO mindstorms や、近藤科学 KHR-1 など、
@@ -95,6 +101,7 @@ GUI の登場によって（GUI 開発と相性の良かった）オブジェク
 
 
 ##### <a id="sec-generated-title-7"></a>リンク
+
 [Microsoft Robotics Studioメモ](http://www.saturn.dti.ne.jp/~npaka/robotics/index.html)
 : 日本語のまとめサイトというとここ。
 
@@ -106,7 +113,8 @@ GUI の登場によって（GUI 開発と相性の良かった）オブジェク
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="xna"></a>XNA Game Studio
+## <a id="sec-generated-title-8"></a> <a id="xna"></a>XNA Game Studio
+
 C# （に限らず、.NET Framework 対応言語）でゲーム開発。
 
 XBOX 360 用ゲームと Windows 用ゲームが同じフレームワーク・ツールで開発可能です。
@@ -119,6 +127,7 @@ XBOX 360 本体と XNA Game Studio だけあれば実機動作可能。
 
 
 ##### <a id="sec-generated-title-9"></a>リンク
+
 [XNA Game Studioメモ](http://www.saturn.dti.ne.jp/~npaka/xna/index.html)
 : まとめサイト。
 
@@ -127,7 +136,8 @@ XBOX 360 本体と XNA Game Studio だけあれば実機動作可能。
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="silverlight"></a>Silverlight
+## <a id="sec-generated-title-10"></a> <a id="silverlight"></a>Silverlight
+
 Microsoft の Adobe Flash 対抗技術。
 
 「[XAML](../../dotnet/wpf/wpf_xaml.md#xaml)」 と JavaScript を用いて作るので、
@@ -155,6 +165,7 @@ Silverlight に標準で用意されているコントロールは Canvas, Ellip
 
 
 ##### <a id="sec-generated-title-11"></a>リンク
+
 [Microsoft Silverlight](http://www.microsoft.com/japan/silverlight/)
 : 日本語公式サイト。 英語版 → http://silverlight.net/
 
@@ -163,7 +174,8 @@ Silverlight に標準で用意されているコントロールは Canvas, Ellip
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="dlr"></a>Dynamic Language Runtime
+## <a id="sec-generated-title-12"></a> <a id="dlr"></a>Dynamic Language Runtime
+
 .NET Framework では、基盤となるランタイム環境（CLR: Common Language Runtime）を用意することで、
 プログラミング言語の壁を越えた開発が可能になっています。
 （例えば、VB.NET で作ったクラスを C# で継承して、それをさらに C++/CLI から利用するというようなことが可能。）
@@ -177,7 +189,8 @@ JavaScript で書かれたライブラリを Ruby から利用するとか、
 動的言語間の連携がスムーズにできるようになるはず。
 
 
-##<a id="sec-generated-title-13"></a> <a id="powershell"></a>PowerShell
+## <a id="sec-generated-title-13"></a> <a id="powershell"></a>PowerShell
+
 Windows の新しいシェル環境。
 
 コマンドプロンプトなどでは、あるコマンドの出力を別のコマンドの入力に与えたい場合、
@@ -190,6 +203,7 @@ Windows の新しいシェル環境。
 
 
 ##### <a id="sec-generated-title-14"></a>リンク
+
 <!-- 以下、reflinks 要素の変換後の出力です。参照先に同じリンクが記述されている可能性があります。-->
 
 [Windows PowerShell でのスクリプティング](http://www.microsoft.com/japan/technet/scriptcenter/hubs/msh.mspx)

@@ -18,7 +18,8 @@ aliases:
 
 # 1＋1
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 小中学生がよく抱くらしい疑問、
 「
 <span class="math"><span class="normal">1</span><span class="normal">+</span><span class="normal">1</span><span class="normal">=</span><span class="normal">2</span></span>
@@ -35,7 +36,8 @@ aliases:
 でもその一方で、他の定義からの導出も可能です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="two"></a>1＋1＝2
+## <a id="sec-generated-title-2"></a> <a id="two"></a>1＋1＝2
+
 <span class="math">
         <span class="normal">1</span>
         <span class="normal">+</span>
@@ -98,7 +100,8 @@ aliases:
 個人的には1と2だと思うんですけど、人によるかも。
 
 
-##<a id="sec-generated-title-3"></a> <a id="two2"></a>1＋1＝2（直感的な説明）
+## <a id="sec-generated-title-3"></a> <a id="two2"></a>1＋1＝2（直感的な説明）
+
 前節で、
 1 とか 2 とか ＋ とかがどういう条件を満たすべきなのか、
 以下のような3つの条件を出しました。
@@ -160,7 +163,8 @@ aliases:
 となります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="minus"></a>(-1)×(-1)＝1
+## <a id="sec-generated-title-4"></a> <a id="minus"></a>(-1)×(-1)＝1
+
 <span class="math">
         <span class="paren" style="font-size:em;">(</span>
           <span class="normal">−</span>
@@ -226,7 +230,8 @@ a<span class="normal">×</span><span class="normal">0</span><span class="normal"
 これはあんまりいい定義だとは思えないですけど。
 
 
-##<a id="sec-generated-title-5"></a> <a id="minus2"></a>(-1)×(-1)＝1 （直感的な説明）
+## <a id="sec-generated-title-5"></a> <a id="minus2"></a>(-1)×(-1)＝1 （直感的な説明）
+
 <span class="math">
         <span class="paren" style="font-size:em;">(</span>
           <span class="normal">−</span>
@@ -374,7 +379,8 @@ a<span class="normal">×</span><span class="normal">0</span><span class="normal"
 ということも言えます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-6"></a> <a id="plan"></a>執筆予定
+
 <pre>
 結局、「定義の仕方次第」
 

@@ -18,7 +18,8 @@ aliases:
 
 # ベクトル
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <pre>
 これの概念が分かってるだけで物理がすごく簡単に。
 高校の物理なんて、ベクトルと
@@ -30,7 +31,8 @@ m (d^2/dt^2)x = f
 でも、計算手間的には大変。
 </pre>
 
-##<a id="sec-generated-title-2"></a> <a id="char"></a>ベクトルに使う文字
+## <a id="sec-generated-title-2"></a> <a id="char"></a>ベクトルに使う文字
+
 高校では、ベクトルを表すために、
 アルファベットの上に矢印を書きますが、
 この記法は大学に入ったとたんに使われなくなります。
@@ -91,7 +93,8 @@ x
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="cross"></a>外積
+## <a id="sec-generated-title-3"></a> <a id="cross"></a>外積
+
 教科書には出てこないけども、参考書などで頻出するものに、
 3次元ベクトルの外積（outer product）というものがあります。
 以下のようなもの。
@@ -169,7 +172,8 @@ q <span class="paren" style="font-size:em;">(</span><span class="vector">E</span
 ちょっとすっきりします。
 
 
-###<a id="sec-generated-title-4"></a> <a id="crossorigin"></a>外積の由来
+### <a id="sec-generated-title-4"></a> <a id="crossorigin"></a>外積の由来
+
 まあ、定義式を見た上で3次元ベクトルの外積の性質の証明するのはそれほど難しくはありません。
 <span class="math"><span class="paren" style="font-size:em;">(</span><span class="vector">x</span><span class="normal">×</span><span class="vector">y</span><span class="paren" style="font-size:em;">)</span><span class="normal">⋅</span><span class="vector">x</span></span>
 とかを成分ごとに計算すれば、ちゃんと直交していることが確かめられますし、
@@ -198,7 +202,8 @@ q <span class="paren" style="font-size:em;">(</span><span class="vector">E</span
 代わりに発展したのが、3次元ベクトルを中心としたベクトル解析（「[数学](../index.md)」参照）です。
 
 
-###<a id="sec-generated-title-5"></a> <a id="crossdiff"></a>外積と微分形式
+### <a id="sec-generated-title-5"></a> <a id="crossdiff"></a>外積と微分形式
+
 現代的な視点でいうと、3次元ベクトルの外積は「[微分形式](../manifold/difform.md#difform)」の外積と捉えることができます。
 2つの3次元1形式の外積。
 <div class="math">
@@ -229,7 +234,8 @@ q <span class="paren" style="font-size:em;">(</span><span class="vector">E</span
 これに関係していると考えることができます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="nth_orthogo"></a>3次元以外の外積（直交ベクトル）
+### <a id="sec-generated-title-6"></a> <a id="nth_orthogo"></a>3次元以外の外積（直交ベクトル）
+
 ベクトルの外積は、通常、3次元ベクトルに対してのみ定義されます。
 3次元以外の場合でも、外積と同じような物は定義できるんですが、
 2通りの定義の仕方があってそれぞれ全然別物になるうえに、
@@ -283,7 +289,8 @@ q <span class="paren" style="font-size:em;">(</span><span class="vector">E</span
 どっちを指すのかで混乱するのであんまり一般的ではない。）
 
 
-###<a id="sec-generated-title-7"></a> <a id="nth_diff"></a>3次元以外の外積（微分形式）
+### <a id="sec-generated-title-7"></a> <a id="nth_diff"></a>3次元以外の外積（微分形式）
+
 もう1つ、ベクトルの外積は、
 「[微分形式](../manifold/difform.md#difform)」の外積だと考えることもできました。
  

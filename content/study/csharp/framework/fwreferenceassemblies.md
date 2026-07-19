@@ -18,7 +18,8 @@ aliases:
 
 # 参照アセンブリ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 .NET Frameworkもリリースから10年以上の時を経て、利用され方もずいぶんと変わってきました。そういう変化に対応するために、「小細工」的な機能をいくつか持っていたりします。ここでは、そんな小細工の中から、参照アセンブリと型転送の仕組みを紹介します。
 
 （書きかけ）
@@ -29,7 +30,8 @@ Visual Studio での開発時と、実行時では実は（メタデータ/型�
 
 PCL（Portable Class Library）の実現方法。
 
-##<a id="sec-generated-title-2"></a> <a id="monolithic"></a>一枚板なフレームワーク
+## <a id="sec-generated-title-2"></a> <a id="monolithic"></a>一枚板なフレームワーク
+
 しばらくは、歴史的経緯の説明になります。
 
 .NET Framework 1.0が出た当時、.NETの標準ライブラリは、ほとんどのクラスがmscorlib.dllというコア機能を提供する1つのライブラリの中に入っていました。
@@ -67,7 +69,8 @@ PCL（Portable Class Library）の実現方法。
 
 以降で、これらの解決策について説明していきます。
 
-###<a id="sec-generated-title-3"></a> <a id="profile-history"></a>補足: 実際の「プロファイル」
+### <a id="sec-generated-title-3"></a> <a id="profile-history"></a>補足: 実際の「プロファイル」
+
 より正確に、.NETの歴史で起きたことを補足的に書いておきます。
 
 - .NET 3.5には、サーバー機能を外した「クライアント プロファイル」というバージョンがある。
@@ -87,7 +90,8 @@ PCL（Portable Class Library）の実現方法。
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-4"></a> <a id="profile"></a>プロファイル
+## <a id="sec-generated-title-4"></a> <a id="profile"></a>プロファイル
+
 .NET にもいろいろなバージョンが出てて。
 でも、主な差はプロファイルの差。
 
@@ -114,7 +118,8 @@ Full .NETが入ってるマシンで Client Profile ターゲットの開発す�
 解決策として導入された方法が、参照アセンブリ。
 
 
-##<a id="sec-generated-title-5"></a> <a id="reference"></a>参照アセンブリ
+## <a id="sec-generated-title-5"></a> <a id="reference"></a>参照アセンブリ
+
 実行時に見てるのと、Visual Studio 上で参照してるのが違う。
 リフレクションで実行時に見てるのが何かを調べて出す例を
 VS 上のはプロパティ ウィンドウで。
@@ -163,7 +168,8 @@ Visual Studio から見ているアセンブリの中身をのぞくと
 Client プロファイルをターゲットにした開発とかができる。
 
 
-##<a id="sec-generated-title-6"></a> <a id="StoreApps"></a>Windows ストア アプリ
+## <a id="sec-generated-title-6"></a> <a id="StoreApps"></a>Windows ストア アプリ
+
 実は、Windows ストア アプリからも、実行時にはデスクトップ版と全く同じアセンブリを参照してる。
 
 Visual Studio 上からは、参照アセンブリだけ切り替えて別プロファイルに見せかけてる。
@@ -175,7 +181,8 @@ Visual Studio 上からは、参照アセンブリだけ切り替えて別プロ
 将来的に、レガシー削除してしまっている Core プロファイル（Windows ストア アプリから参照してる方）の方がサポート期間が長かったりする可能性ある。
 
 
-##<a id="sec-generated-title-7"></a> <a id="pcl"></a>Portable Class Library
+## <a id="sec-generated-title-7"></a> <a id="pcl"></a>Portable Class Library
+
 今は、もっとプロファイルが増えてる
 Silverlight、Windows Store Apps、Windows Phone、…
 Client プロファイルと Full プロファイルみたいに単純な包含関係（上位互換）でもない。
@@ -189,7 +196,8 @@ PCL:
 ターゲット パックってのを入れたらターゲット増やせる。
 
 
-##<a id="sec-generated-title-8"></a> <a id="pcl"></a>余談: 型フォワーディング
+## <a id="sec-generated-title-8"></a> <a id="pcl"></a>余談: 型フォワーディング
+
 型フォワーディング（type forward）
 
 「同じクラスを持っているのに PCL で使えない」みたいな状況もあって。

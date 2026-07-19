@@ -18,20 +18,23 @@ aliases:
 
 # 配列
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ここでは、配列について説明します。
 
 PowerShell では、2つのコマンドをパイプラインで繋ぐと、
 オブジェクトの配列として入出力の受け渡しが行われます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="array"></a>配列
+## <a id="sec-generated-title-2"></a> <a id="array"></a>配列
+
 PowerShell には , を使う方法と @ を使う方法、
 2種類の配列の作り方があります。
 （あと、整数限定で .. 演算子というのもあります。）
 
 
-###<a id="sec-generated-title-3"></a> <a id="array_comma"></a>, 演算子
+### <a id="sec-generated-title-3"></a> <a id="array_comma"></a>, 演算子
+
 まず、複数のオブジェクトを , を使って並べると、
 並べたオブジェクトを要素とする配列ができます。
 また、配列の要素には [] を使ってアクセスします（インデックスは 0 から始まる）。
@@ -76,7 +79,8 @@ PowerShell には , を使う方法と @ を使う方法、
 
 
 
-###<a id="sec-generated-title-4"></a> <a id="array_at"></a>@()
+### <a id="sec-generated-title-4"></a> <a id="array_at"></a>@()
+
 もう1つは @ を使う方法で、
 @(1, 2, 3) というように、@ に続けて () を書くと配列が作れます。
 こちらの場合、区切り文字は ; （要するに、コマンドの区切り）も使えます。
@@ -112,7 +116,8 @@ C:\Users\Public
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="array_range"></a>.. 演算子
+### <a id="sec-generated-title-5"></a> <a id="array_range"></a>.. 演算子
+
 あと、整数に限れば、1..3 （1, 2, 3 と同じ意味）というように、
 .. を使って一定範囲の連続した数値列を作ることができます。
 
@@ -153,7 +158,8 @@ C:\Users\Public
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="minus"></a>末尾からのアクセス
+### <a id="sec-generated-title-6"></a> <a id="minus"></a>末尾からのアクセス
+
 配列のインデックスに負の数 <span class="math">
           <span class="normal">−</span>i
         </span> を指定すると、
@@ -171,7 +177,8 @@ C:\Users\Public
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="out_of_range"></a>範囲外へのアクセス
+### <a id="sec-generated-title-7"></a> <a id="out_of_range"></a>範囲外へのアクセス
+
 配列に対して、範囲外にアクセスした場合、
 読み出しなら null 値を返すだけで、
 書き込みはエラーになります。
@@ -186,7 +193,8 @@ C:\Users\Public
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="concat"></a>配列の連結
+### <a id="sec-generated-title-8"></a> <a id="concat"></a>配列の連結
+
 配列は + 演算子で連結することができます。
 
 <pre class="console" title="配列の連結">
@@ -241,7 +249,8 @@ C:\Users\Public
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="subarray"></a>部分取得
+### <a id="sec-generated-title-9"></a> <a id="subarray"></a>部分取得
+
 以下のような記法で、
 配列の一部分を抜き出すことができます。
 
@@ -264,7 +273,8 @@ C:\Users\Public
 
 
 
-###<a id="sec-generated-title-10"></a> <a id="cond"></a>条件演算子
+### <a id="sec-generated-title-10"></a> <a id="cond"></a>条件演算子
+
 -contains 演算子で、配列の中に要素が含まれているかどうかを調べることができます。
 
 <pre class="console" title="-contains">
@@ -296,7 +306,8 @@ False
 
 
 
-###<a id="sec-generated-title-11"></a> <a id="assign"></a>複数の変数の同時代入
+### <a id="sec-generated-title-11"></a> <a id="assign"></a>複数の変数の同時代入
+
 $a, $b, $c = 1, 2, 3 というように、
 左辺も , で繋ぐことで、複数の変数に同時に値を代入することができます。
 左右で要素の数が違う場合、
@@ -323,7 +334,8 @@ $a, $b, $c = 1, 2, 3 というように、
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="hash"></a>連想配列
+## <a id="sec-generated-title-12"></a> <a id="hash"></a>連想配列
+
 @() で普通の配列を作るのに対して、
 @{} で連想配列を作れます。
 （型は System.Collections.Hashtable になります。）

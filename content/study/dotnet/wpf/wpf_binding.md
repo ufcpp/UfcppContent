@@ -18,13 +18,15 @@ aliases:
 
 # データバインディング（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[WPF](wpf_abst.md#wpf0)」 には、データバインディング（data bining）機能があります。
 （WPF に限らず、最近の GUI 開発フレームワークにはたいていこの機能がありますが。）
 データバインディングは、単にバインディングとか、和訳してデータ結合とか言ったりする場合もあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="about"></a>データバインディングとは
+## <a id="sec-generated-title-2"></a> <a id="about"></a>データバインディングとは
+
 データバインディングというのは、
 例えば、あるコントロールのプロパティとプロパティを結びつけたり、
 データベースなどに格納されたデータとリストコントロールを結びつけたりする機構です。
@@ -81,7 +83,8 @@ aliases:
 イベントハンドラ処理を自前で書く必要のないバインディング機構が望まれます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="bindingExt"></a>Binding マークアップ拡張
+## <a id="sec-generated-title-3"></a> <a id="bindingExt"></a>Binding マークアップ拡張
+
 WPF では、Binding クラスまたは Binding 「[マークアップ拡張](wpf_xamladv.md#extension)」を使ってデータバインディングを行います。
 
 例えば、
@@ -140,7 +143,8 @@ WPF のデータバインディングでは、
 ）
 
 
-##<a id="sec-generated-title-4"></a> <a id="simpleBinding"></a>単純データバインディング
+## <a id="sec-generated-title-4"></a> <a id="simpleBinding"></a>単純データバインディング
+
 Binding だけで、
 いろんなタイプのデータバインディングが実現できます。
 まずは、一番簡単なものということで、
@@ -178,7 +182,8 @@ Binding の ElementName プロパティに同期対象のコントロールの N
 Path プロパティに同期したいプロパティの名前を指定します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="convert"></a>データの変換・確認
+## <a id="sec-generated-title-5"></a> <a id="convert"></a>データの変換・確認
+
 「[Binding マークアップ拡張](#bindingExt)」で例に挙げた、
 スライダーコントロールの値とテキストボックスの中身を結びつけるコードをもう1歩捻って、
 スライダーコントロールの値に応じてキャンバスを回転させるような物を作ってみましょう。
@@ -218,6 +223,7 @@ Path プロパティに同期したいプロパティの名前を指定します
 </code></pre>
 
 ##### <a id="sec-generated-title-6"></a>値の変換
+
 これで、スライダーの位置に応じてキャンバスが回転するんですが、
 1つ問題があります。
 Slider の Value プロパティの値の範囲は 0～10 なので、
@@ -300,6 +306,7 @@ Slider の Value プロパティの値の範囲は 0～10 なので、
 </code></pre>
 
 ##### <a id="sec-generated-title-7"></a>値の有効性の確認
+
 もう1点、
 テキストボックスには数値以外の文字列を入力することもできます。
 上述の Conveter では、無効な文字列が入力された場合には 0 に変換していますが、
@@ -433,15 +440,18 @@ XAML 側では、以下のようにして Binding に ValidationRules を設定�
 Validation.Error イベントを拾ってイベント処理する方法もあります。
 
 
-##<a id="sec-generated-title-8"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-8"></a> <a id="plan"></a>予定
+
 （書きかけ）
 
 
-###<a id="sec-generated-title-9"></a> <a id="notify"></a>双方向データバインディングと変更の通知
+### <a id="sec-generated-title-9"></a> <a id="notify"></a>双方向データバインディングと変更の通知
+
 INotifyPropertyChanged
 
 
-###<a id="sec-generated-title-10"></a> <a id="complexBinding"></a>複合データバインディング
+### <a id="sec-generated-title-10"></a> <a id="complexBinding"></a>複合データバインディング
+
 [図3のソース](../../../../assets/sample/BindingCollectionData.zip)をベースに説明
 
 DataProvider
@@ -457,6 +467,7 @@ DataContext プロパティ
 
 
 ##### <a id="sec-generated-title-11"></a>CollectionViewSource
+
 データに対して、
 ソート・グループ化・項目選択などの機能を行うラッパー。
 
@@ -464,10 +475,12 @@ DataContext プロパティ
 
 
 ##### <a id="sec-generated-title-12"></a>Object
+
 ObjectDataSource で階層構造のあるデータをバインドする場合、Path
 
 
 ##### <a id="sec-generated-title-13"></a>XML
+
 XML をバインディング
 XmlDataSouce とバインド→XPath
 
@@ -503,10 +516,12 @@ Binding マークアップ拡張を使って ItemsSource と XML を同期させ
 
 
 ##### <a id="sec-generated-title-14"></a>ADO.NET
+
 ADO.NET のデータをバインディング
 
 
-###<a id="sec-generated-title-15"></a> <a id="codebehind"></a>コード中でのデータバインディング設定
+### <a id="sec-generated-title-15"></a> <a id="codebehind"></a>コード中でのデータバインディング設定
+
 コードビハインド中でのバインディング設定
 <pre>
 Binding myNewBindDef = new Binding("TheDate");
@@ -524,7 +539,8 @@ BindingOperations.SetBinding(myDateText,
   TextBlock.ForegroundProperty, myNewBindDef);
 </pre>
 
-###<a id="sec-generated-title-16"></a> <a id="sample"></a>サンプル
+### <a id="sec-generated-title-16"></a> <a id="sample"></a>サンプル
+
 [図1, 2のソース](../../../../assets/sample/BindingDependencyProperty.zip)
 
 [図3のソース](../../../../assets/sample/BindingCollectionData.zip)

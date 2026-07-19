@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] Silverlight サンプル
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 Silverlight のサンプルいくつか。
 
 世間的に、RIA とか Flash の対抗としてのサンプルが多い中、
@@ -26,7 +27,8 @@ Silverlight のサンプルいくつか。
 「視覚化すると分かりやすいけど、今まで大変だから視覚化されてこなかったものを、ちゃんと視覚化する」ってのはある意味 Silverlight の正しい使い方かと。
 
 
-##<a id="sec-generated-title-2"></a> <a id="fourier"></a>フーリエ級数展開の可視化
+## <a id="sec-generated-title-2"></a> <a id="fourier"></a>フーリエ級数展開の可視化
+
 フーリエ級数展開を視覚化するためのデモアプリ。
 フーリエ級数展開については「[信号処理](../../sp/index.md)」参照。
 
@@ -41,7 +43,8 @@ Silverlight のサンプルいくつか。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="sort"></a>ソートの可視化
+## <a id="sec-generated-title-3"></a> <a id="sort"></a>ソートの可視化
+
 Wonderfl で、Flash 使ってソートを可視化するサンプルを見かけたので容赦なくパクって Silverlight 化。
 
 ソートって何？って方はまず「[ソート](../../algorithm/index.md#sort)」を参照。
@@ -54,7 +57,8 @@ Wonderfl で、Flash 使ってソートを可視化するサンプルを見か�
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="heap"></a>スタックとヒープ
+## <a id="sec-generated-title-4"></a> <a id="heap"></a>スタックとヒープ
+
 詳細は「[[雑記] スタックとヒープ](../resource/misc_heap.md)」を参照。
 
 * [デモ](../../../../assets/media/ufcpp2000/csharp/ClientBin/MemoryImage.xap)
@@ -65,7 +69,8 @@ Wonderfl で、Flash 使ってソートを可視化するサンプルを見か�
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="compiler"></a>簡易仮想マシン＆コンパイラ
+## <a id="sec-generated-title-5"></a> <a id="compiler"></a>簡易仮想マシン＆コンパイラ
+
 詳細は「[デモアプリ](../../dsl/compiler/cpl_demo.md)」を参照。
 
 * [デモ](../../../../assets/media/ufcpp2000/csharp/ClientBin/StackMachine.xap)

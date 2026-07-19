@@ -18,7 +18,8 @@ aliases:
 
 # 整数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 自然数は加法に関して可換「[半群](../group/group.md#semigroup)」（足し算はできるが引き算はできない）になります。
 <span class="math">
         a <span class="normal">+</span> b <span class="normal">=</span> 0
@@ -38,8 +39,10 @@ aliases:
 まず、同値関係や商集合というものについて説明する必要があります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="equivalent"></a>同値
-###<a id="sec-generated-title-3"></a> <a id="eqrelation"></a>同値関係
+## <a id="sec-generated-title-2"></a> <a id="equivalent"></a>同値
+
+### <a id="sec-generated-title-3"></a> <a id="eqrelation"></a>同値関係
+
 集合 <span class="math">A</span> からそれ自身への「[対応](map.md#correspondence)」<span class="math">
           <span class="paren" style="font-size:em;">(</span>
             A<span class="normal">×</span>A, f
@@ -95,7 +98,8 @@ aliases:
 順序関係は、反射律および推移律は満たしますが、対称律を満たしていません。
 
 
-###<a id="sec-generated-title-4"></a> <a id="eqclass"></a>同値類
+### <a id="sec-generated-title-4"></a> <a id="eqclass"></a>同値類
+
 互いに同値関係にある元同士は、全く同じ物であるとみなすことができます。
 このとき、全く同じ物とみなせる元同士を代表するような物を1つ選ぶことを考えます。
 
@@ -181,7 +185,8 @@ aliases:
 という3つの同値類に分類されることになります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="quotientset"></a>商集合
+## <a id="sec-generated-title-5"></a> <a id="quotientset"></a>商集合
+
 集合 <span class="math">A</span> と、<span class="math">A</span> 上の同値関係 <span class="math">f</span> が与えられたとき、
 <span class="math">A</span> 上の <span class="math">f</span> による同値類の集合を、
 <span class="math">A</span> の <span class="math">f</span> による<strong id="quotient_set" class="keyword">商集合</strong>（quotient set）と呼び、<span class="math">A / f</span> と表します。
@@ -257,7 +262,8 @@ aliases:
       </span> です。
 
 
-##<a id="sec-generated-title-6"></a> <a id="integer"></a>整数の定義
+## <a id="sec-generated-title-6"></a> <a id="integer"></a>整数の定義
+
 <strong id="integer" class="keyword">整数</strong>（integer number）は以下のような手順で定義します。
 
 * 自然数の対<span class="math">
@@ -346,8 +352,10 @@ aliases:
       </span> が成り立ちます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="operation"></a>整数の間の関係・演算
-###<a id="sec-generated-title-8"></a> <a id="order"></a>整数の順序
+## <a id="sec-generated-title-7"></a> <a id="operation"></a>整数の間の関係・演算
+
+### <a id="sec-generated-title-8"></a> <a id="order"></a>整数の順序
+
 整数の順序関係は
 <div class="math">
         a <span class="normal">−</span> b <span class="normal">∈</span> <span class="bold">N</span> <span class="normal">⇔</span> a <span class="normal">&gt;</span> b
@@ -371,7 +379,8 @@ aliases:
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="sum"></a>整数の和・積
+### <a id="sec-generated-title-9"></a> <a id="sum"></a>整数の和・積
+
 2つの整数 <span class="math">
           m <span class="normal">=</span> <span class="paren" style="font-size:em;">(</span>a, b<span class="paren" style="font-size:em;">)</span>, n <span class="normal">=</span> <span class="paren" style="font-size:em;">(</span>c, d<span class="paren" style="font-size:em;">)</span>
         </span> の間の和・積を、
@@ -388,14 +397,16 @@ aliases:
 これらは自然数の和・積の自然な拡張であり、結合法則・交換法則・分配法則などが成り立ちます。
 
 
-###<a id="sec-generated-title-10"></a> <a id="algebra"></a>代数系としての整数
+### <a id="sec-generated-title-10"></a> <a id="algebra"></a>代数系としての整数
+
 整数は、和に関して可換「[群](../group/group.md#group)」、
 積に関して可換「[半群](../group/group.md#semigroup)」になります。
 また、和と積の間に分配法則が成り立つので、整数は「[環](../group/field.md#ring)」となります。
 環であることを明示的に表すために、整数を<em>整数環</em>と呼ぶこともあります。
 
 
-###<a id="sec-generated-title-11"></a> <a id="misc"></a>余談
+### <a id="sec-generated-title-11"></a> <a id="misc"></a>余談
+
 ときどき、<span class="math">
           <span class="paren" style="font-size:em;">(</span>
             <span class="normal">−</span>

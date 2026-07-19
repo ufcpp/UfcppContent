@@ -20,12 +20,14 @@ aliases:
 
 # 複素数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 複素数は実数の2次の代数拡大体。
 また、複素数は代数的閉体になっている。
 
 
-##<a id="sec-generated-title-2"></a> <a id="complex"></a>複素数の定義
+## <a id="sec-generated-title-2"></a> <a id="complex"></a>複素数の定義
+
 実数係数の代数方程式の根は必ずしも実数とはなりません。
 簡単な例を挙げると、
 <span class="math">
@@ -92,8 +94,10 @@ aliases:
 純虚数（pure imaginary number, purely imaginary number）と呼びます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="operation"></a>複素数の間の関係・演算
-###<a id="sec-generated-title-4"></a> <a id="sum"></a>複素数の加減算・乗算
+## <a id="sec-generated-title-3"></a> <a id="operation"></a>複素数の間の関係・演算
+
+### <a id="sec-generated-title-4"></a> <a id="sum"></a>複素数の加減算・乗算
+
 2つの複素数 <span class="math">α <span class="normal">=</span> x <span class="normal">+</span> iy, β <span class="normal">=</span> w <span class="normal">+</span> iz</span> の和・差は
 <div class="math">
         α <span class="normal">±</span> β <span class="normal">=</span> x <span class="normal">±</span> w <span class="normal">+</span> i<span class="paren" style="font-size:em;">(</span>y <span class="normal">±</span> z<span class="paren" style="font-size:em;">)</span>
@@ -114,7 +118,8 @@ aliases:
 となります。
 
 
-###<a id="sec-generated-title-5"></a> <a id="conjugate"></a>複素数の絶対値、共役
+### <a id="sec-generated-title-5"></a> <a id="conjugate"></a>複素数の絶対値、共役
+
 複素数 <span class="math">α <span class="normal">=</span> x <span class="normal">+</span> iy</span> に対して、
 実数 <span class="math">
           <span class="normal" style="font-size:em;">√</span><span class="bar">
@@ -174,7 +179,8 @@ aliases:
 したがって、複素数は体になります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="algebra"></a>代数系としての複素数
+## <a id="sec-generated-title-6"></a> <a id="algebra"></a>代数系としての複素数
+
 ここまでで説明してきたように、複素数は体になります。
 体であることを明示的に表すために、複素数を<em>複素数体</em>と呼ぶこともあります。
 
@@ -185,7 +191,8 @@ aliases:
 このことを<em>複素数は実数の2次の代数拡大体である</em>といいます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="misc"></a>余談
+## <a id="sec-generated-title-7"></a> <a id="misc"></a>余談
+
 複素数以外にも代数拡大によって作れる体はいくらでもあります。
 例えば、有理数体 <span class="math">
         <span class="bold">Q</span>
@@ -281,7 +288,8 @@ aliases:
 四則演算が定義できることが分かると思います。
 
 
-##<a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+
 <pre>
       複素数係数の代数方程式は必ず複素数根を持つ。
       このような性質を「代数的に閉じている」という。

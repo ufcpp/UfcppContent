@@ -18,12 +18,14 @@ aliases:
 
 # C# の型とメンバー
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 機能別索引＆概要。
 C# で使える型とそのメンバーの一覧を先に示しておきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="type"></a>型
+## <a id="sec-generated-title-2"></a> <a id="type"></a>型
+
 大まかに分類すると以下の通り。
 
 <table summary="C# の型の種類。">
@@ -59,6 +61,7 @@ C# で使える型とそのメンバーの一覧を先に示しておきます�
 
 
 ##### <a id="sec-generated-title-3"></a>縦軸分類
+
 * 値型: 値をスタックに確保。代入時にはコピーが作られる。継承不可。
 
 * 参照型: 値をヒープに確保。代入時には参照を渡すだけ。
@@ -68,6 +71,7 @@ C# で使える型とそのメンバーの一覧を先に示しておきます�
 
 
 ##### <a id="sec-generated-title-4"></a>横軸分類
+
 * 組み込み型: プログラミング言語にあらかじめ組み込まれている変数の型 →「[組込み型](../start/st_embeddedtype.md)」
 
 * ユーザー定義型: プログラマーが自由に作ることができる型（後述）
@@ -76,7 +80,8 @@ C# で使える型とそのメンバーの一覧を先に示しておきます�
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="user-defined"></a>ユーザー定義型
+### <a id="sec-generated-title-5"></a> <a id="user-defined"></a>ユーザー定義型
+
 <table summary="C# のユーザー定義型一覧。">
 	<caption>
 		C# のユーザー定義型一覧。
@@ -121,7 +126,8 @@ C# で使える型とそのメンバーの一覧を先に示しておきます�
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="composed"></a>他の型から合成する型
+### <a id="sec-generated-title-6"></a> <a id="composed"></a>他の型から合成する型
+
 <table summary="C# における他の型から合成する型一覧。">
 	<caption>
 		C# における他の型から合成する型一覧。
@@ -146,8 +152,10 @@ C# で使える型とそのメンバーの一覧を先に示しておきます�
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="member"></a>クラス、インターフェイス、構造体のメンバー
+## <a id="sec-generated-title-7"></a> <a id="member"></a>クラス、インターフェイス、構造体のメンバー
+
 ##### <a id="sec-generated-title-8"></a>データ メンバー
+
 データを表すメンバー。
 
 <table summary="C# のクラスのデータ メンバー一覧">
@@ -173,6 +181,7 @@ C# で使える型とそのメンバーの一覧を先に示しておきます�
 
 
 ##### <a id="sec-generated-title-9"></a>関数メンバー
+
 何らかの処理を行うメンバー。
 
 <table summary="C# のクラスの関数メンバー一覧">
@@ -218,6 +227,7 @@ C# で使える型とそのメンバーの一覧を先に示しておきます�
 
 
 ##### <a id="sec-generated-title-10"></a>特殊なメソッド
+
 メソッドに関しては、いくつか特殊な機能を持つものもあります。
 
 <table summary="特殊なメソッド一覧">
@@ -248,7 +258,8 @@ C# で使える型とそのメンバーの一覧を先に示しておきます�
 
 
 
-###<a id="sec-generated-title-11"></a> <a id="accessibility"></a>メンバーのアクセス レベル
+### <a id="sec-generated-title-11"></a> <a id="accessibility"></a>メンバーのアクセス レベル
+
 メンバーにアクセス可能な範囲を制御するためのアクセス修飾子。
 
 <table summary="C# のアクセス修飾子一覧">

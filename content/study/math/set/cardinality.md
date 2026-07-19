@@ -18,7 +18,8 @@ aliases:
 
 # 濃度
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[濃度](#cardinality)」とは、
 有限集合で言う所の“集合の元の数”に相当する概念です。
 無限集合に対して「元の数」というと少しおかしいので、濃度という言い方をします。
@@ -40,7 +41,8 @@ aliases:
 <span class="math">a</span> と「[同値](map.md#equivalent)」な最小の順序数として定義します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="ordered_set"></a>順序集合
+## <a id="sec-generated-title-2"></a> <a id="ordered_set"></a>順序集合
+
 集合 <span class="math">a</span> の2つの元の間の「[関係](map.md#relation)」<span class="math">f</span> が以下の条件を満たすとき、<span class="math">f</span> を<strong id="order_relation" class="keyword">順序関係</strong>（order relation）と言います。
 
 1. <span class="math">
@@ -126,7 +128,8 @@ aliases:
 も順序関係になります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="well_ordered_set"></a>整列集合
+## <a id="sec-generated-title-3"></a> <a id="well_ordered_set"></a>整列集合
+
 前節で定義した順序集合は、
 「順序関係によって順番に並べられた集合」なわけですが、
 必ずしも「綺麗に並べられた集合」にはなりません。
@@ -215,7 +218,8 @@ aliases:
 その逆は成り立ちません。
 
 
-##<a id="sec-generated-title-4"></a> <a id="order_isomorphic"></a>順序同型
+## <a id="sec-generated-title-4"></a> <a id="order_isomorphic"></a>順序同型
+
 2つの順序集合
 <span class="math">
         <span class="paren" style="font-size:em;">(</span>a, f<span class="paren" style="font-size:em;">)</span>
@@ -247,7 +251,8 @@ aliases:
 は<strong id="isomorphic" class="keyword">順序同型</strong>（order isomorphic）であるといいます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="ordinal_number"></a>順序数
+## <a id="sec-generated-title-5"></a> <a id="ordinal_number"></a>順序数
+
 「[自然数](natural.md)」で説明した通り、
 「[自然数](natural.md#natural)」は、
 <div class="math">
@@ -329,7 +334,8 @@ aliases:
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="sum"></a>順序数の和
+### <a id="sec-generated-title-6"></a> <a id="sum"></a>順序数の和
+
 2つの順序集合
 <span class="math">
           <span class="paren" style="font-size:em;">(</span>a, f<span class="paren" style="font-size:em;">)</span>
@@ -404,7 +410,8 @@ aliases:
 <span class="math">n <span class="normal">⊕</span> α <span class="normal">=</span> α</span> が成り立ちます。
 
 
-###<a id="sec-generated-title-7"></a> <a id="prod"></a>順序数の積
+### <a id="sec-generated-title-7"></a> <a id="prod"></a>順序数の積
+
 同じく2つの整列集合
 <span class="math">
           <span class="paren" style="font-size:em;">(</span>a, f<span class="paren" style="font-size:em;">)</span>
@@ -473,7 +480,8 @@ aliases:
         </span> の間には分配法則も成り立ちません。
 
 
-##<a id="sec-generated-title-8"></a> <a id="carginal"></a>基数
+## <a id="sec-generated-title-8"></a> <a id="carginal"></a>基数
+
 有限集合の場合、元の数が等しければ互いに同値でした。
 ある集合と同値な自然数があればそれを元の数と呼びます。
 これに習って、無限集合の場合、
@@ -502,7 +510,8 @@ aliases:
       </span> で表します。
 
 
-##<a id="sec-generated-title-9"></a> <a id="carginality"></a>濃度
+## <a id="sec-generated-title-9"></a> <a id="carginality"></a>濃度
+
 「[基数](#cardinal)」の考え方により、
 互いに同値な集合に対してただ1つ定まる「数」が定義されました。
 そこで、集合 <span class="math">a</span> の基数を
@@ -513,7 +522,8 @@ aliases:
 それでは、無限集合の場合にはどうなるでしょうか。
 
 
-###<a id="sec-generated-title-10"></a> <a id="countable"></a>可算濃度
+### <a id="sec-generated-title-10"></a> <a id="countable"></a>可算濃度
+
 自然数 <span class="math">ω</span> は最小の無限集合になります。
 この自然数 <span class="math">ω</span> の濃度を<strong id="countable" class="keyword">可算濃度</strong>（countable cardinality）と呼び、
 <span class="math">
@@ -552,6 +562,7 @@ aliases:
 
 
 ##### 
+
         <a id="sec-generated-title-11"></a>の濃度
 自然数 <span class="math">n</span> と自然数全体の集合の直和
 <span class="math">ω <span class="normal">⊕</span> n</span> は互いに同値です。
@@ -637,6 +648,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-12"></a>整数の濃度
+
 整数 <span class="math">
           <span class="bold">Z</span>
         </span> は、
@@ -704,6 +716,7 @@ aliases:
       </div>
 
 ##### <a id="sec-generated-title-13"></a>有理数の濃度
+
 整数のときと同じで、
 有理数 <span class="math">
           <span class="bold">Q</span>
@@ -748,7 +761,8 @@ aliases:
         ‭א<sub>0</sub>
       </div>
 
-###<a id="sec-generated-title-14"></a> <a id="infinite"></a>無限濃度に関する性質
+### <a id="sec-generated-title-14"></a> <a id="infinite"></a>無限濃度に関する性質
+
 まず、可算濃度 <span class="math">
           ‭א<sub>0</sub>
         </span> よりも大きな無限濃度が存在することについて説明します。
@@ -838,7 +852,8 @@ aliases:
 有限濃度（＝ 自然数）の場合と大きく異なります。
 
 
-###<a id="sec-generated-title-15"></a> <a id="real"></a>連続濃度
+### <a id="sec-generated-title-15"></a> <a id="real"></a>連続濃度
+
 自然数、整数、有理数の濃度はいずれも
 <span class="math">
           ‭א<sub>0</sub>
@@ -988,7 +1003,8 @@ aliases:
 （添字なしのアレフ）で表します。
 
 
-##<a id="sec-generated-title-16"></a> <a id="continuum"></a>連続体仮説
+## <a id="sec-generated-title-16"></a> <a id="continuum"></a>連続体仮説
+
 これまでに、
 <span class="math">
         ‭א<sub>0</sub>

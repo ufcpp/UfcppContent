@@ -18,7 +18,8 @@ aliases:
 
 # Task Parallel Library 概要（TPL）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 タスクスケジューリングによる並列処理。
 
 移転： 「[[雑記] スレッド プールとタスク](../../csharp/async/misc_task.md)」

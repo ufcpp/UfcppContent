@@ -18,7 +18,8 @@ aliases:
 
 # 基礎的なソフトウェア
 
-##<a id="sec-generated-title-1"></a> <a id="d32e4"></a>ハードウェアとプログラミング言語の間に
+## <a id="sec-generated-title-1"></a> <a id="d32e4"></a>ハードウェアとプログラミング言語の間に
+
 「[回路設計（ゲート、組み合わせ回路、順序回路）](../index.md#basis)」と「[汎用コンピューター](../index.md#general)」で、
 汎用コンピューターを構成するハードウェアの話は一通り終わりました。
 
@@ -32,7 +33,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="framework"></a>APIとライブラリ、フレームワーク
+## <a id="sec-generated-title-2"></a> <a id="framework"></a>APIとライブラリ、フレームワーク
+
 （書きかけ）
 
 この章タイトルを「OS」とせず、基礎的なソフトウェア（ページのURLなんかは「essential」、不可欠なもの）にしてるのは：
@@ -58,7 +60,8 @@ OS の助けが必要なこともあるし、
 場合によってはハードウェア的な補助が必要なこともある。
 
 
-##<a id="sec-generated-title-3"></a> <a id="d32e57"></a>高級言語
+## <a id="sec-generated-title-3"></a> <a id="d32e57"></a>高級言語
+
 「[CPU の命令の種類](../general/cpu.md#instruction-set)」で説明したように、
 原理的には、演算、データの移動、および、実行制御の3種類がそれっていればソフトウェアを作成できます。
 CPUの機械語とほぼ直接に対応関係のあるアセンブリ言語は、この3種類に相当する機能を持っていることになります。
@@ -69,7 +72,8 @@ CPUの機械語とほぼ直接に対応関係のあるアセンブリ言語は�
 本章から先は、プログラミング言語が進歩し、徐々に高級になる（人の直感に近づく）過程を説明していくことになります。
 
 
-###<a id="sec-generated-title-4"></a> <a id="from-how-to-what"></a>how から what へ
+### <a id="sec-generated-title-4"></a> <a id="from-how-to-what"></a>how から what へ
+
 アセンブリ言語は「CPUをどう動かすか」（how）を記述するものです。
 一方、開発者にとって重要なのは「何をしたいか」（what）なわけですが、
 アセンブリ言語を使って開発する場合、このwhatからhowへの変換が非常に大変な作業になります。

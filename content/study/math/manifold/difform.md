@@ -18,11 +18,13 @@ aliases:
 
 # 微分形式
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 ようやく本題の微分形式の話に。
 
 
-##<a id="sec-generated-title-2"></a> <a id="vector_analysis"></a>勾配、発散、回転 再考
+## <a id="sec-generated-title-2"></a> <a id="vector_analysis"></a>勾配、発散、回転 再考
+
 「[数学](../index.md)」で説明した、
 勾配、発散、回転と積分の関係式、
 いわゆるガウスの定理やストークスの定理と呼ばれるものを改めて列挙してみましょう。
@@ -98,7 +100,8 @@ F<sub>3</sub><span class="normal">d</span>u<sup>1</sup><span class="normal">d</s
 少し道具の整備が必要になります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="wedge"></a>ウェッジ積
+## <a id="sec-generated-title-3"></a> <a id="wedge"></a>ウェッジ積
+
 ここで一旦少し話を変えて、
 <span class="math"><span class="normal">d</span>u<sup>1</sup><span class="normal">d</span>u<sup>2</sup><span class="normal">d</span>u<sup>3</sup></span>
 などの意味について考えてみましょう。
@@ -194,7 +197,8 @@ b c <span class="normal">d</span>x ∧ <span class="normal">d</span>y
 ）
 
 
-##<a id="sec-generated-title-4"></a> <a id="dif_int"></a>微分したものを積分
+## <a id="sec-generated-title-4"></a> <a id="dif_int"></a>微分したものを積分
+
 発散、回転、勾配の話に戻りましょう。
 「[勾配、発散、回転 再考](#vector_analysis)」で列挙した式、
 すなわち、ガウスの定理やストークスの定理は、
@@ -294,7 +298,8 @@ V
 そういう発想のもと考えられたのが次節で説明する外微分です。
 
 
-##<a id="sec-generated-title-5"></a> <a id="outer_dif"></a>外微分
+## <a id="sec-generated-title-5"></a> <a id="outer_dif"></a>外微分
+
 さて、それでは<strong id="outer_dif" class="keyword">外微分</strong>（outer differentiation）を定義していきましょう。
  
 まず、普通の関数 <span class="math">f</span> に対しては、外微分 ＝ 全微分
@@ -405,7 +410,8 @@ n 次元ならば n 階しか外微分できません。
 といった感じになります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="stokes"></a>ストークスの定理
+## <a id="sec-generated-title-6"></a> <a id="stokes"></a>ストークスの定理
+
 外微分の計算過程に回転や発散の式が現れることが分かりました。
 だいぶ遠回りをしましたが、
 ようやくガウスの定理やストークスの定理を簡潔に表すことができそうです。
@@ -448,7 +454,8 @@ n 次元ならば n 階しか外微分できません。
 これは、ベクトル解析のストークスの定理の自然な拡張になっています。
 
 
-##<a id="sec-generated-title-7"></a> <a id="form"></a>微分形式
+## <a id="sec-generated-title-7"></a> <a id="form"></a>微分形式
+
 これだけ説明すれば、
 微分形式ももはや「形式的に定義した、よく分からないけどつじつまの合う道具」ではなく、
 具体的なイメージを伴うものになると思います。

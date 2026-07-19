@@ -14,7 +14,8 @@ aliases:
 
 # Span<T>構造体
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <h5 class="version version7">Ver. 7.2</h5>
 
 `Span<T>`構造体(`System`名前空間)は、span (区間、範囲)という名前通り、連続してデータが並んでいるもの([配列](../structured/st_array.md)など)の一定範囲を読み書きするために使う型です。
@@ -38,7 +39,8 @@ C# 14 では、`Span<T>` 構造体を言語構文的に特別扱いするよう�
 
 - [サンプル コード](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/Span)
 
-##<a id="sec-generated-title-2"></a> <a id="data-span"></a>連続データの一定範囲の読み書き
+## <a id="sec-generated-title-2"></a> <a id="data-span"></a>連続データの一定範囲の読み書き
+
 「一定範囲の読み書き」の説明に、まずは配列で例を示します。
 例えば以下のような書き方で、配列の一部分だけの読み書きができます。
 
@@ -92,7 +94,8 @@ r[0] = 1;     <span class="comment">// 書き込みは NG</span>
 - `Span<T>`は、配列だけでなく、いろいろなものを指せる
 - `Span<T>`の方が効率的で、読み書きがだいぶ速い
 
-##<a id="sec-generated-title-3"></a> <a id="various-data"></a>いろいろなタイプのメモリ領域を指せる
+## <a id="sec-generated-title-3"></a> <a id="various-data"></a>いろいろなタイプのメモリ領域を指せる
+
 `Span<T>`は、配列だけでなく、文字列、スタック上の領域、.NET 管理外のメモリ領域などいろいろな場所を指せます。
 以下のような使い方ができます。
 
@@ -136,7 +139,8 @@ r[0] = 1;     <span class="comment">// 書き込みは NG</span>
 }
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="by-reference"></a>部分参照
+### <a id="sec-generated-title-4"></a> <a id="by-reference"></a>部分参照
+
 `Span<T>`は、配列や文字列の一部分を直接参照しています。
 
 例えば、`string`の`Substring`メソッドを使うと、部分文字列をコピーした新しい別の`string`が生成されて、ちょっと非効率です。
@@ -161,7 +165,8 @@ r[0] = 1;     <span class="comment">// 書き込みは NG</span>
 
 ![Substring と Span の差](../../../../assets/media/1149/span2.png)
 
-###<a id="sec-generated-title-5"></a> <a id="pointer-and-array"></a>配列とポインターに両対応
+### <a id="sec-generated-title-5"></a> <a id="pointer-and-array"></a>配列とポインターに両対応
+
 `Span<T>`を使う利点は、配列とポインターの両方に、1つの型で対応できることです。
 
 [ネイティブ コードとの相互運用](../interop/sp_pinvoke.md)で有用なのはもちろん、
@@ -334,7 +339,8 @@ C# だけでプログラムを作るにしてもポインターを使いたい�
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="safe-stackalloc"></a>安全な stackalloc
+### <a id="sec-generated-title-6"></a> <a id="safe-stackalloc"></a>安全な stackalloc
+
 C# の速度最適化のコツの1つに、「[ガベージ コレクション](rm_gc.md#garbage-collection)を避ける」というのがあります。
 要は、可能であれば、クラスや配列の `new` を避けろという話になります。
 (割かし「言うは易し」で、なかなか`new`を避けるのが大変なことはよくありますが。)
@@ -457,7 +463,8 @@ C# の速度最適化のコツの1つに、「[ガベージ コレクション](
 }
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="nested-stackalloc"></a>式中の stackalloc
+### <a id="sec-generated-title-7"></a> <a id="nested-stackalloc"></a>式中の stackalloc
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 で、式中の任意の場所に `stackalloc` を書けるようになりました。
@@ -518,7 +525,8 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 どうも、[再帰パターン](../datatype/patterns.md#recursive)を実装するついでにこの機能が入ったそうです。
 (再帰パターン中に[参照](sp_ref.md#ref-returns)や[`ref`構造体](refstruct.md)が出てきても、戻り値に返していいものかどうかをちゃんと解析しないとまずくて、それが解析できるんなら`stackalloc`の安全性も解析できるとのこと。)
 
-##<a id="sec-generated-title-8"></a> <a id="span-internal"></a>Span の内部的な話
+## <a id="sec-generated-title-8"></a> <a id="span-internal"></a>Span の内部的な話
+
 前節では`Span<T>`構造体の用途を見てきましたが、続いて、その中身がどうなっているかについて説明しておきます。
 
 `ArraySegment<T>`よりも`Span<T>`の方が高速な理由でもありますが、
@@ -558,12 +566,14 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 - `Array`と`Offset`と分けて持つ必要がないので、1メンバー分省サイズ
 - 配列に限らずどこでも(ポインターでも)参照できる
 
-###<a id="sec-generated-title-9"></a> <a id="two-implementations"></a>slow Span と fast Span
+### <a id="sec-generated-title-9"></a> <a id="two-implementations"></a>slow Span と fast Span
+
 先ほど、`Span<T>`の中身には「論理的には」`ref T`なフィールドがあるという話をしました。
 ただ、 .NET の型システム上、フィールドに `ref` を付けることはできませんでした(.NET 6 以前)。
 実のところ、`Span<T>`はこういう「参照フィールド」を実現するためにちょっと特殊なことをしていました。
 
-####<a id="sec-generated-title-10"></a> <a id="fast-span"></a>fast Span (.NET Core 2.1 以降向けの Span<T>)
+#### <a id="sec-generated-title-10"></a> <a id="fast-span"></a>fast Span (.NET Core 2.1 以降向けの Span<T>)
+
 .NET Core 2.1 では、ランタイム側で特殊処理を入れて、「参照フィールド」に相当する機能を使えるようにしました。
 .NET Core 2.1 以降向けの `Span<T>` は以下のような構造になっています。
 ([coreclr レポジトリ内にソースコードがあります](https://github.com/dotnet/coreclr/blob/aae414026671e3dc1ccf0f308d351ac04cc746a4/src/mscorlib/shared/System/Span.cs#L29)。)
@@ -579,7 +589,8 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 `ByReference<T>` が特殊対応部分です。
 ランタイム側で「この型は参照フィールドとして扱う」という特別扱いをすることで、所望の動作を得ています。
 
-####<a id="sec-generated-title-11"></a> <a id="fast-span7"></a>.NET 7 以降の fast Span
+#### <a id="sec-generated-title-11"></a> <a id="fast-span7"></a>.NET 7 以降の fast Span
+
 .NET 7 / C# 11 で、晴れて [ref フィールド](refstruct.md#ref-field)を持てるようになりました。
 その結果、`Span<T>` は「普通の」ref 構造体になりました。
 おおむね以下のような内容の構造体です。
@@ -592,7 +603,8 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 }
 </pre>
 
-####<a id="sec-generated-title-12"></a> <a id="slow-span"></a>slow Span (旧来のランタイム向けの Span<T>)
+#### <a id="sec-generated-title-12"></a> <a id="slow-span"></a>slow Span (旧来のランタイム向けの Span<T>)
+
 「.NET Core 2.1以降でしか使えません」ということになると使い勝手が悪すぎるため、
 旧来のランタイム向けの「ちょっと遅い」`Span<T>`実装もあります。
 (こちらは[corefx リポジトリ内にソースコードがあります](https://github.com/dotnet/corefx/blob/8d212b41126baff94fc025e4438d6f4e8cbff7e9/src/System.Memory/src/System/Span.cs#L448)。)
@@ -615,7 +627,8 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 結果的に、管理下/管理外で条件分岐が必要だったり、構造体のサイズが大きくなるせいで、少し動作が遅くなります。
 ただし、それでも、`ArraySegment<T>`を使うよりはだいぶ高速です。
 
-###<a id="sec-generated-title-13"></a> <a id="ref-fields"></a>参照フィールド
+### <a id="sec-generated-title-13"></a> <a id="ref-fields"></a>参照フィールド
+
 要するに、`Span<T>`構造体は、論理的には「参照フィールドと、長さのペア」です。
 実際、「fast Span」な実装では、参照フィールドに相当するものを、ランタイム側の特殊対応で実現しています。
 
@@ -627,12 +640,14 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 正確な条件などについては次節の「[ref 構造体](refstruct.md)」で説明します。
 
 
-##<a id="sec-generated-title-14"></a> <a id="first-class-span">First-class Span</a>
+## <a id="sec-generated-title-14"></a> <a id="first-class-span">First-class Span</a>
+
 <h5 class="version version14">Ver. 14</h5>
 
 C# 14 では `Span<T>`/`ReadOnlySpan<T>` 構造体を言語構文的に特別扱いするようなりました。
 
-###<a id="sec-generated-title-15"></a> <a id="before-first-class-span">C# 13 までの問題</a>
+### <a id="sec-generated-title-15"></a> <a id="before-first-class-span">C# 13 までの問題</a>
+
 C# 7.2 の頃に `Span<T>` や `ReadOnlySpan<T>` が導入されて以来、
 これらの型を使った高パフォーマンスな実装がたくさん提供されています。
 
@@ -760,7 +775,8 @@ C# 7.2 以降は `ReadOnlySpan<T>` 構造体を使って実装することが増
 今や `Span<T>` や `ReadOnlySpan<T>` が重要な地位を占めていて、
 C# の言語構文上も徐々に特別扱いされるようになって来ています。
 
-###<a id="sec-generated-title-16"></a> <a id="after-first-class-span">C# 14 からの Span/ReadOnlySpan 特別扱い</a>
+### <a id="sec-generated-title-16"></a> <a id="after-first-class-span">C# 14 からの Span/ReadOnlySpan 特別扱い</a>
+
 前節の不便は
 あくまで `Span<T>` や `ReadOnlySpan<T>` が「ただの構造体」ということに起因します。
 配列 `T[]` の変数を `Span<T>` や `ReadOnlySpan<T>` 型の変数/引数に渡せるのもあくまで
@@ -813,7 +829,8 @@ C# 14 からは「コンパイラーが保証している変換で、優先的�
 }
 </pre>
 
-#####<a id="sec-generated-title-17"></a> <a id="covariance">ReadOnlySpan の共変性</a>
+##### <a id="sec-generated-title-17"></a> <a id="covariance">ReadOnlySpan の共変性</a>
+
 また、[ユーザー定義の型変換](../oop/oo_operator.md#cast)では「型引数の[共変性](../oop/sp4_variance.md#variance)」を表現できないという問題があります。
 `ReadOnlySpan<string>` を `ReadOnlySpan<object>` に代入できてもいいはずなのに、
 これが C# 13 まではできませんでした。
@@ -824,7 +841,8 @@ C# 14 からはこれを受け付けます。
 <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">span</span> <span class="operator">=</span> <span class="variable">s</span>; <span class="comment">// C# 13 ではエラー。</span>
 </pre>
 
-#####<a id="sec-generated-title-18"></a> <a id="read-only-span-over-span">Span よりも ReadOnlySpan の方を優先</a>
+##### <a id="sec-generated-title-18"></a> <a id="read-only-span-over-span">Span よりも ReadOnlySpan の方を優先</a>
+
 ちなみに、`Span<T>` と `ReadOnlySpan<T>` の両方のオーバーロードがある場合、
 `ReadOnlySpan<T>` の方が優先されます。
 

@@ -18,7 +18,8 @@ aliases:
 
 # \[雑記\] スレッド プールとタスク
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 3.0 で導入されたラムダ式と、
@@ -32,13 +33,15 @@ C# 3.0 で導入されたラムダ式と、
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * スレッドはそれなりに高コストなので使い回しをしたい → スレッド プール。
 
 * スレッド プールを使った非同期処理を行うには、.NET Framework 4 で導入された Task クラスが便利です。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="task"></a>タスク
+## <a id="sec-generated-title-3"></a> <a id="task"></a>タスク
+
 スレッドを使った非同期処理を行いたい動機としては、以下の2つが挙げられます。
 
 * 非ブロッキング処理: I/O 待ちとかで UI スレッドをフリーズさせないようにする（図1）
@@ -65,7 +68,8 @@ C# 3.0 で導入されたラムダ式と、
 このページで説明する、.NET 4 の Task クラスもこの「タスク」を表すクラスです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="thread"></a>スレッド
+## <a id="sec-generated-title-4"></a> <a id="thread"></a>スレッド
+
 まず、非同期処理の基本となるスレッドについて説明しておきましょう。
 
 <strong id="key_thread" class="keyword">スレッド</strong>（thread）は、CPU の数を超えて複数の処理を同時に実行するための仕組みです。
@@ -92,7 +96,8 @@ C# 3.0 で導入されたラムダ式と、
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="preemptive"></a>余談: プリエンプティブ マルチタスクと強調的マルチタスク
+### <a id="sec-generated-title-5"></a> <a id="preemptive"></a>余談: プリエンプティブ マルチタスクと強調的マルチタスク
+
 タスクのスケジューリング（どうやってタスクの同時実行を行うか、タスク切り替え方の管理方法）には大きく分けて2種類あります。
 
 * プリエンプティブ（preemptive: 専売権、優先権）マルチタスク: スレッドがどんな処理をしていようと、一定間隔で OS が必ず処理を奪い取り、コンテキスト スイッチを行います。 通常、タイマーを使ったハードウェア割り込みを利用していて、 例えスレッドがフリーズしていても強制的にコンテキスト スイッチ可能です。
@@ -107,7 +112,8 @@ C# 3.0 で導入されたラムダ式と、
 公平性を残しつつ、コンテキスト スイッチの負荷を最小限に抑えます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="thread_pool"></a>スレッド プール
+## <a id="sec-generated-title-6"></a> <a id="thread_pool"></a>スレッド プール
+
 前述の通り、スレッドは、生成も切り替えも、それなりに（そして、多くの人が思っている以上に）コストがかかります。
 スレッドの増加はパフォーマンスへの影響が非常に大きく、スレッドの数は最小限に抑えたいです。
 
@@ -130,7 +136,8 @@ C# 3.0 で導入されたラムダ式と、
 [WebClient](http://msdn.microsoft.com/ja-jp/library/system.net.webclient.aspx) クラスなどによる I/O 待ちの非同期処理でもスレッド プールが利用されます。
 
 
-###<a id="sec-generated-title-7"></a> <a id="thread_pool4"></a>.NET Framework 4 のスレッド プール
+### <a id="sec-generated-title-7"></a> <a id="thread_pool4"></a>.NET Framework 4 のスレッド プール
+
 スレッド プールの仕組みは昔からありましたが、
 .NET Framework 4 では性能改善のためにスレッド プールの再設計・実装が行われました。
 （具体的には、後述するワーク スティーリングという仕組みで性能改善を図ります。）
@@ -145,12 +152,14 @@ C# 3.0 で導入されたラムダ式と、
 
 
 ##### <a id="sec-generated-title-8"></a>タスクの追加
+
 タスク実行用のスレッド（ワーカー スレッド（worker thread）と呼びます）から新しいタスクを追加する場合、
 タスクはローカル キューに投入されます。
 一方、ワーカー スレッド以外からのタスクの追加はグローバル キューに投入されます。
 
 
 ##### <a id="sec-generated-title-9"></a>タスクの取り出し
+
 各スレッドは、現在のタスクが完了すると、まず、ローカル キューを見に行きます。
 ローカル キューにタスクがなければ、次に、他のスレッドのキューを見に行き、
 もしそちらにタスクがあれば、タスクを奪い取ります。
@@ -170,12 +179,14 @@ C# 3.0 で導入されたラムダ式と、
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="task-class"></a>Task クラス
+## <a id="sec-generated-title-10"></a> <a id="task-class"></a>Task クラス
+
 .NET Framework 4 では、スレッド プールをより使いやすくするために、Task（System.Threading.Tasks 名前空間）というクラスが導入されました。
 Task クラスは以下のような機能を持っています。
 
 
 ##### <a id="sec-generated-title-11"></a>非同期処理の結果取得
+
 非同期処理の結果を使いたい場合があります。
 Task クラスからの結果の受け取り方には2通りの方法があります。
 
@@ -212,6 +223,7 @@ Result プロパティを読もうとしたとき、タスクがまだ完了し�
 
 
 ##### <a id="sec-generated-title-12"></a>統一的なキャンセル
+
 非同期実行中のタスクを途中でキャンセルするための仕組みとして、
 CancellationToken 構造体というものが標準で用意されています。
 
@@ -232,6 +244,7 @@ cts.Cancel();
 
 
 ##### <a id="sec-generated-title-13"></a>子タスク
+
 タスクの中で別の新しいタスクを作りたい場合があります。
 オプションなしの場合、それぞれのタスクは無関係に動くことになります。
 
@@ -283,6 +296,7 @@ t.Wait(); <span class="comment">// 子タスクの完了まで待つ</span>
 
 
 ##### <a id="sec-generated-title-14"></a>柔軟なスケジューリング
+
 Task クラスでは、タスク開始時に TaskScheduler を渡すことで、
 タスクの実行方法をある程度柔軟に制御できます。
 
@@ -302,21 +316,25 @@ t.Start(<span class="type">TaskScheduler</span>.FromCurrentSynchronizationContex
 
 
 
-###<a id="sec-generated-title-15"></a> <a id="task_usage"></a>Task クラスの用途
+### <a id="sec-generated-title-15"></a> <a id="task_usage"></a>Task クラスの用途
+
 Task クラスは以下のような場面で使われます。
 
 
 ##### <a id="sec-generated-title-16"></a>並列処理
+
 .NET Framework 4で導入された、Parallel クラスや ParallelEnumerable クラス（通称 Parallel LINQ）などの並列処理を用ライブラリは、
 Task クラスの上に実装されています。
 並列処理の詳細は「[並列処理ライブラリ](../lib/lib_parallel.md)」にて説明します。
 
 
 ##### <a id="sec-generated-title-17"></a>先物と継続
+
 「[[雑記] 継続と先物](misc_continuation.md)」参照。
 
 
 ##### <a id="sec-generated-title-18"></a>データ フロー
+
 （書きかけ）
 <pre>
 並列、非ブロッキング処理と、あともう1つ、データ フロー

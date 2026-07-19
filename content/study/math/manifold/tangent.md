@@ -18,11 +18,13 @@ aliases:
 
 # 接ベクトル
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 共変ベクトル ＝ 接ベクトルの話を。
 
 
-##<a id="sec-generated-title-2"></a> <a id="tangent"></a>接ベクトル
+## <a id="sec-generated-title-2"></a> <a id="tangent"></a>接ベクトル
+
 本題の微分形式に入る前に、
 先に
 <span class="math"><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂<denom>
@@ -47,7 +49,8 @@ aliases:
 添え字が下付きになっていることに注意。
 
 
-##<a id="sec-generated-title-3"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-3"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・接ベクトル
 

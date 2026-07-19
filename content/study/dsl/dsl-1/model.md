@@ -20,14 +20,16 @@ aliases:
 
 # ドメイン特化モデル
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 これまで、「[DSL 概要](dsl.md)」などのページでは、
 DSL の「別言語を作ってから開発を始める」という部分、
 すなわち言語指向プログラミングの視点からの話が多かったですが、
 ここでは開発モデルの例を示したいと思います。
 
 
-##<a id="sec-generated-title-2"></a> <a id="numerical"></a>数値計算
+## <a id="sec-generated-title-2"></a> <a id="numerical"></a>数値計算
+
 <pre>
 Fortress … 数値計算がターゲット
 
@@ -94,7 +96,8 @@ Fortress … 数値計算がターゲット
       := 使うと mutable
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-3"></a> <a id="plan"></a>予定
+
 <pre>
 - BPEL
 

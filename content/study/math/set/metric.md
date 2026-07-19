@@ -18,7 +18,8 @@ aliases:
 
 # 距離
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 空間上の2点（集合中の2元）の間が遠いか近いか、
 連続かどうかなどを論じるためには、
 「[位相](topology.md#topology)」
@@ -30,7 +31,8 @@ aliases:
 ここではまず、直感的に想像しやすい距離というものの話をしましょう。
 
 
-##<a id="sec-generated-title-2"></a> <a id="metric_example"></a>距離の例
+## <a id="sec-generated-title-2"></a> <a id="metric_example"></a>距離の例
+
 最も一般的に使われる距離というと、
 ピタゴラスの定理に基づいて定義されるユークリッド距離でしょう。
 説明の簡単化のために2次元で説明しますが、
@@ -58,7 +60,8 @@ d<span class="paren" style="font-size:em;">(</span><span class="vector">x</span>
 この式によって定義される距離をマンハッタン距離と呼びます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="general_metric"></a>距離の一般化
+## <a id="sec-generated-title-3"></a> <a id="general_metric"></a>距離の一般化
+
 前節で述べたように、
 距離の定義の仕方にもいろいろあります。
 また、先ほどは実空間上の距離の例しか挙げませんでしたが、
@@ -115,7 +118,8 @@ d<span class="paren" style="font-size:em;">(</span>f, g<span class="paren" style
 実関数空間に距離を導入できます。
 
 
-###<a id="sec-generated-title-4"></a> <a id="d50e309"></a>ノルム
+### <a id="sec-generated-title-4"></a> <a id="d50e309"></a>ノルム
+
 ユークリッド距離やマンハッタン距離の例を見ても明らかですが、
 同じ集合に対して異なる距離を導入することが出来ます。
 ところで、この2つの距離ですが、
@@ -173,7 +177,8 @@ d<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style
 <span class="math">l<sup>1</sup></span> ノルムを使った計量はマンハッタン距離と一致します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="form"></a>双線形形式と2次形式
+## <a id="sec-generated-title-5"></a> <a id="form"></a>双線形形式と2次形式
+
 実ベクトル空間には内積やノルムの概念があります。
 また簡単化のために2次元ベクトルで説明しますが、
 実ベクトルの内積、ノルム（正確には <span class="math">L<sup>2</sup></span> ノルム）は以下のようなものです。
@@ -262,7 +267,8 @@ x<sup>T</sup> A x
 行列 <span class="math">A</span> の全ての固有値が非負になることです。
 
 
-##<a id="sec-generated-title-6"></a> <a id="valuation"></a>付値
+## <a id="sec-generated-title-6"></a> <a id="valuation"></a>付値
+
 もう1つ、体の絶対値の概念を一般化することを考えましょう。
 このような概念を<strong id="valuation" class="keyword">付値</strong>（valuation）と呼びます。
  
@@ -291,7 +297,8 @@ v<span class="paren" style="font-size:em;">(</span>x － y<span class="paren" st
 によって計量を導入出来ます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="continuous"></a>連続写像
+## <a id="sec-generated-title-7"></a> <a id="continuous"></a>連続写像
+
 距離空間の概念によって、
 写像の連続性というものを議論することができます。
 写像の連続性は、「[ε－δ論法](../infinity/epsilon.md#epsilon-delta)」を用いて定義します。
@@ -321,7 +328,8 @@ d<sub>B</sub><span class="paren" style="font-size:em;">(</span>f<span class="par
 <span class="math">f</span> は一様連続（uniform continuous）であるといいます。
 
 
-##<a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ε近傍
 ε近傍を使った連続性の定義

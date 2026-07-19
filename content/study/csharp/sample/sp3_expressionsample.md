@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] 式木の利用例
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 式木使って遊んでみます。
@@ -55,7 +56,8 @@ df(2) = 4
 ちなみに、この例で示した Derive（微分メソッド）の話は次節で。
 
 
-##<a id="sec-generated-title-2"></a> <a id="differentiation"></a>式木を微分
+## <a id="sec-generated-title-2"></a> <a id="differentiation"></a>式木を微分
+
 式木をいじりたおしてみようということで、
 式木を（記号的に）微分するライブラリ作ってみた。
 
@@ -82,7 +84,8 @@ df(2) = 4
 以下、ライブラリの簡単な説明。
 
 
-###<a id="sec-generated-title-3"></a> <a id="symbolic"></a>記号的に微分
+### <a id="sec-generated-title-3"></a> <a id="symbolic"></a>記号的に微分
+
 部分的に、右記のサイトを参考にしています →
 [Symbolic computation with C# 3.0](http://www.elguille.info/NET/futuro/firmas_octavio_symbolic_computation_EN.htm)。
 
@@ -164,6 +167,7 @@ Console.Write(<span class="literal">"Δf = {0}\n"</span>, laplacian.Apply(f));
 
 
 ##### <a id="sec-generated-title-4"></a>改善案
+
 対応したいけどもまだ未対応のもの↓。
 
 * ExpressionType.Power への対応。
@@ -182,7 +186,8 @@ Console.Write(<span class="literal">"Δf = {0}\n"</span>, laplacian.Apply(f));
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="codedom"></a>文字列から動的に式木を生成
+### <a id="sec-generated-title-5"></a> <a id="codedom"></a>文字列から動的に式木を生成
+
 文字列から Expression 型を動的に生成できます。
 
 自分でパーサを書いてもいいんでしょうけど、
@@ -224,7 +229,8 @@ derivative: x =&gt; (-1 * (Sin(x) / Cos(x)))
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="dynamics"></a>Expression Tree ＋ CodeDom ＋ WPF
+## <a id="sec-generated-title-6"></a> <a id="dynamics"></a>Expression Tree ＋ CodeDom ＋ WPF
+
 前節の式木を使った記号計算ライブラリと、
 「[曲面上の物体の運動シミュレーション](../../dotnet/appendix/sample.md#dynamics)」で作った 「[WPF](../../dotnet/wpf/wpf_abst.md#wpf0)」 を統合してみた。
 

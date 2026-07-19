@@ -19,14 +19,16 @@ aliases:
 
 # \[雑記\] GUI と非同期処理
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 「[非同期処理](sp5_async.md)」の話とからめて、
 GUI アプリケーション開発と非同期処理の話。
 
 
-##<a id="sec-generated-title-2"></a> <a id="dispatcher"></a>GUI とディスパッチャー
+## <a id="sec-generated-title-2"></a> <a id="dispatcher"></a>GUI とディスパッチャー
+
 （書きかけ、清書時は別ページにするかも）
 <pre>
 0.5秒固まったら「使いにくい」、3秒固まったら「バグだ」、10秒固まったら「パソコンが壊れた」と言われる。

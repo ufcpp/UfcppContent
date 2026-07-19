@@ -18,7 +18,8 @@ aliases:
 
 # 発散
 
-##<a id="sec-generated-title-1"></a> <a id="div"></a>発散とは
+## <a id="sec-generated-title-1"></a> <a id="div"></a>発散とは
+
 <em>
         <strong id="divergence" class="keyword">発散</strong>とはある点における単位体積あたりのベクトル場の湧き出し（「[流束](v_field.md#flux)」参照）の量、つまり湧き出しの密度
       </em>です。
@@ -84,7 +85,8 @@ aliases:
       </span>の内積を取ったものが発散となるからです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="gaus"></a>ガウスの定理
+## <a id="sec-generated-title-2"></a> <a id="gaus"></a>ガウスの定理
+
 発散は湧き出しの密度なわけですから発散を体積積分したものは湧き出しに等しくなります。
 つまり、
 <div class="math">

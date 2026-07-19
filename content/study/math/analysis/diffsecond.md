@@ -18,7 +18,8 @@ aliases:
 
 # 2階常微分方程式
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 一番簡単で、機械的な解法が知られている定数係数線形常微分方程式の中でも、
 基礎中の基礎となる2階の斉次常微分方程式
 <div class="math">
@@ -37,7 +38,8 @@ aliases:
 について説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="first"></a>1階の場合
+## <a id="sec-generated-title-2"></a> <a id="first"></a>1階の場合
+
 まずは1階の場合、すなわち
 <span class="math">
         <table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>u <span class="normal">+</span> pu <span class="normal">=</span><span class="normal">0</span>
@@ -73,7 +75,8 @@ aliases:
 と表されます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="second"></a>2階の場合
+## <a id="sec-generated-title-3"></a> <a id="second"></a>2階の場合
+
 「[1階の場合](#first)」で、
 <span class="math">
         u <span class="normal">=</span> A<span class="normal">e</span><sup>
@@ -184,7 +187,8 @@ aliases:
 となります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="imaginary"></a>虚数解の場合
+## <a id="sec-generated-title-4"></a> <a id="imaginary"></a>虚数解の場合
+
 特性方程式の解が実数の場合には、前節の通り、
 微分方程式の解が指数関数の和になります。
 では、虚数解の場合にはどうなるのでしょうか。
@@ -391,7 +395,8 @@ aliases:
 が微分方程式の解になります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="Euler"></a>オイラーの公式
+## <a id="sec-generated-title-5"></a> <a id="Euler"></a>オイラーの公式
+
 <span class="math">a</span> が実数のとき、
 <span class="math">
         <table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>u <span class="normal">=</span> au
@@ -559,7 +564,8 @@ aliases:
 指数関数や三角関数のテイラー展開式からも導けます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="double"></a>重解の場合
+## <a id="sec-generated-title-6"></a> <a id="double"></a>重解の場合
+
 証明とかはなしで事実だけ述べますが、
 <span class="math">n</span> 階の線形微分方程式の解は、<span class="math">n</span> 個の任意定数を含みます。
 （定数の値は初期値などの条件によって決まります。
@@ -609,7 +615,8 @@ aliases:
 もう少し納得の行く過程を知ることができます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-7"></a> <a id="summary"></a>まとめ
+
 特性方程式を使う。
 
 * 実数解：<span class="math">
@@ -630,7 +637,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+
 <pre>
 2階の線形微分方程式になる例を
 

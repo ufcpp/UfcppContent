@@ -18,7 +18,8 @@ aliases:
 
 # 接ベクトル・微分形式の内在的定義
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 具体的な座標をとって考えるなら、
 接ベクトルは多様体上の微分演算子 <span class="math"><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂<denom>x</denom></td></tr></table></span>、
 微分形式は微小変分 <span class="math"><span class="normal">d</span>x</span> と考えることができます。
@@ -34,7 +35,8 @@ aliases:
 このような定義の仕方を内在的定義といいます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・接ベクトル
 接ベクトル ＝ 微分演算子で定義

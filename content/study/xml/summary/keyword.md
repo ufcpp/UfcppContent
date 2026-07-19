@@ -18,7 +18,8 @@ aliases:
 
 # キーワードの参照
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 [<code>keyword.xsl</code>](../../../../assets/media/ufcpp2000/xml/xslfiles/keyword.xsl) には、キーワードの強調、一覧表示のための template が記述されています。
 
 各ドキュメントの先頭には、目次に続き、キーワードの一覧が表示されます。
@@ -26,7 +27,8 @@ aliases:
 また、他のドキュメントからキーワードを参照することも出来ます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+
 <pre class="xsource" title="">
 <code><span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
   <span class="bracket">&lt;</span><span class="element">keyword</span> <span class="attribute">id</span><span class="attvalue">="tag"</span><span class="bracket">&gt;</span>keyword タグ<span class="bracket">&lt;/</span><span class="element">keyword</span><span class="bracket">&gt;</span> でキーワードの強調表示が出来ます。
@@ -37,7 +39,8 @@ aliases:
 <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-3"></a> <a id="result"></a>結果
+## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
+
 <strong id="tag" class="keyword">keyword タグ</strong> でキーワードの強調表示が出来ます。
 
 refkey タグを使うと、keyword タグで囲ったキーワードを参照出来ます。

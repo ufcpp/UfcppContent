@@ -18,7 +18,8 @@ aliases:
 
 # アナログフィルタ設計に基づく IIR LPF 設計
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 信号処理の分野において、最もよく用いられるフィルタの1つに、
 ローパス・ハイパス・バンドバスフィルタなどの、
 周波数帯域分割フィルタがあります。
@@ -33,7 +34,8 @@ s → z 変換を用いることで、
 そのままディジタルローパス帯域分割フィルタの設計に用いることができます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>アナログ LPF
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>アナログ LPF
+
 アナログローパスフィルタ（以下 アナログ LPF）の設計手法には、
 以下に挙げる4つの有名な手法があります。
 
@@ -85,7 +87,8 @@ s → z 変換を用いることで、
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="plan"></a>LPF の設計仕様
+## <a id="sec-generated-title-3"></a> <a id="plan"></a>LPF の設計仕様
+
 通常、LPF の設計仕様は、図2に示すようなパラメータを用いて表します。
 
 * <span class="math">r<sub>p</sub></span>… 透過域リプル（pass-band ripple）（<span class="math">r<sub>p</sub></span>の代わりに<span class="math">A<sub>p</sub> ＝ 1 － r<sub>p</sub></span>を使うことも）

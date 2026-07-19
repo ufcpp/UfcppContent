@@ -14,7 +14,8 @@ aliases:
 
 # コード解析とコード生成
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 C# コンパイラーなどを含むいわゆる「開発ツール」にとって重要なことは開発者の生産性を高めることです。
 開発ツールが発展してきた現在、コンパイラーの仕事は多岐にわたります。
 例えば、以下のようなことをしたいという要求があったりします。
@@ -34,7 +35,8 @@ generator に関しては「ソースコードを生成する」ということ�
 
 積みタスク: [issues/320](https://github.com/ufcpp/UfcppSample/issues/320)
 
-##<a id="sec-generated-title-2"></a> <a id="analyzer"></a>コード解析(analyzer)とコード生成(generator)
+## <a id="sec-generated-title-2"></a> <a id="analyzer"></a>コード解析(analyzer)とコード生成(generator)
+
 C# コンパイラーは現在(というかそれぞれ C# 6.0 世代と C# 9.0 世代で)、コード解析とコード生成のプラグインを書けるようになりました。
 コード解析(analyzer)については C# 6.0 のときにも1ページ利用例を書きました: 「[Code-Awareなライブラリ](../package/pkgcodeawarelibrary.md
 )」。
@@ -60,7 +62,8 @@ C# の文法上は特に問題のない書き方なんですが、推奨され�
 
 コード生成(generator)はまだ実装されて間もない(C# 9.0 世代での追加)ので実例は少ないですが、今後は公式提供される generator が増えていくと思われます。
 
-##<a id="sec-generated-title-3"></a> <a id="syntax-vs-plugin"></a>文法化 VS プラグイン
+## <a id="sec-generated-title-3"></a> <a id="syntax-vs-plugin"></a>文法化 VS プラグイン
+
 [昔ブログに書いたことはあるんですが](../../../blog/2016/12/tipsgeneratedil/index.md)、C# は構文糖衣が多い言語です。
 構文糖衣(syntax sugar)というのは、「煩雑でもよければ等価なコードを別の文法で書けるものの、簡潔に書くために導入された文法」みたいなものです。
 
@@ -162,7 +165,8 @@ generator のサンプルを提供しています。
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="tool-vs-plugin"></a>外部ツール VS プラグイン
+## <a id="sec-generated-title-4"></a> <a id="tool-vs-plugin"></a>外部ツール VS プラグイン
+
 こういうソースコードの生成は、以前でも、外部ツールを書けば(ソースコードを C# コンパイラーでコンパイルする前に、自前のツールを通してソースコードを書き換えるとかすることは)可能でした。
 コンパイラーの関知しない場所での書き換えだと以下のような問題があります。
 
@@ -205,7 +209,8 @@ Visual Studio 上では書いた瞬間から警告が出ますし、
 - F9 でブレイクポイントを設置
 - F11 でステップイン実行
 
-##<a id="sec-generated-title-5"></a> <a id="usage"></a>コード解析・コード生成の利用
+## <a id="sec-generated-title-5"></a> <a id="usage"></a>コード解析・コード生成の利用
+
 C# 6.0 世代でコード解析(analyzer)を、C# 9.0 世代でコード生成(generator)を書けるようになったといっても、ほとんどの C# 開発者にとってこれらは「自分で書く物」ではなく、「人が書いたものを利用するだけ」になると思います。
 
 C#/.NET チームによる公式提供のものは .NET SDK や Visual Studio に最初から組み込まれていて、意識せずに使うことになります。
@@ -266,7 +271,8 @@ StringLiteralGenerator は C# の通常の[文字列リテラル](../start/st_em
 <span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-6"></a> <a id="empty-body">括弧の省略</a>
+## <a id="sec-generated-title-6"></a> <a id="empty-body">括弧の省略</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 C# 12 から、`class A;` というように、クラスの本体の `{}` を省略できるようになりました。

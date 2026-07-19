@@ -46,7 +46,8 @@ aliases:
 
 執筆予定: [C# 10.0 トラッキング issue](https://github.com/ufcpp/UfcppSample/issues/342)
 
-##<a id="sec-generated-title-1"></a> <a id="record-struct">record struct</a>
+## <a id="sec-generated-title-1"></a> <a id="record-struct">record struct</a>
+
 C# 9.0 (レコード型の最初のバージョン)では、レコード型は常に[参照型](../resource/oo_reference.md#reftype)(クラスと同系統の型)になります。
 これに対して C# 10.0 では[値型](../resource/oo_reference.md#valtype)も選べるようにしました。
 そのため、以下のように、`record class` と `record struct` というキーワードで書き分けができるようになりました。
@@ -58,7 +59,8 @@ C# 9.0 (レコード型の最初のバージョン)では、レコード型は�
 
 詳しくは 「[レコード型](../datatype/record.md)」のページ内に色々と追記しました。
 
-##<a id="sec-generated-title-2"></a> <a id="struct-parameterless-ctor"></a>構造体の引数なしコンストラクター
+## <a id="sec-generated-title-2"></a> <a id="struct-parameterless-ctor"></a>構造体の引数なしコンストラクター
+
 構造体に引数なしコンストラクターとかフィールド初期化子を書けるようになりました。
 
 <pre class="source" title="構造体の引数なしコンストラクターの例">
@@ -72,10 +74,12 @@ C# 9.0 (レコード型の最初のバージョン)では、レコード型は�
 これで、`new A()` で `X` が1になります。
 詳しくは「[引数なしコンストラクター](../resource/rm_struct.md#parameterless-ctor)」で説明します。
 
-##<a id="sec-generated-title-3"></a> <a id="string-interpolation"></a>文字列補間
+## <a id="sec-generated-title-3"></a> <a id="string-interpolation"></a>文字列補間
+
 [文字列補間](../start/st_string.md#string-interpolation)に2点ほど改善が入りました。
 
-###<a id="sec-generated-title-4"></a> <a id="improved-string-interpolation"></a>パフォーマンス改善
+### <a id="sec-generated-title-4"></a> <a id="improved-string-interpolation"></a>パフォーマンス改善
+
 `string.Format` を使った実装ではどうしてもパフォーマンス上の改善が難しく、
 別の型を使って結構複雑なコードに変換する最適化が入りました。
 条件を満たす場合、
@@ -98,7 +102,8 @@ handler.<span class="method">AppendLiteral</span>(<span class="string">")"</span
 
 詳しくは「[C# 10.0 の補間文字列の改善](../start/improvedinterpolatedstring.md)」で説明します。
 
-###<a id="sec-generated-title-5"></a> <a id="improved-string-interpolation"></a>const 文字列補間
+### <a id="sec-generated-title-5"></a> <a id="improved-string-interpolation"></a>const 文字列補間
+
 [文字列補間](../start/st_string.md#string-interpolation)でも、`{}` の中身が `const` 文字列な場合に限り、補完結果も `const` にできます。
 例えば以下のような `const` 文字列を作れます。
 
@@ -110,7 +115,8 @@ handler.<span class="method">AppendLiteral</span>(<span class="string">")"</span
 
 詳しくは「[const 文字列補間](../start/sp_const.md#constant-string-interpolation)」で説明します。
 
-##<a id="sec-generated-title-6"></a> <a id="CallerArgumentExpression"></a>CallerArgumentExpression 属性
+## <a id="sec-generated-title-6"></a> <a id="CallerArgumentExpression"></a>CallerArgumentExpression 属性
+
 `CallerArgumentExpression` 属性を使って、メソッド呼び出し元でどの引数にどういう式を渡したかを文字列として取れるようになりました。
 
 <pre class="source" title="CallerArgumentExpression の利用例">
@@ -132,7 +138,8 @@ m(2 * 3 * 5);
 
 詳しくは「[呼び出し元情報(caller info)](../start/miscreservedattribute.md#CallerInfo)」で説明します。
 
-##<a id="sec-generated-title-7"></a> <a id="simple-program"></a>シンプル プログラム
+## <a id="sec-generated-title-7"></a> <a id="simple-program"></a>シンプル プログラム
+
 C# 9.0 の[トップ レベル ステートメント](ap_ver9.md#top-level-statements)に続いて、シンプルなプログラムであればシンプルなソースコードで書けるようになる機能が増えています。
 
 これらの機能によって、いわゆる [Hello World プログラム](https://ja.wikipedia.org/wiki/Hello_world)を以下の1行で書けるようになりました。
@@ -158,7 +165,8 @@ C# 9.0 の[トップ レベル ステートメント](ap_ver9.md#top-level-state
 
 これらを実現するために、C# の文法にもいくつかの新機能が追加されました。
 
-###<a id="sec-generated-title-8"></a> <a id="file-scoped-namespace"></a>ファイル スコープ名前空間
+### <a id="sec-generated-title-8"></a> <a id="file-scoped-namespace"></a>ファイル スコープ名前空間
+
 C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定できるようになりました。
 
 <pre class="source" title="C# 10 からできる名前空間の書き方">
@@ -178,7 +186,8 @@ C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定
 
 詳しくは「[ファイル スコープ namespace](../structured/sp_namespace.md#file-scoped-namespace)」で説明します。
 
-###<a id="sec-generated-title-9"></a> <a id="global-using"></a>global using
+### <a id="sec-generated-title-9"></a> <a id="global-using"></a>global using
+
 `using` ディレクティブの前に `global` という修飾を付けることで、
 [プロジェクト](../package/project.md#project)内全域に対して影響を及ぼす `using` (名前空間の参照)ができるようになりました。
 
@@ -192,7 +201,8 @@ C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定
 
 詳しくは「[global using](../structured/sp_namespace.md#global-using)」で説明します。
 
-###<a id="sec-generated-title-10"></a> <a id="lambda-improvement"></a>ラムダ式の改善(自然な型決定、戻り値明示、属性指定)
+### <a id="sec-generated-title-10"></a> <a id="lambda-improvement"></a>ラムダ式の改善(自然な型決定、戻り値明示、属性指定)
+
 Web アプリ用テンプレートの `MapGet` を実現するために、
 ラムダ式とデリゲートに以下の3つの機能が追加されました。
 
@@ -212,8 +222,10 @@ Web アプリ用テンプレートの `MapGet` を実現するために、
 
 詳しくは「[デリゲートの自然な型](../functional/sp_delegate.md#natural-type)」と「[ラムダ式の戻り値の明示と属性](../functional/fun_localfunctions.md#lambda-csharp10)」で説明します。
 
-##<a id="sec-generated-title-11"></a> <a id="others"></a>その他
-###<a id="sec-generated-title-12"></a> <a id="sub-pattern-name"></a>プロパティ パターンの拡張(入れ子のメンバー参照)
+## <a id="sec-generated-title-11"></a> <a id="others"></a>その他
+
+### <a id="sec-generated-title-12"></a> <a id="sub-pattern-name"></a>プロパティ パターンの拡張(入れ子のメンバー参照)
+
 入れ子のプロパティ・フィールド参照でプロパティ パターンを書けるようになりました。
 
 <pre class="source" title="入れ子のプロパティ参照">
@@ -225,7 +237,8 @@ Web アプリ用テンプレートの `MapGet` を実現するために、
 
 詳しくは「[プロパティ パターン](../datatype/patterns.md#sub-pattern-name)」で説明します。
 
-###<a id="sec-generated-title-13"></a> <a id="mixed-deconstruction"></a>分解宣言と分解代入の混在
+### <a id="sec-generated-title-13"></a> <a id="mixed-deconstruction"></a>分解宣言と分解代入の混在
+
 分解代入と分解宣言の混在もできるようになりました。
 
 <pre class="source" title="分解宣言と分解代入の混在">
@@ -240,7 +253,8 @@ Web アプリ用テンプレートの `MapGet` を実現するために、
 (x, <span class="reserved">var</span> u) = (<span class="error"><span class="reserved">var</span> v</span>, y) = (1, 2);
 </code></pre>
 
-###<a id="sec-generated-title-14"></a> <a id="definite-assignment"></a>明確な初期化ルールの改善
+### <a id="sec-generated-title-14"></a> <a id="definite-assignment"></a>明確な初期化ルールの改善
+
 明確な初期化ルール(未初期化のまま変数から値を読めないようにするフロー解析)に関する改善がありました。
 これまでは `?.` や `??` が絡んだ時の判定があまり賢くなかったんですが、C# 10 で改善しました。
 

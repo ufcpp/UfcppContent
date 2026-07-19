@@ -18,7 +18,8 @@ aliases:
 
 # 集合
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[ZFC公理系](axiom.md#zfc)」を満たす数学的思考の対象を<strong id="set" class="keyword">集合</strong>(set)といいます。
 自然数や実数などの集合も、ZFC公理系から出発して構築していくことが出来ます。
  
@@ -31,14 +32,16 @@ ZFC公理系を満たすもの以外にも、
 興味があれば調べてみてください。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="d42e18"></a>集合とは
+## <a id="sec-generated-title-2"></a> <a id="d42e18"></a>集合とは
+
 「[概要](#abstract)」でも述べましたが、
 集合論ではZFC公理系を満たすような物を集合と呼びます。
  
 集合を現すのに、<span class="math">a, b, c, …, A, B, C, …, α, β, γ</span> などの文字が使われます。
 
 
-###<a id="sec-generated-title-3"></a> <a id="d42e31"></a>元
+### <a id="sec-generated-title-3"></a> <a id="d42e31"></a>元
+
 集合という名前が示すとおり、集合は何らかの対象が集まったものです。
 集合論で取り扱われる数学的対象は全て集合なので、集合の中身はやはり集合です。
 集合の中身のことを<strong id="elem" class="keyword">元</strong>（element）または要素といい、
@@ -49,7 +52,8 @@ a ∈ b
 と書き表します。
 
 
-###<a id="sec-generated-title-4"></a> <a id="d42e52"></a>等しい集合
+### <a id="sec-generated-title-4"></a> <a id="d42e52"></a>等しい集合
+
 まず、「2つの集合が互いに等しい」というのがどういうことなのかを定義する公理が「[外延性公理](axiom.md#extensionality)」です。
 <div class="math">
 ∀a∀b<span class="paren" style="font-size:em;">[</span>a=b⇔∀x<span class="paren" style="font-size:em;">(</span>x∈a⇔x∈b<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span></div>
@@ -77,7 +81,8 @@ a ∈ b
 「中身が全部同じ ⇔ 同じ集合」というような考え方のことを外延的等価性といいます。
 
 
-###<a id="sec-generated-title-5"></a> <a id="subset"></a>部分集合
+### <a id="sec-generated-title-5"></a> <a id="subset"></a>部分集合
+
 <span class="math">∀x<span class="paren" style="font-size:em;">(</span>x∈a⇔x∈b<span class="paren" style="font-size:em;">)</span></span> というのが「等しい集合」の条件でした。
 この ⇔ を一方通行に変えたものは集合の包含関係を表すものになります。
 
@@ -98,7 +103,8 @@ a ⊆ b ∧ b ⊆ a → a ＝ b
 a ⊆ b ∧ b ⊆ c → a ⊆ c
 </div>
 
-###<a id="sec-generated-title-6"></a> <a id="empty"></a>空集合
+### <a id="sec-generated-title-6"></a> <a id="empty"></a>空集合
+
 空集合と呼ばれる特殊な集合の存在を仮定するのが「[空集合の存在公理](axiom.md#empty)」です。
 <div class="math">
 ∃a∀x<span class="paren" style="font-size:em;">[</span>￢ <span class="paren" style="font-size:em;">(</span>x∈a<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span></div>
@@ -114,8 +120,10 @@ a ⊆ b ∧ b ⊆ c → a ⊆ c
 <span class="math">a ＝ b</span> となります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="d42e213"></a>集合に対する操作
-###<a id="sec-generated-title-8"></a> <a id="pair"></a>対
+## <a id="sec-generated-title-7"></a> <a id="d42e213"></a>集合に対する操作
+
+### <a id="sec-generated-title-8"></a> <a id="pair"></a>対
+
 2つの集合 <span class="math">a, b</span> から、これら2つを要素として持つ集合 <span class="math">c ＝ <span class="paren" style="font-size:em;">{</span>a, b<span class="paren" style="font-size:em;">}</span></span> を作ることが考えられます。
 このような操作が出来る（このような集合が存在する）ということを仮定するのが「[対の公理](axiom.md#pair)」です。
 <div class="math">
@@ -130,7 +138,8 @@ a ⊆ b ∧ b ⊆ c → a ⊆ c
 <span class="math">a</span> と <span class="math"><span class="paren" style="font-size:em;">{</span>a<span class="paren" style="font-size:em;">}</span></span> は全く別の集合になります。
 
 
-###<a id="sec-generated-title-9"></a> <a id="union"></a>合併
+### <a id="sec-generated-title-9"></a> <a id="union"></a>合併
+
 「[合併集合の公理](axiom.md#union)」により、合併を作ることが出来ます。
 <div class="math">
 ∀a∃b∀x<span class="paren" style="font-size:em;">[</span>x∈b ⇔ ∃c<span class="paren" style="font-size:em;">(</span>c∈a∧x∈c<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span></div>
@@ -181,7 +190,8 @@ a ⊆ b ∧ b ⊆ c → a ⊆ c
 （この記号が出せるフォントはあまりありませんが。）
 
 
-###<a id="sec-generated-title-10"></a> <a id="intersection"></a>共通部分
+### <a id="sec-generated-title-10"></a> <a id="intersection"></a>共通部分
+
 「[分出公理](axiom.md#comprehension)」
 集合 <span class="math">a</span> の元で、特定の条件（<span class="math">P<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span> という命題）を満たすものを集めて作ったものもまた集合になることを主張しています。
 <div class="math">
@@ -220,7 +230,8 @@ a ⊆ b ∧ b ⊆ c → a ⊆ c
 <span class="math">b ＝ <span class="normal">∩</span>a</span> と表します。
 
 
-###<a id="sec-generated-title-11"></a> <a id="d42e676"></a>その他の操作
+### <a id="sec-generated-title-11"></a> <a id="d42e676"></a>その他の操作
+
 共通部分とは逆に、<span class="math">c ＝ <span class="paren" style="font-size:em;">{</span>x∈a | ￢ x∈b<span class="paren" style="font-size:em;">}</span></span> という集合を作ることが出来ます。
 このような集合 <span class="math">c</span> を<strong id="diff" class="keyword">差</strong>（difference）と呼び、<span class="math">C ＝ A － B</span> と書きます。
 自然数などの差とは性質がかなり異なっているので、区別するために集合論的差という言い方をする場合が多いです。
@@ -254,7 +265,8 @@ a ⊆ b ∧ b ⊆ c → a ⊆ c
 最後の2つの命題は de Morgan の法則と呼ばれています。
 
 
-##<a id="sec-generated-title-12"></a> <a id="d42e826"></a>冪集合
+## <a id="sec-generated-title-12"></a> <a id="d42e826"></a>冪集合
+
 集合 <span class="math">a</span> から <span class="math">a</span> の部分集合全体からなる集合 <span class="math">b</span> を作ることを考えます。
 このような集合が存在することを保証するのが「[ベキ集合の公理](axiom.md#power)」です。
 <div class="math">

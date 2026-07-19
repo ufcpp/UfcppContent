@@ -18,7 +18,8 @@ aliases:
 
 # 四元数の数学的意味
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[四元数と3次元空間中の回転](quaternion.md)」の付録。
 
 四元数の数学的な側面について説明します。
@@ -38,7 +39,8 @@ aliases:
 「[体](../../math/group/field.md#field)」などについて調べることをお勧めします。
 
 
-##<a id="sec-generated-title-2"></a> <a id="complex"></a>その前に・・・ 複素数についておさらい
+## <a id="sec-generated-title-2"></a> <a id="complex"></a>その前に・・・ 複素数についておさらい
+
 四元数の説明に入る前に、
 少し複素数についておさらいしておきます。
 簡単に言うと、複素数ってのは以下のようなものです。
@@ -92,7 +94,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="quaternion"></a>四元数
+## <a id="sec-generated-title-3"></a> <a id="quaternion"></a>四元数
+
 複素数は、実数に対して
 <span class="math">
         i<sup></sup> <span class="normal">=</span> <span class="normal">−</span><span class="normal">1</span>
@@ -138,7 +141,8 @@ aliases:
 四元数は、発見者の名前を取ってハミルトンの四元数（Hamilton's quaternion）とも呼ばれます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="re_im"></a>実部と虚部
+## <a id="sec-generated-title-4"></a> <a id="re_im"></a>実部と虚部
+
 複素数では実部が実数1つ、虚部も実数1つでしたが、
 四元数では虚部が3つになっています。
 この虚部の3つの実数は1セットで意味を持っていたりするので、
@@ -182,6 +186,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-5"></a>加減算
+
 まず、四元数の加減算は非常に単純で、以下のようになります。
 <div class="math">
       <em>
@@ -200,6 +205,7 @@ aliases:
     </div>
 
 ##### <a id="sec-generated-title-6"></a>乗算
+
 次に、乗算ですが、
 <div class="math">
       <span class="paren" style="font-size:em;">(</span>
@@ -275,7 +281,8 @@ aliases:
 四元数の積は非可換になります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="conjugate"></a>共役と逆元
+## <a id="sec-generated-title-7"></a> <a id="conjugate"></a>共役と逆元
+
 四元数
 <span class="math">
         q
@@ -406,7 +413,8 @@ aliases:
 （四則演算がすべて問題なく行える。ただし、積は非可換（左右入れ替えると値が変わる）。）
 
 
-##<a id="sec-generated-title-8"></a> <a id="rotation"></a>四元数を使った回転
+## <a id="sec-generated-title-8"></a> <a id="rotation"></a>四元数を使った回転
+
 「[3次元空間上の回転](quaternion.md#rotation)」で説明したように、
 座標ベクトル <span class="math">
         <span class="vector">u</span>

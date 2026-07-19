@@ -18,14 +18,16 @@ aliases:
 
 # オブジェクト操作 Cmdlet
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 if, while, for などの制御構文に加えて、
 パイプラインを通したオブジェクトの処理用に、
 Where-Object や ForEach-Object などの Cmdlet があります。
 慣れると制御構文の方の foreach や if などよりも便利かも。
 
 
-##<a id="sec-generated-title-2"></a> <a id="foreach"></a>ForEach-Object
+## <a id="sec-generated-title-2"></a> <a id="foreach"></a>ForEach-Object
+
 一番分かりやすいのは、制御構文に同じ名前の物がある
 <strong id="foreach_object" class="keyword">ForEach-Object</strong> でしょうか。
 パイプラインで受け取ったオブジェクトに対して処理を行うもので、
@@ -73,7 +75,8 @@ total 3
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="where"></a>Where-Object
+## <a id="sec-generated-title-3"></a> <a id="where"></a>Where-Object
+
 ForEach-Object 以外に、
 SQL クエリ的な使い方のできる <strong id="where_object" class="keyword">Where-Object</strong> などの Cmdlet もあります。
 
@@ -116,7 +119,8 @@ where と ? でも呼び出せます。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="d33e90"></a>Select-Object
+## <a id="sec-generated-title-4"></a> <a id="d33e90"></a>Select-Object
+
 <strong id="select_object" class="keyword">Select-Object</strong> Cmdlet は、パイプラインから受け取ったオブジェクトのうち、
 特定のプロパティのみを取り出したオブジェクトを出力します。
 
@@ -150,7 +154,8 @@ DOTNETFX                                          2005/03/24 13:22:43
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="group"></a>Group-Object
+## <a id="sec-generated-title-5"></a> <a id="group"></a>Group-Object
+
 <strong id="group_object" class="keyword">Group-Object</strong> （エイリアス: group）は、
 同じプロパティの値を持つオブジェクトをグループ化します。
 （SQL の Group By に相当。）
@@ -183,7 +188,8 @@ Count Name                      Group
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="sort"></a>Sort-Object
+## <a id="sec-generated-title-6"></a> <a id="sort"></a>Sort-Object
+
 もう1個、SQL の sort by に相当する <strong id="sort_object" class="keyword">Sort-Object</strong> （エイリアス: sort）もあります。
 
 <pre class="console" title="Sort-Object">

@@ -20,7 +20,8 @@ aliases:
 > 　　　　今すぐ実践できる良いプログラムの書き方<br>
 > 　　　　C#編 言語機能の進化から学ぶ「良いコードの書き方」
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 プログラムの「良い書き方」は時代とともに進歩しています。そして、それが定着するとともに、プログラミング言語にも「良い書き方」をサポートする新しい構文が徐々に追加されていきます。
 ここでは、C#の[プロパティ](../oop/oo_property.md)構文を例に、「良い書き方」とともに言語構文が進歩していった過程を紹介します。
 
@@ -31,7 +32,8 @@ C#のプロパティ構文は、C#のバージョンアップに伴い何度か�
 
 - [サンプル コード](https://github.com/ufcpp/UfcppSample/tree/master/Demo/2016/GoodCode/src/PropertySample)
 
-##<a id="sec-generated-title-2"></a> <a id="accessor"></a>getter/setter
+## <a id="sec-generated-title-2"></a> <a id="accessor"></a>getter/setter
+
 C#以前からある良いとされる習慣の1つに、「クラスの持つデータは必ずメソッドを通して返せ、[フィールド](../structured/st_struct.md#field)を公開するな」というものがあります。メソッドを通すことで以下のような利点があるためです。
 
 - 実装方法を選べる
@@ -78,7 +80,8 @@ s.SetX(s.GetX() + 1);
 <em>s.X += 1;</em>
 </code></pre>
 
-##<a id="sec-generated-title-3"></a> <a id="set-accessibility"></a>getterとsetterで異なるアクセシビリティ(C# 2.0)
+## <a id="sec-generated-title-3"></a> <a id="set-accessibility"></a>getterとsetterで異なるアクセシビリティ(C# 2.0)
+
 データに対して、読む(get)のと書く(set)のとではだいぶ重みが違います。一般に、書き込みの方が慎重に行う必要があります。多くの場合、読み取り(get)だけを公開(public)し、書き込み(set)はクラス内にとどめる(private)ことになるでしょう。
 
 そこで、C# 2.0で、プロパティのgetとsetの[アクセシビリティ](../oop/oo_conceal.md#level)を[別々に設定できる](../oop/oo_property.md#level)ようになりました。例えばgetだけpublicにして、setをprivateにするには以下のような書き方をします。
@@ -96,7 +99,8 @@ s.SetX(s.GetX() + 1);
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="auto-property"></a>自動プロパティ(C# 3.0)
+## <a id="sec-generated-title-4"></a> <a id="auto-property"></a>自動プロパティ(C# 3.0)
+
 あとから実装方法を変更するかもしれないのでメソッド(のように振る舞えるプロパティ)を使うべきといっても、実際のところ、これまでいくつか挙げたコード例がそうですが、ほとんどのプロパティは単純なフィールドの読み書きです。これらのような書き方は、「あとから変えるかもしれない」という心配のためだけに書くには少し煩雑過ぎます。
 
 そこで、C# 3.0では、自動的に上記のようなフィールドとそれに対する読み書きを生成する[自動プロパティ](../oop/oo_property.md#auto)(auto property)という機能が追加されました。以下のように、getやsetの後ろのブロックを省略することで自動プロパティになります。
@@ -111,7 +115,8 @@ s.SetX(s.GetX() + 1);
 
 単純なフィールドの読み書きでいい間はこの書き方をし、追加の処理が必要になった際には自動実装ではない以前通りのプロパティに変更します。
 
-##<a id="sec-generated-title-5"></a> <a id="get-only-property"></a>get-onlyプロパティ(C# 6)
+## <a id="sec-generated-title-5"></a> <a id="get-only-property"></a>get-onlyプロパティ(C# 6)
+
 繰り返しになりますが、一般に、データの書き込みには慎重になるべきです。極端に言うと、コンストラクターでだけ値を代入して、他の場所では書き換えない方がいいことが多いです。こういう書き換え不能なデータのことをimmutable(変更不能)なデータと呼びます。
 
 C# 5.0までは、immutableであることを確実に保証するためには以下のような書き方でプロパティを作る必要がありました。
@@ -137,7 +142,8 @@ C# 5.0までは、immutableであることを確実に保証するためには�
 }
 </code></pre>
 
-##<a id="sec-generated-title-6"></a> <a id="record-type"></a>レコード型(検討段階)
+## <a id="sec-generated-title-6"></a> <a id="record-type"></a>レコード型(検討段階)
+
 immutableなプロパティは、値の初期化をコンストラクターで行う都合上、プロパティに対応するコンストラクター引数が必ず必要になります。前節の例でいうと、プロパティXに対して引数xがあります。これは、大文字・小文字が違うくらいで、ほぼ同じものを何度も書かされている状態です。
 
 そこで、以下のような書き方で、コンストラクターとimmutableなプロパティを自動生成する構文の追加が検討がされています(C# 7には入らず、そのさらに先)。

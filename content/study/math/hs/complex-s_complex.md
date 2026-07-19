@@ -20,14 +20,16 @@ aliases:
 
 # 複素数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 高校の課程では「複素数と方程式」みたいな所でならうけど、
 発展的にはあらゆる数学の分野で出てくる。
  
 実数の範囲でだけ見ていてはよく分からなかったことが、複素数の範囲に広げてみると非常に見通しがよくなったりする。
 
 
-##<a id="sec-generated-title-2"></a> <a id="variety"></a>複素数のいろんな側面
+## <a id="sec-generated-title-2"></a> <a id="variety"></a>複素数のいろんな側面
+
 複素数には、図1に示すようないろいろな側面があります。
 
 <figure>
@@ -84,7 +86,8 @@ aliases:
 （「拡大」と「回転」は実は極めて似た性質を持つ物だったりします。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="deMoivre"></a>ド・モアブルの定理
+## <a id="sec-generated-title-3"></a> <a id="deMoivre"></a>ド・モアブルの定理
+
 新課程では範囲外なようなので、
 ド・モアブル（de Moivre）の定理について説明しておくと、以下のようなものです。
 <div class="math">
@@ -145,7 +148,8 @@ a<sup><span class="normal">2</span></sup><span class="normal">−</span> b<sup><
 複素数では、もうこれ以上新しい数を考える必要がないわけです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="polar"></a>極形式
+## <a id="sec-generated-title-4"></a> <a id="polar"></a>極形式
+
 任意の複素数 <span class="math">α <span class="normal">=</span> a <span class="normal">+</span> i b</span> （<span class="math">a, b</span> は実数）は、
 <div class="math">
 r <span class="paren" style="font-size:em;">(</span><span class="normal">cos</span>θ <span class="normal">+</span> i <span class="normal">sin</span>θ<span class="paren" style="font-size:em;">)</span></div>
@@ -207,7 +211,8 @@ i <span class="normal">sin</span><span class="paren" style="font-size:em;">(</sp
 （詳しくは「[三角関数](sincos.md)」の方で書こうかと。）
 
 
-##<a id="sec-generated-title-5"></a> <a id="figure"></a>回転のできる2次元ベクトル
+## <a id="sec-generated-title-5"></a> <a id="figure"></a>回転のできる2次元ベクトル
+
 新課程（2004年度入学以降の課程）だと、ド・モアブルの定理とかは課程外なんでしたっけ？
 複素数は、「回転のできる2次元ベクトル」として“も”使えるんで、
 旧課程（1995～2003年度入学の人の課程）だと複素数を使った図形の問題なんかもありました。
@@ -307,7 +312,8 @@ J
 行列 <span class="math">aI <span class="normal">+</span> bJ</span> と複素数 <span class="math">a <span class="normal">+</span> i b</span> は互いに同値な関係にあります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-6"></a> <a id="plan"></a>執筆予定
+
 <pre>
 現実に存在しない？
 実際、物理量として観測されるものはほぼ実数。

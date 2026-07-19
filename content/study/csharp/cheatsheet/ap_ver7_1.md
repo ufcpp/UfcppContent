@@ -14,7 +14,8 @@ aliases:
 
 # C# 7.1 の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="ver7_1"></a>C# 7.1
+## <a id="sec-generated-title-1"></a> <a id="ver7_1"></a>C# 7.1
+
 <div class="version version7_1">Ver. 7.1</div>
 
 <table>
@@ -49,7 +50,8 @@ C# 7.0の頃から、目標としては C# のリリース サイクルの短縮
 
 C# 7.1 は、Visual Studio 2017のリリース時期に間に合わなかった C# 7.0 の積み残しと言った感じの、小さい機能が4つほど追加されています。
 
-##<a id="sec-generated-title-2"></a> <a id="async-Main"></a>非同期Main
+## <a id="sec-generated-title-2"></a> <a id="async-Main"></a>非同期Main
+
 `Main`メソッドの戻り値に`Task`クラス(`System.Threading.Tasks`名前空間)を使えるようになりました。
 以下のいずれかのオーバーロードであればエントリーポイントとして認識されます。
 
@@ -62,7 +64,8 @@ C# 7.1 は、Visual Studio 2017のリリース時期に間に合わなかった 
 
 詳しくは、「[非同期Main](../structured/miscentrypoint.md#async-main)」で説明します。
 
-##<a id="sec-generated-title-3"></a> <a id="default-expr"></a>default 式
+## <a id="sec-generated-title-3"></a> <a id="default-expr"></a>default 式
+
 これまでも[既定値](../resource/rm_default.md)を作るために、`default(T)`という構文がありましたが、
 型名`T`の指定が煩雑でした。
 特に、名前の長い型に対して`default(T)`を使うと、かなりのうっとおしさがあります。
@@ -97,7 +100,8 @@ C# 7.1 は、Visual Studio 2017のリリース時期に間に合わなかった 
 
 既定値自体や、`default(T)`の説明は「[既定値](../resource/rm_default.md)」を参照してください。
 
-##<a id="sec-generated-title-4"></a> <a id="infer-tuple-name"></a>タプル要素名の推論
+## <a id="sec-generated-title-4"></a> <a id="infer-tuple-name"></a>タプル要素名の推論
+
 タプルの要素名が、タプル構築時に渡した変数から推論できるようになりました。
 例えば以下のように、`(x, y)` と書くだけで、1要素目に`x`、2要素目に `y` という名前が付きます。
 (これまでだと、`(x: x, y: y)` と書く必要があった。)
@@ -119,7 +123,8 @@ C# 7.1 は、Visual Studio 2017のリリース時期に間に合わなかった 
 
 詳しくは「[タプル](../datatype/tuples.md#infer-tuple-name)」で説明します。
 
-##<a id="sec-generated-title-5"></a> <a id="generic-type-switch"></a>ジェネリック型に対するパターン マッチング(型スイッチ)
+## <a id="sec-generated-title-5"></a> <a id="generic-type-switch"></a>ジェネリック型に対するパターン マッチング(型スイッチ)
+
 C# 7.0で[`is`や`switch`で型を見ての分岐](../datatype/typeswitch.md)ができるようになりました。
 しかし、[ジェネリクス](../oop/sp2_generics.md)が絡む場合、
 例えば以下のようなコードはC# 7.0ではコンパイル エラーになっていました。

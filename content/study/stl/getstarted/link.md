@@ -18,7 +18,8 @@ aliases:
 
 # リンク集（C/C++）
 
-##<a id="sec-generated-title-1"></a> <a id="cpp"></a>C++ 一般
+## <a id="sec-generated-title-1"></a> <a id="cpp"></a>C++ 一般
+
 [Bjarne Stroustrup's Homepage](http://www.research.att.com/~bs/homepage.html)
 : (英語) C++はこの人が設計しました。
 
@@ -27,13 +28,15 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="stl"></a>STL
+## <a id="sec-generated-title-2"></a> <a id="stl"></a>STL
+
 [STLのページ(角 正史のページ)](http://www.wakhok.ac.jp/~sumi/stl/)
 : STLについて解説しているページ。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="lib"></a>ライブラリ
+## <a id="sec-generated-title-3"></a> <a id="lib"></a>ライブラリ
+
 [Boost C++ Libraries](http://www.boost.org/)
 : (英語) C++のライブラリ集。 標準ライブラリに足りていない多くの機能を提供しています。 Boost ライブラリの中から標準ライブラリに採用されたコードも多数ですし、 Boost そのものを標準ライブラリに取り込む活動も行われています。
 

@@ -14,7 +14,8 @@ aliases:
 
 # 特殊な変数宣言
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 C# 7.0～9.0 に掛けて、
 [パターン マッチング](patterns.md)をはじめとして、
 [変数宣言](../start/st_variable.md#var-decl)を拡張するような機能が入っています。
@@ -30,7 +31,8 @@ C# 6.0 までの変数宣言と違って、以下のような性質がありま�
 - 式の途中でも変数宣言できる
 - 複数の値のうち一部だけを受け取り、残りを破棄したいことがある
 
-##<a id="sec-generated-title-2"></a> <a id="declaration-expression"></a>式中の変数宣言
+## <a id="sec-generated-title-2"></a> <a id="declaration-expression"></a>式中の変数宣言
+
 C# 7.0 以降の構文に特有な点の1つとして、式の途中で変数を宣言できるようになるという点があります。
 
 <pre class="source" title="式中の変数宣言">
@@ -67,7 +69,8 @@ C# 7.0 以降の構文に特有な点の1つとして、式の途中で変数を
 変数のスコープに関するルールがいくつか追加されています。
 詳しくは「[C# 7での新しいスコープ ルール](../start/st_scope.md#csharp7)」で説明します。
 
-##<a id="sec-generated-title-3"></a> <a id="discards"></a>値の破棄
+## <a id="sec-generated-title-3"></a> <a id="discards"></a>値の破棄
+
 型スイッチや分解では、変数を宣言しつつ何らかの値を受け取るわけですが、
 特に受け取る必要のない余剰の値が生まれたりします。
 
@@ -141,7 +144,8 @@ C# 7.0 以降の構文に特有な点の1つとして、式の途中で変数を
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="underscore"></a>_ が破棄の意味になる場合
+## <a id="sec-generated-title-4"></a> <a id="underscore"></a>_ が破棄の意味になる場合
+
 `_`という記号は、元々のC#では[識別子](../start/misc_identifier.md)として有効な名前です。
 すなわち、以下のコードは有効なC#コードです。
 
@@ -191,7 +195,8 @@ C# 7.0 以降の構文に特有な点の1つとして、式の途中で変数を
 }
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="lambda-discard"></a>ラムダ式の引数
+### <a id="sec-generated-title-5"></a> <a id="lambda-discard"></a>ラムダ式の引数
+
 <h5 class="version version9">Ver. 9</h5>
 
 既存の構文で破棄を使いたいものの代表例は、ラムダ式の引数でしょう。

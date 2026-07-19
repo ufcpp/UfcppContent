@@ -19,7 +19,8 @@ aliases:
 
 # 標準クエリ演算子（クエリ式関係）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 「[LINQ](sp3_linq.md)」で、
@@ -40,7 +41,8 @@ aliases:
 次節の「[標準クエリ演算子（その他）](sp3_stdqueryo.md)」で説明。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="sampledata"></a>サンプルデータ
+## <a id="sec-generated-title-2"></a> <a id="sampledata"></a>サンプルデータ
+
 次節以降の説明では、例として以下のようなデータを使います。
 
 <pre class="source" title="クエリ式説明のためのデータ例" lang="">
@@ -56,7 +58,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="queryex"></a>クエリ式の構成要素
+## <a id="sec-generated-title-3"></a> <a id="queryex"></a>クエリ式の構成要素
+
 C# 3.0 で導入されたクエリ式の構成要素は以下のとおりです。
 
 <table summary="クエリ式の構成要素">
@@ -112,7 +115,8 @@ C# 3.0 で導入されたクエリ式の構成要素は以下のとおりです�
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="from"></a>クエリ変換と from
+## <a id="sec-generated-title-4"></a> <a id="from"></a>クエリ変換と from
+
 C# 3.0 のクエリ式は <strong id="from" class="keyword">from 句</strong>から始まります。
 （SQL と違って、from が一番最初に来るのは、上から順番にクエリ式を解釈できるようにするため。
 あと、from が一番上にないと、Visual Studio のインテリセンスとの相性が悪かったらしい。）
@@ -140,7 +144,8 @@ a に対する標準クエリ演算子メソッド呼び出しに変換されま
 また、p はラムダ式の仮引数になります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="basis"></a>基本
+## <a id="sec-generated-title-5"></a> <a id="basis"></a>基本
+
 基本的には、クエリ式は上から順番に、句単位でメソッド呼び出しに変換されます。
 要するに、例えば、
 
@@ -227,7 +232,8 @@ select / group by 句の後ろに into をつけます。
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="cast"></a>Cast
+## <a id="sec-generated-title-6"></a> <a id="cast"></a>Cast
+
 from 句では、from の直後に型を指定することができます。
 
 <pre class="source" title="from 句で型を指定">
@@ -260,7 +266,8 @@ from 句では、from の直後に型を指定することができます。
 [多次元配列](../structured/st_array.md#multid)はなぜか、非ジェネリック`IEnumerable`しか実装していません。その他、一部の古くからある型には、ジェネリック導入前との互換性維持のために、非ジェネリック`IEnumerable`のままのものがあります。例えば、正規表現ライブラリの`Regex`クラス(`System.Text.RegularExpressions`名前空間)の`Matches`メソッドなどは、非ジェネリック`IEnumerable`を返します。これらに対して、`from`直後の型指定や、`Cast<T>`メソッドが有効です。
 
 
-##<a id="sec-generated-title-7"></a> <a id="select"></a>Select
+## <a id="sec-generated-title-7"></a> <a id="select"></a>Select
+
 Select 演算子（射影演算子、projection）は、どういう形式でデータを出力するかを選択します。
 
 クエリ式中の <strong id="select" class="keyword">select 句</strong>は Select 演算子に変換されます。
@@ -322,7 +329,8 @@ select の後にさらにクエリを続けたい場合
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="let"></a>透過識別子と let
+## <a id="sec-generated-title-8"></a> <a id="let"></a>透過識別子と let
+
 <strong id="let" class="keyword">let 句</strong>を使うことで、
 クエリ式中で計算した値を変数に格納しておくことができます。
 
@@ -382,7 +390,8 @@ select の後にさらにクエリを続けたい場合
 この、元のクエリ式中では見えていない（省略されている）変数を<strong id="transparent" class="keyword">透過識別子</strong>（transparent identifier）といったりするようです。
 
 
-##<a id="sec-generated-title-9"></a> <a id="where"></a>Where
+## <a id="sec-generated-title-9"></a> <a id="where"></a>Where
+
 Where 演算子（制限演算子、restriction）は、指定した条件を満たすデータのみを取り出します。
 
 クエリ式中の <strong id="where" class="keyword">where 句</strong>は Where 演算子に変換されます。
@@ -411,7 +420,8 @@ Where 演算子（制限演算子、restriction）は、指定した条件を満
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="selectmany"></a>SelectMany
+## <a id="sec-generated-title-10"></a> <a id="selectmany"></a>SelectMany
+
 SelectMany 演算子は、1対多の射影を行います。
 
 例えば、select を使って Z プロパティ（int 型の配列）を射影すると、
@@ -495,7 +505,8 @@ SelectMany に限らず、クエリ式が2重以上になっているものを�
 透過識別子が必要になることが多いです。
 
 
-##<a id="sec-generated-title-11"></a> <a id="join"></a>Join、GroupJoin
+## <a id="sec-generated-title-11"></a> <a id="join"></a>Join、GroupJoin
+
 Join および GroupJoin 演算子（結合演算子）は、2つのデータシーケンスを1つに結合します。
 
 クエリ式では、
@@ -635,7 +646,8 @@ GroupJoin の場合には、
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="orderby"></a>OrderBy、ThenBy
+## <a id="sec-generated-title-12"></a> <a id="orderby"></a>OrderBy、ThenBy
+
 OrderBy、OrderByDescending、ThenBy、ThenByDescending 演算子（順序付け演算子、ordering）でデータシーケンスを整列させることができます。
 
 これらはクエリ式の <strong id="orderby" class="keyword">orderby 句</strong>に相当します。
@@ -708,7 +720,8 @@ List.Sort メソッドで整列する方が実行速度がはるかによさそ�
 実行時間が List.Sort（おそらくクイックソート）の4倍程度。）
 
 
-##<a id="sec-generated-title-13"></a> <a id="groupby"></a>GroupBy
+## <a id="sec-generated-title-13"></a> <a id="groupby"></a>GroupBy
+
 GroupBy 演算子（グループ化演算子、grouping）は、キーを指定して、値の等しい物をグループ化します。
 
 例えば、
@@ -798,7 +811,8 @@ group ... by ... into 句を使います。
 
 
 
-##<a id="sec-generated-title-14"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-14"></a> <a id="summary"></a>まとめ
+
 C# 3.0 のクエリ式では、以下のようなクエリが可能です。
 
 <table summary="クエリ式と標準クエリ演算子">
@@ -846,6 +860,7 @@ C# 3.0 のクエリ式では、以下のようなクエリが可能です。
 
 
 ##### <a id="sec-generated-title-15"></a>サンプル
+
 <pre class="source" title="クエリ式総まとめ" lang="">
 <code><span class="reserved">using</span> System;
 <span class="reserved">using</span> System.Collections.Generic;

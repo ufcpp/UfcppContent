@@ -19,7 +19,8 @@ aliases:
 
 # 拡張メソッド
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 拡張メソッドは、静的メソッドをインスタンスメソッドと同じ形式で呼び出せるようにできるものです。
 すなわち、
 今までなら、
@@ -52,6 +53,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 拡張メソッド： 静的メソッドをインスタンスメソッドと同じ書式で呼び出せるようにすることで、 あたかもクラスに新しいメソッドを追加したかのように見せかける仕組みです。
 
 * 単に、静的メソッドを後置き記法で呼び出せるようになっただけとも考えることができます。
@@ -62,7 +64,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="extension"></a>拡張メソッド
+## <a id="sec-generated-title-3"></a> <a id="extension"></a>拡張メソッド
+
 C# 2.0 までの常識で言うと、
 既存のクラスの機能拡張（＝メソッドの追加）をしたければ、
 そのクラスを継承したりなどして、新しいクラスを作るしかありませんでした。
@@ -145,7 +148,8 @@ tHIS iS A tEST sTRING.
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="using"></a>using ディレクティブによる拡張メソッドのインポート
+## <a id="sec-generated-title-4"></a> <a id="using"></a>using ディレクティブによる拡張メソッドのインポート
+
 通常、静的メソッドは「クラス名.メソッド名」という記法で呼び出します。
 ところが、拡張メソッドでは、「クラス名」の部分をさぼって書けるようになっています。
 
@@ -234,12 +238,14 @@ tHIS iS A tEST sTRING.
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="priority"></a>優先順位
+## <a id="sec-generated-title-5"></a> <a id="priority"></a>優先順位
+
 拡張メソッドのせいで、
 同じ名前のメソッドがいくつか同時に定義されてしまう可能性があります。
 その場合、どのメソッドが呼ばれるか優先順位が決まっています。
 
-###<a id="sec-generated-title-6"></a> <a id="instance-over-extension"></a>インスタンス メソッド優先
+### <a id="sec-generated-title-6"></a> <a id="instance-over-extension"></a>インスタンス メソッド優先
+
 まず、拡張メソッドよりも通常のインスタンスメソッドの方が優先されます。
 
 <pre class="source" title="インスタンスメソッド優先" lang="">
@@ -265,7 +271,8 @@ tHIS iS A tEST sTRING.
 }
 </code></pre>
 
-####<a id="sec-generated-title-7"></a> <a id="overload"></a>オーバーロード解決ルールより、インスタンス メソッド優先が強い
+#### <a id="sec-generated-title-7"></a> <a id="overload"></a>オーバーロード解決ルールより、インスタンス メソッド優先が強い
+
 通常、オーバーロードが複数ある場合は一番引数の一致度が高いものが呼ばれます。
 例えば、以下のコードの場合は、`object`引数のものより`string`引数のものがまず優先、`string`に合わない場合だけ`object`のものが呼ばれます。
 
@@ -328,7 +335,8 @@ object 10
 </code></pre>
 
 
-###<a id="sec-generated-title-8"></a> <a id="namespace"></a>名前空間の優先度
+### <a id="sec-generated-title-8"></a> <a id="namespace"></a>名前空間の優先度
+
 名前空間違いで複数の拡張メソッドを定義することもできます。
 この場合、優先度付けは名前空間の仕様に準じます:
 
@@ -387,7 +395,8 @@ object 10
 </code></pre>
 
 
-##<a id="sec-generated-title-9"></a> <a id="interface"></a>インターフェースに拡張メソッドを追加
+## <a id="sec-generated-title-9"></a> <a id="interface"></a>インターフェースに拡張メソッドを追加
+
 拡張メソッドでは、1つ、通常のインスタンスメソッドにはできないことができます。
 それは、「[インターフェース](../oop/oo_interface.md#interface)」に対して、
 インスタンスメソッド風のメソッドを定義できると言うことです。
@@ -433,12 +442,14 @@ C# 3.0 では、IEnumerable インターフェースなどに、
 拡張メソッドとして Where や Select などのメソッド（「[標準クエリ演算子](../data/sp3_linq.md#std_query_op)」）が定義されています。
 
 
-##<a id="sec-generated-title-10"></a> <a id="problem"></a>拡張メソッドの問題点
+## <a id="sec-generated-title-10"></a> <a id="problem"></a>拡張メソッドの問題点
+
 ちなみに、インスタンス メソッドでも拡張メソッドでもどちらでもいい場合、拡張メソッドの濫用は避けた方がいいでしょう。
 拡張メソッドの濫用には不便な点もありますし、
 いくつか問題を起こす可能性があります。
 
 ##### <a id="sec-generated-title-11"></a>実体はあくまで静的メソッド
+
 拡張メソッドは、
 呼び出し側だけ見ると、一見、クラスにメソッドが追加されたように思えますが、
 その実態はあくまで静的メソッドです。
@@ -449,6 +460,7 @@ C# 3.0 では、IEnumerable インターフェースなどに、
 
 
 ##### <a id="sec-generated-title-12"></a>定義場所がどこかわからなくなる
+
 クラス本体と別の場所にメソッド定義があるため、
 定義された場所を探すのに苦労する可能性があります。
 
@@ -457,7 +469,8 @@ using 文1つでどの静的メソッドが呼ばれるのかが切り替わっ�
 なおのことどこに定義があるのかわかりにくくなっています。
 
 
-##<a id="sec-generated-title-13"></a> <a id="significance"></a>拡張メソッドの意義
+## <a id="sec-generated-title-13"></a> <a id="significance"></a>拡張メソッドの意義
+
 前節の通り、実を言うと、拡張メソッドは両手ばなしによろこべる機能ではなかったりします。
 インスタンス メソッドでの実装が可能ならば素直にクラスのインスタンス メソッドとして定義すべきです。
 
@@ -536,7 +549,8 @@ using 文1つでどの静的メソッドが呼ばれるのかが切り替わっ�
 静的メソッドを拡張メソッド化することをお勧めします。
 
 
-##<a id="sec-generated-title-14"></a> <a id="delegate"></a>拡張メソッドのデリゲートへの代入
+## <a id="sec-generated-title-14"></a> <a id="delegate"></a>拡張メソッドのデリゲートへの代入
+
 拡張メソッドは、インスタンスメソッドと同じ構文で静的メソッドを呼べるものなわけですが、
 デリゲートへの代入時にも、インスタンスメソッドと同じ構文で書けたりします。
 （ただし、少々制約あり。）
@@ -580,7 +594,8 @@ using 文1つでどの静的メソッドが呼ばれるのかが切り替わっ�
 ただし、カリー化デリゲートが作れるのは参照型の変数のみです。
 値型の場合にはエラーになります。
 
-##<a id="sec-generated-title-15"></a> <a id="ref-extensions"></a>参照渡しの拡張メソッド
+## <a id="sec-generated-title-15"></a> <a id="ref-extensions"></a>参照渡しの拡張メソッド
+
 <h5 class="version version7">Ver. 7.2</h5>
 
 C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)を参照渡し([`ref`](../resource/sp_ref.md#sec-byref)もしくは[`in`](../resource/sp_ref.md#in))で渡せるようになりました。
@@ -632,7 +647,8 @@ C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)�
 修飾子の順序が`ref this`、`in this`の順でないと受け付けないという挙動でした。
 2.7 以降では逆(`this ref`、`this in`)の順でも大丈夫です。
 
-###<a id="sec-generated-title-16"></a> <a id="only-struct"></a>補足: 構造体のみ
+### <a id="sec-generated-title-16"></a> <a id="only-struct"></a>補足: 構造体のみ
+
 すでに触れてはいますが、参照渡しで拡張メソッドを作れるのは[構造体](../resource/rm_struct.md)(値型)だけです。
 以下のように、クラスではできません。また、ジェネリックな型の場合、[`struct`制約](../oop/sp2_generics.md#where)が必要です(ただし、それでも`in`引数は不可)。
 
@@ -700,7 +716,8 @@ C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)�
 }
 </code></pre>
 
-###<a id="sec-generated-title-17"></a> <a id="struct-field"></a>構造体のフィールドの参照
+### <a id="sec-generated-title-17"></a> <a id="struct-field"></a>構造体のフィールドの参照
+
 「[参照渡し](../resource/sp_ref.md#struct-this)」で振れていますが、構造体のインスタンス メソッドでは、その構造体のフィールドの参照を返せません
 (その方が都合のいい場面がある)。
 

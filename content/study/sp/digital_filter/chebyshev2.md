@@ -18,7 +18,8 @@ aliases:
 
 # 逆チェビシェフフィルタ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="chebyshev2" class="keyword">逆チェビシェフフィルタ</strong>（inverse Chebyshev filter）は、
 「[チェビシェフフィルタ](chebyshev.md#chebyshev)」とは逆で、
 阻止域で等リプルとなるようなローパスフィルタです。
@@ -33,7 +34,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="property"></a>周波数特性
+## <a id="sec-generated-title-2"></a> <a id="property"></a>周波数特性
+
 チェビシェフ特性は以下のような特徴を持っていました。
 <div class="math">
       <span class="normal">|</span>H<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">|</span>
@@ -135,8 +137,10 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="analog"></a>アナログプロトタイプの設計（阻止域周波数固定型）
-###<a id="sec-generated-title-4"></a> <a id="zp"></a>零極配置
+## <a id="sec-generated-title-3"></a> <a id="analog"></a>アナログプロトタイプの設計（阻止域周波数固定型）
+
+### <a id="sec-generated-title-4"></a> <a id="zp"></a>零極配置
+
 逆チェビシェフフィルタの極は、
 チェビシェフフィルタの極の逆数になっています。
  
@@ -167,7 +171,8 @@ C<sub>N</sub><span class="paren" style="font-size:em;">(</span><table class="fra
 ただし、<span class="math">k</span>は<span class="math">0～(n－1) / 2</span>までの整数です。
 
 
-###<a id="sec-generated-title-5"></a> <a id="aptf"></a>アナログプロトタイプ伝達関数
+### <a id="sec-generated-title-5"></a> <a id="aptf"></a>アナログプロトタイプ伝達関数
+
 決定された極配置から、チェビシェフフィルタの伝達関数<span class="math">H<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span></span>は以下のようになります。
 <div class="math">
 H<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span>
@@ -203,7 +208,8 @@ t ＝ <span class="paren" style="font-size:2.5em;">(</span><table class="frac" s
 ＝
 <span class="normal">sin</span><sup>2</sup><span class="paren" style="font-size:1.5em;">(</span><table class="frac" summary="fraction"><tr><td class="num">n － 2 k － 1</td></tr><tr><td>2 n</td></tr></table>π<span class="paren" style="font-size:1.5em;">)</span></div>
 
-###<a id="sec-generated-title-6"></a> <a id="spec"></a>設計仕様
+### <a id="sec-generated-title-6"></a> <a id="spec"></a>設計仕様
+
 透過域/阻止域の周波数/リプル
 （<span class="math">A<sub>p</sub>, r<sub>s</sub>, ω<sub>p</sub></span>）
 を仕様として与えたとき、
@@ -275,7 +281,8 @@ N
 この式を満たすような最小の N を選びます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="analog2"></a>アナログプロトタイプの設計（透過域周波数固定型）
+## <a id="sec-generated-title-7"></a> <a id="analog2"></a>アナログプロトタイプの設計（透過域周波数固定型）
+
 「[アナログプロトタイプの設計（阻止域周波数固定型）](#analog)」で説明した伝達関数では、
 阻止域周波数が <span class="math">1</span> で固定になります。
 透過域周波数の方を固定にして設計するために、
@@ -291,7 +298,8 @@ N
 という式を使う手法もあります。
 
 
-###<a id="sec-generated-title-8"></a> <a id="zp2"></a>零極配置
+### <a id="sec-generated-title-8"></a> <a id="zp2"></a>零極配置
+
 阻止域周波数固定型の「[零極配置](#zp)」を元に、
 <span class="math">ε</span> および零点・極を以下のように置き換えます。
 
@@ -304,7 +312,8 @@ N
 倍する
 
 
-###<a id="sec-generated-title-9"></a> <a id="aptf2"></a>アナログプロトタイプ伝達関数
+### <a id="sec-generated-title-9"></a> <a id="aptf2"></a>アナログプロトタイプ伝達関数
+
 阻止域周波数固定型の「[アナログプロトタイプ伝達関数](#aptf)」を元に、
 <span class="math">α<sub>k</sub>, β<sub>k</sub>, γ<sub>k</sub></span> を以下のように置き換えます。
 
@@ -319,7 +328,8 @@ N
 倍する
 
 
-###<a id="sec-generated-title-10"></a> <a id="spec2"></a>設計仕様
+### <a id="sec-generated-title-10"></a> <a id="spec2"></a>設計仕様
+
 透過域/阻止域の周波数/リプル
 （<span class="math">A<sub>p</sub>, r<sub>s</sub>, ω<sub>s</sub></span>）
 を仕様として与えたとき、

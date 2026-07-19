@@ -18,7 +18,8 @@ aliases:
 
 # 商体・剰余体
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[有理数の定義](../set/rational.md#rational)」において、整数から有理数を作ったように、
 ある特定の条件を満たす「[環](field.md#ring)」から「[体](field.md#field)」を機械的に作る方法があります。
  
@@ -26,7 +27,8 @@ aliases:
 商体と呼ばれるものと剰余体と呼ばれるものがあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="quotient"></a>商体
+## <a id="sec-generated-title-2"></a> <a id="quotient"></a>商体
+
 体の構成方法の1つ目は<strong id="quotient" class="keyword">商体</strong>（quotient field）と呼ばれるものです。
 整数から有理数を定義（「[有理数の定義](../set/rational.md#rational)」参照）するときのように、
 環 <span class="math">R</span> の元 <span class="math">m, n</span> に対して、
@@ -58,7 +60,8 @@ aliases:
 体にはなりません。）
 
 
-###<a id="sec-generated-title-3"></a> <a id="quotient_sample"></a>商体の例
+### <a id="sec-generated-title-3"></a> <a id="quotient_sample"></a>商体の例
+
 商体の典型的な例というと、
 これまでの説明でも出てきたように「[有理数](../set/rational.md#rational)」になります。
 ですが、当然のことながら、有理数以外にもさまざまな商体が考えられます。
@@ -71,7 +74,8 @@ aliases:
 この実数上の有理式は体を成します。
 
 
-####<a id="sec-generated-title-4"></a> <a id="polynomial"></a>多項式環と有理式体
+#### <a id="sec-generated-title-4"></a> <a id="polynomial"></a>多項式環と有理式体
+
 一般的に、体 <span class="math">K</span> 上の多項式は整域になり、
 したがって、<span class="math">K</span> 上の有理式は体を成します。
  
@@ -96,7 +100,8 @@ k<sub>i</sub> X<sup>i</sup></div>
 ちなみに、有理式体 <span class="math">K<span class="paren" style="font-size:em;">(</span>X<span class="paren" style="font-size:em;">)</span></span> は体 <span class="math">K</span> の「[拡大体](extensionfield.md#extension)」になっています。
 
 
-##<a id="sec-generated-title-5"></a> <a id="residual"></a>剰余体
+## <a id="sec-generated-title-5"></a> <a id="residual"></a>剰余体
+
 もう1つの体の構成方法として、
 剰余体と呼ばれるものがあります。
 こちらは、「[整数の剰余体](field.md#rasidualfield)」で説明した、
@@ -107,7 +112,8 @@ k<sub>i</sub> X<sup>i</sup></div>
 まずはそちらの説明から始めます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="ideal"></a>イデアル
+### <a id="sec-generated-title-6"></a> <a id="ideal"></a>イデアル
+
 環 <span class="math">R</span> の空でない部分集合 <span class="math">A</span> が
 
 1. <span class="math">A</span>は加法について閉じていて、<span class="math">A</span>は<span class="math">R</span><sup>＋</sup>の部分群になっている
@@ -137,13 +143,15 @@ k<sub>i</sub> X<sup>i</sup></div>
 この2つは自明なイデアルと呼ばれます。
 
 
-####<a id="sec-generated-title-7"></a> <a id="d55e425"></a>余談
+#### <a id="sec-generated-title-7"></a> <a id="d55e425"></a>余談
+
 イデアルの概念は、理想数（ideal number）という別の概念から派生したものらしい。
 この理想数の概念を考えたのも、
 それを整理して今のイデアルの概念を作ったのもドイツの数学者なので、英語の ideal に相当するドイツ語 ideale の読みで「イデアル」というらしい。
 
 
-###<a id="sec-generated-title-8"></a> <a id="generator"></a>生成元
+### <a id="sec-generated-title-8"></a> <a id="generator"></a>生成元
+
 整数環における <span class="math">n</span> の倍数のように、
 環 <span class="math">R</span> のある元の倍数の形で表されるイデアルがあります。
  
@@ -188,7 +196,8 @@ x<sub>i</sub> ∈ R <span class="paren" style="font-size:em;">(</span>i ＝ 1, 2
 これ以上生成元を減らすことが出来ません。
 
 
-###<a id="sec-generated-title-9"></a> <a id="prime_ideal"></a>素イデアル
+### <a id="sec-generated-title-9"></a> <a id="prime_ideal"></a>素イデアル
+
 環 <span class="math">R</span> のイデアル <span class="math">A</span> があるとき、
 <span class="math">R</span> の任意の元 <span class="math">a, b</span> について、
 <span class="math">ab ∈ A ⇒ a∈A ∨ b∈A</span> が成り立つとき、
@@ -208,7 +217,8 @@ x<sub>i</sub> ∈ R <span class="paren" style="font-size:em;">(</span>i ＝ 1, 2
 素イデアルの条件を満たします。
 
 
-###<a id="sec-generated-title-10"></a> <a id="maximal_ideal"></a>極大イデアル
+### <a id="sec-generated-title-10"></a> <a id="maximal_ideal"></a>極大イデアル
+
 環 <span class="math">R</span> のイデアル <span class="math">A</span> が、
 <span class="math">R</span> の任意のイデアル <span class="math">B</span> に対して
 <span class="math">A ⊆ B ⊆ R ⇒ A＝B ∨ B＝R</span>
@@ -224,7 +234,8 @@ x<sub>i</sub> ∈ R <span class="paren" style="font-size:em;">(</span>i ＝ 1, 2
 極大イデアルは常に素イデアルになります。
 
 
-###<a id="sec-generated-title-11"></a> <a id="residual_ring"></a>剰余環
+### <a id="sec-generated-title-11"></a> <a id="residual_ring"></a>剰余環
+
 環 <span class="math">R</span> のイデアル <span class="math">A</span> が与えられたとき、
 「<span class="math">x － y ∈ A</span> のとき <span class="math">x</span> と <span class="math">y</span> が同値である」と定め、
 この同値関係を使って「[商集合](../set/integer.md#quotient_set)」を作ったものを
@@ -273,7 +284,8 @@ x ∈ R
 このとき、大雑把な言い方をすると、この環 <span class="math">R/kR</span> はもとの環 <span class="math">R</span> を元 <span class="math">k</span> で割ったあまりの集合だとみなすことができます。
 
 
-###<a id="sec-generated-title-12"></a> <a id="residual_field"></a>剰余体
+### <a id="sec-generated-title-12"></a> <a id="residual_field"></a>剰余体
+
 環 <span class="math">R</span> のイデアル <span class="math">A</span> による剰余環 <span class="math">R/A</span> は、
 <span class="math">A</span> が「[素イデアル](#p_ideal)」のとき整域に、
 <span class="math">A</span> が「[極大イデアル](#m_ideal)」のとき体になります。

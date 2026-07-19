@@ -18,7 +18,8 @@ aliases:
 
 # 挿入ソート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="insert" class="keyword">挿入ソート</strong>（insertion sort）は、
 以下のような手順でソートを行うアルゴリズムです。
 「[安定](sort.md#stable)」な「[内部](sort.md#inner)」ソート。
@@ -47,7 +48,8 @@ aliases:
 
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=insert&i=0&s=0&w=300" width="304" height="332"></iframe></div>
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/InsertSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/InsertSort.cs)
 
 <pre class="source" title="挿入ソート" lang="">

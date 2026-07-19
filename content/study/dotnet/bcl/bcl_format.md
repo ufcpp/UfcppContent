@@ -18,7 +18,8 @@ aliases:
 
 # 文字列の書式設定
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 数値を整形して表示したいことがあります。
 例えば、19800 という数値に対して、
 
@@ -46,7 +47,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="ToString"></a>ToString メソッド
+## <a id="sec-generated-title-2"></a> <a id="ToString"></a>ToString メソッド
+
 C#では、数値などから文字列への型変換は、そのままではできません。しかし、objectクラスがToStringというメソッドを持っていて、これで文字列化できます。
 
 自作の型を文字列化したい場合は、以下のように、ToStringメソッドをオーバーライドします。
@@ -158,7 +160,8 @@ Console::WriteLine(p);
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="ToString-format"></a>書式設定付きの ToString メソッド
+## <a id="sec-generated-title-3"></a> <a id="ToString-format"></a>書式設定付きの ToString メソッド
+
 intやDateTimeなど、主要な型には、書式設定が可能なバージョンのToStringメソッドが提供されています。書式を、ToStringの引数として渡します。
 
 <pre class="source" title="" lang="">
@@ -176,7 +179,8 @@ intやDateTimeなど、主要な型には、書式設定が可能なバージョ
 書式の書き方については後程改めて説明します。
 
 
-##<a id="sec-generated-title-4"></a> <a id="string-format"></a>複合書式（string.Format）
+## <a id="sec-generated-title-4"></a> <a id="string-format"></a>複合書式（string.Format）
+
 stringクラスのFormat静的メソッドで、複数の値をまとめて書式設定することができます。
 
 <pre class="source" title="string.Format 静的メソッド" lang="">
@@ -215,8 +219,10 @@ Console.Writeや、StreamWriter.Writeなど、内部的にstring.Formatを呼び
 それでは、個別の書式についてみていきましょう。
 
 
-##<a id="sec-generated-title-5"></a> <a id="num-format-std"></a>数値書式（標準）
+## <a id="sec-generated-title-5"></a> <a id="num-format-std"></a>数値書式（標準）
+
 ##### <a id="sec-generated-title-6"></a>整数
+
 dは10進数、xは16進数を表します。xを大文字にするか小文字にするかで、16進数のa～fの大小を選べます。
 
 <pre class="source" title="標準の整数書式" lang="">
@@ -229,6 +235,7 @@ dは10進数、xは16進数を表します。xを大文字にするか小文字�
 
 
 ##### <a id="sec-generated-title-7"></a>浮動小数点数
+
 fで固定小数点表示、eで指数表記を表します。また、gで、fとeのどちらか、簡潔な方を自動選択してくれます。
 
 <pre class="source" title="標準の浮動小数点数書式" lang="">
@@ -243,6 +250,7 @@ fで固定小数点表示、eで指数表記を表します。また、gで、f�
 
 
 ##### <a id="sec-generated-title-8"></a>その他
+
 適宜桁区切り、通貨記号などをはさんでくれるn、cや、精度を自動判定してくれるr、パーセント化してくれるpなども利用できます。
 
 <pre class="source" title="その他の数値書式" lang="">
@@ -261,7 +269,8 @@ fで固定小数点表示、eで指数表記を表します。また、gで、f�
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="num-format-custom"></a>数値書式（カスタム）
+## <a id="sec-generated-title-9"></a> <a id="num-format-custom"></a>数値書式（カスタム）
+
 数値は、0や#（ナンバー記号）などを使って、かなり自由な書式を作れます。
 
 <pre class="source" title="カスタム数値書式" lang="">
@@ -278,7 +287,8 @@ fで固定小数点表示、eで指数表記を表します。また、gで、f�
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="datetime-format"></a>日付の書式
+## <a id="sec-generated-title-10"></a> <a id="datetime-format"></a>日付の書式
+
 DateTime 型、DateTimeOffset 型に対しても、標準書式（<code>"d"</code>など）や、カスタム書式（<code>"y/M/d"</code> など）を設定できます。
 
 <pre class="source" title="標準の日付書式" lang="">
@@ -369,7 +379,8 @@ DateTime 型、DateTimeOffset 型に対しても、標準書式（<code>"d"</cod
 
 
 
-##<a id="sec-generated-title-11"></a> <a id="culture"></a>書式とカルチャー
+## <a id="sec-generated-title-11"></a> <a id="culture"></a>書式とカルチャー
+
 注意点として、文字列の書式設定の結果は、カルチャーに依存します。
 
 例えば、金額表示（通貨書式 <code>"c"</code> を使う）を考えてみましょう。

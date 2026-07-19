@@ -18,7 +18,8 @@ aliases:
 
 # GUI アプリケーション
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （注：
 .NET Framework 3.0 では、
 Windows.Forms よりも高機能な GUI 構築基盤
@@ -49,7 +50,8 @@ C# や Java ではずいぶんと敷居が下がっています。
 .NET Framework の標準化仕様には含まれていません。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="gui"></a>GUI 部品
+## <a id="sec-generated-title-2"></a> <a id="gui"></a>GUI 部品
+
 今、皆様がお使いであろうウェブブラウザを見てください。
 メニューやツールバーがありますね。
 さらに、インターネットオプションなんかを開けば、
@@ -61,7 +63,8 @@ Form や Menu、Button といった名前の「[クラス](../oop/oo_class.md#cl
 その「[インスタンス](../oop/oo_class.md#instance)」を作ることで GUI アプリケーションを構築していきます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="form"></a>Form
+## <a id="sec-generated-title-3"></a> <a id="form"></a>Form
+
 まず、GUI アプリケーションのウィンドウそのもの（.NET Framework ではフォームと呼びます）について説明します。
 .NET Framework では、Form というクラスがそれにあたります。
 
@@ -168,14 +171,16 @@ Text がタイトル文字になります。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="add"></a>GUI 部品を Form に追加
+## <a id="sec-generated-title-4"></a> <a id="add"></a>GUI 部品を Form に追加
+
 前節のままだと、単にフォームが表示されただけで、あとできることというと、
 最小化・最大化・終了くらいのものです。
 まともな GUI アプリケーションにするためには、
 ボタン等の部品を追加していく必要があります。
 
 
-###<a id="sec-generated-title-5"></a> <a id="genparts"></a>GUI 部品の作成
+### <a id="sec-generated-title-5"></a> <a id="genparts"></a>GUI 部品の作成
+
 ここではボタンを例にして説明しましょう。
 ボタンは Button クラスのインスタンスとして作成できます。
 幅や高さ、ボタンに表示される文字を、
@@ -193,7 +198,8 @@ button1.Text = <span class="literal">"ここを押して"</span>;
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="addparts"></a>Form に追加
+### <a id="sec-generated-title-6"></a> <a id="addparts"></a>Form に追加
+
 これだけでは、ボタンを1つ作っただけで、まだフォーム上に表示されません。
 フォームにボタンを登録する必要があります。
 .NET Framework では、
@@ -245,7 +251,8 @@ Form クラスはこのコントロールの一覧である Controls という�
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="handler"></a>イベントハンドラの設定
+### <a id="sec-generated-title-7"></a> <a id="handler"></a>イベントハンドラの設定
+
 前節の段階でもまだあまり意味のある GUI アプリケーションではありません。
 なんせ、ボタンを押しても何も起こりません。
 
@@ -313,7 +320,8 @@ System.Windows.Forms 名前空間以下には、さまざまなコントロー�
 また、コントロールを自作することも可能です。
 
 
-###<a id="sec-generated-title-8"></a> <a id="conclusion"></a>まとめ
+### <a id="sec-generated-title-8"></a> <a id="conclusion"></a>まとめ
+
 フォームにコントロール（ボタン等の GUI 部品）を作るには、
 以下のような手順を踏みます。
 

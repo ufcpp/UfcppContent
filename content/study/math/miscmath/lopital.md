@@ -18,7 +18,8 @@ aliases:
 
 # ロピタルの定理と三角関数の微分
 
-##<a id="sec-generated-title-1"></a> <a id="d84e4"></a>ロピタルの定理は使うな
+## <a id="sec-generated-title-1"></a> <a id="d84e4"></a>ロピタルの定理は使うな
+
 ロピタルの定理と言うもの、理系の人間なら大体みんな知っている言葉じゃないでしょうか。
 高校数学の参考書には載ってるけど、なぜか教科書には載っていない便利な公式。
 関数の極限で、
@@ -49,7 +50,8 @@ g<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="f
 この定理、教科書に載っていないので、高校の試験や大学入試では「使うな」と言われたりします。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d84e76"></a>実は使ってもいい
+## <a id="sec-generated-title-2"></a> <a id="d84e76"></a>実は使ってもいい
+
 「教科書に載っていないものは公式として使うな」というのは、
 「その式を誰でも知っているものだと思って解くなという意味では当然のことではあります
 （検算に使うのはかまわないんですが）。
@@ -100,7 +102,8 @@ g<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="f
 あくまで、式変形の途中で微分の定義にあたる式が出てきたから微分したという形で解く。
 
 
-##<a id="sec-generated-title-3"></a> <a id="d84e200"></a>教科書に載らない理由 ～ 循環論法の発生
+## <a id="sec-generated-title-3"></a> <a id="d84e200"></a>教科書に載らない理由 ～ 循環論法の発生
+
 で、教科書にロピタルの定理が載っていないのにも理由っぽいものがあります。
 本当にこれが原因なのか確かではありませんが、
 僕が思うに多分そうだと思います。
@@ -150,8 +153,10 @@ sin x/x の極限が分からないと、この式が確定しないわけです
 混乱を生むくらいなら教科書に載せない方がマシということではないかと。
 
 
-##<a id="sec-generated-title-4"></a> <a id="d84e301"></a>sin x/x
-###<a id="sec-generated-title-5"></a> <a id="d84e303"></a>孤度
+## <a id="sec-generated-title-4"></a> <a id="d84e301"></a>sin x/x
+
+### <a id="sec-generated-title-5"></a> <a id="d84e303"></a>孤度
+
 sin x/x の極限の話をするまえに、
 孤度（radian: ラジアン）の定義の話をしましょう。
 孤度の定義の仕方はいくつか考えることができます。
@@ -229,7 +234,8 @@ sin x/x の極限値から孤度を定める方法では、
 「sin x/x は収束する」と言う部分だけ別に証明できればこの不利はなくなります。）
 
 
-###<a id="sec-generated-title-6"></a> <a id="d84e392"></a>弧長による定義から sin x/x を計算
+### <a id="sec-generated-title-6"></a> <a id="d84e392"></a>弧長による定義から sin x/x を計算
+
 弧長による孤度の定義は、
 直感的に一番自然な定義ではあるんですが、
 ここからはじめると sin x/x を求めるのが少し面倒になります。
@@ -382,7 +388,8 @@ BC ＜ DE が成り立つ」ということだけ証明できれば <span class=
 <span class="math"><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>2</td></tr></table>r<sup>2</sup> x</span> になります。
 
 
-###<a id="sec-generated-title-7"></a> <a id="d84e812"></a>面積による定義から sin x/x を計算
+### <a id="sec-generated-title-7"></a> <a id="d84e812"></a>面積による定義から sin x/x を計算
+
 sin x/x を計算するという目的からすると、
 面積を使って孤度を定義した方が簡単だったりします。
 こちらも、sin x/x を計算するにあたって、
@@ -426,7 +433,8 @@ r
 （実際は、「弧長は半径と中心角に比例」と「面積は半径の二乗と中心角に比例」という幾何学的な事実だけから、比例定数を除いて扇形の弧長と面積の関係が分かるので、循環を回避する方法はあります。）
 
 
-###<a id="sec-generated-title-8"></a> <a id="d84e902"></a>sin x/x → 1 自体が定義
+### <a id="sec-generated-title-8"></a> <a id="d84e902"></a>sin x/x → 1 自体が定義
+
 角度による孤度の定義ですが、
 2つの部分に分けて考えることが出来ます。
 

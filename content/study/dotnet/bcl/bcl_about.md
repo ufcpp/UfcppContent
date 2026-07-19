@@ -18,12 +18,14 @@ aliases:
 
 # 基本クラスライブラリ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 .NET Framework の標準ライブラリの中でも、基本中の基本の部分。
 BCL（Basic Class Library）
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>追記予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>追記予定
+
 どこまでが BCL だろ（調べる）。
 ECMA 標準化されてる部分？
 

@@ -19,7 +19,8 @@ aliases:
 
 # C# 2.0 の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="ver2"></a>C# 2.0
+## <a id="sec-generated-title-1"></a> <a id="ver2"></a>C# 2.0
+
 <div class="version version2">Ver. 2.0</div>
 
 <table>
@@ -59,7 +60,8 @@ aliases:
 ここでは、その追加機能、すなわち、C# 2.0 の新機能について説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="generics"></a>Generics
+## <a id="sec-generated-title-2"></a> <a id="generics"></a>Generics
+
 C++ で言うところの template。
 （ただし、template とは実装の方式が違います。）
 以下のような感じで、“型をパラメータに持つ型”を作ることが出来ます。
@@ -84,7 +86,8 @@ Generics はクラス、構造体、インターフェース、デリゲート�
 詳細は「[ジェネリック](../oop/sp2_generics.md)」にて説明します。
 
 
-##<a id="sec-generated-title-3"></a> <a id="anonymous"></a>匿名メソッド
+## <a id="sec-generated-title-3"></a> <a id="anonymous"></a>匿名メソッド
+
 匿名メソッドとは、インラインに(コード中に直に)メソッドを記述できる機能です。
 例えば、今までなら、イベントハンドラを定義するときに、
 以下のように1度メソッドを定義してからデリゲートにそのメソッドを渡していました。
@@ -150,7 +153,8 @@ C# 3.0 では、「[ラムダ式](../functional/sp3_lambda.md#lambda)」とい�
 こちらの記法の方が簡便なため、delegate キーワードを使った匿名デリゲートの書き方はもう使われなくなると思われます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="interator"></a>イテレータ
+## <a id="sec-generated-title-4"></a> <a id="interator"></a>イテレータ
+
 C# の foreach 構文は、コレクションクラスの利用者側から見ると非常に便利な機能です。
 しかしながら、実装側から見た場合、<code>IEnumerable</code>や<code>IEnumerator</code>インターフェース実装する必要があり、結構面倒な作業が必要でした。
 
@@ -206,7 +210,8 @@ C# の foreach 構文は、コレクションクラスの利用者側から見�
 詳細は「[イテレーター](../data/sp2_iterator.md)」にて説明します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="partial"></a>Partial Type
+## <a id="sec-generated-title-5"></a> <a id="partial"></a>Partial Type
+
 C# 2.0 では、クラスや構造体などの型を複数のソースファイルに分けて記述できるようになりました。
 分けて記述したい型には、以下のように <code>partial</code> キーワードを付けます。
 
@@ -232,7 +237,8 @@ C# 2.0 では、クラスや構造体などの型を複数のソースファイ�
 クラスの結合はコンパイル時に行う(DLL 参照時にはできない)ので、Partial Type の全ての部分を一緒にしてコンパイルする必要があります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="nullable"></a>Nullable 型
+## <a id="sec-generated-title-6"></a> <a id="nullable"></a>Nullable 型
+
 Nullable 型は、値型の型名の後ろに <code>?</code> を付ける事で、元の型の値または <code>null</code> の値を取れる型になるというものです。
 <code>int</code> 型で例に取ると、以下のような書き方が出来ます。
 
@@ -277,7 +283,8 @@ Nullable 型は、値型の型名の後ろに <code>?</code> を付ける事で�
 詳細は「[Nullable 型](../resource/sp2_nullable.md)」にて説明します。
 
 
-##<a id="sec-generated-title-7"></a> <a id="level"></a>アクセサのアクセスレベル
+## <a id="sec-generated-title-7"></a> <a id="level"></a>アクセサのアクセスレベル
+
 以下に示すように、プロパティの set/get アクセサ別個のアクセスレベルが設定可能になりました。
 
 <pre class="source" title="set/get のアクセスレベルを別個に設定" lang="">
@@ -293,7 +300,8 @@ Nullable 型は、値型の型名の後ろに <code>?</code> を付ける事で�
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="static"></a>static クラス
+## <a id="sec-generated-title-8"></a> <a id="static"></a>static クラス
+
 static メンバーのみを持ち、インスタンスの作成が不可能なクラスを作りたいことがしばしばあります。
 C# 1.0 では、private なコンストラクタを持つ sealed クラスとしてこのようなクラスを作成していました。
 このような方法で、「インスタンスが作成不可能」という制約は満たすことが出来ますが、
@@ -305,7 +313,8 @@ C# 1.0 では、private なコンストラクタを持つ sealed クラスとし
 static メンバーしか定義できないクラスを作ることが出来ます。
 
 
-##<a id="sec-generated-title-9"></a> <a id="alias"></a>namespace alias qualifier
+## <a id="sec-generated-title-9"></a> <a id="alias"></a>namespace alias qualifier
+
 C# では、基本的に、名前空間に対しても、クラスに対しても、
 <code>using</code> 文で作ったエイリアスに対しても、
 全て <code>.</code> 修飾子(qualifier: 限定子とも訳す)を用いて名前を繋いでいました。
@@ -373,7 +382,8 @@ using 文もしくは後述する extern alias という構文を使って作成
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="extern"></a>extern alias
+## <a id="sec-generated-title-10"></a> <a id="extern"></a>extern alias
+
 コンパイル時に、<code>/r</code> オプションで DLL の参照を指定する際に、
 <code>/r:X=xxx.dll</code> というようにエイリアスを付けることが出来るようになりました。
 
@@ -396,7 +406,8 @@ csc /r:X=xxx.dll /Y:yyy.dll test.cs
 
 
 
-##<a id="sec-generated-title-11"></a> <a id="pragma"></a>#pragma
+## <a id="sec-generated-title-11"></a> <a id="pragma"></a>#pragma
+
 pragma プリプロセッサ命令が追加されました。
 warning メッセージの抑止などが出来ます。
 
@@ -418,7 +429,8 @@ warning メッセージの抑止などが出来ます。
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="conditional"></a>Conditional 属性
+## <a id="sec-generated-title-12"></a> <a id="conditional"></a>Conditional 属性
+
 属性クラスに対して Conditional 属性を付けることで、
 一定条件化でのみ適用される属性を作ることが可能になりました。
 
@@ -438,12 +450,14 @@ warning メッセージの抑止などが出来ます。
 
 
 
-##<a id="sec-generated-title-13"></a> <a id="fixed"></a>固定長配列
+## <a id="sec-generated-title-13"></a> <a id="fixed"></a>固定長配列
+
 unsafe コード内限定で、
 <code>fixed int fixedArray[128];</code> というように固定長配列が使用可能になりました。
 
 
-##<a id="sec-generated-title-14"></a> <a id="co-contra"></a>デリゲートの Covariance/Contravariance
+## <a id="sec-generated-title-14"></a> <a id="co-contra"></a>デリゲートの Covariance/Contravariance
+
 Covariance … 戻り値の型が、デリゲートの戻り値の型の派生クラスになっていても OK。
 
 <pre class="source" title="Covariance" lang="">

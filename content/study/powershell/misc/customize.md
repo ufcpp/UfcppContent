@@ -18,11 +18,13 @@ aliases:
 
 # 環境のカスタマイズ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 プロファイルディレクトリに色々ファイルを置くことでカスタマイズができるみたい。
 
 
-##<a id="sec-generated-title-2"></a> <a id="dir"></a>プロファイルディレクトリ
+## <a id="sec-generated-title-2"></a> <a id="dir"></a>プロファイルディレクトリ
+
 PowerShell Home
 C:\WINDOWS\system32\windowspowershell\v1.0
 ここはユーザは直接触らない
@@ -34,7 +36,8 @@ $env:userprofile 以下の
 \My Documents\WindowsPowerShell
 
 
-##<a id="sec-generated-title-3"></a> <a id="d36e22"></a>profile.ps1
+## <a id="sec-generated-title-3"></a> <a id="d36e22"></a>profile.ps1
+
 プロファイルディレクトリ内に profile.ps1 を置いておくと、
 PowerShell のホスト起動時に読み込まれる。
 <pre>
@@ -47,8 +50,10 @@ PowerShell のホスト起動時に読み込まれる。
       http://d.hatena.ne.jp/newpops/20061229/p1
     </pre>
 
-##<a id="sec-generated-title-4"></a> <a id="d36e31"></a>Display.xml
-##<a id="sec-generated-title-5"></a> <a id="d36e33"></a>ホストの配色
+## <a id="sec-generated-title-4"></a> <a id="d36e31"></a>Display.xml
+
+## <a id="sec-generated-title-5"></a> <a id="d36e33"></a>ホストの配色
+
 <pre class="source" title="配色のカスタマイズ" lang="">
 <code>$Host.UI.RawUI.BackgroundColor = 'White'
 $Host.UI.RawUI.ForegroundColor = 'Black'
@@ -66,12 +71,14 @@ $Host.PrivateData.WarningForegroundColor = 'Yellow'
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="d36e42"></a>prompt 関数
+## <a id="sec-generated-title-6"></a> <a id="d36e42"></a>prompt 関数
+
 プロンプトとして表示されてる「PS パス名 &gt;」の部分は、実は prompt 関数の出力。
 prompt 関数を書き換えることで変更可能。
 
 
-##<a id="sec-generated-title-7"></a> <a id="d36e48"></a>TabExpansion 関数
+## <a id="sec-generated-title-7"></a> <a id="d36e48"></a>TabExpansion 関数
+
 TabExpansion 関数で、タブ補完の挙動を変えれるみたい。
 
 http://blogs.msdn.com/powershell/archive/2006/04/26/584551.aspx
@@ -79,11 +86,13 @@ http://blogs.msdn.com/powershell/archive/2006/04/26/584551.aspx
 頑張れば bash 風のタブ補完も可能？
 
 
-##<a id="sec-generated-title-8"></a> <a id="d36e60"></a>types.ps1xml
+## <a id="sec-generated-title-8"></a> <a id="d36e60"></a>types.ps1xml
+
 "${PSHOME}\types.ps1xml"
 で .NET Framework の型を拡張可能
 System.Array に Count プロパティを足したり
 
 
-##<a id="sec-generated-title-9"></a> <a id="d36e66"></a>Display.xml
+## <a id="sec-generated-title-9"></a> <a id="d36e66"></a>Display.xml
+
 Format-List での表示項目とかの設定。

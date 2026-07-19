@@ -14,14 +14,16 @@ aliases:
 
 # 名前のない複合型
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 型名がなくても、メンバー名だけでその型が何をしたいものなのか十分にわかる場合があります。
 このとき、むしろ、良い型名が付かない(メンバー名と重複した名前にしかならない)こともあります。
 
 そういう場合に、「名前のない複合型」を作りたくなります。
 C#には、歴史的経緯から、[匿名型](../start/sp3_inference.md#anonymous)(anonymous type)と[タプル](../datatype/tuples.md#key-tuple)(tuple)という2種類の「名前のない複合型」があります。
 
-##<a id="sec-generated-title-2"></a> <a id="use-case"></a>型に良い名前が付かない場合
+## <a id="sec-generated-title-2"></a> <a id="use-case"></a>型に良い名前が付かない場合
+
 一般的には、型にはちゃんとした名前を考えるべきです。
 「型の名前だけを見れば、その型を使って何をしたいのかがわかる」というのが理想形です。
 読みやすいプログラムを書くための1手法としても、「良い名前が付く単位でデータを1まとめにする」というのが非常に有効です。
@@ -40,7 +42,8 @@ C#には、歴史的経緯から、[匿名型](../start/sp3_inference.md#anonymo
 
 また、タプルと匿名型は似たような機能ですが、動機が異なれば実装はかなり変わります。
 
-##<a id="sec-generated-title-3"></a> <a id="multiple-returns"></a>多値戻り値
+## <a id="sec-generated-title-3"></a> <a id="multiple-returns"></a>多値戻り値
+
 関数を作るとき、複数の値を返したい場合があります。
 例えば、「最小値、最大値、平均値を同時に求めるメソッド」があったとしましょう。
 
@@ -99,7 +102,8 @@ C#には、歴史的経緯から、[匿名型](../start/sp3_inference.md#anonymo
 ちなみに、この、<code>(<span class="reserved">int</span> min, <span class="reserved">int</span> max, <span class="reserved">double</span> average)</code>という書き方をタプルと呼びます。
 この機能については「[タプル](../datatype/tuples.md)」で説明します。
 
-##<a id="sec-generated-title-4"></a> <a id="projection"></a>部分的なメンバー抜き出し
+## <a id="sec-generated-title-4"></a> <a id="projection"></a>部分的なメンバー抜き出し
+
 主に「[データ処理](#projection)」以降で説明して行きますが、
 データ処理では、ある型のデータの中から、所定のメンバーだけを抜き出したいことがよくあります。
 
@@ -180,7 +184,8 @@ C# には、グループ化するための関数(`GroupBy`)や、個数を調べ
 
 この、<code><span class="reserved">new</span> { p.Sex, BirthDecade = p.BirthDay.Year / 10 }</code>というような書き方を匿名型と言います。
 
-##<a id="sec-generated-title-5"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-5"></a> <a id="summary"></a>まとめ
+
 ここでは、型名を付けるに付けられない場合を2例ほど紹介しました。
 
 - 多値戻り値

@@ -20,7 +20,8 @@ aliases:
 
 # はじめての C# 実演編
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[はじめてのプログラミング](../intro/getstarted.md)」でも書いているように、
 C# を最速でマスターしたければ Visual Studio に頼りましょう！
 
@@ -28,7 +29,8 @@ C# を最速でマスターしたければ Visual Studio に頼りましょう�
 Visual Studio の補助を受けつつ実際に書いてみます（動画あり）。
 
 
-##<a id="sec-generated-title-2"></a> <a id="beginWith"></a>手始めに
+## <a id="sec-generated-title-2"></a> <a id="beginWith"></a>手始めに
+
 Visual Studio 自体については「[C# 開発環境](ab_devenv.md)」を参照してください。
 このページは Visual Studio for Windows を元に撮った動画で説明していますが、
 Visual Studio Code や Visual Studio for Mac でも似たような操作が可能です。
@@ -69,7 +71,8 @@ Visual Studio を使う準備ができたら、まずお約束の Hello World（
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="variable"></a>変数
+## <a id="sec-generated-title-3"></a> <a id="variable"></a>変数
+
 <iframe width="480" height="390" src="https://www.youtube.com/embed/y9jSQ0vC19o" frameborder="0" allowfullscreen=""></iframe>
 * <code>int i = 10;</code>
     * 整数型の変数 i に 10 という値を代入。
@@ -96,7 +99,8 @@ Visual Studio を使う準備ができたら、まずお約束の Hello World（
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="arithmetic"></a>四則演算
+## <a id="sec-generated-title-4"></a> <a id="arithmetic"></a>四則演算
+
 <iframe width="480" height="390" src="https://www.youtube.com/embed/rTIs9fDFC0Y" frameborder="0" allowfullscreen=""></iframe>
 * <code>x + y</code>とかで加減乗除ができる。
     * <code>+</code>で足し算。
@@ -118,7 +122,8 @@ Visual Studio を使う準備ができたら、まずお約束の Hello World（
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="cast"></a>型変換
+## <a id="sec-generated-title-5"></a> <a id="cast"></a>型変換
+
 <iframe width="480" height="390" src="https://www.youtube.com/embed/nSgOcNoiHvQ" frameborder="0" allowfullscreen=""></iframe>
 * 精度の高い型から低い型への変換は明示的に書く必要がある。
     * 逆は暗黙的に変換がかかる。
@@ -131,7 +136,8 @@ Visual Studio を使う準備ができたら、まずお約束の Hello World（
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="string"></a>文字列
+## <a id="sec-generated-title-6"></a> <a id="string"></a>文字列
+
 <iframe width="480" height="390" src="https://www.youtube.com/embed/ijUkS6GQt0g" frameborder="0" allowfullscreen=""></iframe>
 * <code>string s = "サンプルテキスト";</code>
     * 文字列型の変数 s を定義。
@@ -150,7 +156,8 @@ Visual Studio を使う準備ができたら、まずお約束の Hello World（
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="loop"></a>配列と反復
+## <a id="sec-generated-title-7"></a> <a id="loop"></a>配列と反復
+
 <iframe width="480" height="390" src="https://www.youtube.com/embed/r3c4wOLPU64" frameborder="0" allowfullscreen=""></iframe>
 * int[] で int 型の配列になる。
     * <code>int[] x = new[] { 1, 2, 3, 4, 5 };</code>で5要素の配列を作る。
@@ -185,7 +192,8 @@ Visual Studio を使う準備ができたら、まずお約束の Hello World（
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="branch"></a>条件分岐
+## <a id="sec-generated-title-8"></a> <a id="branch"></a>条件分岐
+
 <iframe width="480" height="390" src="https://www.youtube.com/embed/75tx1_ipjhc" frameborder="0" allowfullscreen=""></iframe>
 * if まで入力して [Tab] 2回もできるけど、それほどタイピング量減らない。
     * if (条件) 式;
@@ -198,7 +206,8 @@ Visual Studio を使う準備ができたら、まずお約束の Hello World（
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="function"></a>関数
+## <a id="sec-generated-title-9"></a> <a id="function"></a>関数
+
 <iframe width="480" height="390" src="https://www.youtube.com/embed/tDtwW3nJ9zw" frameborder="0" allowfullscreen=""></iframe>
 * 意味のある単位で細かく関数化しましょうね。
     * 関数化したい範囲を選択して、右クリックして [リファクター] → [メソッド抽出]。
@@ -207,7 +216,8 @@ Visual Studio を使う準備ができたら、まずお約束の Hello World（
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="struct"></a>構造体
+## <a id="sec-generated-title-10"></a> <a id="struct"></a>構造体
+
 <iframe width="480" height="390" src="https://www.youtube.com/embed/vvFKdEpVYM0" frameborder="0" allowfullscreen=""></iframe>
 * <code>struct Point { public int X; public int Y; }</code>
     * struct で構造体定義。

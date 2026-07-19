@@ -18,12 +18,14 @@ aliases:
 
 # クラス
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 クラスとはオブジェクトを作るための設計図のようなもので、
 オブジェクト指向プログラミングの中心となるものです。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * クラス: オブジェクトを作るための設計図。
 
 * インスタンス: 設計図を基に作られた個々の実体。
@@ -39,7 +41,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="class"></a>クラスとインスタンス
+## <a id="sec-generated-title-3"></a> <a id="class"></a>クラスとインスタンス
+
 「[オブジェクト指向とは](oo_about.md)」で述べたように、
 操作の対象となるものをオブジェクトといいます。
 オブジェクトを作る場合、まず設計図が必要になります。
@@ -79,7 +82,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="definition"></a>クラス定義
+## <a id="sec-generated-title-4"></a> <a id="definition"></a>クラス定義
+
 C#では以下のようにしてクラスを定義します。
 
 <pre class="source" title="クラス定義のしかた" lang="">
@@ -171,7 +175,8 @@ C#では以下のようにしてクラスを定義します。
 最初ということで、シンプルになるように実装しましたが、今後、徐々にちゃんとした形のものにしていきます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="use"></a>クラスの利用
+## <a id="sec-generated-title-5"></a> <a id="use"></a>クラスの利用
+
 クラスを利用するためには、
 インスタンスを作成しなければなりません。
 そのためにまず、インスタンスを格納するための変数を定義します。
@@ -227,6 +232,7 @@ Complex z = <span class="reserved">new</span> Complex();
 
 
 ##### <a id="sec-generated-title-6"></a>サンプル
+
 <pre class="source" title="クラスのサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -298,7 +304,8 @@ Complex z = <span class="reserved">new</span> Complex();
 }
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="null"></a>null
+## <a id="sec-generated-title-7"></a> <a id="null"></a>null
+
 前節で、クラスを使う際にはまず「`new` キーワードでインスタンスを作る」と説明しましたが、
 インスタンスを持たない(作るのを後回しにしたり、使い終わったものを手放したりする)場合の話もしておきます。
 
@@ -377,7 +384,8 @@ C# 2.0 からは[null許容値型](../resource/sp2_nullable.md)という機能�
 また、C# 8.0 では「nullが本当に必要かどうか」を明示的に指定できるように、
 [null許容参照型](../resource/nullablereferencetype.md)という機能が入りました。
 
-##<a id="sec-generated-title-8"></a> <a id="this-access"></a>this アクセス
+## <a id="sec-generated-title-8"></a> <a id="this-access"></a>this アクセス
+
 クラス中では、`this`というキーワードが特別な意味を持ちます。
 `this`は、英単語の意味(これ、この)通り「このインスタンス自身」を表す特別な変数になります。
 
@@ -455,7 +463,8 @@ C# 2.0 からは[null許容値型](../resource/sp2_nullable.md)という機能�
 }
 </code></pre>
 
-##<a id="sec-generated-title-9"></a> <a id="struct"></a>クラスと構造体
+## <a id="sec-generated-title-9"></a> <a id="struct"></a>クラスと構造体
+
 ここまでの説明を見て、
 「[クラス](#class)」と「[構造体](../structured/st_struct.md#struct)」の類似性に気付いた方もいるかと思います。
 実際、メンバー変数やメソッドの定義は構造体でもできます。
@@ -508,7 +517,8 @@ C# 2.0 からは[null許容値型](../resource/sp2_nullable.md)という機能�
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="partial_class"></a><a id="partial"></a>クラスの分割定義
+## <a id="sec-generated-title-10"></a> <a id="partial_class"></a><a id="partial"></a>クラスの分割定義
+
 <a id="partial_method"></a>
 <a id="partial_method-side-effect"></a>
 <a id="extended_partial_method"></a>
@@ -517,7 +527,8 @@ C# 2.0 からは[null許容値型](../resource/sp2_nullable.md)という機能�
 
 * [型の分割定義 (partial)](../misc/partial-type.md)
 
-##<a id="sec-generated-title-11"></a> <a id="anonymous"></a>匿名型
+## <a id="sec-generated-title-11"></a> <a id="anonymous"></a>匿名型
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymous type）を作成できるようになりました。

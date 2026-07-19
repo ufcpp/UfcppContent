@@ -19,7 +19,8 @@ aliases:
 
 # C# 4.0 の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="ver4"></a>C# 4.0
+## <a id="sec-generated-title-1"></a> <a id="ver4"></a>C# 4.0
+
 <div class="version version4">Ver. 4.0</div>
 
 <table>
@@ -69,7 +70,8 @@ C# 3.0 の時には、後から追加された機能は自動プロパティとp
 ）
 
 
-##<a id="sec-generated-title-2"></a> <a id="dynamic"></a>動的型付け変数
+## <a id="sec-generated-title-2"></a> <a id="dynamic"></a>動的型付け変数
+
 dynamic キーワードを使うことで、動的型付け変数を定義できます。
 
 dynamic 型を使うことで、
@@ -117,7 +119,8 @@ obj が本当に X という名前のプロパティを持っているかどう�
 詳細は「[dynamic](../dynamic/sp4_dynamic.md)」で説明します。
 
 
-##<a id="sec-generated-title-3"></a> <a id="optional"></a>オプション引数・名前付き引数
+## <a id="sec-generated-title-3"></a> <a id="optional"></a>オプション引数・名前付き引数
+
 C# 4.0 で、C++ や VB にあるような、オプション引数と名前付き引数が追加されました。
 
 まず、以下のように規定値(default value)を持ったメソッドを定義します。
@@ -161,7 +164,8 @@ C# 4.0 で、C++ や VB にあるような、オプション引数と名前付�
 詳細は「[オプション引数・名前付き引数](../structured/sp4_optional.md)」で説明します。
 
 
-##<a id="sec-generated-title-4"></a> <a id="variance"></a>ジェネリックの共変性・反変性
+## <a id="sec-generated-title-4"></a> <a id="variance"></a>ジェネリックの共変性・反変性
+
 C# 4.0 で、ジェネリクスの型引数に共変性・反変性を持たせることが可能になりました。
 （共変性・反変性という言葉の意味は「[covariance と contravariance](../functional/sp_delegate.md#co-contra)」参照。）
 
@@ -200,7 +204,8 @@ C# 4.0 で、ジェネリクスの型引数に共変性・反変性を持たせ�
 詳細は「[ジェネリクスの共変性・反変性](../oop/sp4_variance.md)」で説明します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="ComInterop"></a>COM 相互運用時の特別処理
+## <a id="sec-generated-title-5"></a> <a id="ComInterop"></a>COM 相互運用時の特別処理
+
 .NET Framework には COM 相互運用機能があって、COM のクラスをあたかも .NET のクラスであるかのように扱うことができます。
 ただ、COM が主流だった時代と今とでは大分設計思想に差があって、
 .NET 的には不要だけども、COM 相互運用をする上では欲しい機能というのがいくつかあります。

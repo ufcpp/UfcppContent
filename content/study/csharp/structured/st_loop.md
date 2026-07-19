@@ -18,13 +18,15 @@ aliases:
 
 # 反復処理
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 プログラム中で、条件が満たされるまで何度も同じ処理を繰り返したい場面がよくあります。
 C#ではそういう反復処理のために<code>while</code>、<code>do</code>、<code>for</code>、<code>foreach</code> などのキーワードを用意しています。
 (このうち、<code>foreach</code> は「[foreach](../data/sp_foreach.md)」のところでより詳しく説明します。)
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * while (条件) 条件が真の間繰り返し
 
 * do 条件にかかわらず、最低1度は実行される while (条件);
@@ -35,7 +37,8 @@ C#ではそういう反復処理のために<code>while</code>、<code>do</code>
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="while"></a>while 文
+## <a id="sec-generated-title-3"></a> <a id="while"></a>while 文
+
 <strong id="while" class="keyword">while</strong> 文は以下のような書き方をします。
 
 <pre class="source" title="while 文の書式" lang="">
@@ -84,6 +87,7 @@ while A, B （A の間、B）。
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 <pre class="source" title="while文の例" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -125,7 +129,8 @@ while A, B （A の間、B）。
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="dowhile"></a>do-while 文
+## <a id="sec-generated-title-5"></a> <a id="dowhile"></a>do-while 文
+
 <strong id="do" class="keyword">do-while</strong> 文は while 文と似たような書き方をします。
 
 <pre class="source" title="do-while文の書式" lang="">
@@ -143,6 +148,7 @@ do-while 文は while 文と異なり、最低1回は文が実行されます。
 
 
 ##### <a id="sec-generated-title-6"></a>サンプル
+
 <pre class="source" title="do-while文の例" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -175,7 +181,8 @@ do-while 文は while 文と異なり、最低1回は文が実行されます。
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="for"></a>for 文
+## <a id="sec-generated-title-7"></a> <a id="for"></a>for 文
+
 反復処理を行うとき、多くの場合、反復前の初期化、条件式の評価、反復ごとに変数を更新という3つの作業を行います。
 例えば、10回同じ処理を繰り返したい場合、
 整数型の変数 <code>i</code> を用意し、
@@ -212,6 +219,7 @@ FOR_END: <span class="comment">// continue の代わりに goto FOR_END とす�
 
 
 ##### <a id="sec-generated-title-8"></a>サンプル
+
 <pre class="source" title="for文の例" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -248,7 +256,8 @@ FOR_END: <span class="comment">// continue の代わりに goto FOR_END とす�
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="foreach"></a>foreach文
+## <a id="sec-generated-title-9"></a> <a id="foreach"></a>foreach文
+
 最も頻繁に使われる反復処理は配列の全ての要素に対して読み書きを行うことです。
 (配列と言うものについては「[配列](st_array.md)」で詳しく説明します。)
 例えば、配列に格納された値の平均値を求める場合、以下のようにします。
@@ -295,7 +304,8 @@ foreach 文は以下のよな書き方をします。
 ちなみに、foreach 文は配列だけでなく、任意のコレクションクラス(リストや辞書など、複数の要素をひとつにまとめるクラスのこと)に対して使用することが出来ます。
 (詳細は「[foreach](../data/sp_foreach.md)」で説明します。)
 
-###<a id="sec-generated-title-10"></a> <a id="query"></a>クエリ式/LINQ
+### <a id="sec-generated-title-10"></a> <a id="query"></a>クエリ式/LINQ
+
 C# 3.0 以降には、「`foreach` の[式](miscexpressions.md#term)版」とも言えるクエリ式という構文もあります。
 式なので戻り値が必須なのと、内部的な挙動は実はだいぶ`foreach`とは異なるんですが、似たような結果を得られます。
 

@@ -18,7 +18,8 @@ aliases:
 
 # 正規表現（文字列パターン マッチング）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="regex" class="keyword">正規表現</strong>（regular expression）は、文字列のパターン マッチングに使う簡易言語です。
 .NET の場合、Regex クラス（System.Text.RegularExpressions 名前空間）を使うことで、正規表現によるパターン マッチングができます。
 
@@ -31,7 +32,8 @@ Regex クラスが受け付ける正規表現の書き方は、Perl での書き
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="regex-class"></a>Regex クラス
+## <a id="sec-generated-title-2"></a> <a id="regex-class"></a>Regex クラス
+
 概要の通り、Regex クラスを使って文字列パターン マッチングを行います。
 
 例えば、以下のように書くことで、ハイフンで区切られた単語を抜き出すことができます。
@@ -235,7 +237,8 @@ abcde
 以下では、正規表現の中身（Regex クラスに与える文字列）の説明をしていきましょう。
 
 
-##<a id="sec-generated-title-3"></a> <a id="basic"></a>正規表現の基本: 文字をそのまま書く
+## <a id="sec-generated-title-3"></a> <a id="basic"></a>正規表現の基本: 文字をそのまま書く
+
 いくつかの特別な意味を持った記号（. {} \ * + など）以外は、一致させたい文字をそのまま書きます。例えば、abという正規表現は、abを含む文字列に一致します。
 
 <table summary="">
@@ -273,7 +276,8 @@ abcde
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="quantity"></a>数量指定
+## <a id="sec-generated-title-4"></a> <a id="quantity"></a>数量指定
+
 同じ文字の繰り返しを検出したい場合に使える、数量指定用の特殊記号として、 <code>*</code>（アスタリスク）、<code>+</code>（プラス）、<code>?</code> （はてな）、<code>{}</code> （波括弧）などがあります。
 
 <table summary="">
@@ -396,7 +400,8 @@ abcde
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="escape"></a>エスケープ
+## <a id="sec-generated-title-5"></a> <a id="escape"></a>エスケープ
+
 特殊な意味を持つ記号（<code>.</code> や <code>*</code>）自体を検索するためには、特殊記号の前に \ 記号（半角の円記号、フォントによっては逆スラッシュになります）をつけます。
 
 <table summary="">
@@ -448,7 +453,8 @@ abcde
 このような、特殊記号/不可視文字を入力するための記法をエスケープ（escape: 逃げ道、避難）と呼びます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="character-class"></a>文字クラス
+## <a id="sec-generated-title-6"></a> <a id="character-class"></a>文字クラス
+
 特定の文字ではなく、ある範囲の文字（たとえば、算用数字全部など）と一致するようなパターンを作ることができます。
 
 エスケープ同様、\ 記号に続けて d や s などの文字を書くことで、文字クラスを表現します。また、<code>[]</code> （角括弧）中に複数の文字を入れることで、そのいずれかの文字に一致します。
@@ -603,7 +609,8 @@ abcde
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="grouping"></a>グループ化
+## <a id="sec-generated-title-7"></a> <a id="grouping"></a>グループ化
+
 パターンの一部分だけ取り出したり、置換したりするために、正規表現内にグループを作ることができます。<code>()</code> （丸括弧）でくくった部分がグループになります。
 
 例えば以下のようなコードを見てみましょう。

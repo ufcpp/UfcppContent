@@ -18,7 +18,8 @@ aliases:
 
 # XAML の高度な機能（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="dependency"></a>依存プロパティ
+## <a id="sec-generated-title-1"></a> <a id="dependency"></a>依存プロパティ
+
 「[基本構造](wpf_xamlbasic.md#structure)」では、
 XAML 中の XML タグの属性や子要素を通して、
 クラスの「[プロパティ](../../csharp/oop/oo_property.md#property)」の値を設定できると説明しました。
@@ -91,7 +92,8 @@ static readonly なメンバー変数としてクラス中に定義します。
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="attached"></a>添付プロパティ
+## <a id="sec-generated-title-2"></a> <a id="attached"></a>添付プロパティ
+
 「[依存プロパティ](#dependency)」にできて通常のプロパティにできないことの最たるものが、
 <strong id="attached" class="keyword">添付プロパティ</strong>（attached property）です。
 
@@ -140,7 +142,8 @@ Grid.Row と Grid.Column を使って指定します。
 「他のクラスとの依存関係を持つことができるプロパティ」というような意味合いです。
 
 
-##<a id="sec-generated-title-3"></a> <a id="resource"></a>リソース
+## <a id="sec-generated-title-3"></a> <a id="resource"></a>リソース
+
 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 を使うにしろ、
 「[Property Element Syntax](wpf_xamlbasic.md#property)」 を使うにしろ、
 普通に値を設定した場合、
@@ -203,6 +206,7 @@ x:Key 属性をつけておきます。
 </code></pre>
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 <pre class="xsource" title="リソースの例">
 <code><span class="bracket">&lt;</span><span class="element">Page</span>
   <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
@@ -229,7 +233,8 @@ x:Key 属性をつけておきます。
 <span class="bracket">&lt;</span>/<span class="element">Page</span><span class="bracket">&gt;</span>
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="extern_resource"></a>外部リソース
+### <a id="sec-generated-title-5"></a> <a id="extern_resource"></a>外部リソース
+
 Resources プロパティの型は ResourceDictionary なんですが、
 ResourceDictionary の Source プロパティを指定することで、
 外部の XAML からリソースを読みこむことができます。
@@ -308,7 +313,8 @@ StyleForLabel.xaml 中の設定が反映されます。
 詳細は、「[アニメーション（WPF）](wpf_xamlani.md)」などで説明します。）
 
 
-##<a id="sec-generated-title-6"></a> <a id="extension"></a>マークアップ拡張
+## <a id="sec-generated-title-6"></a> <a id="extension"></a>マークアップ拡張
+
 「[プロパティの設定](wpf_xamlbasic.md#property)」で説明したとおり、
 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 を使ってプロパティの値を設定する場合、
 属性の値は文字列もしくは文字列から直接変換可能な型として扱われます。
@@ -363,7 +369,8 @@ StaticResource や Binding 以外にもたくさん標準で用意されてい�
 どのようなマークアップ拡張が標準で用意されているのかは WPF のヘルプを参照してください。
 
 
-##<a id="sec-generated-title-7"></a> <a id="style"></a>スタイル
+## <a id="sec-generated-title-7"></a> <a id="style"></a>スタイル
+
 コントロールごとに Foreground や Background プロパティの値を設定することで、
 個々に文字色などを変更することができました。
 これに対して、

@@ -14,7 +14,8 @@ aliases:
 
 # \[雑記\] コンパイル結果に影響を及ぼす属性
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 「[属性](../dynamic/sp_attribute.md)」の説明を「[動的な処理](../index.md#dynamic)」に並べているように、
 多くの場合(特に属性を自作する場合)、
 属性は[リフレクション](../dynamic/sp_reflection.md#reflection)を使って実行時に型情報から読みだして使うものです。
@@ -23,7 +24,8 @@ aliases:
 ところが、いくつかの属性は C# コンパイラー自体が解釈して、
 コンパイル結果に影響を及ぼします。
 
-##<a id="sec-generated-title-2"></a> <a id="reserved-attribute">予約属性</a>
+## <a id="sec-generated-title-2"></a> <a id="reserved-attribute">予約属性</a>
+
 この手の、(動的・実行時ではなく) 静的・コンパイル時に影響を及ぼす属性として、以下のようなものがあります。
 
 * `AttributeUsage` (`System`名前空間) : 属性の用途を指定します
@@ -39,7 +41,8 @@ aliases:
 その後、C# 5.0 で[呼び出し元情報属性](../cheatsheet/ap_ver5.md#CallerInfo)の `CallerFilePath`, `CallerLineNumber`, `CallerMemberName` 属性(いずれも `System.Runtime.CompilerServices` 名前空間)が追加されました。
 また、C# 10.0 で、呼び出し元情報属性に `CallerArgumentExpression` が追加されました。
 
-###<a id="sec-generated-title-3"></a> <a id="AttributeUsage">AttributeUsage</a>
+### <a id="sec-generated-title-3"></a> <a id="AttributeUsage">AttributeUsage</a>
+
 `AttributeUsage` 属性(`System`名前空間)では、
 [属性を自作](../dynamic/sp_attribute.md#userdefine)する際に、属性の使い方(名前通り、attribute usage)を指定します。
 
@@ -57,7 +60,8 @@ aliases:
 }
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="Obsolete">Obsolete</a>
+### <a id="sec-generated-title-4"></a> <a id="Obsolete">Obsolete</a>
+
 `Obsolete` 属性(`System`名前空間)は、もう廃止(obsolete)したいクラスやメソッドに付けて、そのクラスやメソッドの利用者側コードに警告やエラーを出します。
 通常、廃止理由や移行先に関する情報を書いておきます。
 
@@ -80,7 +84,8 @@ aliases:
 }
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="Conditional">Conditional</a>
+### <a id="sec-generated-title-5"></a> <a id="Conditional">Conditional</a>
+
 `Conditional` 属性 (`System.Diagnostics` 名前空間)を付けると、特定の条件下でのみ実行されるメソッド(conditional method: 条件付きメソッド)、特定の条件下でのみ認識される属性(conditional attribute: 条件付き属性)を定義できるようにします。
 
 ([条件付き属性](../cheatsheet/ap_ver2.md#conditional)は C# 2.0 からの機能です。)
@@ -120,7 +125,8 @@ aliases:
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="CallerInfo">呼び出し元情報(caller info)</a>
+### <a id="sec-generated-title-6"></a> <a id="CallerInfo">呼び出し元情報(caller info)</a>
+
 <h5 class="version version5">Ver. 5</h5>
 <h5 class="version version10">Ver. 10</h5>
 
@@ -241,7 +247,8 @@ Main から呼ばれていて
 <code>(from x in new[] { 1, 2, 3 } select x * x).Sum() = 14
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="new-syntax">属性を使った新機能</a>
+## <a id="sec-generated-title-7"></a> <a id="new-syntax">属性を使った新機能</a>
+
 C# の新機能のうち結構な割合のものが、
 
 * 既存の構文で書けるコードに属性を付けたものが生成される
@@ -304,7 +311,8 @@ C# の新機能のうち結構な割合のものが、
 これらの属性を手書きで使うことはできません。
 「直接使うな、拡張メソッド構文を使え」と言うようなコンパイル エラーになります。
 
-##<a id="sec-generated-title-8"></a> <a id="can-be-internal"></a>internal 属性
+## <a id="sec-generated-title-8"></a> <a id="can-be-internal"></a>internal 属性
+
 昔は、この手の属性は public である必要がありました。
 C# 3.0 の頃はまさにそうで、`Extension` 属性は public です。
 
@@ -318,7 +326,8 @@ C# 3.0 の頃はまさにそうで、`Extension` 属性は public です。
 * その .NET 5 なコードを、.NET 6 な別のライブラリやアプリから参照したい
 * 自前定義の属性と標準ライブラリ中の属性が被って困る
 
-##<a id="sec-generated-title-9"></a> <a id="compiler-generated"></a>コンパイラー生成属性
+## <a id="sec-generated-title-9"></a> <a id="compiler-generated"></a>コンパイラー生成属性
+
 さらに言うと、最近は標準ライブラリ中に定義された属性を参照するのではなく、
 コンパイラーが属性自体をコンパイル時生成していることが多いです。
 

@@ -18,7 +18,8 @@ aliases:
 
 # テンプレート（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[スタイル](wpf_xamladv.md#style)」で説明したように、
 WPF では、
 HTML に対する CSS と同じ要領で UI 要素のスタイルを指定できます。
@@ -31,7 +32,8 @@ HTML に対する CSS と同じ要領で UI 要素のスタイルを指定でき
 コントロールの表示方法そのものを変更することが可能です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="ControlTemplate"></a>コントロールテンプレート
+## <a id="sec-generated-title-2"></a> <a id="ControlTemplate"></a>コントロールテンプレート
+
 Contorl クラス（Button などの親クラス）は Template という名前のプロパティ（ControlTemplate 型）を持っています。
 この Template プロパティを設定することで、コントロールの表示方法を変更することができます。
 
@@ -202,7 +204,8 @@ Windows Vista ライクなボタンの見た目にする。
 XP で実行しても Vista っぽい見た目になるはず。
 
 
-##<a id="sec-generated-title-3"></a> <a id="ItemsPanelTemplate"></a>アイテムコントロールのテンプレート
+## <a id="sec-generated-title-3"></a> <a id="ItemsPanelTemplate"></a>アイテムコントロールのテンプレート
+
 中身（Content）のないコントロールか、
 中身が1つだけのコントロール（ContentControl）に加えて、
 ListBox や ComboBox のように、複数の項目を一覧表示するためのコントロール（ItemsControl）もあります。
@@ -279,7 +282,8 @@ ItemsPanel プロパティ（ItemsPanelTemplate 型）を設定します。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="DataTemplate"></a>データテンプレート
+## <a id="sec-generated-title-4"></a> <a id="DataTemplate"></a>データテンプレート
+
 ListBox などの ItemsControl の類のクラスは、
 ListBoxItem などを使ってアイテムを表示する方法の他に、
 データバインディング機能を使って XML や データベース中のデータを一覧表示する機能も持っています。

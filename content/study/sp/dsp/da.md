@@ -18,7 +18,8 @@ aliases:
 
 # 連続信号と離散信号の比較
 
-##<a id="sec-generated-title-1"></a> <a id="d26e4"></a>連続信号と離散信号の比較
+## <a id="sec-generated-title-1"></a> <a id="d26e4"></a>連続信号と離散信号の比較
+
 <table summary="">
 
 	<tr>

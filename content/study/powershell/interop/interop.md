@@ -16,13 +16,15 @@ aliases:
 
 # C# 上で PowerShell スクリプトを実行
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# 上で PowerShell スクリプトを実行する方法を説明します。
 その際、C# から PowerShell に引数を渡し、
 PowerShell からの戻り値を C# で受け取る方法も説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="prepare"></a>下準備
+## <a id="sec-generated-title-2"></a> <a id="prepare"></a>下準備
+
 PowerShell の機能を .NET 言語から利用するためには、
 System.Management.Automation.dll を参照する必要があります。
 この DLL は、Windows SDK をインストールすると、Program Files の下にある以下のパスに配置されます。
@@ -35,7 +37,8 @@ System.Management.Automation.dll を参照する必要があります。
 （参考： [コマンドレットの作成方法 [C#と諸々]](http://csharper.blog57.fc2.com/blog-entry-55.html)）。
 
 
-##<a id="sec-generated-title-3"></a> <a id="invoke"></a>RunspaceInvoke
+## <a id="sec-generated-title-3"></a> <a id="invoke"></a>RunspaceInvoke
+
 .NET 言語から PowerShell スクリプトを実行するには System.Management.Automation.RunspaceInvoke クラスを使います。
 
 <pre class="source" title="RunspaceInvoke" lang="">
@@ -55,7 +58,8 @@ Invoke メソッドの第2引数は、パイプライン入力としてスクリ
 同様に、スクリプト中でパイプラインに出力した結果が results として C# 側に返されます。
 
 
-###<a id="sec-generated-title-4"></a> <a id="arguments"></a>PowerShell 側での引数の受け取り方
+### <a id="sec-generated-title-4"></a> <a id="arguments"></a>PowerShell 側での引数の受け取り方
+
 前述のとおり、C# から与えられた入力はパイプライン入力になるので、
 PowerShell 側では $input 「[自動変数](../syntax/variable.md#auto_var)」を使って受け取ることができます。
 
@@ -141,6 +145,7 @@ LINQ の ToList を PowerShell からも使いたい・・・
 
 
 #### <a id="sec-generated-title-5"></a>サンプル
+
 2つの配列の要素ごとの積を求めます。
 
 <pre class="source" title="要素ごとの積" lang="">

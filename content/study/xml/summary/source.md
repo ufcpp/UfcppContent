@@ -18,11 +18,13 @@ aliases:
 
 # ソースファイル
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 [<code>source.xsl</code>](../../../../assets/media/ufcpp2000/xml/xslfiles/source.xsl) には、コンソール画面風の表示や、プログラムソース・XML ファイル表示のための template が記述されています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+
 <pre class="xsource" title="">
 <code><span class="bracket">&lt;</span><span class="element">source</span> <span class="attribute">xml:space</span><span class="attvalue">="preserve"</span> <span class="attribute">title</span><span class="attvalue">="C# ソースファイル"</span><span class="bracket">&gt;</span>
 <span class="bracket">&lt;</span><span class="element">reserved</span><span class="bracket">&gt;</span>namespace<span class="bracket">&lt;/</span><span class="element">reserved</span><span class="bracket">&gt;</span> Test
@@ -59,7 +61,8 @@ Hello World!<span class="bracket">&lt;</span><span class="element">comment</span
 ソースファイルから自動生成するためのプログラムを作って使っています。
 
 
-##<a id="sec-generated-title-3"></a> <a id="result"></a>結果
+## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
+
 <pre class="source" title="C# ソースファイル" lang="">
 <code><span class="reserved">namespace</span> Test
 {

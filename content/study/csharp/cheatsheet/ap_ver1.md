@@ -15,6 +15,7 @@ aliases:
 # C# 1.0
 
 ## <a id="sec-generated-title-1"></a>C# 1.0
+
 <table>
 <tr>
 <th>リリース時期</th>
@@ -61,6 +62,7 @@ C# 1.0時代は、Javaが一番近い言語でした。
 C++/CLIで書いたクラスを、Visual Basicで継承して、それをC#から使うといったようなことができます。
 
 ## <a id="sec-generated-title-2"></a>C# 1.1？ C# 1.2？
+
 <table>
 <tr>
 <th>リリース時期</th>

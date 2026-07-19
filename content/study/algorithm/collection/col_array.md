@@ -18,7 +18,8 @@ aliases:
 
 # 配列リスト
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[配列](../../csharp/structured/st_array.md#array)」も、
 同じ型のデータを複数集めた物ですから、
 コレクションの一種です。
@@ -48,7 +49,8 @@ C# （.NET Framework）では System.Collections.ArrayList や System.Collection
 ここでは「<strong id="array" class="keyword">配列リスト</strong>」と呼ぶことにしましょう。
 
 
-##<a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+## <a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+
 配列リストは以下のような利点を持っています。
 
 * 実装が単純（作るのが楽というだけではなく、動作が高速）。
@@ -63,7 +65,8 @@ C# （.NET Framework）では System.Collections.ArrayList や System.Collection
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法
+## <a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法
+
 配列リストは、
 単純に配列をラッピングするだけなので、実装が非常に簡単です。
 まず、配列と、（確保した長さとは別に）実際に入っている要素の数を保持する変数を用意します。
@@ -155,7 +158,8 @@ C# （.NET Framework）では System.Collections.ArrayList や System.Collection
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/ArrayList.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/ArrayList.cs)

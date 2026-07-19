@@ -18,7 +18,8 @@ aliases:
 
 # C# とは
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 市販アプリケーションやビジネスソフトウェアの開発現場で
 最も広く使われてきている言語は C と C++ でした（90年代の話）。
 この二つの言語は非常に細かなコントロールを行える柔軟な言語ですが、
@@ -46,7 +47,8 @@ C# は C++ のパワーと柔軟性を持ち、
 同時に Visual Basic などの生産性の高さも持ち合わせる言語です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="future"></a>1.0 → 2.0 → 3.0 ...
+## <a id="sec-generated-title-2"></a> <a id="future"></a>1.0 → 2.0 → 3.0 ...
+
 一番初め、世に出た直後の C#、すなわち C# 1.0 は、
 既存言語のいいとこ取りのようなプログラミング言語でした。
 新しすぎる物を作っても利用者が付いてくれるわけもなく、
@@ -63,7 +65,8 @@ C# は C++ のパワーと柔軟性を持ち、
 「[C# 5.0 の新機能](../cheatsheet/ap_ver5.md)」。
 
 
-##<a id="sec-generated-title-3"></a> <a id="embedded"></a>組み込み開発
+## <a id="sec-generated-title-3"></a> <a id="embedded"></a>組み込み開発
+
 長らくの間、Windows といえばパソコン用 OS で、
 Microsoft 主導で Windows アプリケーション開発用に作られた C#（.NET Framework）もまた、
 パソコン用（特にビジネスアプリケーション開発用）なイメージがありました。

@@ -18,7 +18,8 @@ aliases:
 
 # 実装の隠蔽
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[オブジェクト指向とは](oo_about.md)」で「オブジェクトは内部の実装がどうなっているのかを隠蔽し、可能な操作と属性のみを公開する」と書きました。
 しかし、今までのサンプルではまず、クラスの定義の仕方などを覚えてもらうためにこのような実装の隠蔽については何も説明していませんでした。
 
@@ -28,6 +29,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * オブジェクト指向の中核概念その1: 実装の隠蔽（カプセル化）。
 
 * 外（クラス利用側）から見た振る舞いと中身（実装側）はわけて考える。
@@ -43,7 +45,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="level"></a>アクセシビリティ
+## <a id="sec-generated-title-3"></a> <a id="level"></a>アクセシビリティ
+
 クラスのメンバー変数やメソッドには<strong id="level" class="keyword">アクセシビリティ</strong>（Accessibility: アクセスできる度合い）というものがあります。
 アクセシビリティとは、変数やメソッドに対して、どこからアクセスできるかという制限の度合いのことで、
 以下のようなものがあります。
@@ -104,6 +107,7 @@ aliases:
 また、別項([トップ レベルのアクセシビリティ](../package/toplevelaccessibility.md))で説明しますが、(トップ レベルにある)クラス自身に対するアクセシビリティは public もしくは internal のみになります。
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 <pre class="source" title="アクセシビリティのサンプル" lang="">
 <code><span class="reserved">class</span> A
 {
@@ -155,7 +159,8 @@ test.cs(35,3): error CS0122: 'A.pri' is inaccessible due to its protection level
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="conceal"></a>実装の隠蔽
+## <a id="sec-generated-title-5"></a> <a id="conceal"></a>実装の隠蔽
+
 通常、内部の実装がどうなっているのかを隠蔽（要するに private にする）し、可能な操作のみを公開(public)することが望ましいとされています。
 簡単に言うと、<em>メンバー変数はクラス外部から直接アクセス出来ないようにして、オブジェクトの状態の変更はすべてメソッドを通して行うべきだということです</em>。
 
@@ -204,6 +209,7 @@ test.cs(35,3): error CS0122: 'A.pri' is inaccessible due to its protection level
 元々のフィールドを直接公開するコードと大差ない速度で実行できます。
 
 ##### <a id="sec-generated-title-6"></a>オブジェクトの不正な書き換え防止する
+
 「[コンストラクタ](../../../../assets/oo_construct.html)」で、 <code>Person</code> というクラスを作りました。
 ここで、年齢が負の数になるのはおかしいので、
 コンストラクタで年齢が負の数にならないようにチェックを行うように改良してみましょう。
@@ -279,6 +285,7 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
 
 
 ##### <a id="sec-generated-title-7"></a>クラスの実装を変更した際、利用側のコードを修正する必要をなくす
+
 クラスの実装を隠蔽しない場合、どのような不具合が生じるかを説明するため、
 まず、以下のコードについて考えてみましょう。
 
@@ -448,7 +455,8 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
 }
 </code></pre>
 
-##<a id="sec-generated-title-8"></a> <a id="protected-internal"></a>protected、internal、protected internal と private protected
+## <a id="sec-generated-title-8"></a> <a id="protected-internal"></a>protected、internal、protected internal と private protected
+
 `protected`や`internal`が必要になるのは[派生クラス](oo_inherit.md#subclass)や[アセンブリ](../package/project.md#assembly)が必要になってからですが、一応ここである程度説明しておきます。
 
 まず、1つの[プロジェクト](../package/project.md#project)内ではアクセシビリティに応じて以下のような制限がかかります。
@@ -559,7 +567,8 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
 <span class="reserved">protected</span> <span class="reserved">private</span> <span class="reserved">int</span> B2;
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="private-protected"></a>余談: private protected は C# コンパイラー上だけの問題
+### <a id="sec-generated-title-9"></a> <a id="private-protected"></a>余談: private protected は C# コンパイラー上だけの問題
+
 <h5 class="version version7_1">Ver. 7.2</h5>
 
 余談となりますが、`private protected`相当のアクセシビリティは、[IL](../abstract/ab_dotnet.md#il)レベルでは 1.0 の頃からずっとあります。

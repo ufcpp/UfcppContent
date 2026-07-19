@@ -18,7 +18,8 @@ aliases:
 
 # 磁場と磁束密度
 
-##<a id="sec-generated-title-1"></a> <a id="magnetro"></a>磁場と磁束密度
+## <a id="sec-generated-title-1"></a> <a id="magnetro"></a>磁場と磁束密度
+
 電場と電束密度と同じように、磁気に関する場にも、<strong id="magfield" class="keyword">磁場</strong>と<strong id="magdensity" class="keyword">磁束密度</strong>の2つのものがあります。
 磁荷(磁気単極子)というものが存在するなら電場と同じように磁場を説明出来るのですが、
 残念ならが磁荷というものは存在しません。
@@ -68,7 +69,8 @@ aliases:
       </em>といいます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="magneticsubstance"></a>磁性体
+## <a id="sec-generated-title-2"></a> <a id="magneticsubstance"></a>磁性体
+
 磁性体とは、磁場をかけると磁化を起こして磁化電流の現れる物質のことです。
 
 <figure>
@@ -126,7 +128,8 @@ aliases:
 となります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="in_material"></a>磁性体中の磁場・磁束密度
+## <a id="sec-generated-title-3"></a> <a id="in_material"></a>磁性体中の磁場・磁束密度
+
 磁場<span class="math">
         <a href="variable.md#H" title="磁場ベクトル"><span class="vector">H</span></a>
       </span>は自由電流密度(つまり、磁性体に生じた磁化電流密度は考慮に入れない)から発生する<em>渦</em>です。
@@ -196,7 +199,8 @@ aliases:
       </span>)、これを<em>比透磁率</em>といいます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="EB"></a>E⇔H対応とE⇔B対応
+## <a id="sec-generated-title-4"></a> <a id="EB"></a>E⇔H対応とE⇔B対応
+
 もし、単磁荷(磁気双極子)というものが存在するのなら、<span class="math">
         <a href="variable.md#E" title="電場ベクトル"><span class="vector">E</span></a>
       </span>⇔<span class="math">

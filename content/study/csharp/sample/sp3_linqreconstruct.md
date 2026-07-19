@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] 式木からクエリ式の再構築
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[標準クエリ演算子（クエリ式関係）](../data/sp3_stdquery.md)」などで説明しているように、
 LINQ クエリ式はメソッド（あるいは拡張メソッド）呼び出しに変換されます。
 例えば、以下のような式は、
@@ -43,7 +44,8 @@ LINQ クエリ式はメソッド（あるいは拡張メソッド）呼び出し
 list.Where(...) から from x in list where ... というクエリ式を再構築します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="cause"></a>ことの発端
+## <a id="sec-generated-title-2"></a> <a id="cause"></a>ことの発端
+
 まず、ことの発端は以下のような問題を LINQ で書いてみようという話題がネット上で起きたこと。
 
 <blockquote markdown="1">
@@ -113,7 +115,8 @@ list.Where(...) から from x in list where ... というクエリ式を再構�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="multifrom"></a>余談：多重 from の展開結果
+## <a id="sec-generated-title-3"></a> <a id="multifrom"></a>余談：多重 from の展開結果
+
 ここでちょっと話がそれますが、
 前節で書いたクエリ式は、以下のようなメソッド呼び出しに展開されます。
 
@@ -163,7 +166,8 @@ list.Where(...) から from x in list where ... というクエリ式を再構�
 多重 from が必要な場合、クエリ式のありがたみが身にしみます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="iterator"></a>イテレータに置き換え
+## <a id="sec-generated-title-4"></a> <a id="iterator"></a>イテレータに置き換え
+
 C# 3.0 のクエリ式は、ラムダ式とかIQueryableを駆使して色々と面白いことができるんで、
 高いポテンシャルを秘めてるんですけども、ここで話すのはもうちょっと単純な場合について考えてみます。
 
@@ -204,7 +208,8 @@ foreach, if, yield return ですべて置き換え可能なんですよね。
 イテレータを使って書き変えましょう。
 
 
-##<a id="sec-generated-title-5"></a> <a id="order"></a>クエリの順序変更
+## <a id="sec-generated-title-5"></a> <a id="order"></a>クエリの順序変更
+
 IEnumerable に対する単純なクエリ式が、foreach, if, yield return を使って書き変えれることがわかったところで、
 パフォーマンスに関して古くから言われている以下の格言を思い出してみましょう。
 
@@ -302,7 +307,8 @@ from が前に固まってないだけで思った以上に式が見づらい。
 と思うわけです。
 
 
-##<a id="sec-generated-title-6"></a> <a id="reconst"></a>クエリ式の再構築
+## <a id="sec-generated-title-6"></a> <a id="reconst"></a>クエリ式の再構築
+
 ということで、クエリ式の順序最適化をしたいなぁと思うわけですが、
 そのためにはまず、
 クエリ式をデータとして扱える必要があります。

@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] 透過プロキシ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[実行時型情報](../dynamic/sp_reflection.md)」のサンプルがちょっと不足してるなぁと思って作ったもの。
 
 .NET Framework では、RealProxy というクラスを使って、
@@ -30,7 +31,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="realproxy"></a>RealProxy
+## <a id="sec-generated-title-2"></a> <a id="realproxy"></a>RealProxy
+
 例えば、マルチキャストデリゲートのようなことをインターフェースのメソッド呼び出しに対して行うようなプロキシ。
 
 RealProxy クラスを継承して、Invoke メソッドをオーバーライドするだけ。
@@ -123,7 +125,8 @@ RealProxy クラスを継承して、Invoke メソッドをオーバーライド
 任意のインターフェースに対してこれと同様のことをするのが MulticastProxy の役目です。
 
 
-##<a id="sec-generated-title-3"></a> <a id="pre-created"></a>事前にデリゲート化
+## <a id="sec-generated-title-3"></a> <a id="pre-created"></a>事前にデリゲート化
+
 一般的に言って、リフレクション使いまくるとパフォーマンスがでないので、
 パフォーマンスが必要なら[動的にアセンブリ言語を吐き出したり、
       かなり変態的なことする必要があったりします](http://d.hatena.ne.jp/NyaRuRu/20070925/p1)が。

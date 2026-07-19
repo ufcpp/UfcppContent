@@ -18,7 +18,8 @@ aliases:
 
 # 制御フロー
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 このページの内容は、次からの3ページ（「[条件分岐](st_branch.md)」、「[反復処理](st_loop.md)」、「[配列](st_array.md)」）の要約になります。
 
 C# などのプログラミング言語では、並べた文は上から順に実行されていくことになります（逐次処理）。
@@ -28,7 +29,8 @@ C# などのプログラミング言語では、並べた文は上から順に�
 C# では、if, switch（条件分岐）や while, for, foreach（反復）というような制御構文を持っています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="flow"></a>制御フロー
+## <a id="sec-generated-title-2"></a> <a id="flow"></a>制御フロー
+
 例えば、「n 個の整数の中から、正の数だけの和を求める」というような処理を行いたいとします。
 この処理の流れ（フロー）を図で書くと以下のような感じです。
 

@@ -18,7 +18,8 @@ aliases:
 
 # 基数ソート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[バケットソート](sort_bucket.md#bucket)」は、
 値の範囲が限られた整数限定で、計算量 O(n) で極めて高速にソートを行えるアルゴリズムでした。
 ですが、「値の範囲が限られた」が曲者で、用途が非常に限定されてしまいます。
@@ -41,7 +42,8 @@ aliases:
 実質上は、整数なら値の範囲を気にせず、計算量 O(n) でソートができます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/RadixSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/RadixSort.cs)
 
 概念説明のために、

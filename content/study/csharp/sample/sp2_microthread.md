@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] イテレータとマイクロスレッド
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ゲーム開発の分野を中心として、
 マイクロスレッド（microthread）あるいはコルーチン（coroutine）、ファイバー（fiber）などと呼ばれる概念が考えられています。
 
@@ -31,7 +32,8 @@ C# 2.0 の「[イテレーター](../data/sp2_iterator.md#iterator)」構文を�
 （zip 形式）。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="microthread"></a>マイクロスレッドとは
+## <a id="sec-generated-title-2"></a> <a id="microthread"></a>マイクロスレッドとは
+
 狭い分野でしか使われてない言葉なので、
 定義も用語もあまりはっきりと固まっていないんですが、
 ここでの説明は数ある定義のうちの1つだと思ってください。
@@ -183,7 +185,8 @@ yield の部分に System.Monitor.Wait とかを書いてスレッドの動作�
 あと、動的言語なら、「yield のところでほんとに処理を一度止めて呼び出し元に戻る」というような実装方法もできるかも。
 
 
-##<a id="sec-generated-title-3"></a> <a id="coroutine"></a>コルーチン
+## <a id="sec-generated-title-3"></a> <a id="coroutine"></a>コルーチン
+
 ここで、同じものに対して別の見方をしてみましょう。
 
 先ほどの MicroThread メソッドを簡素化して
@@ -281,7 +284,8 @@ yield の行に到達するたびに、処理を中断して呼び出し元に�
 マイクロスレッドのことをコルーチン（coroutine: co- は「共に」とかを意味する接頭語）と呼んだりもします。
 
 
-##<a id="sec-generated-title-4"></a> <a id="bycsharp"></a>C# でマイクロスレッド
+## <a id="sec-generated-title-4"></a> <a id="bycsharp"></a>C# でマイクロスレッド
+
 何か概念的な話ばかりしてきましが、
 ようやく、じゃあどうやってマイクロスレッドみたいなものを実装するかという話に入ります。
 
@@ -370,7 +374,8 @@ return null みたいな余計な記述がちょっと増えてしまいます�
 ここで説明したようなマイクロスレッドの実現方法も本質は同じで、シーケンシャルな記述から、フレーム単位の更新型の処理を自動生成することで実現します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-5"></a> <a id="sample"></a>サンプル
+
 具体例として、シューティングゲームの弾幕風プログラムを作ってみました。
 （まあ、簡単な例ということで、
 ただの丸い物体が動き回るだけですが。
@@ -380,6 +385,7 @@ return null みたいな余計な記述がちょっと増えてしまいます�
 
 
 ##### <a id="sec-generated-title-6"></a>旧バージョン
+
 [ソースファイル一式（zip 形式）](../../../../assets/source/MicroThread.zip)
 
 <figure>
@@ -400,6 +406,7 @@ ElementDefinition.cs に書かれています。
 
 
 ##### <a id="sec-generated-title-7"></a>新バージョン
+
 サイト上でデモできるように XBAP で書き直してみた。
 あと、作成環境は Visual Studio 2005 に戻した。
 

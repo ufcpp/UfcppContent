@@ -19,7 +19,8 @@ aliases:
 
 # COM 相互運用時の特別処理
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 .NET Framework には COM 相互運用機能があって、COM のクラスをあたかも .NET のクラスであるかのように扱うことができます。
@@ -36,7 +37,8 @@ COM への特別処理は以下の2点。
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="refomit"></a>ref 省略
+## <a id="sec-generated-title-2"></a> <a id="refomit"></a>ref 省略
+
 本来、「引数の参照渡しでは、呼び出し側からも参照渡しであることが一目でわかるべき」
 というのが C# の流儀なので、ref キーワードの省略はあまりいい構文ではありません。
 （なので、通常は「[参照渡し](../resource/sp_ref.md#byref)」では ref を省略できない。）
@@ -87,7 +89,8 @@ C# 的には本来、ref 引数に対して規定値は定義できないんで�
 RCW の場合には ref がついてても規定値が設定されるようになっています。
 
 
-##<a id="sec-generated-title-3"></a> <a id="indexed"></a>インデックス付きプロパティ
+## <a id="sec-generated-title-3"></a> <a id="indexed"></a>インデックス付きプロパティ
+
 C# は「インデックス付きプロパティじゃなくて、インデクサー持ちの型のプロパティを作れ」という設計思想です。
 （あるいは、「[イテレーター](../data/sp2_iterator.md#iterator)」を使って IEnumerable を返すか。）
 でも、COM の時代にはそういう思想がなくて、インデックス付きプロパティだらけなので、これもやむなく認めるようになりました。
@@ -150,7 +153,8 @@ C# 側からは get_X でしか参照できません。（下図参照。）
 	<figcaption>C# から見たインデックス付きプロパティ</figcaption>
 </figure>
 
-##<a id="sec-generated-title-4"></a> <a id="no-pia"></a>No PIA
+## <a id="sec-generated-title-4"></a> <a id="no-pia"></a>No PIA
+
 C# の機能ではなく、.NET Framework 4 の新機能ですが、No PIA と呼ばれる機能も追加されました。
 
 詳しくは「[プラットフォーム呼び出し](sp_pinvoke.md#no-pia)」で説明します。

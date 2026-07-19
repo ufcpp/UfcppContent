@@ -18,12 +18,15 @@ aliases:
 
 # 値型
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ここでは、整数、小数、論理値などの値型について説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="numeric"></a>数値と算術演算
-###<a id="sec-generated-title-3"></a> <a id="numeric_literal"></a>数値リテラル
+## <a id="sec-generated-title-2"></a> <a id="numeric"></a>数値と算術演算
+
+### <a id="sec-generated-title-3"></a> <a id="numeric_literal"></a>数値リテラル
+
 とりあえず、
 整数は System.Int32
 実数は System.Double になるっぽいです。
@@ -109,7 +112,8 @@ System.Int64
 
 
 
-###<a id="sec-generated-title-4"></a> <a id="numeric_add"></a>加減乗除
+### <a id="sec-generated-title-4"></a> <a id="numeric_add"></a>加減乗除
+
 + - * / % で、それぞれ加算、減算、乗算、除算、剰余演算になります。
 また、
 ++ -- でインクリメント、デクリメントもできます。
@@ -194,7 +198,8 @@ double → int への変換時には、四捨五入されます。
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="numeric_comp"></a>比較
+### <a id="sec-generated-title-5"></a> <a id="numeric_comp"></a>比較
+
 比較演算子は
 -eq
 -ne
@@ -220,7 +225,8 @@ $a equals 1
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="numeric_bitwise"></a>ビットごとの論理演算
+### <a id="sec-generated-title-6"></a> <a id="numeric_bitwise"></a>ビットごとの論理演算
+
 ビットごとの論理演算もできて、
 -bnot -band -bor -bxor
 がそれぞれ、
@@ -243,7 +249,8 @@ $a equals 1
 ）
 
 
-##<a id="sec-generated-title-7"></a> <a id="bool"></a>論理値
+## <a id="sec-generated-title-7"></a> <a id="bool"></a>論理値
+
 整数が System.Int32、小数が System.Double になるのと同様に、
 -eq 演算などの結果は System.Boolean になります（bool という名前でも参照可能）。
 
@@ -263,7 +270,8 @@ $true, $false があります。
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="bool_operator"></a>論理演算
+### <a id="sec-generated-title-8"></a> <a id="bool_operator"></a>論理演算
+
 論理値用の演算子として、
 ! -not -and -or の4つがあります。
 このうち、! と -not は同じ意味です。

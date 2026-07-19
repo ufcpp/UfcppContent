@@ -18,7 +18,8 @@ aliases:
 
 # チェビシェフ有理関数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>チェビシェフ有理関数
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>チェビシェフ有理関数
+
 「[ヤコビの楕円関数](../../math/elliptic/jacobi.md#jacobi)」<span class="math"><span class="normal">cd</span><span class="paren" style="font-size:em;">(</span>x, k<span class="paren" style="font-size:em;">)</span></span> を用いて、
 以下のように定義される関数を<strong id="elliptic_rational" class="keyword">チェビシェフ有理関数</strong>（elliptic rational function）という。
 <div class="math">
@@ -61,7 +62,8 @@ exp
 （<span class="math">q<span class="paren" style="font-size:em;">(</span>k<span class="paren" style="font-size:em;">)</span></span> は Jacobi のテータ関数のノーム。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 ヤコビの楕円関数の詳細は
 「[ヤコビの楕円関数](../../math/elliptic/jacobi.md#abstract)」 
 参照。
@@ -71,8 +73,10 @@ exp
 零点と極 → 有理式で表す。
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="memo"></a>メモ
-###<a id="sec-generated-title-4"></a> <a id="d39e202"></a>基本概念
+## <a id="sec-generated-title-3"></a> <a id="memo"></a>メモ
+
+### <a id="sec-generated-title-4"></a> <a id="d39e202"></a>基本概念
+
 複素平面状に以下のような経路
 <span class="math">C ＝ C<sub>1</sub> ＋ C<sub>2</sub> ＋ C<sub>3</sub></span>
 を考える。
@@ -176,7 +180,8 @@ k
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="d39e645"></a>零点/極
+### <a id="sec-generated-title-5"></a> <a id="d39e645"></a>零点/極
+
 <span class="math">R<sub>n, k<sub>1</sub></sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span> は <span class="math">n</span> 個の零点と極で表される有理式となる。
 まず、<span class="math">R<sub>n, k<sub>1</sub></sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span> の零点/極を求める。
 <span class="math"><span class="normal">cd</span><span class="paren" style="font-size:em;">(</span>u, k<span class="paren" style="font-size:em;">)</span></span> の零点は

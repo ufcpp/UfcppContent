@@ -18,12 +18,14 @@ aliases:
 
 # C# の式と文の一覧
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 機能別索引＆概要。
 C# で使える式と文の一覧を先に示しておきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="expression"></a>式
+## <a id="sec-generated-title-2"></a> <a id="expression"></a>式
+
 式: int x = ... とか f(...) の ... の部分に書けるもの。
 x + y みたいな演算子適用が主。
 その他、メンバー アクセスとかラムダ式とかクエリ式とか。
@@ -254,6 +256,7 @@ x + y みたいな演算子適用が主。
 
 
 ##### <a id="sec-generated-title-3"></a>結合規則
+
 優先順位が同じ場合、クエリ式、ラムダ式、代入の3つは右から、その他の式は左から結合します。
 
 左結合は、例えば、<code>a + b + c + d</code> なら <code>((a + b) + c) + d</code> と同じ意味です。
@@ -261,6 +264,7 @@ x + y みたいな演算子適用が主。
 
 
 ##### <a id="sec-generated-title-4"></a>評価順
+
 演算子のオペランドは、演算子の優先順位や結合規則によらず、常に左から順に評価されます。
 例えば、以下のように、画面への出力を伴うメソッド Echo を呼ぶと、2, 3, 4 の順で出力されます。
 
@@ -292,7 +296,8 @@ x + y みたいな演算子適用が主。
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="statement"></a>文
+## <a id="sec-generated-title-5"></a> <a id="statement"></a>文
+
 一覧:
 
 <table summary="">

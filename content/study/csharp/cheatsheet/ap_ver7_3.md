@@ -43,7 +43,8 @@ C# 7.0 以降の「小数点リリース」も3つ目となりました。
 これまでのC# 7系リリースで追加されてきた、
 [タプル](ap_ver7.md#tuple)や[構造体と参照の活用](ap_ver7_2.md#ref)、[式中での変数宣言](ap_ver7.md#var-expressions)になどに関する改善が含まれています。
 
-##<a id="sec-generated-title-1"></a> <a id="tuple-equality"></a>タプルの ==, != 比較
+## <a id="sec-generated-title-1"></a> <a id="tuple-equality"></a>タプルの ==, != 比較
+
 タプル同士を `==`、`!=` 演算子で比較できるようになりました。
 以下のように、メンバーごとの`==`を[`&&`](../start/st_operator.md#short-circuit)で繋いだものに展開されます。
 
@@ -59,7 +60,8 @@ C# 7.0 以降の「小数点リリース」も3つ目となりました。
 
 詳しくは「[==、!= での比較](../datatype/tuples.md#equality)」で説明します。
 
-##<a id="sec-generated-title-2"></a> <a id="ref-reassignment"></a>ref 再代入
+## <a id="sec-generated-title-2"></a> <a id="ref-reassignment"></a>ref 再代入
+
 参照引数、参照ローカル変数に対して、
 参照先の値の書き換えではなく、「どこを参照しているか」自体を書き換えることができるようになりました。
 
@@ -90,7 +92,8 @@ r = 20; <span class="comment">// y が 20 になる。</span>
 「[for/foreach のループ変数を参照に](../resource/sp_ref.md#ref-for)」で説明します。
 
 
-##<a id="sec-generated-title-3"></a> <a id="var-expressions"></a>式中での変数宣言(使える場所の拡充)
+## <a id="sec-generated-title-3"></a> <a id="var-expressions"></a>式中での変数宣言(使える場所の拡充)
+
 C# 7.0から式中で、
 [is 演算子](../datatype/typeswitch.md#is)や[出力変数宣言](../resource/sp_ref.md#out-var)を使って、
 式中でも変数宣言できるようになりましたが、
@@ -133,7 +136,8 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 
 詳しくは「[C# 7での新しいスコープ ルール](../start/st_scope.md#csharp7)」で説明します。
 
-##<a id="sec-generated-title-4"></a> <a id="constraints"></a>ジェネリック型引数に対する Enum、Delegate、unmanaged 制約
+## <a id="sec-generated-title-4"></a> <a id="constraints"></a>ジェネリック型引数に対する Enum、Delegate、unmanaged 制約
+
 3つほど指定できる制約が増えました。
 
 <table summary="型引数に対する制約条件(C# 7.2まで)">
@@ -162,7 +166,8 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 「[unsafe](../interop/sp_unsafe.md#unmanaged-constraints)」、
 「[[余談] 暗黙的な派生](../oop/miscimplictinherit.md#constraints)」などで説明します。
 
-##<a id="sec-generated-title-5"></a> <a id="overload-resolution"></a>オーバーロード解決の改善
+## <a id="sec-generated-title-5"></a> <a id="overload-resolution"></a>オーバーロード解決の改善
+
 オーバーロード解決が少し賢くなって、
 これまでは呼び分けできなかったようなオーバーロードを呼び分けれるようになりました。
 
@@ -209,7 +214,8 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 
 詳しくは「[[雑記]オーバーロード解決](../structured/miscoverloadresolution.md)」で説明します。
 
-##<a id="sec-generated-title-6"></a> <a id="stackalloc-initializer"></a>stackalloc 初期化子
+## <a id="sec-generated-title-6"></a> <a id="stackalloc-initializer"></a>stackalloc 初期化子
+
 `stackalloc`に対して、配列と同じような初期化子を使えるようになりました。
 配列同様、初期化子中の要素の型からの推論も効きます。
 
@@ -224,7 +230,8 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x3 = <span class="reserved">stackalloc</span>[] { 0xEF, 0xBB, 0xBF };
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="custom-fixed"></a>ユーザー定義型の fixed ステートメント利用
+## <a id="sec-generated-title-7"></a> <a id="custom-fixed"></a>ユーザー定義型の fixed ステートメント利用
+
 所定のパターンを満たす型に対して `fixed` ステートメントが使えるようになりました。
 以下のように、`GetPinnableReference`という名前のメソッドを用意すれば使えます。
 
@@ -264,10 +271,12 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 
 詳しくは「[ユーザー定義型の fixed ステートメント利用](../interop/sp_unsafe.md#custom-fixed)」で説明します。
 
-##<a id="sec-generated-title-8"></a> <a id="others"></a>その他
+## <a id="sec-generated-title-8"></a> <a id="others"></a>その他
+
 その他、ほぼ「バグ修正」レベルの改善が2点あります。
 
-###<a id="sec-generated-title-9"></a> <a id="field-attribute-on-auto-property"></a>自動プロパティのバック フィールドに対する field 属性指定
+### <a id="sec-generated-title-9"></a> <a id="field-attribute-on-auto-property"></a>自動プロパティのバック フィールドに対する field 属性指定
+
 前者は、[自動プロパティ](../oop/oo_property.md#auto)に対して `field` 指定の属性が付けられるようになりました。
 
 <pre class="source" title="自動プロパティが内部的に生成しているフィールドへの属性付け">
@@ -283,7 +292,8 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 
 詳しくは「[プロパティ、イベントと属性の対象](../dynamic/sp_attribute.md#auto-impl)」で説明します。
 
-###<a id="sec-generated-title-10"></a> <a id="movable-fixed-buffer"></a>固定長バッファーの読み書きで、fixed ステートメント不要に
+### <a id="sec-generated-title-10"></a> <a id="movable-fixed-buffer"></a>固定長バッファーの読み書きで、fixed ステートメント不要に
+
 [固定長バッファー](../interop/sp_unsafe.md#fixed-buffer)の読み書きをする際、
 [`fixed`ステートメント](../interop/sp_unsafe.md#fixed)が不要になる場面が増えたそうです。
 

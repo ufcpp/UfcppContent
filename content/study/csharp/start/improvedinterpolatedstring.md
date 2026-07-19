@@ -14,7 +14,8 @@ aliases:
 
 # C# 10.0 の補間文字列の改善
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0 で、補間文字列(interpolated string)のコンパイル結果に変更が掛かって、
@@ -29,7 +30,8 @@ C# 10.0 から補間文字列がどのように展開されるかについて説
 
 サンプル コード: [InterpolatedStrings](https://github.com/ufcpp/UfcppSample/tree/master/Demo/2021/Csharp10/InterpolatedStrings)
 
-##<a id="sec-generated-title-2"></a> <a id="csharp9"></a>C# 9.0 までの補間文字列
+## <a id="sec-generated-title-2"></a> <a id="csharp9"></a>C# 9.0 までの補間文字列
+
 例えば以下のようなコードがあったとします。
 
 <pre class="source" title="補間文字列の例">
@@ -70,7 +72,8 @@ handler.<span class="method">AppendFormatted</span>(d);
 <span class="reserved">string</span> s = handler.<span class="method">ToStringAndClear</span>();
 </code></pre>
 
-##<a id="sec-generated-title-3"></a> <a id="handler-pattern"></a>ハンドラー パターン
+## <a id="sec-generated-title-3"></a> <a id="handler-pattern"></a>ハンドラー パターン
+
 前述の通り、C# 10.0 からは補間文字列(`$""`)を`AppendFormatted`や`AppendLiteral`メソッドに展開します。
 これは[パターン ベース](../misc/miscpatternbased.md#key-pattern-based)になっていて、
 所定のパターンを満たしていればどんな型であっても可能です。
@@ -105,7 +108,8 @@ handler.<span class="method">AppendFormatted</span>(d);
 }
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="assign-to-handler"></a>ハンドラー型への直接代入
+### <a id="sec-generated-title-4"></a> <a id="assign-to-handler"></a>ハンドラー型への直接代入
+
 まず、補間文字列をハンドラー型に直接渡す場合、
 コンストラクター、`AppendLiteral`、`AppendFormatted` メソッドの呼び出しに展開されます。
 
@@ -131,7 +135,8 @@ handler.<span class="method">AppendFormatted</span>(d);
 }
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="assign-to-string"></a>string への代入
+### <a id="sec-generated-title-5"></a> <a id="assign-to-string"></a>string への代入
+
 `string` 型は特殊で、補間文字列を `string` 型に渡す場合、
 以下のような展開が行われます。
 
@@ -176,7 +181,8 @@ handler.<span class="method">AppendFormatted</span>(d);
 `DefaultInterpolatedStringHandler` 型を移植すれば可能です。
 .NET 6.0 にしかない機能をちらほら使っているので 5.0 以前への移植は[多少面倒ですが、できなくはないレベルかと思います](https://github.com/ufcpp/UfcppSample/issues/355#issuecomment-916822451)。
 
-###<a id="sec-generated-title-6"></a> <a id="AppendFormatted-overload"></a>AppendFormatted メソッドのオーバーロード
+### <a id="sec-generated-title-6"></a> <a id="AppendFormatted-overload"></a>AppendFormatted メソッドのオーバーロード
+
 ハンドラー型を作る際、`AppendFormatted` メソッドはいくつオーバーロードがあっても構いません。
 よく使いそうなのは、ジェネリック型引数として使えない `ReadOnlySpan<char>` や、
 その他最適化のために具象型を直接受け取りたい場合(`string` など)用のオーバーロードなどです。
@@ -203,7 +209,8 @@ string 版
 ReadOnlySpan 版
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="formatting"></a>書式指定
+### <a id="sec-generated-title-7"></a> <a id="formatting"></a>書式指定
+
 補間文字列の `{}` の中では[書式指定](st_string.md#formatting)ができます。
 (ハンドラー型が使える状況下で)書式指定した場合、`AppendFormatted` メソッドの第2、第3引数に書式が渡ります。
 例えば以下のようなコードを書いた場合、
@@ -245,7 +252,8 @@ ReadOnlySpan 版
 <code>    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="reserved">int</span>? alignment = <span class="reserved">null</span>, <span class="reserved">string</span>? format = <span class="reserved">null</span>) { }
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="bool-return"></a>bool 戻り値
+### <a id="sec-generated-title-8"></a> <a id="bool-return"></a>bool 戻り値
+
 ハンドラー型のコンストラクターでは第3引数に `out bool` を、
 `AppendLiteral`、`AppendFormatted` メソッドでは戻り値として `bool` を返すことができます。
 この場合、false が返ってきたら処理を途中で打ち切るようなコードに展開されます。
@@ -288,7 +296,8 @@ ReadOnlySpan 版
 これを使って、例えば、「一定文字数を超えたらそこで処理を打ち切り」とか、
 「ログ レベル的に全く文字列化処理が必要ない場合、 `AppendLiteral`/`AppendFormatted` を一切呼ばない」とかができます。
 
-###<a id="sec-generated-title-9"></a> <a id="InterpolatedStringHandlerArgument"></a>InterpolatedStringHandlerArgument 属性
+### <a id="sec-generated-title-9"></a> <a id="InterpolatedStringHandlerArgument"></a>InterpolatedStringHandlerArgument 属性
+
 `InterpolatedStringHandlerArgument` 属性(`System.Runtime.CompilerServices` 名前空間)を使って、
 ハンドラー型のコンストラクターに追加の引数を渡すことができます。
 例えば以下のような使い方をします。
@@ -357,7 +366,8 @@ ReadOnlySpan 版
 <span class="type">Formatter</span>.<span class="method">Format</span>(<span class="type">CultureInfo</span>.InvariantCulture, <span class="reserved">stackalloc</span> <span class="reserved">char</span>[128], <span class="string">$"abc </span>{1}<span class="string"> </span>{2}<span class="string">"</span>);
 </code></pre>
 
-##<a id="sec-generated-title-10"></a> <a id="overload-resolution"></a>オーバーロード解決
+## <a id="sec-generated-title-10"></a> <a id="overload-resolution"></a>オーバーロード解決
+
 C# 10.0 でハンドラー型の仕様が追加され、
 C# 9.0 まででも [FormattableString](st_string.md#FormattableString) の仕様があるので、
 補間文字列を受け取る候補となるメソッドを3つ同時に定義できます。
@@ -412,7 +422,8 @@ FormattableString を優先してほしいのに優先してもらえなくて�
 <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">Handler2</span> _) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"Handler2"</span>);
 </code></pre>
 
-##<a id="sec-generated-title-11"></a> <a id="api-in-net6"></a>.NET 6.0 で追加された API
+## <a id="sec-generated-title-11"></a> <a id="api-in-net6"></a>.NET 6.0 で追加された API
+
 ここまで補間文字列ハンドラーの説明してきましたが、
 実際のところ、ハンドラー型を自作することは少ないでしょう。
 一方で、標準ライブラリ中に存在するハンドラー型(を使っているメソッド)を使うことで、
@@ -421,7 +432,8 @@ FormattableString を優先してほしいのに優先してもらえなくて�
 C# 10.0 と同時に出た .NET 6.0 ではハンドラー型や、それを使ったメソッドがいくつか追加されています。
 本項では最後に、.NET 6.0 で追加されたいくつかのメソッドを紹介して終わりにしたいと思います。
 
-###<a id="sec-generated-title-12"></a> <a id="string.Create"></a>string.Create
+### <a id="sec-generated-title-12"></a> <a id="string.Create"></a>string.Create
+
 `string.Create` に以下の2つのオーバーロードが追加されています。
 
 * [`Create(IFormatProvider, DefaultInterpolatedStringHandler)`](https://docs.microsoft.com/ja-jp/dotnet/api/system.string.create?view=net-6.0#System_String_Create_System_IFormatProvider_System_Runtime_CompilerServices_DefaultInterpolatedStringHandler__)
@@ -429,7 +441,8 @@ C# 10.0 と同時に出た .NET 6.0 ではハンドラー型や、それを使�
 
 「[InterpolatedStringHandlerArgument 属性](improvedinterpolatedstring.md)」で例に挙げた通り、カルチャー指定で文字列補間するための引数と、初期バッファーを渡すための引数です。
 
-####<a id="sec-generated-title-13"></a> <a id="string.Create-culture"></a>カルチャー指定
+#### <a id="sec-generated-title-13"></a> <a id="string.Create-culture"></a>カルチャー指定
+
 C# の補間文字列はカルチャー依存で、何も指定しないと [`CurrentCulture`](https://docs.microsoft.com/ja-jp/dotnet/api/system.globalization.cultureinfo.currentculture) が使われます。
 その結果、手元の環境で実行すると日本式のフォーマットになるけど、
 サーバー上で実行すると米国式のフォーマットになったりすることがあります。
@@ -484,7 +497,8 @@ C# の補間文字列はカルチャー依存で、何も指定しないと [`Cu
 * [`Invariant`](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2021/Csharp10/InterpolatedStrings/InvariantGlobalization/Invariant.cs): 常に `InvariantCulture` で文字列補間する型
 * [`Iso8601`](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2021/Csharp10/InterpolatedStrings/InvariantGlobalization/Iso8601.cs): 常に `InvariantCulture` を使いつつ、日付だけは MM/dd/yyyy を許さず、ISO 8601 形式で文字列補間する型
 
-####<a id="sec-generated-title-14"></a> <a id="string.Create-buffer"></a>初期バッファー指定
+#### <a id="sec-generated-title-14"></a> <a id="string.Create-buffer"></a>初期バッファー指定
+
 冒頭での説明通り、C# 10.0 で再コンパイルするだけで文字列補間は高速化されます。
 ただ、パフォーマンスを求めるのであれば、素の `$""` を使うよりも、
 `string.Create` で初期バッファーを与える方がいいです。
@@ -504,7 +518,8 @@ C# の補間文字列はカルチャー依存で、何も指定しないと [`Cu
 |                                    Improved | 530.8 us | 0.77 us | 0.64 us |  46.8750 |    391 KB |
 |                               InitialBuffer | 377.2 us | 0.73 us | 0.61 us |  47.3633 |    391 KB |
 
-###<a id="sec-generated-title-15"></a> <a id="StringBuilder.Append"></a>StringBuilder.Append
+### <a id="sec-generated-title-15"></a> <a id="StringBuilder.Append"></a>StringBuilder.Append
+
 これまで `StringBuilder` (`System.Text` 名前空間)に対して
 `builder.Append($"{1} {2} {3}");` みたいなコードを書くと、
 一度 `string.Format` で文字列インスタンスを作った上で、それを `Append` していました。
@@ -521,7 +536,8 @@ builder.<span class="method">Append</span>(<span class="string">" "</span>);
 builder.<span class="method">Append</span>(3);
 </code></pre>
 
-###<a id="sec-generated-title-16"></a> <a id="MemoryExtensions.TryWrite"></a>MemoryExtensions.TryWrite
+### <a id="sec-generated-title-16"></a> <a id="MemoryExtensions.TryWrite"></a>MemoryExtensions.TryWrite
+
 `MemoryExtensions` (`System` 名前空間)に [`TryWrite`](https://docs.microsoft.com/ja-jp/dotnet/api/system.memoryextensions.trywrite?view=net-6.0#System_MemoryExtensions_TryWrite_System_Span_System_Char__System_MemoryExtensions_TryWriteInterpolatedStringHandler__System_Int32__) と言う名前で、
 `Span<char>` バッファーに直接書き込みするメソッドも追加されています。
 `string.Create` の場合は最終的に必ず1個は `new string()` が発生しますが、
@@ -540,7 +556,8 @@ builder.<span class="method">Append</span>(3);
 }
 </code></pre>
 
-###<a id="sec-generated-title-17"></a> <a id="Debug.Assert"></a>Debug.Assert
+### <a id="sec-generated-title-17"></a> <a id="Debug.Assert"></a>Debug.Assert
+
 `Debug.Assert` (`System.Diagnostics` 名前空間)に[ハンドラー型を受け取るオーバーロード](https://docs.microsoft.com/ja-jp/dotnet/api/system.diagnostics.debug.assert?view=net-6.0#System_Diagnostics_Debug_Assert_System_Boolean_System_Diagnostics_Debug_AssertInterpolatedStringHandler__)が増えています。
 
 このオーバーロードを使うと、`condition` 引数が `false` の時だけ `AppendLiteral`/`AppendFormatted` を呼び出します。

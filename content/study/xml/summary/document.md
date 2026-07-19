@@ -18,7 +18,8 @@ aliases:
 
 # ドキュメント
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 [<code>document.xsl</code>](../../../../assets/media/ufcpp2000/xml/xslfiles/document.xsl) および [<code>index.xsl</code>](../../../../assets/media/ufcpp2000/xml/xslfiles/index.xsl) は、ドキュメント表示用の template が記述されている、
 必須 xsl です。
 
@@ -39,7 +40,8 @@ aliases:
 メニュー、目次、キーワードリストを非表示にした例 → 「[ドキュメントのパラメータ](nomenu.md)」。
 
 
-##<a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+
 このドキュメント自体のソースは以下のようになっています。
 
 

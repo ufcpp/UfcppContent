@@ -14,7 +14,8 @@ aliases:
 
 # 関数ポインター
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 <h5 class="version version9">Ver. 9</h5>
 
 関数ポインターとは、メモリ上でメソッドなどの命令列が入ってるアドレスを指すポインターで、
@@ -25,7 +26,8 @@ aliases:
 これに対して、C# 9 では `delegate*` という記法で関数ポインターを扱えるようになりました。
 ([unsafe コンテキスト](sp_unsafe.md#unsafe)内限定で使えます。)
 
-##<a id="sec-generated-title-2"></a> <a id="since1.0">以前からある関数ポインター</a>
+## <a id="sec-generated-title-2"></a> <a id="since1.0">以前からある関数ポインター</a>
+
 関数ポインター自体は .NET には昔からあって、
 例えば、関数ポインターの値を `IntPtr` (`nint`) で取得する手段は .NET Framework 1.0 (初代。2002年リリース)の頃からありました。
 
@@ -52,7 +54,8 @@ aliases:
 }
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="pinvoke">ネイティブ コード呼び出し</a>
+## <a id="sec-generated-title-3"></a> <a id="pinvoke">ネイティブ コード呼び出し</a>
+
 まあ、C# で完結している分には役に立ちません。
 C# で書いたメソッドを C# のデリゲートで受け取るんなら、
 直接代入するだけでデリゲート化できます。
@@ -96,7 +99,8 @@ C# で書いたメソッドを C# のデリゲートで受け取るんなら、
 (上記の `Native.Beep` に対して `GetFunctionPointer` すると、
 取れるのはあくまで「ネイティブ コード呼び出しを内部的によろしくやってくれる C# のメソッド」の関数ポインターになります。)
 
-##<a id="sec-generated-title-4"></a> <a id="NativeLibrary">NativeLibrary クラス</a>
+## <a id="sec-generated-title-4"></a> <a id="NativeLibrary">NativeLibrary クラス</a>
+
 「関数ポインターを取る手段がないから使い道がない」と
 「関数ポインターが指す先を呼び出す手段がないから取れてもしょうがない」で卵が先か鶏が先かみたいな話になるんですが、
 C# に関数ポインターは必要ありませんでした。
@@ -133,7 +137,8 @@ C# に関数ポインターは必要ありませんでした。
 ただ、このデリゲートを介する部分がペナルティになって、
 `DllImport` よりも低速になっていました。
 
-##<a id="sec-generated-title-5"></a> <a id="function-pointer">関数ポインター構文</a>
+## <a id="sec-generated-title-5"></a> <a id="function-pointer">関数ポインター構文</a>
+
 <h5 class="version version9">Ver. 9</h5>
 
 問題は `IntPtr` (`nint`)でポインターを取れても、
@@ -190,7 +195,8 @@ C# に関数ポインターは必要ありませんでした。
 ちなみに、[IL](../../il/index.md) には .NET Framework 1.0 の頃から関数ポインターの仕様がちゃんとあって、「引数が `uint` 2つ、戻り値が `int`」みたいなのを指定して関数ポインターが指す先を呼び出す命令([`calli`](https://learn.microsoft.com/ja-jp/dotnet/api/system.reflection.emit.opcodes.calli))がありました。
 あくまで C# 8 以前には `calli` を出力する能力がなかっただけです。
 
-###<a id="sec-generated-title-6"></a> <a id="and-operator">& 演算子</a>
+### <a id="sec-generated-title-6"></a> <a id="and-operator">& 演算子</a>
+
 前節の例ですでに使っていますが、
 C# で書いたメソッドに対して `&` 演算子を使えます。
 `&` 演算子で、`GetFunctionPointer` などのリフレクション介さずにメソッドから直接関数ポインターを得ることができます。
@@ -257,7 +263,8 @@ C# で書いたメソッドに対して `&` 演算子を使えます。
 }
 </pre>
 
-###<a id="sec-generated-title-7"></a> <a id="arguments">引数・戻り値の型</a>
+### <a id="sec-generated-title-7"></a> <a id="arguments">引数・戻り値の型</a>
+
 `delegate*<T>` という、一見するとジェネリック型(`Func<T>` とか `Action<T>` とか)と似たような構文ですが、関数ポインターの `<>` の中に書ける型は、ジェネリック型引数よりもだいぶ制限が緩いです。
 現状ではジェネリック型引数には書けない以下のような型も、関数ポインターの `<>` には普通に書けます。
 
@@ -295,7 +302,8 @@ C# で書いたメソッドに対して `&` 演算子を使えます。
 
 ちなみに、書ける型の制限が緩いので、Unsafe クラスですらできないことが関数ポインター使えば書けたり。
 
-###<a id="sec-generated-title-8"></a> <a id="calling-convention">呼び出し規約</a>
+### <a id="sec-generated-title-8"></a> <a id="calling-convention">呼び出し規約</a>
+
 複数のプログラミング言語をまたいでやり取りする場合、
 呼び出し規約(calling convention)というものを気にする必要があります。
 

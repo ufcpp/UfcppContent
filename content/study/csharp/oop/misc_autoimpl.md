@@ -18,12 +18,14 @@ aliases:
 
 # \[雑記\] 抽象定義と自動実装
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# の文法では、メソッドやプロパティなどの抽象定義（abstract 修飾子が付いているもの）と自動実装（コンパイラーが具体的な実装を生成してくれるもの）の見た目が似ているため、
 少し混乱しやすいです。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 抽象定義 … インターフェイスのメンバーや抽象メソッドのように、宣言のみの（規約だけ定めて、実装を持たない）もの。
 
 * 具象定義 … 通常のメソッドやプロパティのように、実装まで書いてあるもの。
@@ -32,7 +34,8 @@ C# の文法では、メソッドやプロパティなどの抽象定義（abstr
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="auto-property"></a>自動実装プロパティ
+## <a id="sec-generated-title-3"></a> <a id="auto-property"></a>自動実装プロパティ
+
 C# では、プロパティとイベントの場合、実装を省略して書くことで、コンパイラー任せで自動的に実装を作ることができます。
 参考:
 
@@ -122,7 +125,8 @@ C# では、プロパティとイベントの場合、実装を省略して書�
 （「[IL](../abstract/ab_dotnet.md#il)」的には有効な名前です。）
 
 
-##<a id="sec-generated-title-4"></a> <a id="auto-event"></a>自動実装イベント
+## <a id="sec-generated-title-4"></a> <a id="auto-event"></a>自動実装イベント
+
 プロパティは get; set; を明示的に書くだけまだましで、イベント構文はより一層、混乱を招きます。
 
 <pre class="source" title="抽象イベントと自動実装イベント" lang="">

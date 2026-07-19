@@ -18,7 +18,8 @@ aliases:
 
 # デリゲート
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="delegate" class="keyword">デリゲート</strong>（delegate: 代表、委譲、委託）とは、メソッドを参照するための型です。
 C言語やC++言語の勉強をしたことがある人には、
 「デリゲートとは関数ポインターや関数オブジェクトをオブジェクト指向に適するように拡張したもの」
@@ -36,12 +37,14 @@ delegate（委譲）という言葉のニュアンスとしては、
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * C# では、メソッドも他の型と同じように扱えます（変数に代入して使ったり、他のメソッドの引数や戻り値にしたりできる）。
 * デリゲート： メソッドを代入するための変数の型。
 * 例： `delegate int DelegateName(int x, int y);`
 
 
-##<a id="sec-generated-title-3"></a> <a id="definition"></a>デリゲートの定義
+## <a id="sec-generated-title-3"></a> <a id="definition"></a>デリゲートの定義
+
 <em>デリゲートとはメソッドを参照するための型です</em>。
 要するに、<code>A</code> という名前のメソッドとデリゲート型の変数 <code>a</code> があったとすると、
 <code>a = A;</code> というような意味合いの事を実現するのがデリゲートです。
@@ -128,14 +131,16 @@ C# 2.0 からは、
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="function"></a>デリゲートの機能
+## <a id="sec-generated-title-4"></a> <a id="function"></a>デリゲートの機能
+
 これまでに述べたように、デリゲートにはメソッドを参照し、
 間接的なメソッド呼び出しを行う機能があります。
 この機能はC言語でも関数ポインターというものを用いることで実現できますが、
 C# のデリゲートにはさらに高度な機能があります。
 
 
-###<a id="sec-generated-title-5"></a> <a id="instancemethod"></a>インスタンスメソッドの代入
+### <a id="sec-generated-title-5"></a> <a id="instancemethod"></a>インスタンスメソッドの代入
+
 デリゲートにはクラス(static)メソッドとインスタンス(非static)メソッドのどちらでも代入する事が出来ます。
 
 <pre class="source" title="インスタンスメソッドの代入" lang="">
@@ -174,7 +179,8 @@ C# のデリゲートにはさらに高度な機能があります。
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="multicast"></a>複数のメソッドを代入
+### <a id="sec-generated-title-6"></a> <a id="multicast"></a>複数のメソッドを代入
+
 デリゲートには <code>+=</code> 演算子を用いることで、複数のメソッドを代入する事が出来ます。
 複数のメソッドを代入した状態で、デリゲート呼び出しを行うと、代入した全てのメソッドが呼び出されます。
 このように、複数のメソッドを格納した状態のデリゲートのことを<strong id="malticast" class="keyword">マルチキャストデリゲート</strong>と呼びます。
@@ -262,7 +268,8 @@ B が呼ばれました。
 
 ちなみに、マルチキャストデリゲートの呼び出しは、<code>+=</code> で代入した順に<em>逐次実行されます（並列実行はされません）</em>。
 
-###<a id="sec-generated-title-7"></a> <a id="async"></a>非同期呼び出し
+### <a id="sec-generated-title-7"></a> <a id="async"></a>非同期呼び出し
+
 かつては、デリゲート型に対して `BeginInvoke`/`EndInvoke` という形で非同期呼び出しをする機構がありました。
 
 現在では[非同期処理をしたい場合には `Task` クラスを使う](../async/sp_thread.md)のが一般的になっていて、 `BeginInvoke`/`EndInvoke` は非推奨になっています。(↓一応過去の記事の痕跡。)
@@ -374,7 +381,8 @@ AsynchronousMethod (5)
 今でも `BeginInvoke`/`EndInvoke` 自体は残っているんですが、呼び出しすると `PlatformNotSupportedException` 例外を起こしたりします。
 (というか、もはや相当古い .NET ランタイムでしか正常に実行できません。)
 
-##<a id="sec-generated-title-8"></a> <a id="use"></a>デリゲートの用途
+## <a id="sec-generated-title-8"></a> <a id="use"></a>デリゲートの用途
+
 デリゲートの用途はいろいろありますが、
 ここでは例として、述語と言うものを紹介します。
 
@@ -383,7 +391,8 @@ AsynchronousMethod (5)
 イベントハンドラに関しては、「[イベント](sp_event.md)」で説明します。）
 
 
-###<a id="sec-generated-title-9"></a> <a id="pred"></a>述語
+### <a id="sec-generated-title-9"></a> <a id="pred"></a>述語
+
 述語という言葉は「××は○○である」という文章の「○○である」の部分を指します。
 プログラミングの世界では、
 あるオブジェクト x が「x は○○である」という条件を満たすかどうかを調べるメソッドのことを<em>述語</em>（predicate）と呼びます。
@@ -534,7 +543,8 @@ pred は「呼び出し側から渡されるはずの何らかの条件」とい
 図中の空欄を埋めます。
 
 
-##<a id="sec-generated-title-10"></a> <a id="anonymous"></a>匿名関数
+## <a id="sec-generated-title-10"></a> <a id="anonymous"></a>匿名関数
+
 C# では、式中で、その場限りのメソッドを書くことができる<strong id="anonymous-func" class="keyword">匿名関数</strong>（anonymous function）という機能があります。
 
 歴史的経緯から、匿名関数には、C# 2.0 で導入された匿名メソッド式という書き方と、
@@ -545,7 +555,8 @@ C# 3.0 で導入されたラムダ式という書き方があります。
 
 詳細は別項の「[ローカル関数と匿名関数](fun_localfunctions.md)」でも説明しているのでそちらもご覧ください。
 
-###<a id="sec-generated-title-11"></a> <a id="anonymous-method"></a>匿名メソッド式
+### <a id="sec-generated-title-11"></a> <a id="anonymous-method"></a>匿名メソッド式
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 （このページが C# 2.0 の頃に書いたものにラムダ式を書き足しているので、匿名関数の説明が匿名メソッド式ベースで書かれています。
@@ -620,7 +631,8 @@ IsOver10, Is5To15 という２つのメソッドを定義して使っていま�
 
 
 
-###<a id="sec-generated-title-12"></a> <a id="lambda"></a>ラムダ式
+### <a id="sec-generated-title-12"></a> <a id="lambda"></a>ラムダ式
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 では、匿名関数をさらに簡便な記法で書けるようになりました。
@@ -663,7 +675,8 @@ C# 2.0 の記法では、以下のように書いていたものを、
 もしも、ラムダ式の方を先に C# に導入されていたら、
 C# 2.0 式の匿名メソッド式の記法は導入されなかったと思います。
 
-###<a id="sec-generated-title-13"></a> <a id="csharp10"></a>C# 10.0 でのラムダ式
+### <a id="sec-generated-title-13"></a> <a id="csharp10"></a>C# 10.0 でのラムダ式
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0 では以下のような書き方のラムダ式も書けるようになりました。
@@ -677,7 +690,8 @@ C# 10.0 では以下のような書き方のラムダ式も書けるようにな
 * `var` で受け取れる (ラムダ式自体から型が決定できる)
 * [属性](../dynamic/sp_attribute.md)や戻り値の型が指定できる
 
-##<a id="sec-generated-title-14"></a> <a id="co-contra"></a>covariance と contravariance
+## <a id="sec-generated-title-14"></a> <a id="co-contra"></a>covariance と contravariance
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 C# 1.1 以前、
@@ -734,7 +748,8 @@ covariance と contravariance です。
 
 ![デリゲートの共変性と反変性](../../../../assets/media/1080/delegatevariance.png)
 
-###<a id="sec-generated-title-15"></a> <a id="covariance"></a>covariance
+### <a id="sec-generated-title-15"></a> <a id="covariance"></a>covariance
+
 基底クラスを戻り値とするデリゲートに対して、
 派生クラスを戻り値とするメソッドを代入できることを
 <strong id="covariance" class="keyword">covariance</strong> といいます。
@@ -769,7 +784,8 @@ covariance と contravariance です。
 
 
 
-###<a id="sec-generated-title-16"></a> <a id="contravariance"></a>contravariance
+### <a id="sec-generated-title-16"></a> <a id="contravariance"></a>contravariance
+
 派生クラスを引数とするデリゲートに対して、
 基底クラスを引数とするデリゲートを代入できることを
 <strong id="contravariance" class="keyword">contravariance</strong> といいます。
@@ -805,7 +821,8 @@ covariance と contravariance です。
 </code></pre>
 
 
-##<a id="sec-generated-title-17"></a> <a id="natural-type"></a>デリゲートの自然な型
+## <a id="sec-generated-title-17"></a> <a id="natural-type"></a>デリゲートの自然な型
+
 <h5 class="version version10">Ver. 10</h5>
 
 デリゲートの型決定は基本的に[ターゲット型からの推論](../start/misctyperesolution.md#target-type)です。

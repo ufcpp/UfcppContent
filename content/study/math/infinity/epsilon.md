@@ -18,7 +18,8 @@ aliases:
 
 # ε-δ
 
-##<a id="sec-generated-title-1"></a> <a id="d69e4"></a>限りなく？
+## <a id="sec-generated-title-1"></a> <a id="d69e4"></a>限りなく？
+
 「[極限](limit.md#limit)」では極限という考え方について簡単に触れました。
 極限では、「限りなく大きくなる」とか「限りなく近づく」とかいう言葉を使いますが、
 じゃあ、この「限りなく」というのはどういうことなのでしょうか。
@@ -29,7 +30,8 @@ aliases:
 そこで、この「限りなく」というものを厳密に定める必要があります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d69e10"></a>ε‐δ論法
+## <a id="sec-generated-title-2"></a> <a id="d69e10"></a>ε‐δ論法
+
 「<span class="math">x</span> がある値 <span class="math">a</span> に限りなく近づく」というのは、
 「<span class="math"><span class="normal">|</span>x － a<span class="normal">|</span>＜δ</span> としたとき、<span class="math">δ</span>の値がどんどん小さくなる」と表すことができます。
 「<span class="math">f<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span> がある値 <span class="math">b</span> に限りなく近づく」というのも、
@@ -77,6 +79,7 @@ aliases:
 <span class="math">ε</span> の方が「任意の」で <span class="math">N</span> の方が「存在する」です。
 
 
-##<a id="sec-generated-title-3"></a> <a id="d69e184"></a>まとめ
+## <a id="sec-generated-title-3"></a> <a id="d69e184"></a>まとめ
+
 この考え方の下では∞というものは存在しません。
 ∞という概念抜きで「限りなく大きく」や「限りなく近づく」と言うものを表現しています。

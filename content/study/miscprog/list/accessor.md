@@ -18,7 +18,8 @@ aliases:
 
 # Set / Get とプロパティ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[プロパティ](../../csharp/oop/oo_property.md)」で説明しているように、
 C# にはプロパティという便利な機能が備わっています。
  
@@ -33,7 +34,8 @@ C++ ではどうやって実装の隠蔽をしていたかについて説明し�
 ここでも Person クラスの age を例として説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="setter"></a>Set / Get
+## <a id="sec-generated-title-2"></a> <a id="setter"></a>Set / Get
+
 一番簡単なのは、public にしたいメンバー変数の数だけ、
 Set変数名 / Get変数名 という名前のメンバー関数を用意する方法。
 
@@ -85,7 +87,8 @@ age なら、SetAge と GetAge というのを Person クラス内に作る。
 初心者はめんどくさがって accessor を書く癖をなかなか付けてくれなかったりします。
 
 
-##<a id="sec-generated-title-3"></a> <a id="overload"></a>オーバーロードで Set / Get を省略
+## <a id="sec-generated-title-3"></a> <a id="overload"></a>オーバーロードで Set / Get を省略
+
 で、Set / Get だらけになるのを嫌って、
 これを省略する人もいます。
 Set / Get だらけだと、
@@ -135,7 +138,8 @@ C# の「[プロパティ](../../csharp/oop/oo_property.md#property)」のよう
 利用側では変数のように扱えたりはしません。
 
 
-##<a id="sec-generated-title-4"></a> <a id="proxy"></a>プロキシ
+## <a id="sec-generated-title-4"></a> <a id="proxy"></a>プロキシ
+
 実は、C++ でも、かなり無理やりですが、（見た目だけは）プロパティのようなことができたりします。
 とりあえず、百聞は一見にしかずということで、以下の例を見てください。
 

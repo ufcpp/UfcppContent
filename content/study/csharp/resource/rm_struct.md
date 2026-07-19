@@ -16,15 +16,18 @@ aliases:
 
 # 構造体
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[データの構造化](../structured/st_struct.md)」で少し触れて以来、ずっとクラスだけを使って説明してきましたが、ここで、C#における「もう1つの複合型」である構造体について説明します。
 
 根本的な差は、次項で説明する「[値型](oo_reference.md#valtype)」か「[参照型](oo_reference.md#reftype)」かの違いに起因します。構造体は値型で、そのためにクラスと比べていくつか用途に制限がかかります。
 
-##<a id="sec-generated-title-2"></a> <a id="restriction"></a>構造体の制限
+## <a id="sec-generated-title-2"></a> <a id="restriction"></a>構造体の制限
+
 とりあえず、クラスと構造体を並べて書いてみましょう。
 
 #### <a id="sec-generated-title-3"></a>構造体
+
 <pre class="source" title="">
 <code><reserved></span><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">SampleStruct</span> : <span class="type">InterfaceA</span>, <span class="type">InterfaceB</span>
 {
@@ -42,6 +45,7 @@ aliases:
 </code></pre>
 
 #### <a id="sec-generated-title-4"></a>クラス
+
 <pre class="source" title="">
 <code><reserved></span><span class="reserved">public</span> <span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">SampleClass</span> : <span class="type">BaseClass</span>, <span class="type">InterfaceA</span>, <span class="type">InterfaceB</span>
 {
@@ -86,7 +90,8 @@ aliases:
 - インターフェイスの実装(複数も可)
 - (構造体自身には`static`修飾子を付けれないものの)静的メンバーの定義自体は可能
 
-##<a id="sec-generated-title-5"></a> <a id="usage"></a>構造体の用途
+## <a id="sec-generated-title-5"></a> <a id="usage"></a>構造体の用途
+
 「できること」でいうと、構造体はクラスの完全下位互換で、メリットがないように見えます。構造体の利点を理解するには、次項の[値型と参照型](oo_reference.md)についての知識が必要になります。
 
 おおまかに言うと、
@@ -104,7 +109,8 @@ aliases:
 
 という状況下になります。
 
-##<a id="sec-generated-title-6"></a> <a id="default"></a>構造体の既定値
+## <a id="sec-generated-title-6"></a> <a id="default"></a>構造体の既定値
+
 これも[値型](oo_reference.md#valtype)の性質になりますが、
 クラス(`new`するまでメモリ領域を確保しない)と違って、
 構造体は宣言した時点でデータを記録するためのメモリ領域が確保されます。
@@ -154,7 +160,8 @@ False
 
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="parameterless-ctor"></a>引数なしコンストラクター
+## <a id="sec-generated-title-7"></a> <a id="parameterless-ctor"></a>引数なしコンストラクター
+
 C# 9.0 まで、構造体のメンバーとして引数なしのコンストラクターを書くことはできませんでした。
 これは、`new T()`を[既定値](rm_default.md#default-keyword)(0初期化)として使っていたせいです。
 
@@ -221,7 +228,8 @@ C# 10.0 で、ついにその案が採用されることになり、
 
 これで、`new A()` で `X` が1になります。
 
-###<a id="sec-generated-title-8"></a> <a id="new-or-default"></a>new() と default
+### <a id="sec-generated-title-8"></a> <a id="new-or-default"></a>new() と default
+
 背景説明の通り、`new()` と `default` の意味が変わったので注意が必要です。
 この例の構造体 `A` の場合、以下のような挙動になります。
 
@@ -276,7 +284,8 @@ a = <span class="reserved">default</span>;
 <span class="reserved">struct</span> <span class="type">Ctor</span> { <span class="reserved">public</span> <span class="type">Ctor</span>() { } }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="field-initialize"></a>フィールド初期化子
+### <a id="sec-generated-title-9"></a> <a id="field-initialize"></a>フィールド初期化子
+
 C# 10.0 で構造体に引数なしコンストラクターが使えるようになったことに伴って、
 フィールド初期化子も使えるようになりました。
 以下のようなコードは C# 10.0 から書けるようになります。
@@ -304,7 +313,8 @@ C# 10.0 で構造体に引数なしコンストラクターが使えるように
 C# 10 リリース当初はその案に基づいた実装になっていましたが、
 ちょっと問題があって撤回され、明示的にコンストラクターを書かなければならなくなりました。)
 
-###<a id="sec-generated-title-10"></a> <a id="accessibility"></a>引数なしコンストラクターのアクセシビリティ
+### <a id="sec-generated-title-10"></a> <a id="accessibility"></a>引数なしコンストラクターのアクセシビリティ
+
 `new()` が `default` と同じ意味になるのか、
 それとも引数なしコンストラクターの呼び出しになるのか紛らわしくなるので、
 構造体の引数なしコンストラクターは public 以外を認めていません。
@@ -323,7 +333,8 @@ C# 10 リリース当初はその案に基づいた実装になっていまし�
 }
 </code></pre>
 
-##<a id="sec-generated-title-11"></a> <a id="definite-assignment"></a>確実な初期化
+## <a id="sec-generated-title-11"></a> <a id="definite-assignment"></a>確実な初期化
+
 ※ C# 10 までの仕様になります。
 
 `new T()` や`default(T)`で作る「既定値」とは違って、
@@ -371,7 +382,8 @@ C# 10 リリース当初はその案に基づいた実装になっていまし�
 
 (同じくクラスの場合は制限はなし。既定値(0)が使われるだけ。)
 
-###<a id="sec-generated-title-12"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a>
+### <a id="sec-generated-title-12"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a>
+
 <h5 class="version version11">Ver. 11.0</h5>
 
 C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
@@ -400,7 +412,8 @@ C# 11 では、構造体でもフィールドの明示的な初期化が不要�
 </code></pre>
 
 
-###<a id="sec-generated-title-13"></a> <a id="auto-property"></a>自動プロパティの扱い変更
+### <a id="sec-generated-title-13"></a> <a id="auto-property"></a>自動プロパティの扱い変更
+
 <h5 class="version version6">Ver. 6</h5>
 
 前節の「確実な初期化」と絡んで、C# 5.0までのC#では、自動プロパティの初期化が非常に面倒でした。
@@ -470,7 +483,8 @@ C#の仕様書に以下の1文が追加されたことによります。
 }
 </code></pre>
 
-##<a id="sec-generated-title-14"></a> <a id="memberwise"></a>メンバー毎コピー、メンバー毎比較
+## <a id="sec-generated-title-14"></a> <a id="memberwise"></a>メンバー毎コピー、メンバー毎比較
+
 構造体の変数への代入は、全メンバーのコピーになります。
 また、構造体には自動的に`Equals`メソッドが実装されて、メンバー毎の比較(全メンバー一致の場合に一致)になります。
 
@@ -502,7 +516,8 @@ C#の仕様書に以下の1文が追加されたことによります。
 }
 </code></pre>
 
-##<a id="sec-generated-title-15"></a> <a id="struct-modifier"></a>構造体に対する特別な修飾子
+## <a id="sec-generated-title-15"></a> <a id="struct-modifier"></a>構造体に対する特別な修飾子
+
 ここでは紹介だけになりますが、構造体にだけ付けることができる特別な修飾子があります。
 
 - [readonly](readonlyness.md#readonly-struct)

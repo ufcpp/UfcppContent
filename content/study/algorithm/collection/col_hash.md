@@ -18,7 +18,8 @@ aliases:
 
 # ハッシュテーブル
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="hashtable" class="keyword">ハッシュテーブル</strong>（hash table）は、
 「ハッシュ値」という物を使うことによって、
 要素の挿入・削除・検索を非常に高速に行うことの出来るコレクションです。
@@ -27,7 +28,8 @@ aliases:
 要素の挿入・削除・検索をほぼ O(1) （要素数によらず一定時間）で行うことができます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="hash"></a>ハッシュ値
+## <a id="sec-generated-title-2"></a> <a id="hash"></a>ハッシュ値
+
 <strong id="hash" class="keyword">ハッシュ</strong>（hash）というのは、
 文字列などの任意のデータから、そのデータを要約して得られる固定長の値のことです。
 得られた値のことをハッシュ値（hash value）、
@@ -56,7 +58,8 @@ hash という言葉は、料理のハッシュドビーフなどについてい
 「任意のデータから固定長の値（ほとんどの場合整数値）を得る」という部分に意味があります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="hashtable"></a>ハッシュテーブル
+## <a id="sec-generated-title-3"></a> <a id="hashtable"></a>ハッシュテーブル
+
 通常、配列の [] の中には整数しか使えません。
 
 <pre class="source" title="" lang="">
@@ -108,7 +111,8 @@ x[Hash(<span class="literal">"string"</span>) % N].Add(<span class="literal">"st
 挿入・削除・検索の平均計算量は O(N/M) です。）
 
 
-##<a id="sec-generated-title-4"></a> <a id="character"></a>特徴
+## <a id="sec-generated-title-4"></a> <a id="character"></a>特徴
+
 ハッシュテーブルは以下のような利点を持っています。
 
 * ハッシュ関数に偏りがなく、十分なサイズの配列を取れるなら、ほぼ一定時間で要素の挿入・削除・検索ができます。
@@ -131,7 +135,8 @@ x[Hash(<span class="literal">"string"</span>) % N].Add(<span class="literal">"st
 メモリがふんだんにある環境ではハッシュテーブルがよく用いられます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="impl"></a>実装方法
+## <a id="sec-generated-title-5"></a> <a id="impl"></a>実装方法
+
 ハッシュテーブルで必要となる内部データは、
 基本的に「リストの配列」です。
 リストは、「[片方向連結リスト](col_flist.md#flist)」のような構造で十分です。
@@ -219,7 +224,8 @@ C# / .NET Framework では、
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-6"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/HashTable.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/HashTable.cs)

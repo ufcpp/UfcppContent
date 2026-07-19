@@ -19,14 +19,16 @@ aliases:
 
 # 特殊な文字列リテラル
 
-##<a id="sec-generated-title-1"></a> <a id="abst">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abst">概要</a>
+
 <h5 class="version version6">Ver. 6</h5>
 
 C# 6 で、補間文字列と、nameof 演算子(nameof operator)という、2つの文字列関連機能が追加されました。
 
 また、C# 11 で、生文字列リテラルという構文が追加されました。
 
-##<a id="sec-generated-title-2"></a> <a id="string-interpolation">文字列補間</a>
+## <a id="sec-generated-title-2"></a> <a id="string-interpolation">文字列補間</a>
+
 クラスのメンバーを整形して文字列化するには、.NETでは<code>string</code>の<code>Format</code>メソッドを使います。
 
 <pre class="source" title="" lang="">
@@ -63,7 +65,8 @@ C# 6 で、補間文字列と、nameof 演算子(nameof operator)という、2�
 <code><span class="reserved">var</span> formatted = <span class="reserved">string</span>.Format(<span class="literal">"({0}, {1})"</span>, x, y);
 </code></pre>
 
-###<a id="sec-generated-title-3"></a> <a id="csharp10-improvement">C# 10 でのパフォーマンス改善</a>
+### <a id="sec-generated-title-3"></a> <a id="csharp10-improvement">C# 10 でのパフォーマンス改善</a>
+
 <h5 class="version version10">Ver. 10</h5>
 
 `string.Format` を使った実装ではどうしてもパフォーマンス上の改善が難しく、
@@ -92,7 +95,8 @@ handler.<span class="method">AppendLiteral</span>(<span class="string">")"</span
 
 また、C# 10.0 ではこれと同時に、[一定の条件を満たす場合、文字列補間を const にできるようになりました](sp_const.md#constant-string-interpolation)。
 
-###<a id="sec-generated-title-4"></a> <a id="escape">エスケープ</a>
+### <a id="sec-generated-title-4"></a> <a id="escape">エスケープ</a>
+
 エスケープ(`$""` の中で本来使えない文字を埋め込む方法)の方法は[通常の文字列](st_embeddedtype.md#escape-sequence)とほぼ同じです。
 通常の文字列リテラルと同じく、`\` に続けることで、`"`記号(`\"`)や改行文字(`\n`)などが書けます。
 
@@ -107,7 +111,8 @@ handler.<span class="method">AppendLiteral</span>(<span class="string">")"</span
 <code>"{10, 20}"
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="formatting">書式指定</a>
+### <a id="sec-generated-title-5"></a> <a id="formatting">書式指定</a>
+
 書式指定もできます。
 
 <pre class="source" title="文字列補間での書式指定" lang="">
@@ -132,7 +137,8 @@ handler.<span class="method">AppendLiteral</span>(<span class="string">")"</span
 <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x,x}<span class="string">"</span>);
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="conditional-in-string-interpolation">文字列補間と条件演算子</a>
+### <a id="sec-generated-title-6"></a> <a id="conditional-in-string-interpolation">文字列補間と条件演算子</a>
+
 `{}`の中には割と任意の式を書けます。
 たとえば、以下のように、メソッドを呼び出したり、`{}`の中にさらに文字列リテラル`""`を含めることもできます。
 
@@ -153,7 +159,8 @@ handler.<span class="method">AppendLiteral</span>(<span class="string">")"</span
 (「`?`がある時だけ`:`の解釈を変える」というのが高コストすぎるそうで、こういう仕様になっています。)
 一応、`s2`の行のように、1段階 `()`でくくればコンパイルできるようになります。
 
-###<a id="sec-generated-title-7"></a> <a id="multi-line">複数行の文字列補間</a>
+### <a id="sec-generated-title-7"></a> <a id="multi-line">複数行の文字列補間</a>
+
 また、`$@` から始めることで、複数行の文字列補間もできます。
 
 <pre class="source" title="複数行の文字列補間" lang="">
@@ -195,7 +202,8 @@ verbatim (here) string
 "
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="FormatableString"></a><a id="FormattableString">FormattableString</a>
+### <a id="sec-generated-title-8"></a> <a id="FormatableString"></a><a id="FormattableString">FormattableString</a>
+
 ちなみに、`Format`メソッドには、`IFormatProvider` インターフェイス(`System`名前空間)を与える(カルチャーなどの指定ができる)オーバーロードがあります(参考: 「[書式とカルチャー](../../dotnet/bcl/bcl_format.md#culture)」)。
 
 C# 6 では、文字列補間機能を使いつつ、`IFormatProvider` を与える方法もちゃんと提供されます。
@@ -225,7 +233,8 @@ System.<span class="type">IFormattable</span> formatable = <span class="literal"
 <code>System.<span class="type">IFormattable</span> formatable = System.Runtime.CompilerServices.<span class="type">FormattableStringFactory</span>.Create(<span class="literal">"({0}, {1})", x, y</span>;
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="FormattableString-overload">FormattableString のオーバーロード解決</a>
+### <a id="sec-generated-title-9"></a> <a id="FormattableString-overload">FormattableString のオーバーロード解決</a>
+
 `string` 引数と `FormattableString` 引数のオーバーロードがあるとき、
 `$""` リテラルを渡すと、常に `string` の方が優先されます。
 
@@ -285,7 +294,8 @@ System.<span class="type">IFormattable</span> formatable = <span class="literal"
 <span class="method">M2</span>(<span class="string">$&quot;&quot;</span> + <span class="string">$&quot;&quot;</span>);
 </code></pre>
 
-##<a id="sec-generated-title-10"></a> <a id="nameof-operator">nameof 演算子</a>
+## <a id="sec-generated-title-10"></a> <a id="nameof-operator">nameof 演算子</a>
+
 C# 6 で、<strong id="key-nameof" class="keyword">nameof 演算子</strong>(nameof operator: "name of X" (Xの名前)を1キーワード化したもの)というものが追加されました。
 変数や、クラス、メソッド、プロパティなどの名前(識別子)を文字列リテラルとして取得できます。
 
@@ -414,7 +424,8 @@ INotifyPropertyChanged の実装でもnameof 演算子を使う例を以下に�
 }
 </code></pre>。
 
-###<a id="sec-generated-title-11"></a> <a id="nameof-parameter"></a>nameof(引数) のスコープ変更
+### <a id="sec-generated-title-11"></a> <a id="nameof-parameter"></a>nameof(引数) のスコープ変更
+
 <h5 class="version version11">Ver. 11</h5>
 
 C# 11 で、`nameof` にちょっとだけ変更が掛かりました。
@@ -432,7 +443,8 @@ C# 11 で、`nameof` にちょっとだけ変更が掛かりました。
 これ以降にも、[`CallerArgumentExpression`](../cheatsheet/ap_ver10.md#CallerArgumentExpression) 属性や[`InterpolatedStringHandlerArgument`](improvedinterpolatedstring.md#InterpolatedStringHandlerArgument)属性など、
 引数名を参照したい属性がじわじわと増えていたりします。
 
-###<a id="sec-generated-title-12"></a> <a id="unbount-type-in-nameof">unbound な型に対する nameof</a>
+### <a id="sec-generated-title-12"></a> <a id="unbount-type-in-nameof">unbound な型に対する nameof</a>
+
 <h5 class="version version14">Ver. 14</h5>
 
 C# 14 から、`T<>` みたいに型引数を埋めていないジェネリック型(これを unbound (未束縛)とか open (開きっぱなし) な型といいます)に対して `nameof` 演算子を使えるようになりました。
@@ -502,7 +514,8 @@ C# 13 以前だと同じことをしたければ、意味もなく何か適当�
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-13"></a> <a id="raw-string"></a>生文字列リテラル
+## <a id="sec-generated-title-13"></a> <a id="raw-string"></a>生文字列リテラル
+
 C# 11 で、3つ以上の連続した `"` を使うことで、「一切エスケープが必要ない文字列リテラル」を書けるようになりました。
 
 <pre class="source" title="raw string literal">
@@ -521,7 +534,8 @@ C# 11 で、3つ以上の連続した `"` を使うことで、「一切エス�
 こういう「エスケープ不要の文字列」への要望が強くなってきています。
 本来ならば[逐語的文字列リテラル](st_embeddedtype.md#verbatim-string)(`@""`)がその役割に当たるんですが、この `@""` の構文が微妙に使いにくいので、それを置き換えるような新しい文法が導入されました。
 
-###<a id="sec-generated-title-14"></a> <a id="normal-literal">背景: 通常の文字列リテラルや、逐語的リテラル</a>
+### <a id="sec-generated-title-14"></a> <a id="normal-literal">背景: 通常の文字列リテラルや、逐語的リテラル</a>
+
 多くのプログラミング言語で、通常、`"` や `'` などの記号で挟まられた部分が[文字列リテラル](st_embeddedtype.md#stringl)になります。
 この「通常の文字列リテラル」で困るのは、その文字列中に `"` や `'` 自身を含む場合で、
 C# ではそういう場合のために、`\` を使った[エスケープ](st_embeddedtype.md#escape-sequence)を行います。
@@ -564,7 +578,8 @@ C# ではそういう場合のために、`\` を使った[エスケープ](st_e
     </span><span class="string">&quot;</span>;
 </code></pre>
 
-###<a id="sec-generated-title-15"></a> <a id="raw-string-syntax">新文法: 生文字列</a>
+### <a id="sec-generated-title-15"></a> <a id="raw-string-syntax">新文法: 生文字列</a>
+
 `"` や `'` を含め、あらゆる文字を一切エスケープなしで書けるようにしたいということで、
 C# 11 で、`"""` というように、「3つ以上の `"` を並べる」という新しい文法を追加しました。
 
@@ -588,7 +603,8 @@ C# 11 で、`"""` というように、「3つ以上の `"` を並べる」と�
     &quot;&quot;&quot;</span>;
 </code></pre>
 
-###<a id="sec-generated-title-16"></a> <a id="arbitrary-number">3つ以上の "</a>
+### <a id="sec-generated-title-16"></a> <a id="arbitrary-number">3つ以上の "</a>
+
 生文字列の目的は「一切のエスケープが不要」というものです。
 そこで通常問題になるのが、`"""` の内側で同じく `"""` を使いたい場合。
 
@@ -656,7 +672,8 @@ C# 11 で、`"""` というように、「3つ以上の `"` を並べる」と�
     <span class="string">&quot;&quot;</span>);
 </code></pre>
 
-###<a id="sec-generated-title-17"></a> <a id="single-or-multiple">単一行と複数行</a>
+### <a id="sec-generated-title-17"></a> <a id="single-or-multiple">単一行と複数行</a>
+
 単一行リテラルか複数行リテラルかは、単純に `"""` の後ろに改行があるかどうかで変わります。
 
 <pre class="source" title="">
@@ -729,7 +746,8 @@ def&quot;</span>);
 </code></pre>
 
 
-###<a id="sec-generated-title-18"></a> <a id="multiline-indent">複数行生文字列とインデント</a>
+### <a id="sec-generated-title-18"></a> <a id="multiline-indent">複数行生文字列とインデント</a>
+
 元々インデントが深い場所で逐語的文字列リテラルを書いた場合、
 以下のように、普段の C# コードと同じようなインデントを付けれないという問題があります。
 
@@ -797,7 +815,8 @@ def&quot;</span>);
     &quot;&quot;&quot;</span>);
 </code></pre>
 
-####<a id="sec-generated-title-19"></a> <a id="mixed-whitespace">空白文字の混在</a>
+#### <a id="sec-generated-title-19"></a> <a id="mixed-whitespace">空白文字の混在</a>
+
 C# は通常の(ASCII 文字の)スペース(文字コード U+0020)以外にも、以下のような文字を空白文字とみなします(通常スペースと同じ扱いになります)。
 
 * Unicode の文字カテゴリーが Zs (Space Separator)の文字
@@ -823,7 +842,8 @@ C# は通常の(ASCII 文字の)スペース(文字コード U+0020)以外にも
 
 
 
-###<a id="sec-generated-title-20"></a> <a id="priority-verbatim">注意: @"" 優先</a>
+### <a id="sec-generated-title-20"></a> <a id="priority-verbatim">注意: @"" 優先</a>
+
 1つ非常に紛らわしい書き方がありまして…
 以下のコード、出力はどうなるでしょう？
 
@@ -839,7 +859,8 @@ C# は通常の(ASCII 文字の)スペース(文字コード U+0020)以外にも
 
 `@` は見落としがちな文字なので多少注意が必要です。
 
-##<a id="sec-generated-title-21"></a> <a id="raw-string-interpolation">生文字列、かつ、文字列補間</a>
+## <a id="sec-generated-title-21"></a> <a id="raw-string-interpolation">生文字列、かつ、文字列補間</a>
+
 「生文字列で文字列補間をしたい」という要望もそれなりにあります。
 例えば以下のような感じのコードは、そのものはないにしても似たようなコードは書きたいことがあると思います。
 
@@ -881,7 +902,8 @@ C# は通常の(ASCII 文字の)スペース(文字コード U+0020)以外にも
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-22"></a> <a id="utf8-literal"></a>UTF-8 リテラル
+## <a id="sec-generated-title-22"></a> <a id="utf8-literal"></a>UTF-8 リテラル
+
 <h5 class="version version11">Ver. 11</h5>
 
 C# 11 で、`"abc"u8` みたいに、文字列リテラルの後ろに `u8` 接尾辞を付けることで、UTF-8 な byte 列を文字列リテラルの形で書けるようになりました。
@@ -899,10 +921,12 @@ C# 11 で、`"abc"u8` みたいに、文字列リテラルの後ろに `u8` 接�
 <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="warning"><span class="variable">hex</span> <span class="reserved">is</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt;</span>); <span class="comment">// 「常に true」警告が出る</span>
 </code></pre>
 
-###<a id="sec-generated-title-23"></a> <a id="utf8-in-csharp">補足: C# と UTF-8</a>
+### <a id="sec-generated-title-23"></a> <a id="utf8-in-csharp">補足: C# と UTF-8</a>
+
 UTF-8 のリテラルの話をもう少し掘り下げる前に、C# における文字コードの話を少し補足しておきます。
 
-####<a id="sec-generated-title-24"></a> <a id="history">時代背景</a>
+#### <a id="sec-generated-title-24"></a> <a id="history">時代背景</a>
+
 今となっては、文字コードと言えばほぼ Unicode で、
 その他の文字コードは互換性のために残っていると言っても過言ではないと思います。
 Unicode に関する話は昔、Build Insider に寄稿したことがあるのでそちらも参照してください。
@@ -931,7 +955,8 @@ UTF-16 が主流になると思われていた時代の名残りが大きいで�
 
 その結果、ここ数年、C# で「文字が UTF-16」というのが結構な負担になっていました。
 
-####<a id="sec-generated-title-25"></a> <a id="utf8-bytes">byte でやりくり</a>
+#### <a id="sec-generated-title-25"></a> <a id="utf8-bytes">byte でやりくり</a>
+
 この文字コード問題に対して、一時、
 `Utf8String` みたいな名前で UTF-8 な型を追加しようか何て話もありました。
 しかし、その方向性だと、`string` と `Utf8String` の2重管理がしんどい(これだけ `string` 前提で .NET エコシステムが確立された状況で追加は無理だろう)という雰囲気になっています。
@@ -958,7 +983,8 @@ UTF-16 が主流になると思われていた時代の名残りが大きいで�
 
 `Span<byte>` と `ReadOnlySpan<byte>` で UTF-8 文字列を扱っています。
 
-####<a id="sec-generated-title-26"></a> <a id="literal-bytes">C# 10 までの課題: 文字列リテラルの byte 配列化</a>
+#### <a id="sec-generated-title-26"></a> <a id="literal-bytes">C# 10 までの課題: 文字列リテラルの byte 配列化</a>
+
 一応、`Span<byte>` で UTF-8 文字列を扱えるとはいえ、
 問題は文字列リテラルです。
 `"true"` とか `" HTTP/1.0\r\n"` とか、 UTF-8 文字列 (ほとんどの場合、ASCII 文字列)を定数でプログラム中に埋め込みたい場面は結構あります。
@@ -977,7 +1003,8 @@ UTF-16 が主流になると思われていた時代の名残りが大きいで�
 とはいえ明らかに煩雑で、`true` などの文字列から上記のような `byte` 配列を生成してもらいたくなります。
 その結果、C# 11 で UTF-8 リテラルが入ることになりました。
 
-####<a id="sec-generated-title-27"></a> <a id="utf8-literal-usage">UTF-8 リテラルの利用例</a>
+#### <a id="sec-generated-title-27"></a> <a id="utf8-literal-usage">UTF-8 リテラルの利用例</a>
+
 [.NET の標準ライブラリ中のコード](https://github.com/dotnet/runtime)にも、前述のような「本当は文字列リテラルとして埋め込みたいのに仕方がなく `new byte[]` にしていた」というものが山ほどありました。
 C# 11 化に伴い、大量のコードが UTF-8 リテラル化されています。
 以下のような Pull Request が出ています。
@@ -1016,7 +1043,8 @@ C# 11 化に伴い、大量のコードが UTF-8 リテラル化されていま�
     <span class="string">&quot;it-it&quot;u8</span>; <span class="comment">// 以下略</span>
 </code></pre>
 
-###<a id="sec-generated-title-28"></a> <a id="utf8-literal-detail">UTF-8 リテラルの詳細</a>
+### <a id="sec-generated-title-28"></a> <a id="utf8-literal-detail">UTF-8 リテラルの詳細</a>
+
 とうことで、改めて UTF-8 リテラルの話に戻りましょう。
 
 [本節冒頭](#utf8-literal)で書いた通り、文字列リテラルの後ろに `u8` 接尾辞を付けることで UTF-8 リテラルになり、`ReadOnlySpan<byte>` を得ることができます。
@@ -1038,7 +1066,8 @@ C# 11 化に伴い、大量のコードが UTF-8 リテラル化されていま�
 <span class="reserved">byte</span>[] <span class="variable">s3</span> <span class="operator">=</span> <span class="error"><span class="string">&quot;abc&quot;u8</span></span>;
 </code></pre>
 
-####<a id="sec-generated-title-29"></a> <a id="utf8-literal-lowaring">UTF-8 リテラルの展開結果</a>
+#### <a id="sec-generated-title-29"></a> <a id="utf8-literal-lowaring">UTF-8 リテラルの展開結果</a>
+
 UTF-8 リテラルは、その文字列を UTF-8 として符号化した byte 列に展開されます。
 例えば、前述の `"abc"u8` は、以下のようなコードとほぼ同じ意味になります。
 
@@ -1056,7 +1085,8 @@ UTF-8 リテラルは、その文字列を UTF-8 として符号化した byte �
 ちなみに、最近の .NET は `Span<T>`, `ReadOnlySpan<T>` に対する最適化が結構よく掛かって、
 例えば、`"abc"u8.Length` は JIT 時に単なる `3` に展開されたりします。
 
-####<a id="sec-generated-title-30"></a> <a id="utf8-literal-concat">+ での結合</a>
+#### <a id="sec-generated-title-30"></a> <a id="utf8-literal-concat">+ での結合</a>
+
 UTF-8 リテラル同士は `+` 演算子で結合できます。
 例えば、以下の2変数には同じ結果が代入されます。
 
@@ -1081,7 +1111,8 @@ UTF-8 リテラル同士は `+` 演算子で結合できます。
 <span class="reserved">var</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="error"><span class="variable">abc</span> <span class="operator">+</span> <span class="string">&quot;def&quot;u8</span></span>; <span class="comment">// 片方が u8 リテラルでもダメ。エラー。</span>
 </code></pre>
 
-####<a id="sec-generated-title-31"></a> <a id="utf8-literal-non-const">注意: 非 const</a>
+#### <a id="sec-generated-title-31"></a> <a id="utf8-literal-non-const">注意: 非 const</a>
+
 (少なくとも C# 11 時点では) UTF-8 リテラルは [const](sp_const.md#const) 扱いにはなりません。
 const しか書けない場所で使うとエラーになります。
 具体的には、例えば、[`switch` や `is`](../datatype/typeswitch.md) に使えません。
@@ -1100,7 +1131,8 @@ const しか書けない場所で使うとエラーになります。
 <span class="reserved">bool</span> <span class="method">listPattern</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="reserved">is</span> [ <span class="number">97</span>, <span class="number">98</span>, <span class="number">99</span> ];
 </code></pre>
 
-####<a id="sec-generated-title-32"></a> <a id="utf8-raw-string">UTF-8 生文字列</a>
+#### <a id="sec-generated-title-32"></a> <a id="utf8-raw-string">UTF-8 生文字列</a>
+
 [生文字列リテラル](#raw-string)との組み合わせもできます。
 この場合も、`"""` の後ろに `u8` 接尾辞を付けます。
 
@@ -1130,7 +1162,8 @@ const しか書けない場所で使うとエラーになります。
 </code></pre>
 
 
-####<a id="sec-generated-title-33"></a> <a id="utf8-literal-invalid-error">注意: 不正な Unicode 文字</a>
+#### <a id="sec-generated-title-33"></a> <a id="utf8-literal-invalid-error">注意: 不正な Unicode 文字</a>
+
 UTF-8 リテラルでは、UTF-8 にしたときに不正になるものはコンパイル エラーになります。
 
 「UTF-8 リテラルでは」という前置きがあるのは、

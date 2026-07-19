@@ -53,6 +53,7 @@ niconico ブロマガ（趣味用）
 ## <a id="books"></a>書籍
 
 ### <a id="surasura"></a>スラスラわかるC# 
+
 <div>
         <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4798125822&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
 asin 番号: 4798125822</iframe>
@@ -93,6 +94,7 @@ C#には、足枷が少ないといっても、必要とされる機能だけで
 
 
 ### <a id="win8-store-apps"></a>【書籍】Windows8対応〔基本+実用〕Windowsストアアプリ開発入門
+
 <div>
         <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4774155012&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
 asin 番号: 4774155012</iframe>
@@ -112,6 +114,7 @@ iOSやAndroidなどとは異なった複数言語のサポート、Win RTとい�
 
 
 ### <a id="for-cpp-and-java"></a>【書籍】C#プログラミング すぐに現場で使える知識
+
 <div>
         <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4774150169&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
 asin 番号: 4774150169</iframe>
@@ -133,6 +136,7 @@ C++ もしくは Java の経験がある方向けに、
 
 
 ### <a id="before-get-started"></a>【書籍】コンピューター プログラミング入門以前
+
 <div>
         <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4839936919&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
 asin 番号: 4839936919</iframe>
@@ -155,10 +159,12 @@ Java や C# でプログラミングを覚えたという人にも低レイヤ�
 以下の書籍に翻訳監修として関わっています。
 
 ### プログラミング.NET Framework 第4版 (Microsoft Press)
+
 <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=4822294951&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
 asin 番号: 4822294951</iframe>(第3版から関わっています)
 
 ### プログラミング Windows Runtime
+
 <iframe style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" src="https://rcm-jp.amazon.co.jp/e/cm?t=cunflc-22&amp;o=9&amp;p=8&amp;l=as1&amp;asins=B00LMY5S14&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;lc1=0000ff&amp;bc1=000000&amp;bg1=ffffff&amp;f=ifr">
 asin 番号: B00LMY5S14</iframe>
 

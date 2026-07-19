@@ -19,7 +19,8 @@ aliases:
 
 # \[雑記\] 内部イテレータと外部イテレータ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 コレクションの要素の列挙・反復の方法には、
 内部イテレータと呼ばれる方式と外部イテレータと呼ばれる2つの方式（デザインパターン）があります。
 
@@ -32,7 +33,8 @@ C# の Enumerator が順方向アクセスしかできないので、
 そのイメージに引きずられて意味を使い分ける場合もあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="in_out"></a>内部イテレータと外部イテレータ
+## <a id="sec-generated-title-2"></a> <a id="in_out"></a>内部イテレータと外部イテレータ
+
 百聞は一見にしかずということで、具体例を出しつつ内部イテレータと外部イテレータについて説明しましょう。
 
 例ということで、余計な機能は一切省いた以下のような低機能リストを考えます。
@@ -55,7 +57,8 @@ C# の Enumerator が順方向アクセスしかできないので、
 で、この items の中身を列挙したい場合に、アプローチが2つあると。
 
 
-###<a id="sec-generated-title-3"></a> <a id="inner"></a>内部イテレータ
+### <a id="sec-generated-title-3"></a> <a id="inner"></a>内部イテレータ
+
 1つ目が内部イテレータ。
 まず、List クラス内に以下のようなメソッドを用意。
 
@@ -105,7 +108,8 @@ ForEach の実装は簡単なんですけども、
 また、この方法だと、break とか continue が使えなかったりします。
 
 
-###<a id="sec-generated-title-4"></a> <a id="outer"></a>外部イテレータ
+### <a id="sec-generated-title-4"></a> <a id="outer"></a>外部イテレータ
+
 もう1つが外部イテレータ。
 .NET Framework がとってるアプローチはこちらです。
 
@@ -196,7 +200,8 @@ while を使っていて、この方が反復処理らしくはあります。
 なので、こっちのアプローチの方が、実はほんのちょっとだけ遅い。）
 
 
-##<a id="sec-generated-title-5"></a> <a id="foreach"></a>C# の foreach
+## <a id="sec-generated-title-5"></a> <a id="foreach"></a>C# の foreach
+
 前節のとおり、外部イテレータ的アプローチには2つ面倒なところがあります。
 
 1. MoveNext とか Current とかいちいち書くのがめんどくさい
@@ -247,7 +252,8 @@ while (e.MoveNext())
 に相当するコードに変換されます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="iterator"></a>C# のイテレータ構文
+## <a id="sec-generated-title-6"></a> <a id="iterator"></a>C# のイテレータ構文
+
 外部イテレータの2つ目の面倒ごと、すなわち、
 「IEnumerator の実装がものすごい面倒」という問題を解決するために導入されたのが、
 C# 2.0 の「[イテレーター](sp2_iterator.md#iterator)」構文です。

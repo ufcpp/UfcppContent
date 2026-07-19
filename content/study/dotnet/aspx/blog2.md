@@ -18,7 +18,8 @@ aliases:
 
 # ブログ表示（２）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[ブログ表示（１）](blog1.md)」の続き。
 
 以下の3パターンの表示方法を実装します。
@@ -45,7 +46,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="latest"></a>「何日前か」を指定して表示
+## <a id="sec-generated-title-2"></a> <a id="latest"></a>「何日前か」を指定して表示
+
 まず、クエリ文字列で「何日前か」を指定してブログを表示するページを作ります。
 「[Web コントロールの利用](blog1.md#use_control)」で作った BlogLatest.aspx を元に少し書き換え。
 
@@ -131,7 +133,8 @@ BlogLatest の Page_Load イベントハンドラを以下のように書き換�
 最新から2日前のブログを表示できるようになります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="date"></a>日付を指定して表示
+## <a id="sec-generated-title-3"></a> <a id="date"></a>日付を指定して表示
+
 次は、日付を指定して表示する Web フォームを作ります。
 ファイル名は BlogDate.aspx としておきます。
 
@@ -178,7 +181,8 @@ Page_Load イベントハンドラ内の処理が違うだけで、
 1998年5月21日の記事が表示されます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="control"></a>ドロップダウンリストやカレンダーコントロールで日付を選択
+## <a id="sec-generated-title-4"></a> <a id="control"></a>ドロップダウンリストやカレンダーコントロールで日付を選択
+
 最後に、
 クエリ文字列ではなく、
 ページ中にドロップダウンリストやカレンダーコントロールを配置して、

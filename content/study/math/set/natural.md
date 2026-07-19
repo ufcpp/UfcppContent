@@ -18,14 +18,17 @@ aliases:
 
 # 自然数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 自然数全体の集合は、最小の無限集合として定義されます。
 集合論では、0 も自然数に含まれるものとします。
 また、自然数全体の集合をωを使って表します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d44e10"></a>自然数
-###<a id="sec-generated-title-3"></a> <a id="d44e12"></a>後継ぎ
+## <a id="sec-generated-title-2"></a> <a id="d44e10"></a>自然数
+
+### <a id="sec-generated-title-3"></a> <a id="d44e12"></a>後継ぎ
+
 「[対](set.md#pair)」で説明しましたが、空集合 <span class="math">φ</span> とそのシングルトン <span class="math"><span class="paren" style="font-size:em;">{</span>φ<span class="paren" style="font-size:em;">}</span></span> は別の集合になります。
 さらに、<span class="math">φ</span> と <span class="math"><span class="paren" style="font-size:em;">{</span>φ<span class="paren" style="font-size:em;">}</span></span> を使って対
 <span class="math"><span class="paren" style="font-size:em;">{</span>φ, <span class="paren" style="font-size:em;">{</span>φ<span class="paren" style="font-size:em;">}</span><span class="paren" style="font-size:em;">}</span></span> を作ると、
@@ -53,7 +56,8 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
 また、そのような集合はただ1つに確定するかどうかという問題です。
 
 
-###<a id="sec-generated-title-4"></a> <a id="d44e150"></a>無限集合
+### <a id="sec-generated-title-4"></a> <a id="d44e150"></a>無限集合
+
 まず最初の問題、「自然数全体を集めたものは集合になるかどうか」ですが、
 これは「[無限集合の公理](axiom.md#infinity)」によって解決します。
 <div class="math">
@@ -71,7 +75,8 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
 したがって、これを「自然数全体の集合」の定義にすることは出来ません。
 
 
-###<a id="sec-generated-title-5"></a> <a id="d44e180"></a>自然数の定義
+### <a id="sec-generated-title-5"></a> <a id="d44e180"></a>自然数の定義
+
 自然数の定義の仕方ですが、概念的な言い方をするならば「最小の無限集合（無限系譜）」として定義します。ちゃんとした手順を述べると、以下のような定義の仕方をします。
  
 まず、何でもいいので1つ無限集合 <span class="math">a</span> を選びます。
@@ -101,7 +106,8 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
 集合論では、0 も自然数に含めて考えます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="d44e307"></a>Peano の公理
+### <a id="sec-generated-title-6"></a> <a id="d44e307"></a>Peano の公理
+
 いままでに、ZFC 公理系における自然数の定義を述べました。
 この定義の仕方では、自然数 <span class="math">0, 1, 2, 3, …</span> などはそれぞれが集合になっていますし、
 <span class="math">0 ⊂ 1 ⊂ 2 ⊂ 3 ⊂ …</span> という包含関係まであります。
@@ -124,8 +130,10 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
 （だから定義や命題、条件という言い方ではなく、公理という名前が付いている。）
 
 
-##<a id="sec-generated-title-7"></a> <a id="operation"></a>自然数の間の関係・演算
-###<a id="sec-generated-title-8"></a> <a id="order"></a>自然数の順序
+## <a id="sec-generated-title-7"></a> <a id="operation"></a>自然数の間の関係・演算
+
+### <a id="sec-generated-title-8"></a> <a id="order"></a>自然数の順序
+
 集合論的に定義した自然数には、以下のようにして順序関係を与えることができます。
 
 * <span class="math">m ⊆ n</span>のとき、<span class="math">m ≦ n</span>。
@@ -145,7 +153,8 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="sum"></a>自然数の和
+### <a id="sec-generated-title-9"></a> <a id="sum"></a>自然数の和
+
 自然数の和は写像として定義します。
 まず、<span class="math">m</span> を自然数として、<span class="math">m</span> を固定すれば、以下の条件を満たすような写像 <span class="math">α<sub>m</sub></span> が一意的に定まります。
 <div class="math">
@@ -163,7 +172,8 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
 
 
 
-###<a id="sec-generated-title-10"></a> <a id="product"></a>自然数の積
+### <a id="sec-generated-title-10"></a> <a id="product"></a>自然数の積
+
 和と同様に、積は以下のような写像 <span class="math">μ<sub>m</sub></span> を使って定義します。
 <div class="math">
 μ<sub>m</sub><span class="paren" style="font-size:em;">(</span>0<span class="paren" style="font-size:em;">)</span> ＝ 0
@@ -191,7 +201,8 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
 
 
 
-###<a id="sec-generated-title-11"></a> <a id="power"></a>冪（べき）
+### <a id="sec-generated-title-11"></a> <a id="power"></a>冪（べき）
+
 同様に、
 <div class="math">
 π<sub>a</sub><span class="paren" style="font-size:em;">(</span>0<span class="paren" style="font-size:em;">)</span> ＝ 1
@@ -209,7 +220,8 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
 
 
 
-###<a id="sec-generated-title-12"></a> <a id="algebra"></a>代数系としての自然数
+### <a id="sec-generated-title-12"></a> <a id="algebra"></a>代数系としての自然数
+
 自然数に、上述のような定義により和や積を与えたものは「[代数系](../group/algebraic.md#algebraic)」になります。
 ただし、自然数は和に関しても積に関しても可換「[半群](../group/group.md#semigroup)」（逆元を持たない）になります。
  
@@ -236,7 +248,8 @@ x<sup>＋</sup> ＝ x ∪ <span class="paren" style="font-size:em;">{</span>x<sp
         </span>
         <sup>×</sup> ＝ <span class="paren" style="font-size:em;">{</span>ω, ×<span class="paren" style="font-size:em;">}</span></div>
 
-##<a id="sec-generated-title-13"></a> <a id="opnum"></a>いろいろな集合の元の個数
+## <a id="sec-generated-title-13"></a> <a id="opnum"></a>いろいろな集合の元の個数
+
 自然数の話を一通りした所で、
 いろいろな集合の「[元の個数](map.md#num)」の話をしましょう。
  

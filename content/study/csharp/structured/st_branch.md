@@ -18,13 +18,15 @@ aliases:
 
 # 条件分岐
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 プログラム中で、ある条件を満たしたときだけ処理の流れを変えたい場合があります。
 このような処理を<strong id="branch" class="keyword">条件分岐</strong>といい、
 C#では条件分岐のために <code>if</code>、<code>else</code>、<code>switch</code> などのキーワードを用意しています。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * if(条件式) 真のとき
 
 * if(条件式) 真のとき else 偽のとき
@@ -35,7 +37,8 @@ C#では条件分岐のために <code>if</code>、<code>else</code>、<code>swi
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="if"></a>if 文
+## <a id="sec-generated-title-3"></a> <a id="if"></a>if 文
+
 <strong id="if" class="keyword">if</strong> 文は以下のような書き方をします。
 
 <pre class="source" title="if 文の書式" lang="">
@@ -55,6 +58,7 @@ if 文は <code>if</code> の後の括弧内に書かれた条件式の真偽に
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 <pre class="source" title="if 文の例" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -94,7 +98,8 @@ if 文は <code>if</code> の後の括弧内に書かれた条件式の真偽に
 0が入力されました
 </pre>
 
-###<a id="sec-generated-title-5"></a> <a id="conditional-operator"></a>条件演算子
+### <a id="sec-generated-title-5"></a> <a id="conditional-operator"></a>条件演算子
+
 「[組み込み演算子](../start/st_operator.md#condition)」で紹介した条件演算子`?:`は、「`if`文の[式](miscexpressions.md#term)版」とも言える機能です。
 式なので戻り値が必須ですが、以下のように、条件を満たすときと満たさないときの両方で同じ型の値を返す場合には条件演算子を使った方がすっきり書けることが多いです。
 
@@ -118,7 +123,8 @@ if 文は <code>if</code> の後の括弧内に書かれた条件式の真偽に
 }
 </code></pre>
 
-####<a id="sec-generated-title-6"></a> <a id="terget-typed-conditional"></a>条件演算子のターゲット型推論
+#### <a id="sec-generated-title-6"></a> <a id="terget-typed-conditional"></a>条件演算子のターゲット型推論
+
 <h5 class="version version9">Ver. 9</h5>
 
 C# 9.0 から条件演算子に[ターゲット型](../start/misctyperesolution.md#target-type)からの型推論が働くようになりました。
@@ -159,7 +165,8 @@ C# 9.0 から条件演算子に[ターゲット型](../start/misctyperesolution.
 }
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="switch"></a>switch 文
+## <a id="sec-generated-title-7"></a> <a id="switch"></a>switch 文
+
 <strong id="switch" class="keyword">switch</strong> 文は以下のような書き方をします。
 
 <pre class="source" title="switch文の書式" lang="">
@@ -189,7 +196,8 @@ C# 9.0 から条件演算子に[ターゲット型](../start/misctyperesolution.
 <code>default</code> というラベルのついた場所に処理の流れが移ります。
 <code>break</code> は switch 文から抜けるために使います。
 
-###<a id="sec-generated-title-8"></a> <a id="type-switch"></a>型による分岐
+### <a id="sec-generated-title-8"></a> <a id="type-switch"></a>型による分岐
+
 <h5 class="version version7">Ver. 7</h5>
 
 C# 6までは、`case`に書ける条件は値のみでした。その値と一致したときにだけ、`case`以下の文が実行されます。
@@ -235,7 +243,8 @@ C# 6までは、`case`に書ける条件は値のみでした。その値と一�
 
 詳しくは「[型スイッチ](../datatype/typeswitch.md#switch)」で説明します。
 
-###<a id="sec-generated-title-9"></a> <a id="tuple-switch"></a>複数の値で switch
+### <a id="sec-generated-title-9"></a> <a id="tuple-switch"></a>複数の値で switch
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 からは、以下のように、複数の値をまとめて `switch` 文に掛けれるようになりました。
@@ -260,7 +269,8 @@ C# 8.0 からは、以下のように、複数の値をまとめて `switch` 文
 正確に言うと、これは「[タプル](../datatype/tuples.md)に対する[位置パターン](../datatype/patterns.md#positional)」だったりします。
 詳しくは「[タプル switch](../datatype/patterns.md#tuple-switch)」で説明します。
 
-###<a id="sec-generated-title-10"></a> <a id="fallthrough"></a>フォールスルーの禁止
+### <a id="sec-generated-title-10"></a> <a id="fallthrough"></a>フォールスルーの禁止
+
 C# の先祖に当たる C 言語や C++ 言語では、
 以下のようなコードが許されていました。
 
@@ -335,6 +345,7 @@ break 等が必須ではありません。
 
 
 ##### <a id="sec-generated-title-11"></a>サンプル
+
 <pre class="source" title="switch文の例" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -401,7 +412,8 @@ break 等が必須ではありません。
 対応していない操作です
 </pre>
 
-###<a id="sec-generated-title-12"></a> <a id="switch-expression"></a>switch 式
+### <a id="sec-generated-title-12"></a> <a id="switch-expression"></a>switch 式
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0では、`switch`の[式](miscexpressions.md#term)版が追加されました。
@@ -420,7 +432,8 @@ C# 8.0では、`switch`の[式](miscexpressions.md#term)版が追加されまし
 
 詳しくは「[`switch` 式](../datatype/typeswitch.md#switch-expression)」で説明します。
 
-##<a id="sec-generated-title-13"></a> <a id="goto"></a>goto 文
+## <a id="sec-generated-title-13"></a> <a id="goto"></a>goto 文
+
 <strong id="goto" class="keyword">goto</strong> 文は if 文や switch 文と異なり、無条件に処理の流れを変えるものです。
 例えば以下のように使います。
 

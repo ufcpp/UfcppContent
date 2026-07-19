@@ -18,12 +18,14 @@ aliases:
 
 # ラグランジュ形式
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[最小作用の原理](action.md#minaction)」を出発点として、
 座標系によらない力学法則を導出することができます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="equation"></a>ラグランジュの運動方程式
+## <a id="sec-generated-title-2"></a> <a id="equation"></a>ラグランジュの運動方程式
+
 「[最小作用の原理](action.md)」では、「物体は労力的にみて最短な経路を通ろうとする」という話をしました。
 <span class="math">
 L
@@ -79,7 +81,8 @@ L
 意味がはっきりするんですけどね。
 
 
-##<a id="sec-generated-title-3"></a> <a id="coordinate"></a>座標に依存しない力学
+## <a id="sec-generated-title-3"></a> <a id="coordinate"></a>座標に依存しない力学
+
 ラグランジュ形式の運動方程式は、
 元々が作用
 <span class="math">
@@ -131,7 +134,8 @@ L<sub>q</sub><span class="normal">=</span><span class="normal">0</span></div>
 変数（座標系）の取り方に依存しないラグランジュの運動方程式の方が自然の本質に近づいた式といえます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="vector"></a>ベクトルポテンシャル
+## <a id="sec-generated-title-4"></a> <a id="vector"></a>ベクトルポテンシャル
+
 位置エネルギー <span class="math">V</span> の部分が <span class="math">q'</span> にも依存する場合についても考えてみます。
 例えば、
 保存場（スカラーポテンシャル <span class="math">U</span> のみを持つ場）じゃなくて
@@ -182,7 +186,8 @@ q'
 これをベクトルポテンシャルによって生じる力だと考えて式を立てることができます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-5"></a> <a id="summary"></a>まとめ
+
 運動エネルギーを <span class="math">T<span class="paren" style="font-size:em;">(</span>q'<span class="paren" style="font-size:em;">)</span></span>、
 スカラーポテンシャルを <span class="math">U<span class="paren" style="font-size:em;">(</span>q<span class="paren" style="font-size:em;">)</span></span>、
 ベクトルポテンシャルを <span class="math"><span class="vector">A</span><span class="paren" style="font-size:em;">(</span>q<span class="paren" style="font-size:em;">)</span></span> として、

@@ -18,14 +18,16 @@ aliases:
 
 # 正則関数
 
-##<a id="sec-generated-title-1"></a> <a id="regular"></a>正則関数
+## <a id="sec-generated-title-1"></a> <a id="regular"></a>正則関数
+
 <strong id="regular_func" class="keyword">正則関数</strong>（regular function）とは、
 定義域中の任意の点で微分可能である関数のことを言います。
 この正則関数についての説明を行う前に、
 まず、複素関数が微分可能とはどういうことなのかを次節「[複素関数の微分可能性](#differentiability)」で説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="differentiability"></a>複素関数の微分可能性
+## <a id="sec-generated-title-2"></a> <a id="differentiability"></a>複素関数の微分可能性
+
 複素関数<span class="math">
         f<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span>
       </span>の微分は実数の場合と同じように、
@@ -147,7 +149,8 @@ aliases:
 また、定義域中の任意の点でコーシー・リーマンの関係式が成り立つ関数のことを「正則関数」といいます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="property"></a>正則関数の性質
+## <a id="sec-generated-title-3"></a> <a id="property"></a>正則関数の性質
+
 前節で述べたように、
 <div class="math">
       <table class="frac" summary="fraction"><tr><td class="num">∂u</td></tr><tr><td>∂x</td></tr></table>
@@ -165,7 +168,8 @@ aliases:
 関数<span class="math">f</span>が正則であるとき、以下の定理が成り立ちます。
 
 
-###<a id="sec-generated-title-4"></a> <a id="differential"></a>微分可能
+### <a id="sec-generated-title-4"></a> <a id="differential"></a>微分可能
+
 <span class="math">f</span>は微分可能です。
 
 関数が正則であることは、その関数が微分可能であることの必要十分条件です。
@@ -189,7 +193,8 @@ aliases:
 複素関数の場合は、1 階微分できれば必ず無限階微分可能になります。
 
 
-###<a id="sec-generated-title-5"></a> <a id="integral"></a>定積分が経路によらない
+### <a id="sec-generated-title-5"></a> <a id="integral"></a>定積分が経路によらない
+
 複素平面状の任意の経路<span class="math">C</span>に対して<span class="math">
           <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>f<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>z <span class="normal">=</span><span class="normal">0</span>
         </span> になります。
@@ -274,7 +279,8 @@ aliases:
         </span>のとなる関数で、実数関数のときと同じく、<em>原始関数</em>と呼びます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="conjugate"></a>共役変数を含まない
+### <a id="sec-generated-title-6"></a> <a id="conjugate"></a>共役変数を含まない
+
 <span class="math">f</span>は<span class="math">
           z<sup>\*</sup>
         </span>を含みません。
@@ -399,7 +405,8 @@ aliases:
         </span> を含みませんから、正則関数になります。
 
 
-###<a id="sec-generated-title-7"></a> <a id="summary"></a>まとめ
+### <a id="sec-generated-title-7"></a> <a id="summary"></a>まとめ
+
 一般に複素関数は実数関数と同じようには扱えません。
 しかし、コーシー・リーマンの関係式を満たす正則な複素関数は、
 微分・不定積分を定義でき、しかも実数のときとまったく同じように扱えます。

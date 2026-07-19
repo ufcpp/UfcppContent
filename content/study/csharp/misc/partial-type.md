@@ -14,7 +14,8 @@ aliases:
 
 # 型の分割定義 (partial)
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 C# 2.0 で、`partial` 修飾子を付けることで、クラスや構造体、インターフェイスを複数のファイルに分けて型を定義できるようになりました。
@@ -24,7 +25,8 @@ C# 2.0 で、`partial` 修飾子を付けることで、クラスや構造体、
 (それ以外の用途でむやみに複数のファイル分けると、どのファイルに何のメソッドがあるのか探しにくくなるので、
 通常は、むしろ、クラス定義を複数のファイルに分割しない方がいいです。)
 
-##<a id="sec-generated-title-2"></a> <a id="tool-generated-code">背景: ツール生成のソースコード</a>
+## <a id="sec-generated-title-2"></a> <a id="tool-generated-code">背景: ツール生成のソースコード</a>
+
 Visual Studio などの統合開発環境を利用していると分かると思いますが、
 ソースファイルの一部分はプログラマーの手書きではなく、
 開発ツールが自動的に生成してくれる部分があります。
@@ -104,7 +106,8 @@ WinForms アプリを作ると、ソースコード中に以下のような領�
 手で書き換える想定のコードとツール生成コードが1ファイルに混ざっていることで、
 例えば、「ファイル内で一斉置換」みたいな作業をしたときにツール生成部分を壊したりといった事故もありました。
 
-##<a id="sec-generated-title-3"></a> <a id="partial-class">型の分割</a>
+## <a id="sec-generated-title-3"></a> <a id="partial-class">型の分割</a>
+
 このように、手書きとツール生成の混在は危険なので、別ファイルに分かれている方が安心です。
 そこで、C# 2.0 では、クラス定義時に `partial` というキーワードを付けることで、
 クラス定義を複数に分割することができるようになりました。
@@ -231,7 +234,8 @@ WPF アプリでは、手での書き換えを前提とした以下のような�
 
 こちらのツール生成のコードは、通常、どこに生成されたのかすら意識せず、中身を覗くこともほとんどありません。
 
-##<a id="sec-generated-title-4"></a> <a id="partial_method">メソッドの実装の分離</a>
+## <a id="sec-generated-title-4"></a> <a id="partial_method">メソッドの実装の分離</a>
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 で
@@ -298,7 +302,8 @@ C# 3.0 で
 
 こうすると、追加した `OnIdChanged` や `OnNameChanged` の実装が呼び出されるようになります。
 
-###<a id="sec-generated-title-5"></a> <a id="partial_method-side-effect">部分メソッドの引数で副作用を起こす場合</a>
+### <a id="sec-generated-title-5"></a> <a id="partial_method-side-effect">部分メソッドの引数で副作用を起こす場合</a>
+
 「不要な場合は完全削除」という仕様には、1つ奇妙な動作を招く点があります。
 問題が起こり得るのは、部分メソッドの呼び出しの際に引数で副作用を起こす場合です。
 
@@ -329,7 +334,8 @@ C# 3.0 で
 （あるいは、この副作用を積極的に利用したトリッキーなコードも書けるでしょうが・・・。
 個人的には非推奨。）
 
-##<a id="sec-generated-title-6"></a> <a id="extended_partial_method">部分メソッドの拡張</a>
+## <a id="sec-generated-title-6"></a> <a id="extended_partial_method">部分メソッドの拡張</a>
+
 <h5 class="version version9">Ver. 9</h5>
 
 [前節で説明した部分メソッド](#partial_method)は「開発ツールが生成したコードが先にあって、そこに手書き処理を足したいときに使う物」です。
@@ -414,6 +420,7 @@ C# 9.0 では、そのための「不完全なメソッド」を書く方法と�
 ただ、最終的には、下手にキーワードを追加したり全然違う文法を導入するよりはマシという判断が下りました。
 
 #### <a id="sec-generated-title-7"></a>シグネチャの一致
+
 部分メソッドは、宣言側と実装側でシグネチャ(引数リスト、戻り値の型、修飾子)が一致している必要があります。
 
 アクセシビリティ、`static`, `readonly`, `ref` の有無が違うとエラーになります。
@@ -509,7 +516,8 @@ C# 9.0 では、そのための「不完全なメソッド」を書く方法と�
 <span class="reserved">class</span> <span class="type">B</span> : <span class="type">Attribute</span> { }
 </pre>
 
-###<a id="sec-generated-title-8"></a> <a id="partial_property">部分プロパティ</a>
+### <a id="sec-generated-title-8"></a> <a id="partial_property">部分プロパティ</a>
+
 <h5 class="version version13">Ver. 13</h5>
 
 [C# 3.0 からある方の部分メソッド](#partial_method) は「戻り値なし(`void`)でないとダメ」という制約があって、
@@ -572,7 +580,8 @@ C# 13 と同世代の .NET 9 からはプロパティで同じことができる
 }
 </pre>
 
-####<a id="sec-generated-title-9"></a> <a id="auto-property">プロパティの宣言と自動実装</a>
+#### <a id="sec-generated-title-9"></a> <a id="auto-property">プロパティの宣言と自動実装</a>
+
 C# の文法上の紛らわしさなんですが、
 プロパティに対して `{ get; set; }` などと書いたときの扱いには2種類あるので注意が必要です。
 
@@ -634,7 +643,8 @@ C# の文法上の紛らわしさなんですが、
 }
 </pre>
 
-###<a id="sec-generated-title-10"></a> <a id="partial-event">部分イベントと部分コンストラクター</a>
+### <a id="sec-generated-title-10"></a> <a id="partial-event">部分イベントと部分コンストラクター</a>
+
 [部分プロパティ](#partial_property) (C# 13)に続いて、
 C# 14 では[イベント](../functional/sp_event.md)と[コンストラクター](../oop/oo_construct.md)も部分定義できるようになりました。
 (これも「工数の問題で後回しになっていただけ」の類です。)
@@ -665,7 +675,8 @@ C# 14 では[イベント](../functional/sp_event.md)と[コンストラクタ�
 </pre>
 
 
-##<a id="sec-generated-title-11"></a> <a id="contextual-partial-keyword">partial キーワードの位置</a>
+## <a id="sec-generated-title-11"></a> <a id="contextual-partial-keyword">partial キーワードの位置</a>
+
 部分クラス・部分メソッドの仕様は C# 2.0 から追加されたものです。
 `partial`というキーワードも 2.0 からの後付けなわけで、完全に予約語(変数などの名前に使えない単語)にしてしまうと、1.0 時代に書かれたコードを壊す可能性がありました。
 

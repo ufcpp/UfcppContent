@@ -14,7 +14,8 @@ aliases:
 
 # \[雑記\] InlineArray
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 .NET 8 で、
@@ -28,7 +29,8 @@ aliases:
 本稿で書いているようなコードを直接書く必要はほぼありません。
 (実質、本稿はコレクション式の内部実装(の一部)の説明みたいなものです。)
 
-##<a id="sec-generated-title-2"></a> <a id="inline-array-attribute">InlineArray 属性</a>
+## <a id="sec-generated-title-2"></a> <a id="inline-array-attribute">InlineArray 属性</a>
+
 .NET 8 から、
 以下のように、構造体に属性を付けると構造体のサイズが変わります。
 
@@ -71,7 +73,8 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 }
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="vs-stackalloc">stackalloc との違い</a>
+## <a id="sec-generated-title-3"></a> <a id="vs-stackalloc">stackalloc との違い</a>
+
 これまでも [`stackalloc`](../interop/sp_unsafe.md#safe-stackalloc) という機能を使えば、
 一応、スタック上に配列上のデータを置くことはできました。
 ただ、`stackalloc` には結構強い制限があって使いづらいです。
@@ -118,7 +121,8 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 }
 </pre>
 
-##<a id="sec-generated-title-4"></a> <a id="special-syntax">C# 側特殊対応</a>
+## <a id="sec-generated-title-4"></a> <a id="special-syntax">C# 側特殊対応</a>
+
 一応、C# 側にもこの InlineArray に対する特殊対応が入っています。
 (一応、C# 12 の新機能。)
 
@@ -161,7 +165,8 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 }
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="collection-expressions">コレクション式と InlineArray</a>
+## <a id="sec-generated-title-5"></a> <a id="collection-expressions">コレクション式と InlineArray</a>
+
 前述の通り、
 `InlineArray` 属性には `[EditorBrowsable(Never)]` が付いていて、
 開発者が直接使う想定はあまりありません。
@@ -209,7 +214,8 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 }
 </pre>
 
-##<a id="sec-generated-title-6"></a> <a id="future">将来展望</a>
+## <a id="sec-generated-title-6"></a> <a id="future">将来展望</a>
+
 現状では、先ほどの例でいうと `FixedArray3<T>` と `FixedArray5<T>` があるように、
 長さごとに別の型を用意せざるを得ない状態です。
 「N 個のフィールドを並べる」コードを手書きするよりはマシですが、

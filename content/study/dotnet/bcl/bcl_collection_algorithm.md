@@ -18,7 +18,8 @@ aliases:
 
 # コレクションの内部実装
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 コレクションにはいろいろあって、それぞれ特徴があり、目的に応じて使い分ける必要があります。
 コレクションの内部的な実装方法を知ることは、それぞれの特徴を把握する（＝使い分けができるようになる）のの手助けになるでしょう。
 
@@ -27,7 +28,8 @@ aliases:
 具体的なコードを伴った詳細は、別途「[コレクション](../../algorithm/index.md#collection)」で説明しています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="sec-array-list"></a>配列リスト
+## <a id="sec-generated-title-2"></a> <a id="sec-array-list"></a>配列リスト
+
 個数不定のデータを持つための一番手っ取り早い方法は、事前に配列を確保しておいて、状況に応じて確保しなおす方法です。
 このような方式を<strong id="array-list" class="keyword">配列リスト</strong>（array list）と呼びます。
 
@@ -60,7 +62,8 @@ List&lt;T&gt; やStack&lt;T&gt; で内部的にやってることはほぼこれ
 要素のコピーはそれなりに高負荷なので、要素の最大数がだいたいわかってる場合は、事前に確保する配列の長さをコンストラクターに渡しておきます（capacity引数）。
 
 
-##<a id="sec-generated-title-3"></a> <a id="sec-circular-buffer"></a>循環バッファー
+## <a id="sec-generated-title-3"></a> <a id="sec-circular-buffer"></a>循環バッファー
+
 配列リストは、内部的にはあくまでただの配列で、末尾以外の場所に対して要素の追加/削除をしようとすると、
 要素を1つずつ後ろ/前にずらして空きを作る/埋める作業が発生します。
 Stack&lt;T&gt; のように、末尾以外見ないコレクションの場合ならこれでいいんですが、
@@ -89,7 +92,8 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 配列の長さが足りなくなったら再確保するのは配列リストと同じです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="sec-linked-list"></a>連結リスト
+## <a id="sec-generated-title-4"></a> <a id="sec-linked-list"></a>連結リスト
+
 配列リストなどでは、事前に大き目の配列を確保する必要があります。
 これに対して、必要な分だけメモリを確保するために使うのが<strong id="linked-list" class="keyword">連結リスト</strong>（linked list）です。
 .NET には、そのまま LinkedList&lt;T&gt; という名前のクラスがあって、連結リストを使って実装されています。
@@ -109,7 +113,8 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 しかし、インデックスを使ったアクセスはできなくなります（前から順に数えていく効率の悪いやり方しかできない）。
 
 
-##<a id="sec-generated-title-5"></a> <a id="sec-hash-table"></a>ハッシュ テーブル
+## <a id="sec-generated-title-5"></a> <a id="sec-hash-table"></a>ハッシュ テーブル
+
 <strong id="hash-table" class="keyword">ハッシュ テーブル</strong>は、要素の検索を高速に行うために使うデータ構造です。
 
 メモリがふんだんに使えて、
@@ -117,7 +122,8 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 検索をきわめて効率良くできる実装方法です。
 
 
-###<a id="sec-generated-title-6"></a> <a id="sec-hash-value"></a>ハッシュ値
+### <a id="sec-generated-title-6"></a> <a id="sec-hash-value"></a>ハッシュ値
+
 キーに対応する何らかの整数値を作れれば、普通の配列を使って辞書を実現できます。
 その「何らかの整数値」というのがハッシュ値（hash value: 直訳だと「ごちゃまぜにした値」）です。
 
@@ -125,7 +131,8 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 ハッシュ テーブルのキーにしたい型は、このGetHashCodeを“適切に”実装する必要があります。
 
 
-###<a id="sec-generated-title-7"></a> <a id="how-hash-table-works"></a>ハッシュ テーブルの原理
+### <a id="sec-generated-title-7"></a> <a id="how-hash-table-works"></a>ハッシュ テーブルの原理
+
 さて、ハッシュ値を使ったコレクション（Dictionary&lt;TKey, TValue&gt; や HashSet&lt;T&gt; など）を作るにあたって、
 2つ問題があります。
 
@@ -161,14 +168,16 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 事前に大き目の領域を取れない場合、被りやすくなり、性能を落とします。
 
 
-##<a id="sec-generated-title-8"></a> <a id="sec-baranced-tree"></a>二分探索ツリー（平衡ツリー）
+## <a id="sec-generated-title-8"></a> <a id="sec-baranced-tree"></a>二分探索ツリー（平衡ツリー）
+
 ハッシュ テーブルは、メモリをふんだんに使える状況でないとなかなか性能が出ません。
 （逆に、メモリに余裕があって、かなり大き目の領域を確保しておくなら、かなり高速です。）
 これに対して、必要な分だけメモリを使いつつ、要素の検索を高速に行うために使うデータ構造として、
 <strong id="binary-tree" class="keyword">二分探索ツリー</strong>（binary search tree）というものがあります。
 
 
-###<a id="sec-generated-title-9"></a> <a id="sec-tree"></a>ツリー
+### <a id="sec-generated-title-9"></a> <a id="sec-tree"></a>ツリー
+
 二分探索ツリーの話に入る前に、ツリーについても簡単に説明を。
 
 ツリーは、連結リストと同じように、ノードを作ってつないで作ります。ただし、連結リストとは違って、図8のようなつなぎ方をします。
@@ -183,7 +192,8 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 より一般的には、循環のない有向グラフのことをツリーと呼びます。
 
 
-###<a id="sec-generated-title-10"></a> <a id="sec-binary-search-tree"></a>二分探索ツリー
+### <a id="sec-generated-title-10"></a> <a id="sec-binary-search-tree"></a>二分探索ツリー
+
 ツリーを使ってデータを持つとして、以下のような制約を付けると、高速な検索ができるようになります。
 
 * 左側の子孫ノードには、必ず自分より小さい値を入れる
@@ -216,7 +226,8 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 つまり、<span class="math">O<span class="paren" style="font-size:em;">(</span><span class="normal">log</span> n<span class="paren" style="font-size:em;">)</span></span> での検索ができます。
 
 
-###<a id="sec-generated-title-11"></a> <a id="sec-balanced-tree"></a>平衡ツリー
+### <a id="sec-generated-title-11"></a> <a id="sec-balanced-tree"></a>平衡ツリー
+
 上記の例はかなり良い例で、実はうまくツリーの高さが <span class="math"><span class="normal">log</span> n</span> にならない場合があります。
 たとえば、1, 2, 3, 4, 5の順で要素を挿入すると、図19に示すような偏りが生じて、ツリーの高さが <span class="math">n</span> になります。
 
@@ -233,13 +244,15 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 日本人的な感覚でいうと白黒や紅白と表現すべきかも）という平衡化アルゴリズムを使っています。
 
 
-##<a id="sec-generated-title-12"></a> <a id="sec-sorted-array"></a>整列済み配列
+## <a id="sec-generated-title-12"></a> <a id="sec-sorted-array"></a>整列済み配列
+
 配列を整列済みに保っておけば、二分探索という高速な検索アルゴリズムが使えます。
 
 これを応用したコレクションが SortedList&lt;TKey, TValue=&gt; クラスです。
 
 
-###<a id="sec-generated-title-13"></a> <a id="sec-binary-search"></a>二分探索
+### <a id="sec-generated-title-13"></a> <a id="sec-binary-search"></a>二分探索
+
 整列済みの配列に対して、以下のような手順で、要素の検索を高速に行えます（図11）。
 
 * ど真ん中を見る

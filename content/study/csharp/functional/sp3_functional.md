@@ -19,7 +19,8 @@ aliases:
 
 # 関数型言語・動的言語的な機能
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 の新機能には、関数型言語や動的言語が由来と思われる機能がいくつかあります。

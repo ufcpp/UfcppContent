@@ -18,17 +18,20 @@ aliases:
 
 # 使わなくなった機能・新しい機能
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# も .NET Framework （のライブラリ）も、ずいぶんと進歩してきました。
 その結果、一部の構文やライブラリは、別のもので置き換えられる/置き換えた方がいいものも出てきています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="obsolete"></a>過去の遺物
+## <a id="sec-generated-title-2"></a> <a id="obsolete"></a>過去の遺物
+
 いくつかの構文は、もう完全に過去のものです
 （互換性のためだけに残されています）。
 
 
-###<a id="sec-generated-title-3"></a> <a id="non-generic"></a>非ジェネリック コレクション
+### <a id="sec-generated-title-3"></a> <a id="non-generic"></a>非ジェネリック コレクション
+
 ポイント: 非ジェネリック版のコレクションは使ってはいけない。
 
 C# 2.0 で 「[ジェネリック](../oop/sp2_generics.md#generics)」 が導入されると同時に、ジェネリック版のコレクションが導入されました。
@@ -110,7 +113,8 @@ C# 2.0 で 「[ジェネリック](../oop/sp2_generics.md#generics)」 が導入
 実際、Silverlight など、後発のフレームワークの場合、<code>BitArray</code> 以外の非ジェネリック版のコレクションは削除されています。
 
 
-###<a id="sec-generated-title-4"></a> <a id="anonymous-function"></a>匿名関数
+### <a id="sec-generated-title-4"></a> <a id="anonymous-function"></a>匿名関数
+
 ポイント: 匿名メソッド式にメリットはない。
 
 C# では、いわゆる匿名関数を作るための構文として、2種類のものを持っています。
@@ -136,12 +140,14 @@ Func&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-5"></a> <a id="easy-to-use"></a>簡単に書けるようになったもの
+## <a id="sec-generated-title-5"></a> <a id="easy-to-use"></a>簡単に書けるようになったもの
+
 新しい構文やライブラリが導入されたことで、
 「こう書いた方がいいのはわかっているけども、書くのが面倒だから断念」というような妥協が減りました。
 
 
-###<a id="sec-generated-title-6"></a> <a id="async"></a>非同期処理
+### <a id="sec-generated-title-6"></a> <a id="async"></a>非同期処理
+
 ポイント: Task クラスを使いましょう。
 
 時間がかかる処理は、非同期処理にすべきです。
@@ -149,6 +155,7 @@ Func&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;
 
 
 ##### <a id="sec-generated-title-7"></a>過去の書き方
+
 ただ、非同期処理は、かなり面倒でした。
 
 例えば、C# 1.0 の頃からある非同期処理の書き方として、
@@ -195,6 +202,7 @@ c.DownloadStringAsync(<span class="reserved">new</span> <span class="type">Uri</
 
 
 ##### <a id="sec-generated-title-8"></a>これからの書き方
+
 APM や EAP では、複数の非同期処理をつないで、1つの非同期 API にするような作業が面倒でした。
 そのため、性能的に良くないのはわかっていても、ついつい同期処理で書くことが多かったです。
 
@@ -241,7 +249,8 @@ C# 5.0 では、さらに、この手の非同期処理を、同期版と同じ�
 
 
 
-####<a id="sec-generated-title-9"></a> <a id="no-thread"></a>余談: スレッドは直接使わない
+#### <a id="sec-generated-title-9"></a> <a id="no-thread"></a>余談: スレッドは直接使わない
+
 ポイント: Thread クラスを直接使うのは控えましょう。大半は、Task クラス（.NET 3.5 以前でも、ThreadPool クラス）を使う方が性能が良くなります。
 
 新しくスレッドを立てるというのは、かなり重たい処理です。
@@ -256,7 +265,8 @@ C# 5.0 では、さらに、この手の非同期処理を、同期版と同じ�
 
 
 
-###<a id="sec-generated-title-10"></a> <a id="linq"></a>LINQ
+### <a id="sec-generated-title-10"></a> <a id="linq"></a>LINQ
+
 ポイント: LINQ を使えば、不要な一時リストを作る必要はありません。
 
 データを入力、加工後、集計して表示したいとします。
@@ -295,6 +305,7 @@ C# 5.0 では、さらに、この手の非同期処理を、同期版と同じ�
 
 
 ##### <a id="sec-generated-title-11"></a>過去の書き方
+
 C# 1.0 の頃は、「[イテレーター](../data/sp2_iterator.md#iterator)」構文も 「[LINQ](../data/sp3_linq.md#linq)」 もなく、以下のように書きがちでした。
 
 <pre class="source" title="" lang="">
@@ -350,6 +361,7 @@ C# 1.0 の頃は、「[イテレーター](../data/sp2_iterator.md#iterator)」�
 
 
 ##### <a id="sec-generated-title-12"></a>今の書き方
+
 イテレーター構文と LINQ を使うことで、余計な一時リストをなくせます。
 
 <pre class="source" title="" lang="">
@@ -398,7 +410,8 @@ C# 1.0 の頃は、「[イテレーター](../data/sp2_iterator.md#iterator)」�
 
 
 
-####<a id="sec-generated-title-13"></a> <a id="ienumerable"></a>余談: IEnumerable を使いましょう
+#### <a id="sec-generated-title-13"></a> <a id="ienumerable"></a>余談: IEnumerable を使いましょう
+
 ポイント: メソッドの引数や戻り値、プロパティの型には IEnumerable&lt;T&gt; を使いましょう。
 
 データ列に対して、前から順に1要素ずつ読む操作だけしかしないことが多いです。
@@ -437,7 +450,8 @@ C# 1.0 の頃は、「[イテレーター](../data/sp2_iterator.md#iterator)」�
 
 
 
-###<a id="sec-generated-title-14"></a> <a id="xml"></a>XML
+### <a id="sec-generated-title-14"></a> <a id="xml"></a>XML
+
 ポイント: XDocument クラス（System.Xml.Linq 名前空間）を使いましょう。
 
 C# 3.0/.NET 3.5 で 「[LINQ](../data/sp3_linq.md#linq)」 が導入されたことで、データ処理において IEnumerable&lt;T&gt; インターフェイスが特別な意味を持つようになりました。
@@ -446,10 +460,12 @@ C# 3.0/.NET 3.5 で 「[LINQ](../data/sp3_linq.md#linq)」 が導入されたこ
 
 
 ##### <a id="sec-generated-title-15"></a>過去の書き方
+
 .NET 3.0 以前では、XmlDocument クラス（System.Xml 名前空間）を使っていました。
 
 
 ##### <a id="sec-generated-title-16"></a>今の書き方
+
 .NET 3.5 で、XDocument クラスが追加されました。
 IEnumerable&lt;XElement&gt; で要素一覧を読み出せるので、LINQ to Objects が使えます。
 
@@ -469,7 +485,8 @@ IEnumerable&lt;XElement&gt; で要素一覧を読み出せるので、LINQ to Ob
 
 
 
-###<a id="sec-generated-title-17"></a> <a id="auto-property"></a>自動実装プロパティ
+### <a id="sec-generated-title-17"></a> <a id="auto-property"></a>自動実装プロパティ
+
 ポイント: フィールドを public にしてはいけません。
 自動実装プロパティを使えば手間もかからないので、フィールドよりもプロパティを使いましょう。
 
@@ -514,11 +531,13 @@ IEnumerable&lt;XElement&gt; で要素一覧を読み出せるので、LINQ to Ob
 
 
 
-##<a id="sec-generated-title-18"></a> <a id="depends"></a>使い分けも必要な機能
+## <a id="sec-generated-title-18"></a> <a id="depends"></a>使い分けも必要な機能
+
 いくつかの新機能は、状況に応じた利用が必要です。
 
 
-###<a id="sec-generated-title-19"></a> <a id="var"></a>var（型推論）
+### <a id="sec-generated-title-19"></a> <a id="var"></a>var（型推論）
+
 ポイント: だいたい var 使ってれば OK。
 
 C# 3.0 で導入された 「[var](../start/st_variable.md#var)」 は、型推論（右辺値の型に合わせて、静的な型を決定する）なので、C# の型安全性は崩れません。
@@ -529,6 +548,7 @@ C# 3.0 で導入された 「[var](../start/st_variable.md#var)」 は、型推�
 
 
 ##### <a id="sec-generated-title-20"></a>問題: 紙に印刷すると見づらい
+
 var の利用は、Visual Studio の補助が前提な面もあります。
 Visual Studio 上では、図2のように、型推論の結果がすぐに見えるので、多少読みにくいコードであっても、変数の型がわからなくなることはありません。
 
@@ -543,6 +563,7 @@ var が使われないことも多いです。
 
 
 ##### <a id="sec-generated-title-21"></a>例外: あえて右辺と違う型で変数を作りたい場合
+
 C# ではあまりないですが、例えば、具体的な型ではなく、インターフェイスの変数を作りたい場合があります。
 
 <pre class="source" title="明示的にインターフェイスを使う" lang="">
@@ -551,7 +572,8 @@ C# ではあまりないですが、例えば、具体的な型ではなく、�
 
 
 
-###<a id="sec-generated-title-22"></a> <a id="default-parameter"></a>引数の既定値
+### <a id="sec-generated-title-22"></a> <a id="default-parameter"></a>引数の既定値
+
 ポイント: 引数の既定値は、一度設定したら変更しちゃダメ。変更の可能性があるなら、オーバーロードを使う。
 
 C# 4.0 で、引数に既定値を設定できるようになりました。
@@ -573,6 +595,7 @@ C# 4.0 で、引数に既定値を設定できるようになりました。
 
 
 ##### <a id="sec-generated-title-23"></a>問題: バージョニング
+
 引数の既定値にはバージョニングの問題（変更したら、利用側も再コンパイルしてもらわないと変更が反映されず、バージョンを変えた時に値が狂う可能性がある）があります。
 （参考: 「[余談： なんでいまさら？](../structured/sp4_optional.md#fyi)」）
 
@@ -599,7 +622,8 @@ C# 4.0 で、引数に既定値を設定できるようになりました。
 private メソッドならば問題は起こりません。
 
 
-##<a id="sec-generated-title-24"></a> <a id="breaking-change"></a>破壊的変更
+## <a id="sec-generated-title-24"></a> <a id="breaking-change"></a>破壊的変更
+
 C# を見ていると、「こんなに機能を追加してしまって、過去のコードを壊さないのか」という疑問が出てくるかもしれません。
 
 確かに、破壊的変更も 0 ではないんですが、
@@ -615,7 +639,8 @@ C# を見ていると、「こんなに機能を追加してしまって、過�
 C# は、これでも新機能の追加に慎重で、既存コードとの互換性を壊さないか、かなり大量のコードを使ってテストしているようです。
 上記リンクで紹介した破壊的変更も、これで既存コードが動かなくなって困ったという話は著者の見聞きしている範囲では皆無ですし、めったなことでは引っかからないと思います。
 
-###<a id="sec-generated-title-25"></a> <a id="contextual-keyword"></a>文脈キーワード（破壊的変更を避けるために）
+### <a id="sec-generated-title-25"></a> <a id="contextual-keyword"></a>文脈キーワード（破壊的変更を避けるために）
+
 C# の多くのキーワードは文脈依存（特定の状況でだけキーワードとみなされて、その他の状況では変数名などに使える）になっています。
 
 * var は、変数宣言ステートメントでだけキーワード扱いされます。

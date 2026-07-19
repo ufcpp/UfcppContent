@@ -18,7 +18,8 @@ aliases:
 
 # 自然対数の底
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 自然対数の底 e に関して。
  
 e は、
@@ -29,7 +30,8 @@ e は、
 というか、「自然対数の底」って呼ぶ方が一般的ですけど。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="definition"></a>定義
+## <a id="sec-generated-title-2"></a> <a id="definition"></a>定義
+
 自然対数の底 e は、
 以下のいずれかで定義されることが多いです。
 （どちらの定義でも出てくる結論は同じ。）
@@ -169,7 +171,8 @@ n
 となります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="convergence"></a>e の収束性
+## <a id="sec-generated-title-3"></a> <a id="convergence"></a>e の収束性
+
 さて、ここまでは教科書通りです。
 ところで、高校の教科書の e に関する記述には少しごまかしがあります。
 教科書曰く、
@@ -230,7 +233,8 @@ n
 の有界性と単調増加性についての話をします。
 
 
-###<a id="sec-generated-title-4"></a> <a id="increase"></a>単調増加性
+### <a id="sec-generated-title-4"></a> <a id="increase"></a>単調増加性
+
 数列
 <span class="math">
 e<sub>n</sub><span class="normal">=</span><span class="paren" style="font-size:2em;">(</span><span class="normal">1</span><span class="normal">+</span><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>n</td></tr></table><span class="paren" style="font-size:2em;">)</span><sup>
@@ -284,7 +288,8 @@ e<sub>n</sub></span>
 の単調増加性が示されます。
 
 
-###<a id="sec-generated-title-5"></a> <a id="bounded"></a>有界性
+### <a id="sec-generated-title-5"></a> <a id="bounded"></a>有界性
+
 次は有界性に関してですが、
 これもまた、
 以下の式から出発して考えてみます。
@@ -306,7 +311,8 @@ e<sub>n</sub><span class="normal">&lt;</span><table class="sigma" summary="sum">
 有界性が示されます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="value"></a>収束値
+### <a id="sec-generated-title-6"></a> <a id="value"></a>収束値
+
 以上で、e の収束性が示されました。
 といっても、具体的な値が何になるかは分かりません。
  

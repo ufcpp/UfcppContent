@@ -19,7 +19,8 @@ aliases:
 
 # \[雑記\] O/R インピーダンスミスマッチ（クラスの継承）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 「[[雑記] O/R インピーダンスミスマッチ](sp3_ormismatch.md)」では、オブジェクト指向とリレーショナルデータベースの間のデータ構造の差、
@@ -32,7 +33,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="inherit"></a>クラスの継承階層
+## <a id="sec-generated-title-2"></a> <a id="inherit"></a>クラスの継承階層
+
 「[継承](../oop/oo_inherit.md)」や「[多態性](../oop/oo_polymorphism.md)」で説明したように、オブジェクト指向の基本的な概念の1つに継承というものがあります。
 
 例えば、矩形や円などの図形を考えたとき、これらの図形には「面積を求められる」という共通の性質があります。
@@ -76,12 +78,14 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="rdb"></a>継承階層を RDB のテーブルで表現
+## <a id="sec-generated-title-3"></a> <a id="rdb"></a>継承階層を RDB のテーブルで表現
+
 前節で説明したような継承階層を RDB 上で表現するにはいくつか方法がありますが、
 ここでは2つほど紹介します。
 
 
 ##### <a id="sec-generated-title-4"></a>テーブルの共有
+
 1つ目の方法は、クラスの継承階層で1つのテーブルを共有します。
 （table per hierarchy と呼びます。）
 テーブルの各行がどの型かを判別するための列（discriminator: discriminate は「区別・識別する」）を作ります。
@@ -96,6 +100,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-5"></a>別テーブルを作成
+
 もう1つは、クラスごとに別のテーブルを作ります。
 （table per type と呼びます。）
 
@@ -109,7 +114,8 @@ aliases:
 複数のテーブルが見かけ上、1つのテーブルであるかのように見せる仕組みが必要になります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="ormap"></a>Entity Framework における継承構造の O/R マッピング
+## <a id="sec-generated-title-6"></a> <a id="ormap"></a>Entity Framework における継承構造の O/R マッピング
+
 Entity Framework では、データベース コンテキストを作る際に、
 DbContext クラスの OnModelCreating メソッドをオーバーライドすることで、
 継承階層のテーブル化方法をカスタマイズできます。
@@ -150,6 +156,7 @@ table per type にしたい場合は以下のように書きます。
 
 
 ##### <a id="sec-generated-title-7"></a>サンプル データ作成
+
 作成した2つのデータベース コンテキストを使って、サンプル データを作成してみましょう。
 
 <pre class="source" title="サンプル データの作成" lang="">
@@ -199,6 +206,7 @@ TablePerTypeContext によって作られるデータベースは以下のよう
 
 
 ##### <a id="sec-generated-title-8"></a>データの参照
+
 作成したデータを参照してみましょう。
 
 <pre class="source" title="データの参照" lang="">
@@ -242,12 +250,14 @@ Rectangle: 180
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="linq-to-sql"></a>LINQ to SQL 版
+## <a id="sec-generated-title-9"></a> <a id="linq-to-sql"></a>LINQ to SQL 版
+
 <span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span>
 <div class="expand-panel" markdown="1" title="（LINQ to SQL 版）">
       
 
 ##### <a id="sec-generated-title-10"></a>継承構造を RDB のテーブルで表現
+
 前節で説明したような継承構造を RDB 上で表現するには、
 型識別用の情報を格納した列（discriminator: discriminate は「区別・識別する」）を作ります。
 
@@ -276,6 +286,7 @@ Rectangle: 180
       
 
 ##### <a id="sec-generated-title-11"></a>LINQ to SQL における継承構造の O/R マッピング
+
 「[クラスの継承階層](#inherit)」で説明したクラスの継承構造と、
 「[継承階層を RDB のテーブルで表現](#rdb)」で説明したテーブル構造を対応付けるため、
 LINQ to SQL では、継承構造をもつクラスに InheritanceMapping 属性をつけ、

@@ -18,7 +18,8 @@ aliases:
 
 # \[雑記\] スレッド間の競合回避
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 複数のスレッドが同じデータを読み書きする場合、以下のような問題が起きる可能性があります。
@@ -34,7 +35,8 @@ aliases:
 ここでは、原子性の保証に必要ないくつかの概念について説明して行きます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>予定
+
 <pre>
 ●前置き
 ここで話すような内容、実際のところ、ライブラリの内部とかに閉じ込めて、エンド ユーザーが直接触らない方がいい。

@@ -14,7 +14,8 @@ aliases:
 
 # レコード型
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 C# 9.0 で、レコード型(records)という新しい種類の型が追加されました。
 (また、C# 10.0 では構造体版レコード型(record structs)が追加されました。)
 
@@ -27,7 +28,8 @@ record (記録)という名前通り、データの読み書きに使うこと�
 <span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>);
 </code></pre>
 
-##<a id="sec-generated-title-2"></a> <a id="data-centric">データが主役のプログラミング</a>
+## <a id="sec-generated-title-2"></a> <a id="data-centric">データが主役のプログラミング</a>
+
 プログラミングをしていると、データが主役・データが中心になる場面がちらほらあります。
 「データが主役」(data centric)というのは、例えば以下のように、「`Name` という文字列と、`Birthday` という日付を持っている」というような「何の型がどういうデータを記録しているか」という情報が強い意味を持つような場面です。
 
@@ -57,7 +59,8 @@ record (記録)という名前通り、データの読み書きに使うこと�
 }
 </code></pre>
 
-###<a id="sec-generated-title-3"></a> <a id="data-boilerplate">ボイラープレートなコード</a>
+### <a id="sec-generated-title-3"></a> <a id="data-boilerplate">ボイラープレートなコード</a>
+
 上記の例に挙げた `Person` 型の作りは、話を単純化するために簡素化して書いたものですが、
 これを「C# のお作法的に好ましい書き方」で書こうとすると実は結構なコード量を書く必要があります。
 例えば以下のようなコードになります。
@@ -109,7 +112,8 @@ record (記録)という名前通り、データの読み書きに使うこと�
 「お作法的に好ましいものを書こうとするとボイラープレートがしんどい」という状態はあまり好ましくなく、
 簡潔に書ける専用の文法が求められていました。
 
-##<a id="sec-generated-title-4"></a> <a id="record">レコード型</a>
+## <a id="sec-generated-title-4"></a> <a id="record">レコード型</a>
+
 このボイラープレート問題を解決するために、データ中心の型向けの新しい構文として導入されたのが<strong id="key-record" class="keyword">レコード型</strong>です。
 最も短い書き方をすると、例えば以下のようになります。
 
@@ -144,7 +148,8 @@ record (記録)という名前通り、データの読み書きに使うこと�
 
 要するに、前述した「お作用的に好ましい」とされるコードを一通りコンパイラーが用意してくれます。
 
-###<a id="sec-generated-title-5"></a> <a id="record-to-class">レコード型とクラス</a>
+### <a id="sec-generated-title-5"></a> <a id="record-to-class">レコード型とクラス</a>
+
 ちなみに、コンパイラーが色々と自動生成してくれる以外は通常のクラスと同じというか、
 内部的には実際にただのクラスとしてコンパイルされます。
 (※ C# 9.0 の `record` の場合。C# 10.0 で導入された `record struct` は構造体としてコンパイルされます。)
@@ -225,7 +230,8 @@ C# コンパイラーのバージョンによって微妙に異なるコード�
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="equality">等値判定</a>
+### <a id="sec-generated-title-6"></a> <a id="equality">等値判定</a>
+
 前節で示した通り、レコード型を書くと自動的に `==` や `Equals` などの等値判定用のメソッド・演算子が追加されます。
 
 ここで1点注意なんですが、レコード型から作られる `==` や `Equals` は `EqualityComparer<T>.Default` を経由して、最終的にはプロパティごとに `Equals` メソッドを呼ぶことになります。
@@ -252,7 +258,8 @@ Console.WriteLine(recordNan.Equals(recordNan)); <span class="comment">// true</s
 
 ちなみに、等値判定を `EqualityComparer<T>.Default` 越しにやっている都合で、レコード型のプロパティやフィールドに型引数にできない型(例えば[ポインター](../interop/sp_unsafe.md#pointer)や[ref 構造体](../resource/refstruct.md)など)は使えません。`unsafe record R(int* P);` はコンパイル エラーになります。
 
-###<a id="sec-generated-title-7"></a> <a id="record-struct">record class と record struct</a>
+### <a id="sec-generated-title-7"></a> <a id="record-struct">record class と record struct</a>
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 9.0 (レコード型の最初のバージョン)では、レコード型は常に[参照型](../resource/oo_reference.md#reftype)(クラスと同系統の型)になります。
@@ -268,7 +275,8 @@ C# 9.0 (レコード型の最初のバージョン)では、レコード型は�
 (レコード型の思想としては、一番よく使う書き方を極力短く書けるようにしたいというものがあって、
 「クラスの方がよく使うから、`record` という短い書き方は `record class` の意味で使う」という判断があるようです。)
 
-####<a id="sec-generated-title-8"></a> <a id="record-struct-specific"></a>record struct の特徴
+#### <a id="sec-generated-title-8"></a> <a id="record-struct-specific"></a>record struct の特徴
+
 `record class` と `record struct` の差は、ほぼ[クラス(参照型)と構造体(値型)の差](../resource/oo_reference.md)そのままなんですが、
 ちょっとだけ細かい差があります。
 (といっても、それも参照型と値型の用途の違いからくるものです。)
@@ -301,7 +309,8 @@ C# 9.0 (レコード型の最初のバージョン)では、レコード型は�
 <span class="reserved">readonly record</span> <span class="reserved">struct</span> <span class="type">ReadOnlyRecordStruct</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="anonymous-type">レコード型と匿名型</a>
+### <a id="sec-generated-title-9"></a> <a id="anonymous-type">レコード型と匿名型</a>
+
 導入順序的な問題で、C# 的に言うとレコード型は「名前のある[匿名型](../start/sp3_inference.md#anonymous)」みたいな感じ(トゲナシトゲトゲっぽいやつ)だったりはします。
 (匿名型が C# 3.0 で導入された機能なのに対して、レコード型は C# 9.0 です。)
 
@@ -335,7 +344,8 @@ var (<span class="variable">x</span>, <span class="variable">y</span>) = p;
 Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * </span>{y}<span class="string"> = </span>{x * y}<span class="string">&quot;</span>);
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="vs-normal-struct">レコード型と構造体</a>
+### <a id="sec-generated-title-10"></a> <a id="vs-normal-struct">レコード型と構造体</a>
+
 プロパティごとの比較で等値判定したり、プロパティごとの代入でクローン(後述の [`with` 式](#with)を使う)を作ったりを取ったりする操作は、構造体であれば元々できる操作です。
 ある意味、C# 9.0 で導入されたレコード型は「構造体(値型)的な扱いができるクラス(参照型)を作れるようにする」と言うものです。
 (こういう操作ができることを「値セマンティクス(value semantics)を持つ」という用語で呼んだりします。)
@@ -359,7 +369,8 @@ Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * 
   * ただし、コンパイル結果のプログラム サイズがちょっと大きくなる
   * インターフェイスを実装する都合上、[ref 構造体](../resource/refstruct.md) と両立しない (`ref record struct` とは書けない)
 
-##<a id="sec-generated-title-11"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
+## <a id="sec-generated-title-11"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
+
 先ほど、レコード型の最も短い書き方として以下のような例を挙げました。
 
 <pre class="source" title="record の例">
@@ -442,7 +453,8 @@ Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * 
 <span class="reserved">public</span> <span class="reserved">record</span> <span class="type">Record2</span>(<span class="reserved"><span class="error">ref</span></span> <span class="reserved">int</span> X, <span class="reserved"><span class="error">out</span></span> <span class="reserved">int</span> Y);
 </code></pre>
 
-###<a id="sec-generated-title-12"></a> <a id="primary-constructor-attribute">プライマリ コンストラクター引数への属性付与</a>
+### <a id="sec-generated-title-12"></a> <a id="primary-constructor-attribute">プライマリ コンストラクター引数への属性付与</a>
+
 プライマリ コンストラクターからはプロパティがコンパイラー生成されます。
 また、[プロパティからもさらにフィールドが生成](../oop/oo_property.md#auto)されています。
 ということで、プライマリ コンストラクターの引数には3重の意味(引数、プロパティ、フィールド)が含まれていたりします。
@@ -479,7 +491,8 @@ Console.WriteLine(t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)[0]
 }
 </code></pre>
 
-##<a id="sec-generated-title-13"></a> <a id="manual-override">生成物の上書き</a>
+## <a id="sec-generated-title-13"></a> <a id="manual-override">生成物の上書き</a>
+
 レコード型の目標の1つは「お作法として最も好ましいものを最も短い書き方で書ける」というものです。
 
 一方で、わかった上でお作法から外れたい場合や、ちょっとしたカスタマイズをしたい場合もあります。
@@ -513,7 +526,8 @@ Console.WriteLine(t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)[0]
 ちなみに、この場合、「`Name` 引数を `Name` プロパティに自動代入する」みたいな処理は掛からないので注意が必要です。
 上記の例で `Name { get; } = Name;` としているように、明示的な初期化が必要になります。
 
-###<a id="sec-generated-title-14"></a> <a id="manual-override-field">フィールドでの生成物の上書き</a>
+### <a id="sec-generated-title-14"></a> <a id="manual-override-field">フィールドでの生成物の上書き</a>
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 9.0 時点では、プライマリ コンストラクター引数からの生成物の上書きはプロパティでしかできませんでした。
@@ -536,7 +550,8 @@ C# 9.0 時点では、プライマリ コンストラクター引数からの生
 
 とはいえ、別に `record class` で使えてしまって困る機能でもないので、クラスか構造体かは問わずこの機能を使えます。
 
-##<a id="sec-generated-title-15"></a> <a id="inheritance">レコード型の継承</a>
+## <a id="sec-generated-title-15"></a> <a id="inheritance">レコード型の継承</a>
+
 レコード型はクラスと同じく[継承](../oop/oo_inherit.md)ができます。
 例えば以下のように書けます。
 
@@ -612,7 +627,8 @@ Console.WriteLine(<span class="reserved">new</span> Base(1) == <span class="rese
 }
 </code></pre>
 
-##<a id="sec-generated-title-16"></a> <a id="with">with 式</a>
+## <a id="sec-generated-title-16"></a> <a id="with">with 式</a>
+
 「お作法として好ましいのは immutable (書き換え不可)」と言いましたし、
 レコード型もそのお作法に則って(手書きでカスタマイズしない限り) immutable な型を生成します。
 
@@ -674,7 +690,8 @@ Console.WriteLine(ReferenceEquals(p1, p2)); <span class="comment">// クロー�
 (ただし、C# 10.0 で `struct` に対しては `with` 式を使えるようになる予定です。
 構造体は元からクローン相当の機能を持っているので、それを使う予定です。)
 
-###<a id="sec-generated-title-17"></a> <a id="anonymous-type">匿名型と構造体に対する with 式</a>
+### <a id="sec-generated-title-17"></a> <a id="anonymous-type">匿名型と構造体に対する with 式</a>
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 9.0 時点では、`with` 式はレコード型に対してしか使えません。

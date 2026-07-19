@@ -44,15 +44,18 @@ C# 8.0 にはいろいろな新機能が含まれていますが、
 主要なものは堅牢性向上を目的としたものになります。
 プログラマーの人的ミスを避け、より堅牢なプログラムを書けるようにしたいというものです。
 
-##<a id="sec-generated-title-1"></a> <a id=""></a>補足
-###<a id="sec-generated-title-2"></a> <a id="langversion"></a>バージョン指定
+## <a id="sec-generated-title-1"></a> <a id=""></a>補足
+
+### <a id="sec-generated-title-2"></a> <a id="langversion"></a>バージョン指定
+
 ちなみに、C# 8.0 世代の C# コンパイラーから、[バージョンの指定方法](langversionoption.md#langversion)に `preview` というオプションが追加されました。
 このオプションを指定することで、正式リリース前の機能をある程度先取りして試してみることができます。
 例えば、C# 8.0 がデフォルトで有効になるのは Visual Studio 2019 16.3 からですが、
 `preview` 指定であれば 16.0 の頃から使えました。
 (名前通りプレビュー状態なので、正式リリースまでに変更が掛かる可能性が高いので注意は必要です。)
 
-###<a id="sec-generated-title-3"></a> <a id="targetframework"></a>ターゲット フレームワーク
+### <a id="sec-generated-title-3"></a> <a id="targetframework"></a>ターゲット フレームワーク
+
 C# 8.0 の全ての機能を一切の小細工なしで満足に使えるのは .NET Core 3.0/.NET Standard 2.1 以降です。
 古いターゲット フレームワークで C# 8.0 を使うには[バージョンの明示的な指定](langversionoption.md#new-options)が必要です。
 
@@ -67,7 +70,8 @@ C# 8.0 の全ての機能を一切の小細工なしで満足に使えるのは 
 また、[インターフェイスのデフォルト実装](#default-imeplementation-of-interface)は実行環境に手を入れないと実現できない機能で、
 .NET Core 3.0/.NET Standard 2.1 以降でなければどうやっても動かすことができません。
 
-##<a id="sec-generated-title-4"></a> <a id="nullable-reference-type"></a>null 許容参照型
+## <a id="sec-generated-title-4"></a> <a id="nullable-reference-type"></a>null 許容参照型
+
 参照型でも単に型 `T` と書くと null を受け付けず、`T?` と書いて初めて null 許容になる機能が追加されました。
 null 許容参照型と呼びます。
 ただ、これまでと型 `T` の意味を変えてしまうので、opt-in (オプションを明示しないと有効にならない)方式になっています。
@@ -98,7 +102,8 @@ null 許容参照型と呼びます。
 
 詳しくは「[null 許容参照型](../resource/nullablereferencetype.md)」で説明します。
 
-##<a id="sec-generated-title-5"></a> <a id="recursive-pattern"></a>再帰パターン
+## <a id="sec-generated-title-5"></a> <a id="recursive-pattern"></a>再帰パターン
+
 C# 7.0 で部分的に[パターン マッチング](../datatype/patterns.md)が実装されていましたが、C# 8.0 で完全版になります。
 C# 8.0 で追加されるパターンは再帰的なマッチングが可能で、「再帰パターン」(recursive pattern)と呼ばれたりもします。
 
@@ -155,7 +160,8 @@ C# 8.0 で追加されるパターンは再帰的なマッチングが可能で�
 
 詳しくは「[再帰パターン](../datatype/patterns.md)」で説明します。
 
-##<a id="sec-generated-title-6"></a> <a id="switch-expression"></a>switch 式
+## <a id="sec-generated-title-6"></a> <a id="switch-expression"></a>switch 式
+
 `switch`を式として書けるようになりました。
 また、従来の `switch` ステートメントは C# の前身となるC言語のものの名残を強く残し過ぎていて使いにくいものでしたが、その辺りも解消されて使いやすくなりました。
 
@@ -176,7 +182,8 @@ C# 8.0 で追加されるパターンは再帰的なマッチングが可能で�
 
 詳しくは「[`switch` 式](../datatype/typeswitch.md#switch-expression)」で説明します。
 
-##<a id="sec-generated-title-7"></a> <a id="range"></a>範囲アクセス
+## <a id="sec-generated-title-7"></a> <a id="range"></a>範囲アクセス
+
 `a[i..j]` という書き方で「i番目からj番目の要素を取り出す」というような操作ができるようになりました。
 
 <pre class="source" title=".. 構文">
@@ -211,7 +218,8 @@ C# 8.0 で追加されるパターンは再帰的なマッチングが可能で�
 
 詳しくは「[インデックス/範囲処理](../data/dataranges.md)」で説明します。
 
-##<a id="sec-generated-title-8"></a> <a id="default-imeplementation-of-interface"></a>インターフェイスのデフォルト実装
+## <a id="sec-generated-title-8"></a> <a id="default-imeplementation-of-interface"></a>インターフェイスのデフォルト実装
+
 C# 8.0 (.NET Core 3.0)で、インターフェイスの制限が緩和されました。
 以下のようになります。
 
@@ -268,7 +276,8 @@ C# 8.0 (.NET Core 3.0)で、インターフェイスの制限が緩和されま�
 C# 8.0 以降を使っていても、ターゲットとなるランタイム(TargetFramework)が古いと使えません。
 詳しくは以前書いたブログ「[RuntimeFeature クラス](../../../blog/2018/12/runtimefeature/index.md)」で説明しています。
 
-##<a id="sec-generated-title-9"></a> <a id="async-stream"></a>非同期ストリーム
+## <a id="sec-generated-title-9"></a> <a id="async-stream"></a>非同期ストリーム
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 では非同期メソッドが大幅に拡張されました。
@@ -322,8 +331,10 @@ C# 8.0 では非同期メソッドが大幅に拡張されました。
 
 詳しくは「[非同期ストリーム](../async/asyncstream.md)」で説明します。
 
-##<a id="sec-generated-title-10"></a> <a id="using"></a>using ステートメントの改善
-###<a id="sec-generated-title-11"></a> <a id="using-declaration"></a>using 変数宣言
+## <a id="sec-generated-title-10"></a> <a id="using"></a>using ステートメントの改善
+
+### <a id="sec-generated-title-11"></a> <a id="using-declaration"></a>using 変数宣言
+
 変数宣言に対して `using` 修飾を付けることで、
 その変数のスコープに紐づいて `using` ステートメントと同じ効果を得られるようになりました。
 これを `using` 変数宣言(using declaration)と呼びます。
@@ -356,7 +367,8 @@ C# 8.0 では非同期メソッドが大幅に拡張されました。
 
 詳しくは「[using 変数宣言](../resource/oo_dispose.md#using-declaration)」で説明します。
 
-###<a id="sec-generated-title-12"></a> <a id="pattern-based-using"></a>パターン ベースな using
+### <a id="sec-generated-title-12"></a> <a id="pattern-based-using"></a>パターン ベースな using
+
 [ref 構造体](../resource/refstruct.md)に限るんですが、
 パターン ベース(別にインターフェイスを実装していなくても、`Dispose` メソッドさえ持っていればOK)で [`using` ステートメント](../resource/oo_dispose.md#using)を使えるようになりました。
 
@@ -384,10 +396,12 @@ ref 構造体だけ対応したのは、需要が高く、既存コードを壊�
 
 詳しくは「[パターン ベースな using](../resource/oo_dispose.md#pattern-based-using)」で説明します。
 
-##<a id="sec-generated-title-13"></a> <a id="others"></a>その他
+## <a id="sec-generated-title-13"></a> <a id="others"></a>その他
+
 こまごまとした修正がいくつかあります。
 
-###<a id="sec-generated-title-14"></a> <a id="null-coalescing-assignment"></a>null 合体代入 (??=)
+### <a id="sec-generated-title-14"></a> <a id="null-coalescing-assignment"></a>null 合体代入 (??=)
+
 C# 8.0 では、null合体演算子 (`??`)も複合代入に使えるようになりました(`??=`)。
 
 <pre class="source" title="null 合体代入">
@@ -400,7 +414,8 @@ C# 8.0 では、null合体演算子 (`??`)も複合代入に使えるように�
 
 詳しくは「[null 合体代入 (??=)](../resource/sp2_nullable.md#null-coalescing-assignment)」で説明します。
 
-###<a id="sec-generated-title-15"></a> <a id="static-local-function"></a>静的ローカル関数
+### <a id="sec-generated-title-15"></a> <a id="static-local-function"></a>静的ローカル関数
+
 C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 ローカル関数に `static` 修飾を付けれるようになりました。
 この機能を<strong id="key-static-local-function" class="keyword">静的ローカル関数</strong>(static local function)と呼びます。
@@ -420,12 +435,14 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 詳しくは「[静的ローカル関数](../functional/fun_localfunctions.md#static-local-function)」で説明します。
 同時に、変数の[シャドーイング](../functional/fun_localfunctions.md#shadowing)も認められるようになりました。
 
-###<a id="sec-generated-title-16"></a> <a id="at-dollar"></a>@$
+### <a id="sec-generated-title-16"></a> <a id="at-dollar"></a>@$
+
 C# 7.0 では、文字列リテラル`""`の前に`$@`と付けることで、複数行に渡る[文字列補間](../start/st_string.md#multi-line)ができましたが、`$`と`@`の順序は`$@`しか認められていませんでした。
 
 C# 8.0では`@$`の順でも認められるようになりました。
 
-###<a id="sec-generated-title-17"></a> <a id="unmanaged-generic-struct"></a>アンマネージなジェネリック構造体
+### <a id="sec-generated-title-17"></a> <a id="unmanaged-generic-struct"></a>アンマネージなジェネリック構造体
+
 C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネージ型かどうかの判定するようになりました。
 型引数全てがアンマネージであれば、その構造体もアンマネージ扱いを受けるようになります。
 <pre class="source" title="ジェネリックな構造体に対するポインター">
@@ -443,7 +460,8 @@ C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネ�
 
 詳しくは「[アンマネージなジェネリック構造体](../interop/sp_unsafe.md#unmanaged-generic-struct)」で説明します。
 
-###<a id="sec-generated-title-18"></a> <a id="readonly-member"></a>readonly 関数メンバー
+### <a id="sec-generated-title-18"></a> <a id="readonly-member"></a>readonly 関数メンバー
+
 C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-member)単位で「フィールドを書き換えてない」ということを保証できるようになりました。
 
 <pre class="source" title="プロパティを readonly 修飾する例">
@@ -461,7 +479,8 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 
 詳しくは「[readonly 関数メンバー](../resource/readonlyness.md#readonly-member)」で説明します。
 
-###<a id="sec-generated-title-19"></a> <a id="nested-stackalloc"></a>式中の stackalloc
+### <a id="sec-generated-title-19"></a> <a id="nested-stackalloc"></a>式中の stackalloc
+
 式中の任意の場所に `stackalloc` を書けるようになりました。
 例えば以下のような書き方ができます。
 
@@ -484,7 +503,8 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 
 詳しくは「[式中の stackalloc](../resource/span.md#nested-stackalloc)」で説明します。
 
-###<a id="sec-generated-title-20"></a> <a id="generic-is-null"></a>ジェネリック型に対する is null
+### <a id="sec-generated-title-20"></a> <a id="generic-is-null"></a>ジェネリック型に対する is null
+
 ほぼ「バグ修正」レベルですが、
 以下のコードがコンパイルできるようになりました。
 
@@ -495,7 +515,8 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 元々 `x == null` であればコンパイルできていたのに、`x is null` がコンパイルできないのは変だということで修正されました。
 型引数 `T` が[非 null 値型](../resource/sp2_nullable.md#non-nullable)の時には常に false になります。
 
-###<a id="sec-generated-title-21"></a> <a id="obsolete-accessor"></a>プロパティのアクセサーに Obsolete 指定
+### <a id="sec-generated-title-21"></a> <a id="obsolete-accessor"></a>プロパティのアクセサーに Obsolete 指定
+
 プロパティの get/set アクセサーに対して、どちらか片方にだけ `Obsolete` 属性(`System`名前空間)を指定できるようになりました。
 以下のコードは C# 7.3 以前ではエラーになっていました。
 

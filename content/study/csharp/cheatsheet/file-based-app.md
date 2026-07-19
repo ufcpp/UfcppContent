@@ -15,7 +15,9 @@ aliases:
 # ファイル ベース実行
 
 # <a id="sec-generated-title-1"></a>ファイル ベース実行
-##<a id="sec-generated-title-2"></a> <a id="abstract">概要</a>
+
+## <a id="sec-generated-title-2"></a> <a id="abstract">概要</a>
+
 .NET 10 (C# 14 と同世代)で単独の `.cs` ファイルだけで C# プログラムを実行できるようになりました。
 例えば、`app1.cs` という名前で保存した C# ファイルを `dotnet app1.cs` という1コマンドだけで実行できます。
 それに伴って、C# 14 で `#!` と `#:` (無視ディレクティブ)という機能が追加されています。
@@ -28,7 +30,8 @@ C# 14 の `#!` と `#:` (無視ディレクティブ)について説明します
 
 サンプル コード: [FileBaseApp](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/FileBaseApp)
 
-##<a id="sec-generated-title-3"></a> <a id="file-based-app">ファイル ベース実行</a>
+## <a id="sec-generated-title-3"></a> <a id="file-based-app">ファイル ベース実行</a>
+
 改めて、 .NET 10 で C# ファイルを直接1コマンドで実行できるようになりました。
 例えば、以下の1行だけ書いたファイル `app1.cs` を用意して、
 
@@ -63,7 +66,8 @@ C# コンパイラーからすると「単に無視するもの」なので、�
 移行を自動化するための `dotnet project convert` というコマンドも用意されています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="shebang">shebang</a>
+## <a id="sec-generated-title-4"></a> <a id="shebang">shebang</a>
+
 `#!` (通称 shebang。 sharp + bang が由来)は主に Unix のスクリプト言語で使われるもので、
 ソースコードの先頭にこの記号から始まる行を入れると「何を使ってこのスクリプトを実行するか」を指定できます。
 
@@ -89,7 +93,8 @@ app1.cs
 用途的に、`#!` はファイルの先頭にのみ書けます。
 `#!` の前には改行はもちろんのこと、空白文字や [BOM](https://ja.wikipedia.org/wiki/%E3%83%90%E3%82%A4%E3%83%88%E9%A0%86%E3%83%9E%E3%83%BC%E3%82%AF) を入れることもできません。
 
-##<a id="sec-generated-title-5"></a> <a id="ignored-directive">: 無視ディレクティブ</a>
+## <a id="sec-generated-title-5"></a> <a id="ignored-directive">: 無視ディレクティブ</a>
+
 `#:` から始まる行は `dotnet` コマンドがプロジェクト設定として解釈するために使い、
 C# 上は単に無視されます。
 
@@ -150,7 +155,8 @@ C# 上は単に無視されます。
 | `#:package` | [パッケージ参照](https://learn.microsoft.com/ja-jp/nuget/consume-packages/package-references-in-project-files) | `<PackageReference>` 要素 |
 | `#:project` | [プロジェクト参照](https://learn.microsoft.com/ja-jp/visualstudio/msbuild/common-msbuild-project-items#projectreference) | `<ProjectReference>` 要素 |
 
-###<a id="sec-generated-title-6"></a> <a id="sdk-directive">sdk ディレクティブ</a>
+### <a id="sec-generated-title-6"></a> <a id="sdk-directive">sdk ディレクティブ</a>
+
 `#:sdk` は、 `.csproj` では `<Project Sdk="Identifier">` と書いていたものです。
 省略した場合は `Microsoft.NET.Sdk` (ライブラリやコンソール プログラムで使う一番シンブルな SDK)になります。 
 実質的には「ASP.NET プログラムを書きたいときに `Microsoft.NET.Sdk.Web` にするもの」です。
@@ -165,7 +171,8 @@ C# 上は単に無視されます。
 <span class="variable">app</span><span class="operator">.</span>Run();
 </pre>
 
-###<a id="sec-generated-title-7"></a> <a id="property-directive">property ディレクティブ</a>
+### <a id="sec-generated-title-7"></a> <a id="property-directive">property ディレクティブ</a>
+
 `#:property` は、 `.csproj` では `<PropertyGroup>` の子要素として書いていたものです。
 `.csproj` の `<Tag>Value</Tag>` 要素が `#:property Tag=Value` という書き方になります。
 
@@ -184,7 +191,8 @@ C# 上は単に無視されます。
 }
 </pre>
 
-###<a id="sec-generated-title-8"></a> <a id="package-directive">package ディレクティブ</a>
+### <a id="sec-generated-title-8"></a> <a id="package-directive">package ディレクティブ</a>
+
 `#:package` は、 `.csproj` では `<PackageReference>` 要素で書いていたものです。
 `.csproj` の `<PackageReference Include="PackageName" Version="x.y.z" />` 要素が `#:package PackageName@x.y.z` という書き方になります。
 
@@ -201,7 +209,8 @@ C# 上は単に無視されます。
 <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">root</span><span class="operator">.</span><span class="method">GetFirstToken</span>()<span class="operator">.</span><span class="property">Text</span>);
 </pre>
 
-###<a id="sec-generated-title-9"></a> <a id="project-directive">project ディレクティブ</a>
+### <a id="sec-generated-title-9"></a> <a id="project-directive">project ディレクティブ</a>
+
 `#:project` は、 `.csproj` では `<ProjectReference>` 要素で書いていたものです。
 `.csproj` の `<ProjectReference Include="path" />` 要素が `#:project path` という書き方になります。
 
@@ -212,7 +221,8 @@ C# 上は単に無視されます。
 <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(Lib<span class="operator">.</span><span class="type">Class1</span><span class="operator">.</span><span class="property"><span class="static">Name</span></span>);
 </pre>
 
-###<a id="sec-generated-title-10"></a> <a id="unknown-directive">未対応のディレクティブ</a>
+### <a id="sec-generated-title-10"></a> <a id="unknown-directive">未対応のディレクティブ</a>
+
 未対応の `#:` ディレクティブは、ファイル ベース実行するとエラーを起こします。
 例えば以下のようなコードを書いて `dotnet app1.cs` コマンド実行すると、
 「認識されないディレクティブ ' aaa' です。」というエラーが出ます。

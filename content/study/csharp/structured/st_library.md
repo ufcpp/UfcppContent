@@ -18,7 +18,8 @@ aliases:
 
 # ライブラリ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="library" class="keyword">ライブラリ</strong>(library)とは、一言で言うと便利な機能をまとめておいて、他のプログラムから呼び出せる形にしたものです。
 
 .NET framework SDK をインストールすると、コンパイラと一緒にさまざまなライブラリが初めからインストールされます。
@@ -28,13 +29,15 @@ C# に限らず、このようにコンパイラとセットで必ず提供さ�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * ライブラリ: よくつかわれる機能をひとまとめにしたもの
 
 * C# （というか、.NET Framework）には標準で多種多様なライブラリが付属します
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="lib"></a>.NET framework の標準ライブラリ
+## <a id="sec-generated-title-3"></a> <a id="lib"></a>.NET framework の標準ライブラリ
+
 「[.NET Framework とは](../abstract/ab_dotnet.md)」で説明したように、
 .NET Framework では、.NET Framework 上に実装された言語すべてから呼び出せるような共通ライブラリが用意されています。
 
@@ -43,6 +46,7 @@ C# に限らず、このようにコンパイラとセットで必ず提供さ�
 
 
 ##### <a id="sec-generated-title-4"></a>標準ライブラリの利用方法
+
 C# ではライブラリを利用する際、プログラムのソースには特に何も手を加える必要はありません。
 (C言語のように <code>#include</code> でヘッダーファイルを読み込む必要はないし、Java のように <code>import</code> も行う必要はない。)
 ライブラリは、コンパイラに対して <code>/r</code> オプションでライブラリの入っている DLL ファイルを指定するだけで利用できます。
@@ -55,11 +59,13 @@ C# ではライブラリを利用する際、プログラムのソースには�
 
 
 ##### <a id="sec-generated-title-5"></a>クラスライブラリ
+
 .NET Framework の標準ライブラリはすべてクラス化されています。
 クラスに関しては「[クラス](../oop/oo_class.md)」で解説します。
 
 
 ##### <a id="sec-generated-title-6"></a>名前空間
+
 「[名前空間](sp_namespace.md)」で説明しますが、C# の標準ライブラリはすべて名前空間によって分類されています。
 例えば、数学関連の機能を利用するためには <code>Math</code> というクラスを用いますが、
 <code>Math</code> クラスは <code>System</code> という名前空間に属しています。
@@ -95,7 +101,8 @@ C# ではライブラリを利用する際、プログラムのソースには�
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="class"></a>このページのサンプルで利用しそうなクラス
+## <a id="sec-generated-title-7"></a> <a id="class"></a>このページのサンプルで利用しそうなクラス
+
 今後、このページのサンプルで利用しそうなクラスを以下に列挙します。
 
 <table summary="">

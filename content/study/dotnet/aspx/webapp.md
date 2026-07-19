@@ -18,7 +18,8 @@ aliases:
 
 # Web アプリケーション
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 <pre>
 ラウンドトリップ
@@ -64,6 +65,8 @@ Web アプリケーションの状態
 
 </pre>
 
-##<a id="sec-generated-title-2"></a> <a id="d43e13"></a>
-##<a id="sec-generated-title-3"></a> <a id="d43e18"></a>
-##<a id="sec-generated-title-4"></a> <a id="d43e23"></a>
+## <a id="sec-generated-title-2"></a> <a id="d43e13"></a>
+
+## <a id="sec-generated-title-3"></a> <a id="d43e18"></a>
+
+## <a id="sec-generated-title-4"></a> <a id="d43e23"></a>

@@ -18,13 +18,15 @@ aliases:
 
 # WPF のコンテナ（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 WPF では、
 コントロール（ボタンやテキストボックス）などの配置を容易にするために、
 配置制御のためのコンテナがいくつか用意されています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="Canvas"></a>Canvas
+## <a id="sec-generated-title-2"></a> <a id="Canvas"></a>Canvas
+
 まず、一番分かりやすいのは Canvas でしょうか。
 Canvas では、
 Canvas の左上からの相対座標を直接指定して子要素を配置します。
@@ -69,7 +71,8 @@ Canvas の左上からの相対座標を直接指定して子要素を配置し�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="StackPanel"></a>StackPanel
+## <a id="sec-generated-title-3"></a> <a id="StackPanel"></a>StackPanel
+
 StackPanel による配置はいたってシンプルで、
 上から順に、幅いっぱいに詰め込んでいくだけです。
 
@@ -125,7 +128,8 @@ StackPanel による配置はいたってシンプルで、
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="WrapPanel"></a>WrapPanel
+## <a id="sec-generated-title-4"></a> <a id="WrapPanel"></a>WrapPanel
+
 WrapPanel は、HTML みたいに、
 左詰で子要素を配置していき、
 右端で折り返します。
@@ -163,7 +167,8 @@ WrapPanel がリサイズされた場合、
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="DockPanel"></a>DockPanel
+## <a id="sec-generated-title-5"></a> <a id="DockPanel"></a>DockPanel
+
 DockPanel を使うと、
 <code>Dock</code> 属性で指定した方向に子要素を貼り付けることができます。
 例えば、<code>Dock="Top"</code> とすれば上側に張り付いて、左右いっぱいに表示されます。
@@ -198,7 +203,8 @@ DockPanel がリサイズされた場合、
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="Grid"></a>Grid
+## <a id="sec-generated-title-6"></a> <a id="Grid"></a>Grid
+
 Grid を使うと、
 行の高さ、列の幅を指定して、
 テーブル上に子要素を配置できます。
@@ -248,5 +254,6 @@ Grid を使うと、
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="other"></a>その他
+## <a id="sec-generated-title-7"></a> <a id="other"></a>その他
+
 UniformGrid や TabPanel、ToolbarPanel なんてのもあるみたい。

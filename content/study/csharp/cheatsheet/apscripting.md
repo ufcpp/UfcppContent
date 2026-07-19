@@ -14,7 +14,8 @@ aliases:
 
 # C#スクリプト実行
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 2015年末頃、ついにC#をスクリプト言語的に実行したり、インタラクティブに実行したりできるようになりました。すなわち、以下のようなことができるようになりました。
 
 - アプリへの組み込み
@@ -30,10 +31,12 @@ aliases:
 
 通常の(コンパイルして使う)C#で書けるものは大体はスクリプト実行できます。また、スクリプト実行時にのみ許される構文や、スクリプト実行時特有の動作がいくつかあります。
 
-##<a id="sec-generated-title-2"></a> <a id="variety"></a>いくつかの実行形態
+## <a id="sec-generated-title-2"></a> <a id="variety"></a>いくつかの実行形態
+
 概要で一覧を出したように、いくつかの方法でC#スクリプト実行できます。
 
-###<a id="sec-generated-title-3"></a> <a id="hosting"></a>アプリへの組み込み
+### <a id="sec-generated-title-3"></a> <a id="hosting"></a>アプリへの組み込み
+
 [Microsoft.CodeAnalysis.CSharp.Scripting](https://www.nuget.org/packages/Microsoft.CodeAnalysis.CSharp.Scripting)ライブラリを参照することで、自作のアプリにC#スクリプトを組み込めます。
 例えば、以下のようなコードが書けます。
 
@@ -63,7 +66,8 @@ x + y
 }
 </code></pre>
 
-####<a id="sec-generated-title-4"></a> <a id="script-globals"></a>スクリプトとアプリとのやり取り
+#### <a id="sec-generated-title-4"></a> <a id="script-globals"></a>スクリプトとアプリとのやり取り
+
 アプリに組み込む以上は、アプリに対する命令みたいなものをスクリプトに対して公開する必要があるわけですが、
 それはこの`EvaluateAsync`などのメソッドの引数の`globals`に対してオブジェクトを渡すことで実現できます。
 
@@ -101,7 +105,8 @@ C#スクリプト側から、`walk`, `turn`, `speed`, `clear`などのメソッ�
 
 <iframe width="420" height="315" src="https://www.youtube.com/embed/uex74qGWLxE" frameborder="0" allowfullscreen></iframe>
 
-###<a id="sec-generated-title-5"></a> <a id="interactive-window"></a>C# インタラクティブ ウィンドウ
+### <a id="sec-generated-title-5"></a> <a id="interactive-window"></a>C# インタラクティブ ウィンドウ
+
 Visual Studio 2015 Update 1から、C#をREPL実行できる「C# インタラクティブ」というウィンドウが追加されました。
 
 Visual Studioのメニューから下図のようにたどるか、
@@ -119,7 +124,8 @@ REPL(Read Eval Print Loop)なので、1行1行コードを読んで(read)、評�
 
 ![C#インタラクティブ ウィンドウを使ったREPL実行](../../../../assets/media/1066/csi-repl.png)
 
-###<a id="sec-generated-title-6"></a> <a id="dotnet-cli"></a>dotnetコマンド
+### <a id="sec-generated-title-6"></a> <a id="dotnet-cli"></a>dotnetコマンド
+
 [dotnetコマンド](../devenv/ab_devenv.md#dotnetcli)の1機能として、REPL実行やスクリプト実行ができます。
 
 下図のように、`dotnet repl`というサブコマンドを使うことでREPLが起動します。
@@ -153,7 +159,8 @@ REPLで1行1行実行する他に、スクリプト ファイルを与えて実�
 見てのとおり、通常の(コンパイルして使う)C#と違って、トップ レベルにステートメントを書いて実行できます。
 `class Program`や`static void Main()`などのクラス/メソッドは必ずしも必要ありません。
 
-##<a id="sec-generated-title-7"></a> <a id="script-syntax"></a>スクリプト実行用の構文
+## <a id="sec-generated-title-7"></a> <a id="script-syntax"></a>スクリプト実行用の構文
+
 通常の(コンパイルして使う)C#の機能はほぼ全て使えます。
 例えば以下のように、通常のC#コードをそのままC#インタラクティブ ウィンドウに張り付けて実行できます。
 
@@ -174,7 +181,8 @@ Hello World!
 
 一方で、スクリプト実行でだけできる書き方がいくつかあります。
 
-###<a id="sec-generated-title-8"></a> <a id="print-expression"></a>結果の出力
+### <a id="sec-generated-title-8"></a> <a id="print-expression"></a>結果の出力
+
 式を1つだけ書いて、`;`も入力せずに改行すると、その式の結果を出力します。
 例えば、以下のようなコードでは、1行目は普通のC#と同じく代入ステートメント、2行目は`x * x`という式の計算結果の出力になります。
 
@@ -192,7 +200,8 @@ Hello World!
 (1,1): error CS0201: Only assignment, call, increment, decrement, and new object expressions can be used as a statement
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="top-level"></a>トップ レベル
+### <a id="sec-generated-title-9"></a> <a id="top-level"></a>トップ レベル
+
 通常のC#では、トップ レベル(ソースコードの一番上)に書けるものがかなり限られています。
 
 - [プリプロセス ディレクティブ](../misc/sp_preprocess.md)
@@ -261,7 +270,8 @@ Hello World!
 "\r\n&lt;!DOCTYPE html&gt;\r\n&lt;html lang=\"ja\" xmlns=\"http://w"
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="directive"></a>スクリプト用ディレクティブ
+### <a id="sec-generated-title-10"></a> <a id="directive"></a>スクリプト用ディレクティブ
+
 スクリプト実行時にだけ使えるものとして、[プリプロセス ディレクティブ](../misc/sp_preprocess.md)と同じ `#` から始まるいくつかのディレクティブがあります。
 
 現状では以下のようなものがあります。

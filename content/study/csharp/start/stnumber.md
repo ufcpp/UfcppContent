@@ -15,10 +15,12 @@ aliases:
 
 # 数値
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 本項では、[組み込み型](st_embeddedtype.md)の補足として、[整数型](st_embeddedtype.md#integer)や[浮動小数点数型](st_embeddedtype.md#float)など、いわゆる「数値」がらみの少し細かい話をします。
 
-##<a id="sec-generated-title-2"></a> <a id="int-double"></a>int型とdouble型
+## <a id="sec-generated-title-2"></a> <a id="int-double"></a>int型とdouble型
+
 C#の数値型には、使用する記憶領域サイズ違いのものがいくつかあります。その中で代表的な位置づけにあるのは、整数では`int`型(4バイト)、浮動小数点数では`double`型(8バイト)です。
 
 どう「代表的」かというと以下のような感じです。
@@ -35,12 +37,14 @@ C#の数値型には、使用する記憶領域サイズ違いのものがいく
 (実際にはいろんな要因がからんで、`int`型か`double`型を使っておけば安泰というわけでもなく、何が最適かは状況によります。
 CPU構造の流行など、時代による差もあったりします。最近だと`double`型(8バイト)よりも`float`型の方が有利になる場面も多いです。)
 
-##<a id="sec-generated-title-3"></a> <a id="base"></a>10進数以外の数値
+## <a id="sec-generated-title-3"></a> <a id="base"></a>10進数以外の数値
+
 普通に整数リテラルを書くと10進数なわけですが、その他に、16進数と2進数で書くことができます。
 
 16進数や2進数については「[コンピューターでよく使う数字](../../computer/digits/digitsincomputer.md#bin-oct-hex)」を参照してください。
 
-###<a id="sec-generated-title-4"></a> <a id="hexadecimal"></a>16進数リテラル
+### <a id="sec-generated-title-4"></a> <a id="hexadecimal"></a>16進数リテラル
+
 普通に数字を並べると10進数扱いされますが、先頭に`0x`を付けると16進数で数値を書けるようになります(hexadecimal literals)。
 
 <pre class="source" title="16進数リテラル">
@@ -48,7 +52,8 @@ CPU構造の流行など、時代による差もあったりします。最近�
 <span class="reserved">var</span> y = 0XabcdABCD; <span class="comment">// 0X や、A～F の記号は大文字・小文字どちらでもOK</span>
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="binary"></a>2進数リテラル
+### <a id="sec-generated-title-5"></a> <a id="binary"></a>2進数リテラル
+
 <h5 class="version version7">Ver. 7</h5>
 
 C# 7で、2進数でもリテラルを書けるようになりました(binary literals)。
@@ -83,7 +88,8 @@ C# 7で、2進数でもリテラルを書けるようになりました(binary l
 「赤と緑の組み合わせが黄色(yellow)」というのを、1ビット目と2ビット目が1なので、2進数で11(つまり、10進数で3)という数値で表しています。
 こういう表し方を、特定の場所に旗(flag)を立てて目印にするのに例えて、「フラグ」と呼びます。
 
-###<a id="sec-generated-title-6"></a> <a id="initial0"></a>数値リテラルの先頭は 0～9
+### <a id="sec-generated-title-6"></a> <a id="initial0"></a>数値リテラルの先頭は 0～9
+
 16進数リテラルも2進数リテラルも、どちらも0から始まります(それぞれ、`0x`か`0b`始まり)。
 10進数リテラルも数字(0～9のいずれか)から始まるわけで、数値リテラルは常に数字始まりです。
 
@@ -92,7 +98,8 @@ C# 7で、2進数でもリテラルを書けるようになりました(binary l
 
 C#で書かれたソースコードの解釈を高速に行うためにこういう仕様になっています。
 
-##<a id="sec-generated-title-7"></a> <a id="digit-separator"></a>数字区切り文字
+## <a id="sec-generated-title-7"></a> <a id="digit-separator"></a>数字区切り文字
+
 <h5 class="version version7">Ver. 7</h5>
 
 C# 7では、数値リテラルの数字と数字の間に、`_`で区切りを入れれるようになりました。
@@ -120,7 +127,8 @@ C# 7では、数値リテラルの数字と数字の間に、`_`で区切りを�
 <span class="reserved">var</span> f = 0b_10;
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="leading-separator"></a>先頭区切り文字
+### <a id="sec-generated-title-8"></a> <a id="leading-separator"></a>先頭区切り文字
+
 <h5 class="version version7_1">Ver. 7.2</h5>
 
 C# 7.2で、`0b`、`0x`の直後に区切り文字の `_` を入れることができるようになりました。
@@ -152,7 +160,8 @@ C# 7.2で認められたのはあくまで `0b` と `0x` の直後だけです�
 迷った理由は、「数字(digit)の区切り」という割には`b`や`x`が数字ではないためと、
 `_10` と書くと識別子扱いされるので `0b_10`や`0x_10`を認めるのに多少抵抗があったためだそうです。
 
-##<a id="sec-generated-title-9"></a> <a id="plan"></a>他、書く予定
+## <a id="sec-generated-title-9"></a> <a id="plan"></a>他、書く予定
+
 (書きかけ)
 
 - 科学表記リテラルについて多少詳しめに

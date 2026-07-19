@@ -18,7 +18,8 @@ aliases:
 
 # 変分学
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 （書きかけ）
  
 「関数の関数」の最小化問題、
@@ -47,7 +48,8 @@ aliases:
 <strong id="theory" class="keyword">変分学</strong>などと呼ばれたりします。
 
 
-##<a id="sec-generated-title-2"></a> <a id="functional"></a>汎関数
+## <a id="sec-generated-title-2"></a> <a id="functional"></a>汎関数
+
 改めて書きますが、
 「実関数 → 実数の関数」を<strong id="functional" class="keyword">汎関数</strong>（functional）と呼びます。
  
@@ -88,7 +90,8 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
       <span class="normal">d</span>t
 </div>
 
-##<a id="sec-generated-title-3"></a> <a id="euler"></a>オイラー・ラグランジュ方程式
+## <a id="sec-generated-title-3"></a> <a id="euler"></a>オイラー・ラグランジュ方程式
+
 端点（<span class="math">x<span class="paren" style="font-size:em;">(</span>a<span class="paren" style="font-size:em;">)</span>, x<span class="paren" style="font-size:em;">(</span>b<span class="paren" style="font-size:em;">)</span></span> の値）が固定された定積分形の汎関数
 <div class="math">
 I<span class="paren" style="font-size:em;">[</span>x<span class="paren" style="font-size:em;">]</span><span class="normal">=</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> b</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">a</td></tr></table>
@@ -191,7 +194,8 @@ f
 これを、（変分問題に対する）オイラー・ラグランジュ方程式という。
 
 
-##<a id="sec-generated-title-4"></a> <a id="example"></a>変分問題の例
+## <a id="sec-generated-title-4"></a> <a id="example"></a>変分問題の例
+
 例:
 2点間の最短経路
  
@@ -200,7 +204,8 @@ f
 もう1つ、有名な例として、最速降下曲線 (brachistochrone curve)
 
 
-##<a id="sec-generated-title-5"></a> <a id="energy"></a>弧長とエネルギー
+## <a id="sec-generated-title-5"></a> <a id="energy"></a>弧長とエネルギー
+
 曲線 <span class="math">x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span> の弧長は
 <span class="math"><span class="cursive">L</span><span class="paren" style="font-size:em;">[</span>x<span class="paren" style="font-size:em;">]</span><span class="normal">=</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> b</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">a</td></tr></table><span class="normal">|</span>
  x<sup><span class="paren" style="font-size:em;">(</span><span class="normal">1</span><span class="paren" style="font-size:em;">)</span></sup><span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="normal">|</span><span class="normal">d</span>t
@@ -350,7 +355,8 @@ V
 弧長 <span class="math"><span class="cursive">L</span></span> の最小化問題とエネルギー <span class="math"><span class="cursive">E</span></span> の最小化問題は同値。
 
 
-##<a id="sec-generated-title-6"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-6"></a> <a id="summary"></a>まとめ
+
 汎関数 ＝ 実関数→実数 の写像
  
 変分問題 ＝ 汎関数の極値問題

@@ -19,12 +19,14 @@ aliases:
 
 # \[雑記\] LINQ と遅延評価
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# 2.0 の「[イテレーター](sp2_iterator.md#iterator)」や、
 C# 3.0 の「[LINQ](../cheatsheet/ap_ver3.md#linq)」を使うと、lazy list のようなことが実現可能。
 
 
-##<a id="sec-generated-title-2"></a> <a id="linq"></a>LINQ の動作概要
+## <a id="sec-generated-title-2"></a> <a id="linq"></a>LINQ の動作概要
+
 例えば、以下のようなコードを見てみましょう。
 
 <pre class="source" title="LINQ の例" lang="">
@@ -85,7 +87,8 @@ int[]に（正確に言うと、IEnumerable&lt;int&gt; に）“追加した”�
 （定義場所は System.Query.Sequence クラス内。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="list"></a>リスト → リスト
+## <a id="sec-generated-title-3"></a> <a id="list"></a>リスト → リスト
+
 前節の Where や Select はリストを変形して別のリストを得るメソッドと考えることができます。
 Where は特定の条件を満たす要素だけを取り出したリストを、
 Select はリスト内の各要素にある操作を施したリストを作るメソッドです。
@@ -216,7 +219,8 @@ Extensions の方の Where, Select が呼び出されます。
 最初のリスト x から別のリスト y を得る部分で実行時間の大部分を占めています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="delay"></a>遅延評価
+## <a id="sec-generated-title-4"></a> <a id="delay"></a>遅延評価
+
 前節では、IList を使って Where および Select を実装してみました。
 その結果は、元のリスト x から変形後のリスト y を得る部分で一気に処理をしていて、
 残りの foreach の部分ではほとんど何もしていないという状態になりました。
@@ -310,7 +314,8 @@ lazy list に似たような機能が実現できるわけです。
 lazy list 風の操作がより簡便に行えるようになりました。
 
 
-###<a id="sec-generated-title-5"></a> <a id="side_effect"></a>おまけ：値のキャッシュ
+### <a id="sec-generated-title-5"></a> <a id="side_effect"></a>おまけ：値のキャッシュ
+
 一般に、関数型言語などの言語で実装されている遅延評価機能は、
 「必要になるまで計算を実行しない」というのに加えて、
 「1度計算したら計算結果をキャッシュする」というような機構も持っていることが多いです。

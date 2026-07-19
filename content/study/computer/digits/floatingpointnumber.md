@@ -18,14 +18,16 @@ aliases:
 
 # 浮動小数点数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[コンピューターでよく使う数字](digitsincomputer.md)」で説明したとおり、コンピューターで扱える数値の桁数は有限です。
 例えば、8バイト（64ビット）の記憶領域を使っても、整数の場合、10進数で20桁程度の桁数しか表現できません。
 
 そこで、限られた記憶領域でできる限り大きな数を表す方法として、浮動小数点数（fl oating point number）というものが考えられれています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="exponential"></a>浮動小数点数 ＝ 指数表記
+## <a id="sec-generated-title-2"></a> <a id="exponential"></a>浮動小数点数 ＝ 指数表記
+
 浮動小数点数は、自然科学などの分野で数値を指数表記で2.99792×10<sup>8</sup>と表すように、
 値を<strong id="fraction" class="keyword">仮数部</strong>（fraction：2.99792の部分）と<strong id="exeponent" class="keyword">指数部</strong>（exponent：10の指数としてかかっている8の部分）に分けて値を表現する方法です。
 浮動小数点という言葉は、「10<sup>n</sup>というような指数を掛けることで小数点の位置を変えている」という意味です。
@@ -46,16 +48,19 @@ aliases:
 図1の例の指数8ビット、仮数23ビットという表現形式はIEEE 754規格の単精度（32ビットを使うという意味。64ビット使うものを倍精度と呼びます）浮動小数点数になります。
 
 
-###<a id="sec-generated-title-3"></a> <a id="ieee"></a>注: IEEE
+### <a id="sec-generated-title-3"></a> <a id="ieee"></a>注: IEEE
+
 IEEEとは、The Institute of Electrical and Electronics Engineersの略称で、アメリカに本部を置く学会の名前です。
 IEEE 754という名称は、「IEEEで定めた754番の規格」という意味です。
 
 
-##<a id="sec-generated-title-4"></a> <a id="note"></a>浮動小数点数に関する注意
+## <a id="sec-generated-title-4"></a> <a id="note"></a>浮動小数点数に関する注意
+
 以下で説明するように、IEEE 754規格ではいくつか注意すべき点があります。
 
 
-###<a id="sec-generated-title-5"></a> <a id="normalize"></a>正規化
+### <a id="sec-generated-title-5"></a> <a id="normalize"></a>正規化
+
 指数表記では、123 = 12.3 × 10 = 1.23 × 10<sup>2</sup> = 0.123 × 10<sup>3</sup> というように、
 同じ数字を複数の方法で表すことができてしまいます。
 そこで、通常は「必ず0.から始めて、0以外の数字が続くようにする」というようなルールを定めて表記を1通りに定めます。
@@ -69,7 +74,8 @@ IEEE 754規格では以下のような正規化ルールを使っています。
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="infinity"></a>無限大
+### <a id="sec-generated-title-6"></a> <a id="infinity"></a>無限大
+
 有限桁しか表現できないコンピューターの世界では、桁を途中で打ち切ることによって誤差が生じます。
 このような誤差を<strong id="rounding" class="keyword">打切り誤差</strong>と呼びます。
 
@@ -93,7 +99,8 @@ IEEE 754規格の場合には、指数部を最大値（単精度の場合は255
 εは、本来は無限小（無限大の対になる概念で、数ではない）を表す記号ですが、コンピューターの世界では非常に小さな値と無限小も区別しません。
 
 
-###<a id="sec-generated-title-7"></a> <a id="nan"></a>NaN（Not a Number）
+### <a id="sec-generated-title-7"></a> <a id="nan"></a>NaN（Not a Number）
+
 前節で話したように、無限大同士の割り算結果など、数として扱えないものもあります。
 このような無効な値をNaN（Not a Number: 非数）と呼びます。
 

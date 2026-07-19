@@ -18,7 +18,8 @@ aliases:
 
 # 計量とポテンシャル
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[最小作用の原理](action.md)」では、
 「物体は最短経路上を運動する」というような話をしました。
 そこでは、
@@ -56,7 +57,8 @@ u<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style
 ベクトルポテンシャルというものも考えてみます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="general"></a>一般座標系と計量
+## <a id="sec-generated-title-2"></a> <a id="general"></a>一般座標系と計量
+
 「[最小作用の原理](action.md)」では、
 座標を <span class="math"><span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span></span> で書きましたが、
 このページでは、
@@ -208,7 +210,8 @@ G<sub>ij</sub><span class="normal">=</span><table class="sigma" summary="sum"><t
 各点の尺度が違うと考える。
 
 
-##<a id="sec-generated-title-3"></a> <a id="scalar"></a>スカラーポテンシャルと4次元計量
+## <a id="sec-generated-title-3"></a> <a id="scalar"></a>スカラーポテンシャルと4次元計量
+
 「[歪んだ空間での最短経路](action.md#curve)」では、
 <span class="math"><span class="normal">d</span><span class="vector">s</span><span class="normal">=</span><span class="normal" style="font-size:em;">√</span><span class="bar">
 x'<sup><span class="normal">2</span></sup><span class="normal">+</span>
@@ -253,7 +256,8 @@ g
 4次元時空の計量の時間 <span class="math">t</span> に関係する成分だという解釈ができます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="vector"></a>ベクトルポテンシャル
+## <a id="sec-generated-title-4"></a> <a id="vector"></a>ベクトルポテンシャル
+
 前節で導入した4次元計量 <span class="math">g</span> は、
 <div class="math">
 g
@@ -397,7 +401,8 @@ u
 <span class="math">u, <span class="vector">a</span></span> がポテンシャルに相当するものであることが分かります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-5"></a> <a id="summary"></a>まとめ
+
 「最小作用の原理」 ≒ 「物体は最短距離を動く」という考え方のもと、
 計量という概念を導入しました。
  

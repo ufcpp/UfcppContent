@@ -20,7 +20,8 @@ aliases:
 
 # DSL がらみのその他諸々
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 執筆途中。
 
 その他、直接的ではないにしても DSL とも関連しそうな話題。
@@ -30,7 +31,8 @@ aliases:
 汎用言語＋DSL 混在開発すると面白そうなもの。
 
 
-##<a id="sec-generated-title-2"></a> <a id="offline"></a>オフライン処理
+## <a id="sec-generated-title-2"></a> <a id="offline"></a>オフライン処理
+
 設定ファイルや画像・音声などのリソースファイルの形式には、
 「編集しやすい形式」と「プログラムから読み込みやすい形式」があります。
 また、編集時にのみ必要になる
@@ -49,7 +51,8 @@ DSL ベース開発においても、
 （実際、「[WPF](../../dotnet/dotnet3/abstract.md#wpf)」 の 「[XAML](../../dotnet/wpf/wpf_xaml.md#xaml)」 がこういう処理をしています。）
 
 
-###<a id="sec-generated-title-3"></a> <a id="offline_demand"></a>オフライン処理の必要性
+### <a id="sec-generated-title-3"></a> <a id="offline_demand"></a>オフライン処理の必要性
+
 「[抽象定義と具象定義](dsl.md#abstraction)」で説明したように、
 持ってる情報としてはまったく同じ（抽象形式的には同じ）でも、
 具体的な表現方法（具象形式）は変えることができます。
@@ -77,11 +80,13 @@ XML なんかは、理念的にはこの折中案。
 編集時にしか必要ない情報を削除してしまうのが普通です。
 
 
-###<a id="sec-generated-title-4"></a> <a id="offline_sample"></a>オフライン処理の例
+### <a id="sec-generated-title-4"></a> <a id="offline_sample"></a>オフライン処理の例
+
 いくつか、オフライン処理の例を挙げてみます。
 
 
 ##### <a id="sec-generated-title-5"></a>テキスト → バイナリ
+
 まあ、わかりやすい例で言うと、
 テキスト形式で書いて、バイナリ形式に変換しておくというのがあります。
 
@@ -115,6 +120,7 @@ Parse では「文字列を解析して数値に変換」というような処�
 
 
 ##### <a id="sec-generated-title-6"></a>編集用のメタデータ
+
 データには、編集するときにはあった方がいいけど、
 実行時には不要になるデータというのもあります。
 
@@ -135,6 +141,7 @@ Parse では「文字列を解析して数値に変換」というような処�
 
 
 ##### <a id="sec-generated-title-7"></a>ロスレス → 準ロスレス
+
 ゲームなどでは、画像や音声データをよく使います。
 で、この手のデータは、編集時には、編集のたびにデータが劣化していては話にならないので、
 ロスレス（完全に可逆な）データ形式で保存します。
@@ -149,7 +156,8 @@ Parse では「文字列を解析して数値に変換」というような処�
 ）
 
 
-###<a id="sec-generated-title-8"></a> <a id="content_pipeline"></a>コンテントパイプライン
+### <a id="sec-generated-title-8"></a> <a id="content_pipeline"></a>コンテントパイプライン
+
 Microsoft のゲーム開発環境 [XNA](http://www.microsoft.com/japan/msdn/xna/) は、
 コンテントパイプラインという仕組みを持っています。
 <pre>
@@ -174,7 +182,8 @@ Microsoft のゲーム開発環境 [XNA](http://www.microsoft.com/japan/msdn/xna
       特に Makefile の類を書かなくても1→3の処理ができること。
     </pre>
 
-##<a id="sec-generated-title-9"></a> <a id="language_workbench"></a>言語ワークベンチ
+## <a id="sec-generated-title-9"></a> <a id="language_workbench"></a>言語ワークベンチ
+
 <pre>
       （書きかけ）
 

@@ -18,12 +18,14 @@ aliases:
 
 # 変数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 説明が長くなりそうなので分割。
 ここでは、主に変数の取り扱いについて説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="variable"></a>変数
+## <a id="sec-generated-title-2"></a> <a id="variable"></a>変数
+
 「[基礎知識](basic.md)」でも説明したように、
 $ から始まる単語は変数になります。
 
@@ -40,7 +42,8 @@ ${a} というように、中身がアルファベットなら $a と同じ意�
 ${#$%&amp;'(} というような、任意の記号を含む変数名を付けることができます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="object"></a>Variant ではなく Object
+## <a id="sec-generated-title-3"></a> <a id="object"></a>Variant ではなく Object
+
 変数にはどんな型の値でも代入できますが、
 Variant ではなく Object です。
 
@@ -93,7 +96,8 @@ String
 数値や文字列に対してどういう操作が可能なのかとかを調べることができます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="cast"></a>型変換
+## <a id="sec-generated-title-4"></a> <a id="cast"></a>型変換
+
 値や変数の前に [型名] を付けると、型変換ができます。
 例えば、実数を整数に変換するには以下のようにします。
 
@@ -127,7 +131,8 @@ Int32
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="typespesific"></a>型の指定
+## <a id="sec-generated-title-5"></a> <a id="typespesific"></a>型の指定
+
 変数の型は明示的に指定することもできます。
 指定方法は、例えば以下のような感じで、
 代入時に [型名] を変数の前に付けます。
@@ -156,7 +161,8 @@ Int32
 後述する 「[Remove-Variable](../cmdlet/cmd_variable.md#remove_variable)」 Cmdlet でいったん変数を削除する必要があります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="type"></a>型
+## <a id="sec-generated-title-6"></a> <a id="type"></a>型
+
 先ほども説明したように、
 PowerShell 上のオブジェクトは全て .NET Framework のオブジェクトになっています。
 整数なら System.Int32 ですし、
@@ -189,7 +195,8 @@ UInt32 や Int16 と書く必要あり。）
 関数（例えば、実行の成否を bool で返してくるような）の戻り値を無視したいときなどに使います。
 
 
-##<a id="sec-generated-title-7"></a> <a id="scope"></a>スコープ
+## <a id="sec-generated-title-7"></a> <a id="scope"></a>スコープ
+
 PowerShell の変数はスコープを持っています。
 普通に宣言した変数はローカルスコープを持っていて、
 関数やブロックの外部からは参照できません。
@@ -263,7 +270,8 @@ C:\ からフルパス書かないと駄目みたい。
 普通に Get-Content, Set-Content を使った方がいいかも。
 
 
-##<a id="sec-generated-title-8"></a> <a id="operator"></a>演算子
+## <a id="sec-generated-title-8"></a> <a id="operator"></a>演算子
+
 整数の加減乗除・剰余に関しては、
 C# と同じ
 <code>+ - * / %</code>
@@ -300,7 +308,8 @@ C# と同じ
 - から始まる文字列を使って演算子を表します。
 
 
-###<a id="sec-generated-title-9"></a> <a id="typeoperator"></a>Object に対する演算子
+### <a id="sec-generated-title-9"></a> <a id="typeoperator"></a>Object に対する演算子
+
 整数や文字列、配列に対する演算子は、
 それぞれの項で説明するとして、
 ここでは任意の型に共通する演算だけ説明しておきます。
@@ -354,7 +363,8 @@ True
 
 
 
-###<a id="sec-generated-title-10"></a> <a id="priority"></a>演算子の優先順位
+### <a id="sec-generated-title-10"></a> <a id="priority"></a>演算子の優先順位
+
 演算子には結合の優先度があります。
 例えば、（まあ、多くのプログラミング言語がそうであるように、）
 + より * の方が優先度が上で、
@@ -459,11 +469,13 @@ True
 多分、-as -is -replace -contains -f は比較演算子のところに含まれてると思う。
 
 
-##<a id="sec-generated-title-11"></a> <a id="shell_var"></a>シェル変数
+## <a id="sec-generated-title-11"></a> <a id="shell_var"></a>シェル変数
+
 PowerShell が既定で持っている変数（シェル変数）がいくつかあります。
 
 
-###<a id="sec-generated-title-12"></a> <a id="auto"></a>自動変数
+### <a id="sec-generated-title-12"></a> <a id="auto"></a>自動変数
+
 いくつか、PowerShell 自体が自動的に値を設定している<strong id="auto_var" class="keyword">自動変数</strong>があります。
 （ユーザは変更できない。）
 
@@ -526,6 +538,7 @@ PowerShell を起動直後に Get-Variable すればどういう自動変数が�
 
 
 
-###<a id="sec-generated-title-13"></a> <a id="user"></a>ユーザ設定変数
+### <a id="sec-generated-title-13"></a> <a id="user"></a>ユーザ設定変数
+
 履歴の最大保持数など、
 ユーザが設定できるシェル変数（<strong id="user_var" class="keyword">ユーザ設定変数</strong>）もあります。

@@ -18,7 +18,8 @@ aliases:
 
 # 非同期処理の種類
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「非同期処理」と言っても、いくつかのタイプの用途があって、それぞれ書き方や使うクラス ライブラリが異なります。
 大まかに言うと、以下のような用途があります。
 
@@ -41,12 +42,14 @@ C# 5.0 で導入された非同期メソッド（「[非同期処理](sp5_async.
 
 
 ##### <a id="sec-generated-title-2"></a>※
+
 本稿の内容は[プログラミングの魔導書 Vol. 3](http://longgate.co.jp/books/grimoire-vol3.html)に寄稿したものがベースとなっています（分割、体裁の変更のみ）。
 また、このページ中の内容（＝ 魔導書への寄稿の一部分）は、
 @IT に書いた記事「[フリーズしないアプリケーションの作り方](http://www.atmarkit.co.jp/ait/articles/1109/30/news126.html)」を短くまとめたものになります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="background"></a>バックグラウンド処理（非同期メソッド）
+## <a id="sec-generated-title-3"></a> <a id="background"></a>バックグラウンド処理（非同期メソッド）
+
 負荷の高い計算や、I/O 待ちをする場合、
 メイン スレッドとは別のスレッドを使いたい場合がある。
 例えば、GUI アプリの場合、
@@ -152,7 +155,8 @@ await 演算子の引数として渡せます。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="data-parallel"></a>データ並列（Parallel クラスと並列 LINQ）
+## <a id="sec-generated-title-4"></a> <a id="data-parallel"></a>データ並列（Parallel クラスと並列 LINQ）
+
 並列処理も非同期処理の一種になります。
 （単一のコンピューター上で）並列処理を行いたい主な同期は、
 マルチコア CPU の性能を最大限引き出すことです。
@@ -211,7 +215,8 @@ await 演算子の引数として渡せます。
 そのため、データ処理を並列化する際には、データが独立している（ようなアルゴリズムを考える）ことが重要になります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="dataflow"></a>タスク並列/非同期データフロー（TPL Dataflowライブラリ）
+## <a id="sec-generated-title-5"></a> <a id="dataflow"></a>タスク並列/非同期データフロー（TPL Dataflowライブラリ）
+
 並列処理を行うもう1つの方法としては、
 図4に示すように、異なる処理（タスク）を独立して動かして、その間で非同期にデータのやり取りする方法があります。
 異なるタスクを並列に動かすという意味ではタスク並列（task parallelism）、

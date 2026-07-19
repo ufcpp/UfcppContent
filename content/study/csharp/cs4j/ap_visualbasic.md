@@ -18,7 +18,8 @@ aliases:
 
 # C# と Visual Basic
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 (書きかけ)
 
 Visual Basic 7 以降、つまり、.NET が出てからの VB は、持っている機能的には C# とあまり変わりありません。
@@ -41,34 +42,40 @@ Visual Basic 7 以降、つまり、.NET が出てからの VB は、持って�
 という意味で、C# と VB の現状の差を紹介しましょう。
 
 
-##<a id="sec-generated-title-2"></a> <a id="unsafe"></a>unsafe コード
+## <a id="sec-generated-title-2"></a> <a id="unsafe"></a>unsafe コード
+
 C# にしかない機能の筆頭は unsafe
 
 
-##<a id="sec-generated-title-3"></a> <a id="xml-literal"></a>XML リテラル
+## <a id="sec-generated-title-3"></a> <a id="xml-literal"></a>XML リテラル
+
 VB にしかない機能筆頭。
 
 あんまり XML が使われなくなってきてる現状としては…
 
 
-##<a id="sec-generated-title-4"></a> <a id="iterator"></a>イテレーター
+## <a id="sec-generated-title-4"></a> <a id="iterator"></a>イテレーター
+
 VB は 10 までなかった。
 
 一方で、VB 10 では、匿名関数もイテレーター化できるように（C# は無理）。
 
 
-##<a id="sec-generated-title-5"></a> <a id="collection-inilializer"></a>コレクション初期化子
+## <a id="sec-generated-title-5"></a> <a id="collection-inilializer"></a>コレクション初期化子
+
 Add メソッドがあればコレクション初期化子を使えるわけだけども。
 
 VB の場合は拡張メソッドでも OK（C# は通常のメソッドとして持たなきゃダメ）。
 
 
-##<a id="sec-generated-title-6"></a> <a id="dynamic"></a>dynamic
+## <a id="sec-generated-title-6"></a> <a id="dynamic"></a>dynamic
+
 dynamic 関連の仕様が結構違う。
 単なる late-binding か、Dynamic Callsite か。
 
 
-##<a id="sec-generated-title-7"></a> <a id="overload-resolution"></a>オーバーロードの解決ルール
+## <a id="sec-generated-title-7"></a> <a id="overload-resolution"></a>オーバーロードの解決ルール
+
 メソッドの似たようなオーバーロードがあるとき、どれが呼ばれるかを決めるルールは結構複雑。
 C# と VB で意外と違うので、
 パッと見で同じになるように単純に翻訳してしまうと挙動が変わる。
@@ -76,7 +83,8 @@ C# と VB で意外と違うので、
 C# ⇔ VB の自動変換をやろうとすると一番はまる部分。
 
 
-##<a id="sec-generated-title-8"></a> <a id="misc"></a>他
+## <a id="sec-generated-title-8"></a> <a id="misc"></a>他
+
 With とか Handles とか On Error とか。
 要するに、旧 VB の名残。
 

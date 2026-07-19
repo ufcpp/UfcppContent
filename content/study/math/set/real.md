@@ -18,7 +18,8 @@ aliases:
 
 # 実数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 実数は、有理数をユークリッド距離を用いて完備化した体になります。
  
 完備（complete）というのは、
@@ -37,7 +38,8 @@ aliases:
 ここでは前者の距離完備化（カントール流の定義）を用いて説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="sequence"></a>有理数列
+## <a id="sec-generated-title-2"></a> <a id="sequence"></a>有理数列
+
 有理数列は必ずしも有理数に収束しません。
 例えば、<span class="math">a<sub>n</sub> ＝ <table class="sigma" summary="sum"><tr><td class="sigmasub">n</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">k ＝ 0</td></tr></table><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>k!</td></tr></table></span> とすると、<span class="math"><table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub">n → ∞</td></tr></table> a<sub>n</sub></span> は無理数になります。
 なんでこういう話をするかというと、
@@ -50,7 +52,8 @@ aliases:
 <span class="math"><span class="paren" style="font-size:em;">{</span>a<sub>0</sub>, a<sub>1</sub>, a<sub>2</sub>, ・・・<span class="paren" style="font-size:em;">}</span></span> などと表すこともあります。
 
 
-###<a id="sec-generated-title-3"></a> <a id="Cauchy-sequence"></a>コーシー列・零数列
+### <a id="sec-generated-title-3"></a> <a id="Cauchy-sequence"></a>コーシー列・零数列
+
 収束する数列というものをきっちりと書き表す必要があります。
 収束する数列というものの表すための条件として以下のようなものがあります。
  
@@ -87,7 +90,8 @@ aliases:
 <span class="math"><span class="normal">|</span>f<span class="paren" style="font-size:em;">(</span>n<span class="paren" style="font-size:em;">)</span><span class="normal">|</span> ＜ a</span> となる数列が零数列です。
 
 
-##<a id="sec-generated-title-4"></a> <a id="real"></a>実数の定義
+## <a id="sec-generated-title-4"></a> <a id="real"></a>実数の定義
+
 最初に述べたように、概念的には有理数列の収束値として<strong id="real" class="keyword">実数</strong>（real number）を定義します。
 といっても、実際にはもう少し回りくどい定義の仕方が必要で、簡単に言うと以下のようになります。
 
@@ -105,8 +109,10 @@ aliases:
 <em>有理数は実数の部分集合である</em>とみなすことができます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="operation"></a>実数の間の関係・演算
-###<a id="sec-generated-title-6"></a> <a id="lim"></a>極限
+## <a id="sec-generated-title-5"></a> <a id="operation"></a>実数の間の関係・演算
+
+### <a id="sec-generated-title-6"></a> <a id="lim"></a>極限
+
 実数の順序の話をする前に、コーシー列の極限というものについて説明します。
  
 ある有理数列 <span class="math">f</span> に対して、<span class="math">f</span> を代表する実数の元を <span class="math">f</span> の<strong id="d47e377" class="keyword">極限</strong>と呼び、<span class="math"><table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub">n → ∞</td></tr></table>f<span class="paren" style="font-size:em;">(</span>n<span class="paren" style="font-size:em;">)</span></span> または単に <span class="math"><table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub"></td></tr></table>f</span> で表します。
@@ -120,7 +126,8 @@ aliases:
 が成り立ちます。
 
 
-###<a id="sec-generated-title-7"></a> <a id="order"></a>実数の順序
+### <a id="sec-generated-title-7"></a> <a id="order"></a>実数の順序
+
 詳細は省きますが、任意のコーシー列 <span class="math">f</span> には、
 <span class="math">n ≧ N</span> となるような自然数 <span class="math">n</span> に対して
 <span class="math">f<span class="paren" style="font-size:em;">(</span>n<span class="paren" style="font-size:em;">)</span></span> の符号が全て同じになるような自然数 <span class="math">N</span> が存在します。
@@ -134,7 +141,8 @@ x － y <span class="normal">が負</span> ⇔ x ＜ y
 で定義します。
 
 
-###<a id="sec-generated-title-8"></a> <a id="sum"></a>実数の加減乗除
+### <a id="sec-generated-title-8"></a> <a id="sum"></a>実数の加減乗除
+
 2つの実数 <span class="math">x ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub"></td></tr></table>f, y ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub"></td></tr></table>g</span> の和・差・積・商は
 <div class="math">
 x ± y ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub"></td></tr></table><span class="paren" style="font-size:em;">(</span>f ± g<span class="paren" style="font-size:em;">)</span></div><div class="math">
@@ -143,7 +151,8 @@ x / y ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal"
 で定義します。
 
 
-##<a id="sec-generated-title-9"></a> <a id="algebra"></a>代数系としての実数
+## <a id="sec-generated-title-9"></a> <a id="algebra"></a>代数系としての実数
+
 定義から明らかなように、実数は体になります。
 体であることを明示的に表すために、実数を<em>実数体</em>と呼ぶこともあります。
  
@@ -152,7 +161,8 @@ x / y ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal"
 特に、有理数→実数のように極限を用いて体の拡大を行う方法を「[完備拡大](../group/extensionfield.md#completed)」と呼びます。
 
 
-##<a id="sec-generated-title-10"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-10"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・有理数と実数の関係
 有理数 ⊂ 実数

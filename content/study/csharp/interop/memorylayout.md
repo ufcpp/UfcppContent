@@ -14,7 +14,8 @@ aliases:
 
 # 複合型のレイアウト
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 複合型(クラスや構造体)では、フィールドをメモリ上にどうレイアウト(layout: 配置)するかという問題があります。
 
 通常、メモリ上のレイアウトがどうなっているのかをプログラマーが気にする必要はありません。
@@ -27,7 +28,8 @@ aliases:
 C#では、クラスと構造体に対してレイアウトのカスタマイズ機能を提供しています。
 `StructLayout`属性を付けることでカスタマイズ可能です。
 
-##<a id="sec-generated-title-2"></a> <a id="alignment"></a>アラインメント
+## <a id="sec-generated-title-2"></a> <a id="alignment"></a>アラインメント
+
 「最適なレイアウト」について説明するためには、まず、メモリの<strong id="key-alignment" class="keyword">アラインメント</strong>(alignment: 整列、調整)について知る必要があります。
 
 一般に、メモリの読み書きは、[アドレス](../../computer/general/memory.md#address)が4の倍数や8の倍数になっている方が高速です。
@@ -54,7 +56,8 @@ C#では、クラスと構造体に対してレイアウトのカスタマイズ
 フィールドすべてが8の倍数アドレスに並ぶように、8バイト間隔でフィールドが並びます。
 また、末尾にも、全体が8の倍数になるように未使用領域が追加されます。
 
-##<a id="sec-generated-title-3"></a> <a id="inspection"></a>C#でレイアウトを調べてみる
+## <a id="sec-generated-title-3"></a> <a id="inspection"></a>C#でレイアウトを調べてみる
+
 C#でも、[unsafe](sp_unsafe.md#unsafe)コードを使えば、構造体のレイアウトを調べることができます。
 以下のように、ポインターを使って、構造体の先頭と、各フィールドのアドレスの差を見れば、レイアウトがわかります。
 
@@ -114,7 +117,8 @@ C#でも、[unsafe](sp_unsafe.md#unsafe)コードを使えば、構造体のレ�
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="layout-kind"></a>レイアウトの指定
+## <a id="sec-generated-title-4"></a> <a id="layout-kind"></a>レイアウトの指定
+
 C#では、`StructLayout`属性(`System.Runtime.InteropServices`名前空間)を付けることで、レイアウト方式をカスタマイズ可能です。
 
 以下の3種類のレイアウト方式を選択できます。
@@ -127,7 +131,8 @@ C#では、`StructLayout`属性(`System.Runtime.InteropServices`名前空間)を
 
 また、フィールドとフィールドに何バイトの間隔を空けるか(Pack)を指定することもできます。
 
-###<a id="sec-generated-title-5"></a> <a id="sequential-layout"></a>Sequentialレイアウト
+### <a id="sec-generated-title-5"></a> <a id="sequential-layout"></a>Sequentialレイアウト
+
 Sequentialレイアウトでは、複合型のフィールドは宣言した順序通りにレイアウトされます。
 `StructLayout`属性の引数に、`LayoutKind.Sequential`を渡します。
 
@@ -151,7 +156,8 @@ Sequentialレイアウトでは、複合型のフィールドは宣言した順�
 順序通りに並べるとコンパイラーごとの差異が生まれにくく、相互運用がしやすいからでしょう
 (構造体はネイティブコードとの相互運用に使うことが結構多い)。
 
-###<a id="sec-generated-title-6"></a> <a id="pack"></a>Pack指定
+### <a id="sec-generated-title-6"></a> <a id="pack"></a>Pack指定
+
 間隔の開け方(Pack)は、通常は、32ビットCPUであれば4 (4バイト = 32ビット)、64ビットCPUであれば8 (8バイト = 64ビット)です
 (それが一番高速になる可能性が高い)。
 
@@ -197,7 +203,8 @@ Packを明示的に指定したい場合には、以下のように、`StructLay
 
 ![Pack指定した結果のレイアウト](../../../../assets/media/1083/structpack.png)
 
-###<a id="sec-generated-title-7"></a> <a id="auto-layout"></a>Autoレイアウト
+### <a id="sec-generated-title-7"></a> <a id="auto-layout"></a>Autoレイアウト
+
 Autoレイアウトでは、コンパイラー裁量でフィールドの順序変更を許します。
 `StructLayout`属性の引数に、`LayoutKind.Auto`を渡します。
 
@@ -228,7 +235,8 @@ Autoレイアウトでは、コンパイラー裁量でフィールドの順序�
 
 ちなみに、クラスでは、特に何も指定しないとAutoレイアウトになります。
 
-###<a id="sec-generated-title-8"></a> <a id="explicit-layout"></a>Explicitレイアウト
+### <a id="sec-generated-title-8"></a> <a id="explicit-layout"></a>Explicitレイアウト
+
 `StructLayout`属性の引数に、`LayoutKind.Explicit`を指定して、
 フィールドに`FieldOffset`属性を付けることで、
 フィールドの位置を明示的に指定することができます。
@@ -254,7 +262,8 @@ Autoレイアウトでは、コンパイラー裁量でフィールドの順序�
 
 ![Explicitレイアウトの例](../../../../assets/media/1085/explicitlayout.png)
 
-####<a id="sec-generated-title-9"></a> <a id="union"></a>フィールドの位置を重ねる
+#### <a id="sec-generated-title-9"></a> <a id="union"></a>フィールドの位置を重ねる
+
 Explicitレイアウトを使うと、複数のフィールドの位置を重ねることもできます。
 すなわち、C言語のunionのようなことができます。
 
@@ -308,7 +317,8 @@ Explicitレイアウトを使うと、複数のフィールドの位置を重ね
 ちなみに、下位バイト(この例では78)が先頭(フィールド`A`)に来るか末尾(フィールド`D`)に来るかはCPUによります(「エンディアン(endian)」と言います)。
 Intel CPUの場合は先頭に来ます(little endianと言います。この逆はbig endian)。
 
-####<a id="sec-generated-title-10"></a> <a id="abuse-union"></a>余談: Explicitレイアウトの悪用例
+#### <a id="sec-generated-title-10"></a> <a id="abuse-union"></a>余談: Explicitレイアウトの悪用例
+
 C# 8.0 で挙動が変わったんですが、昔の C# では、「true でも false でもない bool 型」を作ることができました。
 (詳しくは「[余談: bool の網羅性](../datatype/typeswitch.md#bool-exhaustiveness)」で説明しています。)
 
@@ -393,7 +403,8 @@ C#の`true`、`false`は、内部的にはそれぞれ1, 0の数値になって�
 
 </div>
 
-####<a id="sec-generated-title-11"></a> <a id="illegal-layout"></a>余談: 値と参照を重ねる
+#### <a id="sec-generated-title-11"></a> <a id="illegal-layout"></a>余談: 値と参照を重ねる
+
 Explicitレイアウトには1つ制限があります。
 値型のフィールドと参照型のフィールドを同じ位置に重ねてレイアウトすることはできません。
 

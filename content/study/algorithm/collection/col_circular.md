@@ -18,7 +18,8 @@ aliases:
 
 # 循環バッファ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[配列リスト](col_array.md#array)」は、
 要素へのランダムアクセスが非常に高速という利点がある一方、
 末尾以外への要素の挿入が極端に遅いという欠点がありました。
@@ -39,7 +40,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+## <a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+
 循環バッファは以下のような利点を持っています。
 
 * 「[配列リスト](col_array.md#array)」と同様に、高速な（オーダー O(1)）ランダムアクセスが可能。
@@ -55,7 +57,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法
+## <a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法
+
 配列の先頭と末尾を環のように繋ぐというのをどうやって実装するかと言うと、
 答えは簡単で、
 
@@ -188,7 +191,8 @@ aliases:
 見ての通り、いずれも要素数に関係なく、一定時間で挿入・削除が可能です。
 
 
-##<a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/CircularBuffer.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/CircularBuffer.cs)

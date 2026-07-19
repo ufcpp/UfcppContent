@@ -18,17 +18,20 @@ aliases:
 
 # 上付き・下付き文字
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 上付き・下付き文字を表示する。
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;sup&gt;上付き&lt;/sup&gt;
 &lt;sub&gt;下付き&lt;/sub&gt;
 &lt;subsup&gt;&lt;sub&gt;下&lt;/sub&gt;&lt;sup&gt;上&lt;/sup&gt;&lt;/subsup&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>x&lt;sup&gt;2&lt;/sup&gt;, 
 a&lt;sub&gt;0&lt;/sub&gt; , 
 p&lt;subsup&gt;&lt;sub&gt;1&lt;/sub&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/subsup&gt;
@@ -37,7 +40,8 @@ a<sub>0</sub> ,
 p<table class="subsup" summary="sub / sup"><tr><td>2</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td>1</td></tr></table>
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>
 &lt;xsl:template match="ufcpp:sup0"&gt;&lt;sup&gt;&lt;span class="normal"&gt;0&lt;/span&gt;&lt;/sup&gt;&lt;/xsl:template&gt;
 &lt;xsl:template match="ufcpp:sup1"&gt;&lt;sup&gt;&lt;span class="normal"&gt;1&lt;/span&gt;&lt;/sup&gt;&lt;/xsl:template&gt;
@@ -83,7 +87,8 @@ p<table class="subsup" summary="sub / sup"><tr><td>2</td></tr><tr><td style="fon
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>table.subsup
 {
   display:inline;

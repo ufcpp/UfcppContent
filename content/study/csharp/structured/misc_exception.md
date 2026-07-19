@@ -18,7 +18,8 @@ aliases:
 
 # \[雑記\] 例外の使い方
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 言語構文的な意味での例外処理の方法は「[例外処理](oo_exception.md)」で説明しましたが、
 実際のところ、どういう場合にどうやって例外を投げて、
 どうやって処理すればいいのかは、
@@ -27,7 +28,8 @@ aliases:
 ということで、ここでは、例外の使い方について説明したいと思います。
 
 
-##<a id="sec-generated-title-2"></a> <a id="basis"></a>例外の投げ方の基本方針
+## <a id="sec-generated-title-2"></a> <a id="basis"></a>例外の投げ方の基本方針
+
 例外の投げ方に関する考え方は意外とシンプルで、
 「<em>メソッドの定める結果を達成できないなら例外を投げる</em>」という方針で OK です。
 
@@ -70,7 +72,8 @@ aliases:
 （利用側に例外処理を強制できず、例外が発生したことに気づかないまま正常なつもりで処理を続けてしまい、後になって困る可能性がある。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="class"></a>例外の種類
+## <a id="sec-generated-title-3"></a> <a id="class"></a>例外の種類
+
 一口に「規約を達成できない状況」と言っても、実はいくつかのパターンがあります。
 
 * 利用法上の例外： 利用者側が正しい使い方をしていれば回避できる例外。
@@ -82,6 +85,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-4"></a>利用法上の例外
+
 多くの場合、事前のチェックなどを行うことによって例外が発生するような状況は回避できます。
 
 <table summary="例外の発生状況と回避方法">
@@ -124,6 +128,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-5"></a>発生は避けれないが、復帰可能な例外
+
 例えば、File.Open を考えてみましょう。
 以下のようなコードは、一応、ファイルの存在の有無を事前チェックしています。
 
@@ -186,6 +191,7 @@ Exists で確認してから ReadAllText で読み込みを行うわずかな間
 
 
 ##### <a id="sec-generated-title-6"></a>対処のしようがない致命的な例外
+
 .NET Framework 自体がエラーを起こしたり、どうあがいてもプログラムの続行が不可能な状況も、希にあります。
 
 こういう場合、言えることは1つだけで、
@@ -194,7 +200,8 @@ Exists で確認してから ReadAllText で読み込みを行うわずかな間
 例外が起きた瞬間に処理を止める方が幾分かマシです。
 
 
-##<a id="sec-generated-title-7"></a> <a id="tester"></a>Tester-Doer パターン
+## <a id="sec-generated-title-7"></a> <a id="tester"></a>Tester-Doer パターン
+
 前述のとおり、使用法上の例外はそもそも発生しないようにするのが好ましいです。
 そのためには、メソッド呼び出し前に、インスタンスの状態や、引数の中身をチェックします。
 引数の null チェックのように外で簡単にチェックできる条件もあれば、
@@ -237,7 +244,8 @@ Exists で確認してから ReadAllText で読み込みを行うわずかな間
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="try"></a>Try Parse パターン
+## <a id="sec-generated-title-8"></a> <a id="try"></a>Try Parse パターン
+
 処理の内容によっては、Tester の処理負荷が高すぎて、「[Tester-Doer パターン](#tester_doer)」を実装したくない場合があります。
 
 例えば、int.Parse なんかがそうなんですが、

@@ -18,12 +18,14 @@ aliases:
 
 # \[雑記\] スタックとヒープ
 
-##<a id="sec-generated-title-1"></a> <a id="point"></a>ポイント
+## <a id="sec-generated-title-1"></a> <a id="point"></a>ポイント
+
 * メモリにはスタックとヒープの2種類の使い方がある
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-2"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 「スタックとは」「ヒープとは」の説明を入れる予定。
@@ -32,13 +34,15 @@ aliases:
 「[値型と参照型](oo_reference.md)」の理解の手助け用。
 
 
-##<a id="sec-generated-title-3"></a> <a id="emulate"></a>模擬的に視覚化
+## <a id="sec-generated-title-3"></a> <a id="emulate"></a>模擬的に視覚化
+
 スタックとヒープの挙動を模擬的にデモするような Silverlight アプリを作ってみました。
 <div class="silverlightControlHost" style="margin:1em;height:480;"><object data="data:application/x-silverlight-2," type="application/x-silverlight-2" width="752" height="480"><param name="source" value="/media/ufcpp2000/csharp/ClientBin/MemoryImage.xap"></param><param name="onerror" value="onSilverlightError"></param><param name="background" value="white"></param><param name="minRuntimeVersion" value="2.0"></param><param name="autoUpgrade" value="false"></param><a href="http://go.microsoft.com/fwlink/?LinkID=124807" style="text-decoration: none;"><img src="http://go.microsoft.com/fwlink/?LinkId=108181" alt="Microsoft Silverlight プラグインを入れてね" style="border-style: none"></img></a></object><iframe style="visibility:hidden;height:0;width:0;border:0px"></iframe></div>
 以下、使い方の説明。
 
 
 ##### <a id="sec-generated-title-4"></a>疑似コード（左半分）
+
 疑似コードで記述されたプログラム。
 コードの先頭から選択した行までの実行結果が右側に表示されます。
 
@@ -96,6 +100,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-5"></a>スタック（真ん中辺りの青いところ）
+
 スタックを模したもの。
 変数の中身はここに格納されます。
 
@@ -103,6 +108,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-6"></a>ヒープ（右側の黄色いところ）
+
 ヒープを模したもの。
 new したインスタンスはここに作成されます。
 
@@ -118,6 +124,7 @@ Java や C# などのように、ガベージコレクションを持つ言語�
 
 
 ##### <a id="sec-generated-title-7"></a>関連物ダウンロード
+
 * 
 [ソース一式（ZIP 形式圧縮）](../../../../assets/media/ufcpp2000/csharp/source/MemoryImage.zip)
 

@@ -18,7 +18,8 @@ aliases:
 
 # 組み合わせ回路
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 論理演算の組み合わせで表現できるディジタル回路のことを<strong id="combinational-circuit" class="keyword">組み合わせ回路</strong>（combinational logic circuit）と呼びます。
 例えば、<span class="math">AB <span class="normal">+</span> B<span class="bar">C</span></span> という論理式を回路図で表現すると図1に示すようになります。
 
@@ -41,7 +42,8 @@ aliases:
 ここでは、組み合わせ回路（論理レベル）の設計方法について説明してしていきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="design"></a>組み合わせ回路の設計
+## <a id="sec-generated-title-2"></a> <a id="design"></a>組み合わせ回路の設計
+
 入力と出力がいずれも0, 1で表せる限り、どんな複雑なものでも否定、論理積、および、論理和を組み合わせた式で表現することができます。
 すなわち、組み合わせ回路を設計するためには、以下のような手順を考えることになります。
 
@@ -60,7 +62,8 @@ aliases:
 それでは具体的な例を挙げながら、これらの手順についてみていきましょう。
 
 
-###<a id="sec-generated-title-3"></a> <a id="sample-spec"></a>仕様例
+### <a id="sec-generated-title-3"></a> <a id="sample-spec"></a>仕様例
+
 例として、ディジタル時計などに見られる数字の液晶表示を考えてみましょう。
 
 説明を簡単にするため、表示する数字は1～4の4つだけに絞ります。要するに、表1に示すような入出力を得ることを考えます。
@@ -120,7 +123,8 @@ aliases:
 7セグ ディスプレイは設計が簡単なので、組み合わせ回路設計の例としてよく使われます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="0-1-in-out"></a>入出力を0, 1で表現
+## <a id="sec-generated-title-4"></a> <a id="0-1-in-out"></a>入出力を0, 1で表現
+
 まず、入出力をすべて0, 1で表現します。
 
 入力は数字が4つあるだけなので、1～4をそれぞれ00, 01, 10, 11などと割り当てることで、2ビットで表現することができます。
@@ -197,7 +201,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="disjunctive-normal"></a>加法標準形の論理式で表す
+## <a id="sec-generated-title-5"></a> <a id="disjunctive-normal"></a>加法標準形の論理式で表す
+
 表2のような真偽値表から機械的に論理式を作る方法があります。
 図3に示すように、まず、真偽値表の入力のところの0, 1に応じて入力変数のAND演算を行います。
 そして、AND演算で作った項を、真偽値表の出力のところの0, 1に応じてOR演算することで式を得ます。
@@ -234,7 +239,8 @@ aliases:
       <span class="normal">+</span> x<sub><span class="normal">0</span></sub> <span class="bar">x<sub><span class="normal">1</span></sub></span>
     </div>
 
-##<a id="sec-generated-title-6"></a> <a id="simplify"></a>論理式の簡単化
+## <a id="sec-generated-title-6"></a> <a id="simplify"></a>論理式の簡単化
+
 一般に、論理式から組み合わせ回路におこす際、論理式の複雑さにほぼ比例して組み合わせ回路の規模が大きくなります。
 回路の大きさは、材料費、故障率、消費電力などに直結しますので、小さければ小さいほど良いです。
 このため、論理式可能な限り簡単化する必要があります。
@@ -355,7 +361,8 @@ x の場合、AND演算とOR演算がそれぞれ1回ずつ必要ですが、y �
       </span>
     </div>
 
-##<a id="sec-generated-title-7"></a> <a id="to-circuit"></a>組み合わせ回路化
+## <a id="sec-generated-title-7"></a> <a id="to-circuit"></a>組み合わせ回路化
+
 あとは、このページの冒頭で説明したように、論理式から回路に起こすことで液晶表示を行う組み合わせ回路を作ることができます。
 例として、<span class="math">
         y<sub><span class="normal">0</span></sub> <span class="normal">=</span> <span class="bar">
@@ -373,7 +380,8 @@ x の場合、AND演算とOR演算がそれぞれ1回ずつ必要ですが、y �
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="dont-care"></a>ドント・ケア
+## <a id="sec-generated-title-8"></a> <a id="dont-care"></a>ドント・ケア
+
 入力の表現方法によっては、絶対に入力されない組み合わせが生じる場合があります。
 この絶対に入力されない組み合わせに対応する出力はどうなっても構わない（don’t care）ことになり、これをドント・ケア（“don’t care” （気にするな）を1つの名詞として使います）と呼びます。
 

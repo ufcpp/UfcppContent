@@ -18,7 +18,8 @@ aliases:
 
 # 多態性
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 多態性(polymorphism: ポリモーフィズム)とは、
 同じメソッド呼び出し(オブジェクト指向用語的には「メッセージ」という)に対して異なるオブジェクトが異なる動作をすることを言います。
 
@@ -32,6 +33,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * オブジェクト指向の中核概念その3: 多態性。
 
 * 同じ名前のメソッドを呼び出しで、異なる振る舞いをすること。
@@ -42,7 +44,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="type"></a>静的な型、動的な型
+## <a id="sec-generated-title-3"></a> <a id="type"></a>静的な型、動的な型
+
 「[継承](oo_inherit.md)」で説明したとおり、
 派生クラスのインスタンスは基底クラスの変数に格納することが出来ます。
 このとき、変数の型を<strong id="statictype" class="keyword">静的な型</strong>といい、
@@ -96,6 +99,7 @@ typeof 演算子は <code>System.Type</code> というクラスのインスタ�
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 <pre class="source" title="動的型情報のサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -127,7 +131,8 @@ Derived
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="downcast"></a>ダウンキャスト
+## <a id="sec-generated-title-5"></a> <a id="downcast"></a>ダウンキャスト
+
 基底クラスの変数に派生クラスの変数を渡すことを<strong id="upcast" class="keyword">アップキャスト</strong>（upcast）と呼び、
 それとは逆に、
 派生クラスの変数に基底クラスの変数を渡すことを<strong id="downcast" class="keyword">ダウンキャスト</strong>（downcast）と呼びます。
@@ -254,7 +259,8 @@ b = new Derived1();
 </pre>
 
 
-###<a id="sec-generated-title-6"></a> <a id="type-switch"></a>is演算子の拡張
+### <a id="sec-generated-title-6"></a> <a id="type-switch"></a>is演算子の拡張
+
 <h5 class="version version7">Ver. 7</h5>
 
 C# 7では、`is`演算子で以下のような書き方ができるようになりました。
@@ -280,7 +286,8 @@ C# 7では、`is`演算子で以下のような書き方ができるようにな
 
 詳しくは、「[型スイッチ](../datatype/typeswitch.md#is)」で説明します。
 
-##<a id="sec-generated-title-7"></a> <a id="virtual"></a>仮想メソッド
+## <a id="sec-generated-title-7"></a> <a id="virtual"></a>仮想メソッド
+
 C# では、何も指定しない通常のメソッド呼び出し時、
 基底クラスと派生クラスに同名のメソッドがある場合、
 どちらのメソッドが呼び出されるかは静的な型によって決定されます。
@@ -377,7 +384,8 @@ Derived.Test()
       </em>を明示的に付ける必要があります。
 
 
-##<a id="sec-generated-title-8"></a> <a id="usage"></a>仮想メソッドの利用例
+## <a id="sec-generated-title-8"></a> <a id="usage"></a>仮想メソッドの利用例
+
 仮想メソッド、すなわち、メソッドの動的呼び出しを用いると、
 どのようなことが出来るのかを説明します。
 
@@ -566,7 +574,8 @@ I'm 17 years old.
 <code>Age</code> プロパティが呼び出されます。
 
 
-##<a id="sec-generated-title-9"></a> <a id="polymorphism"></a>多態性とは
+## <a id="sec-generated-title-9"></a> <a id="polymorphism"></a>多態性とは
+
 仮想メソッドの利用例のところで示したとおり、
 仮想メソッドを用いると、同じメソッドを呼び出しても、
 変数に格納されているインスタンスの型によって異なる動作をします。
@@ -581,7 +590,8 @@ I'm 17 years old.
 仮想メソッド呼び出しの動作は実行時に決定するという違いがあります。
 (前者を静的多態性、後者を動的多態性と言って区別する場合もあります。)
 
-##<a id="sec-generated-title-10"></a> <a id="covariance">戻り値の共変性</a>
+## <a id="sec-generated-title-10"></a> <a id="covariance">戻り値の共変性</a>
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 C# 9.0 (.NET 5.0)から、仮想メソッドの戻り値に共変性が認められるようになりました。
@@ -619,7 +629,8 @@ get のみのプロパティでも同様に、共変なオーバーライドが�
 }
 </code></pre>
 
-###<a id="sec-generated-title-11"></a> <a id="runtime-feature">ランタイム側の修正</a>
+### <a id="sec-generated-title-11"></a> <a id="runtime-feature">ランタイム側の修正</a>
+
 [デリゲート](../functional/sp_delegate.md#co-contra)や[ジェネリクス](sp4_variance.md)では元々できていたことなので、今までできなかったことの方が不思議なくらいです。
 (実際、似たような言語でいうと、Java は JDK 5.0 以降で共変戻り値をサポートしています。)
 
@@ -631,7 +642,8 @@ get のみのプロパティでも同様に、共変なオーバーライドが�
 ランタイム側の修正に関しては、以前書いたブログ「[RuntimeFeature クラス](../../../blog/2018/12/runtimefeature/index.md)」で説明しています。
 (.NET 5.0 で `RuntimeFeature` クラスに `CovariantReturnsOfClasses` が追加されています。)
 
-###<a id="sec-generated-title-12"></a> <a id="interface-covariant-returns">注意: インターフェイスの共変戻り値(C# 9.0 時点で未対応)</a>
+### <a id="sec-generated-title-12"></a> <a id="interface-covariant-returns">注意: インターフェイスの共変戻り値(C# 9.0 時点で未対応)</a>
+
 C# 9.0 時点では共変戻り値を使えるのはクラスの仮想メソッド・仮想プロパティのみです。
 将来的にはインターフェイスに対しても共変戻り値のサポートを考えているようですが、後回しにしたそうです。
 

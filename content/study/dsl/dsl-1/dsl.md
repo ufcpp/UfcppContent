@@ -18,7 +18,8 @@ aliases:
 
 # DSL 概要
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 Domain Specific Language、略して DSL。
 ドメイン特化言語、ドメイン固有言語、あるいは、特定領域記述言語などと訳されます。
 名前どおり、特定の用途向けに特化した言語のことです。
@@ -45,7 +46,8 @@ DSL ＝ ビジュアル言語というようなイメージも少しあったり
 こういうのを言語指向プログラミング（langage oriented programming）とか言ったりするようです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="domain_specific"></a>ドメイン特化
+## <a id="sec-generated-title-2"></a> <a id="domain_specific"></a>ドメイン特化
+
 「[モデル化](../dsl/mdd.md)」の章では、
 「よいモデルとは、問題の要件を必要十分に、過不足なく表せるモデル」という話をしました。
 何でもかんでも扱おうとするのではなく、
@@ -58,6 +60,7 @@ DSL ＝ ビジュアル言語というようなイメージも少しあったり
 
 
 ##### <a id="sec-generated-title-3"></a>汎用 VS ドメイン特化
+
 汎用（general purpose）言語にもドメイン特化（domain specific）言語にも、
 それぞれ利点があります。
 両者の特徴を比べて見ましょう。
@@ -100,6 +103,7 @@ DSL ＝ ビジュアル言語というようなイメージも少しあったり
 
 
 ##### <a id="sec-generated-title-4"></a>言語といっても・・・
+
 まあ、専用言語といっても、そんなたいした話ではないんですね。
 そりゃ、中には、コンパイラ作りからやるような本格的な人もいますけど。
 多くの場合は、「設定ファイル」とか「ライブラリ」程度のものです。
@@ -112,7 +116,8 @@ emacs の設定にいたっては LISP 言語で書きます。
 まず、「設定ファイル」とか「ライブラリ」が DSL の第1歩という話から始めてみたいと思います。
 
 
-##<a id="sec-generated-title-5"></a> <a id="abstraction"></a>抽象定義と具象定義
+## <a id="sec-generated-title-5"></a> <a id="abstraction"></a>抽象定義と具象定義
+
 DSL と設定ファイル、ライブラリの関係性を話す前に、
 ちょっと補足的な説明をしておきます。
 
@@ -218,7 +223,8 @@ C# 3.0 以降なら以下のような書き方もありかと思います。
 これがこのページでいう「DSL（の文法を考える） ≒ 設定ファイル（の具象定義を考える）」という話になります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="config"></a>設定ファイルと DSL
+## <a id="sec-generated-title-6"></a> <a id="config"></a>設定ファイルと DSL
+
 ということで、設定ファイルの構造がプログラミング言語っぽくなってくる例をあげてみます。
 
 要するに、細かい設定をしようとこだわってるといつの間にやら、
@@ -382,7 +388,8 @@ C# のライブラリとしてサウンドノベルフレームワークを提�
 特定ドメイン向けに言語を作る（DSL）という発想の原点はここにあります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="Library"></a>ライブラリと DSL
+## <a id="sec-generated-title-7"></a> <a id="Library"></a>ライブラリと DSL
+
 今度は逆に、ライブラリ側から初めて DSL にいたる流れを話してみましょう。
 
 例えば、プログラム中で XML を生成したい場合を考えてみます。
@@ -492,7 +499,8 @@ partial キーワードなどを使って、手書きのプログラミングコ
 これが、ライブラリから出発して、DSL という発想にいたる道筋です。
 
 
-###<a id="sec-generated-title-8"></a> <a id="breaking_change"></a>余談：破壊的変更の問題
+### <a id="sec-generated-title-8"></a> <a id="breaking_change"></a>余談：破壊的変更の問題
+
 「文法に大きな変更を加えると、
 過去のバージョンのソースコードがコンパイルできなくなる可能性も」
 と書いたついでにそれの話を。
@@ -523,7 +531,8 @@ a.Method(b &lt; c, d &gt; (e + f)) というようなコードは、C# 1.0 と 2
 このような、将来的な話まで含めて、future breaking change（将来の破壊的変更）なんていう言葉もあったりします。
 
 
-##<a id="sec-generated-title-9"></a> <a id="approach"></a>内部言語的アプローチ、外部言語的アプローチ
+## <a id="sec-generated-title-9"></a> <a id="approach"></a>内部言語的アプローチ、外部言語的アプローチ
+
 DSL にいたる1つのシナリオは、本節で話をしたような、
 「設定ファイルがだんだん凝ってきて1つの言語みたいになる」というようなものです。
 凝りだすと、ほんとにコンパイラを作るくらいの労力がかかります。
@@ -550,6 +559,7 @@ DSL にいたる1つのシナリオは、本節で話をしたような、
 
 
 ##### <a id="sec-generated-title-10"></a>一長一短
+
 どちらも一長一短ありますね。
 例えばまた、「[設定ファイルと DSL](#config)」で例に使ったようなゲームのシナリオの場合を考えてみましょう。
 
@@ -578,6 +588,7 @@ GUI ツールなんかも自作しないといけない。）
 
 
 ##### <a id="sec-generated-title-11"></a>具体例
+
 さて、そろそろ概念的な話だけでなく、具体的な話をしたいわけですが、
 長くなりそうなので別ページに分けることにします →
 「[DSL へのアプローチ（内部言語）](dslapproachi.md)」、
@@ -585,7 +596,8 @@ GUI ツールなんかも自作しないといけない。）
 「[DSL がらみのその他諸々](dslother.md)」。
 
 
-##<a id="sec-generated-title-12"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-12"></a> <a id="plan"></a>予定
+
 <pre>
       - UML も general-purpose
       - UML は元々はノートやホワイトボード、仕様書に書くことを想定したもの
@@ -595,7 +607,8 @@ GUI ツールなんかも自作しないといけない。）
 
     </pre>
 
-##<a id="sec-generated-title-13"></a> <a id="summay"></a>まとめ
+## <a id="sec-generated-title-13"></a> <a id="summay"></a>まとめ
+
 昨今、ドメイン特化型のモデル（モデリング言語）を作って、
 そのドメイン特化型言語（DSL: Domain Specific Language）を使ってシステム開発を行うという流れがはやりつつあります。
 

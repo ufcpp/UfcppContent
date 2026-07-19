@@ -18,7 +18,8 @@ aliases:
 
 # 最小作用の原理
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 解析力学なんかを習うと、「最小作用の原理」なんて物が出てきます。
 ここから出発して、変分法を使うと、
 ラグランジュ形式の運動方程式という、
@@ -34,7 +35,8 @@ aliases:
 でも、じゃあ、一体、作用ってなんなんでしょう？
 
 
-##<a id="sec-generated-title-2"></a> <a id="shortest"></a>労力的に最短
+## <a id="sec-generated-title-2"></a> <a id="shortest"></a>労力的に最短
+
 まず、図1を見てください。
 
 <figure>
@@ -103,7 +105,8 @@ A から B への行き方は人によるかもしれませんね。
 実に省エネです。
 
 
-##<a id="sec-generated-title-3"></a> <a id="line"></a>平面上の最短経路 ＝ 直線
+## <a id="sec-generated-title-3"></a> <a id="line"></a>平面上の最短経路 ＝ 直線
+
 物体は最小作用の原理に従う、
 すなわち、
 労力的に最短な経路を通ります。
@@ -169,7 +172,8 @@ y
 これを解くと、結局、直線が最短経路な事が分かります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="curve"></a>歪んだ空間での最短経路
+## <a id="sec-generated-title-4"></a> <a id="curve"></a>歪んだ空間での最短経路
+
 前節での説明どおり、
 何の力も働いていない平面上では、物体は
 <span class="math"><span class="cursive">L</span><span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><span class="normal" style="font-size:em;">√</span><span class="bar">
@@ -348,7 +352,8 @@ V
 空間の歪みによる「移動に掛かるコスト」の変化なわけです。
 
 
-##<a id="sec-generated-title-5"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-5"></a> <a id="summary"></a>まとめ
+
 要するに、
 
 * 作用というのは物体が運動するときにかかる労力。

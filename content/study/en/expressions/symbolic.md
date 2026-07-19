@@ -18,7 +18,8 @@ aliases:
 
 # Symbolic Computation with Expression Trees in C# 3.0
 
-##<a id="sec-generated-title-1"></a> <a id="description"></a>Description
+## <a id="sec-generated-title-1"></a> <a id="description"></a>Description
+
 [source files](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/csharp/source/Differential.zip)
 .
  
@@ -54,6 +55,7 @@ df(2) = 4
 
 
 ##### <a id="sec-generated-title-2"></a>Differentiation
+
 This library partially refers to "[Symbolic computation with C# 3.0](http://www.elguille.info/NET/futuro/firmas_octavio_symbolic_computation_EN.htm)".
 With some optimization, it achieves good results such as follows:
 
@@ -66,6 +68,7 @@ With some optimization, it achieves good results such as follows:
 
 
 ##### <a id="sec-generated-title-3"></a>Differential Operator
+
 Additionally, differential operator class is implemented.
 
 <pre class="source" title="differential operator" lang="">
@@ -90,6 +93,7 @@ df/dx = (x, y) =&gt; ((2 * (x * y)) + (2 * y))
 
 
 ##### <a id="sec-generated-title-4"></a>Differential Operator Initialized by Lambda
+
 The differential operator can be initialized with a characteristic polynomial written in Lambda.
 
 <pre class="source" title="initialization with lambda" lang="">
@@ -106,6 +110,7 @@ DifferentialOperator(x * x + y * y) means Laplacian operator
 
 
 ##### <a id="sec-generated-title-5"></a>Dynamic Creation of Expression from String
+
 The library has a class which create Expression dynamically from a string.
 Instead that I implement an original parser, the class uses standard library classes in System.CodeDom and Microsoft.CSharp namespace.
 The usage is as follow:

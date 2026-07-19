@@ -18,20 +18,23 @@ aliases:
 
 # コマンドライン引数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# にはコマンドライン引数は <code>Main</code> 関数の引数としてプログラムに渡されます。
 ここでは、コマンドライン引数というものが何なのかを簡単に説明した後、
 C# でコマンドライン引数を受け取る方法について説明します。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * コマンドライン引数: プログラム起動の際に渡されるオプションの値
 
 * C# では、Main 関数の引数として受け取れる
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="cmd"></a>コマンドライン引数とは
+## <a id="sec-generated-title-3"></a> <a id="cmd"></a>コマンドライン引数とは
+
 コマンドプロンプト(Win9x の場合は「DOS プロンプト」と呼ばれる)上でファイルのコピーを行う場合、
 copy というコマンドを利用します。copy は以下のようにして、コピー元のファイルとコピー先のディレクトリ(フォルダ)を指定することによってファイルのコピーを行います。
 
@@ -79,7 +82,8 @@ copy <span class="input">コピーするファイル</span> <span class="input">
 「<code>/e,/root,"C:\Program Files\Internet Explorer"</code>」という文字列がコマンドライン引数としてエクスプローラに渡され、その結果としてエクスプローラの表示形式が変わったわけです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="arg"></a>C#でコマンドライン引数を利用する
+## <a id="sec-generated-title-4"></a> <a id="arg"></a>C#でコマンドライン引数を利用する
+
 今まで、<code>Main</code> 関数には引数を書いていませんでしたが、
 コマンドライン引数を受け取りたい場合には、以下のように <code>Main</code> 関数に <code>string[]</code> 型の引数を書きます。
 
@@ -127,7 +131,8 @@ test aaa bbb ccc ddd
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="return"></a>終了コード
+## <a id="sec-generated-title-5"></a> <a id="return"></a>終了コード
+
 コマンドライン引数の他に、プログラムには終了コードというものがあります。
 終了コードとは、プログラムが正しく終了したかどうかなどの情報を得るために、
 プログラム終了時に返す値のことです。
@@ -151,6 +156,7 @@ C# でプログラムを作る際、自分で終了コードを指定したい�
 
 
 ##### <a id="sec-generated-title-6"></a>サンプル
+
 <pre class="source" title="コマンドライン引数のサンプル" lang="">
 <code><span class="reserved">using</span> System;
 <span class="reserved">using</span> System.IO;

@@ -18,7 +18,8 @@ aliases:
 
 # 保存場とソレノイダル場
 
-##<a id="sec-generated-title-1"></a> <a id="conservation"></a>保存場とソレノイダル場
+## <a id="sec-generated-title-1"></a> <a id="conservation"></a>保存場とソレノイダル場
+
 <em>
         回転が0のベクトル場を<strong id="conservative" class="keyword">保存場</strong>といい、発散が0のベクトル場を<strong id="solenoidal" class="keyword">ソレノイダル場</strong>といいます。
       </em>

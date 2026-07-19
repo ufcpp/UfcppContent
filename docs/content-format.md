@@ -38,6 +38,8 @@ prefer `sinceSet` and `lastUpdatedSet`; blog publication dates use `firstPublish
 ## Body conversion
 
 - Original `bodyText` MarkdownDeep/Extra Markdown and embedded HTML are preserved.
+- ATX headings use a space after the marker and are followed by a blank line; fenced code, HTML
+  code blocks, comments, and front matter are left unchanged.
 - `bodyTextParsed` is not used.
 - HTML tables and MathML remain embedded HTML.
 - Legacy heading anchors are normalized to valid empty HTML anchors for GitHub rendering.

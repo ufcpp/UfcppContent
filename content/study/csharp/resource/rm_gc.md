@@ -18,7 +18,8 @@ aliases:
 
 # C# のメモリ管理
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# をはじめとした .NET Framework 上で動く言語は、メモリ管理を .NET Framework のガベージ コレクションに任せることで、管理の手間を削減できます。
 
 しかし、.NET Framework に任せれたとしても、
@@ -44,7 +45,8 @@ C# をはじめとした .NET Framework 上で動く言語は、メモリ管理�
 次節以降の話と、「[メモリ管理](../../computer/essential-software/memorymanagement.md)」で説明しているような概念の関わりについて説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="stack-heap"></a>C# とスタック/ヒープ
+## <a id="sec-generated-title-2"></a> <a id="stack-heap"></a>C# とスタック/ヒープ
+
 「[メモリ管理](../../computer/essential-software/memorymanagement.md)」で説明しますが、
 一般に、メモリの管理方法には「[スタック](../../computer/essential-software/memorymanagement.md#stack)」と「[ヒープ](../../computer/essential-software/memorymanagement.md#heap)」という2種類のものがあります。
 
@@ -55,7 +57,8 @@ C# では、ローカル変数はスタック上に値を置きます。
 参考: 「[ボックス化](rmboxing.md)」
 
 
-##<a id="sec-generated-title-3"></a> <a id="garbage-collection"></a>C# のガベージ コレクション
+## <a id="sec-generated-title-3"></a> <a id="garbage-collection"></a>C# のガベージ コレクション
+
 .NET Framework （の上で動く C# などの言語）は、
 <strong id="garbage-collection" class="keyword">ガベージ コレクション</strong>(参考: 「[ガベージ・コレクション](../../computer/essential-software/memorymanagement.md#garbage-collection)」)
 を使ってヒープを管理しています。
@@ -71,7 +74,8 @@ C# では、ローカル変数はスタック上に値を置きます。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="finalize"></a>ファイナライズ
+## <a id="sec-generated-title-4"></a> <a id="finalize"></a>ファイナライズ
+
 C# では、オブジェクトがガベージ コレクションで回収される時に呼びだされるメソッドのことをファイナライザーといい、
 ~ 記号を使った C++ のデストラクターに似た構文で書きます。
 (そのため C# でもかつてはこれのことをデストラクターと呼んでいました。
@@ -98,7 +102,8 @@ C# では、オブジェクトがガベージ コレクションで回収され�
 C++ のデストラクターとは、構文が似ているだけで、呼び出されるタイミングなどは違うので注意が必要です。
 
 
-##<a id="sec-generated-title-5"></a> <a id="cost-to-finalize"></a>ファイナライズのコスト
+## <a id="sec-generated-title-5"></a> <a id="cost-to-finalize"></a>ファイナライズのコスト
+
 ファイナライズは以下の手順で行われます。
 
 * ファイナライザー(＝ Finalize メソッド、C# の場合は旧称デストラクター。現在は C# でもファイナライザー呼び)を持ったクラスのオブジェクトが作られたとき、 そのオブジェクトをファイナライズ リスト(finalization list)と呼ばれるリストに入れて記憶しておく。
@@ -121,7 +126,8 @@ Finalize メソッドを呼び出すまでの間はそのオブジェクトに�
 (これが結構深刻なコストになるので、極力ファイナライザーを使いたくない理由になります)。
 
 
-###<a id="sec-generated-title-6"></a> <a id="suppress-finalization"></a>ファイナライズ抑止
+### <a id="sec-generated-title-6"></a> <a id="suppress-finalization"></a>ファイナライズ抑止
+
 前述の通り、ファイナライズ処理はコストのかかる処理なので、できる限り避けたいものです。
 
 ファイナライザーを使いたい場合というのは、だいたい「破棄処理を忘れたらまずいものに対する保険」になります。
@@ -134,7 +140,8 @@ GC クラス(System 名前空間)に SuppressFinalize というメソッドが�
 (参考: 「[IDisposable インターフェイスの実装](rm_disposable.md#idisposable)」)
 
 
-###<a id="sec-generated-title-7"></a> <a id="resurrection"></a>復活
+### <a id="sec-generated-title-7"></a> <a id="resurrection"></a>復活
+
 ファイナライザーを使ってしまうと、一度死んだはず(ゴミ扱いされたはず)のオブジェクトが、一時的に復活してしまうという話はしました。
 
 ここで、マナーの悪いコードを書いてしまうと、オブジェクトが完全復活(resurrection)してしまうことがあります。

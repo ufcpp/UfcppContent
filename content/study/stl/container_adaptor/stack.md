@@ -18,7 +18,8 @@ aliases:
 
 # stack
 
-##<a id="sec-generated-title-1"></a> <a id="d23e4"></a>stackとは
+## <a id="sec-generated-title-1"></a> <a id="d23e4"></a>stackとは
+
 スタックは末尾(または先頭)に限って要素の追加削除を行うことのできるデータ構造です。
 末尾からしか要素を取り出せないので、
 必然的に「後に入れたものから先に取り出さなくてなはならない」ということになります。
@@ -29,7 +30,8 @@ aliases:
 普通は配列や単方向連結リストを用いて実装します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d23e17"></a>STLにおけるstack
+## <a id="sec-generated-title-2"></a> <a id="d23e17"></a>STLにおけるstack
+
 STLのstackは何を使って実装するかをvector,deque,listの中から選べます。
 スタックの要素の型をTとすると、
 

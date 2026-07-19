@@ -18,7 +18,8 @@ aliases:
 
 # C++とJavaとの組込み型の比較
 
-##<a id="sec-generated-title-1"></a> <a id="comp"></a>組込み型の比較
+## <a id="sec-generated-title-1"></a> <a id="comp"></a>組込み型の比較
+
 以下にC++とJavaとC#の組込み型の一覧を列挙します。
 
 <table summary="">

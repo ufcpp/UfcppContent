@@ -20,7 +20,8 @@ aliases:
 
 # DSL へのアプローチ（外部言語）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 前節では、「DSL を作ってから、それを使って開発」というのがはやりつつありますが、
 言語作りといってもそれほど大げさな話ではないというような話をしました。
 また、DSL のアプローチとして、
@@ -31,7 +32,8 @@ aliases:
 具体例を挙げて紹介します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="outer"></a>外部言語
+## <a id="sec-generated-title-2"></a> <a id="outer"></a>外部言語
+
 ユーザが自由に変えれる設定や、
 ユーザには触らせないにしてもプログラム完成後にこまごまと調整したい部分は、
 たいていは、設定ファイルとしてプログラムから分離します。
@@ -76,11 +78,13 @@ DSL 記述も修正しつつ、
 汎用言語 ＋ DSL の混在開発が好まれる傾向があります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="method"></a>方式
+## <a id="sec-generated-title-3"></a> <a id="method"></a>方式
+
 汎用言語＋DSL の混在開発のやり方にはいくつかの方式が考えられます。
 
 
 ##### <a id="sec-generated-title-4"></a>動的ローディング
+
 まずは、DSL を「ちょっと凝ったことのできる設定ファイル」と考えたとき、
 一番素直に思いつく方式。
 図1のように、実行ファイルから DSL を動的にローディングして使います。
@@ -103,6 +107,7 @@ XML のような標準的なライブラリで読める構文を利用します�
 
 
 ##### <a id="sec-generated-title-5"></a>コンパイラ作成
+
 次は、ほんとに DSL のコンパイラを作っちゃう場合。
 せっかく .NET Framework や Java VM みたいなインフラがあるんだから、
 それの IL（中間言語）をはいてやって、
@@ -125,6 +130,7 @@ DLR（Dynamic Language Runtime）や C# 3.0 の「[式木](../../csharp/function
 
 
 ##### <a id="sec-generated-title-6"></a>コード変換
+
 で、コンパイラを作るよりは多少簡単に作れそうなのが、
 図3に示すような、
 DSL → 汎用言語へのコード変換です。
@@ -144,6 +150,7 @@ C++ 専用のコンパイラを作った方がコードの最適化がしやす�
 
 
 ##### <a id="sec-generated-title-7"></a>混在方式
+
 ちなみに、これらの方式の混在も考えられます。
 具体例としては、「[WPF](../../dotnet/wpf/wpf_abst.md#wpf0)」 が図4のような方式を取っています。
 
@@ -167,7 +174,8 @@ BAML の動的ローディングのためのコードなどが自動生成され
 BAML ファイルは動的にローディングします。
 
 
-##<a id="sec-generated-title-8"></a> <a id="translator"></a>コード変換プログラム
+## <a id="sec-generated-title-8"></a> <a id="translator"></a>コード変換プログラム
+
 コンパイラ作りのハードルの高さは論外として、
 DSL → 汎用言語への変換も大変そうだと思うかもしれません。
 まあ、でも、やり方次第で結構楽できるもので、
@@ -175,6 +183,7 @@ DSL → 汎用言語への変換も大変そうだと思うかもしれません
 
 
 ##### <a id="sec-generated-title-9"></a>XSLT
+
 ある XML 形式を別の XML 形式に変換するための XSLT（Extensible Stylesheet Language Transformations）という機構があります。
  
 自分で決めた形式を、何かのツールで読める形式の XML に変換するというのは、
@@ -197,6 +206,7 @@ XSLT で HTML に変換しています。
 
 
 ##### <a id="sec-generated-title-10"></a>スクリプト言語の便利な機能
+
 最近のスクリプト言語は XML を簡単に読み書きする機能とか、
 ヒア文字列、文字列中の変数展開とかの機能を持ってるので、
 それを使うと割ときれいに変換処理がかけます。
@@ -267,12 +277,14 @@ class $($xml.class.name)
 
 
 
-##<a id="sec-generated-title-11"></a> <a id="osample"></a>例：ステートマシン記述
+## <a id="sec-generated-title-11"></a> <a id="osample"></a>例：ステートマシン記述
+
 もう少し具体的な例ということで、
 ステートマシン記述用の DSL でも作ってみましょう。
 
 
 ##### <a id="sec-generated-title-12"></a>概要
+
 構文解析プログラムを書くのが面倒なので、
 前節で説明したような、XML で書いて PowerShell を使って C# に変換という方式を取ることにします。
  
@@ -302,6 +314,7 @@ class $($xml.class.name)
 
 
 ##### <a id="sec-generated-title-13"></a>手順1：ステートマシンの実装
+
 まず、ステートマシンそのものの実装方法について。
 ステートマシンだけで1つのクラスにしてみます。
 クラス名はまんま StateMachine で。
@@ -384,6 +397,7 @@ class $($xml.class.name)
 
 
 ##### <a id="sec-generated-title-14"></a>手順2：電卓の実装
+
 ここまでは C# のみで書いています。
 ここからが本題。
  

@@ -18,7 +18,8 @@ aliases:
 
 # 常微分方程式
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 ひとくちに微分方程式といってもさまざまな形のものがあります。
 一般的には、微分方程式は解析的に解を求めることができませんが、
 特定のパターンの場合に限り解析解を求めることが出来ます。
@@ -28,7 +29,8 @@ aliases:
 どういう方法で解析解を計算できるのかというものがあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・まず、具体例を
 力学の法則： ma = f

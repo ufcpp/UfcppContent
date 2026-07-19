@@ -19,7 +19,8 @@ aliases:
 
 # null許容値型(Nullable&lt;T&gt; 型)
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 通常、「[値型](oo_reference.md#valtype)」は `null` 値（無効な値）を取れません。
 ところが、データベース等、一部のアプリケーションでは、
 値型の通常の（有効な）値と `null`（無効な値）を取るような型が欲しいときがあります。
@@ -33,12 +34,14 @@ C# 8.0 では、[参照型](oo_reference.md#valtype)についても `?` の有�
 この null 許容参照型と区別する意味で、本項で説明している機能(C# 2.0 時代には唯一の null 許容型だった)を指して、null 許容値型(nullable value type)と呼ぶこともあります。
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 値型 T に対して、T? をいう書き方で null 許容型になります。
 
 * null 許容型は、元となる値型の値か `null` を保持できる型です。
 
 
-##<a id="sec-generated-title-3"></a> <a id="nullable"></a>null 許容型
+## <a id="sec-generated-title-3"></a> <a id="nullable"></a>null 許容型
+
 <strong id="nullableType" class="keyword">null 許容型</strong>(nullable type)は、値型の型名の後ろに <code>?</code> を付ける事で、元の型の値または <code>null</code> の値を取れる型になるというものです。
 <code>int</code> 型で例に取ると、以下のような書き方が出来ます。
 
@@ -47,7 +50,8 @@ C# 8.0 では、[参照型](oo_reference.md#valtype)についても `?` の有�
 <span class="reserved">int</span>? y = <span class="reserved">null</span>;
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="non-nullable"></a>null 非許容型
+### <a id="sec-generated-title-4"></a> <a id="non-nullable"></a>null 非許容型
+
 (本項の意味、すなわち null 許容値型の場合)
 null 許容型にできるのは「null 許容型を除く値型」のみです。
 
@@ -58,7 +62,8 @@ C#の仕様書上は、この「null 許容型を除く値型」を指して、n
 
 C# 8.0 以降では「null 非許容値型」や「非 null 値型」というように、値型であることを強調する呼び方もします。
 
-###<a id="sec-generated-title-5"></a> <a id="nullable-reference"></a>null 許容参照型
+### <a id="sec-generated-title-5"></a> <a id="nullable-reference"></a>null 許容参照型
+
 C# 7.3 以前では、<code>string?</code> というのは定義できません（参照型には `?` を付けれない）。
 
 C# 8.0 で、null 許容参照型と呼ばれる新しい機能が入って参照型でも `?` の有無で null の可否を指定できるようになりました。
@@ -66,7 +71,8 @@ C# 8.0 で、null 許容参照型と呼ばれる新しい機能が入って参�
 
 詳しくは別項で説明予定です。
 
-##<a id="sec-generated-title-6"></a> <a id="member"></a>null 許容型のメンバー
+## <a id="sec-generated-title-6"></a> <a id="member"></a>null 許容型のメンバー
+
 <code>T?</code> という書き方で得られる null 許容型は、
 コンパイル結果的には、`Nullable<T>`構造体(`System`名前空間) と等価になります。
 例えば、以下の2つの変数x と y は全く同じ型の変数になります。
@@ -131,7 +137,8 @@ z = (<span class="reserved">int</span>)y; <span class="comment">// 例外が発�
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="operation"></a>null 許容型に対する演算
+## <a id="sec-generated-title-7"></a> <a id="operation"></a>null 許容型に対する演算
+
 元となる型 <code>T</code> が持っている演算子は、
 そのまま null 許容型 <code>T?</code> に対して利用できます。
 
@@ -235,7 +242,8 @@ z = (<span class="reserved">int</span>)y; <span class="comment">// 例外が発�
 	</tr>
 </table>
 
-##<a id="sec-generated-title-8"></a> <a id="coalescing"></a>null 合体演算子 (??)
+## <a id="sec-generated-title-8"></a> <a id="coalescing"></a>null 合体演算子 (??)
+
 null 許容型には、`??` 演算という特殊な演算子を使えます。
 この`??`演算子は<strong id="nullableType" class="keyword">null合体演算子</strong><sup>※</sup>と呼ばれ、
 値が <code>null</code> かどうかを判別し、<code>null</code> の場合には別の値を割り当てる演算子です。
@@ -246,14 +254,16 @@ null 許容型には、`??` 演算という特殊な演算子を使えます。
 <span class="reserved">int</span> i = z ?? -1; <span class="comment">// z != null ? z.Value : -1</span>
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="coalesce-translation"></a><sup>※</sup> coalesce
+### <a id="sec-generated-title-9"></a> <a id="coalesce-translation"></a><sup>※</sup> coalesce
+
 null合体演算子は、英語では null coalescing operator と言います。
 
 coalesceという名前はSQLの同様の機能から来ているようです。SQLでも、「もし値がnullだったら、別の有効な値を返す」という機能を持ったCOALESCE関数というものがあります。
 
 coalesceの元の英単語の意味は、合体・融合・癒着というような意味です。null coalescing operatorやCOALESCE関数の意味としては、「癒着」が一番近い気がします。SQLが由来ですので、歯抜け(テーブル中のnullの行 = 値が欠けている状態)をパテで埋めるようなイメージでしょうか。
 
-###<a id="sec-generated-title-10"></a> <a id="null-coalescing-assignment"></a>null 合体代入 (??=)
+### <a id="sec-generated-title-10"></a> <a id="null-coalescing-assignment"></a>null 合体代入 (??=)
+
 C# 8.0 では、null合体演算子 (`??`)も複合代入に使えるようになりました(`??=`)。
 
 例えば以下のような書き方ができます。
@@ -268,7 +278,8 @@ C# 8.0 では、null合体演算子 (`??`)も複合代入に使えるように�
 
 意味としては、`if (s == null) s = ...;` と同じになります。[キャッシュ用途](rm_nullusage.md#cache)に便利だったりします。
 
-###<a id="sec-generated-title-11"></a> <a id="assignment-result"></a>結果の型
+### <a id="sec-generated-title-11"></a> <a id="assignment-result"></a>結果の型
+
 C# では、代入や複合代入自体も式になっています。
 なので、`var z = y += x;` みたいな感じでつないで掛けて、
 `var z = (y += x);` という意味で評価されます。

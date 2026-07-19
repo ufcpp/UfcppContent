@@ -18,7 +18,8 @@ aliases:
 
 # 場
 
-##<a id="sec-generated-title-1"></a> <a id="field"></a>場とは
+## <a id="sec-generated-title-1"></a> <a id="field"></a>場とは
+
 位置や時間の関数になっている物理量を<strong id="field" class="keyword">場</strong>または界(どちらも英語ではfield)と呼びます(それに対し、エネルギーや周波数の関数になっているものを<strong id="spectrum" class="keyword">スペクトル</strong>(spectrum)と呼びます)。
 
 値がスカラーとなる場をスカラー場、ベクトルとなる場をベクトル場といいます。
@@ -42,7 +43,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="flow"></a>流線
+## <a id="sec-generated-title-2"></a> <a id="flow"></a>流線
+
 ベクトル場をイメージ的に捉えるために、線上の各点における接線の方向がその点におけるベクトル場の方向と一致しているような曲線を描いてベクトル場を幾何学的に表示します。
 このようにして描いた曲線群を<strong id="flow" class="keyword">流線</strong>または力線と呼びます。
 
@@ -50,7 +52,8 @@ aliases:
 ベクトル場の向きは水の流れる方向で、その大きさは流れの速さを表します。
 
 
-##<a id="sec-generated-title-3"></a> <a id="flux"></a>流束
+## <a id="sec-generated-title-3"></a> <a id="flux"></a>流束
+
 「[流線](#flow)」で説明したとおり、流線は水の流れをイメージして考えると分かりやすくなります。
 ところで、水は細いところを流れるときには速く、広いところを流れるときには水は遅くなります。
 そして、水の総量は変わらないわけですから、通り道の断面積と流れの速さの積は一定となるでしょう。
@@ -78,7 +81,8 @@ aliases:
 逆に閉曲面内に入っていくような流束のことを負の湧き出しとか流入といい、流線が吸い込まれていく点のことを<em>流入点</em>といいます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="vortex"></a>渦
+## <a id="sec-generated-title-4"></a> <a id="vortex"></a>渦
+
 水の流れには、水源(湧出点)から下流(流入点)まで一方向のみに流れる単純な流れの他に、同じ場所をぐるぐる回る渦があります。
 同様にベクトル場にも湧出点から出て流入点に入る流線と、渦を巻く流線があります。
 
@@ -91,6 +95,7 @@ aliases:
 逆に、<em>閉曲線上での線積分の値が0でないとき、その値は渦の強さだと考えることが出来ます</em>。
 
 
-##<a id="sec-generated-title-5"></a> <a id="level-surface"></a>等位面
+## <a id="sec-generated-title-5"></a> <a id="level-surface"></a>等位面
+
 ベクトル場で流線を描いたように、スカラー場では、曲面上のスカラー場の値が一定(等位)となるような曲面を描いてスカラー場を幾何学的に表示します。
 このようにして描いた曲面群を等位面と呼びます。

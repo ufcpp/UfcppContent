@@ -18,7 +18,8 @@ aliases:
 
 # 線形な座標系
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 多様体の話に入る前に、
 座標系というものの復習をしましょう
 そのために、ここではまず、
@@ -34,7 +35,8 @@ aliases:
 非線形な場合の理解も早まるかと思います。
 
 
-##<a id="sec-generated-title-2"></a> <a id="coordinate"></a>ベクトルの座標
+## <a id="sec-generated-title-2"></a> <a id="coordinate"></a>ベクトルの座標
+
 最初に述べたように、2次元の実数ベクトル <span class="math"><span class="bold">R</span><sup>2</sup></span> に関して説明します。
 
 <span class="math">
@@ -94,7 +96,8 @@ x <span class="vector">a</span><sub>1</sub> ＋ y <span class="vector">a</span><
 というように、行列の形で表すことができます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="transform"></a>座標変換
+## <a id="sec-generated-title-3"></a> <a id="transform"></a>座標変換
+
 座標の取り方は一通りではなく、
 同じ空間を表すのに複数の座標系が存在します。
 ここでは <span class="math"><span class="bold">R</span><sup>2</sup></span> を表す2つの座標を考え、
@@ -124,7 +127,8 @@ x <span class="vector">a</span><sub>1</sub> ＋ y <span class="vector">a</span><
 このような変換を座標変換（cooridinate transformation, cooridinate conversion, cooridinate change）と言います。
 
 
-##<a id="sec-generated-title-4"></a> <a id="dualspace"></a>双対空間
+## <a id="sec-generated-title-4"></a> <a id="dualspace"></a>双対空間
+
 体 <span class="math">K</span> 上の線形空間 <span class="math">V</span> に対し、
 <span class="math">V → K</span> の線形写像全体の空間
 <span class="math">
@@ -165,7 +169,8 @@ V<sup>*</sup>
 それは以下で説明する双対座標の座標変換を見ていただければはっきりすると思います。
 
 
-##<a id="sec-generated-title-5"></a> <a id="dualcoordinate"></a>双対座標
+## <a id="sec-generated-title-5"></a> <a id="dualcoordinate"></a>双対座標
+
 先ほどの説明では、座標系の話はあいまいにぼかして説明していましたが、
 ここでは双対空間に座標系を導入することを考えて見ましょう。
  
@@ -259,7 +264,8 @@ y<sub>i</sub></div>
 となり、それぞれの座標の値を、数ベクトルの内積と同じルールで積和したものと一致します。
 
 
-##<a id="sec-generated-title-6"></a> <a id="dualtransform"></a>双対座標の座標変換
+## <a id="sec-generated-title-6"></a> <a id="dualtransform"></a>双対座標の座標変換
+
 「[座標変換](#transform)」では、
 同じ点 <span class="math">p</span> の、
 2つの基底
@@ -314,7 +320,8 @@ y<sub>i</sub></div>
 元の空間の座標変換と異なる変換法則が得られます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="variance"></a>反変座標と共変座標
+## <a id="sec-generated-title-7"></a> <a id="variance"></a>反変座標と共変座標
+
 これまでの話を少し違った視点から見てみましょう。
 基底 <span class="math"><span class="vector">A</span></span> を用いて、
 <span class="math">
@@ -326,7 +333,8 @@ p ＝ <span class="vector">A</span><sup>－1・T</sup><span class="vector">y</sp
 というように考えることも出来ます。
 
 
-###<a id="sec-generated-title-8"></a> <a id="contravariance"></a>反変座標
+### <a id="sec-generated-title-8"></a> <a id="contravariance"></a>反変座標
+
 まず、前者、
 <span class="math">
 p ＝ <span class="vector">A</span><span class="vector">x</span></span>
@@ -368,7 +376,8 @@ y <span class="vector">a</span><sub>2</sub>
 <strong id="contravariant" class="keyword">反変座標</strong>（contravariant coordinage）とも呼びます。
 
 
-###<a id="sec-generated-title-9"></a> <a id="covariance"></a>共変座標
+### <a id="sec-generated-title-9"></a> <a id="covariance"></a>共変座標
+
 では、後者の
 <span class="math">
 p ＝ <span class="vector">A</span><sup>－1・T</sup><span class="vector">x</span></span>

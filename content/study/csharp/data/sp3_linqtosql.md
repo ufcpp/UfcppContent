@@ -19,7 +19,8 @@ aliases:
 
 # \[雑記\] LINQ to SQL 実践編
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 「[[雑記] O/R インピーダンスミスマッチ](sp3_ormismatch.md)」では、LINQ to SQL の概念的な部分を説明しました。
@@ -35,7 +36,8 @@ Visual Studio のウィザードを使ってコンソールアプリケーショ
 LinqToSqlTest という名前でプロジェクトを作成したものとして説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="database"></a>データベース作成
+## <a id="sec-generated-title-2"></a> <a id="database"></a>データベース作成
+
 本例では、表1～4に示すようなデータテーブルを作ります。
 
 表形式だとちょっと分かりにくい気もしますが、
@@ -198,7 +200,8 @@ LinqToSqlTest という名前でプロジェクトを作成したものとして
 （これで、主キーで、かつ、一意な ID 番号が自動的に振られるようになります。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="entity"></a>LINQ to SQL クラス作成
+## <a id="sec-generated-title-3"></a> <a id="entity"></a>LINQ to SQL クラス作成
+
 次に、LINQ to SQL クラス（Entity と DataContext）を作成します。
 
 前節のテーブルに対応したクラスを自前で手書きしてもいいんですが、
@@ -275,7 +278,8 @@ LINQ to SQL が使える状態になりました。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="linq"></a>LINQ to SQL を使ってみる
+## <a id="sec-generated-title-4"></a> <a id="linq"></a>LINQ to SQL を使ってみる
+
 あとは、例えば、以下のようにしてデータベースにアクセスすることができます。
 
 <pre class="source" title="LINQ to SQL でデータベースアクセス" lang="">
@@ -308,7 +312,8 @@ ConnectionString の .mdf ファイルのパスの部分は好きな場所に変
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="add"></a>サンプルデータの追加
+### <a id="sec-generated-title-5"></a> <a id="add"></a>サンプルデータの追加
+
 さて、今回の説明では、テーブルは列の定義だけして、データベースの中身はまだ何も追加していません。
 
 もちろん、データベース管理アプリを使って .mdf ファイルにデータを追加してもいいんですが、
@@ -352,7 +357,8 @@ db.SubmitChanges();
 @"" 文字列中のデータを読み出してデータを追加するコードになっています。
 
 
-###<a id="sec-generated-title-6"></a> <a id="sample"></a>LINQ to SQL 利用例
+### <a id="sec-generated-title-6"></a> <a id="sample"></a>LINQ to SQL 利用例
+
 データ構造の定義もサンプルデータの追加も終わったところで、
 最後に、いくつかクエリの例を示します。
 
@@ -371,6 +377,7 @@ db.Log = <span class="type">Console</span>.Out;
 
 
 ##### <a id="sec-generated-title-7"></a>例1： テーブル全部結合
+
 各シリーズの、作家名・出版社名・既刊の巻数を表示。
 
 <pre class="source" title="テーブル全部結合" lang="">
@@ -398,6 +405,7 @@ C# のコードはシンプルですが、生成される SQL 文は結構でか
 
 
 ##### <a id="sec-generated-title-8"></a>例2： クエリ発行のタイミング
+
 以下の例では、
 クエリ式はなくて、一見するとデータベース問い合わせをしているようなコードには見えないんですが、
 Author、Series テーブルへのアクセスの際、サーバに問い合わせが行われます。
@@ -487,6 +495,7 @@ foreach の頻度や要求される性能に応じて決めてください。
 
 
 ##### <a id="sec-generated-title-9"></a>例3： メソッド呼び出し
+
 これまでの例でもすでに Contains や Count を利用していますが、
 クエリ式中のメソッド呼び出しは、
 対応する T-SQL 組み込み関数・演算子がある場合にはちゃんとその関数・演算子に変換してもらえます。

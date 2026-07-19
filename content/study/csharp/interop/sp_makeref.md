@@ -18,17 +18,20 @@ aliases:
 
 # 型付き参照
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ほぼ、他の言語との相互運用のための機能ですが、
 C# には参照関連の隠しキーワード `__makeref`, `__refvalue`, `__reftype`, `__arglist` があったりします。
 
 ※ ちなみに現在では [`Unsafe` クラス](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.unsafe) で代用できることも多く、より一層出番は減っています。
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Interop/TypedReference](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Interop/TypedReference)
 
 
-##<a id="sec-generated-title-3"></a> <a id="reference"></a>参照と隠しキーワード
+## <a id="sec-generated-title-3"></a> <a id="reference"></a>参照と隠しキーワード
+
 ここで言う「参照」というのは、他の変数を読み書きできる別の変数を作ることです。
 標準 C# にはないので別の言語の機能で説明すると、C++ で 型名の後ろに &amp; を付けて作る参照変数のことです
 (一種の制限付きのポインター)。
@@ -95,7 +98,8 @@ C# には参照関連の隠しキーワード `__makeref`, `__refvalue`, `__reft
 ちなみに、標準仕様外の機能ですが、[Mono](http://www.mono-project.com/) のC#コンパイラーもこの機能対応していて、こちらでも普通に使えます。
 
 
-###<a id="sec-generated-title-4"></a> <a id="internal-ref"></a>※ 補足: 内部的な話
+### <a id="sec-generated-title-4"></a> <a id="internal-ref"></a>※ 補足: 内部的な話
+
 参照が作れないのは C# の言語仕様上の制限で、.NET の 「[IL](../abstract/ab_dotnet.md#il)」 の仕様上は参照があります。
 
 C# でも、内部的には(コンパイル結果の IL 的には)、値型の this 参照や、値型の入れ子の書き換えなどで参照が使われます。
@@ -132,7 +136,8 @@ C# でも、内部的には(コンパイル結果の IL 的には)、値型の t
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="makeref"></a>__makeref の例
+## <a id="sec-generated-title-5"></a> <a id="makeref"></a>__makeref の例
+
 先ほどの C++ の例を、__makeref キーワードを使って書きなおすと以下のようになります。
 
 <pre class="source" title="__makeref の例" lang="">
@@ -167,7 +172,8 @@ __makeref で参照を作って、__refvalue で値の読み書きをします�
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="arglist"></a>__arglist の例
+## <a id="sec-generated-title-6"></a> <a id="arglist"></a>__arglist の例
+
 C# の場合、通常、可変個の引数をとりたければ配列引数(参考: 「[params キーワード](../structured/sp_params.md#params)」)を使います。
 これは、複数与えた実引数を、1つの配列にまとめてからメソッドなどに渡すので、実際の引数は1つだけになります。
 
@@ -240,7 +246,8 @@ Double: 1.5
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="avoid-boxing"></a>ボックス化回避
+## <a id="sec-generated-title-7"></a> <a id="avoid-boxing"></a>ボックス化回避
+
 (C# にとっては隠し機能ですが).NET に型付き参照がある理由は、値型に対する操作の効率化、特に、ボックス化回避のためです。
 ボックス化については「[ボックス化](../resource/rmboxing.md)」を参照。
 

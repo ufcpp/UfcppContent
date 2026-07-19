@@ -22,7 +22,8 @@ aliases:
 
 # 変数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 [<code>variable.xsl</code>](../../../../assets/media/ufcpp2000/xml/xslfiles/variable.xsl) には、変数定義、参照、一覧表示のための template が記述されています。
 
 var-group タグに、
@@ -35,7 +36,8 @@ use タグを記述した場所には、変数の文字が表示されます。
 さらに、文字をクリックすると、変数の定義のある場所にジャンプします。
 
 
-##<a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+
 <pre class="xsource" title="ソース">
 <code><span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="結果"</span> <span class="attribute">id</span><span class="attvalue">="result"</span><span class="bracket">&gt;</span>
   <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
@@ -69,7 +71,8 @@ use タグを記述した場所には、変数の文字が表示されます。
 <span class="bracket">&lt;/</span><span class="element">var-group</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-3"></a> <a id="result"></a>結果
+## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
+
 変数の参照→ <span class="math"><a href="#freq" title="周波数">
         f
       </a></span>、<span class="math"><a href="#afreq" title="角周波数">

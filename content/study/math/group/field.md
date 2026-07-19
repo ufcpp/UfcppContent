@@ -18,13 +18,15 @@ aliases:
 
 # 環・体
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[群とは](group.md#group)」では算法を1つ持つ代数系の分類について説明しました。
 ここでは、加法と乗法の2つを持つ代数系の分類について説明します。
 このような代数系の分類として、環・体などがあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="field"></a>環・体とは
+## <a id="sec-generated-title-2"></a> <a id="field"></a>環・体とは
+
 ある代数系<span class="math">
         <span class="paren" style="font-size:em;">(</span>
           A,<span class="paren" style="font-size:em;">{</span>＋, ×<span class="paren" style="font-size:em;">}</span>
@@ -75,7 +77,8 @@ aliases:
 環 <span class="math">R</span> が零因子を持たないとき、<span class="math">R</span> を<strong id="integral" class="keyword">整域</strong>（integral domain）と呼びます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="easy_sample"></a>環・体の簡単な例
+## <a id="sec-generated-title-3"></a> <a id="easy_sample"></a>環・体の簡単な例
+
 よく知られている集合のうちで、環・体になっているものをいくつか例に挙げて紹介します。
 <h4>整数・有理数・実数・複素数</h4>
 整数 <span class="math">
@@ -276,12 +279,14 @@ aliases:
 と同型になります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="filed_sample"></a>その他の体の例
+## <a id="sec-generated-title-4"></a> <a id="filed_sample"></a>その他の体の例
+
 有理数や実数など以外にも、様々な体が存在します。
 このような体の例をいくつか紹介します。
 
 
-###<a id="sec-generated-title-5"></a> <a id="quaternion"></a>ハミルトンの四元数体
+### <a id="sec-generated-title-5"></a> <a id="quaternion"></a>ハミルトンの四元数体
+
 複素数は、<span class="math">
           i<sup>2</sup> ＝ －1
         </span> となる数 <span class="math">i</span> と、2つの実数 <span class="math">a, b</span> を使って <span class="math">a ＋ i b</span> となるような数を作ったものです。
@@ -311,7 +316,8 @@ aliases:
 四元数という言葉は、4つの実数（4元）から作られた数という意味です。
 
 
-####<a id="sec-generated-title-6"></a> <a id="d54e748"></a>ベクトルを使った表現
+#### <a id="sec-generated-title-6"></a> <a id="d54e748"></a>ベクトルを使った表現
+
 四元数 <span class="math">a ＋ i b ＋ j c ＋ k d</span> は、
 1つのスカラー <span class="math">x ＝ a</span> と
 1つのベクトル <span class="math">
@@ -389,7 +395,8 @@ aliases:
 四元数の積は非可換になります。
 
 
-####<a id="sec-generated-title-7"></a> <a id="d54e934"></a>絶対値・共役
+#### <a id="sec-generated-title-7"></a> <a id="d54e934"></a>絶対値・共役
+
 四元数 <span class="math">
             α ＝ <span class="paren" style="font-size:em;">(</span>
               x, <span class="vector">u</span>
@@ -483,7 +490,8 @@ aliases:
 したがって、四元数は非可換体になります。
 
 
-####<a id="sec-generated-title-8"></a> <a id="d54e1164"></a>3次元空間上の回転
+#### <a id="sec-generated-title-8"></a> <a id="d54e1164"></a>3次元空間上の回転
+
 複素数を使って2次元空間上の（原点中心の）回転を表すことができました。
 すなわち、複素数 <span class="math">a ＋ ib</span> を2次元ベクトル <span class="math">a, b</span> とみなし、
 <span class="math">
@@ -566,7 +574,8 @@ aliases:
 と表すことができるので、先ほど示した式を導き出すことができます。
 
 
-####<a id="sec-generated-title-9"></a> <a id="d54e1394"></a>四元数を使った回転
+#### <a id="sec-generated-title-9"></a> <a id="d54e1394"></a>四元数を使った回転
+
 以上のことを踏まえた上で、本題の四元数を使った回転の話に入ります。
 まず、絶対値が 1 になるような四元数を用意します。
 絶対値が 1 の四元数 <span class="math">Σ</span> は以下のように、
@@ -702,7 +711,8 @@ aliases:
 3次元ベクトルの回転をすることができます。
 
 
-####<a id="sec-generated-title-10"></a> <a id="appendix1"></a>余談
+#### <a id="sec-generated-title-10"></a> <a id="appendix1"></a>余談
+
 四元数そのものはそれほど使い道のあるものではないんですが、
 四元数の発見は歴史的には大きな意味のあるものだったそうです。
 
@@ -721,7 +731,8 @@ aliases:
 さらに、16元数は零因子も持っています。
 
 
-####<a id="sec-generated-title-11"></a> <a id="appendix2"></a>余談2
+#### <a id="sec-generated-title-11"></a> <a id="appendix2"></a>余談2
+
 回転軸と回転角度を指定するんじゃなくて、
 球面上の点 <span class="math">
             <span class="vector">a</span>
@@ -803,7 +814,8 @@ aliases:
 になります。
 
 
-###<a id="sec-generated-title-12"></a> <a id="finite"></a>有限体
+### <a id="sec-generated-title-12"></a> <a id="finite"></a>有限体
+
 整数は環、有理数や実数などは体となりますが、
 これらはいずれも無限集合です。
 これに対して、有限集合となるような体も存在します。
@@ -815,7 +827,8 @@ aliases:
 整数の剰余環を紹介します。
 
 
-####<a id="sec-generated-title-13"></a> <a id="d54e2076"></a>整数の剰余環
+#### <a id="sec-generated-title-13"></a> <a id="d54e2076"></a>整数の剰余環
+
 0 から N－1 までの整数 <span class="math">a, b</span> に対して、以下のようにして加法と乗法を定めます。
 
 * 加法:<span class="math">
@@ -932,7 +945,8 @@ mod N は N で割ったあまりを表します。
           </span>）。
 
 
-####<a id="sec-generated-title-14"></a> <a id="d54e2349"></a>整数の剰余環の逆元
+#### <a id="sec-generated-title-14"></a> <a id="d54e2349"></a>整数の剰余環の逆元
+
 <span class="math">
             <span class="bold">Z</span>/N<span class="bold">Z</span>
           </span> の元 <span class="math">a</span> が逆元を持つための条件を考えるために、まず、以下のような定理を紹介します。
@@ -981,7 +995,8 @@ mod N は N で割ったあまりを表します。
           </em>という結論が得られます。
 
 
-####<a id="sec-generated-title-15"></a> <a id="rasidualfield"></a>整数の剰余体
+#### <a id="sec-generated-title-15"></a> <a id="rasidualfield"></a>整数の剰余体
+
 <span class="math">
             <span class="bold">Z</span>/N<span class="bold">Z</span>
           </span> の元は、<span class="math">N</span> と互いに素な場合にのみ乗法に関する逆元を持ちます。
@@ -1137,7 +1152,8 @@ mod N は N で割ったあまりを表します。
 
 
 
-####<a id="sec-generated-title-16"></a> <a id="d54e2890"></a>ブール体
+#### <a id="sec-generated-title-16"></a> <a id="d54e2890"></a>ブール体
+
 2 も素数ですから、<span class="math">
             <span class="bold">Z</span>/2<span class="bold">Z</span>
           </span> も剰余体になります。
@@ -1238,8 +1254,10 @@ mod N は N で割ったあまりを表します。
 （論理代数の考案者 George Boole の名から付いた名前。）
 
 
-##<a id="sec-generated-title-17"></a> <a id="concept"></a>環・体に関する諸概念
-###<a id="sec-generated-title-18"></a> <a id="order"></a>位数
+## <a id="sec-generated-title-17"></a> <a id="concept"></a>環・体に関する諸概念
+
+### <a id="sec-generated-title-18"></a> <a id="order"></a>位数
+
 群の「[位数](group.md#order)」と同様に、
 環・体に対しても、
 その元の数（正確には「[濃度](../set/cardinality.md#cardinality)」）を<strong id="order" class="keyword">位数</strong>（order）と呼び、
@@ -1248,7 +1266,8 @@ mod N は N で割ったあまりを表します。
         </span> というように表します。
 
 
-###<a id="sec-generated-title-19"></a> <a id="isomorphic"></a>同型
+### <a id="sec-generated-title-19"></a> <a id="isomorphic"></a>同型
+
 これも「[群同型](group.md#g_isomorphic)」と同様、
 環・体にも同型の概念があります。
 環として同型であることを<strong id="r_isomorphic" class="keyword">環同型</strong>（ring isomorphic）、
@@ -1302,7 +1321,8 @@ mod N は N で割ったあまりを表します。
 体の場合も同様です。
 
 
-##<a id="sec-generated-title-20"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-20"></a> <a id="plan"></a>執筆予定
+
 <pre>
       有限体関係の説明は別ページに移動。
       リンクを張る。

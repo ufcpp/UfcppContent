@@ -18,7 +18,8 @@ aliases:
 
 # 面積分
 
-##<a id="sec-generated-title-1"></a> <a id="surfaceint"></a>面積分とは
+## <a id="sec-generated-title-1"></a> <a id="surfaceint"></a>面積分とは
+
 ある曲面<span class="math">S</span>上で定義されるスカラー場<span class="math">F</span>に対し、
 <div class="math">
       <em>
@@ -36,7 +37,8 @@ aliases:
 と書きます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル場の面積分
+## <a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル場の面積分
+
 ベクトル場<span class="math">
         <span class="vector">F</span>
       </span>を考えます。
@@ -74,7 +76,8 @@ aliases:
       </span>の曲面<span class="math">S</span>上での面積分ということもあります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="cartesian"></a>面積分の直交座標系での表現
+## <a id="sec-generated-title-3"></a> <a id="cartesian"></a>面積分の直交座標系での表現
+
 曲面<span class="math">S</span>上の点<span class="math">
         <span class="vector">r</span>
       </span>は媒介変数を持ちいて<span class="math">

@@ -33,7 +33,8 @@ aliases:
 
 執筆予定: [C# 13.0 トラッキング issue](https://github.com/ufcpp/UfcppSample/issues/462)
 
-##<a id="sec-generated-title-1"></a> <a id="params-collections">params コレクション</a>
+## <a id="sec-generated-title-1"></a> <a id="params-collections">params コレクション</a>
+
 [コレクション式](../datatype/collection-expression.md)で使える型であれば何でも `params` にできるようになりました。
 
 <pre class="source" title="任意のコレクションに対して params を付ける例">
@@ -65,7 +66,8 @@ aliases:
 
 詳しくは「[`params` コレクション](../structured/sp_params.md#params-collections)」で説明しています。
 
-##<a id="sec-generated-title-2"></a> <a id="partial-property">部分プロパティ</a>
+## <a id="sec-generated-title-2"></a> <a id="partial-property">部分プロパティ</a>
+
 プロパティとインデクサーも `partial` にできるようになりました。
 
 例えば、C# 13 と同世代の .NET 9 では、[`GeneratedRegex`](https://learn.microsoft.com/ja-jp/dotnet/api/system.text.regularexpressions.generatedregexattribute) をプロパティにできるようになりました。
@@ -82,7 +84,8 @@ aliases:
 
 詳しくは「[部分プロパティ](../misc/partial-type.md#partial_property)」で説明します。
 
-##<a id="sec-generated-title-3"></a> <a id="ref-struct-interface">ref 構造体のインターフェイス実装</a>
+## <a id="sec-generated-title-3"></a> <a id="ref-struct-interface">ref 構造体のインターフェイス実装</a>
+
 ref 構造体にインターフェイスを実装できるようになりました。
 また、このインターフェイスのメンバーを呼び出すために、
 ジェネリック型引数に ref 構造体を渡せるようにする仕組みとして `allows ref struct` アンチ制約が追加されました。
@@ -110,7 +113,8 @@ ref 構造体にインターフェイスを実装できるようになりまし�
 詳しくは「[ref 構造体のインターフェイス実装](../resource/refstruct.md#ref-struct-interface)」で説明します。
 また、「アンチ制約」という言葉については「[アンチ制約](../oop/sp2_generics.md#anti-constraint)」で説明しています。
 
-##<a id="sec-generated-title-4"></a> <a id="overload-resolution-priority">OverloadResolutionPriority</a>
+## <a id="sec-generated-title-4"></a> <a id="overload-resolution-priority">OverloadResolutionPriority</a>
+
 C# 13 で、オーバーロードの解決優先度を属性を付けて明示できる機能が入りました。
 
 <pre class="source" title="オーバーロード解決の優先度を変更する例">
@@ -141,7 +145,8 @@ C# 13 で、オーバーロードの解決優先度を属性を付けて明示�
 
 トラッキングissue: [#478](https://github.com/ufcpp/UfcppSample/issues/478)
 
-##<a id="sec-generated-title-5"></a> <a id="lock-class">Lock クラスに対する lock</a>
+## <a id="sec-generated-title-5"></a> <a id="lock-class">Lock クラスに対する lock</a>
+
 .NET 9 で `Lock` クラス(`System.Threading` 名前空間)という新しい lock 用の型が追加されたことに伴って、
 `lock` ステートメントでこの `Lock` クラスを特別扱いするようになりました。
 既存の `lock` (`Monitor.Enter` に展開される)と異なり、以下のようなコードに展開されます。
@@ -157,7 +162,8 @@ C# 13 で、オーバーロードの解決優先度を属性を付けて明示�
 
 詳しくは「[Lock クラス](../async/sp_thread.md#lock-class)」で説明しています。
 
-##<a id="sec-generated-title-6"></a> <a id="ref-in-async">ref/unsafe をイテレーター/非同期メソッド中に書けるように</a>
+## <a id="sec-generated-title-6"></a> <a id="ref-in-async">ref/unsafe をイテレーター/非同期メソッド中に書けるように</a>
+
 [ref ローカル変数](../resource/sp_ref.md#ref-returns)、
 [ref 構造体](../resource/refstruct.md)の変数、
 [unsafe](../interop/sp_unsafe.md#unsafe) ブロックを、
@@ -239,7 +245,8 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 }
 </pre>
 
-##<a id="sec-generated-title-7"></a> <a id="escape-escape">\e (エスケープ文字のエスケープ シーケンス)</a>
+## <a id="sec-generated-title-7"></a> <a id="escape-escape">\e (エスケープ文字のエスケープ シーケンス)</a>
+
 文字・文字列リテラル中の[エスケープ シーケンス](../start/st_embeddedtype.md#escape-sequence)に `\e` (U+001B、エスケープ文字)が追加されました。
 
 例えば、コンソール アプリで以下のように書くことで、文字列の色を変えたり装飾したりできます。
@@ -255,15 +262,18 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 機能追加の背景などについてはブログ記事「[\e (エスケープ文字のエスケープ シーケンス)](../../../blog/2023/12/escape-escape/index.md)」で説明しています。
 
 
-##<a id="sec-generated-title-8"></a> <a id="interceptor">インターセプター</a>
+## <a id="sec-generated-title-8"></a> <a id="interceptor">インターセプター</a>
+
 (書きかけ。予定地。)
 
 トラッキングissue: [#456](https://github.com/ufcpp/UfcppSample/issues/456)
 
-##<a id="sec-generated-title-9"></a> <a id="other">その他</a>
+## <a id="sec-generated-title-9"></a> <a id="other">その他</a>
+
 その他、ほぼバグ修正レベルの機能がいくつかあります。
 
-###<a id="sec-generated-title-10"></a> <a id="index-in-object-initializer">オブジェクト初期化子中の ^ 演算子</a>
+### <a id="sec-generated-title-10"></a> <a id="index-in-object-initializer">オブジェクト初期化子中の ^ 演算子</a>
+
 以下のように、オブジェクト初期化子中の `[]` の中で[インデックスの `^` 演算子](../data/dataranges.md)を使えるようになりました。
 
 <pre class="source" title="">
@@ -283,7 +293,8 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 }
 </pre>
 
-###<a id="sec-generated-title-11"></a> <a id="method-group-natrural-type">デリゲートの自然な型の改善</a>
+### <a id="sec-generated-title-11"></a> <a id="method-group-natrural-type">デリゲートの自然な型の改善</a>
+
 [デリゲートの自然な型](../functional/sp_delegate.md#natural-type)の決定の際、
 メソッド グループに対する型決定がちょっと賢くなったそうです。
 同名のインスタンス メソッドと拡張メソッドがあるとき、インスタンス メソッドを優先的に見るようになりました。
@@ -323,7 +334,8 @@ C# 13 ではインスタンスメソッドを優先的に見ます。
 <span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> <span class="variable">x</span><span class="operator">.</span><span class="method">M</span>;
 </pre>
 
-###<a id="sec-generated-title-12"></a> <a id="collection-expression13">コレクション式の改善</a>
+### <a id="sec-generated-title-12"></a> <a id="collection-expression13">コレクション式の改善</a>
+
 [コレクション式](ap_ver12.md#collection-expression)にも微妙な修正が2つ入っています。
 
 1つは、`Add` メソッドが拡張メソッドでも大丈夫になりました。

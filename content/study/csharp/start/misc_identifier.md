@@ -18,7 +18,8 @@ aliases:
 
 # \[雑記\] 識別子名に使える文字
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[識別子名](st_variable.md#identifier)」で説明したように、
 変数など、プログラマが自由に名前を付けることの出来るものを識別子（identifier）と呼びます。
 識別子の名前は以下のルールでつける必要があります。
@@ -39,7 +40,8 @@ aliases:
 ちなみに、C# に限らず、識別子に Unicode を使える言語では、たいてい同じようなルールを採用しています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="unicode"></a>Unicode の文字クラス
+## <a id="sec-generated-title-2"></a> <a id="unicode"></a>Unicode の文字クラス
+
 C# の識別子に利用可能な文字、letter-character などは、Unicode の文字クラスに基づいて以下のように定められています。
 
 （
@@ -65,6 +67,7 @@ Unicode では、文字の持つ意味によって各文字をカテゴリーわ
 
 
 ##### <a id="sec-generated-title-3"></a>参考
+
 一応、参考までにリンクを2つほど：
 
 * [文字クラスのルール（第35回　要素や属性の名前に使用できる文字の規定） ](http://www.atmarkit.co.jp/fxml/rensai/w3cread35/w3cread35_2.html)
@@ -74,7 +77,8 @@ Unicode では、文字の持つ意味によって各文字をカテゴリーわ
 ちなみに、C# が採用しているこの識別子のルールは C# が独自に定めたものではなく、
 Unicode が推奨しているルール([Unicode Standard Annex #31](https://unicode.org/reports/tr31/))に則ったものです。
 
-##<a id="sec-generated-title-4"></a> <a id="initial"></a>識別子の1文字目から使える文字
+## <a id="sec-generated-title-4"></a> <a id="initial"></a>識別子の1文字目から使える文字
+
 識別子の1文字目には以下の文字が使えます。
 
 * letter-character
@@ -108,7 +112,8 @@ Unicode が推奨しているルール([Unicode Standard Annex #31](https://unic
 要するに、可読文字なら言語を問わずたいてい利用可能です。
 
 
-##<a id="sec-generated-title-5"></a> <a id="noninitial"></a>識別子の2文字目以降に使える文字
+## <a id="sec-generated-title-5"></a> <a id="noninitial"></a>識別子の2文字目以降に使える文字
+
 識別子の2文字目以降では、
 letter-character に加えて、
 以下の文字が使えます。
@@ -148,7 +153,8 @@ letter-character に加えて、
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="confusing"></a>紛らわしい文字
+## <a id="sec-generated-title-6"></a> <a id="confusing"></a>紛らわしい文字
+
 * 濁点・半濁点
     * 日本語の濁点・半濁点には、半角文字を除いても、 Mn クラスの combining voiced sound mark っていうのと、 Sk クラス（記号扱い）の voiced sound mark っていうのの2つある。
 
@@ -188,6 +194,7 @@ letter-character に加えて、
 
 
 ##### <a id="sec-generated-title-7"></a>おまけ
+
 案外、変な記号も識別子に使えちゃうんで、以下のようなまね可能。
 良い子は真似しちゃダメ。
 
@@ -201,7 +208,8 @@ letter-character に加えて、
 	<figcaption>変な記号</figcaption>
 </figure>
 
-##<a id="sec-generated-title-8"></a> <a id="supplementary"></a>追加面文字
+## <a id="sec-generated-title-8"></a> <a id="supplementary"></a>追加面文字
+
 C# は内部的に文字を UTF-16 (2バイト)で扱っています。
 C# は2002年のリリースですが、開発自体は1990年代から始まっていて、ちょっと90年代の名残が見られます。
 そのため、2バイトに収まらない文字(追加面文字、supplementary planes)の扱いが面倒だったりします。
@@ -231,7 +239,8 @@ C# の仕様上は「2バイトに収まるかどうか」には触れておら�
 ちなみに、これは C# コンパイラー開発チームも把握している既知の問題ですが、
 実際にこれで困ることが少なくて需要がないため、修正は先送りにされています。
 
-##<a id="sec-generated-title-9"></a> <a id="escape-sequence"></a>エスケープ シーケンス
+## <a id="sec-generated-title-9"></a> <a id="escape-sequence"></a>エスケープ シーケンス
+
 [エスケープ シーケンス](st_embeddedtype.md#escape-sequence)のうち、`\u` と `\U` の2つは識別子としても使えます。
 例えば以下のコードは普通に有効な C# コードです。
 
@@ -242,7 +251,8 @@ C# の仕様上は「2バイトに収まるかどうか」には触れておら�
 <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">nameof</span>(<span class="variable">\u0061</span>)); <span class="comment">// a と表示される</span>
 </code></pre>
 
-##<a id="sec-generated-title-10"></a> <a id="ignore-format"></a>formatting character の無視
+## <a id="sec-generated-title-10"></a> <a id="ignore-format"></a>formatting character の無視
+
 これも[Unicode Standard Annex #31](https://unicode.org/reports/tr31/)による推奨事項なんですが、
 C# では、識別子中に含まれる formatting character を完全に無視します。
 例えば[zero width joiner](https://ja.wikipedia.org/wiki/%E3%82%BC%E3%83%AD%E5%B9%85%E6%8E%A5%E5%90%88%E5%AD%90)という文字(文字コード U+200D)が該当します。

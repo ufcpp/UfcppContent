@@ -18,14 +18,16 @@ aliases:
 
 # 並列処理ライブラリ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 マルチコア CPU の普及に伴って、並列処理の重要性が増しています。
 この時代背景に合わせるかのように、.NET Framework 4で並列処理用のライブラリが追加されました。
 
 
-##<a id="sec-generated-title-2"></a> <a id="parallel"></a>Parallel クラス
+## <a id="sec-generated-title-2"></a> <a id="parallel"></a>Parallel クラス
+
 まずは、制御フロー（「[制御フロー](../structured/st_control.md)」参照）の並列化です。
 Parallel クラス（System.Threading.Tasks 名前空間）を使うことで、
 通常の for 文や foreach 文に非常に似た書き方で並列処理を行えます。
@@ -143,7 +145,8 @@ C();
 この例の場合、並列化するとかえって遅くなる可能性があります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="plinq"></a>Parallel LINQ
+## <a id="sec-generated-title-3"></a> <a id="plinq"></a>Parallel LINQ
+
 「[LINQ](../data/sp3_linq.md#linq)」 に対する並列化の仕組みも用意されています。
 System.Linq 名前空間に ParallelEnumerable というクラスが追加されていて、
 このクラスで定義されている AsParallel 拡張メソッドを使えば、LINQ クエリを並列化できます。

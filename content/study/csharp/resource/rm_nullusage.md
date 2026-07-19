@@ -19,7 +19,8 @@ aliases:
 
 # null の取り扱い
 
-##<a id="sec-generated-title-1"></a> <a id="abst">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abst">概要</a>
+
 null が来た時にできる対処はいくつかあります。
 
 - null が来たら単に null を返す (対処は他の誰かに委ねる)
@@ -29,7 +30,8 @@ null が来た時にできる対処はいくつかあります。
 
 ここでは、それぞれについて C# での書き方について説明して行きます。
 
-##<a id="sec-generated-title-2"></a> <a id="null">null</a>
+## <a id="sec-generated-title-2"></a> <a id="null">null</a>
+
 C# の[参照型](oo_reference.md#reftype)には null (無効な値、何もない、ゼロ)という、無効な参照を表す特別な値があります。
 また、[null許容型](sp2_nullable.md)を使うことで、
 本来は無効な値を持たない[値型](oo_reference.md#valtype)に対しても無効な状態を表すことができます。
@@ -68,7 +70,8 @@ null 自体はなくせないものの、少なくとも「意図して null を
 - null が来たら何も処理しない
 - null を完全に認めない
 
-##<a id="sec-generated-title-3"></a> <a id="for-instance">例題</a>
+## <a id="sec-generated-title-3"></a> <a id="for-instance">例題</a>
+
 最初に、本項の残りの部分の例として使うクラスを1セット用意しておきましょう。
 
 例えば、ゲームで使いそうなデータ構造で考えてみます。
@@ -123,7 +126,8 @@ null 自体はなくせないものの、少なくとも「意図して null を
 - 画像URLを渡して、その画像ロードする
 - ロードした画像を表示する
 
-##<a id="sec-generated-title-4"></a> <a id="null-conditional">null 条件演算子(null が来たら null を返す)</a>
+## <a id="sec-generated-title-4"></a> <a id="null-conditional">null 条件演算子(null が来たら null を返す)</a>
+
 <h5 class="version version6">Ver. 6.0</h5>
 
 まず、`Weapon`から画像URL (`string`)を得る部分だけを見てましょう。
@@ -158,7 +162,8 @@ null条件演算子は、メンバー アクセスのための `.` の代わり�
 <span class="reserved">static</span> <span class="reserved">string</span> <span class="method"><span class="static">M</span></span>(<span class="type">Weapon</span><span class="operator">?</span> w) =&gt; <em>w?.ImagePath</em>;
 </pre>
 
-###<a id="sec-generated-title-5"></a> <a id="null-conditional-indexer">インデクサーに対するnull条件演算子</a>
+### <a id="sec-generated-title-5"></a> <a id="null-conditional-indexer">インデクサーに対するnull条件演算子</a>
+
 インデクサーの前にも、`?`を付けることでnull条件付きにできます。
 
 <pre class="source" title="null 条件インデクサーの例">
@@ -175,7 +180,8 @@ null条件演算子は、メンバー アクセスのための `.` の代わり�
     <span class="control">else</span> <span class="control">return</span> <span class="variable">w1</span>[<span class="number">0</span>];
 }</pre>
 
-###<a id="sec-generated-title-6"></a> <a id="null-conditional-to-nullable">補足: null許容型に対するnull条件演算子</a>
+### <a id="sec-generated-title-6"></a> <a id="null-conditional-to-nullable">補足: null許容型に対するnull条件演算子</a>
+
 null 条件演算子 `?.` を使えば、[null許容型](sp2_nullable.md)のメンバー アクセスが少し楽になります。
 例えば以下のコードでは、`x` の行はコンパイル エラーになりますが、`y` の行は OK です。
 
@@ -205,7 +211,8 @@ null 条件演算子 `?.` を使えば、[null許容型](sp2_nullable.md)のメ�
 }
 </pre>
 
-###<a id="sec-generated-title-7"></a> <a id="void-null-conditional">null じゃないときだけメソッド呼び出し</a>
+### <a id="sec-generated-title-7"></a> <a id="void-null-conditional">null じゃないときだけメソッド呼び出し</a>
+
 null 条件演算子 `?.` は戻り値がない(戻り値が `void` の)メソッドに対しても使えます。
 この場合、`?.` の結果も「戻り値がない」(`void`)扱いです。
 
@@ -242,7 +249,8 @@ null 条件演算子 `?.` は戻り値がない(戻り値が `void` の)メソ�
 <span class="reserved">var</span> <span class="error" title="CS0815"><span class="variable">x</span> <span class="operator">=</span> <span class="property">Weapon1</span><span class="operator">?</span><span class="operator">.</span><span class="method">Dispose</span>()</span>;
 </pre>
 
-###<a id="sec-generated-title-8"></a> <a id="null-conditional-delegate">補足: デリゲートの呼び出し</a>
+### <a id="sec-generated-title-8"></a> <a id="null-conditional-delegate">補足: デリゲートの呼び出し</a>
+
 `?[]` が行けるのなら、デリゲート呼び出し時に `?()` も行けそうに思えますが、
 これは認められていません。
 条件演算子 `? :` との弁別が少し面倒で、需要の割に実装するリスクが大きいとのことで認めていないようです。
@@ -262,7 +270,8 @@ null 条件演算子 `?.` は戻り値がない(戻り値が `void` の)メソ�
 }
 </pre>
 
-###<a id="sec-generated-title-9"></a> <a id="null-conditional-assignment">null じゃないときだけ代入</a>
+### <a id="sec-generated-title-9"></a> <a id="null-conditional-assignment">null じゃないときだけ代入</a>
+
 <h5 class="version version14">Ver. 14</h5>
 
 C# 14 では、[代入](../start/st_operator.md#substitute)
@@ -432,7 +441,8 @@ C# 14 では、[代入](../start/st_operator.md#substitute)
 </pre>
 
 
-##<a id="sec-generated-title-10"></a> <a id="null-coalesce">null合体演算子(null が来たら何か適当な有効な値で埋める)</a>
+## <a id="sec-generated-title-10"></a> <a id="null-coalesce">null合体演算子(null が来たら何か適当な有効な値で埋める)</a>
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 次に、画像URLを渡して、その画像ロードする部分を考えましょう。
@@ -476,7 +486,8 @@ coalesce には「(折れた骨が)融合・癒着する」と言うような意
 例えば欠けた素材をパテなどで穴埋めするようなときにも使うようです。
 「null coalescing」 も null で欠けた部分を穴埋めすると言うようなニュアンスです。
 
-###<a id="sec-generated-title-11"></a> <a id="short-circuit">補足: null条件演算子とnull合体演算子の短絡評価</a>
+### <a id="sec-generated-title-11"></a> <a id="short-circuit">補足: null条件演算子とnull合体演算子の短絡評価</a>
+
 null条件演算子とnull合体演算子はいわゆる[短絡評価](../start/st_operator.md#shortcircuit)になっています。
 null条件演算子の場合は左側がnullだったら、
 null合体演算子の場合は左側がnullでなかったら、右側を評価する必要がなくなるので、全く評価しません。
@@ -567,7 +578,8 @@ X
 
 
 
-###<a id="sec-generated-title-12"></a> <a id="cache">余談: キャッシュ用途</a>
+### <a id="sec-generated-title-12"></a> <a id="cache">余談: キャッシュ用途</a>
+
 null を使う場面の例としてよく挙げられるものの1つに、キャッシュ用途もあります。
 ここでいうキャッシュは、
 
@@ -643,7 +655,8 @@ C# 14 以降では以下のような書き方ができます。
 <span class="reserved">public</span> <span class="reserved">string</span> Description =&gt; <span class="reserved">field</span> ??= <span class="method">GetDescription</span>();
 </pre>
 
-##<a id="sec-generated-title-13"></a> <a id="null-branch">nullを読み飛ばす</a>
+## <a id="sec-generated-title-13"></a> <a id="null-branch">nullを読み飛ばす</a>
+
 続いて、ロードした画像の表示を考えます。
 今回の例では画像を表示する画面には2種類あって、「空欄は飛ばして詰めて表示したい画面」という仕様のものもあります。
 
@@ -691,7 +704,8 @@ C# 8.0 では、[再帰パターン](../datatype/patterns.md#recursive) の `{}`
 <span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> { }) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;ここは通らない&quot;</span>);
 </pre>
 
-##<a id="sec-generated-title-14"></a> <a id="non-null">null を完全に認めない</a>
+## <a id="sec-generated-title-14"></a> <a id="non-null">null を完全に認めない</a>
+
 今回の例では、画面に2種類の仕様がありますが、
 
 - 前節の「空欄は飛ばして詰める」というものでは、`if`ステートメントで null を読み飛ばしているので、`Draw`の行には絶対にnullが来ない
@@ -737,7 +751,8 @@ C# 7.3 以前の場合、せめて、引数に対してnull判定をして、nul
 }
 </pre>
 
-##<a id="sec-generated-title-15"></a> <a id="user-defined-null">余談: 自称 null</a>
+## <a id="sec-generated-title-15"></a> <a id="user-defined-null">余談: 自称 null</a>
+
 混乱の元なのでおすすめはしませんが、[演算子を自作](../oop/oo_operator.md)して、「null を自称できる型」を作ることができます。
 例えば以下のようなものです。
 

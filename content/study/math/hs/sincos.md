@@ -18,13 +18,15 @@ aliases:
 
 # 三角関数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 教科書に公式が大量に並んでる割には、
 丸暗記が必要なことはほとんどない、
 実に素敵な単元。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 <pre>
 　　　　／|
 　１　／　|

@@ -20,7 +20,8 @@ aliases:
 
 # 関数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 同じプログラムコードを複数の場所で何度も利用したい場合があります。
 例えば、今まで説明してきた中で、たびたび「入力を促すメッセージを出力して、整数を入力してもらう」という場面が出てきました。
 そのために何度も同じようなソースコードを書いてきました。
@@ -36,6 +37,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 何度も出てくる処理は関数化する。
 
 * 数学の「関数」から取った名前。プログラミング用語的には、他に、サブルーチン、プロシージャ（手続き）、メソッド等といった呼び方がある。
@@ -50,10 +52,12 @@ aliases:
 
 
 ##### <a id="sec-generated-title-3"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/StructuredProgramming/Function](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/StructuredProgramming/Function)
 
 
-##<a id="sec-generated-title-4"></a> <a id="sec-function-member"></a>補足: 関数メンバー
+## <a id="sec-generated-title-4"></a> <a id="sec-function-member"></a>補足: 関数メンバー
+
 C# の場合、このページで説明するような「関数」的な動作、
 すなわち、何らかの値を受け取って、処理して、結果の値を返すような挙動をするものがいくつかあります。
 具体的には、以下のようなものがあります。
@@ -91,7 +95,8 @@ C# の場合、このページで説明するような「関数」的な動作�
 (引数や戻り値が指定できない関数メンバーもありますが、指定できる場合には、書き方が同じです。)
 
 
-##<a id="sec-generated-title-5"></a> <a id="definition"></a>関数定義
+## <a id="sec-generated-title-5"></a> <a id="definition"></a>関数定義
+
 C# では、以下のようにして関数(C# 用語としては、正確にはメソッド)を定義します。
 
 <pre class="source" title="関数の書式" lang="">
@@ -165,6 +170,7 @@ C#の関数も同じように、入力出来る値と、出力される値の型
 
 
 ##### <a id="sec-generated-title-6"></a>サンプル
+
 <pre class="source" title="sin関数を使ったサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -290,6 +296,7 @@ x = <span class="reserved">double</span>.Parse(Console.ReadLine());
 
 
 ##### <a id="sec-generated-title-7"></a>サンプル
+
 <pre class="source" title="値の入力部分を関数化したサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -343,7 +350,8 @@ x = <span class="reserved">double</span>.Parse(Console.ReadLine());
 }
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="return-statement"></a>returnの場所・数
+### <a id="sec-generated-title-8"></a> <a id="return-statement"></a>returnの場所・数
+
 これまでの例ではすべて、関数の最後に1つだけ`return`を書いていますが、C# には別にそういう縛りはありません。
 `return` は関数の途中にも書けますし、1つの関数内に複数書けます。
 
@@ -370,10 +378,12 @@ x = <span class="reserved">double</span>.Parse(Console.ReadLine());
 }
 </code></pre>
 
-##<a id="sec-generated-title-9"></a> <a id="arity"></a>引数・戻り値の数
+## <a id="sec-generated-title-9"></a> <a id="arity"></a>引数・戻り値の数
+
 引数や戻り値は、なくてもよかったり、複数書けたりします。
 
-###<a id="sec-generated-title-10"></a> <a id="multiple-params"></a>引数が複数ある関数、
+### <a id="sec-generated-title-10"></a> <a id="multiple-params"></a>引数が複数ある関数、
+
 数学の関数では、例えば「f(x, y、z) = x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>」といったように、入力が複数ある場合があります。
 C#の関数でもこのように引数が複数ある関数を作れます。
 引数を複数使いたい場合、数学の関数と同じように、関数を定義する際に、以下のように複数の引数を <code>,</code> で区切って並べます。
@@ -387,7 +397,8 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 }
 </code></pre>
 
-###<a id="sec-generated-title-11"></a> <a id="no-param"></a>引数のない関数
+### <a id="sec-generated-title-11"></a> <a id="no-param"></a>引数のない関数
+
 数学ではあまり考えられませんが、C#では引数のない関数も定義できます。
 引数のない関数は、以下のように、引数リストを空にして定義します。
 
@@ -401,7 +412,8 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 }
 </code></pre>
 
-###<a id="sec-generated-title-12"></a> <a id="void"></a>戻り値のない関数
+### <a id="sec-generated-title-12"></a> <a id="void"></a>戻り値のない関数
+
 同様に戻り値のない関数も定義できます。
 戻り値のない関数は、以下のように、戻り値の型を <em>
                 <code>void</code>
@@ -434,7 +446,8 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 }
 </code></pre>
 
-###<a id="sec-generated-title-13"></a> <a id="unit"></a>補足1: void だけ特別扱いは不便
+### <a id="sec-generated-title-13"></a> <a id="unit"></a>補足1: void だけ特別扱いは不便
+
 戻り値が`void`の関数は`return`の後ろに値を書けません。
 これは`void`の場合だけの特別な書き方になります。
 そして、特別に書き方を変えないといけないというのが面倒になることがあります。
@@ -490,7 +503,8 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 
 不格好なので積極的に使うものでもありませんが、統一のためにやむを得ないこともあったりします。
 
-####<a id="sec-generated-title-14"></a> <a id="why-unit"></a>Unitという名前
+#### <a id="sec-generated-title-14"></a> <a id="why-unit"></a>Unitという名前
+
 ちなみに、先ほどの例では、空っぽの型の名前をunit (単位元)にしていますが、
 一応意味があってこの名前を使っています。
 プログラミング用語しても使われるので、C#に限らず、たまに目にする言葉かもしれません。
@@ -504,7 +518,8 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 unitというのはこの意味での「1」を指します。
 先ほどの例では`defautl(Unit)`という意味のない値を返していますが、`Unit`型は、この意味のない値を1つだけ持つ型ということになります。
 
-###<a id="sec-generated-title-15"></a> <a id="tuple"></a>補足2: 複数の戻り値(タプル)
+### <a id="sec-generated-title-15"></a> <a id="tuple"></a>補足2: 複数の戻り値(タプル)
+
 C#では、基本的には戻り値は1つだけ返せます。
 
 複数の値(多値)を返したいこともありますが、その場合、C# 6以前では[複合型](st_struct.md#about)を1つ作って返していました。
@@ -556,6 +571,7 @@ C#では、基本的には戻り値は1つだけ返せます。
 詳細は[名前のない複合型](st_anonymoustype.md)で説明します。
 
 ##### <a id="sec-generated-title-16"></a>サンプル
+
 <pre class="source" title="さまざまな関数のサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -620,7 +636,8 @@ norm = 4082
 
 
 
-###<a id="sec-generated-title-17"></a> <a id="state"></a>補足: 状態
+### <a id="sec-generated-title-17"></a> <a id="state"></a>補足: 状態
+
 この例の `Random` は、数学の関数と違って、「状態」(state)を持っています。
 一般に、数学の関数は、引数と戻り値の関係だけを説明していて、同じ引数を与えた場合、常に同じ戻り値が返ります。
 一方、この例は、関数の外にある `seed` という変数に値を記録・書き換え(これを「状態を持つ」という)していて、呼ぶたびに状態が変わり、違う戻り値を返します。
@@ -628,11 +645,13 @@ norm = 4082
 ちなみに、この関数の外にある変数のことは、C# 的にはフィールド(field)と呼びます。詳しくは「[データの構造化](st_struct.md)」で説明します。
 
 
-##<a id="sec-generated-title-18"></a> <a id="parameter"></a>補足: 引数
+## <a id="sec-generated-title-18"></a> <a id="parameter"></a>補足: 引数
+
 引数についてはいくつか補足があります。
 
 
-###<a id="sec-generated-title-19"></a> <a id="default-parameter"></a>オプション引数と名前付き引数
+### <a id="sec-generated-title-19"></a> <a id="default-parameter"></a>オプション引数と名前付き引数
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4 から、引数に規定値(default value)を与えて、呼び出し時に省略できたり(optional)、名前付き(named)で引数を書けるようになりました。
@@ -666,7 +685,8 @@ C# 4 から、引数に規定値(default value)を与えて、呼び出し時に
 とはいえ、後から値を変えることもそう多くなく、便利に使える機能です。
 
 
-###<a id="sec-generated-title-20"></a> <a id="actual-formal"></a>実引数と仮引数
+### <a id="sec-generated-title-20"></a> <a id="actual-formal"></a>実引数と仮引数
+
 引数という言葉は、「引数として渡す値」と「引数を受け取るための変数」という2つの意味で使われます。
 区別が必要な場合、前者を<strong id="actual-parameter" class="keyword">実引数</strong>(actual parameter)、後者を<strong id="formal parameter" class="keyword">仮引数</strong>(formal parameter)と呼びます。
 
@@ -688,6 +708,7 @@ Norm 関数の定義側にある x, y, z などの変数が仮引数です。
 
 
 ##### <a id="sec-generated-title-21"></a>余談: paramter と argument
+
 少し余談になりますが、引数は、英語だと parameter 以外に、argument (ここでは「独立変数」の意味。数学用語としての argument)という単語を使うこともあります。
 (ちなみに、parameter も、数学用語としては「媒介変数」という訳語になります。)
 
@@ -695,7 +716,8 @@ Norm 関数の定義側にある x, y, z などの変数が仮引数です。
 (どちらがどちらだったかわからなくなるので、あまり推奨はされません。結局、actual argument, formal argument という言い方もします。)
 
 
-###<a id="sec-generated-title-22"></a> <a id="special-case"></a>特殊な引数
+### <a id="sec-generated-title-22"></a> <a id="special-case"></a>特殊な引数
+
 C# には、いくつか特殊な引数があります。
 詳しくは別項で説明しています。
 
@@ -707,7 +729,8 @@ C# には、いくつか特殊な引数があります。
 
 
 
-##<a id="sec-generated-title-23"></a> <a id="overload"></a>関数のオーバーロード
+## <a id="sec-generated-title-23"></a> <a id="overload"></a>関数のオーバーロード
+
 関数を作る際、関数の名前が同じで引数リストだけが異なる関数を複数作ることが出来ます。
 例えば、以下のように同じ名前の関数を作成することが出来ます。
 
@@ -732,6 +755,7 @@ C# には、いくつか特殊な引数があります。
 このように、引数リストだけが異なる関数を作ることを関数の<strong id="overload" class="keyword">オーバーロード</strong>(overload : 過負荷、上積み)といいます。
 
 ##### <a id="sec-generated-title-24"></a>サンプル
+
 <pre class="source" title="関数のオーバーロードのサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -776,7 +800,8 @@ C# には、いくつか特殊な引数があります。
 実数   : 3.14159265
 </pre>
 
-###<a id="sec-generated-title-25"></a> <a id="non-ovarloadable"></a>オーバーロードできない例
+### <a id="sec-generated-title-25"></a> <a id="non-ovarloadable"></a>オーバーロードできない例
+
 C# のメソッドのオーバーロードにはいくつか制限があります。
 
 引数の型違いのオーバーロードはできますが、引数名だけが違うオーバーロードは作れません。
@@ -822,7 +847,8 @@ C# のメソッドのオーバーロードにはいくつか制限がありま�
 <span class="reserved">void</span> <span class="error">H</span>(<span class="reserved">out</span> <span class="reserved">int</span> x) =&gt; x = 0;
 </code></pre>
 
-###<a id="sec-generated-title-26"></a> <a id="signature"></a>シグネチャ
+### <a id="sec-generated-title-26"></a> <a id="signature"></a>シグネチャ
+
 オーバーロードがある以上、関数は、複数ある関数のうちのどれを呼ぶか、名前だけ特定することができません。
 特定には、関数名と、引数の型が必要になります。
 こういう、関数の呼び分けに必要な情報のことを<strong id="key-signature" class="keyword">シグネチャ</strong>(signature: 署名、サイン)と呼びます。
@@ -835,7 +861,8 @@ C++やJavaはC#と同様です。
 C言語やGoは、関数のオーバーロード自体認めていない(呼び分けには名前自体を変えないといけない)ので、関数名 = シグネチャです。
 Swiftでは、引数名違いや戻り値の型違いのオーバーロードができるので、`func x(x: Int) -> Int`というような関数があった場合、`x(x: Int) -> Int`全体がシグネチャです。
 
-###<a id="sec-generated-title-27"></a> <a id="method-group"></a>メソッド グループ
+### <a id="sec-generated-title-27"></a> <a id="method-group"></a>メソッド グループ
+
 関数の中でも[メソッド](#method)の場合は、[デリゲート](../functional/sp_delegate.md)への代入の際に `Action a = M;` みたいな引数なしな書き方ができます。
 
 この引数なしな書き方では、`M`だけではなくてその周りまで見ないと「どの`M`か」が確定しません。
@@ -863,7 +890,8 @@ Swiftでは、引数名違いや戻り値の型違いのオーバーロードが
 }
 </code></pre>
 
-##<a id="sec-generated-title-28"></a> <a id="sec-expression-bodied"></a>expression-bodied な関数
+## <a id="sec-generated-title-28"></a> <a id="sec-expression-bodied"></a>expression-bodied な関数
+
 <h5 class="version version6">Ver. 6</h5>
 C# 6 では、関数本体の部分が1つの式だけからなる場合、 `=>` 記号を使って以下のような書き方をすることができるようになりました。
 これを、<strong id="expression-bodied" class="keyword">expression-bodied (本体が式の)関数</strong>(expression-bodied function)と呼びます。
@@ -931,7 +959,8 @@ C# 6時点では、メソッド、演算子、プロパティとインデクサ�
 }
 </code></pre>
 
-##<a id="sec-generated-title-29"></a> <a id="sec-local"></a>ローカル関数
+## <a id="sec-generated-title-29"></a> <a id="sec-local"></a>ローカル関数
+
 <h5 class="version version7">Ver. 7</h5>
 
 C# 7では、関数の中で別の関数を定義して使うことができます。
@@ -956,7 +985,8 @@ C# 7では、関数の中で別の関数を定義して使うことができま�
 
 詳細は「[ローカル関数と匿名関数](../functional/fun_localfunctions.md)」で説明しています。
 
-##<a id="sec-generated-title-30"></a> <a id="anonymous"></a>匿名関数
+## <a id="sec-generated-title-30"></a> <a id="anonymous"></a>匿名関数
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 もう1つ、関数の中に関数を書く方法として、<strong id="key-anonymous" class="keyword">匿名関数</strong>(anonymous function)というものがあります。

@@ -18,7 +18,8 @@ aliases:
 
 # インデクサー
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# で利用できる基本型の1つに配列があります。
 配列では i 番目の要素を読み書きする際、
 <code>a[i]</code> というように <code>[]</code> を用います。
@@ -33,6 +34,7 @@ C# で利用できる基本型の1つに配列があります。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 組み込み型（int や string など）とユーザー定義型（クラスや構造体）の区別をなくそう。
 
 * ユーザー定義型にも、配列っぽく<code>[]</code>を使ったインデックスアクセスを定義できます（インデクサー）。
@@ -41,7 +43,8 @@ C# で利用できる基本型の1つに配列があります。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="definition"></a>インデクサーの定義
+## <a id="sec-generated-title-3"></a> <a id="definition"></a>インデクサーの定義
+
 インデクサーは以下のようにして定義します。
 
 <pre class="source" title="" lang="">
@@ -261,7 +264,8 @@ a[9] = 9
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="level"></a>set/get で異なるアクセスレベルを設定
+## <a id="sec-generated-title-4"></a> <a id="level"></a>set/get で異なるアクセスレベルを設定
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 C# 2.0 では、
@@ -279,7 +283,8 @@ C# 2.0 では、
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="indexed"></a>余談: VB のインデックス付きプロパティ
+## <a id="sec-generated-title-5"></a> <a id="indexed"></a>余談: VB のインデックス付きプロパティ
+
 余談なんですが、
 VB.NET なんかにはインデックス付きプロパティというものもあります。
 （VB.NET の他、Delphi には配列プロパティという名前で同様な機能が。）

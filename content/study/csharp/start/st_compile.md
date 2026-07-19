@@ -18,11 +18,13 @@ aliases:
 
 # プログラムの作成・実行
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ここでは、C# でプログラムを書いたあと、そのプログラムを実行するまでの流れを説明します。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * ソースファイル: プログラミング言語（人が読み書きしやすい形式）で書かれたコード
 
 * 実行ファイル: コンピューターが実行できる形式
@@ -35,7 +37,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="make"></a>プログラムの作成
+## <a id="sec-generated-title-3"></a> <a id="make"></a>プログラムの作成
+
 コンピュータプログラムを作成するには、
 プログラミング言語を用いてプログラムを記述し、
 それをコンピュータが理解できる形式に変換する必要があります。
@@ -52,7 +55,8 @@ aliases:
 
 
 
-###<a id="sec-generated-title-4"></a> <a id="dotnet"></a>.NET プログラム
+### <a id="sec-generated-title-4"></a> <a id="dotnet"></a>.NET プログラム
+
 C# など、.NET Framework 上で動くプログラムの場合、
 CPU 依存な命令（ネイティブ コード（native code）に直接コンパイルするのではなく、
 CPU 非依存な中間言語（intermediate language、略して IL）と呼ばれるものにコンパイルされます。
@@ -67,7 +71,8 @@ IL は、プログラムの実行時に少しずつネイティブ コードに�
 このような方式を、Just In Time コンパイル（JIT）と呼びます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="vc"></a>Visual Studio を使ったプログラムの作成
+## <a id="sec-generated-title-5"></a> <a id="vc"></a>Visual Studio を使ったプログラムの作成
+
 [統合開発環境](../devenv/ab_devenv.md)を用いると、プログラムを容易に作成できます。
 ここでは、
 統合開発環境の1つである Visual Studio を使ってコンソール アプリ(文字ベースのプログラム)の作成手順を例にして解説します。
@@ -75,7 +80,8 @@ IL は、プログラムの実行時に少しずつネイティブ コードに�
 ※ スクリーンショットなどは古いバージョンの Visual Studio のものですが、
 見た目が少し変わっていたりするくらいで、大まかな流れは現在(執筆時点で Visual Sutido 2017 15.3)でもそれほど変わっていません。
 
-###<a id="sec-generated-title-6"></a> <a id="project"></a>プロジェクトの作成
+### <a id="sec-generated-title-6"></a> <a id="project"></a>プロジェクトの作成
+
 Visual Studio でコンソールプログラムを作る場合には、まず、新しいプロジェクトを作成します。
 プロジェクトの作成は、スタートページにある[新しいプロジェクト]というボタンを押すか、
 メニューから[ファイル]→[新規作成]→[プロジェクト]を選択します。
@@ -85,7 +91,8 @@ Visual Studio でコンソールプログラムを作る場合には、まず、
 [プロジェクト名]に今から作りたいプログラムの名前を入れて[OK]ボタンを押します。
 
 
-###<a id="sec-generated-title-7"></a> <a id="excute"></a>プログラムの作成・実行
+### <a id="sec-generated-title-7"></a> <a id="excute"></a>プログラムの作成・実行
+
 プロジェクトを作成したら、後は作成された C# プログラムの雛形を元にソースを編集してコンパイルすればプログラムを作成できます。
 Visual Studio では [F6] キーまたは [Ctrl+Shift+B] というショートカットキーを押すだけでコンパイルが行えます。
 また、テスト実行をしたい場合には [F5] キーを押せば作成したプログラムを実行してみることができます。
@@ -98,12 +105,14 @@ Visual Studio では [F6] キーまたは [Ctrl+Shift+B] というショート�
 
 
 ##### <a id="sec-generated-title-8"></a>参考動画
+
 サンプル作成の様子を動画化してみました。
 <iframe width="480" height="390" src="https://www.youtube.com/embed/P_9xj2msC6M" frameborder="0" allowfullscreen=""></iframe>
 (この動画では Visual Studio 2010 を利用しています。)
 
 
-##<a id="sec-generated-title-9"></a> <a id="sdk"></a>C# コンパイラーのみでのプログラムの作成
+## <a id="sec-generated-title-9"></a> <a id="sdk"></a>C# コンパイラーのみでのプログラムの作成
+
 （注意: 本節は Visual Studio に無料版がなかった頃に書いた文章です。
 現在の [Visual Studio](https://visualstudio.microsoft.com/ja/downloads/) は、
 条件を満たせば無料で使用可能です。
@@ -115,7 +124,8 @@ Visual Studio では [F6] キーまたは [Ctrl+Shift+B] というショート�
 そこで、無料で入手できる.NET Framework SDK のみを使った C# によるプログラム作成方法を紹介します。
 
 
-###<a id="sec-generated-title-10"></a> <a id="cscompiler"></a>C# コンパイラ
+### <a id="sec-generated-title-10"></a> <a id="cscompiler"></a>C# コンパイラ
+
 C# のソースファイルをコンパイルするためには C# コンパイラが必要になります。
 .NET Framework をインストール（開発者向けである必要はなく、Windows Update でインストール可能な実行環境のみで OK）すれば、
 CSC(C Sharp Compiler)というコンパイラも一緒にインストールされます。
@@ -138,7 +148,8 @@ C:\Windows\Microsoft.NET\Framework\v2.0.50727
 という場所に csc.exe があるはずです。
 
 
-###<a id="sec-generated-title-11"></a> <a id="makewithsdk"></a>プログラムの作成
+### <a id="sec-generated-title-11"></a> <a id="makewithsdk"></a>プログラムの作成
+
 C# のソースファイルはただのテキストファイルですから、Windows 付属のメモ帳や、ネットにフリーで公開されているエディタなどを使って編集できます。
 (エディタは[窓の杜](http://www.forest.impress.co.jp/editor.html)や[Vector](http://www.vector.co.jp/vpack/filearea/win/writing/edit/index.html)で探してみてください。)
 
@@ -168,7 +179,8 @@ csc sample.cs
 csc のより詳しい操作が知りたい人は一度目を通してみてください。
 
 
-###<a id="sec-generated-title-12"></a> <a id="excutewithsdk"></a>プログラムの実行
+### <a id="sec-generated-title-12"></a> <a id="excutewithsdk"></a>プログラムの実行
+
 さて、これでソースファイルの間違いが無ければコンパイルが行われ、
 sample.exe という名前の実行ファイルが出来ているはずです。
 「<code>sample</code>」と入力することでプログラムを実行することが出来ます。
@@ -182,6 +194,7 @@ sample.exe という名前の実行ファイルが出来ているはずです。
 
 
 ##### <a id="sec-generated-title-13"></a>参考動画
+
 サンプル作成の様子を動画化してみました。
 <iframe width="480" height="390" src="https://www.youtube.com/embed/oYUClOpjwQE" frameborder="0" allowfullscreen=""></iframe>
 * 表示する文字は単に "Hello" にしています（タイピングが面倒だった）。

@@ -18,7 +18,8 @@ aliases:
 
 # パターン マッチング
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 [前項](typeswitch.md)で説明した通り、C# 7.0で、`is`演算子と`swtich`ステートメントが拡張されて、`is`/`case`の後ろにパターンを書けるようになりました。
 パターンには以下のようなものがあります。
 
@@ -36,7 +37,8 @@ aliases:
 
 サンプル コード: [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Data/Patterns](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Data/Patterns)
 
-##<a id="sec-generated-title-2"></a> <a id="nonrecursive"></a>非再帰パターン
+## <a id="sec-generated-title-2"></a> <a id="nonrecursive"></a>非再帰パターン
+
 <h5 class="version version7">Ver. 7.0</h5>
 
 C# の文法上の区別する意味はないんですが、
@@ -46,7 +48,8 @@ C# 7.0 からあるパターンは1層限り、8.0 で追加されたパター�
 
 ここではまず、文法が簡単な再帰のないパターンから説明していきます。
 
-###<a id="sec-generated-title-3"></a> <a id="declaration"></a>型パターン (宣言パターン)
+### <a id="sec-generated-title-3"></a> <a id="declaration"></a>型パターン (宣言パターン)
+
 C# 6.0以前から元々あった [`is` 演算子](../oop/oo_polymorphism.md#is-operator)の自然な拡張になっているのが型パターン(type pattern)です。
 以下のように、型の後ろに続けて、マッチした結果を変数で受け取れます。
 
@@ -97,7 +100,8 @@ C# 6.0以前から元々あった [`is` 演算子](../oop/oo_polymorphism.md#is-
 }
 </code></pre>
 
-####<a id="sec-generated-title-4"></a> <a id="simplified-type-pattern"></a>型パターンの簡単化
+#### <a id="sec-generated-title-4"></a> <a id="simplified-type-pattern"></a>型パターンの簡単化
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 C# 9.0 で型パターンがちょっとだけシンプルになりました。
@@ -164,7 +168,8 @@ C# 9.0 時点でこれが書けたなかったのは次節の[定数パターン
 }
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="constant"></a>定数パターン
+### <a id="sec-generated-title-5"></a> <a id="constant"></a>定数パターン
+
 `is`や`case`の後ろには定数も書けます。これを定数パターン(constant pattern)と言います。
 単体で見ると普通に `==` を使えば済むことも多いわけですが、
 定数パターンであれば他のパターンとの混在ができます。
@@ -225,7 +230,8 @@ C# 9.0 時点でこれが書けたなかったのは次節の[定数パターン
 }
 </code></pre>
 
-####<a id="sec-generated-title-6"></a> <a id="pointer-null"></a>ポインターの null 比較
+#### <a id="sec-generated-title-6"></a> <a id="pointer-null"></a>ポインターの null 比較
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 細かい修正ですが、C# 8.0 からポインターに対してもパターン マッチングが使えるようになりました。
@@ -242,7 +248,8 @@ C# 9.0 時点でこれが書けたなかったのは次節の[定数パターン
 }
 </code></pre>
 
-####<a id="sec-generated-title-7"></a> <a id="span">ReadOnlySpan に対するパターンマッチ</a>
+#### <a id="sec-generated-title-7"></a> <a id="span">ReadOnlySpan に対するパターンマッチ</a>
+
 <h5 class="version version11">Ver. 11</h5>
 
 C# 11 で、`ReadOnlySpan<char>` に対して文字列リテラルによる定数パターンが使えるようになりました。
@@ -275,7 +282,8 @@ C# 11 で、`ReadOnlySpan<char>` に対して文字列リテラルによる定�
 そこに `string` から `ReadOnlySpan<char>` の変換が挟まっていて定数とは言い切れない状態です。
 C# チーム自身はそれほど実装に乗り気ではなく、外部からのコントリビューションで実装された機能になります。)
 
-###<a id="sec-generated-title-8"></a> <a id="var"></a>var パターン
+### <a id="sec-generated-title-8"></a> <a id="var"></a>var パターン
+
 型パターンと似ていますが、具体的な型名の代わりに `var` キーワードを使うと、
 任意の型にマッチするパターンになります。
 これを var パターン (var pattern)と言います。
@@ -315,7 +323,8 @@ C# チーム自身はそれほど実装に乗り気ではなく、外部から�
 
 null をはじきたい場合は、var ではなく、後述するプロパティ パターンを使って`x is {} nonNull`と書いたりします。
 
-###<a id="sec-generated-title-9"></a> <a id="discards"></a><a id="discard"></a>破棄パターン
+### <a id="sec-generated-title-9"></a> <a id="discards"></a><a id="discard"></a>破棄パターン
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 何にでもマッチして、マッチ結果を受け取る必要がない場合、`_` を使って値を破棄できます。これを破棄パターン(discard pattern)と言います。
@@ -333,7 +342,8 @@ null をはじきたい場合は、var ではなく、後述するプロパテ�
     };
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="breaking-change-in-discard"></a>余談: 破棄パターンが C# 8.0 からな理由
+### <a id="sec-generated-title-10"></a> <a id="breaking-change-in-discard"></a>余談: 破棄パターンが C# 8.0 からな理由
+
 ちなみに、`is` や `switch`ステートメント内で `_` だけでの値の破棄ができないのは既存コードとの互換性のためです。
 普通書かないようなコードですが、一応、以下のようなコードが元々合法なため、意味を変えることができませんでした。
 
@@ -369,7 +379,8 @@ null をはじきたい場合は、var ではなく、後述するプロパテ�
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-11"></a> <a id="recursive"></a>再帰パターン
+## <a id="sec-generated-title-11"></a> <a id="recursive"></a>再帰パターン
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 7.0 の範囲で使えるものは、「パターン」と呼ぶのが仰々しいくらい単純なものでした。
@@ -400,7 +411,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 }
 </code></pre>
 
-###<a id="sec-generated-title-12"></a> <a id="positional"></a>位置パターン
+### <a id="sec-generated-title-12"></a> <a id="positional"></a>位置パターン
+
 位置パターン (positional pattern)は、
 [分解](deconstruction.md)と同じ要領で再帰的なマッチングを行うパターンです。
 
@@ -465,7 +477,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 };
 </code></pre>
 
-####<a id="sec-generated-title-13"></a> <a id="constructor-vs-positional"></a>補足: コンストラクター呼び出しの逆
+#### <a id="sec-generated-title-13"></a> <a id="constructor-vs-positional"></a>補足: コンストラクター呼び出しの逆
+
 位置パターンは、コンストラクター呼び出し(`new`)の逆に当たる構文です。
 書き方も、コンストラクターと対になっています。
 
@@ -488,7 +501,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 <span class="reserved">var</span> <span class="variable">r4</span> = <span class="variable">line</span> <span class="reserved">is</span> ((1, 2), (3, 4));
 </code></pre>
 
-####<a id="sec-generated-title-14"></a> <a id="how-to-deconstruct"></a>分解方法
+#### <a id="sec-generated-title-14"></a> <a id="how-to-deconstruct"></a>分解方法
+
 位置パターンは [分解](deconstruction.md)と同じ要領でメンバーの値を取り出します。
 分解もそうなんですが、[タプル](tuples.md)(C# のタプル構文を使って作る `ValueTuple` 構造体の値)の場合とそうでない場合で内部的な挙動が少し変わります。
 
@@ -564,7 +578,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 }
 </code></pre>
 
-####<a id="sec-generated-title-15"></a> <a id="tuple-switch"></a>タプル switch
+#### <a id="sec-generated-title-15"></a> <a id="tuple-switch"></a>タプル switch
+
 位置パターンに伴って、`switch`ステートメントの `()` の中に、複数の値を `,` 区切りで書けるようになりました。
 
 <pre class="source" title="複数の値に対する switch">
@@ -585,7 +600,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 要するに、意味としては `switch ((a, b))` と書くのと同じです。
 なので実体としては「複数の値に対する`switch`」というより、「タプルに限り、`()` を一段省略できる」という機能です。
 
-####<a id="sec-generated-title-16"></a> <a id="zero-or-one"></a>0、1要素の分解
+#### <a id="sec-generated-title-16"></a> <a id="zero-or-one"></a>0、1要素の分解
+
 タプル構築や分解代入・分解宣言では0、1要素のもの( `()` や `(x)`) は認められていませんが、
 位置パターンでは認められるようになりました。
 それぞれ、0、1引数の`Deconstruct`メソッドが調べられます。
@@ -624,7 +640,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 素直に `(constant)` とか `(T variable)` とかは書けません。
 `var (subpattern)` とか `(subpattern) _` とか、前後に余計なものを付けることでキャストと区別します。
 
-###<a id="sec-generated-title-17"></a> <a id="remove-deconstruct"></a>最適化での Deconstruct 削除
+### <a id="sec-generated-title-17"></a> <a id="remove-deconstruct"></a>最適化での Deconstruct 削除
+
 位置パターンでは、コンパイラーの最適化によって `Deconstruct` メソッドの呼び出しが消えることがあります。
 以下のように、すべて `_` で値を破棄してしまう場合には `Deconstruct` メソッドを呼び出す必要がなく、
 実際、呼び出しが消えてなくなります。
@@ -697,7 +714,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 ちなみに、仕様上は「必ず消える」という保証もないです(「消えることがある」という仕様)。
 なので、`Deconstruct` メソッドは副作用を起こさないように作ることが推奨されます。
 
-###<a id="sec-generated-title-18"></a> <a id="property"></a>プロパティ パターン
+### <a id="sec-generated-title-18"></a> <a id="property"></a>プロパティ パターン
+
 プロパティ パターン(property pattern)は、プロパティに対して再帰的なマッチングを行うパターンです。
 (プロパティ パターンという名前に反して、フィールドも使えます。)
 
@@ -776,7 +794,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 }
 </code></pre>
 
-####<a id="sec-generated-title-19"></a> <a id="initializer-vs-property"></a>オブジェクト初期化子の逆
+#### <a id="sec-generated-title-19"></a> <a id="initializer-vs-property"></a>オブジェクト初期化子の逆
+
 「位置パターンはコンストラクター呼び出しの逆」という話をしましたが、
 同様に、プロパティ パターンは[オブジェクト初期化子](../oop/oo_construct.md#member_initializer)と対になるものです。
 
@@ -793,7 +812,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 ただ、`=` は代入の意味なのでパターンとしては使えず、代わりに `:` になっています。
 `:` を使っているのは、位置パターンと構文を共通化できて実装が楽だからだそうです。
 
-####<a id="sec-generated-title-20"></a> <a id="no-order"></a>位置パターンとプロパティ パターンの順序
+#### <a id="sec-generated-title-20"></a> <a id="no-order"></a>位置パターンとプロパティ パターンの順序
+
 位置パターンとプロパティ パターンを混在して使う場合、
 `Deconstruct`メソッドとプロパティのアクセサーの呼び出し順序には<em>保証がない</em>そうです。
 
@@ -836,7 +856,8 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 }
 </code></pre>
 
-####<a id="sec-generated-title-21"></a> <a id="non-null"></a>非 null マッチング
+#### <a id="sec-generated-title-21"></a> <a id="non-null"></a>非 null マッチング
+
 プロパティ パターンは、暗黙的にnullチェックが挟まって、非 null であることが保証されます。
 しかも、`x is { }` というように、中身が空っぽであっても null チェックだけは挿入されるので、 `x is { }`を「`x`はnullではない」の意味で使えます。
 
@@ -882,7 +903,8 @@ C# 7.0 までのパターンだと、null チェックを楽に書く手段が�
 }
 </code></pre>
 
-####<a id="sec-generated-title-22"></a> <a id="sub-pattern-name"></a>プロパティ パターンの拡張(入れ子のメンバー参照)
+#### <a id="sec-generated-title-22"></a> <a id="sub-pattern-name"></a>プロパティ パターンの拡張(入れ子のメンバー参照)
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0 で、以下のように、入れ子のプロパティ・フィールド参照でプロパティ パターンを書けるようになりました。
@@ -928,7 +950,8 @@ C# 10.0 で、以下のように、入れ子のプロパティ・フィールド
     }
 </code></pre>
 
-###<a id="sec-generated-title-23"></a> <a id="list">リスト パターン</a>
+### <a id="sec-generated-title-23"></a> <a id="list">リスト パターン</a>
+
 <h5 class="version version11">Ver. 11</h5>
 
 C# 11で、`[]` を使ってリスト(配列や `List<T>` など)に対するパターン マッチングができるようになりました。
@@ -949,7 +972,8 @@ C# 11で、`[]` を使ってリスト(配列や `List<T>` など)に対するパ
 
 このような `[]` を使ったパターンを<strong id="key-list-pattern" class="keyword">リスト パターン</strong>(list pattern)と言います。
 
-####<a id="sec-generated-title-24"></a> <a id="square-bracket">注意: 角カッコ</a>
+#### <a id="sec-generated-title-24"></a> <a id="square-bracket">注意: 角カッコ</a>
+
 C# で新文法を追加する際には、既存の文法と比べて違和感がないような選択をすることが多いです。
 
 そういう意味ではリスト パターンの `[]` は珍しくちょっと見慣れない感じの選択でした。
@@ -975,7 +999,8 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 
 これが入れば、初期化・生成側と、パターン マッチ・分解側の間の違和感が緩和されるかと思います。
 
-####<a id="sec-generated-title-25"></a> <a id="slice-pattern">.. (スライス パターン)</a>
+#### <a id="sec-generated-title-25"></a> <a id="slice-pattern">.. (スライス パターン)</a>
+
 パターンに対して `[a, b]` と書く場合、2要素ピッタリのリスト出ないとマッチしません。
 
 <pre class="source" title="個数がピッタリでないとマッチしない">
@@ -1031,7 +1056,8 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">array</span> <span class="reserved">is</span> [.., <span class="error">..</span>]);
 </code></pre>
 
-####<a id="sec-generated-title-26"></a> <a id="sub-pattern">リスト パターンの再帰</a>
+#### <a id="sec-generated-title-26"></a> <a id="sub-pattern">リスト パターンの再帰</a>
+
 [リスト パターン](#list)はカテゴライズするなら[再帰パターン](#recursive)の一種です。
 `[]` の中の各要素には任意のパターンを書くことができます。
 
@@ -1084,7 +1110,8 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
     <span class="operator">=&gt;</span> <span class="variable local">utf8</span> <span class="reserved">is</span> [<span class="number">0xEF</span>, <span class="number">0xBB</span>, <span class="number">0xBF</span>, .. <span class="reserved">var</span> noBom] <span class="operator">?</span> <span class="variable">noBom</span> <span class="operator">:</span> <span class="variable local">utf8</span>;
 </code></pre>
 
-####<a id="sec-generated-title-27"></a> <a id="list-pattern-lowering">リスト パターンの展開結果</a>
+#### <a id="sec-generated-title-27"></a> <a id="list-pattern-lowering">リスト パターンの展開結果</a>
+
 リスト パターンやスライス パターンは、
 割かしべたに長さ (`Length` もしくは `Count` プロパティ)、インデックス (`a[i]`) やスライス (`a[..]`) に展開されます。
 例えば以下のようなリスト パターンを書いた場合、
@@ -1144,7 +1171,8 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 }
 </code></pre>
 
-###<a id="sec-generated-title-28"></a> <a id="usage"></a>再帰パターンの利用例
+### <a id="sec-generated-title-28"></a> <a id="usage"></a>再帰パターンの利用例
+
 「[型スイッチの用途](typeswitch.md#usage)」と同じ題材で、再帰パターンの利用例も挙げておきます。
 
 使った題材は、数式を扱うようなクラスです。
@@ -1267,7 +1295,8 @@ C# 7.3 までだと、この処理は以下のように書くことになりま�
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-29"></a> <a id="pattern-combintor"></a>パターンの組み合わせ
+## <a id="sec-generated-title-29"></a> <a id="pattern-combintor"></a>パターンの組み合わせ
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 C# 9.0 で `and` や `or` などのキーワードを使ってパターンの組み合わせ(pattern combinators)ができるようになりました。
@@ -1277,7 +1306,8 @@ C# 9.0 で `and` や `or` などのキーワードを使ってパターンの組
 - `not`: 否定パターン (negated patterns)。後ろに書いたパターンの否定を取る
 - `()`: 括弧付きパターン (parenthesized patterns)。`and`, `or` などの結合優先度を指定するためにパターンを `()` でくくる
 
-###<a id="sec-generated-title-30"></a> <a id="and-pattern"></a>and パターン
+### <a id="sec-generated-title-30"></a> <a id="and-pattern"></a>and パターン
+
 2つのパターンを `and` キーワードでつなぐことで、両方のパターンにマッチしたときだけマッチした扱いになります。
 (論理積パターン(conjunctive patterns)と言ったりもします。)
 
@@ -1307,7 +1337,8 @@ C# 9.0 で `and` や `or` などのキーワードを使ってパターンの組
 };
 </code></pre>
 
-###<a id="sec-generated-title-31"></a> <a id="or-pattern"></a>or パターン
+### <a id="sec-generated-title-31"></a> <a id="or-pattern"></a>or パターン
+
 2つのパターンを `or` キーワードでつなぐことで、少なくともいずれか片方のパターンにマッチしたときにマッチした扱いになります。
 (論理和パターン(disjunctive patterns)と言ったりもします。)
 
@@ -1341,7 +1372,8 @@ C# 9.0 で `and` や `or` などのキーワードを使ってパターンの組
 };
 </code></pre>
 
-####<a id="sec-generated-title-32"></a> <a id="conditional-keyward-and-or"></a>文脈キーワードの and, or
+#### <a id="sec-generated-title-32"></a> <a id="conditional-keyward-and-or"></a>文脈キーワードの and, or
+
 C# のキーワード追加では恒例行事ですが、
 既存コードをなるべく壊さないように、後付けな `and`、`or` などは[文脈キーワード](../appendix/ap_reserved.md#context)になっています。
 
@@ -1355,7 +1387,8 @@ C# のキーワード追加では恒例行事ですが、
 <span class="reserved">class</span> <span class="type">or</span> { }
 </code></pre>
 
-###<a id="sec-generated-title-33"></a> <a id="not-pattern"></a>not パターン
+### <a id="sec-generated-title-33"></a> <a id="not-pattern"></a>not パターン
+
 パターンの前に `not` キーワードを置くことで、元のパターンの成否を反転させることができます。
 (否定パターン(negated patterns)と言ったりもします。)
 
@@ -1405,7 +1438,8 @@ C# のキーワード追加では恒例行事ですが、
 }
 </code></pre>
 
-###<a id="sec-generated-title-34"></a> <a id="parenthesized-patterns"></a>括弧付きパターン
+### <a id="sec-generated-title-34"></a> <a id="parenthesized-patterns"></a>括弧付きパターン
+
 `not`, `and`, `or` の結合順位は `!`, `&&`, `||` と同じで、`not` → `and` → `or` の順です。
 
 例えば以下のような書き方をすると、`and` の結合が優先されます。
@@ -1443,7 +1477,8 @@ C# のキーワード追加では恒例行事ですが、
 <span class="reserved">interface</span> <span class="type">IB</span> { <span class="reserved">int</span> B { <span class="reserved">get</span>; } }
 </code></pre>
 
-##<a id="sec-generated-title-35"></a> <a id="relational-patterns"></a>関係演算パターン
+## <a id="sec-generated-title-35"></a> <a id="relational-patterns"></a>関係演算パターン
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 `<`, `<=`, `>`, `>=` の4つの関係演算子を使って数値の大小をパターンの中に書けます。
@@ -1467,10 +1502,12 @@ C# のキーワード追加では恒例行事ですが、
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-36"></a> <a id="compile-time-validation"></a>コンパイル時検査
+## <a id="sec-generated-title-36"></a> <a id="compile-time-validation"></a>コンパイル時検査
+
 パターン マッチングでは、値の網羅性を満たしているかどうかと、書いたパターンが重複していないかをコンパイル時に検査してくれる仕組みがあります。
 
-###<a id="sec-generated-title-37"></a> <a id="exhaustive"></a>網羅性チェック
+### <a id="sec-generated-title-37"></a> <a id="exhaustive"></a>網羅性チェック
+
 いくつかの型は決まった値しかとりません。例えば `bool` なら `true` か `false` の2値ですし、
 `bool?` でも `true`, `false`, `null` の3値だけです。
 `byte` も高々256個の値しか持ちません。
@@ -1538,7 +1575,8 @@ C# のキーワード追加では恒例行事ですが、
 };
 </code></pre>
 
-###<a id="sec-generated-title-38"></a> <a id="case-duplicate"></a>条件の重複チェック
+### <a id="sec-generated-title-38"></a> <a id="case-duplicate"></a>条件の重複チェック
+
 `switch` ステートメント/`switch` 式中に絶対に到達できない条件があるとき、
 ある程度はコンパイル時に検知してコンパイル エラーにしてもらえます。
 

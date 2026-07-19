@@ -18,21 +18,25 @@ aliases:
 
 # ボックス化
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# では、int 型などの値型も、object 型として扱えます。
 その裏では、「ボックス化」という仕組みが動いています。
 
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/Boxing](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Resource/Boxing)
 
 
-##<a id="sec-generated-title-3"></a> <a id="value-reference"></a>値型/参照型
+## <a id="sec-generated-title-3"></a> <a id="value-reference"></a>値型/参照型
+
 「[メモリ管理](../../computer/essential-software/memorymanagement.md)」で説明しますが、
 一般に、メモリの管理方法には「[スタック](../../computer/essential-software/memorymanagement.md#stack)」と「[ヒープ](../../computer/essential-software/memorymanagement.md#heap)」という2種類のものがあります。
 
 
-###<a id="sec-generated-title-4"></a> <a id="stack-heap"></a>スタック/ヒープ
+### <a id="sec-generated-title-4"></a> <a id="stack-heap"></a>スタック/ヒープ
+
 C# では、ローカル変数はスタック上に値を置きます。
 この時、変数が「[値型](oo_reference.md#valtype)」の場合、値すべてがスタック上に置かれます。
 一方、「[参照型](oo_reference.md#reftype)」の場合、実際の値はヒープ上に置かれ、そのヒープ上の場所への参照情報（「[ポインター](../../computer/general/memory.md#pointer)」 ）だけがスタック上に置かれます。
@@ -44,7 +48,8 @@ C# では、ローカル変数はスタック上に値を置きます。
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="value-type-object"></a>値型も object
+### <a id="sec-generated-title-5"></a> <a id="value-type-object"></a>値型も object
+
 C# では、値型と参照型の扱いを同列にしています。具体的には、値型も object 型から派生しているかのような扱いをしています。
 
 (object 型は参照型です。
@@ -100,7 +105,8 @@ C# でこれが可能なのは、次節で説明する「ボックス化」と�
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="boxing"></a>ボックス化
+## <a id="sec-generated-title-6"></a> <a id="boxing"></a>ボックス化
+
 値型を object 型(object 型は参照型です)に代入できるわけですが、
 この時、図2に示すように、値型(スタック上に値がある)から参照型(ヒープ上に値がある)への変換が行われます。
 この処理を<strong id="key-boxing" class="keyword">ボックス化</strong>(boxing: 箱詰め)と呼びます。
@@ -133,7 +139,8 @@ C# でこれが可能なのは、次節で説明する「ボックス化」と�
 型が間違っていた場合は InvalidCastException 例外(System 名前空間)が発生します。
 
 
-##<a id="sec-generated-title-7"></a> <a id="avoid-boxing"></a>ボックス化を避ける
+## <a id="sec-generated-title-7"></a> <a id="avoid-boxing"></a>ボックス化を避ける
+
 一般的に、ヒープ上の領域確保は、スタックと比べると重たい処理です。
 値型の利点はスタック上に値を置く(= ヒープを使わない)ことによる性能向上です。
 ボックス化(要するに、ヒープ確保)が起きてしまうと、この利点が失われることになります。

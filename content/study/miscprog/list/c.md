@@ -18,7 +18,8 @@ aliases:
 
 # C言語小ネタ集
 
-##<a id="sec-generated-title-1"></a> <a id="variadic"></a>可変長引数 条件付きデバッグ関数
+## <a id="sec-generated-title-1"></a> <a id="variadic"></a>可変長引数 条件付きデバッグ関数
+
 リリース版には残したくないデバッグ用のコードは、
 以下のように <code>#if, #ifdef</code> プリプロセッサ命令を使って条件コンパイルするのが一般的です。
 

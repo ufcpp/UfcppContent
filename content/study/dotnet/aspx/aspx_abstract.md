@@ -18,7 +18,8 @@ aliases:
 
 # ASP.NET 概要
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="aspdotnet" class="keyword">ASP.NET</strong> は、Microsoft が開発したサーバサイトアプリケーションフレームワークです。
 
 動的な処理はウェブサーバ上で行い、
@@ -31,7 +32,8 @@ ASP.NET のフレームワークを用いることで、
 ここでは、ウェブフォームを中心に説明していきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>例
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>例
+
 ASP.NET のウェブフォームでは、HTML （ただし、拡張子は .html ではなく、.aspx にする）の中にプログラムを埋め込んだり、
 「HTML ＋ プログラムソースファイル」で開発ができます。
 
@@ -152,7 +154,8 @@ ASP.NET では、このコードビハインド方式での開発が推奨され
 「[Windows Presentation Foundation](../wpf/wpf_abst.md#wpf)」にも引き継がれています。
 
 
-##<a id="sec-generated-title-3"></a> <a id="devenv"></a>開発環境
+## <a id="sec-generated-title-3"></a> <a id="devenv"></a>開発環境
+
 ASP.NET は、ウェブフォームを作るにしろウェブサービスを作るにしろ、
 全てテキスト形式のソースファイルで書くことができます。
 なので、やろうと思えば、テキストエディタ一つあれば開発ができます。
@@ -166,7 +169,8 @@ ASP.NET は、ウェブフォームを作るにしろウェブサービスを作
 asin 番号: B000CSRIYG</iframe>
 
 
-##<a id="sec-generated-title-4"></a> <a id="server"></a>ウェブサーバ
+## <a id="sec-generated-title-4"></a> <a id="server"></a>ウェブサーバ
+
 ウェブアプリケーションを使うためには、当然、ウェブサーバが必要になります。
 「自宅でサーバを稼動させて・・・」なんてやる人はそう多くないので、
 レンタルサーバを少し紹介。
@@ -177,7 +181,8 @@ asin 番号: B000CSRIYG</iframe>
 気軽に試してみたい方はこのあたりを。
 
 
-##<a id="sec-generated-title-5"></a> <a id="link"></a>リンク
+## <a id="sec-generated-title-5"></a> <a id="link"></a>リンク
+
 本格的に ASP.NET を勉強してみるつもりなら、
 以下の辺りを。
 <!-- 以下、reflinks 要素の変換後の出力です。参照先に同じリンクが記述されている可能性があります。-->

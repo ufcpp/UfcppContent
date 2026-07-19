@@ -18,7 +18,8 @@ aliases:
 
 # ブログ表示（３）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[ブログ表示（２）](blog2.md)」の続き。
 
 利便性向上のためのおまけとして、
@@ -38,7 +39,8 @@ URL リライト・リダイレクトによる URL 短縮について説明し�
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="rewrite"></a>リライト・リダイレクト
+## <a id="sec-generated-title-2"></a> <a id="rewrite"></a>リライト・リダイレクト
+
 「[ブログ表示（２）](blog2.md)」までの実装で、
 BlogDate.aspx?year=2007&amp;month=6&amp;day=30 みたいな URL でリクエストを受けると、
 2007年6月30日のブログを表示するようにできました。
@@ -59,6 +61,7 @@ BlogDate.aspx?year=2007&amp;month=6&amp;day=30 にリダイレクトなりリラ
 
 
 ##### <a id="sec-generated-title-3"></a>Global.aspx を使ったリダイレクト/リライト
+
 ASP.NET におけるリダイレクト/リライトの方法ですが、
 Global.aspx 中の Application_BeginRequest イベントハンドラ内で、
 Response.Redirect か Context.RewritePath メソッドを呼び出します。
@@ -101,6 +104,7 @@ URL の書き換えは、例えば、正規表現を使って以下のように�
 
 
 ##### <a id="sec-generated-title-4"></a>汎用性を持たせる
+
 もう少し汎用性を持たせてみましょう。
 （元 URL, リダイレクト/リライト先 URL）のペアのリストを持っておいて、
 リスト中の項目を1つ1つチェックしていくようにしてみます。
@@ -174,6 +178,7 @@ URL の変換ルールをソース中に埋め込むのではなく、
 
 
 ##### <a id="sec-generated-title-5"></a>HttpModule、HttpHandler
+
 ここで説明したような、Global.aspx に処理を書く方法の他に、
 HttpModule や HttpHandler を使う方法もあります。
 
@@ -181,7 +186,8 @@ HttpModule や HttpHandler を使う方法もあります。
 [URLのリダイレクト](http://uchukamen.com/ASPNET20/URLRedirect/index.htm)。
 
 
-###<a id="sec-generated-title-6"></a> <a id="redirect_note1"></a>注意点1: 元 URL
+### <a id="sec-generated-title-6"></a> <a id="redirect_note1"></a>注意点1: 元 URL
+
 「[アクセスログを取ろう](logging.md)」でも同じような話がありましたが、
 元 URL は ASP.NET エンジンを通して表示する物でなければなりません。
 （txt を ASP.NET を通して表示する設定にしていない限り）
@@ -200,7 +206,8 @@ HttpModule や HttpHandler を使う方法もあります。
 （多少、サーバに掛かる負荷が増える物の、その増加量は小さいそうです。）
 
 
-###<a id="sec-generated-title-7"></a> <a id="redirect_note2"></a>注意点2: リライト時の rebase
+### <a id="sec-generated-title-7"></a> <a id="redirect_note2"></a>注意点2: リライト時の rebase
+
 URL のリライトをする際、1つ気をつけるべきことがあります。
 
 例えば、2007/06/30.aspx を BlogDate.aspx&amp;y=2007&amp;m=06&amp;d=30 にリライトする場合、
@@ -367,7 +374,8 @@ href 内のパスの修正が掛かっていない状態になります。
 <span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-8"></a> <a id="rss"></a>RSS
+## <a id="sec-generated-title-8"></a> <a id="rss"></a>RSS
+
 最後に、RSS フィードを生成してみます。
 
 ＠IT の記事「[サイトの更新情報を提供する標準言語RSS](http://www.atmarkit.co.jp/fdotnet/special/rss/rss_03.html)」あたりを参考に。

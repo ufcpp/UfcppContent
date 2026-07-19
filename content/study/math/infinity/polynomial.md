@@ -18,14 +18,16 @@ aliases:
 
 # 多項式環
 
-##<a id="sec-generated-title-1"></a> <a id="d71e4"></a>多項式環
+## <a id="sec-generated-title-1"></a> <a id="d71e4"></a>多項式環
+
 <pre>
 f[x] ＝ Σ a_n x^n
 
 などは環をなす。
 </pre>
 
-##<a id="sec-generated-title-2"></a> <a id="d71e7"></a>多項式環の順序
+## <a id="sec-generated-title-2"></a> <a id="d71e7"></a>多項式環の順序
+
 <pre>
 実数係数の多項式同士の順序関係を以下のように定義
 

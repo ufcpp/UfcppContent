@@ -18,7 +18,8 @@ aliases:
 
 # XML で数式を書こう
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 勉強用ページにある数式は全て、
 何らかのプラグインを使っているわけでも画像になっているわけでもなく、
 HTML で表示しています。
@@ -30,7 +31,8 @@ mathenv.xsl の詳細は、「[勉強用ページの XSL](../index.md)」を参�
 ちなみに、XSD もあります → [math.xsd](../../../../assets/media/ufcpp2000/xsd/math.xsd)。
 
 
-##<a id="sec-generated-title-2"></a> <a id="byHtml"></a>HTMLで数式を書こう
+## <a id="sec-generated-title-2"></a> <a id="byHtml"></a>HTMLで数式を書こう
+
 このサイトでは勉強用ページと称して数学等の解説を書いているわけですが、
 そこでは意地でも数式を HTML で書いています。
 

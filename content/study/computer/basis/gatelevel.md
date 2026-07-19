@@ -18,7 +18,8 @@ aliases:
 
 # ゲート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「ディジタル回路では、電位の高低によって0と1の2値を表現する」という話はコンピューターに詳しくない人でも聞いたことがあるかもしれません。
 本項では、その0と1の2値を表現するために用いる物理素子レベルの説明をします。
 
@@ -26,7 +27,8 @@ aliases:
 「0、1の切り替え」という抽象的な概念に置き換えて回路設計します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="section-gate"></a>ゲート
+## <a id="sec-generated-title-2"></a> <a id="section-gate"></a>ゲート
+
 ここで重要なことは、物理素子がどうなっているかではありません。
 どんなものを使おうと、0、1の切り替え（switching）ができればディジタル回路を作れるということです。
 この0、1切り替えを行う素子のことを<strong id="gate" class="keyword">ゲート</strong>（gate: 門）と呼びます。
@@ -39,12 +41,14 @@ aliases:
 ゲートの組み合わせとしてディジタル回路を作っていきます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="section-mosfet"></a>MOSFET
+## <a id="sec-generated-title-3"></a> <a id="section-mosfet"></a>MOSFET
+
 一応、今現在、主流になっているゲートの作り方を紹介しておきましょう。
 <strong id="mosfet" class="keyword">MOSFET</strong>（Metal Oxide Semiconductor Field Effect Transistor: 金属酸化膜半導体 電界効果トランジスター）と呼ばれる素子です。
 
 
-###<a id="sec-generated-title-4"></a> <a id="0-1"></a>電圧の高低で0、1を表現
+### <a id="sec-generated-title-4"></a> <a id="0-1"></a>電圧の高低で0、1を表現
+
 MOSFETを用いたディジタル回路では、図1に示すように、電位の高い面と電位の低い面を作り、そのどちらとつながっているかによって0, 1という2つの値を表現します。
 
 <figure>
@@ -61,7 +65,8 @@ MOSFETを用いたディジタル回路では、図1に示すように、電位�
 （この流儀を正論理と呼び、逆にする場合を負論理と呼びます。）
 
 
-###<a id="sec-generated-title-5"></a> <a id="mosfet-structure"></a>MOSFETの性質
+### <a id="sec-generated-title-5"></a> <a id="mosfet-structure"></a>MOSFETの性質
+
 MOSFETでは、0、1を表現するために、電圧の高低を使います。
 
 MOSFETにはN型とP型の2タイプ（Negative/Positiveの頭文字を取ったもの）があり、図2のような回路記号で記述します。
@@ -83,7 +88,8 @@ N型の場合、gateの部分に電圧をかけるとsource-drain間の電気抵
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="sectino-cmos"></a>CMOS回路
+### <a id="sec-generated-title-6"></a> <a id="sectino-cmos"></a>CMOS回路
+
 前節のMOSFETの性質を使って、ゲート（0、1、つまり、電圧の高低を切り替える素子）を作ることができます。
 MOSFETを使ったゲートの作り方にもいくつか手法があるんですが、
 消費電力的に有利な手法として、N型とP型を同数組み合わせて作る<strong id="cmos" class="keyword">CMOS</strong>（Complementary MOS: 相補型MOS）回路というものがよく使われます。
@@ -106,7 +112,8 @@ MOSFETを使ったゲートの作り方にもいくつか手法があるんで�
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="warter-circuit"></a>例えば、電気を使わなくても
+## <a id="sec-generated-title-7"></a> <a id="warter-circuit"></a>例えば、電気を使わなくても
+
 ディジタル回路設計では、ゲート、つまり、0、1切り替える素子さえあれば、その実現方法は問いません。
 CMOS回路は、生産効率、正確さ、故障しにくさ、動作速度、サイズなどの利点があるため使われているというだけで、
 採算度外視すればさまざまなものを使ってディジタル回路を作れます。

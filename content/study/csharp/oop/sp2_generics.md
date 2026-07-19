@@ -19,7 +19,8 @@ aliases:
 
 # ジェネリック
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# 2.0 で、
 C++でいうところのテンプレート、一般にはジェネリック(ジェネリクス)などと呼ばれるものが実装されました。
 （C++ のテンプレートとは少し仕様が異なりますが。）
@@ -31,13 +32,15 @@ C++でいうところのテンプレート、一般にはジェネリック(ジ�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * ジェネリック： 型だけ違って処理の内容が同じようなものを作るときに使う。
 
 * ジェネリッククラス：<code>IComparable&lt;T&gt; { int CompareTo(T x, T y); }</code>
 
 * ジェネリックメソッド：<code>T max&lt;T&gt;(T x, T y) { ... } </code>
 
-#####<a id="sec-generated-title-3"></a> <a id="katakana-generics"></a>※genericsの訳語
+##### <a id="sec-generated-title-3"></a> <a id="katakana-generics"></a>※genericsの訳語
+
 英語だと、名詞では generics、形容詞が generic です。
 なので名詞の genericsは、カタカナ語で訳すにしても「ジェネリクス」の方が適切な気はします。実際、Java などではジェネリクスという訳語が一般的です。
 (一方、形容詞で generic type や generic method と言うときには訳もだいたい「ジェネリック」です。)
@@ -58,8 +61,10 @@ generics は「形容詞 + s」で名詞化している単語で、通常、s �
 (本サイトでは一時期、マイクロソフトのドキュメントに訳語を併せるよう努めていたため、名詞形もジェネリックになっているところが多いです。
 さすがに変なルールではあるのでジェネリクスと書いているところも多く、混在しているのでご容赦ください。)
 
-##<a id="sec-generated-title-4"></a> <a id="ex"></a>ジェネリックの例
-###<a id="sec-generated-title-5"></a> <a id="method"></a>ジェネリックメソッド
+## <a id="sec-generated-title-4"></a> <a id="ex"></a>ジェネリックの例
+
+### <a id="sec-generated-title-5"></a> <a id="method"></a>ジェネリックメソッド
+
 例えば、2つの値の大きいほうをとる関数（静的メソッド）、Max を作りたいとします。
 <code>int</code>型に限定したものなら簡単に作れて、以下のようになります。
 
@@ -120,7 +125,8 @@ Max 関数のジェネリック版は以下のようになります。
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="class"></a>ジェネリッククラス
+### <a id="sec-generated-title-6"></a> <a id="class"></a>ジェネリッククラス
+
 関数と同じく、クラスでもさまざまな型に対応したものを作成したいときがあります。
 例えば、コレクションクラス（配列とかリストとかの、物の集まりのこと）などがその典型です。
 
@@ -184,7 +190,8 @@ Stack&lt;<span class="reserved">double</span>&gt; sd = <span class="reserved">ne
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="merit"></a>ジェネリックの利点
+## <a id="sec-generated-title-7"></a> <a id="merit"></a>ジェネリックの利点
+
 C# の「[配列](../structured/st_array.md#array)」や、
 「[foreach](../data/sp_foreach.md)」で例に挙げた連結リストなど、
 複数の値を一まとめにして管理するクラスのことを、
@@ -297,7 +304,8 @@ C# の「[配列](../structured/st_array.md#array)」や、
 このような要素・方式・操作などの直交性を最大限に引き出せることです。
 
 
-##<a id="sec-generated-title-8"></a> <a id="in_cs"></a>C# のジェネリック
+## <a id="sec-generated-title-8"></a> <a id="in_cs"></a>C# のジェネリック
+
 例だけ見ても、もうほとんど分かるかと思いますが、
 C# では以下のようにしてジェネリックな（どんな型に対しても総称的に使える）クラス・メソッドを定義できます。
 
@@ -332,7 +340,8 @@ C# では以下のようにしてジェネリックな（どんな型に対し�
 キーワード <code>where</code> に関しては次のサブセクションで説明します。
 
 
-###<a id="sec-generated-title-9"></a> <a id="where"></a>制約条件
+### <a id="sec-generated-title-9"></a> <a id="where"></a>制約条件
+
 `where` 以下に、型引数が満たすべき条件(constraint: 制約条件)を書きます。
 制約は付けなくてもかまいませんが、
 その場合、型引数で与えた型に対するメソッド呼び出しなどは出来なくなります。
@@ -462,7 +471,8 @@ C# で指定できる型制約には以下のようなものがあります。
 </code></pre>
 
 
-####<a id="sec-generated-title-10"></a> <a id="cs7.3"></a>C# 7.3 での追加
+#### <a id="sec-generated-title-10"></a> <a id="cs7.3"></a>C# 7.3 での追加
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 C# 7.3 では、3つほど指定できる制約が増えました。
@@ -503,7 +513,8 @@ C# 7.3 では、3つほど指定できる制約が増えました。
 ちょっと特殊なクラスで、実態としてはクラスよりもインターフェイスに近いです
 (インターフェイスであれば `struct` 制約と同時に指定できる)。
 
-####<a id="sec-generated-title-11"></a> <a id="cs8.0"></a>C# 8.0 での追加
+#### <a id="sec-generated-title-11"></a> <a id="cs8.0"></a>C# 8.0 での追加
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 で `notnull` 制約が増えました。
@@ -565,7 +576,8 @@ null 許容参照型を受け付けたい場合は制約に `?` を付けるこ�
 }
  </code></pre>
 
-####<a id="sec-generated-title-12"></a> <a id="new-constrants"></a>補足: new() 制約
+#### <a id="sec-generated-title-12"></a> <a id="new-constrants"></a>補足: new() 制約
+
 `new()`制約を付けることで、型引数`T`に対して引数なしのコンストラクター`new T()`を呼べるようになります。
 
 例えば以下のように、`new T()`で要素を初期化しながら配列を作るなどの処理ができます。
@@ -596,7 +608,8 @@ null 許容参照型を受け付けたい場合は制約に `?` を付けるこ�
 `new()`制約はお手軽ですが、
 パフォーマンス的にシビアな場面では使わないよう注意が必要です。
 
-####<a id="sec-generated-title-13"></a> <a id="anti-constraint">アンチ制約</a>
+#### <a id="sec-generated-title-13"></a> <a id="anti-constraint">アンチ制約</a>
+
 <h5 class="version version13">Ver. 13</h5>
 
 C# 13 で [`allows ref struct`](../resource/refstruct.md#ref-struct-interface) という機能が追加されました。
@@ -740,7 +753,8 @@ C# 13 時点でアンチ制約(= `allows` を使うもの)は `ref struct` だ�
 }
 </pre>
 
-###<a id="sec-generated-title-14"></a> <a id="instanciation"></a>インスタンス化
+### <a id="sec-generated-title-14"></a> <a id="instanciation"></a>インスタンス化
+
 ジェネリックなクラス・メソッドに対して、
 具体的な型を与えることを「インスタンス化する」といいます。
 
@@ -762,7 +776,8 @@ Stack&lt;<span class="reserved">double</span>&gt; sd = <span class="reserved">ne
 
 
 
-###<a id="sec-generated-title-15"></a> <a id="complex"></a>複雑な型引数の使い方
+### <a id="sec-generated-title-15"></a> <a id="complex"></a>複雑な型引数の使い方
+
 型引数は複数の型を含んでいてもかまいません。
 
 <pre class="source" title="複数の型を含む型引数" lang="">
@@ -800,7 +815,8 @@ Stack&lt;<span class="reserved">double</span>&gt; sd = <span class="reserved">ne
 
 
 
-###<a id="sec-generated-title-16"></a> <a id="default"></a>既定値
+### <a id="sec-generated-title-16"></a> <a id="default"></a>既定値
+
 変数を初期化するとき、
 数値型の場合は 0 で、
 参照型の場合は <code>null</code> で初期化する事がよくあります。
@@ -837,14 +853,16 @@ Stack&lt;<span class="reserved">double</span>&gt; sd = <span class="reserved">ne
 
 
 
-###<a id="sec-generated-title-17"></a> <a id="variance"></a>共変性・反変性
+### <a id="sec-generated-title-17"></a> <a id="variance"></a>共変性・反変性
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4.0 から、ジェネリックの型引数に共変性・反変性を持たせることができるようになりました。
 詳しくは「[ジェネリクスの共変性・反変性](sp4_variance.md)」を参照してください。
 
 
-##<a id="sec-generated-title-18"></a> <a id="compare"></a>C++ や Java の template/generics との違い
+## <a id="sec-generated-title-18"></a> <a id="compare"></a>C++ や Java の template/generics との違い
+
 （変更予定）
 この比較表は「Java/C++ 開発者向け」の一節に移してもいいかも。
 
@@ -897,7 +915,8 @@ C# 4.0 から、ジェネリックの型引数に共変性・反変性を持た�
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-19"></a> <a id="inside-generics"></a>ジェネリックの実現方法
+## <a id="sec-generated-title-19"></a> <a id="inside-generics"></a>ジェネリックの実現方法
+
 [サンプルコード](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Oop/GenericsSample)
 
 ジェネリックの実装方法はプログラミング言語ごとに方針の差が結構あります。例えば、以下のようなやり方があります。
@@ -935,7 +954,8 @@ C# 4.0 から、ジェネリックの型引数に共変性・反変性を持た�
 
 これが、どういう風に展開されるかを見ていきましょう。
 
-###<a id="sec-generated-title-20"></a> <a id="templated"></a>全展開(C++など)
+### <a id="sec-generated-title-20"></a> <a id="templated"></a>全展開(C++など)
+
 わかりやすい実装は、型パラメーターごとにすべて展開してしまう手法(全展開)です。
 C++ではこの手法でジェネリックを実現しています。
 (ちなみに、C++の言語機能としてはテンプレート(template)と呼びます。
@@ -980,7 +1000,8 @@ C++ではこの手法でジェネリックを実現しています。
 
 - 型パラメーターに与える型が増えると、生成されるプログラムのサイズが大きくなりすぎる
 
-###<a id="sec-generated-title-21"></a> <a id="type-erasure"></a>型消去(Javaなど)
+### <a id="sec-generated-title-21"></a> <a id="type-erasure"></a>型消去(Javaなど)
+
 全展開の真逆の実装は、全部の型を消してしまう手法(型消去)です。
 `object`型にはどんな型でも代入できるので、`object`型なクラス1つを用意して、適宜キャストを挟むコードを生成します。
 Javaではこの手法でジェネリックを実現しています。
@@ -1037,7 +1058,8 @@ Javaではこの手法でジェネリックを実現しています。
 - 実行性能的に不利
   - 特に値型に対して[ボックス化](../resource/rmboxing.md#boxing)が発生するのがかなりつらい
 
-###<a id="sec-generated-title-22"></a> <a id="value-type"></a>値型だけ展開
+### <a id="sec-generated-title-22"></a> <a id="value-type"></a>値型だけ展開
+
 C#の実装は全展開と型消去の間くらいの手法になっています。
 
 型消去の場合、値型に対してボックス化が起きることが実行性能上かなり不利になります。
@@ -1091,7 +1113,8 @@ C#の実装は全展開と型消去の間くらいの手法になっています
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-23"></a> <a id="constrained"></a>インターフェイス制約
+## <a id="sec-generated-title-23"></a> <a id="constrained"></a>インターフェイス制約
+
 C#のジェネリックでは、メソッドなどのメンバーを参照するためにインターフェイス制約([制約条件](#where)で、`where T : [interface]`)を付ける必要があります。
 例えば、以下のようなコードでは、前者の書き方ではだめで、
 後者のように、`where`句を付けて初めてコンパイルできます。
@@ -1182,7 +1205,8 @@ C#のジェネリックでは、メソッドなどのメンバーを参照する
 C#のジェネリックでは値型を使ったときにコードを展開してくれます。
 その結果、ボックス化を起こさずにメソッドの引数に値型を渡せます。
 
-###<a id="sec-generated-title-24"></a> <a id="pseudo-static"></a>静的メソッド代わり
+### <a id="sec-generated-title-24"></a> <a id="pseudo-static"></a>静的メソッド代わり
+
 ジェネリックでは静的メソッドを呼ぶ手段がないという話をしました。
 ちょっと強引な手段にはなりますが、この代わりとなる方法を考えてみましょう。
 

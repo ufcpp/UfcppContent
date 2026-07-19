@@ -18,12 +18,14 @@ aliases:
 
 # n 進数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 コンピュータの中では、数値は全て2進数になっているので、
 まずはその2進数の説明。
 
 
-##<a id="sec-generated-title-2"></a> <a id="n-adic"></a>n 進数
+## <a id="sec-generated-title-2"></a> <a id="n-adic"></a>n 進数
+
 まずは n 進数（n-adic number）というものをおさらい。
 
 そもそも、
@@ -76,7 +78,8 @@ billion×billion＝trillion という流儀もありました。
 3か4桁区切りで数字を読み上げる」というのが現在の主流なわけです。
 
 
-##<a id="sec-generated-title-3"></a> <a id="binary"></a>2進数
+## <a id="sec-generated-title-3"></a> <a id="binary"></a>2進数
+
 人間が10進数を好んで使うのに対して、
 コンピュータの内部では2進数（binary number）が使われます。
 要は、電圧の高低を 0, 1 に読み替えて計算しているからなんですが。
@@ -118,7 +121,8 @@ low のとき上側にスイッチが入ります。
 たいていの人はそんな面倒なことは避けて、2値回路でコンピュータを作っています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="hexadecimal"></a>8進数、16進数
+## <a id="sec-generated-title-4"></a> <a id="hexadecimal"></a>8進数、16進数
+
 というわけで、コンピュータの内部では数値は 0, 1 で表現されています。
 でも、10進数の 200 が2進数だと 11001000 になるとか、
 流石に桁が多くなりすぎるので、
@@ -292,7 +296,8 @@ low のとき上側にスイッチが入ります。
 2×8が10、2×9が12、2×aが14・・・みたいな感じで。
 
 
-##<a id="sec-generated-title-5"></a> <a id="Byte"></a>1ビット、1バイト
+## <a id="sec-generated-title-5"></a> <a id="Byte"></a>1ビット、1バイト
+
 コンピュータの中では2進数になっているわけですが、
 その2進数の1桁の情報を1ビット（1 bit）といいます。
 要するに、1 bit ＝ 0 か 1 か。

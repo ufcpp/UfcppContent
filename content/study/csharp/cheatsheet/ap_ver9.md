@@ -38,7 +38,8 @@ aliases:
 </tr>
 </table>
 
-##<a id="sec-generated-title-1"></a> <a id="record"></a>レコード型
+## <a id="sec-generated-title-1"></a> <a id="record"></a>レコード型
+
 C# 9.0 で、レコード型(records)という新しい種類の型が追加されました。
 record (記録)という名前通り、データの読み書きに使うことを意図した型です。
 例えば以下のような書き方で、「`Name` という文字列と `Birthday` という日付」を読み書きできます。
@@ -51,7 +52,8 @@ record (記録)という名前通り、データの読み書きに使うこと�
 
 詳しくは「[レコード型](../datatype/record.md)」で説明します。
 
-###<a id="sec-generated-title-2"></a> <a id="init-only"></a>init-only プロパティ
+### <a id="sec-generated-title-2"></a> <a id="init-only"></a>init-only プロパティ
+
 以下のように `init` という新しいアクセサーを使って、「オブジェクト初期化子までは書き換え可能で、それ以降は書き換えできないプロパティ」を作れるようになりました。
 
 <pre class="source" title="オブジェクト初期化子でだけ書き換え可能">
@@ -70,7 +72,8 @@ record (記録)という名前通り、データの読み書きに使うこと�
 
 詳しくは「[init-only プロパティ](../oop/oo_property.md#init-only)」で説明します。
 
-##<a id="sec-generated-title-3"></a> <a id="top-level-statements"></a>トップ レベル ステートメント
+## <a id="sec-generated-title-3"></a> <a id="top-level-statements"></a>トップ レベル ステートメント
+
 トップ レベル(top-leve: クラスや名前空間よりも外側、ファイル直下)に[ステートメント](../start/st_variable.md#statement)を直接書けるようになりました。
 
 例えばよくある「Hello World」であれば、単に以下のように書けるようになります。
@@ -82,7 +85,8 @@ record (記録)という名前通り、データの読み書きに使うこと�
 
 詳しくは「[トップ レベル ステートメント](../misc/miscentrypoint.md#top-level-statements)」で説明します。
 
-##<a id="sec-generated-title-4"></a> <a id="pattern-v3"></a>パターンの追加
+## <a id="sec-generated-title-4"></a> <a id="pattern-v3"></a>パターンの追加
+
 [C# 7.0](ap_ver7.md)から脈々と改善されてきた[パターン マッチング](../datatype/patterns.md)ですが、
 C# 9.0 でもいくつかのパターンが追加されています。
 
@@ -109,8 +113,10 @@ C# 9.0 で追加されているのは以下の3つです。
 - [パターンの組み合わせ](../datatype/patterns.md#pattern-combintor)
 - [関係演算パターン](../datatype/patterns.md#relational-patterns)
 
-##<a id="sec-generated-title-5"></a> <a id="target-typed-inference"></a>ターゲット型推論の強化
-###<a id="sec-generated-title-6"></a> <a id="target-typed-new"></a>ターゲットからの new 型推論
+## <a id="sec-generated-title-5"></a> <a id="target-typed-inference"></a>ターゲット型推論の強化
+
+### <a id="sec-generated-title-6"></a> <a id="target-typed-new"></a>ターゲットからの new 型推論
+
 ターゲット型からの推論が効く場合に、`new T()` の `T` の部分を省略できるようになりました。
 (target-typed new とか呼ばれたりします。)
 
@@ -130,7 +136,8 @@ C# 9.0 で追加されているのは以下の3つです。
 
 詳しくは「[ターゲットからの new 型推論](../oop/oo_construct.md#target-typed-new)」で説明します。
 
-###<a id="sec-generated-title-7"></a> <a id="target-typed-conditional"></a>条件演算子のターゲット型推論
+### <a id="sec-generated-title-7"></a> <a id="target-typed-conditional"></a>条件演算子のターゲット型推論
+
 条件演算子の第2・第3項がターゲット型からの型推論するようになりました。
 
 
@@ -152,7 +159,8 @@ C# 9.0 で追加されているのは以下の3つです。
 詳しくは「[条件演算子のターゲット型推論](../structured/st_branch.md#terget-typed-conditional)」で説明します。
 「[型の決定](../start/misctyperesolution.md)」も参考にしてください。
 
-##<a id="sec-generated-title-8"></a> <a id="class-covariant-returns"></a>クラスの共変戻り値
+## <a id="sec-generated-title-8"></a> <a id="class-covariant-returns"></a>クラスの共変戻り値
+
 仮想メソッドの戻り値に共変性が認められるようになりました。
 (機能名の俗称としては、「クラスの共変戻り値」と言ったりします。)
 
@@ -174,7 +182,8 @@ C# 9.0 で追加されているのは以下の3つです。
 
 詳しくは「[多態性/戻り値の共変性](../oop/oo_polymorphism.md#covariance)」で説明します。
 
-##<a id="sec-generated-title-9"></a> <a id="unsafe"></a>unsafe/ネイティブ相互運用向け機能
+## <a id="sec-generated-title-9"></a> <a id="unsafe"></a>unsafe/ネイティブ相互運用向け機能
+
 [C# 7.2](ap_ver7_2.md)の辺りから、
 言語の方向性として生産性や安全性を優先する C# でも、
 パフォーマンス改善を目的とするような言語機能が結構増えてきました。
@@ -185,7 +194,8 @@ C# 9.0 で追加されているのは以下の3つです。
 .NET ランタイム自体や、大規模に使われているライブラリのパフォーマンス改善につながり、
 間接的にすべての C# 開発者が恩恵を受けるものになります。
 
-###<a id="sec-generated-title-10"></a> <a id="skip-locals-init"></a>ローカル変数の0初期化抑止
+### <a id="sec-generated-title-10"></a> <a id="skip-locals-init"></a>ローカル変数の0初期化抑止
+
 `/unsafe` オプション指定時限定ですが、ローカル変数の0初期化を抑止できるようになりました。
 
 <pre class="source" title="SkipLocalsInit 属性で0初期化抑止">
@@ -216,7 +226,8 @@ C# 9.0 で追加されているのは以下の3つです。
 
 詳しくは「[ローカル変数の0初期化抑止](../interop/sp_unsafe.md#skip-locals-init)」で説明します。
 
-###<a id="sec-generated-title-11"></a> <a id="function-pointer"></a>関数ポインター
+### <a id="sec-generated-title-11"></a> <a id="function-pointer"></a>関数ポインター
+
 C# で関数ポインターを書けるようになりました。
 
 .NET の内部的にはこれまでも関数ポインターがあったんですが、 それを C# から効率的に呼ぶ手段がありませんでした。 これに対して、C# 9 では delegate* という記法で関数ポインターを扱えるようになりました。
@@ -240,7 +251,8 @@ C# で関数ポインターを書けるようになりました。
 
 詳しくは「[関数ポインター](../interop/functionpointer.md)」で説明します。
 
-##<a id="sec-generated-title-12"></a> <a id="nint"></a>native int
+## <a id="sec-generated-title-12"></a> <a id="nint"></a>native int
+
 `nint` と `nuint` というキーワードで、「CPU 依存の一番高速に扱える整数」が使えるようになりました。
 `nint` が符号付、`nuint` が符号なしです。
 
@@ -282,15 +294,18 @@ C# で関数ポインターを書けるようになりました。
 * [ネイティブ コード側が CPU 依存幅の整数になっている場合の相互運用](https://github.com/dotnet/runtime/blob/7984b32774916c98ab7c85c244c9e40581e4cdf5/src/libraries/Common/src/Interop/OSX/Interop.libobjc.cs#L11-L17)
 * [配列のインデックス アクセスは `nint` を使った方が速い](https://github.com/dotnet/runtime/blob/4017327955f1d8ddc43980eb1848c52fbb131dfc/src/libraries/System.Private.CoreLib/src/System/SpanHelpers.Char.cs#L30) (C++ でいう `size_t` な処理)
 
-##<a id="sec-generated-title-13"></a> <a id="other"></a>その他
-###<a id="sec-generated-title-14"></a> <a id="nrt"></a>null 許容参照型の改善
+## <a id="sec-generated-title-13"></a> <a id="other"></a>その他
+
+### <a id="sec-generated-title-14"></a> <a id="nrt"></a>null 許容参照型の改善
+
 C# 8.0 で入った [null 許容参照型](../resource/nullablereferencetype.md)に対してちょっと改善が入っています。
 主に以下の2点です。
 
 - [制約なしジェネリック型引数に `?` を付けれるようになった](../resource/nullablereferencetype.md#unconstrained-generics)
 - [アノテーション属性](../resource/nullablereferencetype.md#annotation-attributes)に `MemberNotNull` と `MemberNotNullWhen` が増えた
 
-###<a id="sec-generated-title-15"></a> <a id="lambda-discard"></a>ラムダ式の引数を破棄
+### <a id="sec-generated-title-15"></a> <a id="lambda-discard"></a>ラムダ式の引数を破棄
+
 ラムダ式の引数で、`_` を使った値の破棄ができるようになりました。
 
 <pre class="source" title="ラムダ式の引数で _ を破棄扱い">
@@ -303,7 +318,8 @@ C# 8.0 で入った [null 許容参照型](../resource/nullablereferencetype.md)
 
 詳細は「[値の破棄 - ラムダ式の引数](../datatype/declarationexpressions.md#lambda-discard)」で説明します。
 
-###<a id="sec-generated-title-16"></a> <a id="static-anonymous-function"></a>静的匿名関数
+### <a id="sec-generated-title-16"></a> <a id="static-anonymous-function"></a>静的匿名関数
+
 匿名関数に対しても `static` 修飾子を付けれるようになりました。
 「外部の変数を捕獲しない」という意味になります。
 
@@ -321,7 +337,8 @@ C# 8.0 で入った [null 許容参照型](../resource/nullablereferencetype.md)
 
 詳しくは「[静的匿名関数](../functional/fun_localfunctions.md#static-local-function)」で説明します。
 
-###<a id="sec-generated-title-17"></a> <a id="local-function-attribute"></a>ローカル関数への属性適用
+### <a id="sec-generated-title-17"></a> <a id="local-function-attribute"></a>ローカル関数への属性適用
+
 [ローカル関数](../functional/fun_localfunctions.md#local-function)に属性を付けられるようになりました。
 
 <pre class="source" title="ローカル関数に属性を付ける">
@@ -350,17 +367,20 @@ C# 8.0 で入った [null 許容参照型](../resource/nullablereferencetype.md)
 }
 </code></pre>
 
-###<a id="sec-generated-title-18"></a> <a id="extension-getenumerator"></a>拡張メソッドでの GetEnumerator 実装
+### <a id="sec-generated-title-18"></a> <a id="extension-getenumerator"></a>拡張メソッドでの GetEnumerator 実装
+
 [パターン ベース](../misc/miscpatternbased.md#index)な [`foreach`](../data/sp_foreach.md#extension-getenumerator)、[`await foreach`](../async/asyncstream.md#await-foreach)で、拡張メソッドによる実装ができるようになりました。
 
-##<a id="sec-generated-title-19"></a> <a id="source-generator"></a>ソースコード生成
+## <a id="sec-generated-title-19"></a> <a id="source-generator"></a>ソースコード生成
+
 正確には C# という言語の機能ではなく、「C# 9.0 と同時期に実装された」というだけですが、
 C# 9.0 世代の C# コンパイラーにはソースコード生成(source generator)プラグインの作成機能が追加されました。
 詳細は「[コード解析とコード生成](../misc/analyzer-generator.md)」で説明しています。
 
 これと同時に、ソースコード生成を前提とした文法もいくつか実装されました。
 
-###<a id="sec-generated-title-20"></a> <a id="extended_partial_method"></a>部分メソッドの拡張
+### <a id="sec-generated-title-20"></a> <a id="extended_partial_method"></a>部分メソッドの拡張
+
 [ソースコード生成](../misc/analyzer-generator.md)では、手書きでは不完全な C# コードを書いて、
 それをソースコード生成で埋めてもらうという状況があり得ます。
 C# 9.0 ではそのための文法として、[`partial` キーワード](../oop/oo_class.md#partial_method)を再利用することにしました。
@@ -392,7 +412,8 @@ C# 2.0 の頃からある部分メソッドとの差は[アクセシビリティ
 
 詳しくは「[部分メソッドの拡張](../oop/oo_class.md#extended_partial_method)」で説明します。
 
-###<a id="sec-generated-title-21"></a> <a id="module-initializer"></a>モジュール初期化子
+### <a id="sec-generated-title-21"></a> <a id="module-initializer"></a>モジュール初期化子
+
 プログラムの実行時、最初に1回だけ呼び出したい処理が必要になることがあります。
 「[静的コンストラクター](../oop/oo_static.md#ctor)」で説明しているように、この静的コンストラクターという機能を使っても「最初に1回だけ呼ばれる」ということができますが、C# 9.0 ではモジュール初期化子という書き方もできるようになりました。
 

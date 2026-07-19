@@ -19,7 +19,8 @@ aliases:
 
 # データ処理
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 アプリケーション開発において、データの分析や集計などの処理は非常に重要な位置を占めます。
 例として小売業を挙げると、日々蓄積された売上データを分析して、以下のような知識を得ることができます。
 
@@ -34,18 +35,21 @@ C# 3.0 の新機能の多くは、一言でいってしまえば、この手の�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * データ処理の多くはストリーム的でパイプライン的。
 
 * LINQ もその類のデータ処理。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="stream"></a>ストリームとパイプライン
+## <a id="sec-generated-title-3"></a> <a id="stream"></a>ストリームとパイプライン
+
 データ処理の多くは、「データ・ストリームに対するパイプライン処理」と捉えることができます。
 ここで、ストリームやパイプラインという言葉は以下のような意味合いです。
 
 
 ##### <a id="sec-generated-title-4"></a>ストリーム
+
 データは、前から順に、1項目ずつ処理されていきます。
 RDB のテーブルなどに格納されたデータを一気に全部読み出す必要はありません。
 このような処理の仕方をストリーム（stream： 流れ、小川）処理と呼びます。
@@ -63,6 +67,7 @@ RDB のテーブルなどに格納されたデータを一気に全部読み出�
 
 
 ##### <a id="sec-generated-title-5"></a>パイプライン
+
 データストリームの処理結果は、やはりデータストリームになります。
 例えば、あるデータストリームに対して「特定の条件を満たす要素だけ残す」という処理をかけたものはやはりデータストリームとして扱えます。
 
@@ -77,7 +82,8 @@ RDB のテーブルなどに格納されたデータを一気に全部読み出�
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="basic_sample"></a>データに対する基本的な操作
+## <a id="sec-generated-title-6"></a> <a id="basic_sample"></a>データに対する基本的な操作
+
 基本的な操作としては、以下のようなものがあります。
 
 * 選択（selection）
@@ -95,6 +101,7 @@ Apache Hadoop や Google MapReduce などの大規模分散データ処理フレ
 
 
 ##### <a id="sec-generated-title-7"></a>選択（selection）
+
 SQL でいうなら where、map-reduce でいうなら map の一部分です。
 条件を指定して、一部の要素だけを選択します。
 
@@ -117,6 +124,7 @@ LINQ では、以下のような種類があります。
 
 
 ##### <a id="sec-generated-title-8"></a>射影（projection）
+
 「要素 x から x の二乗を求める」とか「オブジェクト x のうち、x.Value プロパティと x.Name プロパティだけを取り出す」とかの、
 要素の加工を射影と呼びます。
 SQL でいうなら select に相当します。
@@ -134,6 +142,7 @@ SQL でいうなら select に相当します。
 
 
 ##### <a id="sec-generated-title-9"></a>集計（aggregation）
+
 選択・加工したデータは、そのまま一覧で見る場合もありますが、
 集計して合計や平均などを求める場合も多いです。
 
@@ -159,6 +168,7 @@ LINQ では、以下のような種類があります。
 
 
 ##### <a id="sec-generated-title-10"></a>パイプライン処理の例
+
 前述のとおり、データストリームに対する処理はパインプライン的につなぐことができます。
 例えば、上記の例を3つ繋いでみましょう（＋ もう1条件追加）。
 
@@ -175,7 +185,8 @@ C# で書くと、
 となります。
 
 
-##<a id="sec-generated-title-11"></a> <a id="cs_data"></a>C# でデータ処理を書く上でのポイント
+## <a id="sec-generated-title-11"></a> <a id="cs_data"></a>C# でデータ処理を書く上でのポイント
+
 C# 2.0 で追加された「[イテレーター](sp2_iterator.md#iterator)」や C# 3.0 の「[LINQ](sp3_linq.md#linq)」は、
 データ列をストリーム的・パイプライン的に処理するための機能です。
 （もちろん、これらの機能がなくても、頑張ればストリーム的・パイプライン的に処理を書けますが、結構大変です。）
@@ -188,7 +199,8 @@ C# 3.0 以降でデータ処理を書く際には、以下の2点を意識しま
 
 
 
-###<a id="sec-generated-title-12"></a> <a id="onebyone"></a>1要素ずつ処理する
+### <a id="sec-generated-title-12"></a> <a id="onebyone"></a>1要素ずつ処理する
+
 List や配列を作るのではなく、
 IEnumerable インターフェイスとイテレーターブロック（「[イテレーター ブロック](sp2_iterator.md#block)」参照）を使いましょう。
 
@@ -240,7 +252,8 @@ C# 3.0 以降では以下のように書きます。
 
 
 
-###<a id="sec-generated-title-13"></a> <a id="ordered"></a>処理の順序通りに書く
+### <a id="sec-generated-title-13"></a> <a id="ordered"></a>処理の順序通りに書く
+
 A → B → C という順でデータ処理を掛けたいなら、<code>C(B(A(data)));</code> ではなく、
 <code>data.A().B().C();</code> と書ける方が自然です。
 C# 3.0 以降では、「[拡張メソッド](../functional/sp3_extension.md#exmethod)」を使うことで、この順で処理を書くことができます。
@@ -284,7 +297,8 @@ Enumerable と書かなきゃいけなくなった分うっとおしいという
 述語と補語のペアも、常に近い位置にかけて、対応関係を見失うこともありません。
 
 
-##<a id="sec-generated-title-14"></a> <a id="sample"></a>少し変わった例
+## <a id="sec-generated-title-14"></a> <a id="sample"></a>少し変わった例
+
 * 
 [サンプルコード](../../../../assets/media/ufcpp2000/csharp/source/ContinuousSequence.zip)
 （プロジェクト一式、ZIP 圧縮）
@@ -446,11 +460,13 @@ C# なら、「[イテレーター](sp2_iterator.md#iterator)」を使って以�
 割かし、意図の伝わるソースコードになっているんじゃないでしょうか。
 
 
-##<a id="sec-generated-title-15"></a> <a id="order"></a>補足1： データの順序
+## <a id="sec-generated-title-15"></a> <a id="order"></a>補足1： データの順序
+
 順序に関して、2点ほど留意点があります。
 
 
 ##### <a id="sec-generated-title-16"></a>データストリームの順序
+
 データストリームとして流れてくるデータの順序に意味があるかどうかによって、並列化のしやすさが変わります。
 
 一般に、並列処理を行うと出力として得られるデータの順序が変わってしまいます。
@@ -459,6 +475,7 @@ C# なら、「[イテレーター](sp2_iterator.md#iterator)」を使って以�
 
 
 ##### <a id="sec-generated-title-17"></a>集計関数の性質
+
 Aggregate で集計を掛ける場合、集計関数（Aggregate の引数として渡す関数）が満たす条件によって並列化のしやすさが変わります。
 
 * 結合的かつ可換：
@@ -492,8 +509,10 @@ Aggregate で集計を掛ける場合、集計関数（Aggregate の引数とし
 
 
 
-##<a id="sec-generated-title-18"></a> <a id="programming_model"></a>補足2： データ処理に関係するプログラミングモデル
+## <a id="sec-generated-title-18"></a> <a id="programming_model"></a>補足2： データ処理に関係するプログラミングモデル
+
 ##### <a id="sec-generated-title-19"></a>データの不変性
+
 データ処理には関数型プログラミングモデルがいいと言われる由縁の1つは、データの不変性（immutability）の保証。
 関連して、以下のような言葉があります。
 
@@ -507,6 +526,7 @@ map-reduce 型のデータ処理の場合、データは不変な（immutable：
 
 
 ##### <a id="sec-generated-title-20"></a>不変データを使う場合の情報の記録
+
 そんなモデルにしちゃって、データの更新はどうするの？
 →  データをストリーム的に（1次元的に、前から1要素ずつ）読めれば十分で、蓄積しっぱなしでいい（更新不要な）種類のデータも存在する。
 この手のデータに対する処理に向いたモデルかも。

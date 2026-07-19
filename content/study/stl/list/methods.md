@@ -18,7 +18,8 @@ aliases:
 
 # STL メソッド一覧
 
-##<a id="sec-generated-title-1"></a> <a id="d29e4"></a>注意
+## <a id="sec-generated-title-1"></a> <a id="d29e4"></a>注意
+
 以下の説明において:
 
 <pre class="source" title="" lang="">
@@ -33,7 +34,8 @@ N   :コンテナのサイズ
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="d29e13"></a>コンテナ内で定義された型
+## <a id="sec-generated-title-2"></a> <a id="d29e13"></a>コンテナ内で定義された型
+
 <table summary="">
 
 	<tr>
@@ -166,7 +168,8 @@ N   :コンテナのサイズ
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="d29e384"></a>・可能な操作とそのオーダー
+## <a id="sec-generated-title-3"></a> <a id="d29e384"></a>・可能な操作とそのオーダー
+
 <h3>コンストラクタ/デストラクタ/コピー/交換</h3>
 <pre class="source" title="" lang="">
 <code>n    :負でない整数

@@ -18,7 +18,8 @@ aliases:
 
 # 磁気回路
 
-##<a id="sec-generated-title-1"></a> <a id="elecircuit"></a>電気回路
+## <a id="sec-generated-title-1"></a> <a id="elecircuit"></a>電気回路
+
 本題の磁気回路に入る前にまずは電気回路について簡単にまとめます。
 
 直流電流回路では、
@@ -102,7 +103,8 @@ aliases:
       </em>。
 
 
-##<a id="sec-generated-title-2"></a> <a id="magcircuit"></a>磁気回路
+## <a id="sec-generated-title-2"></a> <a id="magcircuit"></a>磁気回路
+
 環状の磁性体にコイルを巻き、コイルに電流を流すと、磁性体中に磁場が発生します。
 このとき、コイルの巻き数を <span class="math">N</span>、コイルに流れる電流の強さを <span class="math">
         <a href="variable.md#current" title="電流">I</a>
@@ -181,7 +183,8 @@ aliases:
 という関係式が成り立つ
 
 
-##<a id="sec-generated-title-3"></a> <a id="compare"></a>電気回路と磁気回路の対比
+## <a id="sec-generated-title-3"></a> <a id="compare"></a>電気回路と磁気回路の対比
+
 <table summary="">
 
 	<tr>

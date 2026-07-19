@@ -18,14 +18,16 @@ aliases:
 
 # \[雑記\] デリゲートの利用例
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「デリゲートのイメージがつかめない」って人が思った以上に多いようなので、
 利用例をいくつか挙げて、図示してみることに。
 
 一言でいうと、「何か処理を外から挿す」というのがデリゲートの役割。
 
 
-##<a id="sec-generated-title-2"></a> <a id="predicate"></a>述語： 条件式を外から挿す
+## <a id="sec-generated-title-2"></a> <a id="predicate"></a>述語： 条件式を外から挿す
+
 「[デリゲート](sp_delegate.md)」で書いたことをさらりともう一度。
 
 特定の条件を満たすものだけを抽出するようなメソッドを書きたいとき、条件式をデリゲートにして引数に渡します。
@@ -74,7 +76,8 @@ pred が「外から与える条件」です。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="callback"></a>コールバック： 非同期処理の終了通知
+## <a id="sec-generated-title-3"></a> <a id="callback"></a>コールバック： 非同期処理の終了通知
+
 マルチスレッドで複数の処理を同時に実行したりすると、
 他のスレッドの終了のタイミングがつかめなくなります。
 （「タイミングがつかめない」ってことを指して、こういう処理を非同期（acyncronous）処理と呼びます。）
@@ -170,7 +173,8 @@ BeginAsyncWork で、AsyncWork の非同期実行を開始しています。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="event"></a>イベント処理
+## <a id="sec-generated-title-4"></a> <a id="event"></a>イベント処理
+
 デリゲートといえばイベント処理（「[イベント](sp_event.md)」参照。）
 詳しくは 「[イベント](sp_event.md)」 の方を読んでもらうとして、
 ここでは GUI アプリのイベント処理がどんな感じで動いているかをイラストレーション。

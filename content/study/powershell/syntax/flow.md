@@ -18,7 +18,8 @@ aliases:
 
 # 制御構文
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# を意識して作ってるだけあって、
 PowerShell の制御構文は C# の物と結構似ています。
 
@@ -40,7 +41,8 @@ C# と違うのは、以下の点。
 test.ps1 という名前のスクリプト中に書いたものを呼び出す形で説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="if"></a>if, elseif, else
+## <a id="sec-generated-title-2"></a> <a id="if"></a>if, elseif, else
+
 条件分岐には <strong id="if" class="keyword">if</strong>, <strong id="elseif" class="keyword">elseif</strong>, <strong id="else" class="keyword">else</strong> を使います。
 "else if" とか elif という書き方はしません。
 
@@ -76,7 +78,8 @@ if や else の後は、
 例え1文だけであっても {} でくくる必要があります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="flow"></a>switch
+## <a id="sec-generated-title-3"></a> <a id="flow"></a>switch
+
 <strong id="switch" class="keyword">switch</strong> 文は、ちょっと C# と書式が違います。
 switch(条件) と書くところまでは一緒で、
 その後ろが以下のような点で違います。
@@ -158,7 +161,8 @@ switch ($x)
 
 
 
-###<a id="sec-generated-title-4"></a> <a id="switch_cond"></a>値の代わりに条件式を書く
+### <a id="sec-generated-title-4"></a> <a id="switch_cond"></a>値の代わりに条件式を書く
+
 値の代わりに条件式もかけたりします。
 条件式は {} でくくります。
 また、自動変数 $_ を使って式を書きます。
@@ -213,7 +217,8 @@ x ＜ 10
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="option"></a>大文字・小文字の区別
+### <a id="sec-generated-title-5"></a> <a id="option"></a>大文字・小文字の区別
+
 switch 文にはいくつかオプションを付けることができます。
 
 1つは、アルファベットの大文字・小文字を区別するかどうかで、
@@ -269,7 +274,8 @@ no match
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="option"></a>正規表現、ワイルドカード、完全一致
+### <a id="sec-generated-title-6"></a> <a id="option"></a>正規表現、ワイルドカード、完全一致
+
 もう1つ、文字列の一致判定を、
 正規表現、ワイルドカード、完全一致のいずれで行うかオプション指定できます。
 （-c オプションとの併用も可能。）
@@ -350,7 +356,8 @@ t*
 ）
 
 
-###<a id="sec-generated-title-7"></a> <a id="file"></a>ファイルの中身を見て switch
+### <a id="sec-generated-title-7"></a> <a id="file"></a>ファイルの中身を見て switch
+
 なんか、何に使うかよく分からないけども、
 -f オプション（多分、file の f）で、
 ファイルの中身を見て switch できるみたい。
@@ -374,7 +381,8 @@ test.txt contains 10
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="while"></a>while, for, until
+## <a id="sec-generated-title-8"></a> <a id="while"></a>while, for, until
+
 <strong id="while" class="keyword">while</strong> と <strong id="for" class="keyword">for</strong> は C# とほぼ同じです。
 while(条件式) は条件式が真の間だけ反復処理、
 for(a; b; c){ブロック} は a; while(b){ブロック} c; とほぼ同じ意味です。
@@ -468,7 +476,8 @@ do
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="foreach"></a>foreach
+## <a id="sec-generated-title-9"></a> <a id="foreach"></a>foreach
+
 <strong id="foreach" class="keyword">foreach</strong> もほとんど C# と同じで、
 foreach ($x in $array) {ブロック} です。
 Perl みたいな書き方（for ($array) {$_}）はできません。
@@ -493,7 +502,8 @@ foreach ($a in $x)
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="break"></a>break, continue
+## <a id="sec-generated-title-10"></a> <a id="break"></a>break, continue
+
 C# などと同様に、
 <strong id="brak" class="keyword">break</strong>, <strong id="continue" class="keyword">continue</strong> を使って、ループから抜けたり、次の反復処理に移ったりできます。
 

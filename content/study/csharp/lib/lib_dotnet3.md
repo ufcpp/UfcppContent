@@ -18,7 +18,8 @@ aliases:
 
 # .NET Framework 3.0 / 3.5
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>.NET Framework 3.0 概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>.NET Framework 3.0 概要
+
 .NET Framework 3.0 といいつつ、
 Common Language Runtime （.NET アプリを動作させるための実行エンジン）自体は .NET Framework 2.0 のままで、
 ライブラリコンポーネントが追加されたもの。
@@ -38,7 +39,8 @@ Common Language Runtime （.NET アプリを動作させるための実行エン
 その他、音声認識・合成ライブラリなど、地味にいろいろと追加されています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="abst"></a>.NET Framework 3.5 概要
+## <a id="sec-generated-title-2"></a> <a id="abst"></a>.NET Framework 3.5 概要
+
 .NET Framework 3.5 では、C# のバージョンが 3.0 となり、
 LINQ クエリ式などの構文が追加されました。
 .NET Framework 3.5 のライブラリも、LINQ 関連の追加が多くなっています。
@@ -51,7 +53,8 @@ LINQ クエリ式などの構文が追加されました。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="abst"></a>.NET Framework 4.0 概要
+## <a id="sec-generated-title-3"></a> <a id="abst"></a>.NET Framework 4.0 概要
+
 Visual Studio 2010 と同時期に正式版リリース予定の .NET Framework 4.0 では、
 かなりいろいろとライブラリが追加される模様。
 

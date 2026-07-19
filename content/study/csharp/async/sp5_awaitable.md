@@ -20,7 +20,8 @@ aliases:
 
 # 非同期メソッドの内部実装
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version5">Ver. 5.0</h5>
 
 C# はこれまでも一貫して、「言語自体（コンパイラー）に多くのことをさせ過ぎない」、
@@ -40,13 +41,15 @@ C# はこれまでも一貫して、「言語自体（コンパイラー）に�
 
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 * [C# Async の例](http://code.msdn.microsoft.com/C-Async-3185c2e8)
 
 * [EAPをTAP化するラッパー クラスの自動生成](http://code.msdn.microsoft.com/EAPTAP-bb69ab56)
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="awaiter"></a>Awaitable パターン
+## <a id="sec-generated-title-3"></a> <a id="awaiter"></a>Awaitable パターン
+
 await の対象にできるのは、
 以下のような Awaitable パターンを実装したクラスです。
 （インターフェイスなどの実装も不要で、いわゆる「[ダックタイピング](../appendix/ap_term.md#ducktype)」的。）
@@ -103,6 +106,7 @@ GetAwaiter は拡張メソッドでもいいので、独自実装で挙動を変
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 （参考： [サンプルの AwaiterPatternSample プロジェクト](http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105647)。）
 
 実装例を挙げてみましょう。
@@ -154,7 +158,8 @@ GetAwaiter は拡張メソッドでもいいので、独自実装で挙動を変
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="statemachine"></a>状態機械生成
+## <a id="sec-generated-title-5"></a> <a id="statemachine"></a>状態機械生成
+
 それでは、この awaitable/awaiter が実際にどのように利用されているのかを見てみましょう。
 仕組みとしては、「[イテレーター](../data/sp2_iterator.md#iterator)」と似ていて、
 一種の状態機械（state machine）の生成となっています。
@@ -211,6 +216,7 @@ awaiter = <span class="reserved">default</span>(T);            <span class="comm
 </code></pre>
 
 ##### <a id="sec-generated-title-6"></a>サンプル
+
 （参考： [サンプルの PseudoAsync プロジェクト](http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105659)。）
 
 例えば、以下のような非同期メソッドを考えてみましょう。
@@ -324,7 +330,8 @@ awaiter = <span class="reserved">default</span>(T);            <span class="comm
 }
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="catch-finally"></a>catch句、finally句内でのawait
+### <a id="sec-generated-title-7"></a> <a id="catch-finally"></a>catch句、finally句内でのawait
+
 <h5 class="version version6">Ver. 6</h5>
 
 C# 6からは、catch句、finally句内にも`await`を書けるようになりました。
@@ -339,7 +346,8 @@ C# 6からは、catch句、finally句内にも`await`を書けるようになり
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="synchronization"></a>同期コンテキスト
+## <a id="sec-generated-title-8"></a> <a id="synchronization"></a>同期コンテキスト
+
 （書きかけ）
 
 （参考： [サンプルの SynchronizationContextSample プロジェクト](http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105663)。）

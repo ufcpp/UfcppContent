@@ -15,7 +15,8 @@ aliases:
 
 # エントリー ポイント
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 実行可能なプログラムを書くとき、最初に呼び出される処理を<strong id="key-entry-point" class="keyword">エントリー ポイント</strong>(entry point: 入場地点、入り口)と言います。
 C# の場合、通常、`Main` という名前の静的メソッドを1個だけ書くことで、このメソッドがエントリー ポイントになります。
 
@@ -24,7 +25,8 @@ C# 9.0 からはトップ レベル ステートメントという書き方で�
 
 本項ではこの C# のエントリー ポイントに関する仕様について説明します。
 
-##<a id="sec-generated-title-2"></a> <a id="entry-point-in-csharp"></a>C# のエントリー ポイント
+## <a id="sec-generated-title-2"></a> <a id="entry-point-in-csharp"></a>C# のエントリー ポイント
+
 C# 関連のチュートリアルでのサンプル コードや、
 テンプレート通りに C# プログラムを新規作成すると以下のような内容になっていることが多いと思います。
 
@@ -88,7 +90,8 @@ C# の仕様上、実行可能プログラムを C# で書きたい場合、ど�
 <span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; <span class="method">Main</span>(<span class="reserved">string</span>[] args)
 </code></pre>
 
-##<a id="sec-generated-title-3"></a> <a id="entry-point-in-dotnet"></a>.NET のエントリー ポイント
+## <a id="sec-generated-title-3"></a> <a id="entry-point-in-dotnet"></a>.NET のエントリー ポイント
+
 前述の `Main` という名前が必須なのは C# の仕様上の話で、
 その下層、 .NET ランタイムにはそういう制限はありません。
 `.entrypoint` ディレクティブで修飾したメソッドがエントリー ポイントになります。
@@ -133,7 +136,8 @@ C# の仕様上、実行可能プログラムを C# で書きたい場合、ど�
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="startup-option"></a>複数の Main メソッドからエントリー ポイントを選択
+## <a id="sec-generated-title-4"></a> <a id="startup-option"></a>複数の Main メソッドからエントリー ポイントを選択
+
 C# で複数のクラスに `Main` メソッドを書くこともできますが、
 素の状態ではコンパイル エラーになります。
 (エラー内容は「複数のエントリー ポイントが定義されています」。)
@@ -177,7 +181,8 @@ csproj (プロジェクト)に設定を書く場合は `StartupObject` タグで
 
 この例の場合は、この書き方で、`A.Main` の方がエントリー ポイントになります。
 
-##<a id="sec-generated-title-5"></a> <a id="top-level-statements"></a>トップ レベル ステートメント
+## <a id="sec-generated-title-5"></a> <a id="top-level-statements"></a>トップ レベル ステートメント
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも外側、ファイル直下)に[ステートメント](../start/st_variable.md#statement)を直接書けるようになりました。
@@ -212,7 +217,8 @@ C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも�
 <sup>※</sup> [C# 10.0 以降は、クラス名に関しては `Program` という普通の名前に変更されました](../../../blog/2021/11/top-level-csharp10/index.md)。
 メソッド名の方は `<Main>$` になっています。
 
-###<a id="sec-generated-title-6"></a> <a id="top-level-statement-restriction"></a>ステートメントを書ける場所
+### <a id="sec-generated-title-6"></a> <a id="top-level-statement-restriction"></a>ステートメントを書ける場所
+
 トップ レベル ステートメントを書ける場所には少し制約があります。
 
 - プロジェクト全体で1ファイルだけがトップ レベル ステートメントを持てる
@@ -239,7 +245,8 @@ C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも�
 <span class="error"><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;below class&quot;</span>);</span>
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="top-level-method"></a>トップ レベルにメソッド記述
+### <a id="sec-generated-title-7"></a> <a id="top-level-method"></a>トップ レベルにメソッド記述
+
 トップ レベルにはメソッドを書くこともできます。
 これは扱いとしては、生成される `Main` (相当の)メソッドのローカル関数になります。
 
@@ -290,7 +297,8 @@ C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも�
 
 (将来的に、トップ レベルで定義したメソッドを、ローカル関数扱いからグローバル関数(どこからでも参照できる静的メソッド)扱いに変更する可能性もなくはなく、その場合、C# 9.0 時点ではこの例のようなエラーにしておく方が将来の憂いがないみたいです。)
 
-###<a id="sec-generated-title-8"></a> <a id="top-level-vs-script"></a>トップ レベル ステートメントとスクリプト実行
+### <a id="sec-generated-title-8"></a> <a id="top-level-vs-script"></a>トップ レベル ステートメントとスクリプト実行
+
 今の C# には[スクリプト実行用の文法](../cheatsheet/apscripting.md)もあったりするんですが、
 それとトップ レベル ステートメントは微妙に仕様が違っていたりします。
 
@@ -328,7 +336,8 @@ p.Y
 }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="args-returns"></a>コマンドライン引数と戻り値
+### <a id="sec-generated-title-9"></a> <a id="args-returns"></a>コマンドライン引数と戻り値
+
 トップ レベル ステートメントを使う場合、暗黙的に `args` という名前の変数が定義されていて、
 この変数にはコマンドライン引数(`Main` メソッドを書いた時、`string[]` 引数に入っているのと同じもの)が入っています。
 

@@ -18,7 +18,8 @@ aliases:
 
 # はじめに
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 * C# はいい言語ですよ。
 
 * C# の文法を知りたいだけなら Microsoft の公式文書だけで十分。
@@ -37,7 +38,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="about"></a>当コンテンツの内容について
+## <a id="sec-generated-title-2"></a> <a id="about"></a>当コンテンツの内容について
+
 .NET Framework Technical Preview 版配布開始から約2年、
 2001年末にようやく .NET Framework 正式版が発表されました。
 また、2002年2月には日本語版も配布開始され、同4月には Visual C# .NET 日本語版も発売されました。
@@ -67,7 +69,8 @@ C++ や Java と比べて追加された機能や、逆に削除された機能�
 「なぜ追加・削除されたのか」が分かってもらえるような説明を心がけるつもりです。
 
 
-###<a id="sec-generated-title-3"></a> <a id="whycs"></a>C# によるプログラミング入門
+### <a id="sec-generated-title-3"></a> <a id="whycs"></a>C# によるプログラミング入門
+
 よく訊かれる質問、
 特に、主として C 言語を利用しているプログラマの方からの質問なのですが、
 「C# は初入門の言語として適切か」と言うものを受けることがあります。
@@ -105,8 +108,10 @@ C++ のせいで過剰にプログラミングを怖がったり、
 ）
 
 
-##<a id="sec-generated-title-4"></a> <a id="content"></a>サンプル コードについて
+## <a id="sec-generated-title-4"></a> <a id="content"></a>サンプル コードについて
+
 ##### <a id="sec-generated-title-5"></a>言語選択
+
 ページ中のサンプル コードを C# 以外の言語にも対応させてみました。
 VB（Visual Basic）、F#、C++/CLI などに対応します。
 （タブ名が C++ になっているものは、ネイティブ（のみ）の C++ ではなく、C++/CLI だと思ってください。）
@@ -163,6 +168,7 @@ Console::WriteLine(L<span class="literal">"Hello World"</span>);
 
 
 ##### <a id="sec-generated-title-6"></a>凡例
+
 当コンテンツ中でサンプル コードは以下のようなスタイルで書いています。
 
 <pre class="source" title="サンプルコードの例" lang="">
@@ -192,7 +198,8 @@ sample input/output
 さらに、本文中、サンプルコード中を問わず、<em>重要な部分</em>は背景色を色付けし強調表示してあります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="bsmark"></a>\ 記号についての注意
+## <a id="sec-generated-title-7"></a> <a id="bsmark"></a>\ 記号についての注意
+
 ￥記号問題
 （同じ文字コードに、日本では ￥、英語圏では ＼ の半角が割り当たっている）
 のせいで、
@@ -202,7 +209,8 @@ sample input/output
 ￥記号問題に関する詳細は、
 [Wikipedia の￥記号の記事](http://ja.wikipedia.org/wiki/%EF%BF%A5%E8%A8%98%E5%8F%B7)を参照してください。
 
-##<a id="sec-generated-title-8"></a> <a id="variants"></a>表記ゆれ
+## <a id="sec-generated-title-8"></a> <a id="variants"></a>表記ゆれ
+
 このサイトはもう15年以上にわたって更新していますし、
 C# 関連の用語の和訳が正式に決まる前から記事を書くことが多いので、
 結構表記ゆれが多いです。
@@ -216,7 +224,8 @@ C# 関連の用語の和訳が正式に決まる前から記事を書くこと�
 
 極力元の英単語を併記するようにしているので、もし思った通りのものが見つからなかった場合、その元の英単語での検索も試みてください。
 
-##<a id="sec-generated-title-9"></a> <a id="availability"></a>当コンテンツ複製・利用について
+## <a id="sec-generated-title-9"></a> <a id="availability"></a>当コンテンツ複製・利用について
+
 当コンテンツの内容は個人的・教育的目的での複製・利用はご自由にして頂いて構いません。
 利用に際して、誤字等を見つけた場合や、ご意見・ご要望・ご不満等がございましたら、
 その内容を教えていただければこちらとしても助かりますので、

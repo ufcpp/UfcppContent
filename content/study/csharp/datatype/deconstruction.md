@@ -18,7 +18,8 @@ aliases:
 
 # 複合型の分解
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <h5 class="version version7">Ver. 7</h5>
 
 [タプル](tuples.md#key-tuple)から値を取り出す際には、メンバーを直接、それぞれバラバラに受け取りたくなることがあります。
@@ -29,7 +30,8 @@ aliases:
 
 そこでC# 7では、タプルと同時に、分解(deconstruction)のための構文が追加されました。
 
-##<a id="sec-generated-title-2"></a> <a id="deconstruction"></a>分解
+## <a id="sec-generated-title-2"></a> <a id="deconstruction"></a>分解
+
 以下のような、整数列の個数(count)と和(sum)を同時に計算するメソッドがあったとします。
 「[名前のない複合型](../structured/st_anonymoustype.md)」で説明したように、
 戻り値の型として「個数と和」みたいな名前(`CountAndSum`とか)しか思い浮かばないようなものです。
@@ -86,7 +88,8 @@ aliases:
 
 ちなみに、この分解構文は、タプルか、後述する`Deconstruct`メソッドを持つ任意の型に対して使えます。
 
-###<a id="sec-generated-title-3"></a> <a id="deconstruction-declaration"></a>分解宣言
+### <a id="sec-generated-title-3"></a> <a id="deconstruction-declaration"></a>分解宣言
+
 以下のような書き方で、分解と同時に変数を宣言できます。
 これを分解宣言(deconstruction declaration)と言います。
 
@@ -141,7 +144,8 @@ aliases:
 
 (仕様書状はクエリ式の`let`、`from` でも使えることになっているものの、プレビュー版である現在は未実装。)
 
-###<a id="sec-generated-title-4"></a> <a id="deconstruction-assignment"></a>分解代入
+### <a id="sec-generated-title-4"></a> <a id="deconstruction-assignment"></a>分解代入
+
 既存の変数を使って分解することもできます。
 こちらは分解代入(deconstruction assignment)といいます。
 
@@ -202,7 +206,8 @@ aliases:
 }
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="deconstruction-expression"></a>タプル構築と分解の混在
+### <a id="sec-generated-title-5"></a> <a id="deconstruction-expression"></a>タプル構築と分解の混在
+
 タプルを作る構文と分解代入の構文は似ているわけですが、これらは、以下のようにつなげて書くこともできます。
 
 <pre class="source" title="分解、かつ、タプル構築">
@@ -218,7 +223,8 @@ aliases:
 <span class="reserved">var</span> t = (x, y);  <span class="comment">// 改めてタプルを構築</span>
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="mixed-deconstruction"></a>分解宣言と分解代入の混在
+### <a id="sec-generated-title-6"></a> <a id="mixed-deconstruction"></a>分解宣言と分解代入の混在
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0 では以下のように、分解代入と分解宣言の混在もできるようになりました。
@@ -235,7 +241,8 @@ C# 10.0 では以下のように、分解代入と分解宣言の混在もでき
 (x, <span class="reserved">var</span> u) = (<span class="error"><span class="reserved">var</span> v</span>, y) = (1, 2);
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="conversion"></a>分解時の型変換
+## <a id="sec-generated-title-7"></a> <a id="conversion"></a>分解時の型変換
+
 分解時には、[タプル間の型変換](tuples.md#conversion)と同じルールで暗黙の型変換が働きます。
 すなわち、宣言位置で分解されます(メンバー名は見ない)し、メンバーごとに暗黙的型変換が効くなら分解でも暗黙的型変換が効きます。
 
@@ -253,7 +260,8 @@ C# 10.0 では以下のように、分解代入と分解宣言の混在もでき
 (<span class="reserved">object</span> x, <span class="reserved">long</span> y) = t;
 </code></pre>
 
-##<a id="sec-generated-title-8"></a> <a id="arbitrary-types"></a>任意の型を分解
+## <a id="sec-generated-title-8"></a> <a id="arbitrary-types"></a>任意の型を分解
+
 C#の言語機能としてのタプルの他にも、
 タプルに類する型はあります。
 すなわち、意味のある変数が作れず、分解して使う前提の型です。
@@ -310,7 +318,8 @@ C#の言語機能としてのタプルの他にも、
 <span class="comment">// tuple.Deconstruct(out x, out y);</span>
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="deconstruct-overload"></a>引数の数が同じオーバーロード不可
+### <a id="sec-generated-title-9"></a> <a id="deconstruct-overload"></a>引数の数が同じオーバーロード不可
+
 分解構文では、引数の数が同じ`Deconstruct`メソッドを呼び分けることができません。
 例えば以下の例のように、引数の型が`double, double`のものと、`double, Radian`のものという2つの`Deconstruct`メソッドを定義してしまうと、2変数の分解ができなくなります。
 
@@ -384,7 +393,8 @@ C#の言語機能としてのタプルの他にも、
 }
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="tuple-optimization"></a>タプルの構築や分解の最適化
+### <a id="sec-generated-title-10"></a> <a id="tuple-optimization"></a>タプルの構築や分解の最適化
+
 分解構文は、基本的には`Deconstruct`メソッドの呼び出しに展開されます。
 しかし、タプルに対しては、`Deconstruct`メソッドやコンストラクター呼び出しをなくす最適化が掛かります。
 
@@ -420,7 +430,8 @@ y = t2;
 例えば、C# 7.0の頃には `new ValueTuple<int, int>(x, y)` が一度作られていましたし、
 現在の実装では `t1` も消えて `var t = x; x = y; y = t;` 相当のコードが出力されます。
 
-###<a id="sec-generated-title-11"></a> <a id="ValueTuple"></a>余談: System.ValueTuple 構造体を要求される
+### <a id="sec-generated-title-11"></a> <a id="ValueTuple"></a>余談: System.ValueTuple 構造体を要求される
+
 タプルによる分解を使う場合、C# コンパイラーは常に`ValueTuple`構造体を要求します([System.ValueTuple](https://www.nuget.org/packages/System.ValueTuple/)パッケージの参照が必要)。
 
 「常に」というところが少し曲者です。
@@ -440,7 +451,8 @@ y = t2;
 このコードから「すぐに分解するから最適化で消える」というの判定するのはコンパイラーにとっては意外と大変らしく、
 「頑張っても見合わない」とのことで、この仕様を変えるつもりは今のところないようです。
 
-##<a id="sec-generated-title-12"></a> <a id="evaluation"></a>分解の評価のされ方
+## <a id="sec-generated-title-12"></a> <a id="evaluation"></a>分解の評価のされ方
+
 分解構文では、メンバーごとにそれぞれ代入するような結果を生みます。
 このとき、以下のようなルールが働きます。
 

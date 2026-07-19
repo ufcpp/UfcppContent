@@ -18,12 +18,14 @@ aliases:
 
 # 群
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 まずは、算法を1つ持つ代数系の分類について説明します。
 このような代数系の分類として、群・半群などがあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="group"></a>群とは
+## <a id="sec-generated-title-2"></a> <a id="group"></a>群とは
+
 ある代数系<span class="math"><span class="paren" style="font-size:em;">(</span>G,・<span class="paren" style="font-size:em;">)</span></span>に対して、以下の条件を考えます。
 
 1. 「[結合法則](algebraic.md#associative)」が成り立つ。
@@ -46,7 +48,8 @@ aliases:
 （逆に言うと、<span class="math">＋</span> を用いて表される算法は暗黙的に可換算法であると考えることが多い。）
 
 
-###<a id="sec-generated-title-3"></a> <a id="d53e73"></a>余談
+### <a id="sec-generated-title-3"></a> <a id="d53e73"></a>余談
+
 群という概念は、ニールス・ヘンリック・アーベル（Niels Henrik Abel、ノルウェーの数学者）が
 5次方程式の一般解法の存在の有無を調べるために考えたものです。
 この当時、アーベルは可換群しか想定していませんでした。
@@ -55,7 +58,8 @@ aliases:
 可換群をアーベル群と呼ぶのはこの名残です。
 
 
-##<a id="sec-generated-title-4"></a> <a id="sample"></a>群の例
+## <a id="sec-generated-title-4"></a> <a id="sample"></a>群の例
+
 半群・群の例をいくつか紹介します。
 <h4>自然数</h4>
 自然数 <span class="math">ω</span> は加法 <span class="math">＋</span> に関して可換モノイドになります。
@@ -87,7 +91,8 @@ aliases:
 （整数同士の割り算は整数になるとは限らない。単位元は 1。）
 
 
-###<a id="sec-generated-title-5"></a> <a id="finite"></a>有限群
+### <a id="sec-generated-title-5"></a> <a id="finite"></a>有限群
+
 自然数や整数などは無限集合ですが、
 有限集合になるような群も存在します。
 <h4>1 の n 乗根</h4>
@@ -150,8 +155,10 @@ a<sup>n</sup> b<sup>n</sup>
 この群を置換群（permutation group）と呼びます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="concept"></a>群に関する諸概念
-###<a id="sec-generated-title-7"></a> <a id="order"></a>位数
+## <a id="sec-generated-title-6"></a> <a id="concept"></a>群に関する諸概念
+
+### <a id="sec-generated-title-7"></a> <a id="order"></a>位数
+
 群の元の数を<strong id="order" class="keyword">位数</strong>（order）といいます。
 集合の元の数と同様に、群 <span class="math">G</span> の位数を <span class="math"><span class="normal">|</span>G<span class="normal">|</span></span> と表します。
 「[群の例](#sample)」で出てきた例に関しては、
@@ -160,7 +167,8 @@ a<sup>n</sup> b<sup>n</sup>
 n 元に対する置換群の位数は <span class="math">n!</span> になります。
 
 
-###<a id="sec-generated-title-8"></a> <a id="isomorphic"></a>同型
+### <a id="sec-generated-title-8"></a> <a id="isomorphic"></a>同型
+
 二つの群
 <span class="math"><span class="paren" style="font-size:em;">{</span>G, ・<sub>G</sub><span class="paren" style="font-size:em;">}</span>
 , 
@@ -223,7 +231,8 @@ f<span class="paren" style="font-size:em;">(</span>2<span class="paren" style="f
 実質的には同じ構造をになっているようなもののことを言います。
 
 
-###<a id="sec-generated-title-9"></a> <a id="subgroup"></a>部分群
+### <a id="sec-generated-title-9"></a> <a id="subgroup"></a>部分群
+
 群 <span class="math"><span class="paren" style="font-size:em;">{</span>G, ・<span class="paren" style="font-size:em;">}</span></span> があるとき、
 <span class="math">G</span> の部分集合 <span class="math">H</span> が <span class="math">・</span> に関して群を成しているとき、
 群 <span class="math"><span class="paren" style="font-size:em;">{</span>H, ・<span class="paren" style="font-size:em;">}</span></span> を
@@ -254,7 +263,8 @@ G ＝ <span class="paren" style="font-size:em;">{</span>x | ∃y ∈ R, x ＝ a 
 <span class="math">g</span> を左からかけた場合 <span class="math">gG</span> と、右から書けた場合 <span class="math">Gg</span> の2つが考えられます。
 
 
-###<a id="sec-generated-title-10"></a> <a id="residual"></a>剰余群
+### <a id="sec-generated-title-10"></a> <a id="residual"></a>剰余群
+
 群 <span class="math">G</span> とその部分群 <span class="math">H</span> があるときに、以下のようにして新しい集合を定義することを考えます。
 
 * <span class="math">a, b ∈ G</span>
@@ -390,7 +400,8 @@ G ＝ <span class="paren" style="font-size:em;">{</span>x | ∃y ∈ R, x ＝ a 
 となります。
 
 
-###<a id="sec-generated-title-11"></a> <a id="s_to_g"></a>半群から群を機械的に作る
+### <a id="sec-generated-title-11"></a> <a id="s_to_g"></a>半群から群を機械的に作る
+
 実は、半群から群を機械的に作ることが出来ます。
 最も分かりやすい例は、自然数から整数を定義する手順なんですが、
 これに関しては「[整数の定義](../set/integer.md#integer)」で説明しています。
@@ -412,7 +423,8 @@ G ＝ <span class="paren" style="font-size:em;">{</span>x | ∃y ∈ R, x ＝ a 
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-12"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・部分群
 

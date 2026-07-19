@@ -14,7 +14,8 @@ aliases:
 
 # 型フォワーディング
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 .NETでは、「アセンブリ＋名前」の組み合わせで型の所在を検索します。
 その結果、異なるアセンブリでまったく同じ名前の型を定義しても、それぞれ別の型として扱われます。
 これは、人的ミスの削減や、悪意あるコードへの耐性につながる一方で、
@@ -24,9 +25,11 @@ aliases:
 これを型フォワーディング(type forwarding: 型の転送)と呼びます。
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 - [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding)
 
-##<a id="sec-generated-title-3"></a> <a id="TypeForwardedTo"></a>TypeForwardedTo属性
+## <a id="sec-generated-title-3"></a> <a id="TypeForwardedTo"></a>TypeForwardedTo属性
+
 型フォワーディングには、`TypeForwardedTo`属性(`System.Runtime.CompilerServices`)というものを使います。
 
 例えば、ActualLibraryという名前のライブラリがあって、この中に以下のようなクラスが定義されているとします。
@@ -64,7 +67,8 @@ Aに`TypeForwardedTo`属性を書いておけば、互換性を崩さずに型�
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-4"></a> <a id="modular"></a>モジュール分割
+## <a id="sec-generated-title-4"></a> <a id="modular"></a>モジュール分割
+
 - [サンプル](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding/VersioningSamples)
 
 ありがちな技術的負債の1つに、単一のライブラリに債務を詰め込み過ぎるというのがあります。
@@ -95,7 +99,8 @@ Aに`TypeForwardedTo`属性を書いておけば、互換性を崩さずに型�
 一枚岩な状態は、依存関係が大きくなりすぎたり、部分的な更新ができなかったりといった問題を抱えることになるので、
 モジュール型な状態を保つよう心がけるべきです。
 
-###<a id="sec-generated-title-5"></a> <a id="transpose"></a>余談: 逆のやり方
+### <a id="sec-generated-title-5"></a> <a id="transpose"></a>余談: 逆のやり方
+
 ちなみに、`TypeForwardedTo`属性を付けるのを逆にすることもできます。
 
 上記の例で言うと、
@@ -109,7 +114,8 @@ Aに`TypeForwardedTo`属性を書いておけば、互換性を崩さずに型�
 内部的には一枚岩のままなので、根本的には問題解決しません(依存関係は大きいままだし、部分更新できない)が、
 「将来こう分割するよ」という予告にはなります。
 
-###<a id="sec-generated-title-6"></a> <a id="modular-dotnet"></a>余談: .NET 標準ライブラリのモジュール化
+### <a id="sec-generated-title-6"></a> <a id="modular-dotnet"></a>余談: .NET 標準ライブラリのモジュール化
+
 「初期段階で一枚岩に作ってしまって、後からモジュール分割」という流れ、
 .NET Frameworkの標準ライブラリが典型例だったりします。
 
@@ -131,7 +137,8 @@ mscorlib.dll自体は元のままで、モジュール分割した側のアセ�
 <!-- original-page-break -->
  
 
-##<a id="sec-generated-title-7"></a> <a id="backporting"></a>バックポーティング
+## <a id="sec-generated-title-7"></a> <a id="backporting"></a>バックポーティング
+
 - [サンプル](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Package/TypeForwarding/FormattableString)
 
 [C#の言語バージョンと.NET Frameworkバージョン](../cheatsheet/listfxlangversion.md)で書いていますが、

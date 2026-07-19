@@ -18,19 +18,22 @@ aliases:
 
 # \[雑記\] Dispose にまつわる余談
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[リソースの破棄](oo_dispose.md)」で説明したように、
 C# で何らかのリソースの破棄が必要な場合、IDisposable インターフェイスを実装して、using ステートメントを使います。
 
 この、IDisposable インターフェイス（の Dispose メソッド）の実装方法などに関して、少々注釈を。
 
 
-##<a id="sec-generated-title-2"></a> <a id="idisposable"></a>IDisposable インターフェイスの実装
+## <a id="sec-generated-title-2"></a> <a id="idisposable"></a>IDisposable インターフェイスの実装
+
 .NET の性質上、
 明示的に破棄処理を書く必要があるリソースには、非管理リソース（unmanaged resource）と管理リソース（managed resource）の2種類あります。
 
 
 ##### <a id="sec-generated-title-3"></a>非管理リソース
+
 .NET Framework （の自動メモリ管理）の範疇にないリソースです。
 ネイティブ コードで書かれた OS 機能を直接呼び出す場合などです。
 
@@ -44,6 +47,7 @@ File クラスからは触れない機能を使いたければ、Windows API を
 
 
 ##### <a id="sec-generated-title-4"></a>管理リソース
+
 破棄処理をかけるべき対象が全て .NET Framework の管理化に収まるリソースです。
 
 例えば、他の IDisposable オブジェクトをメンバーに持っていて、間接的にしか非管理リソースを使わない場合もあります。
@@ -54,7 +58,8 @@ File クラスからは触れない機能を使いたければ、Windows API を
 (※ 「[ファイナライズのコスト](rm_gc.md#cost-to-finalize)」 で説明しているように、ファイナライザーにはかなり高コストな処理が発生します。)
 
 
-###<a id="sec-generated-title-5"></a> <a id="derivation"></a>Dispose の実装方法
+### <a id="sec-generated-title-5"></a> <a id="derivation"></a>Dispose の実装方法
+
 この2種類に正式に対応（しつつ問題を起こさない実装を）するには、以下のような書き方をします。
 
 <pre class="source" title="Dispose メソッドの実装方法" lang="">
@@ -90,11 +95,13 @@ File クラスからは触れない機能を使いたければ、Windows API を
 
 
 ##### <a id="sec-generated-title-6"></a>Dispose(bool disposing) の中身
+
 bool 型の引数 disposing は、Dispose メソッドから呼ぶときは true、ファイナライザーから呼ぶときは false を渡します。
 if (disposing) { } の中でだけ管理リソースの破棄を行うことで、ファイナライザーの中で管理リソースに触れないようにしています。
 
 
 ##### <a id="sec-generated-title-7"></a>SuppressFinalize
+
 引数なしの Dispose メソッドの中では、引数付きの Dispose メソッドの後で、SuppressFinalize というメソッドを呼んでいます。
 これは、ガベージ コレクション時にもうファイナライザーを呼んでもらう必要がないということを、ガベージ コレクターに伝えるためのメソッドです
 （実際、呼ばれなくなります）。
@@ -102,7 +109,8 @@ if (disposing) { } の中でだけ管理リソースの破棄を行うことで�
 Dispose メソッド内ですでに破棄処理を済ませているので、必要のなくなったファイナライザー呼び出しはしないようにします。
 
 
-##<a id="sec-generated-title-8"></a> <a id="close"></a>Close メソッド
+## <a id="sec-generated-title-8"></a> <a id="close"></a>Close メソッド
+
 リソースの明示的な破棄が必要となる典型的な例として、[Stream クラス](http://msdn.microsoft.com/ja-jp/library/System.IO.Stream.aspx)がありますが、
 このクラスは Dispose メソッドに加えて、[Close メソッド](http://msdn.microsoft.com/ja-jp/library/System.IO.Stream.aspx)も持っています。
 
@@ -127,7 +135,8 @@ Windows ストア アプリ版や、クラウド最適化版の .NET Framework �
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="task"></a>Task クラス
+## <a id="sec-generated-title-9"></a> <a id="task"></a>Task クラス
+
 IDisposable インターフェイスを実装するクラスのインスタンスは、用が済み次第 Dispose メソッドを呼んで破棄するべきです
 (クラスを作った側からすると、そうしてほしいから IDisposable インターフェイスを実装している)。
 

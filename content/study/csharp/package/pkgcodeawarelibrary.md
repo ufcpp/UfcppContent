@@ -15,7 +15,8 @@ aliases:
 
 # Code-Awareなライブラリ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version6">Ver. 6</h5>
 
 (C# 6の言語的な機能ではありませんが、C# 6と同世代(Visual Studio 2015世代)の技術なので、利用できるのはC# 6以降になります。)
@@ -29,9 +30,11 @@ aliases:
 こういう、「利用側のコードを理解するライブラリ」を、Code-Aware なライブラリと呼びます。
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/DevEnv/CodeAwareLibrarySample](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/DevEnv/CodeAwareLibrarySample)
 
 ## <a id="sec-generated-title-3"></a>コード アナライザー
+
 (アナライザー自体の説明はたぶんそのうち別ページに分ける。分けたあかつきには: 
 1. C#はリアルタイムに、書いてるそばからエラー・警告出してもらえる言語。
 2. Visual Studio以外もRoslyn対応そのうちするはず。Xamarinは近々？VSチームがOmniSharpにも協力してたはず。)
@@ -51,7 +54,8 @@ aliases:
 
 本稿の主題は3つ目の「ライブラリ固有の事情」になります。
 
-##<a id="sec-generated-title-4"></a> <a id="libary-specific"></a>ライブラリ固有の事情の例
+## <a id="sec-generated-title-4"></a> <a id="libary-specific"></a>ライブラリ固有の事情の例
+
 簡単な例を上げてみましょう。以下のようなコードをライブラリ化することを考えます。
 
 <pre class="source" title="fluent interface な算術演算ライブラリ">
@@ -76,7 +80,8 @@ aliases:
 
 「`Div(0)` と書いたら常にエラーを起こす」というのは完全にこのライブラリ固有の事情になります。このライブラリのこの`Div`メソッドに限り、常に実行時エラーを起こすんだからもうコンパイル時にエラーにしたい。しかし、コンパイラーは、そんな特定のライブラリだけの特殊対応なんてできません。こんな時こそコード アナライザーの出番です。
 
-##<a id="sec-generated-title-5"></a> <a id="libary-specific-analyzer"></a>ライブラリ固有のコード アナライザーの例
+## <a id="sec-generated-title-5"></a> <a id="libary-specific-analyzer"></a>ライブラリ固有のコード アナライザーの例
+
 ということで、以下のような機能を提供するコード アナライザーを考えます。
 
 - `Div(0)` を見たら問答無用でコンパイル エラーにする
@@ -103,7 +108,8 @@ aliases:
 
 ちなみに、Visual Studio的には、この「電球マークを起点として何か処理を掛ける」操作を「クイック アクション」といいます。
 
-##<a id="sec-generated-title-6"></a> <a id="code-aware"></a>Code-Aware ライブラリ
+## <a id="sec-generated-title-6"></a> <a id="code-aware"></a>Code-Aware ライブラリ
+
 [サンプル](https://github.com/ufcpp/UfcppSample/tree/master/DevEnv/CodeAwareLibrarySample)は実際にこの例のライブラリとそれ用コード アナライザーを実装したものです。
 
 - FluentArithmetic.dll: ライブラリ本体。`a.Add(b).Sub(c)` という類の書き方で整数の四則演算をするためのライブラリ。

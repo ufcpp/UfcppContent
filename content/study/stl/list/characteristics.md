@@ -18,7 +18,8 @@ aliases:
 
 # STL コンテナの特徴一覧
 
-##<a id="sec-generated-title-1"></a> <a id="d28e4"></a>STL コンテナの特徴一覧
+## <a id="sec-generated-title-1"></a> <a id="d28e4"></a>STL コンテナの特徴一覧
+
 STLに標準で用意されているコンテナの特徴の一覧です。
 
 <table summary="">

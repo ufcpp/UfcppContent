@@ -18,7 +18,8 @@ aliases:
 
 # 抽象メソッド、抽象クラス
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 抽象メソッドとは、実装を持たず、メソッドの意味（規約）だけを定義したメソッドです。
 抽象メソッドの実装は基底クラスでは行わず、派生クラスで行います。
 
@@ -28,6 +29,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 抽象メソッド: 基底クラスでは実装せず、メソッドの意味（規約）だけを定義して、派生クラスで具体的な実装を行うようなメソッド。
 
 * （C++ では純粋仮想関数と呼ばれていたものです。）
@@ -38,7 +40,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="abstraction"></a>抽象化
+## <a id="sec-generated-title-3"></a> <a id="abstraction"></a>抽象化
+
 「[多態性](oo_polymorphism.md)」で、
 仮想メソッドの利用例として <code>Person</code> クラスを挙げました。
 この <code>Person</code> 基底クラスには、
@@ -162,6 +165,7 @@ abstract を付けて抽象プロパティにすることができます。
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 いままで例に挙げてきた <code>Person</code> クラスの最終形です。
 
 <pre class="source" title="" lang="">

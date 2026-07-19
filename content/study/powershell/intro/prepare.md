@@ -18,7 +18,8 @@ aliases:
 
 # 準備
 
-##<a id="sec-generated-title-1"></a> <a id="install"></a>インストール
+## <a id="sec-generated-title-1"></a> <a id="install"></a>インストール
+
 Longhorn サーバ（コードネーム）には標準で入るらしいんですが。
 
 PowerShell は Windows XP、Windows Server 2003 もしくは Vista にインストール可能です。
@@ -29,7 +30,8 @@ PowerShell は Windows XP、Windows Server 2003 もしくは Vista にインス�
 （.NET Framework 2.0 は Microsoft Update でインストール可能。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="context_menu"></a>フォルダを右クリックで
+## <a id="sec-generated-title-2"></a> <a id="context_menu"></a>フォルダを右クリックで
+
 エクスプローラで、フォルダを右クリックして、そのフォルダをカレントフォルダにして PowerShell を起動できるようにしておくと便利です。
 
 レジストリをいじることになるんですが、
@@ -47,7 +49,8 @@ PowerShell 上からコマンド1行でできるのが素敵。
 Vista の場合、PowerShell を「管理者として実行」しないと権限の問題でエラーになるので注意。
 
 
-##<a id="sec-generated-title-3"></a> <a id="script"></a>スクリプトファイルの実行
+## <a id="sec-generated-title-3"></a> <a id="script"></a>スクリプトファイルの実行
+
 詳細は「[スクリプトの実行ポリシー](../syntax/basic.md#policy)」に書いていますが、
 上述の右クリックメニュー登録のついでに、
 以下のコマンドも1度実行しておくことをお勧めします。

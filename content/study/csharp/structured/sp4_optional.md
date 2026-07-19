@@ -19,13 +19,15 @@ aliases:
 
 # オプション引数・名前付き引数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4.0 でオプション引数と名前付き引数が追加されました。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * オプション引数と規定値：<code>int Sum(int x = 0, int y = 0) { return x + y; }</code>とか書けるようになった
 
 * オプション引数の省略：<code>Sum(); Sum(1); Sum(1, 2);</code>
@@ -36,7 +38,8 @@ C# 4.0 でオプション引数と名前付き引数が追加されました。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="optional"></a>オプション引数
+## <a id="sec-generated-title-3"></a> <a id="optional"></a>オプション引数
+
 オプション引数は C++ にもある機能ですね。
 これは、メソッドのオーバーロードで似たようなことが可能なので、
 今まで C# では敬遠し続けてきたようです。
@@ -131,7 +134,8 @@ Sum(rest)
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="named"></a>名前付き引数
+## <a id="sec-generated-title-4"></a> <a id="named"></a>名前付き引数
+
 で、もう1つ、
 こちらも VB には昔からある機能なんですが、
 名前付き引数（named parameter）が使えるようになりました。
@@ -182,7 +186,8 @@ C# の場合、以下のような構文が許されているので、間違え�
 <span class="reserved">static</span> <span class="reserved">int</span> Sum(<span class="reserved">int</span> x = 0, <span class="reserved">int</span> y = 0, <span class="reserved">int</span> z = 0) =&gt; x + y + z;
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="non-trailing-named"></a>非末尾名前付き引数 (前の方の引数を名前付きに)
+### <a id="sec-generated-title-5"></a> <a id="non-trailing-named"></a>非末尾名前付き引数 (前の方の引数を名前付きに)
+
 <h5 class="version version7_1">Ver. 7.2</h5>
 
 C# 7.2で、前の方の引数を名前付きにできるようになりました。
@@ -214,8 +219,10 @@ Sum(2, 3, <span class="error">x</span>: 1);
 <span class="type">Array</span>.Copy(sourceArray: a, destinationArray: b, 3);
 </code></pre>
 
-##<a id="sec-generated-title-6"></a> <a id="implementation"></a>内部実装
+## <a id="sec-generated-title-6"></a> <a id="implementation"></a>内部実装
+
 ##### <a id="sec-generated-title-7"></a>オプション引数（メソッド定義側）
+
 オプション引数の仕組みは、今までの VB.NET と同じ実装方法で実現されていて、
 実体は Optional 属性と DefaultParameterValue 属性になっています。
 例えば、以下のようなコードを書くと、
@@ -244,11 +251,13 @@ Sum(2, 3, <span class="error">x</span>: 1);
 
 
 ##### <a id="sec-generated-title-8"></a>名前付き引数（メソッド定義側）
+
 C# （や、VB など、.NET 上の言語）では、元々、コンパイル結果にメソッドの引数名に関する情報が残っています。
 名前付き引数はこの情報に基づいて実装されています。
 
 
 ##### <a id="sec-generated-title-9"></a>メソッド呼び出し側
+
 オプション引数や名前付き引数を使ったメソッド呼び出しでは、
 コンパイル時に値が全て展開された状態になります。
 
@@ -275,7 +284,8 @@ Sum(<span class="literal">3</span>, <span class="literal">1</span>, <span class=
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="fyi"></a>余談： なんでいまさら？
+## <a id="sec-generated-title-10"></a> <a id="fyi"></a>余談： なんでいまさら？
+
 引数の規定値は C++ にもあるし、
 VB はオプション引数・名前付き引数ともにかなり前から実装していました。
 C# でも、かなり初期の頃からずっと、オプション引数・名前付き引数が欲しいという要望はたびたび出ていました。
@@ -286,7 +296,8 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 それから、仮想メソッドに対して規定値を与える場合には特に注意が必要になります。
 
 
-###<a id="sec-generated-title-11"></a> <a id="const-issue"></a>規定値の変更
+### <a id="sec-generated-title-11"></a> <a id="const-issue"></a>規定値の変更
+
 1つ目は、引数の規定値は定数扱いになっていて、コンパイル結果に直接埋め込まれるということです。
 「[const メンバー](../start/sp_const.md#const_member)」で説明している定数の問題と同様に、利用側でも再コンパイルが必要という問題があります。
 (定数と同様、問題になるのは public な場合です。internal や private の場合には問題になりません。)
@@ -341,7 +352,8 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 
 
 
-###<a id="sec-generated-title-12"></a> <a id="name-issue"></a>名前も public
+### <a id="sec-generated-title-12"></a> <a id="name-issue"></a>名前も public
+
 2つ目は名前付き引数に関して。
 
 メソッドの定義側で引数名を変更した場合、
@@ -383,7 +395,8 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 名前付き引数を使うなら特に注意が必要です。
 
 
-###<a id="sec-generated-title-13"></a> <a id="compile-time"></a>コンパイル時に決定
+### <a id="sec-generated-title-13"></a> <a id="compile-time"></a>コンパイル時に決定
+
 3つ目は、仮想メソッドと一緒に使うと少しわかりにくい挙動をするという問題です。
 
 どの規定値が使われるかは、変数の型を見て決定されます。
@@ -415,7 +428,8 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 
 
 
-###<a id="sec-generated-title-14"></a> <a id="d57e944"></a>とはいえ便利
+### <a id="sec-generated-title-14"></a> <a id="d57e944"></a>とはいえ便利
+
 このようないくつかの問題はあるものの、名前付き引数は非常に便利です。
 まとめると要するに以下の点にだけ気を付ければいいので、そこまで及び腰になる必要もないでしょう。
 

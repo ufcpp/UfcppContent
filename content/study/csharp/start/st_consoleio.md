@@ -18,7 +18,8 @@ aliases:
 
 # 値の入出力
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 これから本格的に C# によるプログラミングを解説して行くことになりますが、
 ただ文章で説明するよりも実際にサンプルプログラムを挙げて説明するほうが分かりやすいと思うので、
 そうして行きたいと思います。
@@ -38,11 +39,13 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 「まずは慣れろ」ということで、とりあえず今は詳しい説明省略。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="input"></a>入力
+## <a id="sec-generated-title-3"></a> <a id="input"></a>入力
+
 C#でユーザーからの入力を受け取りたい場合、<em>
         <code>Console.ReadLine</code>
       </em> というものを使います。
@@ -144,7 +147,8 @@ C#でユーザーからの入力を受け取りたい場合、<em>
 <code>Console</code> については「[ライブラリ](../structured/st_library.md)」で説明します。
 
 
-##<a id="sec-generated-title-4"></a> <a id="output"></a>出力
+## <a id="sec-generated-title-4"></a> <a id="output"></a>出力
+
 計算結果などを出力したい場合には <em>
         <code>Console.Write</code>
       </em> というものを使います。
@@ -208,6 +212,7 @@ m = 1, n = 3
 
 
 ##### <a id="sec-generated-title-5"></a>サンプル
+
 <div class="tab-container">
 <ul>
 	<li>C#</li>
@@ -301,7 +306,8 @@ tiyu (12歳) さん、ようこそお越しくださいました。
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="gui"></a>GUI 雛形プログラム
+## <a id="sec-generated-title-6"></a> <a id="gui"></a>GUI 雛形プログラム
+
 GUI プログラム（Windows アプリ）を使って演習問題（の一部）を解いてもらうために、
 演習用 GUI プログラムの雛形を用意しました。
 

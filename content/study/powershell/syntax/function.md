@@ -18,14 +18,16 @@ aliases:
 
 # 関数、フィルタ、スクリプト
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 他の多くのプログラミング言語と同様に、
 PowerShell にも関数やサブルーチンと呼ばれる類の機能があります。
 
 PowerShell の関数はオブジェクトパイプラインを強く意識して作られています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="function"></a>関数
+## <a id="sec-generated-title-2"></a> <a id="function"></a>関数
+
 PowerShell では、
 <strong id="keyfunction" class="keyword">function</strong> キーワードを使って、
 「function 関数名 {処理内容}」という構文で<strong id="function" class="keyword">関数</strong>（function）を定義します。
@@ -43,7 +45,8 @@ C:\Users\Public
 
 
 
-###<a id="sec-generated-title-3"></a> <a id="args"></a>引数の受け取り
+### <a id="sec-generated-title-3"></a> <a id="args"></a>引数の受け取り
+
 PowerShell の関数は引数を持てるんですが、
 引数の受け取り方には3パターンあります。
 
@@ -100,7 +103,8 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 この param キーワードを使って引数を受け取ることになります。
 
 
-###<a id="sec-generated-title-4"></a> <a id="argstype"></a>引数の型指定
+### <a id="sec-generated-title-4"></a> <a id="argstype"></a>引数の型指定
+
 引数リストによる方法と、param キーワードを使う方法では、
 引数の型を明示することもできます。
 
@@ -129,7 +133,8 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="ref"></a>ref 引数
+### <a id="sec-generated-title-5"></a> <a id="ref"></a>ref 引数
+
 関数の引数は参照渡しもできます。
 （参照渡しに関しては、「[引数の参照渡し](../../csharp/resource/sp_ref.md)」参照。）
 参照渡しをするには、引数の前に [ref] をつけます。
@@ -157,7 +162,8 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 [ref] を付けた変数は System.Management.Automation.PSReference 型になります。
 
 
-###<a id="sec-generated-title-6"></a> <a id="call"></a>引数の渡し方
+### <a id="sec-generated-title-6"></a> <a id="call"></a>引数の渡し方
+
 既に少し触れましたが、
 関数の呼び出しはコマンド扱いです。
 引数の取り方が「[コマンドモード](basic.md#commandmode)」になる以外にも、
@@ -179,7 +185,8 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="default"></a>引数のデフォルト値
+### <a id="sec-generated-title-7"></a> <a id="default"></a>引数のデフォルト値
+
 引数には、
 デフォルト値（呼び出し側で引数を与えずに呼んだときに設定される値）を設定できます。
 
@@ -200,7 +207,8 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="return"></a>return
+### <a id="sec-generated-title-8"></a> <a id="return"></a>return
+
 関数中に return と書くと、そこで関数の処理を終了します。
 
 <pre class="console" title="return">
@@ -213,7 +221,8 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="returnval"></a>戻り値
+### <a id="sec-generated-title-9"></a> <a id="returnval"></a>戻り値
+
 値を出力するコマンドを書くと、
 それが関数の戻り値になります。
 値を出力するコマンドを複数並べた場合、
@@ -285,7 +294,8 @@ False
 
 
 
-###<a id="sec-generated-title-10"></a> <a id="pipeline"></a>パイプライン引数
+### <a id="sec-generated-title-10"></a> <a id="pipeline"></a>パイプライン引数
+
 PowerShell の関数の他のスクリプト言語の関数と異なるのは、
 オブジェクトパイプラインを強く意識している所です。
 
@@ -313,7 +323,8 @@ $input は Enumerator なので、foreach 文などを使って要素を参照�
 
 
 
-###<a id="sec-generated-title-11"></a> <a id="process"></a>begin, process, end
+### <a id="sec-generated-title-11"></a> <a id="process"></a>begin, process, end
+
 PowerShell の関数には、パイプライン処理専用の以下のような構文も用意されています。
 
 <pre class="console" title="begin, process, end">
@@ -360,7 +371,8 @@ total 3 objects
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="filter"></a>フィルタ
+## <a id="sec-generated-title-12"></a> <a id="filter"></a>フィルタ
+
 関数とは別に、パイプラインから受け取ったオブジェクトに対する処理専用の<strong id="filter" class="keyword">フィルタ</strong>（filter）というものもあります。
 まあ、要するに、process 文だけを持つ function だと思ってください。
 
@@ -402,7 +414,8 @@ total 3 objects
 
 
 
-##<a id="sec-generated-title-13"></a> <a id="scriptblock"></a>スクリプトブロック
+## <a id="sec-generated-title-13"></a> <a id="scriptblock"></a>スクリプトブロック
+
 名前付きの関数・フィルタに加えて、
 匿名関数のような物も作れます。
 作り方は以下のような感じで、{} で囲ったコードを書くだけ。
@@ -474,7 +487,8 @@ Invoke の方は () を使って , 区切りで与えるので注意してくだ
 
 
 
-##<a id="sec-generated-title-14"></a> <a id="extern"></a>外部スクリプト
+## <a id="sec-generated-title-14"></a> <a id="extern"></a>外部スクリプト
+
 「[スクリプトファイル](basic.md#extern)」で説明したとおり、
 拡張子 .ps1 のファイルにスクリプトを書いておいて、
 そのスクリプトファイルを呼び出すということもできます。
@@ -517,7 +531,8 @@ process
 
 
 
-##<a id="sec-generated-title-15"></a> <a id="execute"></a>実行演算子
+## <a id="sec-generated-title-15"></a> <a id="execute"></a>実行演算子
+
 「[スクリプトブロック](#scriptblock)」のところで、
 スクリプトブロックは &amp; を使って呼び出すと書きましたが、
 ここではもう少し詳しく &amp; について説明します。
@@ -556,7 +571,8 @@ C:\Users\Public
 （「&amp; "cd" ..」なら正しく実行できる。）
 
 
-##<a id="sec-generated-title-16"></a> <a id="source"></a>ソース演算子
+## <a id="sec-generated-title-16"></a> <a id="source"></a>ソース演算子
+
 実行演算子 &amp; と似たような演算子に、
 ソース演算子 . があります。
 &amp; と同じく、以下の3つのことができます。
@@ -619,7 +635,8 @@ PowerShell は ".test" という名前のファイルを探しにいっちゃう
 . 演算子の後ろには1スペース空ける必要があります。
 
 
-##<a id="sec-generated-title-17"></a> <a id="priority"></a>コマンド名の解決順位
+## <a id="sec-generated-title-17"></a> <a id="priority"></a>コマンド名の解決順位
+
 PowerShell では、
 Cmdlet も関数もスクリプトも全部同じ書式でコマンドとして呼び出せます。
 また、Cmdlet と同じ名前の関数やエイリアスを作ったりすることもできます。

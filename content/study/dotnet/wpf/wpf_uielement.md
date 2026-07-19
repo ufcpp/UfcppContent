@@ -18,12 +18,14 @@ aliases:
 
 # WPF の GUI 要素（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 WPF で最初から用意されている GUI 要素や機能は膨大で、とても全部を紹介することはできませんが、
 代表的なものをいくつか紹介します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="Controls"></a>コントロール
+## <a id="sec-generated-title-2"></a> <a id="Controls"></a>コントロール
+
 System.Windows.Controls 名前空間内に、
 ボタン、テキストボックス、チェックボックス、ラジオボタンなど、
 ユーザからの入力操作を受け付けるためのコントロール類が定義されています。
@@ -85,7 +87,8 @@ System.Windows.Controls 名前空間内に、
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="Shapes"></a>図形
+## <a id="sec-generated-title-3"></a> <a id="Shapes"></a>図形
+
 System.Windows.Shapes 名前空間内に、
 直線、円、多角形などの図形が定義されています。
 これらの図形はベクタグラフィックになっていて、
@@ -123,7 +126,8 @@ System.Windows.Shapes 名前空間内に、
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="Media"></a>メディア
+## <a id="sec-generated-title-4"></a> <a id="Media"></a>メディア
+
 System.Windows.Media 名前空間内には多彩な機能が用意されています。
 
 まず、
@@ -233,7 +237,8 @@ System.Windows.Media 名前空間内には多彩な機能が用意されてい�
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="Media3D"></a>3次元モデル
+### <a id="sec-generated-title-5"></a> <a id="Media3D"></a>3次元モデル
+
 特に、
 System.Windows.Media.Media3D 名前空間内には、
 3次元モデルの表示機能があります。

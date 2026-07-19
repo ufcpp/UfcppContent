@@ -14,7 +14,8 @@ aliases:
 
 # IL の概要
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 C# などの、.NET Framework 上で動作するプログラミング言語は、
@@ -25,7 +26,8 @@ MSIL（Microsoft Intermediate Language）や CIL（Common intermediate language�
 （以後、IL という表記に統一します。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="mechanism"></a>.NET の仕組み
+## <a id="sec-generated-title-2"></a> <a id="mechanism"></a>.NET の仕組み
+
 <pre>
 いくつか、用語を説明
 
@@ -46,7 +48,8 @@ C#をはじめとする、.NET対応言語は、.NETの仮想マシンが直接�
 ILは、.NET Frameworkの仮想マシンによって、都度、ネイティブ コード（実CPUが直接解釈できるマシン語）にコンパイルしながら（Just-In-Time方式のコンパイル、略してJIT）実行されます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="why"></a>なぜ IL
+## <a id="sec-generated-title-3"></a> <a id="why"></a>なぜ IL
+
 <pre>
 ・コンパイラー作る側の都合
 
@@ -66,7 +69,8 @@ CPU ごとに高度な最適化をしようと思うと、
 メタデータを持ちたい
 </pre>
 
-##<a id="sec-generated-title-4"></a> <a id="assembly"></a>.NET アセンブリ
+## <a id="sec-generated-title-4"></a> <a id="assembly"></a>.NET アセンブリ
+
 C#などのソース コードのコンパイル結果、つまり、.NET向けの実行可能形式（exe）やライブラリ（dll）を総称して、.NETアセンブリ（assembly）と言います。
 
 アセンブリの中には、メタデータ（型情報や属性）と、ILコードが入っています。
@@ -74,7 +78,8 @@ C#などのソース コードのコンパイル結果、つまり、.NET向け�
 図を入れる
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="metadata"></a>メタデータ
+## <a id="sec-generated-title-5"></a> <a id="metadata"></a>メタデータ
+
 <pre class="source" title="C#" lang="">
 <code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Sample</span>
 {
@@ -133,7 +138,8 @@ TypeRef （型の弁別情報だけ）
 ジェネリック
 </pre>
 
-##<a id="sec-generated-title-6"></a> <a id="metadata"></a>IL 命令
+## <a id="sec-generated-title-6"></a> <a id="metadata"></a>IL 命令
+
 IL コードの例:
 
 <pre class="source" title="IL" lang="">

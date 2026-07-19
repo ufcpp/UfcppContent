@@ -18,7 +18,8 @@ aliases:
 
 # 集合の公理系
 
-##<a id="sec-generated-title-1"></a> <a id="axiom"></a>公理系
+## <a id="sec-generated-title-1"></a> <a id="axiom"></a>公理系
+
 公理とは「数学の理論体系で定理を証明するにあたって、前提として仮定するいくつかの事柄」を指します。
 どのような理論体系にも公理、すなわち「前提とする仮定」が存在します。
 もちろん、この「仮定」が間違っていれば、理論全体が間違いになりますが、
@@ -39,7 +40,8 @@ aliases:
 現在、一般的に使われている集合の公理系は ZFC と呼ばれる公理系です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="zfc"></a>ZFC公理系
+## <a id="sec-generated-title-2"></a> <a id="zfc"></a>ZFC公理系
+
 まず、ZFC公理系の前に、Zermelo、Fraenkelの2名により体系化された<strong id="zf" class="keyword">ZF公理系</strong>というものがあります。
 
 <table summary="">

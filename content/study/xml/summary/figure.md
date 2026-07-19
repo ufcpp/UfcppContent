@@ -18,11 +18,13 @@ aliases:
 
 # 図表
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 [<code>figure.xsl</code>](../../../../assets/media/ufcpp2000/xml/xslfiles/figure.xsl) には、図表用の template が記述されています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
+
 <pre class="xsource" title="ソース">
 <code><span class="bracket">&lt;</span><span class="element">figure</span><span class="bracket">&gt;</span>
   <span class="bracket">&lt;</span><span class="element">image</span> <span class="attribute">src</span><span class="attvalue">="test.png"</span> <span class="attribute">width</span><span class="attvalue">="200"</span> <span class="attribute">height</span><span class="attvalue">="200"</span> <span class="bracket">/&gt;</span>
@@ -74,7 +76,8 @@ aliases:
 <span class="bracket">&lt;/</span><span class="element">table</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-3"></a> <a id="result"></a>結果
+## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
+
 <figure>
 	[![テスト用の画像](../../../../assets/media/ufcpp2000/xml/test.png)](../../../../assets/media/ufcpp2000/xml/test.png)
 	<figcaption>テスト用の画像</figcaption>

@@ -18,7 +18,8 @@ aliases:
 
 # 実行時型情報
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 クラスを他のプログラムから利用できるようにするため、
 プログラムやライブラリ中にはクラス名やメンバー名、それらのアクセスレベル等の情報が格納されています。
 これらの情報は<strong id="metadata" class="keyword">メタデータ</strong>と呼ばれ、
@@ -32,13 +33,15 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 構造体/クラス名やメンバー名などの情報は、プログラムを実行するだけなら不要な情報です。
 
 * ですが、C# には、クラス名やメンバー名などの情報を実行時に取り出したり、 あるいは、クラス名の文字列からクラスのインスタンスを動的に生成したりする機能（リフレクション）があります。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="gettype"></a>実行時型情報とは
+## <a id="sec-generated-title-3"></a> <a id="gettype"></a>実行時型情報とは
+
 実は、プログラムを実行するだけなら、実行時型情報は不要な情報です。
 
 例えば、以下のような構造体を考えます。
@@ -133,7 +136,8 @@ char x[8];
 実行時にこういった情報を引き出せるようになっています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="type"></a>実行時型情報の取得
+## <a id="sec-generated-title-4"></a> <a id="type"></a>実行時型情報の取得
+
 C# では、System.Type クラスというものを使って実行時型情報の取得できます。
 
 例として、以下のようなコードを考えてみます。
@@ -184,6 +188,7 @@ GetType() メソッドや typeof 演算子を用いることでも Type型のイ
 
 
 ##### <a id="sec-generated-title-5"></a>ポインター版
+
 参考までに、
 逆に 「[unsafe](../interop/sp_unsafe.md#unsafe)」 機能・ポインターを使って書くと、
 以下のようになります。
@@ -205,6 +210,7 @@ Console.Write(<span class="literal">"{0} × {1} ＝ {2}\n"</span>, x.Width, x.He
 
 
 ##### <a id="sec-generated-title-6"></a>実行速度
+
 リフレクション機能を使うと、
 例えば、テキスト形式で書かれた設定ファイルを読み込んで、
 動的にインスタンスを生成したりといった面白いこともできるんですが、
@@ -214,6 +220,7 @@ Console.Write(<span class="literal">"{0} × {1} ＝ {2}\n"</span>, x.Width, x.He
 
 
 ##### <a id="sec-generated-title-7"></a>サンプル
+
 リフレクションを使って、XML ファイルから動的に（実行時に）インスタンスを生成する簡単なプログラムを作りました。
 
 

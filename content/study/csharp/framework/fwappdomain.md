@@ -18,7 +18,8 @@ aliases:
 
 # AppDomain
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 第三者コード（プラグインとか）が勝手なメモリ アクセスできないように。
@@ -26,7 +27,8 @@ aliases:
 明確にドメイン（domain: 領地、領域、占有権）を分ける。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>書く予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>書く予定
+
 ネイティブのセキュリティ。
 メモリ アドレス空間がプロセスごとに違ったり
 OS がいろいろ保護してる代わりにプロセス立てるの重たい。

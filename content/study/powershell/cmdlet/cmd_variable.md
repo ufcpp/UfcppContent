@@ -18,7 +18,8 @@ aliases:
 
 # 変数操作関連の Cmdlet
 
-##<a id="sec-generated-title-1"></a> <a id="setget"></a>Set-Variable, Get-Variable
+## <a id="sec-generated-title-1"></a> <a id="setget"></a>Set-Variable, Get-Variable
+
 $ を使って変数の読み書きをする以外に、
 <strong id="set_variable" class="keyword">Set-Variable</strong> と <strong id="get_variable" class="keyword">Get-Variable</strong> という Cmdlet を使うことでも変数の読み書きができます。
 

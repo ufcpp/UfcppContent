@@ -18,17 +18,20 @@ aliases:
 
 # 基礎知識
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 まず、Windows PowerShell の構文の基礎的な部分について説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="case"></a>大文字小文字
+## <a id="sec-generated-title-2"></a> <a id="case"></a>大文字小文字
+
 PowerShell では、アルファベットの大文字・小文字を区別しません。
 get-location と Get-Location、
 $a と $A は同じコマンド・変数になります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="command"></a>コマンド実行
+## <a id="sec-generated-title-3"></a> <a id="command"></a>コマンド実行
+
 シェル言語なので、
 本分はコマンドの実行です。
 コマンド実行にいちいち
@@ -124,7 +127,8 @@ d-r--        2006/11/02     21:50            Videos
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="pipeline"></a>パイプライン
+## <a id="sec-generated-title-4"></a> <a id="pipeline"></a>パイプライン
+
 コマンドとコマンドの間を | で繋ぐと、
 前のコマンドの出力を次のコマンドの入力として与えることができます。
 
@@ -142,7 +146,8 @@ more は、出力が1画面に収まらないときに、1ページずつ表示�
 かなり量が多いので、more コマンドで受けて1ページずつ表示します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="redirect"></a>リダイレクト
+## <a id="sec-generated-title-5"></a> <a id="redirect"></a>リダイレクト
+
 Windows のコマンドプロンプトや Unix 系のシェルで言うところのリダイレクト
 （command &lt; input.txt &gt; output.txt とかすると、
 input.txt の中身を command に食わせて、
@@ -219,7 +224,8 @@ test 1
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="expression"></a>式
+## <a id="sec-generated-title-6"></a> <a id="expression"></a>式
+
 行頭がアルファベットで始まると、
 最初の1単語はコマンド名とみなされてコマンドが実行されるのに対して、
 " や ' などの文字列の開始を表す記号や、
@@ -265,7 +271,8 @@ C:\Users\john\Desktop\temp
 = とか + 以外に、どういう式が書けるかとかは別項で説明予定。
 
 
-##<a id="sec-generated-title-7"></a> <a id="comment"></a>コメント
+## <a id="sec-generated-title-7"></a> <a id="comment"></a>コメント
+
 コマンドの実行や式計算とは無関係なコメントを入れることもできます。
 コメントは # で始めて、行末までがコメントになります。
 当然のことながら、"" や '' （要するに文字列）中の # はコメントにはなりません。
@@ -282,7 +289,8 @@ C:\Users\john\Desktop\temp
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="mode"></a>式モードとコマンドモード
+## <a id="sec-generated-title-8"></a> <a id="mode"></a>式モードとコマンドモード
+
 PowerShell の構文解析には、
 <strong id="expressionmode" class="keyword">式モード</strong>（expression mode）と<strong id="commandmode" class="keyword">コマンドモード</strong>（command mode）という2つのモードがあります。
 （command modeの日本語訳、
@@ -382,7 +390,8 @@ C:\Users\john\Desktop\temp
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="host"></a>対話型ホスト
+## <a id="sec-generated-title-9"></a> <a id="host"></a>対話型ホスト
+
 PowerShell には、
 対話型ホスト（コマンドラインインターフェース）と、
 スクリプトファイルの実行機能があります。
@@ -506,13 +515,15 @@ PowerShell をインストールすると、スタートメニューに
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="extern"></a>スクリプトファイル
+## <a id="sec-generated-title-10"></a> <a id="extern"></a>スクリプトファイル
+
 対話型で1行1行コマンドを入力していく方法に加えて、
 スクリプト（要するにテキストファイル）に処理内容を記述しておいて、
 そのスクリプトを呼び出すこともできます。
 
 
-###<a id="sec-generated-title-11"></a> <a id="policy"></a>スクリプトの実行ポリシー
+### <a id="sec-generated-title-11"></a> <a id="policy"></a>スクリプトの実行ポリシー
+
 ただ、
 （過去に VBScript を使ったウィルスなんかもあったし、
 当然流れなのかもしれないけど、）
@@ -550,7 +561,8 @@ better コマンドプロンプトとして使う意図をあまり考えてな�
 （改善を望む声はあるんで、将来的には変わるかも。）
 
 
-###<a id="sec-generated-title-12"></a> <a id="execute"></a>スクリプトの実行
+### <a id="sec-generated-title-12"></a> <a id="execute"></a>スクリプトの実行
+
 実行ポリシーを RemoteSigned にしたなら、
 早速スクリプトを実行してみましょう。
 
@@ -584,7 +596,8 @@ ps1 はメモ帳に関連付けられています。
 （これもセキュリティの関連からすると妥当な処置かも。）
 
 
-##<a id="sec-generated-title-13"></a> <a id="help"></a>ヘルプ
+## <a id="sec-generated-title-13"></a> <a id="help"></a>ヘルプ
+
 Get-Help コマンド名
 
 Get-Help about_* で構文関係のヘルプも。

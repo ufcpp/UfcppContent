@@ -18,27 +18,32 @@ aliases:
 
 # 指数関数の底
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 指数関数の底eを表示する(eはブロック体で表記すべき)
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;e/&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;e/&gt;&lt;sup&gt;iθ&lt;/sup&gt; = &lt;cos/&gt;θ ＋ i&lt;sin/&gt;θ
 </pre><div class="math"><span class="normal">e</span><sup>iθ</sup> = <span class="normal">cos</span>θ ＋ i<span class="normal">sin</span>θ
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:e"&gt;
   &lt;span class="normal"&gt;e&lt;/span&gt;
 &lt;/xsl:template&gt;
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>span.normal
 {
   font-weight:normal;

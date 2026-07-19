@@ -18,7 +18,8 @@ aliases:
 
 # 演算子のオーバーロード
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 オブジェクト指向言語ではクラスを定義することで自分の思い通りの「型」を作ることが出来ます。
 このような自作の型は、<code>int</code> や <code>double</code> などの組込み型と区別するため、
 <strong id="udt" class="keyword">ユーザー定義型</strong>と呼ばれています。
@@ -35,6 +36,7 @@ C#の組込み型には <code>+</code> や <code>-</code> などの演算子が�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 組み込み型（int や string など）とユーザー定義型（クラスや構造体）の区別をなくそう。
 
 * ユーザー定義型にも、組み込み型と同じように<code>+</code>や<code>-</code>などの演算子が定義できます。
@@ -43,7 +45,8 @@ C#の組込み型には <code>+</code> や <code>-</code> などの演算子が�
 
 
 
-###<a id="sec-generated-title-3"></a> <a id="shouldnot"></a>注意: 乱用は非推奨
+### <a id="sec-generated-title-3"></a> <a id="shouldnot"></a>注意: 乱用は非推奨
+
 演算子のオーバーロードの最大の目的は、ユーザー定義型と組み込み型の差をなくすことです。
 
 逆に言うと、オーバーロードした演算子は、組み込み型と似たような挙動をすべきです。
@@ -56,7 +59,8 @@ C#の組込み型には <code>+</code> や <code>-</code> などの演算子が�
 かろうじて、<code>+</code> 演算子は文字列やデリゲートなど、結合にも使われるので用途も広がります。
 しかし、他の演算子に関しては、複素数型のように数学で使うような「数」を表す型など、ごく限られた型でしかまず使いません。
 
-##<a id="sec-generated-title-4"></a> <a id="overload"></a>演算子のオーバーロードの方法
+## <a id="sec-generated-title-4"></a> <a id="overload"></a>演算子のオーバーロードの方法
+
 演算子は <code>operator</code> キーワードを用いることで、
 クラスの「[静的メソッド](oo_static.md#stmethod)」として以下のようにして定義することが出来ます。
 
@@ -118,7 +122,8 @@ C#の組込み型には <code>+</code> や <code>-</code> などの演算子が�
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="able"></a>オーバーロード可能な演算子
+## <a id="sec-generated-title-5"></a> <a id="able"></a>オーバーロード可能な演算子
+
 演算子の一覧とオーバーロード可能かどうかを以下に示します。
 
 <table summary="">
@@ -167,7 +172,8 @@ C#の組込み型には <code>+</code> や <code>-</code> などの演算子が�
 <code>+</code> などの演算子は特に説明は必要ないと思います。
 ここでは、説明の必要になりそうな演算子のみをとりあげます。
 
-###<a id="sec-generated-title-6"></a> <a id="true-false"></a>true, false 演算子
+### <a id="sec-generated-title-6"></a> <a id="true-false"></a>true, false 演算子
+
 <code>true, false</code> 演算子が定義された型のオブジェクトは
 <code>if</code> や <code>while, for, ?:</code> などで条件式として利用することが出来ます。
 
@@ -202,7 +208,8 @@ C#の組込み型には <code>+</code> や <code>-</code> などの演算子が�
 b==false
 </pre>
 
-###<a id="sec-generated-title-7"></a> <a id="increment"></a>インクリメント・デクリメント
+### <a id="sec-generated-title-7"></a> <a id="increment"></a>インクリメント・デクリメント
+
 インクリメント・デクリメント演算子は一度インスタンスをコピーし、
 コピー後のインスタンスの値を変更し、戻り値とします。
 前置き(<code>++x</code>)と後置き(<code>x++</code>)の2つの形式がありますが、
@@ -265,7 +272,8 @@ b==false
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="conditional-and-or"></a>条件 AND/OR 演算子
+### <a id="sec-generated-title-8"></a> <a id="conditional-and-or"></a>条件 AND/OR 演算子
+
 <code>&amp;&amp;, ||</code> 演算子は直接オーバーロードすることは出来ませんが、
 <code>&amp;, |</code> 演算子および <code>true, false</code> 演算子をオーバーロードすることで利用可能になります。
 
@@ -341,7 +349,8 @@ b || a
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="assignment"></a>複合代入演算
+### <a id="sec-generated-title-9"></a> <a id="assignment"></a>複合代入演算
+
 (C# 13 までは) [複合代入演算子](../start/st_operator.md#compound-assignment)は直接オーバーロードすることは出来ませんが、
 対応する2項演算子をオーバーロードすることで利用可能になります。
 
@@ -351,7 +360,8 @@ b || a
 <code>x += y</code> とすることで、
 <code>x = x + y</code> と同じ結果が得られます。
 
-###<a id="sec-generated-title-10"></a> <a id="cast"></a>型変換演算
+### <a id="sec-generated-title-10"></a> <a id="cast"></a>型変換演算
+
 <strong id="cast" class="keyword">型変換</strong>（cast）演算子は以下のようにして定義します。
 
 <pre class="source" title="型変換演算子の定義の仕方" lang="">
@@ -407,7 +417,8 @@ b || a
 count=2
 </pre>
 
-##<a id="sec-generated-title-11"></a> <a id="parameter"></a>演算子の引数
+## <a id="sec-generated-title-11"></a> <a id="parameter"></a>演算子の引数
+
 (C# 7.1 以前では) 演算子の引数は[値渡し](../resource/sp_ref.md#sec-byval)である必要があります。
 
 <pre class="source" title="値渡しはOK。参照渡し(ref引数)はNG">
@@ -445,14 +456,16 @@ C# 7.2 で[`in` 引数](../resource/sp_ref.md#in)という機能が入りまし�
 }
 </code></pre>
 
-##<a id="sec-generated-title-12"></a> <a id="checked"></a>checked 演算子
+## <a id="sec-generated-title-12"></a> <a id="checked"></a>checked 演算子
+
 <h5 class="version version11">Ver. 11</h5>
 
 オーバーロード可能な演算子のうち、`++`, `--`, `+`, `-`, `*`, `/` および キャスト演算子は `checked` キーワードを付けて、`checked` 演算子オーバーロードすることができます。
 
 詳しくは「[【Generic Math】 C# 11 での演算子の新機能](generic-math-operators.md#checked-operator-overload)」で説明します。
 
-##<a id="sec-generated-title-13"></a> <a id="overload-compound">複合代入演算子のオーバーロード</a>
+## <a id="sec-generated-title-13"></a> <a id="overload-compound">複合代入演算子のオーバーロード</a>
+
 <h5 class="version version14">Ver. 14</h5>
 
 C# 13 まで、「`+` をオーバーロードしたら `+=` も使える。`x += y` は `x = x + y` と解釈する」というように、
@@ -635,7 +648,8 @@ C# 13 まで、「`+` をオーバーロードしたら `+=` も使える。`x +
 }
 </pre>
 
-###<a id="sec-generated-title-14"></a> <a id="compound-metadata">余談: コンパイル結果</a>
+### <a id="sec-generated-title-14"></a> <a id="compound-metadata">余談: コンパイル結果</a>
+
 [IL](../../il/index.md) の仕様上は演算子というものはなく、
 例えば `+` 演算子であれば `op_Addition` という名前の静的メソッドになっていたりします。
 (`x + y` なども `X.op_Addition(x, y)` みたいなコードが生成されています。)
@@ -645,7 +659,8 @@ C# 13 まで、「`+` をオーバーロードしたら `+=` も使える。`x +
 「自己書き換えのインクリメント/デクリメント」も `op_IncrementAssignment`/`op_DecrementAssignment` という名前です。
 さらに、`checked` 版は `op_CheckedAdditionAssignment` というような名前になります。
 
-###<a id="sec-generated-title-15"></a> <a id="both-binary-and-compound">注意: 両方をオーバーロード</a>
+### <a id="sec-generated-title-15"></a> <a id="both-binary-and-compound">注意: 両方をオーバーロード</a>
+
 旧来の静的な二項演算子と C# 14 からのインスタンスの複合代入演算子は両方ユーザー定義できます。
 この場合当然、その2種の整合性を取るのは実装する人の責任になるので、
 変な実装をしてしまわないように気を付けましょう。
@@ -706,7 +721,8 @@ X { Value = 0 }
 }
 </pre>
 
-###<a id="sec-generated-title-16"></a> <a id="compound-virtual">余談: virtual</a>
+### <a id="sec-generated-title-16"></a> <a id="compound-virtual">余談: virtual</a>
+
 複合代入演算子のオーバーロードはインスタンス メンバーなので、一応、`virtual` や `abstract` にできます。
 
 <pre class="source" title="複合代入演算子は virtual/abstract にできる">

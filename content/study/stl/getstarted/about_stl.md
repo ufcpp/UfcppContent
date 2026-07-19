@@ -18,12 +18,14 @@ aliases:
 
 # STL とは
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 STL (Standard Template Library) とは、C++ の（1998年に標準化された）標準ライブラリの1つです。
 STL は、template という機能を用いた直交性の高いライブラリです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="template"></a>template
+## <a id="sec-generated-title-2"></a> <a id="template"></a>template
+
 <em>template</em>は型をパラメータとして与えることで、任意の型に対応したコンテナやアルゴリズムを記述できる機能です。
 例えば、2つの値のうち大きいほうを取り出す関数<code>max()</code>を作りたいとします。<code>int</code>型に限定したものなら簡単に作れて以下のようになります。
 
@@ -62,7 +64,8 @@ C/C++言語では、長い間このような汎用の機能を汎用ポインタ
 しかし、templateを使うことで、型安全に汎用アルゴリズムを記述できるようになります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="orthogonal"></a>直交性
+## <a id="sec-generated-title-3"></a> <a id="orthogonal"></a>直交性
+
 配列のように複数の値を一まとめにして管理するクラスを
 <em>コンテナクラス</em>または<em>コレクションクラス</em>といいます。
 コンテナクラスは、格納する型、格納する方式によってさまざまな種類があり、
@@ -97,7 +100,8 @@ C/C++言語では、長い間このような汎用の機能を汎用ポインタ
 依存性の少ないものを直交性が高いといいます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="stl"></a>STL
+## <a id="sec-generated-title-4"></a> <a id="stl"></a>STL
+
 STLは、template機能を用いることで、直交性、汎用性が高く、型安全で高速なコンテナクラスおよびその操作を提供するライブラリです。
 
 STLのコンテナクラスは <code>&gt;</code> などの演算子を適切に定義した任意の型を格納できます。

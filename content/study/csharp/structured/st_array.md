@@ -18,7 +18,8 @@ aliases:
 
 # 配列
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「複数の数値を入力してその和を求める」とかいうように、複数のデータを一まとめにして扱いたい場合があります。
 C# などのプログラミング言語には、
 複数のデータを一まとめにするための「配列」というものがあります。
@@ -31,13 +32,15 @@ C# などのプログラミング言語には、
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 配列: 複数のデータをひとまとめに
 
 * x[n] で、x の n 番目の要素にアクセス
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="unless"></a>配列がなかったら
+## <a id="sec-generated-title-3"></a> <a id="unless"></a>配列がなかったら
+
 まずは、もし複数のデータを一まとめにせずにばらばらに扱おうとするとどうなるか考えてみましょう。
 例として、5個の整数を入力して、それらの二乗和を求めることを考えます。
 プログラムは以下のようになるでしょう。
@@ -65,7 +68,8 @@ Console.Write(<span class="literal">"二乗和は {0} です"</span>, square_sum
 それに、入力するデータの数を5個から10個とかいうように変更したい場合にも、修正が大変になります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="use"></a>配列を使う
+## <a id="sec-generated-title-4"></a> <a id="use"></a>配列を使う
+
 C# には複数のデータを一まとめにするために<strong id="array" class="keyword">配列</strong>というものが用意されています。
 先ほどの例では、5個のデータを<code>a, b, c, d, e</code>という5つの変数に格納していましたが、
 配列を使うことで<code>a[0], a[1], a[2], a[3], a[4]</code>というように、番号を振って管理出来ます。
@@ -122,6 +126,7 @@ Console.Write(<span class="literal">"二乗和は {0} です"</span>, square_sum
 
 
 ##### <a id="sec-generated-title-5"></a>サンプル
+
 <pre class="source" title="配列のサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -208,7 +213,8 @@ C# 12 からは配列の初期化を以下のように書くことができる�
 
 `{}` を使った初期化子との差や、コレクション式のメリットなどは「[コレクション式](../datatype/collection-expression.md)」で説明します。
 
-###<a id="sec-generated-title-6"></a> <a id="infer"></a>暗黙的型付け配列
+### <a id="sec-generated-title-6"></a> <a id="infer"></a>暗黙的型付け配列
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 では、
@@ -223,7 +229,8 @@ C# 3.0 では、
 この例の場合、{} の中身が <code>int</code> なので、<code>a</code> は <code>int[]</code> になります。
 
 
-###<a id="sec-generated-title-7"></a> <a id="range"></a>範囲アクセス
+### <a id="sec-generated-title-7"></a> <a id="range"></a>範囲アクセス
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 で、`a[i..j]` という書き方で「i番目からj番目の要素を取り出す」というような操作ができるようになりました。
@@ -251,13 +258,15 @@ C# 8.0 で、`a[i..j]` という書き方で「i番目からj番目の要素を�
 
 詳しくは「[インデックス/範囲処理](../data/dataranges.md)」で説明します。
 
-##<a id="sec-generated-title-8"></a> <a id="multid"></a>多次元配列
+## <a id="sec-generated-title-8"></a> <a id="multid"></a>多次元配列
+
 今までは1次元的に並んだデータを格納するための1次元配列について説明してきました。
 しかし、画像の画素などのように、データが多次元的に並んでいる場合もあります。
 C# ではそのような多次元データを格納するため、<strong id="multid" class="keyword">多次元配列</strong>が用意されています。
 
 
-###<a id="sec-generated-title-9"></a> <a id="rectangular"></a>四角い多次元配列
+### <a id="sec-generated-title-9"></a> <a id="rectangular"></a>四角い多次元配列
+
 C# の多次元配列は以下のようにして宣言します。
 （次節で説明する「配列の配列」と区別するために、「四角い多次元配列」と呼んだりする場合もあります。
 単に多次元配列という場合、こちらの四角い多次元配列を指します。）
@@ -309,7 +318,8 @@ C# の多次元配列は以下のようにして宣言します。
 
 
 
-###<a id="sec-generated-title-10"></a> <a id="jugged"></a>配列の配列
+### <a id="sec-generated-title-10"></a> <a id="jugged"></a>配列の配列
+
 多次元のデータを扱うためには <code>array[x, y]</code> という構文で使用する多次元配列の他に、
 「<strong id="jugged" class="keyword">配列の配列</strong>」を使う方法もあります。
 「配列の配列」とはその名の通り、配列(<code>型名[]</code>)をさらに配列にしたもの(<code>型名[][]</code>)です。
@@ -350,7 +360,8 @@ C# の多次元配列は以下のようにして宣言します。
 「配列の配列」のことを“<em>Jagged Array</em>” (ぎざぎざ配列)という言うこともあります。
 
 
-###<a id="sec-generated-title-11"></a> <a id="compare"></a>比較
+### <a id="sec-generated-title-11"></a> <a id="compare"></a>比較
+
 <table summary="「多次元配列」と「配列の配列」の比較">
 	<caption>
 		「多次元配列」と「配列の配列」の比較

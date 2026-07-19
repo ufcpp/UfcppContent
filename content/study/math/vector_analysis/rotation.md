@@ -18,7 +18,8 @@ aliases:
 
 # 回転
 
-##<a id="sec-generated-title-1"></a> <a id="rot"></a>回転とは
+## <a id="sec-generated-title-1"></a> <a id="rot"></a>回転とは
+
 <em>
         <strong id="rotation" class="keyword">回転</strong>とはある点における単位面積あたりの渦（「[](v_field.md#vortex)」参照）の強さの量です。
       </em>
@@ -92,7 +93,8 @@ aliases:
       </span>の外積を取ったものが回転となるからです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="green"></a>グリーンの定理
+## <a id="sec-generated-title-2"></a> <a id="green"></a>グリーンの定理
+
 いきなり3次元の線積分と面積分を関係付ける公式を出すよりも、2次元で考えたほうが分かりやすいので、まずは2次元で考えます。
 
 図1のような積分経路を考えると、ベクトル場<span class="math">
@@ -160,7 +162,8 @@ aliases:
 この式をグリーンの定理といいます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="stokes"></a>ストークスの定理
+## <a id="sec-generated-title-3"></a> <a id="stokes"></a>ストークスの定理
+
 回転は単位面積あたりの渦の強さなわけですから、回転の面積分の値は渦の強さに等しくなります。
 つまり、
 <div class="math">

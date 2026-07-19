@@ -18,7 +18,8 @@ aliases:
 
 # キーワード（予約語）一覧
 
-##<a id="sec-generated-title-1"></a> <a id="keyword"></a>C# のキーワード
+## <a id="sec-generated-title-1"></a> <a id="keyword"></a>C# のキーワード
+
 <table summary="">
 
 	<tr>
@@ -353,7 +354,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="context"></a>C# の文脈キーワード
+## <a id="sec-generated-title-2"></a> <a id="context"></a>C# の文脈キーワード
+
 特定の文脈でのみ、キーワードとして認識される物もあります。
 このようなキーワードのことを文脈キーワード（contextual keyword）といいます。
 

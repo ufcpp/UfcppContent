@@ -18,7 +18,8 @@ aliases:
 
 # ハミルトン形式
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[ラグランジュの運動方程式](lagrange.md#equation)」は、
 以下のように、<span class="math">t, q, q'</span> に関する微分を含む2階の微分方程式になっています。
 <div class="math">
@@ -58,7 +59,8 @@ H
 定性的な解析や、数値計算がしやすい形式になっています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="derivation"></a>ハミルトン形式の導出
+## <a id="sec-generated-title-2"></a> <a id="derivation"></a>ハミルトン形式の導出
+
 というわけで、
 <div class="math">
 p
@@ -138,7 +140,8 @@ p
 となります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="equation"></a>ハミルトンの運動方程式
+## <a id="sec-generated-title-3"></a> <a id="equation"></a>ハミルトンの運動方程式
+
 まとめると、
 <div class="math">
 p
@@ -184,7 +187,8 @@ H
 全エネルギーに相当する（保存則が成り立つ）物理量です。
 
 
-###<a id="sec-generated-title-4"></a> <a id="merit"></a>ハミルトン形式の利点
+### <a id="sec-generated-title-4"></a> <a id="merit"></a>ハミルトン形式の利点
+
 ハミルトン形式は、
 ラグランジュ形式と比べて形がシンプルです。
 （「自励系」と呼ばれる、微分方程式の中でもかなりシンプルな部類に入る形になってる。）
@@ -203,7 +207,8 @@ H
 ラグランジュ形式よりも形がシンプルな分、ハミルトン形式の方が解析がしやすいという利点があります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="preserve"></a>一般の物理量とハミルトニアンの保存則
+## <a id="sec-generated-title-5"></a> <a id="preserve"></a>一般の物理量とハミルトニアンの保存則
+
 <span class="math">q<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>, p<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span> をハミルトンの運動方程式の解曲線として、
 （<span class="math">t</span> を明示的に含まず、）
 <span class="math">q, p</span> に依存する物理量
@@ -256,7 +261,8 @@ g
 と書くことができます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="preserve"></a>ハミルトニアンの保存則
+### <a id="sec-generated-title-6"></a> <a id="preserve"></a>ハミルトニアンの保存則
+
 ハミルトニアン
 <span class="math">H</span>
 自身も <span class="math">q, p</span> に依存する物理量なわけで、
@@ -269,7 +275,8 @@ g
 すなわち、ハミルトニアン <span class="math">H</span> は時間的に不変な量（＝ 保存則が成り立つ）になります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-7"></a> <a id="summary"></a>まとめ
+
 * ラグランジュの運動方程式に対して、独立変数を増やす代わりに次数を下げて、<span class="math"><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>x <span class="normal">=</span> f<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span>という、 定性的な解析や、数値計算がしやすい形式に変形。
 
 * ラグランジュ形式から導出するので、任意の座標変数に対して同じ微分方程式が成り立つ。
@@ -278,5 +285,6 @@ g
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
+
 正準変換

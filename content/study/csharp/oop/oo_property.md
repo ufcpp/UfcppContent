@@ -21,7 +21,8 @@ aliases:
 
 # プロパティ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="property" class="keyword">プロパティ</strong>（property：所有物、特性）とは、JavaやC++にはない(Visual Basicにはある)機能で、
 クラス外部から見るとメンバー変数のように振る舞い、
 クラス内部から見るとメソッドのように振舞うものです。
@@ -32,13 +33,15 @@ JavaやC++がこの機能を持ってないことからも分かると思いま�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * プロパティ: 中（実装側）からはメソッドのように扱え、外（利用側）からはメンバー変数のように見えるもの。
 
 * 実装の隠蔽（カプセル化）の原則を崩すことなく、 アクセサー関数の煩雑さを解消。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="about"></a>プロパティとは
+## <a id="sec-generated-title-3"></a> <a id="about"></a>プロパティとは
+
 「[実装の隠蔽](oo_conceal.md)」で、
 メンバー変数はクラス外部から直接アクセス出来ないようにして、
 オブジェクトの状態の変更はすべてメソッドを通して行うべきだと書きました。
@@ -257,7 +260,8 @@ get 以降のに値の取得用の処理を書きます。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="level"></a>set/get で異なるアクセスレベルを設定
+## <a id="sec-generated-title-4"></a> <a id="level"></a>set/get で異なるアクセスレベルを設定
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 C# 2.0 の新機能で、
@@ -278,7 +282,8 @@ C# 2.0 の新機能で、
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="auto"></a>自動プロパティ
+## <a id="sec-generated-title-5"></a> <a id="auto"></a>自動プロパティ
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 では、プロパティの get/set の中身の省略もできるようになりました。
@@ -340,7 +345,8 @@ C# プログラミングでは、
 その省略機能がプロパティにも実装されたということになります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="get-only"></a>get-only プロパティ
+## <a id="sec-generated-title-6"></a> <a id="get-only"></a>get-only プロパティ
+
 <h5 class="version version6">Ver. 6</h5>
 
 C# 6 では、get アクセサーだけのプロパティを定義できるようになりました。
@@ -387,7 +393,8 @@ C# 6 では、get アクセサーだけのプロパティを定義できるよ�
 }
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="property-initializer"></a>プロパティ初期化子
+## <a id="sec-generated-title-7"></a> <a id="property-initializer"></a>プロパティ初期化子
+
 <h5 class="version version6">Ver. 6</h5>
 
 同じくC# 6.0から、自動プロパティに対して初期化子を与えられるようになりました。
@@ -402,7 +409,8 @@ C# 6 では、get アクセサーだけのプロパティを定義できるよ�
 
 これで、コンストラクターを書かなくてもプロパティに対して初期値を与えることができます。
 
-##<a id="sec-generated-title-8"></a> <a id="expression-bodied"></a>expression-bodied なプロパティ
+## <a id="sec-generated-title-8"></a> <a id="expression-bodied"></a>expression-bodied なプロパティ
+
 get-only のプロパティに限りますが、他のいくつかの関数メンバーと同様に、expression-bodied (本体が式の)形式でプロパティを定義できます。
 (参考: 「[expression-bodied な関数](../structured/st_function.md#sec-expression-bodied)」)
 
@@ -422,7 +430,8 @@ get-only のプロパティに限りますが、他のいくつかの関数メ�
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="indexed"></a>余談: C# にインデックス付きプロパティはありません
+## <a id="sec-generated-title-9"></a> <a id="indexed"></a>余談: C# にインデックス付きプロパティはありません
+
 VB にはある「インデックス付きプロパティ」は、C# にはありません。
 C# の流儀的には、「インデックス付きプロパティ」よりも、「コレクションクラスを返す普通のプロパティ」推奨です。
 （その方が、foreach が使えたり、色々便利だから。）
@@ -468,7 +477,8 @@ C# からは get_X(0) というように呼び出します。
 さらに特殊事情として、対 COM の場合だけ、普通に X[0] というような呼び出し方が認められます。
 詳しくは「[COM 相互運用時の特別処理](../interop/sp4_cominterop.md)」を参照。
 
-##<a id="sec-generated-title-10"></a> <a id="init-only"></a>init-only プロパティ
+## <a id="sec-generated-title-10"></a> <a id="init-only"></a>init-only プロパティ
+
 <h5 class="version version9">Ver. 9</h5>
 
 C# 9.0 では、`set` に代わって、`init` という名前のアクセサーを定義できるようになりました。
@@ -587,7 +597,8 @@ C# 9.0 では、`set` に代わって、`init` という名前のアクセサー
 }
 </code></pre>
 
-###<a id="sec-generated-title-11"></a> <a id="init-only-internal">init-only プロパティの中身</a>
+### <a id="sec-generated-title-11"></a> <a id="init-only-internal">init-only プロパティの中身</a>
+
 ちなみに、init-only プロパティコンパイル結果としては単に `public` な `set` アクセサーと `readonly` フィールドになっています。
 C# コンパイラーのレベルで「初期化子など以外からの書き換えを禁止する」というような解析をしています。
 
@@ -601,7 +612,8 @@ modreq については別途説明予定です。トラッキング issue:
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-12"></a> <a id="required"></a>required メンバー
+## <a id="sec-generated-title-12"></a> <a id="required"></a>required メンバー
+
 <h5 class="version version11">Ver. 11</h5>
 
 C# 11 でプロパティとフィールドに対する `required` 修飾子というものが追加されました。
@@ -625,7 +637,8 @@ C# 11 でプロパティとフィールドに対する `required` 修飾子と�
 
 この機能を指して、<strong id="key-required" class="keyword">required メンバー</strong> (required members)と言います。
 
-###<a id="sec-generated-title-13"></a> <a id="required-needs">required の必要性</a>
+### <a id="sec-generated-title-13"></a> <a id="required-needs">required の必要性</a>
+
 C# のオブジェクトの初期化には以下の2種類の構文があります。
 
 * `new A(x, y)`: コンストラクターに引数で値を与える
@@ -748,7 +761,8 @@ C# 3 当時は名前指定初期化という考え方もなくて、あくまで
 }
 </pre>
 
-###<a id="sec-generated-title-14"></a> <a id="applicable">required の適用範囲</a>
+### <a id="sec-generated-title-14"></a> <a id="applicable">required の適用範囲</a>
+
 `required` は、`virtual` や `abstract` なプロパティに対しても使えます。
 ただし、基底クラス側が `required` なものは派生クラス側にも `required` を付ける必要があります。
 
@@ -809,7 +823,8 @@ C# 3 当時は名前指定初期化という考え方もなくて、あくまで
 }
 </pre>
 
-###<a id="sec-generated-title-15"></a> <a id="SetsRequiredMembers">SetsRequiredMembers</a>
+### <a id="sec-generated-title-15"></a> <a id="SetsRequiredMembers">SetsRequiredMembers</a>
+
 `required` メンバーをコンストラクター内で初期化するのであれば、
 呼び出し元のオブジェクト初期化子では必ずしも初期化の必要がない場合があります。
 こういう場合にエラーを出されても困るので、
@@ -866,7 +881,8 @@ C# 3 当時は名前指定初期化という考え方もなくて、あくまで
 }
 </pre>
 
-###<a id="sec-generated-title-16"></a> <a id="required-internal">required メンバーの中身</a>
+### <a id="sec-generated-title-16"></a> <a id="required-internal">required メンバーの中身</a>
+
 required メンバーを含む型は、内部的には属性を付けて表現しているようです。
 例えば、以下のようなクラスがあったとします。
 
@@ -928,7 +944,8 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 }
 </pre>
 
-##<a id="sec-generated-title-17"></a> <a id="field-keyword">field キーワード</a>
+## <a id="sec-generated-title-17"></a> <a id="field-keyword">field キーワード</a>
+
 <h5 class="version version14">Ver. 14</h5>
 
 [自動プロパティ](#auto)ではバッキング フィールドへの値の素通しが行われます。
@@ -1027,7 +1044,8 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 `get;` は `get => field;` と、
 `set;` は `set => field = value;` と同じ意味になります。
 
-###<a id="sec-generated-title-18"></a> <a id="field-backed-property">自動プロパティとの共通点</a>
+### <a id="sec-generated-title-18"></a> <a id="field-backed-property">自動プロパティとの共通点</a>
+
 既存の自動プロパティと、 C# 14 で追加された `field` キーワードを使ったプロパティは
 「バッキング フィールドが自動生成される」という意味で共通しているわけですが、
 これらを合わせて field-baked プロパティ(フィールドで裏付けされたプロパティ)と呼びます。
@@ -1079,7 +1097,8 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 }
 </pre>
 
-###<a id="sec-generated-title-19"></a> <a id="field-contextual-keyword">文脈キーワード</a>
+### <a id="sec-generated-title-19"></a> <a id="field-contextual-keyword">文脈キーワード</a>
+
 `field` 「キーワード」とは言っていますが、
 他の例にもれず `field` は[文脈キーワード](../misc/ap_compatibility.md#contextual-keyword)です。
 プロパティの `get`/`set` 内でだけキーワード扱いされます。
@@ -1137,7 +1156,8 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 }
 </pre>
 
-###<a id="sec-generated-title-20"></a> <a id="field-keyword-initializer">プロパティ初期化子</a>
+### <a id="sec-generated-title-20"></a> <a id="field-keyword-initializer">プロパティ初期化子</a>
+
 プロパティ初期化子を使う場合ちょっと注意が必要になります。
 初期化子で値を渡す場合、プロパティの `set` アクセサー呼び出しではなく、バッキング フィールドへの直代入になります。
 
@@ -1189,7 +1209,8 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 初期化子で `set` アクセサーは呼んではいけないということになります。
 そのため仕方なく、プロパティ初期化子ではフィールドへの直代入する仕様になっています。
 
-###<a id="sec-generated-title-21"></a> <a id="backing-field-nullability">バッキング フィールドの null 許容性</a>
+### <a id="sec-generated-title-21"></a> <a id="backing-field-nullability">バッキング フィールドの null 許容性</a>
+
 プロパティが参照型のとき、そのバッキング フィールドの [null 許容性](../resource/nullablereferencetype.md)はどうあるべきでしょうか？
 本節冒頭の例でも挙げたように、`field` キーワードの用途の1つに遅延初期化があります。
 この場合、「`T` 型のプロパティのバッキング フィールドは `T?` の方が都合がいい」ということになります。

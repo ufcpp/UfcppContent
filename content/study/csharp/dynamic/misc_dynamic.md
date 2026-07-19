@@ -19,7 +19,8 @@ aliases:
 
 # \[雑記\] 動的コード生成のパフォーマンス
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 .NET Framework のバージョンが上がるたびに色々と追加され、
 今や、動的コード生成にもさまざまなやり方が。
 ということで、並べて比較してみたいと思います。
@@ -36,6 +37,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 毎回リフレクションを呼び出すのはやっぱりかなり（2～3桁）遅い。
 
 * キャッシュ機構を使えば、静的なコードの数倍程度までは速くできる。
@@ -44,7 +46,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="methodology"></a>比較の仕方
+## <a id="sec-generated-title-3"></a> <a id="methodology"></a>比較の仕方
+
 以下のような操作をベースに。
 
 <pre class="source" title="元となる操作" lang="">
@@ -68,7 +71,8 @@ aliases:
 （Point 以外の型であっても、int 型の2つのプロパティ X, Y を持っていればなんでも受け付けるようにする。）
 
 
-##<a id="sec-generated-title-4"></a> <a id="reflection"></a>リフレクション
+## <a id="sec-generated-title-4"></a> <a id="reflection"></a>リフレクション
+
 リフレクションを使って、毎度 type.GetProperty するやり方。
 
 <pre class="source" title="リフレクション" lang="">
@@ -89,6 +93,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-5"></a>利点
+
 * .NET Framework 1.0 でも動く。
 
 * 以上。
@@ -96,6 +101,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-6"></a>欠点
+
 * 遅い。文字通り、桁外れに遅い。
 
 * 静的なバージョンと比べてだいたい2～3桁遅い。「倍」じゃなくて「桁」って単位で遅い。
@@ -104,7 +110,8 @@ aliases:
 正直、今この選択肢はないと思う。
 
 
-##<a id="sec-generated-title-7"></a> <a id="ilgenerator"></a>IL 生成
+## <a id="sec-generated-title-7"></a> <a id="ilgenerator"></a>IL 生成
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 .NET Framework 2.0 で、DynamicMethod を使った動的コード生成ができるようになりました。
@@ -173,6 +180,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-8"></a>利点
+
 * コード生成はそれなりに速い。
 
 * .NET Framework 2.0 で使える。
@@ -180,6 +188,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-9"></a>欠点
+
 * アセンブリ言語を書ける人でないと無理。
 
 * 自分でキャッシュの仕組みを書かなきゃいけない。
@@ -196,7 +205,8 @@ aliases:
 .NET Framework 3.5 以降が使えるのであれば、あえて使う必要性はないと思います。
 
 
-##<a id="sec-generated-title-10"></a> <a id="expressiontree"></a>式木
+## <a id="sec-generated-title-10"></a> <a id="expressiontree"></a>式木
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 .NET Framework 3.5 （C# 3.0）で「[式木](sp3_expression.md#expressiontree)」というものが導入されました。
@@ -259,11 +269,13 @@ IL レベルではなく、構文木レベルでコードを生成できるの�
 
 
 ##### <a id="sec-generated-title-11"></a>利点
+
 * IL 生成と比べれば随分素直に書ける。
 
 
 
 ##### <a id="sec-generated-title-12"></a>欠点
+
 * .NET Framework 4 必須（限定的に、.NET 3.5 で実現可能な部分もあり）。
 
 * 自分でキャッシュの仕組みを書かなきゃいけない。
@@ -275,7 +287,8 @@ IL レベルではなく、構文木レベルでコードを生成できるの�
 静的なバージョンと比べた場合、数倍程度の遅さで済みます。
 
 
-##<a id="sec-generated-title-13"></a> <a id="dynamic"></a>dynamic
+## <a id="sec-generated-title-13"></a> <a id="dynamic"></a>dynamic
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4.0 で dynamic が導入されたわけですが、
@@ -306,6 +319,7 @@ dynamic 任せの方が高速な場合も出て来ると思います。
 
 
 ##### <a id="sec-generated-title-14"></a>利点
+
 * 超お手軽。
 
 * 動的コード生成もキャッシュも全自動。
@@ -313,6 +327,7 @@ dynamic 任せの方が高速な場合も出て来ると思います。
 
 
 ##### <a id="sec-generated-title-15"></a>欠点
+
 * Type 型を（メソッドの引数で受け取るとか）明示的に渡せない。
 
 * .NET Framework 4 必須。
@@ -325,7 +340,8 @@ dynamic 任せの方が高速な場合も出て来ると思います。
 そういう場合は後述する CallSite（dynamic を実現するための内部的なクラス）を直接利用することになります（結構面倒）。
 
 
-##<a id="sec-generated-title-16"></a> <a id="callsite"></a>CallSite（dynamic の内部挙動）
+## <a id="sec-generated-title-16"></a> <a id="callsite"></a>CallSite（dynamic の内部挙動）
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4.0 の dynamic の内部挙動的には、CallSite というクラスを使っています。
@@ -362,11 +378,13 @@ C# 4.0 の dynamic の内部挙動的には、CallSite というクラスを使�
 
 
 ##### <a id="sec-generated-title-17"></a>利点
+
 * やってみたら、動的実行版の中では最速だった（今回の例の場合）。
 
 
 
 ##### <a id="sec-generated-title-18"></a>欠点
+
 * 結構複雑で、お手軽とはいかない。
 
 * .NET Framework 4 必須。
@@ -381,7 +399,8 @@ C# 4.0 の dynamic の内部挙動的には、CallSite というクラスを使�
 ありといえばありな選択肢。
 
 
-##<a id="sec-generated-title-19"></a> <a id="dictionary"></a>おまけ： 辞書構造
+## <a id="sec-generated-title-19"></a> <a id="dictionary"></a>おまけ： 辞書構造
+
 参考実装。
 
 動的にやるんであれば、CLR オブジェクトとか使わず最初から辞書（ハッシュテーブル）にでもすりゃいいんじゃね？
@@ -405,11 +424,13 @@ C# 4.0 の dynamic の内部挙動的には、CallSite というクラスを使�
 
 
 ##### <a id="sec-generated-title-20"></a>利点
+
 * 単純と言えば単純。
 
 
 
 ##### <a id="sec-generated-title-21"></a>欠点
+
 * CLR オブジェクトを渡せない。
 
 * やっぱり遅い。

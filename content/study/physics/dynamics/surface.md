@@ -18,7 +18,8 @@ aliases:
 
 # 曲面上の運動
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[ラグランジュ形式](lagrange.md)」や「[ハミルトン形式](hamilton.md)」で解説したような、
 座標系の取り方によらない運動方程式に関して、
 曲面上に拘束された物体の運動について考えてみます。
@@ -27,7 +28,8 @@ aliases:
 数値計算により物体の軌跡を求めてみます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="surface"></a>曲面上のラグランジアン
+## <a id="sec-generated-title-2"></a> <a id="surface"></a>曲面上のラグランジアン
+
 正規直交座標系 <span class="math">x, y, z</span> を用いると、
 ラグランジアンは
 <span class="math">
@@ -123,7 +125,8 @@ L
 <span class="normal">−</span>
 φ<sub>q</sub><span class="paren" style="font-size:em;">(</span>q<span class="paren" style="font-size:em;">)</span></div>
 
-##<a id="sec-generated-title-3"></a> <a id="d23e373"></a>曲面上のハミルトン形式
+## <a id="sec-generated-title-3"></a> <a id="d23e373"></a>曲面上のハミルトン形式
+
 ラグランジアンの形が分かれば、
 ラグランジュ形式やハミルトン形式の運動方程式が立てられます。
 まずは、
@@ -179,7 +182,8 @@ H
 p<sup>T</sup><span class="paren" style="font-size:2em;">(</span><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂q</td></tr></table>g<sup><span class="normal">−1</span></sup><span class="paren" style="font-size:em;">(</span>q<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">)</span> p
 <span class="normal">−</span><table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂q</td></tr></table>φ<span class="paren" style="font-size:em;">(</span>q<span class="paren" style="font-size:em;">)</span></div>
 
-##<a id="sec-generated-title-4"></a> <a id="example"></a>具体例: 単位球面上の運動
+## <a id="sec-generated-title-4"></a> <a id="example"></a>具体例: 単位球面上の運動
+
 前節までで、曲面上のハミルトン形式を導出したわけですが、
 まだ「よく分からない式」だと思うので、
 具体例を挙げてみましょう。
@@ -191,7 +195,8 @@ p<sup>T</sup><span class="paren" style="font-size:2em;">(</span><table class="fr
 単位球面上の運動を考えてみます。
 
 
-###<a id="sec-generated-title-5"></a> <a id="sphere"></a>ハミルトン形式の導出
+### <a id="sec-generated-title-5"></a> <a id="sphere"></a>ハミルトン形式の導出
+
 単位球面は、
 <div class="math">
 x<span class="paren" style="font-size:em;">(</span>q<sub><span class="normal">1</span></sub>, q<sub><span class="normal">2</span></sub><span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">cos</span> q<sub><span class="normal">1</span></sub><span class="normal">sin</span> q<sub><span class="normal">2</span></sub></div><div class="math">
@@ -250,7 +255,8 @@ mG <span class="normal">sin</span> q<sub><span class="normal">2</span></sub></di
         <table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>p<sub><span class="normal">2</span></sub><span class="normal">=</span><table class="frac" summary="fraction"><tr><td class="num">p<sub><span class="normal">1</span></sub><sup><span class="normal">2</span></sup><span class="normal">cos</span> q<sub><span class="normal">2</span></sub></td></tr><tr><td>m <span class="normal">sin</span><sup><span class="normal">3</span></sup> q<sub><span class="normal">2</span></sub></td></tr></table><span class="normal">−</span>
 mG <span class="normal">sin</span> q<sub><span class="normal">2</span></sub></div>
 
-###<a id="sec-generated-title-6"></a> <a id="numerical"></a>数値計算
+### <a id="sec-generated-title-6"></a> <a id="numerical"></a>数値計算
+
 微分方程式を導出したからといって、
 厳密解を解析的に求められるわけではないんですが、
 ハミルトン形式にしてしまえば、

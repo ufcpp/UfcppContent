@@ -18,7 +18,8 @@ aliases:
 
 # 微小差分
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「微分」という言葉には2つの意味があります。
 というのも、日本語の「分」には「分割する」という操作を示す意味と、
 「部分」という物を表す意味があるためです。
@@ -66,7 +67,8 @@ aliases:
 ここでは、なぜわざわざこんな書き方をするのかという辺りの説明をしていきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="differential"></a>微小差分
+## <a id="sec-generated-title-2"></a> <a id="differential"></a>微小差分
+
 概要で軽く触れましたが、<strong id="difop" class="keyword">微分演算</strong>（derivation, differentiation）の定義は以下の通りです。
 <div class="math">
       f'<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub">Δt → 0</td></tr></table><table class="frac" summary="fraction"><tr><td class="num">
@@ -103,7 +105,8 @@ aliases:
       </span> あるいは積分中でのみ意味を持ちます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="reduce"></a>合成関数の微分（微小差分の約分）
+## <a id="sec-generated-title-3"></a> <a id="reduce"></a>合成関数の微分（微小差分の約分）
+
 比の形でしか意味を持たないものをなぜわざわざ分母と分子に分けて書くかというと、
 微小差分同士で形式的に約分ができるからです。
 
@@ -224,7 +227,8 @@ aliases:
       </span> を取る操作と、約分（乗除算）の順番を入れ替えることが出来るという性質がありますので、こういうことが可能なわけです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="inverse"></a>逆関数の微分（微小差分の逆数）
+## <a id="sec-generated-title-4"></a> <a id="inverse"></a>逆関数の微分（微小差分の逆数）
+
 逆関数の微分も、合成関数の微分と似たような式になります。
 先ほどの式に、<span class="math">
         y <span class="normal">=</span> t
@@ -344,7 +348,8 @@ aliases:
 となるわけです。
 
 
-##<a id="sec-generated-title-5"></a> <a id="definite"></a>定積分（積分中の微小差分）
+## <a id="sec-generated-title-5"></a> <a id="definite"></a>定積分（積分中の微小差分）
+
 <strong id="definite" class="keyword">定積分</strong>（definite integral）の定義（正確にはリーマン積分（Riemann integral）と呼ばれる定義）は以下のようになります。
 まず、区間 <span class="math">
         <span class="paren" style="font-size:em;">(</span>a, b<span class="paren" style="font-size:em;">)</span>
@@ -475,7 +480,8 @@ aliases:
 見ての通り、微分演算の時に説明した微小差分の意味と同じになります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="indefinite"></a>定積分と不定積分（微分演算中と積分中の微小差分）
+## <a id="sec-generated-title-6"></a> <a id="indefinite"></a>定積分と不定積分（微分演算中と積分中の微小差分）
+
 高校では、定積分と不定積分を特に区別して教えませんが、
 この2つは定義上、全く異なるものです。
 定積分は、前節で説明したような、関数の和の極限を取る操作のことを言います。
@@ -585,7 +591,8 @@ aliases:
 （この未知定数 <span class="math">C</span> を積分定数と呼びます。）
 
 
-##<a id="sec-generated-title-7"></a> <a id="separation"></a>変数分離形の微分方程式（微分方程式中の微小差分）
+## <a id="sec-generated-title-7"></a> <a id="separation"></a>変数分離形の微分方程式（微分方程式中の微小差分）
+
 解析的に解くことのできる微分方程式のパターンの1つに、変数分離形（separation of variables）というものがあります。
 変数分離形の微分方程式は以下のような式で表されます。
 <div class="math">
@@ -738,7 +745,8 @@ aliases:
 と開き直るのもありだったりするんですが。
 
 
-##<a id="sec-generated-title-8"></a> <a id="summary"></a>最後に
+## <a id="sec-generated-title-8"></a> <a id="summary"></a>最後に
+
 これまで散々、微小変分（<span class="math">
         <span class="normal">d</span>t
       </span> など）は比の形あるいは積分中でしか意味を成さない、

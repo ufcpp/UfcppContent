@@ -18,7 +18,8 @@ aliases:
 
 # 論理マークアップとデザインの変更
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 HTML を直接書くのではなく、
 一度 XML で書いてから XSL で変換をかける利点の1つは、
 論理マークアップと視覚デザインを分離できることです。
@@ -26,7 +27,8 @@ HTML を直接書くのではなく、
 論理と視覚が分離されているので、視覚デザインの変更も容易です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="separation"></a>論理と視覚の分離
+## <a id="sec-generated-title-2"></a> <a id="separation"></a>論理と視覚の分離
+
 例として更新履歴を見てみましょう。
 
 勉強ページの更新履歴の元データは以下のような XML になっています。
@@ -123,7 +125,8 @@ HTML の方では視覚的なタグの中に情報が埋まっています。
 こういう視覚デザイン的な情報は更新履歴という論理的な情報とは分離しておいた方が変更作業が楽になるわけです。
 
 
-##<a id="sec-generated-title-3"></a> <a id="xsl"></a>XSL による論理と視覚の分離
+## <a id="sec-generated-title-3"></a> <a id="xsl"></a>XSL による論理と視覚の分離
+
 XSL というのは、まさに「論理と視覚の分離」のためにあります。
 XML には論理的な情報を書き、
 XSL によって視覚的な情報を持たせます。

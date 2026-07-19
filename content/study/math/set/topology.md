@@ -18,7 +18,8 @@ aliases:
 
 # 位相
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 数学では位相とはtopologyのこと。
 物理で言う所の位相（phase）は相と言うことが多い。
  
@@ -31,7 +32,8 @@ aliases:
 関数の連続性や微分積分などのいわゆる「解析学」の下地となる基本的な概念になります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 <pre>
 
 ・位相

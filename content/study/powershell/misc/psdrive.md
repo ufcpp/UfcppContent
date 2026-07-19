@@ -18,7 +18,8 @@ aliases:
 
 # プロバイダとドライブ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 PowerShell では、
 ファイルシステム、レジストリ、環境変数なんかの項目を、
 どれも同じコマンドで操作できます。

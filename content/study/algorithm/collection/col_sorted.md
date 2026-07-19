@@ -18,7 +18,8 @@ aliases:
 
 # ソート済み配列
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 コレクションを使う際、
 要素の並び順には意味がない場合があります。
 例えば、辞書のような用途を考えてください。
@@ -38,7 +39,8 @@ aliases:
 その2分検索法を使ったコレクションです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="bin_search"></a>2分検索法
+## <a id="sec-generated-title-2"></a> <a id="bin_search"></a>2分検索法
+
 例えば、配列中の要素を検索しようと思うと、
 普通は以下のようになります。
 
@@ -104,7 +106,8 @@ aliases:
 このようなアルゴリズムを<strong id="binary" class="keyword">2分検索法</strong>（binary search）と呼びます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="sorted_array"></a>ソート済み配列
+## <a id="sec-generated-title-3"></a> <a id="sorted_array"></a>ソート済み配列
+
 「[2分検索法](#binary)」を使えば、
 検索が計算量 O(log n) を作ることができます。
 
@@ -114,7 +117,8 @@ aliases:
 ソート済み配列が高速なのはあくまで検索のみになります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="character"></a>特徴
+## <a id="sec-generated-title-4"></a> <a id="character"></a>特徴
+
 ソート済み配列は以下のような利点を持っています。
 
 * 検索が極めて高速。計算量 O(log n) の検索アルゴリズムの中でも、オーバーヘッドが少なく、特に高速です。
@@ -133,7 +137,8 @@ aliases:
 要素の挿入・削除の機会が少なく検索の比率の高い場合に用いられます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="impl"></a>実装方法
+## <a id="sec-generated-title-5"></a> <a id="impl"></a>実装方法
+
 要素の挿入・削除もありますし、
 内部実装には「[配列リスト](col_array.md#array)」を使いましょう。
 
@@ -222,7 +227,8 @@ aliases:
 配列リストへの挿入・削除自体は O(n) です。
 
 
-##<a id="sec-generated-title-6"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-6"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/SortedArray.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/SortedArray.cs)

@@ -19,7 +19,8 @@ aliases:
 
 # \[雑記\] IQueryable の実装
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 LINQ to SQL で使われる Table クラスなどは IQueryable と IQueryProvider インターフェースを実装しています。
 これら IQueryable および IQueryProvider は、
 
@@ -49,7 +50,8 @@ IQueryable の仕組みについて説明します。
 「[式木（Expression Trees）](../dynamic/sp3_expression.md)」や「[[サンプル] 式木を WPF で GUI 表示](../sample/sm_treeview.md)」辺りを参考にしてください。
 
 
-##<a id="sec-generated-title-2"></a> <a id="toSQL"></a>LINQ to SQL: クエリ式 → 式木 → SQL 文
+## <a id="sec-generated-title-2"></a> <a id="toSQL"></a>LINQ to SQL: クエリ式 → 式木 → SQL 文
+
 まず、
 前節で説明した「クエリ式 → 式木の構築手順 → 式木を独自に処理」という流れを見るために、
 LINQ to SQL を例に説明します。
@@ -115,7 +117,8 @@ WHERE [t0].[cv] = [t1].[ID]
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="iqueyable"></a>IQueryable, IQueryProvider
+## <a id="sec-generated-title-3"></a> <a id="iqueyable"></a>IQueryable, IQueryProvider
+
 IQueryable および IQueryProvider は以下のようなインターフェースです。
 
 <pre class="source" title="IQueryable インターフェース" lang="">
@@ -152,7 +155,8 @@ CreateQuery で「クエリ式 → 式木の構築」を、
 Excute で「式木の独自処理」を行います。
 
 
-##<a id="sec-generated-title-4"></a> <a id="impl"></a>IQueryable, IQueryProvider の実装
+## <a id="sec-generated-title-4"></a> <a id="impl"></a>IQueryable, IQueryProvider の実装
+
 たいていの場合、IQueryProvider.Excute 以外の部分の実装で凝る必要はないようです。
 以下の記事（英語）に、IQueryable の典型的な実装方法が書かれています。
 
@@ -180,7 +184,8 @@ QueryProvider を継承して Execute と GetQueryText を実装することに�
 IQueryable の「クエリ式 → 式木の構築」の部分について説明していきたいと思います。
 
 
-###<a id="sec-generated-title-5"></a> <a id="system"></a>挙動の確認
+### <a id="sec-generated-title-5"></a> <a id="system"></a>挙動の確認
+
 QueryProvider クラスの時点で「クエリ式 → 式木の構築」の部分は完成しているわけで、
 「式木の独自処理」が必要ないのであれば、
 以下のような適当な実装でも十分に動いたりします。
@@ -240,7 +245,8 @@ Console.Write(<span class="literal">"{0}\n"</span>, q4.Expression);
 IQueryable.Expression の中身が追記されています。
 
 
-###<a id="sec-generated-title-6"></a> <a id="system"></a>System.Linq.Queryable
+### <a id="sec-generated-title-6"></a> <a id="system"></a>System.Linq.Queryable
+
 実のところ、QueryProvider クラスの CreateQuery メソッドは、
 引数で与えられた式木をそのまま Query クラスに流しているだけだったりします。
 

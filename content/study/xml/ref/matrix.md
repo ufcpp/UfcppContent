@@ -18,11 +18,13 @@ aliases:
 
 # 行列
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 テーブル状の行列を表示
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;matrix size="行列の高さ"&gt;
   &lt;row&gt;&lt;elem&gt;1,1成分&lt;/elem&gt;...&lt;elem&gt;1,n成分&lt;/elem&gt;
   .
@@ -32,7 +34,8 @@ aliases:
 &lt;/matrix&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;vervec size="3"&gt;&lt;elem&gt;x'&lt;/elem&gt;&lt;elem&gt;y'&lt;/elem&gt;&lt;elem&gt;z'&lt;/elem&gt;&lt;/vervec&gt; = 
 &lt;matrix size="3"&gt;
 &lt;row&gt;&lt;elem&gt;a&lt;/elem&gt;&lt;elem&gt;b&lt;/elem&gt;&lt;elem&gt;c&lt;/elem&gt;&lt;/row&gt;
@@ -45,7 +48,8 @@ aliases:
 <span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="vector"><tr><td>x</td></tr><tr><td>y</td></tr><tr><td>z</td></tr></table><span class="paren" style="font-size:3em;">]</span>
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:matrix"&gt;
   &lt;span class="paren"&gt;
     &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
@@ -76,7 +80,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>table.matrix
 {
   display:inline;

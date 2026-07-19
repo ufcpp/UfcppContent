@@ -18,7 +18,8 @@ aliases:
 
 # vector
 
-##<a id="sec-generated-title-1"></a> <a id="d20e4"></a>vectorとは
+## <a id="sec-generated-title-1"></a> <a id="d20e4"></a>vectorとは
+
 <strong id="vector" class="keyword">vector</strong>とは一言で言うと可変長配列です。
 データが確保した記憶領域に収まりきらなくなったら自動で領域を拡張してくれ、
 配列の長さを自動で管理してくれるます。
@@ -32,7 +33,8 @@ STLのvectorはメモリの許す限り、次元を拡張できるn次元ベク�
 (まあ、むしろ数学のベクトルは想像しないほうがいいです。)
 
 
-##<a id="sec-generated-title-2"></a> <a id="d20e24"></a>vectorの特徴
+## <a id="sec-generated-title-2"></a> <a id="d20e24"></a>vectorの特徴
+
 * ランダムアクセス(<code>[]</code>を使って添え字を指定してのアクセス)が O(1) で行え、もっとも高速
 
 * 末尾への要素の追加、削除は O(1) で行える

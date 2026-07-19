@@ -18,7 +18,8 @@ aliases:
 
 # 高次元図形
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[数学](../index.md)」の方で、
 「式の丸暗記はするな」
 「イメージで覚えられるものはイメージで覚えろ」
@@ -40,7 +41,8 @@ aliases:
 高次元図形のイメージを使むというのがどういうことなのか考えてみようと思います。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 <pre>
 具体的にイメージできないっていっても、類推は出来る。
 

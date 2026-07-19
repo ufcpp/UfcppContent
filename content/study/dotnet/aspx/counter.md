@@ -18,7 +18,8 @@ aliases:
 
 # アクセスカウンタを作ろう
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 アクセスログ記録に続き、アクセスカウンタを。
 
 せっかくだから色々やってみようということで、
@@ -43,7 +44,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="count"></a>カウント処理
+## <a id="sec-generated-title-2"></a> <a id="count"></a>カウント処理
+
 アクセスログ記録と同じく、
 カウント処理は Global.asax の Session_Start イベントハンドラで行うことにします。
 
@@ -111,7 +113,8 @@ HttpSessionState 型。）
 セッションがタイムアウトするまでずっと保持されます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="cookie"></a>Cookie の利用
+## <a id="sec-generated-title-3"></a> <a id="cookie"></a>Cookie の利用
+
 ここで、カウント数もアクセスログに記録してみることにします。
 また、前回のアクセス時のカウント数も記録して、
 リピート状況をログに取れるようにします。
@@ -168,7 +171,8 @@ Response.Cookies でサーバから送り返す Cookie を設定します。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="display"></a>カウント数の表示（Web フォーム中）
+## <a id="sec-generated-title-4"></a> <a id="display"></a>カウント数の表示（Web フォーム中）
+
 Global.asax で Session 状態に記憶したカウント数を表示したいわけですが、
 Web フォーム（.aspx）ページ中に表示するのは非常に簡単です。
 
@@ -196,7 +200,8 @@ Web フォーム（.aspx）ページ中に表示するのは非常に簡単で�
 <span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-5"></a> <a id="image"></a>画像カウンタ
+## <a id="sec-generated-title-5"></a> <a id="image"></a>画像カウンタ
+
 普通の html ページ上にカウンタを設置しすることを考えて、
 CGI などでよくやるような、画像カウンタを作ることもできます。
 
@@ -287,7 +292,8 @@ private void Page_Load(object sender, System.EventArgs e)
 <span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="js"></a>おまけ（JavaScript 版）
+### <a id="sec-generated-title-6"></a> <a id="js"></a>おまけ（JavaScript 版）
+
 同じ理屈で、JavaScript カウンタにしたりもできます。
 
 

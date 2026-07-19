@@ -14,14 +14,16 @@ aliases:
 
 # \[雑記\] 式にまつわる補足
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[変数と式](../start/st_variable.md)」で少し言葉としては出しましたが、
 プログラミング言語の構文には大きく分けて式(expression)とステートメント(statement: 文、平叙文)という2種類のものがあります。
 
 最近のプログラミング言語ほど式の比率が高くなっています。
 C#でも、バージョンを重ねるごとに、式になっている構文が増えています。
 
-##<a id="sec-generated-title-2"></a> <a id="term"></a>式とステートメント
+## <a id="sec-generated-title-2"></a> <a id="term"></a>式とステートメント
+
 「[基礎](../index.md#start)」と「[構造化](../index.md#structured)」のセクションで、C#の式とステートメントの結構な割合を紹介しました。ここで1度、この式とステートメントの区別についての話をしておきます。
 
 式とステートメントは、大まかに言うと以下のようなものです。
@@ -29,7 +31,8 @@ C#でも、バージョンを重ねるごとに、式になっている構文が
 - <strong id="key-expression" class="keyword">式</strong>(expression): 割とどこにでも書ける代わりに戻り値が必須
 - <strong id="key-statement" class="keyword">ステートメント</strong>(statement): 戻り値がなくてもいい代わりに書ける場所がブロック内に限られている
 
-#####<a id="sec-generated-title-3"></a> <a id="expression"></a>式
+##### <a id="sec-generated-title-3"></a> <a id="expression"></a>式
+
 式(expression: 表現、語句、(数学用語で)式)は、
 以下のような特徴がある構文です。
 
@@ -58,7 +61,8 @@ C#でも、バージョンを重ねるごとに、式になっている構文が
 
 組み合わせて書ける分、1つ1つはシンプルなものが多いです。
 
-#####<a id="sec-generated-title-4"></a> <a id="statement"></a>ステートメント
+##### <a id="sec-generated-title-4"></a> <a id="statement"></a>ステートメント
+
 一方、ステートメント(statement: 文、声明)は、
 以下のような特徴がある構文です。
 
@@ -82,7 +86,8 @@ C#でも、バージョンを重ねるごとに、式になっている構文が
 
 式やステートメント(文)の一覧は、「[C# の式と文の一覧](../cheatsheet/list_expression.md)」にまとめてあります。
 
-##<a id="sec-generated-title-5"></a> <a id="increasing-expressions"></a>式は増加傾向にある
+## <a id="sec-generated-title-5"></a> <a id="increasing-expressions"></a>式は増加傾向にある
+
 近年では、ステートメントよりも式の方が好まれる傾向があります。
 C# でも、バージョンアップを重ねるたびに、式の比率が増えています。
 
@@ -94,6 +99,7 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 以下に例を挙げていきます。
 
 ##### <a id="sec-generated-title-6"></a>C# 2.0
+
 <table>
 <tr>
 <th>構文</th>
@@ -136,6 +142,7 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </table>
 
 ##### <a id="sec-generated-title-7"></a>C# 3.0
+
 <table>
 <tr>
 <th>構文</th>
@@ -178,6 +185,7 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 
 
 ##### <a id="sec-generated-title-8"></a>C# 6.0
+
 <table>
 <tr>
 <th>構文</th>
@@ -225,6 +233,7 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </table>
 
 ##### <a id="sec-generated-title-9"></a>C# 7.0
+
 <table>
 <tr>
 <th>構文</th>
@@ -300,6 +309,7 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </table>
 
 ##### <a id="sec-generated-title-10"></a>C# 8.0
+
 <table>
 <tr>
 <th>構文</th>

@@ -6,6 +6,66 @@ namespace Ufcpp.ContentConverter.Tests;
 public sealed class MigrationTests
 {
     [Fact]
+    public void MarkdownHeadingSpacingIsNormalizedOutsideProtectedBlocks()
+    {
+        var input = """
+            ---
+            title: Test
+            # Front matter comment
+            ---
+            # Heading
+            Body
+            ##<a id="legacy"></a>Legacy heading
+            Body
+            ## Already spaced
+
+            Body
+            ```text
+            # Fenced code
+            Body
+            ```
+            <pre>
+            # HTML code
+            Body
+            </pre>
+            <!--
+            # Commented heading
+            Body
+            -->
+            """;
+        var expected = """
+            ---
+            title: Test
+            # Front matter comment
+            ---
+            # Heading
+
+            Body
+            ## <a id="legacy"></a>Legacy heading
+
+            Body
+            ## Already spaced
+
+            Body
+            ```text
+            # Fenced code
+            Body
+            ```
+            <pre>
+            # HTML code
+            Body
+            </pre>
+            <!--
+            # Commented heading
+            Body
+            -->
+            """;
+
+        Assert.Equal(expected, TextUtilities.NormalizeMarkdownHeadingSpacing(input));
+        Assert.Equal(expected, TextUtilities.NormalizeMarkdownHeadingSpacing(expected));
+    }
+
+    [Fact]
     public void ParserIgnoresDtdWithoutResolvingIt()
     {
         using var workspace = new TestWorkspace();
@@ -472,7 +532,7 @@ public sealed class MigrationTests
                              nodeTypeAlias="Chapter"><title>Chapter</title>
                       <Article id="5" parentID="4" level="5" sortOrder="0" nodeName="target" urlName="target"
                                createDate="2020-01-01T00:00:00" updateDate="2020-01-02T00:00:00"
-                               nodeTypeAlias="Article"><title>Target</title><bodyText>## Section</bodyText></Article>
+                               nodeTypeAlias="Article"><title>Target</title><bodyText>##Section&#10;Section body</bodyText></Article>
                       <Article id="6" parentID="4" level="5" sortOrder="1" nodeName="source" urlName="source"
                                createDate="2020-01-01T00:00:00" updateDate="2020-01-02T00:00:00"
                                nodeTypeAlias="Article"><title>Source</title>
@@ -511,7 +571,7 @@ public sealed class MigrationTests
         var subject = File.ReadAllText(
             Path.Combine(output, "content", "study", "subject", "index.md"));
         Assert.Contains("source_url: \"https://ufcpp.net/study/subject/chapter/target/\"", target);
-        Assert.Contains("""## <a id="sec-generated-title-1"></a>Section""", target);
+        Assert.Contains("## <a id=\"sec-generated-title-1\"></a>Section\n\nSection body", target);
         Assert.Contains("""[target](target.md#sec-generated-title-1)""", source);
         Assert.Contains("""<a id="chapter"></a>""", subject);
     }

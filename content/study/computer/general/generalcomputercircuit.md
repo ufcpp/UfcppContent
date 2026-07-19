@@ -18,7 +18,8 @@ aliases:
 
 # 汎用コンピューターの作り方
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[CPU](cpu.md)」で説明したようなCPUの動作を実現するためには、以下のようなハードウェアが必要です。
 
 * 演算回路: ALUの内部で使う、加算や乗算を行うための回路。
@@ -40,11 +41,13 @@ aliases:
 （桁が増えても、単純に並べる回路の数が増えるだけです。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="alu"></a>演算回路
+## <a id="sec-generated-title-2"></a> <a id="alu"></a>演算回路
+
 前述のとおり、ALUには加算回路や乗算回路をはじめとして、さまざまな演算回路が入っています。
 
 
-###<a id="sec-generated-title-3"></a> <a id="bit-logic"></a>ビットごとの論理演算
+### <a id="sec-generated-title-3"></a> <a id="bit-logic"></a>ビットごとの論理演算
+
 ALU中の演算回路の中で最も簡単なものは、ビットごとの論理演算回路です。
 ビットごとの論理演算回路は、名前通りビットごとにそれぞれAND演算回路などを通すものです。
 例えばビットごとのAND演算なら図1に示すようになります。
@@ -63,7 +66,8 @@ ALU中の演算回路の中で最も簡単なものは、ビットごとの論�
 （いまどきはコンパイラーが自動で置き換えてくれたりするので、開発者が気にする必要性は低くなっています。）
 
 
-###<a id="sec-generated-title-4"></a> <a id="add"></a>加算
+### <a id="sec-generated-title-4"></a> <a id="add"></a>加算
+
 加算に関しては、まず、1桁だけの場合から考えてみましょう。
 入力を <span class="math">a</span>, <span class="math">b</span>、出力を <span class="math">cs <span class="normal">=</span> a <span class="normal">+</span> b</span>
 （<span class="math">c</span>, <span class="math">s</span> はそれぞれ、桁上がり（carry out）と和（sum）を意味します）とすると、
@@ -254,7 +258,8 @@ ALU中の演算回路の中で最も簡単なものは、ビットごとの論�
 （次項で説明しますが、1桁目も全加算器にすることで、減算と回路を共通化することができます）。
 
 
-###<a id="sec-generated-title-5"></a> <a id="two-complement"></a>2の補数（負の数の表現）
+### <a id="sec-generated-title-5"></a> <a id="two-complement"></a>2の補数（負の数の表現）
+
 負の数を表現するためには、符号1ビットと絶対値を持つというような方法も考えられますが、
 通常は、これから説明するような<strong id="two-complement" class="keyword">2の補数</strong>（two’s complement）と呼ばれる表現を用います。
 2の補数表現のいいところは、加算や乗算が正の数の場合とまったく同じ回路で計算可能なことです
@@ -358,7 +363,8 @@ ALU中の演算回路の中で最も簡単なものは、ビットごとの論�
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="sub"></a>減算
+### <a id="sec-generated-title-6"></a> <a id="sub"></a>減算
+
 2の補数がわかれば、減算回路を作るのは簡単です。
 <span class="math">a <span class="normal">−</span> b <span class="normal">=</span> a <span class="normal">+</span> <span class="paren" style="font-size:em;">(</span><span class="normal">−</span>b<span class="paren" style="font-size:em;">)</span></span> なので、
 b の2の補数を加算回路に与えるだけで減算を実現できます。
@@ -376,7 +382,8 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 実際、通常は、加算器と減算器の回路を共通化して、CPUの回路面積を削減します。
 
 
-###<a id="sec-generated-title-7"></a> <a id="mul"></a>乗算
+### <a id="sec-generated-title-7"></a> <a id="mul"></a>乗算
+
 2進数での乗算を考える前に、10進数の乗算を振り返ってみましょう。
 小学校などで始めて2桁以上の掛け算を習う際、図4に例を示すような図を使って手順を教わると思います。
 
@@ -411,7 +418,8 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 興味があれば調べてみてください。
 
 
-###<a id="sec-generated-title-8"></a> <a id="shift"></a>シフト
+### <a id="sec-generated-title-8"></a> <a id="shift"></a>シフト
+
 図6に示すように、入力されたビット列をずらす操作をシフト（shift）演算と呼びます。
 文字に起こしたときに左右どちらに向かってずれるかによって、左シフトと右シフトの2種類のシフト演算があり、
 例えば、0110という2進数（10進数で6）を左シフトすると0011（10進数で3）に、右シフトすると1100（10進数で12）になります。
@@ -462,7 +470,8 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 「大小比較（減算が必要）より等値比較（XOR相当の演算）の方が高速」とかいうようなことが言えます。
 
 
-##<a id="sec-generated-title-9"></a> <a id="selector"></a>選択回路
+## <a id="sec-generated-title-9"></a> <a id="selector"></a>選択回路
+
 CPUを作るためには、ALU内のどの演算回路を動かすかや、
 どのレジスターからデータを読み出して、どのレジスターへデータ書き込むかなどを選択する回路（selector）が必要です。
 図9に4つのレジスターがある場合の選択回路の例を示します。
@@ -476,7 +485,8 @@ CPUを作るためには、ALU内のどの演算回路を動かすかや、
 選択回路には、読み出し側と書き込み側でそれぞれ1種類ずつ、マルチプレクサーとデマルチプレクサーという2種類の選択回路があります。
 
 
-###<a id="sec-generated-title-10"></a> <a id="multiplexer"></a>マルチプレクサー
+### <a id="sec-generated-title-10"></a> <a id="multiplexer"></a>マルチプレクサー
+
 読み出し側では、複数の入力のうち1つを選んで出力するような回路が必要で、これを<strong id="multiplexer" class="keyword">マルチプレクサー</strong>（multiplexer: 多重化するもの）と呼びます。
 例えば、入力が4つの場合には、選択信号は2ビットで表され、図10に示すような挙動をする回路になります。
 
@@ -510,7 +520,8 @@ CPUを作るためには、ALU内のどの演算回路を動かすかや、
 通常、入力が多いほどマルチプレクサーの回路規模も大きくなり、組み合わせ回路の伝播遅延も大きくなります。
 
 
-###<a id="sec-generated-title-11"></a> <a id="demultiplexer"></a>デマルチプレクサー
+### <a id="sec-generated-title-11"></a> <a id="demultiplexer"></a>デマルチプレクサー
+
 逆に、書き込み側では、複数の出力のうち1つだけを1にする（レジスターの書き込み制御信号として使う）回路が必要で、
 これを<strong id="multiplexer" class="keyword">デマルチプレクサー</strong>（demultiplexer）と呼びます。
 出力が4つの場合には、図11に示すような回路になります。

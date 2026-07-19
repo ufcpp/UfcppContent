@@ -18,7 +18,8 @@ aliases:
 
 # 固有値
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 [2006年度前期輪講](../../misc/list/lecture.md#2006a)で発表した内容にそって説明を書く予定。
  
 行列の、座標変換によって不変な性質を調べる。
@@ -38,7 +39,8 @@ aliases:
 行列の冪計算、指数計算
 
 
-##<a id="sec-generated-title-2"></a> <a id="similar"></a>相似変換
+## <a id="sec-generated-title-2"></a> <a id="similar"></a>相似変換
+
 「[線形写像](matrix.md#linear_map)」で説明しましたが、
 線形写像を行列で表すとき、
 線形空間の座標系の取り方によって行列の形が変わります。
@@ -92,7 +94,8 @@ aliases:
 ということになります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="diag"></a>行列の対角化と冪計算
+## <a id="sec-generated-title-3"></a> <a id="diag"></a>行列の対角化と冪計算
+
 前節で言うような「相似変換によって変化しない行列の性質」
 として、これから説明する固有値や固有ベクトルという物があるのですが、
 そういう概念を説明する前に、もう少し簡単な話から初めて見ましょう。
@@ -138,7 +141,8 @@ aliases:
 <span class="math">A</span> の冪計算を <span class="math">Λ</span> の冪計算に帰着することができます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="feasibility"></a>行列の対角化可能性
+## <a id="sec-generated-title-4"></a> <a id="feasibility"></a>行列の対角化可能性
+
 前節の通り、行列を相似変換によって対角行列に変形（対角化）したいわけですが、
 任意の行列が対角化できるわけではありません。
 ただし、結論から先に言ってしまえば、
@@ -179,7 +183,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="eigen_value"></a>固有値と固有ベクトル
+## <a id="sec-generated-title-5"></a> <a id="eigen_value"></a>固有値と固有ベクトル
+
 それでは、具体的な対角化の方法について考えてみましょう。
  
 行列 <span class="math">A</span> が相似変換によって対角行列 <span class="math">Λ</span> になるということは、
@@ -211,7 +216,8 @@ A <span class="vector">p</span> ＝ λ <span class="vector">p</span></div>
 このような問題を<strong id="eigen_problem" class="keyword">固有値問題</strong>と呼びます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="eigen_equation"></a>固有方程式
+## <a id="sec-generated-title-6"></a> <a id="eigen_equation"></a>固有方程式
+
 さらに、固有値、固有ベクトルを具体的に求める方法を考えます。
  
 固有ベクトルというのは、
@@ -250,7 +256,8 @@ A <span class="vector">p</span> ＝ λ <span class="vector">p</span></span>
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="diagonal"></a>拡大： 相異なる実数解の場合
+## <a id="sec-generated-title-7"></a> <a id="diagonal"></a>拡大： 相異なる実数解の場合
+
 行列 <span class="math">A</span> の固有値が全て互いに異なる実数解
 <span class="math">λ<sub>i</sub></span>
 の場合、
@@ -278,7 +285,8 @@ P<sup>－1</sup> A P
 （これを、<span class="math"><span class="normal">diag</span><span class="paren" style="font-size:em;">{</span>λ<sub>i</sub><span class="paren" style="font-size:em;">}</span></span> と書いたりします。）
 
 
-##<a id="sec-generated-title-8"></a> <a id="ddiagonal"></a>傾斜： 重解を持つ場合
+## <a id="sec-generated-title-8"></a> <a id="ddiagonal"></a>傾斜： 重解を持つ場合
+
 重解の場合でも、
 <span class="math">
 A <span class="vector">p</span> ＝ λ <span class="vector">p</span></span>
@@ -326,7 +334,8 @@ P<sup>－1</sup> A P
 このような行列を、2重対角行列（double diagonal matrix）と呼びます。
 
 
-##<a id="sec-generated-title-9"></a> <a id="roteta"></a>回転： 共役複素数解の場合
+## <a id="sec-generated-title-9"></a> <a id="roteta"></a>回転： 共役複素数解の場合
+
 解が複素数解の場合、
 実数の範囲では対角化ができません。
  
@@ -386,7 +395,8 @@ r
 <span class="math">θ</span> の回転を表す行列になります。
 
 
-##<a id="sec-generated-title-10"></a> <a id="jordan"></a>Jordan の標準形
+## <a id="sec-generated-title-10"></a> <a id="jordan"></a>Jordan の標準形
+
 これまで、相異なる実数解、重解、複素数解の場合についてそれぞれ説明しました。
 これらが混在している場合には、
 図4に示すような、対角、2重対角、回転が混在した行列に変形することになります。
@@ -402,7 +412,8 @@ r
 物理学者に同じスペルでヨルダンと読む人がいてややこしい。）
 
 
-##<a id="sec-generated-title-11"></a> <a id="power"></a>行列の冪、指数
+## <a id="sec-generated-title-11"></a> <a id="power"></a>行列の冪、指数
+
 <pre>
 執筆予定
 
@@ -444,7 +455,8 @@ exp(A ＋ B) ＝ exp(A) ＋ exp(B)
 exp(N) も、冪級数の k 項目まで計算すれば OK。
 </pre>
 
-##<a id="sec-generated-title-12"></a> <a id="hk"></a>最小多項式とハミルトン・ケイリーの定理
+## <a id="sec-generated-title-12"></a> <a id="hk"></a>最小多項式とハミルトン・ケイリーの定理
+
 （書きかけ）
 <h4>固有ベクトル展開</h4>
 （固有値に重根を持つ場合は拡張固有空間まで含めて）
@@ -580,7 +592,8 @@ g<span class="paren" style="font-size:em;">(</span>A<span class="paren" style="f
 行列が対角化可能な条件は、最小多項式が重根を持たないこと。
 
 
-###<a id="sec-generated-title-13"></a> <a id="d33e1699"></a>余談
+### <a id="sec-generated-title-13"></a> <a id="d33e1699"></a>余談
+
 ちなみに、ハミルトンとケイリーはそれぞれ別の数学者の名前。
  
 アーサー・ケイリー（Arthur Cayley、1821年8月16日生まれ）、
@@ -600,7 +613,8 @@ g<span class="paren" style="font-size:em;">(</span>A<span class="paren" style="f
 日本語の「ち」を「ti」にするか「chi」にするかで順番変わっちゃうとか。）
 
 
-##<a id="sec-generated-title-14"></a> <a id="d33e1717"></a>余談
+## <a id="sec-generated-title-14"></a> <a id="d33e1717"></a>余談
+
 実は、固有値・固有方程式の歴史は行列の概念が整理されるよりも古かったりします。
 もちろん、行列の概念がないので、「行列の固有値」という言い方はしませんが、
 同等の概念が存在しました。
@@ -624,7 +638,8 @@ a<sub>i j</sub> x<sub>i</sub> x<sub>j</sub>
 この方程式の描く図形の大まかな形が推測できました。
 
 
-##<a id="sec-generated-title-15"></a> <a id="d33e1773"></a>サンプルプログラム
+## <a id="sec-generated-title-15"></a> <a id="d33e1773"></a>サンプルプログラム
+
 [2次正方行列の固有値計算＆図示](../../../../assets/media/ufcpp2000/math/demo/matrix.xbap)
 
 .NET Framework 3.0 必須。

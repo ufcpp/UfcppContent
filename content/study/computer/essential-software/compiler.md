@@ -18,7 +18,8 @@ aliases:
 
 # コンパイラー
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 高級言語を使ってプログラムを作るためには、高級言語から、CPUが実行できる「[機械語](../general/cpu.md#machine-language)」への変換作業が必要になります。
 この変換作業のことをコンパイル（compile： 編纂する）と呼びます。
 そして、コンパイルを行うためのプログラムを<strong id="compiler" class="keyword">コンパイラー</strong>（compiler）と呼びます。
@@ -43,7 +44,8 @@ aliases:
 本項では、木構造からの変換が容易なスタック・マシン（stack machine）と呼ばれるタイプの機械語を用いて説明を行っていきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="interpreter"></a>注: コンパイラーとインタープリター
+## <a id="sec-generated-title-2"></a> <a id="interpreter"></a>注: コンパイラーとインタープリター
+
 元々、コンパイルという言葉は「ソース・コードを事前に全て実行可能ファイルに変えておく」ということを指していました。
 これに対して、「ソース・コードのままで配布して、逐次的に機械語に翻訳して実行する」という方式もあり、
 逐次翻訳作業のことをインタープリット（interpret： 翻訳する）、逐次実行するためのプログラムを<strong id="interpreter" class="keyword">インタープリター</strong>（interpreter）と呼びます。
@@ -58,7 +60,8 @@ aliases:
 本項で説明するような字句解析、構文解析、機械語化などの過程が必要になります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="regular-expression"></a>正規表現
+## <a id="sec-generated-title-3"></a> <a id="regular-expression"></a>正規表現
+
 まずは、字句解析から見ていくわけですが、その前に、正規表現というものの説明が必要になります。
 
 前節では、字句解析を「文字列を単語に切り分ける処理」と言いましたが、
@@ -112,6 +115,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-4"></a>注意: 名前の由来
+
 言語学などの分野で、言語の文法を形式的に（機械的な一定のルール（format）に沿った表現で）表そうという学問があって、
 これを形式言語（formal language）と呼びます。
 正規表現という言葉は、元々この分野の用語です。
@@ -124,7 +128,8 @@ aliases:
 本来の意味での正規表現（＝ 正規言語を表すのに必要十分なルール）ではなくなっています。
 
 
-##<a id="sec-generated-title-5"></a> <a id="lexical"></a>字句解析
+## <a id="sec-generated-title-5"></a> <a id="lexical"></a>字句解析
+
 正規表現について簡単に説明したところで、具体的に例を挙げながら字句解析について説明していきましょう。
 例として、以下のようなソース・コードを考えましょう。
 
@@ -254,7 +259,8 @@ sum = x + y;
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="syntactic"></a>構文解析
+## <a id="sec-generated-title-6"></a> <a id="syntactic"></a>構文解析
+
 続いて、構文解析を行います。
 
 ちゃんとしたプログラミング言語であるためには、
@@ -389,7 +395,8 @@ sum = x + y;
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="stack-machine"></a>スタック・マシン
+## <a id="sec-generated-title-7"></a> <a id="stack-machine"></a>スタック・マシン
+
 抽象構文木からの機械語生成の説明に入る前に、<strong id="stack-machine" class="keyword">スタック・マシン</strong>（stack machine）というものについて説明します。
 スタック・マシンと呼ばれるタイプのCPUでは、抽象構文木からの機械語生成が容易です。
 そこで、スタック・マシン型の仮想的なCPUを考えて、その機械語コードを生成することを考えます。
@@ -417,7 +424,8 @@ sum = x + y;
 このような、CPU非依存の中間言語を考える場合にもスタック・マシンは便利で、JavaでもC#でも、中間言語はスタック・マシン型の機械語になっています。
 
 
-##<a id="sec-generated-title-8"></a> <a id="stack-operation"></a>スタック・マシンの動作
+## <a id="sec-generated-title-8"></a> <a id="stack-operation"></a>スタック・マシンの動作
+
 スタック機械では、オペランドが常にスタックの1番上に積まれている前提で、以下のような命令実行の仕方をします。
 
 * push： スタックの1番上に新しい値を積む。
@@ -470,7 +478,8 @@ sum = x + y;
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="assemble"></a>機械語の生成
+## <a id="sec-generated-title-9"></a> <a id="assemble"></a>機械語の生成
+
 さて、それでは抽象構文木からスタック機械型の機械語生成について説明して行きましょう。
 スタック・マシン型の機械語は、逆ポーランド記法的な順序でオペランド（を求める命令列）と演算子（に相当する演算命令）を並べることで生成できます。
 この性質から、図9に示すように、木構造を子要素側から逐次機械語化していけば、最終的に抽象構文木全体を機械語化できます。

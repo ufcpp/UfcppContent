@@ -18,7 +18,8 @@ aliases:
 
 # べき級数展開・留数
 
-##<a id="sec-generated-title-1"></a> <a id="int"></a>複素関数の積分
+## <a id="sec-generated-title-1"></a> <a id="int"></a>複素関数の積分
+
 正則関数のところで説明していますが、
 関数<span class="math">
         f<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span>
@@ -95,7 +96,8 @@ aliases:
 となります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="order"></a>極と零点の位数
+## <a id="sec-generated-title-2"></a> <a id="order"></a>極と零点の位数
+
 関数<span class="math">f</span>に対して<span class="math">
         <table class="sigma" summary="limitation"><tr><td><span class="normal">lim</span></td></tr><tr><td class="sigmasub">z→a</td></tr></table>f<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">0</span>
       </span>が成り立っているとき、<span class="math">a</span>を<span class="math">f</span>の<strong id="zero" class="keyword">零点</strong>（zero, zero point）といいます。
@@ -148,7 +150,8 @@ aliases:
 位数が<span class="math">N</span>である極を「<span class="math">N</span>位の極」といいます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="z"></a>整式の積分
+## <a id="sec-generated-title-3"></a> <a id="z"></a>整式の積分
+
 べき級数展開や留数の話をする前に、<span class="math">
         <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>z<sup>n</sup><span class="normal">d</span>z
       </span>（<span class="math">C</span>は原点を囲む閉路で、<span class="math">n</span>は整数）の計算結果を知っていると留数を理解しやすくなりますので、まずこのことについて述べます。
@@ -291,7 +294,8 @@ aliases:
 ただし、 <span class="math">C</span>は<span class="math">ζ</span>を囲む任意の経路です。
 
 
-##<a id="sec-generated-title-4"></a> <a id="Laurent"></a>ローラン展開
+## <a id="sec-generated-title-4"></a> <a id="Laurent"></a>ローラン展開
+
 <span class="math">
         <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table>
         <span class="paren" style="font-size:em;">(</span>
@@ -493,7 +497,8 @@ aliases:
 （ここではローラン級数の収束性や一意性について厳密な話は取り扱いません。詳しくは教科書などをご覧ください。）
 
 
-##<a id="sec-generated-title-5"></a> <a id="residue"></a>留数
+## <a id="sec-generated-title-5"></a> <a id="residue"></a>留数
+
 <span class="math">f</span>が領域<span class="math">
         <span class="normal">0</span><span class="normal">&lt;</span><span class="normal">|</span>
           z<span class="normal">−</span>ζ

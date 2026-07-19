@@ -18,7 +18,8 @@ aliases:
 
 # 数学B
 
-##<a id="sec-generated-title-1"></a> <a id="sequence"></a>数列
+## <a id="sec-generated-title-1"></a> <a id="sequence"></a>数列
+
 * 数列とその和 - 等差数列、等比数列、いろいろな数列(階差数列など)
 
 * 漸化式と数学的帰納法 - 漸化式と数列、数学的帰納法
@@ -28,7 +29,8 @@ aliases:
 → 「[数列と漸化式](sequence.md)」。
 
 
-##<a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル
+## <a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル
+
 * 平面上のベクトル - ベクトルとその演算、ベクトルの内積
 
 * 空間のベクトル
@@ -41,7 +43,8 @@ aliases:
 参考： 「[数学](../index.md)」。
 
 
-##<a id="sec-generated-title-3"></a> <a id="computer"></a>統計とコンピュータ
+## <a id="sec-generated-title-3"></a> <a id="computer"></a>統計とコンピュータ
+
 * 資料の整理 - 度数分布表、相関図
 
 * 資料の分析 - 代表値、分散、標準偏差、相関係数

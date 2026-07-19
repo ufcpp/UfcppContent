@@ -18,14 +18,16 @@ aliases:
 
 # フーリエ変換
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[フーリエ級数展開](fourierseries.md#series)」では、
 周期性を持つ関数はフーリエ級数に展開出来るという話をしてきました。
 ここでは、非周期関数を、「関数の周期<span class="math">T</span>を<span class="math">T→∞</span>としたものである」とみなすことで、
 フーリエ級数展開を非周期関数にも適用することを考えてみます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="transform"></a>フーリエ変換
+## <a id="sec-generated-title-2"></a> <a id="transform"></a>フーリエ変換
+
 まず、<span class="math">ω＝<table class="frac" summary="fraction"><tr><td class="num">2πn</td></tr><tr><td>T</td></tr></table></span>をいう変数を定義します。
 変数<span class="math">ω</span>は、フーリエ級数中では<span class="math"><span class="normal">sin</span>ωt, <span class="normal">cos</span>ωt, <span class="normal">exp</span>iωt</span>というように、正弦波中で変数<span class="math">t</span>に掛かるため、<strong id="afreq" class="keyword">角周波数</strong>と呼ばれます。
 角周波数<span class="math">ω</span>は、<span class="math">T→∞</span>としたとき、実数になります。
@@ -81,11 +83,13 @@ x(t) ＝
 同様に、フーリエ逆変換は<em><span class="math"><span class="normal">ℱ</span><sup>�|1</sup><span class="paren" style="font-size:em;">[</span>F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span></em>と表します。
 
 
-##<a id="sec-generated-title-3"></a> <a id="property"></a>フーリエ変換の性質
+## <a id="sec-generated-title-3"></a> <a id="property"></a>フーリエ変換の性質
+
 フーリエ変換は以下のような性質を持っています。
 
 
-###<a id="sec-generated-title-4"></a> <a id="linear"></a>線形性
+### <a id="sec-generated-title-4"></a> <a id="linear"></a>線形性
+
 <div class="math">
         <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 a f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
@@ -101,7 +105,8 @@ b
 <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
 
-###<a id="sec-generated-title-5"></a> <a id="differential"></a>微分
+### <a id="sec-generated-title-5"></a> <a id="differential"></a>微分
+
 <div class="math">
         <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
           <table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
@@ -138,7 +143,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 収束の可否については別途調べる必要があります。
 
 
-###<a id="sec-generated-title-6"></a> <a id="integral"></a>積分
+### <a id="sec-generated-title-6"></a> <a id="integral"></a>積分
+
 <div class="math">
         <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
           <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> t</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">－∞</td></tr></table>
@@ -169,7 +175,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>iω</td></tr></table><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
 
-###<a id="sec-generated-title-7"></a> <a id="timeshift"></a>時間シフト
+### <a id="sec-generated-title-7"></a> <a id="timeshift"></a>時間シフト
+
 <div class="math">
         <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 f<span class="paren" style="font-size:em;">(</span>t±T<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
@@ -191,7 +198,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 <span class="normal">exp</span><span class="paren" style="font-size:em;">(</span>±iTω<span class="paren" style="font-size:em;">)</span><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
 
-###<a id="sec-generated-title-8"></a> <a id="product"></a>積のフーリエ変換
+### <a id="sec-generated-title-8"></a> <a id="product"></a>積のフーリエ変換
+
 関数の積のフーリエ変換
 <span class="math"><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
@@ -291,13 +299,15 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></div>
 
-##<a id="sec-generated-title-9"></a> <a id="covolution"></a><a id="convolution"></a>畳込み積
+## <a id="sec-generated-title-9"></a> <a id="covolution"></a><a id="convolution"></a>畳込み積
+
 前節で説明したとおり、
 2つの関数を掛け合わせたものをフーリエ変換すると、<strong id="convolution" class="keyword">畳込み積</strong>（convolution product）という特殊な演算が出てきます。
 畳込み積は単に畳込み（convolution）と呼ぶこともあります。
 
 
-###<a id="sec-generated-title-10"></a> <a id="conv-definition"></a>畳込みの定義
+### <a id="sec-generated-title-10"></a> <a id="conv-definition"></a>畳込みの定義
+
 改めて、<span class="math">f</span>と<span class="math">g</span>の畳込み積<span class="math">f＊g</span>の定義式を書くと以下のようになります。
 <div class="math">
 f＊g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
@@ -307,7 +317,8 @@ f<span class="paren" style="font-size:em;">(</span>τ<span class="paren" style="
 g<span class="paren" style="font-size:em;">(</span>t－τ<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>τ
 </div>
 
-###<a id="sec-generated-title-11"></a> <a id="conv-meaning"></a>畳込みの意味
+### <a id="sec-generated-title-11"></a> <a id="conv-meaning"></a>畳込みの意味
+
 畳込み積は積のフーリエ変換結果として出てくる演算として定義しました。
 では、この演算自体にはどういった意味合いがあるのかという疑問に思う方もいるかと思います。
 そこで、畳込み積自体の意味について、具体例を挙げて説明していきます。
@@ -358,7 +369,8 @@ q<sub>i</sub>
 「畳込み（convolution）」という言葉は「ずらして重ねあわせる」という意味合いで使われているわけです。
 
 
-###<a id="sec-generated-title-12"></a> <a id="conv-property"></a>畳込みの性質
+### <a id="sec-generated-title-12"></a> <a id="conv-property"></a>畳込みの性質
+
 畳み込み積には交換法則および結合法則が成り立ちます。
 <div class="math">f＊g ＝ g＊f</div><div class="math">f＊<span class="paren" style="font-size:em;">(</span>g＊h<span class="paren" style="font-size:em;">)</span> ＝ <span class="paren" style="font-size:em;">(</span>g＊f<span class="paren" style="font-size:em;">)</span>＊h</div>
 また、畳込み積の微分・積分は以下のようになります。
@@ -382,7 +394,8 @@ f＊<span class="paren" style="font-size:2em;">(</span><span class="integral">�
 ＝
 f<span class="paren" style="font-size:em;">(</span>t ± T<span class="paren" style="font-size:em;">)</span></div>
 
-##<a id="sec-generated-title-13"></a> <a id="summay"></a>まとめ
+## <a id="sec-generated-title-13"></a> <a id="summay"></a>まとめ
+
 <table summary="フーリエ変換の公式">
 	<caption>
 		フーリエ変換の公式
@@ -473,7 +486,8 @@ g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 
 
 
-##<a id="sec-generated-title-14"></a> <a id="plan"></a>加筆予定
+## <a id="sec-generated-title-14"></a> <a id="plan"></a>加筆予定
+
 <pre>
 定数の 1/2π、普通は逆変換側に付けるけど、他にいろんな流儀あり。
 順変換側に付けたり、

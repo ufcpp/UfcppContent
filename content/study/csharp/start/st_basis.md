@@ -18,15 +18,18 @@ aliases:
 
 # C#のプログラムの基本構造
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * C# プログラムは Main から始まります。
 
 * 「[クラス](../oop/oo_class.md#class)」とか「[名前空間](../structured/sp_namespace.md#namespace)」とかは、今のところおまじない（後々説明）。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>C#の簡単なプログラム例
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>C#の簡単なプログラム例
+
 まずは C# を用いて書かれた簡単なプログラムを見てみましょう。
 
 
@@ -120,7 +123,8 @@ Console.Write <span class="literal">"皆様、はじめまして"</span>
 <code>static</code>は「[静的メンバー](../oop/oo_static.md)」で、
 <code>void</code>は「[関数](../structured/st_function.md)」で説明していきます。
 
-###<a id="sec-generated-title-4"></a> <a id="top-level-statements"></a>C# 9.0 から
+### <a id="sec-generated-title-4"></a> <a id="top-level-statements"></a>C# 9.0 から
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 C# 9.0 からは、上記のコードを以下のように書くことができます。
@@ -134,7 +138,8 @@ C# 9.0 からは、上記のコードを以下のように書くことができ�
 `namespace` とか `class` とかを飛ばして、書きたい処理を直接ファイル直下に書くことができるようになりました。
 詳しくは「[トップ レベル ステートメント](../misc/miscentrypoint.md#top-level-statements)」で説明します。
 
-###<a id="sec-generated-title-5"></a> <a id="global-using"></a>C# 10.0 から
+### <a id="sec-generated-title-5"></a> <a id="global-using"></a>C# 10.0 から
+
 <h5 class="version version10">Ver. 10.0</h5>
 
 C# 10.0 からは、さらに、以下のように縮めて書くことができます。
@@ -147,7 +152,8 @@ C# 10.0 からは、さらに、以下のように縮めて書くことができ
 `using` も消えました。
 詳しくは「[global using](../structured/sp_namespace.md#global-using)」で説明します。
 
-##<a id="sec-generated-title-6"></a> <a id="gui"></a>GUIプログラム例
+## <a id="sec-generated-title-6"></a> <a id="gui"></a>GUIプログラム例
+
 C# では GUI (Graphical User Interface: 要するに、Windowsなどのようにボタンやメニューなどをマウスで操作するようなもの)プログラミングも行えます。
 
 GUI プログラムは文字ベース(CUI: Character User Interfaceという)のプログラムに比べて煩雑な処理が多く、難しいので、ここでは例を挙げるにとどめます。
@@ -329,7 +335,8 @@ csc /r:system.windows.forms.dll /r:system.drawing.dll /t:winexe WelcomeForm.cs
    
 </div>
 
-##<a id="sec-generated-title-7"></a> <a id="web"></a>Webアプリ例
+## <a id="sec-generated-title-7"></a> <a id="web"></a>Webアプリ例
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0/ .NET 6 世代では、Webアプリ開発を以下のような十数行のコードから始められるようになりました。

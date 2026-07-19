@@ -18,7 +18,8 @@ aliases:
 
 # 文字列
 
-##<a id="sec-generated-title-1"></a> <a id="string"></a>文字列
+## <a id="sec-generated-title-1"></a> <a id="string"></a>文字列
+
 "" か '' でくくると文字列になります。
 
 "" の場合、中に $a などの変数が出てくると中身を展開します。
@@ -44,7 +45,8 @@ test $a
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="herestring"></a>here 文字列
+## <a id="sec-generated-title-2"></a> <a id="herestring"></a>here 文字列
+
 もう1つ、複数行にわたる文字列を定義できる
 <strong id="herestring" class="keyword">here string</strong> というものがあります。
 @" と "@ ではさむか、
@@ -86,7 +88,8 @@ $a
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="escape"></a>エスケープシーケンス
+## <a id="sec-generated-title-3"></a> <a id="escape"></a>エスケープシーケンス
+
 PowerShell では、
 タブや改行などの特殊な文字を表すためのエスケープ（後ろに続く文字に特殊な意味を持たせるもの）に
 `（バッククォート、逆アポストロフィ）を使います。
@@ -147,7 +150,8 @@ C 言語とかみたいにエスケープに \ 記号を使わないのは、
 多分、Windows のファイルシステムが \ をパスの区切りに使うからだと思います。
 
 
-##<a id="sec-generated-title-4"></a> <a id="string_add"></a>結合・反復
+## <a id="sec-generated-title-4"></a> <a id="string_add"></a>結合・反復
+
 文字列は、+ 演算子で結合、* 演算子で反復ができます。
 
 <pre class="console" title="2つの文字列を結合">
@@ -169,7 +173,8 @@ stringstringstring
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="string_comp"></a>比較・置換
+## <a id="sec-generated-title-5"></a> <a id="string_comp"></a>比較・置換
+
 2つの文字列を比較する演算子として、
 以下のようなものがあります。
 
@@ -298,7 +303,8 @@ False
 意味ないけど。）
 
 
-##<a id="sec-generated-title-6"></a> <a id="format"></a>フォーマット演算子
+## <a id="sec-generated-title-6"></a> <a id="format"></a>フォーマット演算子
+
 あともう1つ、フォーマット演算子 -f というものもあります。
 「書式文字列 -f オブジェクト1, オブジェクト2, ...」という書式で使います。
 書式文字列の書き方は、
@@ -314,7 +320,8 @@ System.String.Format メソッドのものと同じです。
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="expression"></a>式評価演算子
+## <a id="sec-generated-title-7"></a> <a id="expression"></a>式評価演算子
+
 文字列に対する演算子ではないんですが、
 式評価演算子 $ というものがあります。
 まあ、要するに、変数名の頭についてる $ です。

@@ -18,11 +18,13 @@ aliases:
 
 # その他の用語
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 どのページに書くにも収まりの悪かったものをここに。
 
 
-##<a id="sec-generated-title-2"></a> <a id="ducktype"></a>ダック タイピング
+## <a id="sec-generated-title-2"></a> <a id="ducktype"></a>ダック タイピング
+
 C# では通常、クラスやインターフェースの型情報に基づいてメソッド呼び出しが行われます。
 一方で、動的言語と呼ばれるような言語では、
 「同じ名前のメソッドを持っていれば変数の型は問わない」

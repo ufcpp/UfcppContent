@@ -42,7 +42,8 @@ C# 11 で、`file` という修飾子を使って「書いたファイル内か�
 通常、global な場所(どの名前空間にも属さない場所)に、`Extensions` なんていうよくありそうな名前のクラスを作るとすぐに名前が衝突しますが、
 `file` が付いていることによって、全くの同名の型があってもコンパイルできるようになります。
 
-##<a id="sec-generated-title-1"></a> <a id="vs-internal">private や internal と比べて</a>
+## <a id="sec-generated-title-1"></a> <a id="vs-internal">private や internal と比べて</a>
+
 この手の「見える範囲を制限する」系の処理の用途の1つとして、
 「派生クラス・インターフェイス実装クラスを隠す」というのがあります。
 
@@ -141,7 +142,8 @@ C# 10 以前ではこれでしのいできました。
 }
 </pre>
 
-##<a id="sec-generated-title-2"></a> <a id="applicable">適用範囲</a>
+## <a id="sec-generated-title-2"></a> <a id="applicable">適用範囲</a>
+
 `file` 修飾子は型にのみ適用できます。
 以下のように、フィールドやメソッドなどに使おうとするとコンパイル エラーになります。
 
@@ -207,7 +209,8 @@ C# 10 以前ではこれでしのいできました。
     }
 }</pre>
 
-##<a id="sec-generated-title-3"></a> <a id="implementation">内部実装</a>
+## <a id="sec-generated-title-3"></a> <a id="implementation">内部実装</a>
+
 file ローカルな型のコンパイル結果は、
 C# にはよくある「通常の C# からは参照できない名前」(unspeakable name)に変換されます。
 名前付けのルールは仕様化されていなくて、「常に同じ名前で生成される保証はない」とされています。

@@ -18,7 +18,8 @@ aliases:
 
 # 優先度付き待ち行列
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="priority" class="keyword">優先度付き待ち行列</strong>（priority queue）とは、
 ある優先度（例えば、値の大きな物ほど優先度が高いとか）に従って、
 優先度の高いものから順に取り出すことの出来るコレクションです。
@@ -46,7 +47,8 @@ aliases:
 通常、優先度付き待ち行列は、このヒープを用いて実装されます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="heap"></a>ヒープ
+## <a id="sec-generated-title-2"></a> <a id="heap"></a>ヒープ
+
 <strong id="heap" class="keyword">ヒープ</strong>（heap）と言う言葉は、
 「塊」とか「積み重ね」という非常に一般的な意味の単語で、
 使う分野によって結構意味がばらばらです。
@@ -111,7 +113,8 @@ aliases:
 （配列を常にソート済みの状態に保とうと思うなら、挿入に O(n) の演算量が必要になるので、ヒープの方が有利。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="heapimpl"></a>ヒープの実装
+## <a id="sec-generated-title-3"></a> <a id="heapimpl"></a>ヒープの実装
+
 ヒープは、概念的には木構造になりますが、
 「末端のノードを除いて必ず子ノードを2つ持つ」と「葉は左詰」という構造上の制約があるおかげで、
 単なる配列を使って実装することができます。
@@ -205,7 +208,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="impl"></a>優先度付き待ち行列の実装
+## <a id="sec-generated-title-4"></a> <a id="impl"></a>優先度付き待ち行列の実装
+
 ヒープの作り方さえ分かれば、
 優先度付き待ち行列の実装は簡単です。
 まず、ヒープ本体となる「[配列リスト](col_array.md#array)」を用意します。
@@ -242,7 +246,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-5"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/PriorityQueue.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/PriorityQueue.cs)

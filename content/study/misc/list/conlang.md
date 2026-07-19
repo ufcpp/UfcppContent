@@ -18,8 +18,10 @@ aliases:
 
 # 言語造り
 
-##<a id="sec-generated-title-1"></a> <a id="intro"></a>はじめに
-###<a id="sec-generated-title-2"></a> <a id="henka"></a>言葉は変化するもの
+## <a id="sec-generated-title-1"></a> <a id="intro"></a>はじめに
+
+### <a id="sec-generated-title-2"></a> <a id="henka"></a>言葉は変化するもの
+
 このページを書くきっかけは、
 「8割以上の大人が漢字力の低下を感じ、危機感を覚えている」というようなニュースを見たことによります。
 8割以上の大人が漢字力の低下を感じているなら、それはもう人間の方が危機感を感じる必要は無くて、日本語の方が変わるべきなんじゃないかと。
@@ -40,7 +42,8 @@ aliases:
 「日本語が変化した」と捕らえるべき。
 
 
-###<a id="sec-generated-title-3"></a> <a id="kaeru"></a>積極的に変える
+### <a id="sec-generated-title-3"></a> <a id="kaeru"></a>積極的に変える
+
 言葉は変わるものなわけですが、
 むしろ変えて言葉がよくなるなら積極的に変えた方がいいんじゃないかという発想もありなわけですね。
  
@@ -54,7 +57,8 @@ aliases:
 [合理化英語 案](http://www3.ocn.ne.jp/~gthmhk/inglix.html)なんかを読んでみてもらえればわかるんですが、もはや別言語になっています。
 
 
-###<a id="sec-generated-title-4"></a> <a id="kawaru"></a>本当に変わる？
+### <a id="sec-generated-title-4"></a> <a id="kawaru"></a>本当に変わる？
+
 とはいえ、言葉なんてものは誰かが恣意的に変えようとして簡単に変わるものじゃないです。
 まして、新しく作った言語なんて誰が覚えてくれるでしょう。
 「英語を初学者のために学びやすい言語に変えよう」とか、
@@ -69,7 +73,8 @@ aliases:
 あえて言葉の変化や新しい言語作りについて書こうかと思います。
 
 
-##<a id="sec-generated-title-5"></a> <a id="artifitial"></a>人工言語
+## <a id="sec-generated-title-5"></a> <a id="artifitial"></a>人工言語
+
 民族の長い歴史の中で形作られてきた自然の言語と異なり、
 誰か、特定の個人なり組織なりが何らかの目的を持って作った言語を人工言語と呼びます。
 「既存の言語を少し変えよう」なんて発想も、
@@ -90,7 +95,8 @@ aliases:
 既存の言語の改善というのは普及目的の人工言語の範疇に入ります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="universal"></a>普及型言語の目標は言語統一？
+## <a id="sec-generated-title-6"></a> <a id="universal"></a>普及型言語の目標は言語統一？
+
 理想論（それも、絵空事なレベルでの理想）として、
 世界中の人が同じ1つの言語を使えるようにならないかという発想は誰しもが考えたことがあると思います。
 そういう、全人類共通の単一言語を目指す人工言語を普遍言語と言ったりします。
@@ -107,7 +113,8 @@ aliases:
 それは以下に述べるような理由によります。
 
 
-###<a id="sec-generated-title-7"></a> <a id="local"></a>地域格差
+### <a id="sec-generated-title-7"></a> <a id="local"></a>地域格差
+
 まずは地域格差の問題。
 たとえ1度言語統一がなされたとしても、
 地域による差はどうしても生じてきます。
@@ -119,7 +126,8 @@ aliases:
 この問題は今後はどんどん無くなっていくかもしれません。
 
 
-###<a id="sec-generated-title-8"></a> <a id="culture"></a>文化
+### <a id="sec-generated-title-8"></a> <a id="culture"></a>文化
+
 遠隔コミュニケーション手段の発達によって、
 地域的な語彙や文法の差異は無くなっていくかもしれませんが、
 それだけでは言語統一はかないません。
@@ -154,7 +162,8 @@ aliases:
 そして文化の違いがいずれは方言を生み出していく可能性は非常に高いです。
 
 
-##<a id="sec-generated-title-9"></a> <a id="auxiety"></a>国際補助語
+## <a id="sec-generated-title-9"></a> <a id="auxiety"></a>国際補助語
+
 言語統一なんていう絵空事はあきらめるとして、
 じゃあ、せめて、異なる言語間・異文化間での意思疎通を簡単化できないか、
 というのが、最近の（普及を目指す）人工言語のスタンスです。
@@ -172,7 +181,8 @@ aliases:
 
 
 
-###<a id="sec-generated-title-10"></a> <a id="equ"></a>平等な言語
+### <a id="sec-generated-title-10"></a> <a id="equ"></a>平等な言語
+
 前者に関しては、特定の言語に肩入れすると、
 他の言語話者からの反発を受け、普及が困難になります。
 かといって、完全に平等にしようと思うと、
@@ -188,7 +198,8 @@ aliases:
 非西洋圏にも平等にしようと思うと、今度は覚えにくいから普及しないということになります。
 
 
-###<a id="sec-generated-title-11"></a> <a id="no1"></a>現在のシェア No. 1 言語
+### <a id="sec-generated-title-11"></a> <a id="no1"></a>現在のシェア No. 1 言語
+
 後者に関しては、要するに、今現在の状況で言えば英語を使おうぜということです。
 非英語圏の人間には不公平極まりないことですが、
 世の中、力あるところにより力が集まるものなので、
@@ -201,7 +212,8 @@ aliases:
 英語の優位性は覆らないかもしれません。
 
 
-###<a id="sec-generated-title-12"></a> <a id="good"></a>言語の良し悪し
+### <a id="sec-generated-title-12"></a> <a id="good"></a>言語の良し悪し
+
 ちなみに、「言語の良し悪しを考えて、一番いい言語を使おう」という発想は使えません。
 各国で数千年も使われてきている言語に、そんな明白な優劣が残るわけも無く、
 どれもどっこいどっこいです。
@@ -216,7 +228,8 @@ aliases:
 言語形態がループするんじゃないかという気も。
 
 
-##<a id="sec-generated-title-13"></a> <a id="resist"></a>英語に抵抗
+## <a id="sec-generated-title-13"></a> <a id="resist"></a>英語に抵抗
+
 国際語 ＝ 英語という方向に流れ出した今の世界に対して、
 幾分かでも抵抗することはできないでしょうか。
  
@@ -257,7 +270,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 （その代償が、西洋人ですらうんざりするような複雑な活用です。）
 
 
-##<a id="sec-generated-title-14"></a> <a id="japanese"></a>あえて日本語
+## <a id="sec-generated-title-14"></a> <a id="japanese"></a>あえて日本語
+
 そういうわけで、この国際語 ＝ 英語の流れが確立しつつあるこの世の中で、
 あえて日本語を推進するなら、大きく分けると以下の2つの方向性があります。
 
@@ -267,7 +281,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 
 
 
-###<a id="sec-generated-title-15"></a> <a id="asian"></a>アジアの代表言語化
+### <a id="sec-generated-title-15"></a> <a id="asian"></a>アジアの代表言語化
+
 まあ、正直自分で言ってて苦しいですね。
 大体、「○○の一極支配を覆すため、アンチ○○を旗頭にして勢力を作る」っていう発想は、
 僕的にもあんまり好きじゃないですし。
@@ -291,7 +306,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 それだけで普及するとは限りません。
 
 
-###<a id="sec-generated-title-16"></a> <a id="improve"></a>日本語の改善
+### <a id="sec-generated-title-16"></a> <a id="improve"></a>日本語の改善
+
 言語の改善が即普及には繋がらないとはいえ、
 やっておいて損はないことです。
  
@@ -311,7 +327,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 それが覚えやすさという面から見てどうなるかを考えてみましょう。
 
 
-####<a id="sec-generated-title-17"></a> <a id="douon"></a>同音異義語の多さ
+#### <a id="sec-generated-title-17"></a> <a id="douon"></a>同音異義語の多さ
+
 日本語最大の問題点と思われるのが同音異義語の多さです。
  
 音韻の種類が少ないのに、中国語から大量に語彙を輸入しているので、
@@ -334,7 +351,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 「ばけがく」も、理系の人間にとっては割りと一般的な読み方です。
 
 
-####<a id="sec-generated-title-18"></a> <a id="doushi"></a>動詞の活用
+#### <a id="sec-generated-title-18"></a> <a id="doushi"></a>動詞の活用
+
 日本語って「見る」っていう動詞なら
 「見、見、見る、見れ、見ろ」と、
 「走る」なら
@@ -375,7 +393,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 外国人が「走りて」って言ってもおかしいと思わない風土さえ築けばそれで大丈夫なはず。
 
 
-####<a id="sec-generated-title-19"></a> <a id="aimai"></a>あいまいな表現が多い
+#### <a id="sec-generated-title-19"></a> <a id="aimai"></a>あいまいな表現が多い
+
 あいまいな表現がいくらでもできるのは日本語の悪い所だなんてよく言われますね。
 警察を装った詐欺師が「警察の方から来ました（←嘘ではない）」とか、
 新しいことをやるかどうか迷ってる人が「やってみたい気がしなくもない」とか。
@@ -389,7 +408,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 国際語として使う際には「無駄に高機能すぎて使わない能力」ということになります。
 
 
-####<a id="sec-generated-title-20"></a> <a id="tango"></a>単語の区切りがわからない
+#### <a id="sec-generated-title-20"></a> <a id="tango"></a>単語の区切りがわからない
+
 日本語は文章中に全然スペースを入れないので、単語の区切りが分かりにくいです。
  
 日本人が特にこれで困らないのは漢字交じりで書くからでしょうね。
@@ -410,7 +430,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 機械翻訳とかのコンピュータ上での処理の際くらいでしょうか。
 
 
-####<a id="sec-generated-title-21"></a> <a id="accent"></a>自由アクセント
+#### <a id="sec-generated-title-21"></a> <a id="accent"></a>自由アクセント
+
 英語なんかでもそうなんですが、アクセントの位置が定まってないと覚えるのが非常に面倒です。
 単語のどの位置にアクセントがあるのか定まってないことを自由アクセントと呼ぶんですが、
 日本語も標準語や関西弁は自由アクセントです。
@@ -432,7 +453,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 名詞の語尾変化だとみなす方が自然だったり。）
 
 
-####<a id="sec-generated-title-22"></a> <a id="phonem"></a>音韻が少ない
+#### <a id="sec-generated-title-22"></a> <a id="phonem"></a>音韻が少ない
+
 日本語は音素も少なければ、音節の構造も単純です。
 なので、学習者にとっては非常に簡単になじみやすい音韻体系だと思います。
  
@@ -455,7 +477,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 単位時間当たりに伝達できる情報量は多言語よりも少ないと思います。
 
 
-####<a id="sec-generated-title-23"></a> <a id="kanji"></a>漢字
+#### <a id="sec-generated-title-23"></a> <a id="kanji"></a>漢字
+
 学習という面から見ると困難極める漢字ですが、不要だとまではいえないと思います。
  
 漢字を持っていることのメリットってかなり大きいんですよ。
@@ -503,7 +526,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 英語では congestion （密集、充満、混雑）なんですから。
 
 
-###<a id="sec-generated-title-24"></a> <a id="japanize"></a>英語に日本語的性質を
+### <a id="sec-generated-title-24"></a> <a id="japanize"></a>英語に日本語的性質を
+
 英語の改善案は、結構たくさんありますね。
 ネットで検索すればすぐに見つかります。
 大体は以下のような案です。
@@ -575,7 +599,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 英単語と漢字が（文化の違いなんかに起因して）1対1に対応していないとかの問題があります。
 
 
-##<a id="sec-generated-title-25"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-25"></a> <a id="summary"></a>まとめ
+
 「言葉には変える余地がいくらでもある」ということを認識してもらうことを目的に、
 言語の改善や人工言語のことについて書いてきました。
 それこそ絵空事なことから、
@@ -593,7 +618,8 @@ I my me / you your you を例えば、mo ma mon / to ta ton とか言うよう�
 これがいいことなのかどうかは、目的を何にするか次第です。
 
 
-##<a id="sec-generated-title-26"></a> <a id="link"></a>リンク集
+## <a id="sec-generated-title-26"></a> <a id="link"></a>リンク集
+
 [後藤文彦の頁](http://www3.ocn.ne.jp/~gthmhk/isnmg.html)
 : エスペラントの話、 英語の合理化の話、 それに日本語に関してもいろいろな改善案がかかれていたりします。
 

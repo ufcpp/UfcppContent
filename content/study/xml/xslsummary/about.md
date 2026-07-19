@@ -18,7 +18,8 @@ aliases:
 
 # 概要
 
-##<a id="sec-generated-title-1"></a> <a id="term"></a>用語
+## <a id="sec-generated-title-1"></a> <a id="term"></a>用語
+
 <table summary="">
 
 	<tr>
@@ -77,7 +78,8 @@ XSD があれば XML を書いている途中にタグの補完機能が働く�
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="xml"></a>XML の利用
+## <a id="sec-generated-title-2"></a> <a id="xml"></a>XML の利用
+
 このサイトではそこら中でXMLを使っています。 勉強ページは全域、XML で書いて XSLT をかけてからアップロードしています。
 
 XML を使う利点は以下のような感じ。
@@ -120,7 +122,8 @@ XSD（XML Schema Definition）を書けば XML エディタ（XML notepad や Vi
 XSD も書くことでタグを覚える面倒さは軽減されます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="example"></a>具体例
+## <a id="sec-generated-title-3"></a> <a id="example"></a>具体例
+
 具体的に例をあげると、 以下のような XML を書いて、
 
 

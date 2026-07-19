@@ -18,7 +18,8 @@ aliases:
 
 # ブログ表示（１）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ブログっぽいものを作成。
 
 一般に“ブログ”と呼ばれてるようなものほどちゃんとしたツールを作るつもりはなくて、
@@ -57,7 +58,8 @@ aliases:
 技術面で言うと、1 と 2 を説明。
 
 
-##<a id="sec-generated-title-2"></a> <a id="spec"></a>仕様
+## <a id="sec-generated-title-2"></a> <a id="spec"></a>仕様
+
 ブログもどきの仕様ですが、以下のような感じ。
 
 * XML 形式で保存しておいたデータを読んで、XSLT を掛けた結果を表示するだけ。
@@ -111,7 +113,8 @@ XSL “Transformation” と言うほど賢い処理はしていなくて、
 XML に XSLT を掛けた物を表示するだけの Web コントロールを作ります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="control"></a>Web コントロールの作成
+## <a id="sec-generated-title-3"></a> <a id="control"></a>Web コントロールの作成
+
 Web コントロールというのは、
 asp:Button や asp:Label などのように、
 Web フォームページ中に配置する部品です。
@@ -227,7 +230,8 @@ XML やデータベース中から取り出してきたデータを任意の形�
 （使い方次第ではあるけど）そちらを使ってみることも推奨。
 
 
-##<a id="sec-generated-title-4"></a> <a id="use_control"></a>Web コントロールの利用
+## <a id="sec-generated-title-4"></a> <a id="use_control"></a>Web コントロールの利用
+
 前節で作った XML 表示コントロールを使って、
 ブログデータを表示する Web フォームを作ってみます。
 とりあえず、まず最初に、

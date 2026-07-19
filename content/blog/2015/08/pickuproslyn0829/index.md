@@ -14,6 +14,7 @@ aliases: []
 # ピックアップRoslyn 8/29
 
 ## Anonymous function that captures no outer variables is not static #4793
+
 [https://github.com/dotnet/roslyn/issues/4793](https://github.com/dotnet/roslyn/issues/4793)
 
 [匿名関数](../../../../study/csharp/functional/sp_delegate.md#anonymous-func) (ラムダ式とか匿名デリゲート式)の生成結果が変わったという話。
@@ -27,6 +28,7 @@ aliases: []
 (StackOverflow 上での説明によれば、ネイティブ コード化するときの呼び出し規約の決定のコストがどうとか書いてある)。
 
 ## Discussion: Scope of pattern variables, and tuple decomposition #4781
+
 [https://github.com/dotnet/roslyn/issues/4781](https://github.com/dotnet/roslyn/issues/4781)
 
 現状、パターンマッチングは `x is pattern` という構文で bool 値を返す想定で作っているものの、
@@ -57,6 +59,7 @@ var tuple = (12, "foo")
 コンパイル時にチェックできるのって実質タプルの分解くらいかもしれず、タプル分解用の構文としてはなんかいまいちに思えるあたりが悩ましい感じ。
 
 ## Proposal: An await operator similar to ?. #4714
+
 [https://github.com/dotnet/roslyn/issues/4714](https://github.com/dotnet/roslyn/issues/4714)
 
 `await null;` がヌルポになるの何とかならない？ メソッド呼び出しに `?.` (null 条件演算子)が導入されたんだし、null 条件 await できない？という提案。
@@ -73,6 +76,7 @@ if (t != null) await t;
 とかいう嫌なコード書いたところ…
 
 ## Proposal: A bottom type for C# #4843
+
 [https://github.com/dotnet/roslyn/issues/4843](https://github.com/dotnet/roslyn/issues/4843)
 
 型理論でいうところの bottom type、Haskelでいう`undefined`、Scalaでいう`Nothing`が欲しいとのことで、そこそこ議論が起きた後で、「それ、もうあるよ [#1226](https://github.com/dotnet/roslyn/issues/4843)」(今のところ Never 型として提案中)。

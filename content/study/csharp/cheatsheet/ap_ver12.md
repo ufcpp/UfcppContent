@@ -30,7 +30,8 @@ aliases:
 </tr>
 </table>
 
-##<a id="sec-generated-title-1"></a> <a id="collection-expression">コレクション式</a>
+## <a id="sec-generated-title-1"></a> <a id="collection-expression">コレクション式</a>
+
 `[]` 記号を使って配列などの初期化ができるようになりました。
 配列だけではなく、コレクション(`List<T>` 型など)、`Span<T>` なども全く同じ書き方で初期化できます。
 これをコレクション式(collection expression)と言います。
@@ -58,7 +59,8 @@ aliases:
 
 詳しくは「[コレクション式](../datatype/collection-expression.md)」で説明します。
 
-##<a id="sec-generated-title-2"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
+## <a id="sec-generated-title-2"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
+
 通常のクラス、構造体に対してプライマリ コンストラクターが使えるようになりました。
 
 <pre class="source" title="">
@@ -75,7 +77,8 @@ aliases:
 
 詳しくは「[プライマリ コンストラクター](../oop/oo_construct.md#primary-constructor)」で説明します。
 
-##<a id="sec-generated-title-3"></a> <a id="using-any-type">using エイリアスに任意の型を書けるように</a>
+## <a id="sec-generated-title-3"></a> <a id="using-any-type">using エイリアスに任意の型を書けるように</a>
+
 C# 11 ではエラーになっていた以下のようなコードをコンパイルできるようになりました。
 
 <pre class="source" title="C# 12 から書ける using エイリアス">
@@ -87,7 +90,8 @@ C# 11 ではエラーになっていた以下のようなコードをコンパ�
 
 詳しくは「[任意の型に対する using エイリアス](../structured/sp_namespace.md#using-any-type)」で説明します。
 
-##<a id="sec-generated-title-4"></a> <a id="lambda-default">ラムダ式のデフォルト引数</a>
+## <a id="sec-generated-title-4"></a> <a id="lambda-default">ラムダ式のデフォルト引数</a>
+
 ラムダ式の引数に[オプション引数](../structured/sp4_optional.md#optional)にできる(既定値を与えられる)ようになりました。
 また、[params 引数](../structured/sp_params.md)も使えるようになりました。
 
@@ -104,7 +108,8 @@ C# 11 ではエラーになっていた以下のようなコードをコンパ�
 
 詳しくは「[ラムダ式のオプション引数(既定値)と params 引数](../functional/fun_localfunctions.md#lambda-default)」で説明します。
 
-##<a id="sec-generated-title-5"></a> <a id="ref-readonly-param">ref readonly 引数</a>
+## <a id="sec-generated-title-5"></a> <a id="ref-readonly-param">ref readonly 引数</a>
+
 ref 引数、in 引数の亜種として、
 「書き換えはしないけども、右辺値は受け付けたくない」ということを表す ref readonly 引数というものを導入しました。
 
@@ -139,8 +144,10 @@ ref 引数、in 引数の亜種として、
 
 詳しくは「[ref readonly 引数](../resource/sp_ref.md#ref-readonly-param)」で説明します。
 
-##<a id="sec-generated-title-6"></a> <a id="other"></a>その他
-###<a id="sec-generated-title-7"></a> <a id="inline-array">InlineArray</a>
+## <a id="sec-generated-title-6"></a> <a id="other"></a>その他
+
+### <a id="sec-generated-title-7"></a> <a id="inline-array">InlineArray</a>
+
 .NET 8 で、[`InlineArray` 属性](https://learn.microsoft.com/ja-jp/dotnet/api/system.runtime.compilerservices.inlinearrayattribute) (`System.Runtime.CompilerServices` 名前空間) というものが入って、「値型の固定長配列」みたいなものを作れるようになりました。
 
 <pre class="source" title="InlineArray 属性">
@@ -178,7 +185,8 @@ ref 引数、in 引数の亜種として、
 
 詳しくは「[[雑記] InlineArray](../datatype/inline-array.md)」で説明します。
 
-###<a id="sec-generated-title-8"></a> <a id="nameof-instance-menbers"></a>nameof の微修正
+### <a id="sec-generated-title-8"></a> <a id="nameof-instance-menbers"></a>nameof の微修正
+
 [`nameof` 演算子](../start/st_string.md#nameof-operator)にちょっとした修正が入りました。
 
 C# 11 以前だと、以下の例の最後の行のように、

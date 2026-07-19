@@ -18,7 +18,8 @@ aliases:
 
 # \[雑記\] C# ソースコードと Unicode
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[[雑記] 識別子名に使える文字](misc_identifier.md)」 で説明したように、C# では、Unicode の文字クラスに基づいて「使える文字」を規定しています。
 ここでは、いくつかその Unicode にまつわる与太話をしていきます。
 
@@ -26,7 +27,8 @@ C# だけでなく、1990年代後半以降にできたプログラミング言�
 (ぱっと思いつくのでも、Java, Go, Swift とかではここで話したような内容が当てはまるはず。)
 
 
-##<a id="sec-generated-title-2"></a> <a id="whitespace"></a>空白文字
+## <a id="sec-generated-title-2"></a> <a id="whitespace"></a>空白文字
+
 識別子だけでなく、空白文字の判定にも Unicode 文字クラスを使います。
 (C# の場合、空白文字はほとんどの場面で意味を持たず無視されます。意味があるのは ++ の間くらい。)
 具体的には、C# の空白文字の定義は以下のようになっています。
@@ -167,7 +169,8 @@ C# だけでなく、1990年代後半以降にできたプログラミング言�
 メリットはないですけども。
 
 
-##<a id="sec-generated-title-3"></a> <a id="katakana-middle-dot"></a>注意: カタカナ中点
+## <a id="sec-generated-title-3"></a> <a id="katakana-middle-dot"></a>注意: カタカナ中点
+
 Unicode の文字クラスに基づいているということは、Unicode に変更があった場合、C# も影響を受けます。
 日本語的にかなり困るのは、カタカナ中点(なかぐろ)「・」(katakana middle dot、U+30FB)です。
 
@@ -195,7 +198,8 @@ Unicode 5.1 から 6.0 の間で Po クラス(その他の句読点。C# 的に�
 
 同様の問題は、Java 7 でも起きているようです。
 
-###<a id="sec-generated-title-4"></a> <a id="vb-unicode"></a>余談: Visual BasicとUnicode
+### <a id="sec-generated-title-4"></a> <a id="vb-unicode"></a>余談: Visual BasicとUnicode
+
 余談になりますが、使っているUnicodeのバージョンが変わった影響は、Visual Basicの方が大きいみたいです。
 
 VBは、識別子の大文字・小文字を区別しない言語なわけですが、この大文字・小文字の判定もUnicodeの文字クラスをベースに判定しています。
@@ -203,7 +207,8 @@ VBは、識別子の大文字・小文字を区別しない言語なわけです
 カタカナ中点のように文字クラスががらっと変わったような文字はほとんどありませんが、大文字・小文字の判定変わった文字はちらほらあるみたいで、VBに影響が少し出ているそうです。
 (こちらは、日本人にとっては全くといっていいほど影響はないはずですが。)
 
-##<a id="sec-generated-title-5"></a> <a id="emoji"></a>絵文字
+## <a id="sec-generated-title-5"></a> <a id="emoji"></a>絵文字
+
 Swift は絵文字を識別子に使えると聞いて。
 
 ちなみに、C#は今のところ、[サロゲート ペア](http://www.codezine.jp/article/detail/1592) (16ビットで収まらず、UTF16 では2ワードになっちゃう文字)になっている文字は受け付けていません。
@@ -214,6 +219,7 @@ Swift は絵文字を識別子に使えると聞いて。
 まあ、使えてもしょうがないというか、むしろ使えるとやばそうな例がいくつかあったりします。
 
 ##### <a id="sec-generated-title-6"></a>カラー絵文字
+
 やばい例その1: [http://www.swiftstub.com/381749597/](http://www.swiftstub.com/381749597/)
 
 <pre class="source" title="Swift 絵文字識別子 その1: 色付きハート" lang="">
@@ -235,6 +241,7 @@ println(💙 + 💚 + 💛 + 💜)
 
 
 ##### <a id="sec-generated-title-7"></a>数学シンボル
+
 やばい例その2: [http://www.swiftstub.com/647829248/](http://www.swiftstub.com/647829248/)
 
 <pre class="source" title="Swift 絵文字識別子 その2: 数字識別子" lang="">

@@ -18,7 +18,8 @@ aliases:
 
 # 例外処理
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 PowerShell では throw で例外を投げて、trap で例外を処理します。
 
 シェルスクリプト言語の割には例外処理がきっちりしていると思います。
@@ -26,7 +27,8 @@ PowerShell では throw で例外を投げて、trap で例外を処理します
 外部スクリプト内で 0 除算（1/0 とか）すると例外が trap できなかったり。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="exception"></a>例外
+## <a id="sec-generated-title-2"></a> <a id="exception"></a>例外
+
 PowerShell では、（タイプミスしたりして）未定義のコマンドを入力したり、
 不正な型変換をしたり、0 除算したり、
 なんらかのエラーが起きたとき、例外を投げます。
@@ -63,7 +65,8 @@ PowerShell では、（タイプミスしたりして）未定義のコマンド
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="error"></a>$Error
+## <a id="sec-generated-title-3"></a> <a id="error"></a>$Error
+
 ちなみに、例外の詳細は $Error 自動変数の中身を覗くことで分かります。
 $Error には、過去に発生した例外のリストが格納されていて、
 直前に発生した例外は $Error[0] に入っています。
@@ -108,7 +111,8 @@ TargetType :
 「[発生した例外クラス名を調べる](http://d.hatena.ne.jp/newpops/20051211)」
 
 
-##<a id="sec-generated-title-4"></a> <a id="throw"></a>例外の throw
+## <a id="sec-generated-title-4"></a> <a id="throw"></a>例外の throw
+
 例外は throw キーワードを使って自分で投げることもできます。
 throw は文字列、.Net Framework の例外クラス、ErrorRecord 型のいずれかを受け取ります。
 （どれを throw しても、
@@ -168,7 +172,8 @@ TargetType :
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="trap"></a>例外の trap
+## <a id="sec-generated-title-5"></a> <a id="trap"></a>例外の trap
+
 今までは例外を投げっぱなしの状態でしたが、
 ちゃんと例外を拾って処理することもできます。
 例外処理は trap キーワードを使って行います。
@@ -208,7 +213,8 @@ trap { 'trap exception' }
 例外を trap しても、その後、エラーメッセージを表示した上で処理は続行します。
 
 
-###<a id="sec-generated-title-6"></a> <a id="trap_break"></a>trap 内の break, continue
+### <a id="sec-generated-title-6"></a> <a id="trap_break"></a>trap 内の break, continue
+
 ここで、trap ブロック内に break か continue を書くことで、
 挙動を変更することができます。
 まず、continue を書くと、
@@ -285,7 +291,8 @@ b
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="trap_certain"></a>特定の例外だけ trap
+### <a id="sec-generated-title-7"></a> <a id="trap_certain"></a>特定の例外だけ trap
+
 trap {ブロック} と書くことで任意の例外を拾っていましたが、
 trap [型] {ブロック} と書くことで特定の型の例外だけを拾えます
 

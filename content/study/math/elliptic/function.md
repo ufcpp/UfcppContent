@@ -18,11 +18,13 @@ aliases:
 
 # 楕円関数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 1価解析的で2重周期を持つ関数のことを<strong id="d77e8" class="keyword">楕円関数</strong>（elliptic function）と呼びます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 <pre>
 1価解析関数の周期性
   - 周期を持たない

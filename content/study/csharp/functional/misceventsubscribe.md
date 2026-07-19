@@ -18,15 +18,18 @@ aliases:
 
 # 【雑記】イベントの購読とその解除
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# の event 構文の問題と、その解消方法について説明します。
 
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Event/Observable](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Event/Observable)
 
 
 ##### <a id="sec-generated-title-3"></a>ポイント
+
 * イベントには発生側と受取側があって、発生側に受取側を登録する口が必要。
 
 * C# の event 構文は、このイベント登録口を作るための構文。
@@ -37,7 +40,8 @@ C# の event 構文の問題と、その解消方法について説明します�
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="event-syntax"></a>イベント
+## <a id="sec-generated-title-4"></a> <a id="event-syntax"></a>イベント
+
 まず、イベントについておさらい。
 ↓こういうの。「発生側」と「受取側」を明確に分離するためのパターン。
 
@@ -50,7 +54,8 @@ C# の event 構文の問題と、その解消方法について説明します�
 event source, observable, event sender, ... など、呼び方はいろいろありますが、流儀や文脈の差であって、だいたい同じものです。
 
 
-###<a id="sec-generated-title-5"></a> <a id="revisit"></a>event 構文のおさらい
+### <a id="sec-generated-title-5"></a> <a id="revisit"></a>event 構文のおさらい
+
 C# の場合、イベント発生側に「登録口」を作るための専用構文(以下、event 構文)を持っているわけですが。(参考: 「[イベント](sp_event.md)」)
 
 <pre class="source" title="" lang="">
@@ -105,7 +110,8 @@ C# の場合、イベント発生側に「登録口」を作るための専用�
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="must-unsubscribe"></a>登録解除が必要
+### <a id="sec-generated-title-6"></a> <a id="must-unsubscribe"></a>登録解除が必要
+
 C# は、ガベージ コレクションというメモリの自動管理の仕組みを持っています(参考: 「[C# のメモリ管理](../resource/rm_gc.md)」)。
 (C# に限らず多くの言語がそうですが) C# のガベージ コレクションは、「もう誰からも参照されていないオブジェクトがあったら消す」という仕組みで動いています。
 逆に言うと、誰かが参照を持ち続けている限り、いつまでたってもメモリが解放されません。
@@ -121,7 +127,8 @@ C# は、ガベージ コレクションというメモリの自動管理の仕�
 それがかえって油断になるというか、管理し忘れを生みがちではあります。)
 
 
-##<a id="sec-generated-title-7"></a> <a id="add-remove-issue"></a>問題1: add/remove
+## <a id="sec-generated-title-7"></a> <a id="add-remove-issue"></a>問題1: add/remove
+
 C# の event 構文では、イベント購読の開始・解除が <code>+=</code> と <code>-=</code> です。
 (あるいは、コンパイル結果的には addX, removeX というようなメソッドが生成されています。)
 他のプログラミング言語でも、addListener/removeListener とか、addTarget/removeTarget とかいう名前のメソッドをよく見かけます。
@@ -209,7 +216,8 @@ C# の event 構文では、イベント購読の開始・解除が <code>+=</co
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="parameter-issue"></a>問題2: メソッドの引数に渡せない
+## <a id="sec-generated-title-8"></a> <a id="parameter-issue"></a>問題2: メソッドの引数に渡せない
+
 event 構文で作った「イベント登録口」は、「オブジェクトでもメソッドでもない」というのが結構困りものになります。
 一番きついのが、メソッドの引数として渡せないことでしょう。
 
@@ -338,7 +346,8 @@ event 構文を直接使うのをやめる。
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="event-internal"></a>問題3: 結構中身が大げさ
+## <a id="sec-generated-title-9"></a> <a id="event-internal"></a>問題3: 結構中身が大げさ
+
 C# の event 構文では、add/remove 句を書かなかった場合、コンパイラーが自動的に add/remove の中身を実装してくれます。
 この中身の自動実装が、実は結構大変なものだったりします。
 
@@ -408,7 +417,8 @@ C# の event 構文では、add/remove 句を書かなかった場合、コン�
 (コード生成される箇所は1か所だけになる)。
 
 
-##<a id="sec-generated-title-10"></a> <a id="rx"></a>Reactive Extensions
+## <a id="sec-generated-title-10"></a> <a id="rx"></a>Reactive Extensions
+
 event 構文に関して、いくつかの問題の説明と、
 その解決策として IEvent インターフェイス、Event クラスというものを作ってみました。
 まあ、実は Event クラスを自作する必要はなかったんですが。

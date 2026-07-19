@@ -18,7 +18,8 @@ aliases:
 
 # 電場と電束密度
 
-##<a id="sec-generated-title-1"></a> <a id="electro"></a>電場と電束密度
+## <a id="sec-generated-title-1"></a> <a id="electro"></a>電場と電束密度
+
 電荷の作る場には、電場と電束密度という2つのものがあります。
 どっちも似たようなものなのに、なぜ2つあるのかって疑問をもたれるかたもいるかと思います。
 あと、似ているようで微妙に違ってて混乱したりも。
@@ -63,7 +64,8 @@ aliases:
       </em>といいます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="dielectric"></a>誘電体
+## <a id="sec-generated-title-2"></a> <a id="dielectric"></a>誘電体
+
 誘電体とは、電場をかけると分極を起こして分極電荷の現れる物質のことです。
 
 <figure>
@@ -132,7 +134,8 @@ aliases:
 となります。(電束密度と電荷、電流の関係とは符号が逆なのに注意。)
 
 
-##<a id="sec-generated-title-3"></a> <a id="in_material"></a>誘電体中の電場・電束密度
+## <a id="sec-generated-title-3"></a> <a id="in_material"></a>誘電体中の電場・電束密度
+
 電束密度<span class="math">
         <a href="variable.md#D" title="電束密度ベクトル"><span class="vector">D</span></a>
       </span>は自由電荷(つまり、誘電体に生じた分極電荷は考慮に入れない)から湧き出してくる流束です。

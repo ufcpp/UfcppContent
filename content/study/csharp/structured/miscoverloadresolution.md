@@ -14,7 +14,8 @@ aliases:
 
 # \[雑記\] オーバーロード解決
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 [関数](st_function.md#overload)で説明しましたが、
 C# では[関数メンバー](st_function.md#function-member)に対して、
 同名で引数リストだけが違う物を定義でき、これをオーバーロードと呼びます。
@@ -24,7 +25,8 @@ C# では[関数メンバー](st_function.md#function-member)に対して、
 
 本項では、C# がどういうルールでオーバーロード解決を行っているのかについて説明して行きます。
 
-##<a id="sec-generated-title-2"></a> <a id="betterness-rule"></a>「より一致度の高いものを選ぶ」ルール
+## <a id="sec-generated-title-2"></a> <a id="betterness-rule"></a>「より一致度の高いものを選ぶ」ルール
+
 オーバーロード解決は、基本方針だけを一言でいうとシンプルで、
 「より一致度の高いものを選ぶ」という方針になっています。
 詳しくは後々説明して行くことになりますが、例えば以下のようなルールになっています。
@@ -32,7 +34,8 @@ C# では[関数メンバー](st_function.md#function-member)に対して、
 - 型変換なしで引数に渡せるなら、それを優先的に呼ぶ
 - 引数の数がピッタリ一致している方を優先的に呼ぶ
 
-###<a id="sec-generated-title-3"></a> <a id="parameter-type"></a>引数の型
+### <a id="sec-generated-title-3"></a> <a id="parameter-type"></a>引数の型
+
 引数の型は、以下のリストの上の方ほど「一致度が高い」と判断されます。
 
 - ぴったり一致する型
@@ -155,7 +158,8 @@ C# では、任意の[値型](../resource/oo_reference.md#valtype)は `System.Va
 }
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="generic-method"></a>ジェネリック メソッド
+### <a id="sec-generated-title-4"></a> <a id="generic-method"></a>ジェネリック メソッド
+
 C# では、「ジェネリックかどうか」だけの差があるメソッド オーバーロードも可能です。
 この場合、非ジェネリックな方が優先的に呼ばれます。
 
@@ -178,7 +182,8 @@ C# では、「ジェネリックかどうか」だけの差があるメソッ�
 }
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="optional"></a>オプション引数・可変長引数
+### <a id="sec-generated-title-5"></a> <a id="optional"></a>オプション引数・可変長引数
+
 C# には[オプション引数](sp4_optional.md#optional)と[可変長引数](sp_params.md)という、引数を省略できる仕組みが2つあります。
 この場合、以下のリストの上の方ほど「一致度が高い」と判断されます。
 
@@ -207,7 +212,8 @@ C# には[オプション引数](sp4_optional.md#optional)と[可変長引数](s
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="instance"></a>インスタンス メソッド優先
+### <a id="sec-generated-title-6"></a> <a id="instance"></a>インスタンス メソッド優先
+
 C# には[拡張メソッド](../functional/sp3_extension.md)という、
 インスタンス メソッドと同じ書き方で静的メソッドを呼べます。
 正確にはオーバーロードとは言わないんですが、
@@ -244,7 +250,8 @@ C# には[拡張メソッド](../functional/sp3_extension.md)という、
 }
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="inference"></a>型推論とオーバーロード解決
+## <a id="sec-generated-title-7"></a> <a id="inference"></a>型推論とオーバーロード解決
+
 C# の構文にはいくつか、左辺値からの型推論をするものがあります。
 
 - [ラムダ式](../functional/sp3_lambda.md)
@@ -336,7 +343,8 @@ C# の構文にはいくつか、左辺値からの型推論をするものが�
 ただし、次節で説明しますが、ラムダ式の型推論は結構優秀で、
 ちゃんと推論が働きつつ、オーバーロード解決できる場合も多いです。
 
-##<a id="sec-generated-title-8"></a> <a id="lambda"></a>ラムダ式
+## <a id="sec-generated-title-8"></a> <a id="lambda"></a>ラムダ式
+
 ラムダ式の型推論は相当優秀で、結構複雑なオーバーロード解決もできたりします。
 例えば、以下の `M(x => x)` はちゃんとコンパイルできます。
 
@@ -407,7 +415,8 @@ C# の構文にはいくつか、左辺値からの型推論をするものが�
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-9"></a> <a id="remove-redundant"></a>オーバーロード候補の絞り込み
+## <a id="sec-generated-title-9"></a> <a id="remove-redundant"></a>オーバーロード候補の絞り込み
+
 <h5 class="version version7">Ver. 7.3</h5>
 
  C# 7.3で、オーバーロード解決の改善がありました。
@@ -463,7 +472,8 @@ C# 7.3でこの順を逆にして、引数の型でオーバーロード解決�
 呼べないことがわかるんだったら最初からオーバーロード解決候補から外して欲しいわけで、
 ある意味当然の変更でしょう。
 
-###<a id="sec-generated-title-10"></a> <a id="static-instance"></a>静的メソッドかインスタンス メソッドか
+### <a id="sec-generated-title-10"></a> <a id="static-instance"></a>静的メソッドかインスタンス メソッドか
+
 前節の例に、引数の既定値を足してみましょう。
 2つのメソッド`M`が、どちらも`M()`で呼べるようになります。
 C# 7.3からは、これらの呼び分けができるようになりました。
@@ -510,7 +520,8 @@ C# 7.3からは、これらの呼び分けができるようになりました�
 }
 </code></pre>
 
-####<a id="sec-generated-title-11"></a> <a id="color-color"></a>余談: Color Color 問題
+#### <a id="sec-generated-title-11"></a> <a id="color-color"></a>余談: Color Color 問題
+
 C# では、型名とプロパティ名が同じプロパティを作ることができます。
 もっともありがちな例が「`Color`構造体型の`Color`プロパティ」なので、「Color Color問題」と呼ばれます。
 
@@ -566,7 +577,8 @@ Color Color問題下においても呼び分けできるようになったもの
 }
 </code></pre>
 
-###<a id="sec-generated-title-12"></a> <a id="constraints"></a>ジェネリック型制約
+### <a id="sec-generated-title-12"></a> <a id="constraints"></a>ジェネリック型制約
+
 ジェネリック メソッドで、型制約だけが違うメソッドのオーバーロード解決ができるようにもなりました。
 
 <pre class="source" title="型制約での呼び分け">
@@ -642,7 +654,8 @@ Color Color問題下においても呼び分けできるようになったもの
 }
 </code></pre>
 
-###<a id="sec-generated-title-13"></a> <a id="method-return"></a>メソッドの戻り値
+### <a id="sec-generated-title-13"></a> <a id="method-return"></a>メソッドの戻り値
+
 C# (というか、.NET)のメソッドは、戻り値の型を[シグネチャ](st_function.md#key-signature)に含みません。
 基本的に、戻り値だけが違うメソッドは定義できませんし、呼び分けもできません。
 
@@ -694,7 +707,8 @@ M(() =&gt; <span class="string">"abc"</span>); <span class="comment">// string �
 }
 </code></pre>
 
-###<a id="sec-generated-title-14"></a> <a id="signature-trick"></a>余談: 同一シグネチャのメソッド オーバーロード
+### <a id="sec-generated-title-14"></a> <a id="signature-trick"></a>余談: 同一シグネチャのメソッド オーバーロード
+
 ここで説明してきたように、C# 7.3から静的メソッドかインスタンス メソッドかや、
 ジェネリック型制約の差でオーバーロード解決できるようになりました。
 
@@ -788,7 +802,8 @@ C# 7.3で呼び分けができるようになったことで、少し使い勝�
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-15"></a> <a id="overload-resolution-priority">OverloadResolutionPriority 属性</a>
+## <a id="sec-generated-title-15"></a> <a id="overload-resolution-priority">OverloadResolutionPriority 属性</a>
+
 C# 13 で、オーバーロードの解決優先度を属性を付けて明示できる機能が入りました。
 `OverloadResolutionPriority` 属性(`System.Runtime.CompilerServices` 名前空間)を使います。
 名前通り優先度を指定できて、正の整数を指定すると優先度が上がって、負の整数なら下がります。
@@ -850,7 +865,8 @@ C# 13 で、オーバーロードの解決優先度を属性を付けて明示�
 </pre>
 
 
-###<a id="sec-generated-title-16"></a> <a id="binary-compat">互換性問題</a>
+### <a id="sec-generated-title-16"></a> <a id="binary-compat">互換性問題</a>
+
 C# の言語機能が増えるにつれて、例えば「`IEnumerable<T>` よりも、`ReadOnlySpan<T>` 引数を使いたい」みたいなことが多々あります。
 しかし、以前からあるメソッドを消すことができなくて、それは残したまま新しいオーバーロードを追加することになったりします。
 (ライブラリ作者、特に、プラグイン提供するような場合、バイナリ互換(ソースコードの再コンパイルなしでも動く保証)を残すため、メソッドの削除はできなくなります。)
@@ -994,7 +1010,8 @@ C# の言語機能が増えるにつれて、例えば「`IEnumerable<T>` より
 }
 </pre>
 
-###<a id="sec-generated-title-17"></a> <a id="in-a-type">同一クラス内でのみ有効</a>
+### <a id="sec-generated-title-17"></a> <a id="in-a-type">同一クラス内でのみ有効</a>
+
 `OverloadResolutionPriority` 属性による優先度の変更は、同一クラス内においてのみ有効です。
 なので、以下のようなことは<em>できません</em>。
 
@@ -1074,7 +1091,8 @@ C# の言語機能が増えるにつれて、例えば「`IEnumerable<T>` より
 }
 </pre>
 
-###<a id="sec-generated-title-18"></a> <a id="overload-by-return">余談: (疑似)戻り値オーバーロード</a>
+### <a id="sec-generated-title-18"></a> <a id="overload-by-return">余談: (疑似)戻り値オーバーロード</a>
+
 C# では戻り値だけが異なるオーバーロードを認めていません。
 例えば以下のコードはコンパイル エラーになります。
 

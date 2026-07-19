@@ -18,7 +18,8 @@ aliases:
 
 # 行列と線形写像
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 行列とは何なのかといわれると、いろいろな表現の仕方があるのですが、
 大まかに言うと以下の2つになります。
 
@@ -28,7 +29,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="matrix"></a>行列
+## <a id="sec-generated-title-2"></a> <a id="matrix"></a>行列
+
 まず、行列というのは1次方程式を簡潔に表現するための便法だと考えることができます。
 例えば、
 <div class="math">
@@ -130,7 +132,8 @@ x<span class="paren" style="font-size:em;">(</span>0<span class="paren" style="f
 行列というのは、数というものを多変数・高次元の場合に一般化したものだと考えることができます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="linear_map"></a>線形写像
+## <a id="sec-generated-title-3"></a> <a id="linear_map"></a>線形写像
+
 行列の持つもう1つの側面として、線形写像という考え方があります。
  
 ベクトルに対して、線形性という性質にのみ着目して、線形空間として抽象化したように、
@@ -197,7 +200,8 @@ b f<span class="paren" style="font-size:em;">(</span>y<span class="paren" style=
 その時々に最も適切な座標系を選んで、行列表現を得ます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="coordinate"></a>座標変換
+## <a id="sec-generated-title-4"></a> <a id="coordinate"></a>座標変換
+
 同じ線形空間上の同じ元でも、座標系の取り方によって異なる数ベクトルで表される。
 ある座標系から別の座標系に変換することを座標変換と言う。
 座標変換も線形写像になる ＝ 行列で表される。

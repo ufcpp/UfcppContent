@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] 式木を WPF で GUI 表示
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 下のスクリーンショットを見ての通り。
 
 <figure>
@@ -36,7 +37,8 @@ WPF を使って階層的に GUI 表示します。
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="component"></a>構成要素
+## <a id="sec-generated-title-2"></a> <a id="component"></a>構成要素
+
 以下のような要素を詰め込んだサンプルになっています。
 
 * 式木としてどんなクラスがあるのか、一通り全部網羅。 （System.Linq.Expressions 名前空間内の Expression クラスを継承するクラスを網羅。）
@@ -50,7 +52,8 @@ WPF を使って階層的に GUI 表示します。
 ざっと眺めるのにちょうどいいと思います。
 
 
-###<a id="sec-generated-title-3"></a> <a id="datatemplate"></a>データテンプレート
+### <a id="sec-generated-title-3"></a> <a id="datatemplate"></a>データテンプレート
+
 他のプログラムでも使いまわせると思うので、
 式木表示用の DataTemplate だけ ResourceDictionary 化しています。
 

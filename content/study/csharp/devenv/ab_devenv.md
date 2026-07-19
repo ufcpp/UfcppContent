@@ -20,7 +20,8 @@ aliases:
 
 # C# 開発環境
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# でプログラミングを行うためには、コンパイラーだけ入手してテキスト エディターで開発する方法と、
 統合開発環境を利用する方法があります。
 
@@ -34,7 +35,8 @@ C# でプログラミングを行うためには、コンパイラーだけ入�
 - Mac な人: [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/)
 - その他、あるいは、クロスプラットフォームで開発をしたい人: [Visual Studio Code](https://code.visualstudio.com/)
 
-##<a id="sec-generated-title-2"></a> <a id="ide"></a>統合開発環境(IDE)
+## <a id="sec-generated-title-2"></a> <a id="ide"></a>統合開発環境(IDE)
+
 統合開発環境(Integrated Development Environment、略してIDE)は、
 ソースコードの編集、コンパイル、デバッグなど、プログラム作成に必要な機能を統合的に提供するGUIプログラムです。
 概ね、以下のようなことができます。
@@ -47,7 +49,8 @@ C# でプログラミングを行うためには、コンパイラーだけ入�
   - ステップ実行: ソースコードを1行1行実行しつつ、その時点の変数の中身などを覗けます
 - パッケージ化: プログラムを配布可能な状態にパッキングします
 
-###<a id="sec-generated-title-3"></a> <a id="Visual-Studio"></a>Visual Studio
+### <a id="sec-generated-title-3"></a> <a id="Visual-Studio"></a>Visual Studio
+
 Visual Studioは、Windows専用ではありますが、古くからある高機能なIDEです。
 
 - 公式ページ: [Visual Studio](https://visualstudio.microsoft.com/)
@@ -78,6 +81,7 @@ Visual Studioには無償版もあります。
 - [BizSpark](https://www.microsoft.com/ja-jp/ventures/BizSpark.aspx): 企業5年未満、非上場、かつ、年商100万ドル未満の会社であれば入れます。
 
 #### <a id="sec-generated-title-4"></a>補足: Visual Studioブランド
+
 後述する Visual Studio Code など、名前に「Visual Studio」と入っていますが、これまでの Visual Studio とは別物の製品があります。
 最近では、マイクロソフトは「Visual Studio」という名前をマイクロソフト製の開発ツール全般を指すブランド名にしたいようです。
 例えば、以下のようなものも前節の Visual Studio とは別物です。
@@ -88,6 +92,7 @@ Visual Studioには無償版もあります。
 これらと区別するために、前節の意味での Visual Studio は、「Visual Studio for Windows」と言ったりもするようになりました。
 
 ### <a id="sec-generated-title-5"></a>その他
+
 - [MonoDevelop](http://www.monodevelop.com/): クロスプラットフォームIDE。
 - [Xamarin Studio](https://xamarin.com/studio): 中身はMonoDevelopと一緒というか、MonoDevelop + iOS/Android開発プラグインみたい。
   - Visual Studio for Mac も、中身は Xamarin Studio (= MonoDevelop ベース)
@@ -95,7 +100,8 @@ Visual Studioには無償版もあります。
 
 (他にもいいものがあれば随時更新)
 
-##<a id="sec-generated-title-6"></a> <a id="editor-extensions"></a>テキスト エディターと拡張機能
+## <a id="sec-generated-title-6"></a> <a id="editor-extensions"></a>テキスト エディターと拡張機能
+
 Visual Studio (for Windows)くらい「全部入り」な IDE だと、インストールや起動が重くて嫌という人もいると思います。
 なので、単に「テキストを編集する」用途の場合、テキスト エディターと呼ばれるようなもっとシンプルなアプリを使うことが多いでしょう。
 
@@ -103,6 +109,7 @@ Visual Studio (for Windows)くらい「全部入り」な IDE だと、インス
 最近のテキスト エディターは拡張機能が充実していて、開発支援用の拡張もいろいろ提供されています。
 
 ### <a id="sec-generated-title-7"></a>Visual Studio Code
+
 Visual Studio Codeは、クロスプラットフォームで動く開発ツールです。
 
 - 公式ページ: [Visual Studio Code](https://code.visualstudio.com/)
@@ -111,11 +118,13 @@ Visual Studio Codeは、クロスプラットフォームで動く開発ツー�
 C# 向けの拡張機能をインストールすることで、前述のコード補完やデバッグ実行なども使えます。
 
 ### <a id="sec-generated-title-8"></a>その他
+
 - [OmniSharp](http://www.omnisharp.net/): EmacsやSublime Text向けの、C#開発支援プラグイン。
 
 (他にもいいものがあれば随時更新)
 
-##<a id="sec-generated-title-9"></a> <a id="command-line-tools"></a>コマンド ライン ツール
+## <a id="sec-generated-title-9"></a> <a id="command-line-tools"></a>コマンド ライン ツール
+
 プログラミングには IDE や、拡張機能が充実しているエディターが必須というわけではありません。
 
 本当に「プレーンなテキストを打ち込む」という機能しか持たないエディターで編集したC#ソースコードを、コマンド ラインから実行することもできます。
@@ -125,7 +134,8 @@ C# 向けの拡張機能をインストールすることで、前述のコー�
 - [CI](https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A%E7%9A%84%E3%82%A4%E3%83%B3%E3%83%86%E3%82%B0%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)ビルドで、コミットごとにとか、日に1回特定の時刻にとか、自動ビルドしたい
 - サーバーにリモート ログインして、[GitHub](https://github.com/)などからソースコード一式をダウンロードして、それをコンパイルして実行したい
 
-###<a id="sec-generated-title-10"></a> <a id="dotnetcli"></a>dotnet コマンド
+### <a id="sec-generated-title-10"></a> <a id="dotnetcli"></a>dotnet コマンド
+
 .NET Core(オープンソース開発されているクロスプラットフォーム向け.NET)では、dotnetコマンドという便利なコマンド ライン ツールを提供しています。
 
 dotnetコマンドという1つのコマンドだけで、C#でのプログラミングに必要な機能が一通り提供されています。
@@ -138,7 +148,8 @@ dotnetコマンドは、今のところ(2016年1月時点)、Windows、Ubuntu、
 ![dotnetコマンド(1)][1]
 ![dotnetコマンド(2)][2]
 
-###<a id="sec-generated-title-11"></a> <a id="csc"></a>C#コンパイラーとMSBuild
+### <a id="sec-generated-title-11"></a> <a id="csc"></a>C#コンパイラーとMSBuild
+
 旧来のWindows向け.NET Frameworkでも、C#のコンパイラーだけであれば無償で使えていました。
 
 Visual Studioに無償版がなかったころでも、やろうと思えば無償でC#プログラミングは可能でした。

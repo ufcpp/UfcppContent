@@ -18,7 +18,8 @@ aliases:
 
 # 今更ながら LaTeX
 
-##<a id="sec-generated-title-1"></a> <a id="d22e4"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="d22e4"></a>概要
+
 今の世の中、文書ファイルの標準的なフォーマットと言えばMicrosoftのWordドキュメントかAdobeのPDFでしょうか。
 ウェブ上に公開するにしてもXMLかHTMLが一般的です。
 そんな中LaTeXが根強く生き残ってるのは、アンチM$な人たちがWordを使わないのと、ただであることと、あと数式を書くならやっぱりLaTeXが一番楽だからでしょうか。
@@ -35,7 +36,8 @@ aliases:
 このページでは小ネタ集的なノリで行こうかと思っています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="vector"></a>太字イタリックのベクトル
+## <a id="sec-generated-title-2"></a> <a id="vector"></a>太字イタリックのベクトル
+
 LaTeXで<code>\vector</code>というと、<ruby><rb>AB</rb><rt>→</rt><rp>(IE5でしか見れないけど許してね)</rp></ruby>というような感じの文字の上に矢印が乗っかったものになります。
 太字イタリック体のベクトルを書くには自分でマクロ定義してやる必要があります。
 
@@ -45,7 +47,8 @@ LaTeXで<code>\vector</code>というと、<ruby><rb>AB</rb><rt>→</rt><rp>(IE5
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="diff"></a>微分記号
+## <a id="sec-generated-title-3"></a> <a id="diff"></a>微分記号
+
 微分記号のdなんですけども、ブロック体で書いたほうがいいってことになってます。
 要するに
 <table class="layout" summary="レイアウト用テーブル">
@@ -76,7 +79,8 @@ LaTeXだとめんどくさいからついつい、
 というのを定義しておいて<code>\ddt{x}</code>とすれば楽でいいかも。
 
 
-##<a id="sec-generated-title-4"></a> <a id="fourier"></a>ラプラス変換・フーリエ変換
+## <a id="sec-generated-title-4"></a> <a id="fourier"></a>ラプラス変換・フーリエ変換
+
 ラプラス変換とかフーリエ変換の記号を出したいとき、要するに筆記体をかければ言い訳ですが、そのためには<code>\cal</code>という命令を使います。
 
 <pre class="source" title="" lang="">
@@ -86,7 +90,8 @@ LaTeXだとめんどくさいからついつい、
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="dint"></a>角度、温度
+## <a id="sec-generated-title-5"></a> <a id="dint"></a>角度、温度
+
 角度(45°とか)や温度(21℃とか)を表示したいとき、まあ、全角文字の°とか℃を使っちゃえばすむんですが、一応LaTeXで書こうってことで
 
 <pre class="source" title="" lang="">
@@ -96,7 +101,8 @@ LaTeXだとめんどくさいからついつい、
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="dint"></a>重積分
+## <a id="sec-generated-title-6"></a> <a id="dint"></a>重積分
+
 重積分を書くとき、普通に<code>\int\int_Df(x,y)\diff x\diff y</code>と書くと積分記号の間のスペースが空きすぎてちょっと不恰好です。そこで
 
 <pre class="source" title="" lang="">
@@ -107,7 +113,8 @@ LaTeXだとめんどくさいからついつい、
 というなマクロを定義して<code>\dint_Df(x,y)\diff x\diff y</code>とします。
 
 
-##<a id="sec-generated-title-7"></a> <a id="praphicx"></a>画像を貼り付けたい
+## <a id="sec-generated-title-7"></a> <a id="praphicx"></a>画像を貼り付けたい
+
 画像を貼り付けたいってのはよくある要望なんですが、
 TeXは文章を書くのが専門なんでTeX自身は画像ファイルを取り込む機能を持っていません
 (それに画像ってのはWindowsではBMPが標準形式だし、Macだとpictやtiff、UNIXではPBMが標準的というように機種ごとに違うのもTeXが標準で画像を取り込む機能を持っていない原因)。
@@ -130,7 +137,8 @@ susieプラグインを用いて表示しています。
 susieプラグインさえあればPNGやPBMなどさまざまな形式の画像を表示できます。
 
 
-##<a id="sec-generated-title-8"></a> <a id="color"></a>文章をカラーにしたい
+## <a id="sec-generated-title-8"></a> <a id="color"></a>文章をカラーにしたい
+
 colorスタイルファイルを使えばLaTeX文書をカラー化できます。
 
 <pre class="source" title="" lang="">
@@ -150,7 +158,8 @@ colorスタイルファイルを使えばLaTeX文書をカラー化できます�
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="here"></a>図表をその場に表示したい
+## <a id="sec-generated-title-9"></a> <a id="here"></a>図表をその場に表示したい
+
 LaTeXでfigure環境やtable環境を使うと、適切と思われる位置に図表が勝手に移動されてしまいます。
 まあ、そのほうがいいときも多いでしょうが、どうしても指定した位置に図表を表示したいときにはhereスタイルファイルを使いましょう。(here.styが必要)
 
@@ -168,7 +177,8 @@ LaTeXでfigure環境やtable環境を使うと、適切と思われる位置に�
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="ppt"></a>パワーポイントで書いた絵をLaTeXで使いたい
+## <a id="sec-generated-title-10"></a> <a id="ppt"></a>パワーポイントで書いた絵をLaTeXで使いたい
+
 うちの学科では論文発表時のプレゼンはパワーポイントで作ります。
 でも、論文書き自体はLaTeXで書くことが多いです。
 そういうわけで、必然的にパワーポイントで絵を描いて、
@@ -187,6 +197,7 @@ wmf2epsを使ってEPSに変換します。
 この方法を使えばLaTeXに結構綺麗な図を張り込むことが出来ます。
 
 
-##<a id="sec-generated-title-11"></a> <a id="omake"></a>おまけ
+## <a id="sec-generated-title-11"></a> <a id="omake"></a>おまけ
+
 LaTeXのロゴ、HTMLでは「L<sup><small>A</small></sup>T<small>E</small>X」こう書くのが一般的なんでしょうか。
 <code>L&lt;sup&gt;&lt;small&gt;A&lt;/small&gt;&lt;/sup&gt;T&lt;small&gt;E&lt;/small&gt;X</code>

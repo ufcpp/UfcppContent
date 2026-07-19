@@ -18,7 +18,8 @@ aliases:
 
 # 論理演算と算術演算
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 コンピュータ内での演算の基本は論理演算です。
 
 論理演算ができる電子回路（論理回路）があれば、
@@ -28,7 +29,8 @@ aliases:
 例として、加算器の作り方や、負の数の表現方法を説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="logical"></a>論理演算
+## <a id="sec-generated-title-2"></a> <a id="logical"></a>論理演算
+
 「[n 進数](n_adic.md)」で、
 コンピュータの中では 0, 1 の2進で数値を表しているという説明をしました。
 
@@ -264,7 +266,8 @@ CMOS NAND 回路というのがあります。
 ここではあまり詳しくは触れませんが、興味があればこの単語をキーワードに検索してみてください。
 
 
-##<a id="sec-generated-title-3"></a> <a id="adder"></a>加算器
+## <a id="sec-generated-title-3"></a> <a id="adder"></a>加算器
+
 前節の最後でちょこっとだけ触れましたが、
 論理演算は電子回路を用いて簡単に実現できます。
 （これを論理回路と呼びます。）
@@ -533,7 +536,8 @@ CMOS NAND 回路というのがあります。
 「コンピュータ内の演算の基本は論理回路」というのがポイントです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="negative"></a>負の数
+## <a id="sec-generated-title-4"></a> <a id="negative"></a>負の数
+
 次は、負の数の表現の仕方を考えてみます。
 符号と絶対値を別々に持つとか、いろいろ考えられるんですけども、
 よく使われるのは「2の補数表現」と呼ばれる表現方法です。

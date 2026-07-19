@@ -18,18 +18,21 @@ aliases:
 
 # コンストラクター
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 オブジェクトを作成するためには、オブジェクトを正しく初期化してやる必要があります。
 そのために、オブジェクトの構築のためのコンストラクターと呼ばれる特殊なメソッドが用意されています。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * コンストラクターで初期化
     * new したときに呼び出される特殊なメソッド。
     * 型名と同じ名前で定義する。
 * 例えば、class Person { public Person(string name) { ... } ... }
 
-##<a id="sec-generated-title-3"></a> <a id="ctor"></a>コンストラクター
+## <a id="sec-generated-title-3"></a> <a id="ctor"></a>コンストラクター
+
 コンストラクターはインスタンスを正しく初期化するための特別なメソッドです。
 コンストラクターは以下のように、型名と同じ名前のメソッドを書くことで定義できます。
 
@@ -189,6 +192,7 @@ Console.Write(p.age); <span class="comment">// 57 と表示される</span>
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 <pre class="source" title="コンストラクターのサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -275,7 +279,8 @@ Console.Write(p.age); <span class="comment">// 57 と表示される</span>
 </pre>
 
 
-##<a id="sec-generated-title-5"></a> <a id="variable-initializer"></a>フィールド初期化子
+## <a id="sec-generated-title-5"></a> <a id="variable-initializer"></a>フィールド初期化子
+
 フィールドに初期値を与えるだけなら、
 コンストラクターを使わなくても、以下の様な書き方で初期化できます。
 
@@ -293,7 +298,8 @@ Console.Write(p.age); <span class="comment">// 57 と表示される</span>
 (初期化する対象の名前が違うだけで、ほぼ同じものです。)
 
 
-##<a id="sec-generated-title-6"></a> <a id="initializer"></a>コンストラクター初期化子
+## <a id="sec-generated-title-6"></a> <a id="initializer"></a>コンストラクター初期化子
+
 場合によっては、あるコンストラクターから別のコンストラクターを呼びだしたいことがあります。
 このような場合に、以下のような書き方で、別のコンストラクターを呼び出すことができます。
 
@@ -320,7 +326,8 @@ Console.Write(p.age); <span class="comment">// 57 と表示される</span>
 この書き方をコンストラクター初期化子（constructor initializer）と言います。
 （[別項](oo_inherit.md#base_ctor)で説明する`base`と区別してthis初期化子と言うこともあります。）
 
-###<a id="sec-generated-title-7"></a> <a id="initializer-order">初期化子の呼ばれる順序</a>
+### <a id="sec-generated-title-7"></a> <a id="initializer-order">初期化子の呼ばれる順序</a>
+
 ちなみに、フィールド初期化子やコンストラクターの実行順序は以下のようになります。
 
 1. コンストラクター初期化子に渡す引数の評価
@@ -379,7 +386,8 @@ Console.Write(p.age); <span class="comment">// 57 と表示される</span>
 }
 </pre>
 
-##<a id="sec-generated-title-8"></a> <a id="member_initializer"></a>オブジェクト初期化子
+## <a id="sec-generated-title-8"></a> <a id="member_initializer"></a>オブジェクト初期化子
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 から、以下のような記法でメンバーを初期化できるようになりました。
@@ -400,7 +408,8 @@ p.Y = 1;
 
 詳細は「[初期化子](../functional/sp3_lambda.md#init)」で説明します。
 
-##<a id="sec-generated-title-9"></a> <a id="dtor"></a>コンストラクターの逆操作
+## <a id="sec-generated-title-9"></a> <a id="dtor"></a>コンストラクターの逆操作
+
 詳しくは後々説明していきますが、コンストラクターと逆の操作を行うものが2つあります。
 
 1つは、ファイナライザー(destructor)です。
@@ -457,7 +466,8 @@ p.Y = 1;
 詳しくは「[複合型の分解](../datatype/deconstruction.md)」で説明します。
 
 
-##<a id="sec-generated-title-10"></a> <a id="target-typed-new"></a>ターゲットからの new 型推論
+## <a id="sec-generated-title-10"></a> <a id="target-typed-new"></a>ターゲットからの new 型推論
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 C# 9.0 から、状況によっては `new 型名()` の `型名` の部分を省略できるようになりました。
@@ -534,7 +544,8 @@ C# 9.0 から、状況によっては `new 型名()` の `型名` の部分を�
 
 また、`throw new()` は `throw new Exception()` の意味になったりします。
 
-##<a id="sec-generated-title-11"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
+## <a id="sec-generated-title-11"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 C# 12 から、クラス名の直後に `()` を付けることでコンストラクターを簡素に書けるようになりました。
@@ -602,7 +613,8 @@ C# 12 から、クラス名の直後に `()` を付けることでコンスト�
 }
 </pre>
 
-###<a id="sec-generated-title-12"></a> <a id="vs-record">補足: レコード型との差</a>
+### <a id="sec-generated-title-12"></a> <a id="vs-record">補足: レコード型との差</a>
+
 C# 9 で[レコード型](../datatype/record.md)が導入された際、
 普通のクラスや構造体よりも先にレコード型に対してだけプライマリ コンストラクターが書けました。
 順序的に紛らわしくなっていますが、
@@ -641,7 +653,8 @@ C# 9 で[レコード型](../datatype/record.md)が導入された際、
 }
 </pre>
 
-###<a id="sec-generated-title-13"></a> <a id="empty-body">括弧省略</a>
+### <a id="sec-generated-title-13"></a> <a id="empty-body">括弧省略</a>
+
 レコード型では、以下のように `{}` を省略可能でした。
 (ただし、その場合、`;` を付ける必要があります。)
 
@@ -686,7 +699,8 @@ C# 12 で、普通のクラスに対してもプライマリ コンストラク�
 <span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable local">FirstName</span>, <span class="reserved">string</span> <span class="variable local">LastName</span>);
 </pre>
 
-###<a id="sec-generated-title-14"></a> <a id="pc-paramter">プライマリ コンストラクター引数</a>
+### <a id="sec-generated-title-14"></a> <a id="pc-paramter">プライマリ コンストラクター引数</a>
+
 プライマリ コンストラクターの引数は、クラス内の全域で参照できます。
 
 <pre class="source" title="プライマリ コンストラクターの引数を参照">
@@ -739,7 +753,8 @@ C# 12 で、普通のクラスに対してもプライマリ コンストラク�
 }
 </pre>
 
-####<a id="sec-generated-title-15"></a> <a id="capture">キャプチャ</a>
+#### <a id="sec-generated-title-15"></a> <a id="capture">キャプチャ</a>
+
 プライマリ コンストラクター引数を初期化時以外でも使う場合には少し事情が変わってきます。
 
 例えば以下のように、メソッドや[プロパティ](oo_property.md)の中で参照した場合、
@@ -776,7 +791,8 @@ C# 12 で、普通のクラスに対してもプライマリ コンストラク�
 }
 </pre>
 
-####<a id="sec-generated-title-16"></a> <a id="double-field">注意: 2重フィールド生成</a>
+#### <a id="sec-generated-title-16"></a> <a id="double-field">注意: 2重フィールド生成</a>
+
 ちょっと注意が必要なのは、以下のようなコードを書いてしまうと(おそらく意図せず)フィールドが2重に生成されることがあるという点です。
 
 <pre class="source" title="2重にフィールド生成がかかってしまう例">
@@ -819,7 +835,8 @@ C# 12 で、普通のクラスに対してもプライマリ コンストラク�
 
 こんな風にフィールドが2個できることは望ましくないので、ちゃんと警告は取りましょう。
 
-####<a id="sec-generated-title-17"></a> <a id="mutable">注意: 書き換え可能</a>
+#### <a id="sec-generated-title-17"></a> <a id="mutable">注意: 書き換え可能</a>
+
 プライマリ コンストラクターの引数は、
 あくまで引数です。
 キャプチャが発生すると実質的にはフィールドみたいなものですが、

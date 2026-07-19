@@ -18,20 +18,24 @@ aliases:
 
 # 縦ベクトル
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 縦ベクトルを表示する
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;vervec size="ベクトルの要素数"&gt;&lt;elem&gt;要素1&lt;/elem&gt;...&lt;elem&gt;要素n&lt;elem&gt;&lt;/vervec&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;vec&gt;r&lt;/vec&gt; = &lt;vervec size="2"&gt;&lt;elem&gt;x&lt;/elem&gt;&lt;elem&gt;y&lt;/elem&gt;&lt;/vervec&gt;
 </pre><div class="math"><span class="vector">r</span> = <span class="paren" style="font-size:2em;">[</span><table class="matrix" summary="vector"><tr><td>x</td></tr><tr><td>y</td></tr></table><span class="paren" style="font-size:2em;">]</span>
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:vervec"&gt;
   &lt;span class="paren"&gt;
     &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
@@ -52,7 +56,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>table.matrix
 {
   display:inline;

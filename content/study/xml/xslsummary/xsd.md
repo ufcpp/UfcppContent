@@ -18,7 +18,8 @@ aliases:
 
 # XSD
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 XSD を書いておけば、XML エディタで補完機能が働くようになります。
 
 たとえば、Visual Studio の場合、

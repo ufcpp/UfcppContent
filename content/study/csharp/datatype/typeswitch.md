@@ -14,7 +14,8 @@ aliases:
 
 # is、switch の拡張 (型スイッチ)
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <h5 class="version version7">Ver. 7</h5>
 
 C# 7.0で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステートメント](../structured/st_branch.md#switch)の`case`が拡張されました。
@@ -44,7 +45,8 @@ C# 7.0 時点では「型パターン」が主だった機能だったため、
 例なども、主に型パターン(C# 7.0)で説明していきます。
 パターン自体の詳細については次項の「[パターン マッチング](patterns.md)」を参照してください。
 
-##<a id="sec-generated-title-2"></a> <a id="is"></a>is演算子の拡張
+## <a id="sec-generated-title-2"></a> <a id="is"></a>is演算子の拡張
+
 C# 7では、`is`演算子で以下のような書き方ができるようになりました。
 
 <pre class="source" title="is = 型判定">
@@ -100,14 +102,16 @@ C# 6以前の`is`演算子は少し使い勝手が悪い面がありました。
 挙動的には、先ほどの`as`演算子を使ったものとまったく同じ挙動になります。
 `is`演算子で型を判定しつつ(`bool`の戻り値を返しつつ)、その型への変換結果を新しい変数で受け取れます。
 
-###<a id="sec-generated-title-3"></a> <a id="scope"></a>is演算子で宣言された変数のスコープ
+### <a id="sec-generated-title-3"></a> <a id="scope"></a>is演算子で宣言された変数のスコープ
+
 `is`演算子の拡張によって、式の中で変数宣言ができるようになりました。
 そこで問題になるのはこの変数のスコープです。
 
 概ね、「その式を含むブロック内」と考えていいんですが、`if`や`while`などの中で使ったときなど、いくつか特殊な場合があります。
 詳細については「[式の中で変数宣言](../start/st_scope.md#declaration-expressions)」を参照してください。
 
-###<a id="sec-generated-title-4"></a> <a id="null-check"></a>is演算子によるnullチェック
+### <a id="sec-generated-title-4"></a> <a id="null-check"></a>is演算子によるnullチェック
+
 元々の`is`演算子の仕様でもあるんですが、`null`には型がなくて常に`is`に失敗します(`false`を返す)。
 
 <pre class="source" title="nullは型を持たない">
@@ -185,7 +189,8 @@ C# 6以前の`is`演算子は少し使い勝手が悪い面がありました。
 <span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> { }) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;ここは通らない&quot;</span>);
 </code></pre>
 
-###<a id="sec-generated-title-5"></a> <a id="invariant-meaning"></a>余談: 変数の意味を変えない
+### <a id="sec-generated-title-5"></a> <a id="invariant-meaning"></a>余談: 変数の意味を変えない
+
 プログラミング言語によっては、以下のように、`is`演算子で型を判定した後には、自動的にその型扱いしてくれる言語もあります。
 
 <pre class="source" title="is によって変数の意味を変える">
@@ -228,7 +233,8 @@ C#では、変数はスコープ内で意味不変(invariant meaning)である�
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-6"></a> <a id="switch"></a>switchステートメントの拡張
+## <a id="sec-generated-title-6"></a> <a id="switch"></a>switchステートメントの拡張
+
 C# 7では、`switch`ステートメントの`case`句に、値だけでなく、パターンを書けるようになりました。
 パターンの書き方は、前節の`is`演算子と同様です。
 また、型による条件に加えて、`when`句というものを付けて追加の条件式を書くこともできます。
@@ -283,7 +289,8 @@ C# 7では、`switch`ステートメントの`case`句に、値だけでなく�
 }
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="sequential"></a>上から逐次判定
+### <a id="sec-generated-title-7"></a> <a id="sequential"></a>上から逐次判定
+
 C# 6までの、値による分岐しかなかった`switch`ステートメントとはちょっと違う部分があります。
 以下の点に気を付けてください。
 
@@ -409,7 +416,8 @@ C# 6までの、値による分岐しかなかった`switch`ステートメン�
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-8"></a> <a id="usage"></a>型スイッチ(switch を使ったパターン マッチング)の用途
+## <a id="sec-generated-title-8"></a> <a id="usage"></a>型スイッチ(switch を使ったパターン マッチング)の用途
+
 型によって分岐する方法としては、[仮想メソッド](../oop/oo_polymorphism.md#virtual)を使う方法があります。
 オブジェクト指向プログラミング言語としては、仮想メソッドが相当に便利で、実行性能もよく、こちらが好まれます。
 極端な意見では、「型を調べたら負け」、「[ダウンキャスト](../oop/oo_polymorphism.md#downcast)が必要なのは筋が悪い」という人すらいます。
@@ -550,7 +558,8 @@ C# 6までの、値による分岐しかなかった`switch`ステートメン�
 
 こういう、クラス作者側では用途が見えないものは、型スイッチを使って書くことになります。
 
-###<a id="sec-generated-title-9"></a> <a id="performance"></a>補足: 型スイッチの性能
+### <a id="sec-generated-title-9"></a> <a id="performance"></a>補足: 型スイッチの性能
+
 仮想メソッドと比べると遅いという話をしましたが、これは、仮想メソッドが性能よすぎるだけで、
 型スイッチもそこまでひどい性能ではありません。
 先ほどの`Calculate`の例でいうと、大まかに計測したところ4倍程度の差でした。
@@ -575,7 +584,8 @@ C# 6までの、値による分岐しかなかった`switch`ステートメン�
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-10"></a> <a id="generic-type-switch"></a>余談: ジェネリック型に対する型パターン
+## <a id="sec-generated-title-10"></a> <a id="generic-type-switch"></a>余談: ジェネリック型に対する型パターン
+
 <h5 class="version version7_1">Ver. 7.1</h5>
 
 C# 7.0の時点では、[ジェネリクス](../oop/sp2_generics.md)が絡む場合、
@@ -637,7 +647,8 @@ C# 7.0でも、以下のように、`as`演算子を使った場合にはちゃ�
 そこで、C# 7.1では、上記コードのような、ジェネリックな型に対する型パターンを使えるようになりました。
 (新機能というよりは、仕様漏れ・バグ修正の類です。)
 
-##<a id="sec-generated-title-11"></a> <a id="generic-is-null"></a>余談: ジェネリック型に対する is null
+## <a id="sec-generated-title-11"></a> <a id="generic-is-null"></a>余談: ジェネリック型に対する is null
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 から、
@@ -654,7 +665,8 @@ C# 8.0 から、
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-12"></a> <a id="switch-expression"></a>switch 式
+## <a id="sec-generated-title-12"></a> <a id="switch-expression"></a>switch 式
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が追加されました。
@@ -773,7 +785,8 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
 };
 </code></pre>
 
-###<a id="sec-generated-title-13"></a> <a id="switch-priority"></a>switch 式の優先度
+### <a id="sec-generated-title-13"></a> <a id="switch-priority"></a>switch 式の優先度
+
 `switch` 式の優先度は単項演算の下、乗除演算の上になります。
 `++x` や `await x` は `switch` 式よりも先に評価されて、
 `x * y` や `x + y` は `switch` 式よりも後に評価されます。
@@ -795,7 +808,8 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
     =&gt; <span class="variable">y</span> * <span class="variable">x</span> <span class="control">switch</span> { 0 =&gt; 0, <span class="reserved">_</span> =&gt; 1 };
 </code></pre>
 
-###<a id="sec-generated-title-14"></a> <a id="exhaustive"></a>網羅性
+### <a id="sec-generated-title-14"></a> <a id="exhaustive"></a>網羅性
+
 式であるからには、`switch` 式は必ず値を返す必要があります。
 なので、パターンには網羅性(exhaustiveness)が求められます。
 すなわち、「どのパターンも満たさず`switch`式を抜けてしまう」みたいな状態は許容されません。
@@ -842,7 +856,8 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
 将来的には、`enum`型の網羅性や、派生クラスの網羅性もチェックしたいそうですが、
 「後からのメンバー追加に弱くなる」など課題があるため、実装されるかどうかは不明瞭です。
 
-####<a id="sec-generated-title-15"></a> <a id="bool-exhaustiveness"></a>余談: bool の網羅性
+#### <a id="sec-generated-title-15"></a> <a id="bool-exhaustiveness"></a>余談: bool の網羅性
+
 前節の`switch`式の網羅性チェックと関連して、ステートメントの方の`switch`でも、`bool`の網羅性チェックが働くようになりました。
 C# 8.0 前後で挙動が変わるのでご注意ください。
 
@@ -865,7 +880,8 @@ C# 8.0 前後で挙動が変わるのでご注意ください。
 
 C# 7.3 以前がどうしてそうなっていたかは以前ブログを書いたのでそちらを参照してください: 「[bool 型の false, true, それ以外](../../../blog/2019/1/falsetrueother/index.md)」。
 
-###<a id="sec-generated-title-16"></a> <a id="target-typed"></a>ターゲットからの型決定
+### <a id="sec-generated-title-16"></a> <a id="target-typed"></a>ターゲットからの型決定
+
 `switch` 式にはターゲットからの型推論が働きます。
 
 ここでいうターゲットというのは結果を渡す先のことで、例えば以下のような書き方をした場合、

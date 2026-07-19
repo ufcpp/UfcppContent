@@ -18,7 +18,8 @@ aliases:
 
 # 文字列関係
 
-##<a id="sec-generated-title-1"></a> <a id="string"></a>string
+## <a id="sec-generated-title-1"></a> <a id="string"></a>string
+
 C# の組込み型 string の実体は System.String クラスです。
 System.String クラスには以下のようなメソッドが標準で用意されています。
 （以下の例に挙げるもの以外にも、いくつかのメソッドがあります。）
@@ -84,7 +85,8 @@ This Is a Program Which Allows You to View It
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="format"></a>書式指定出力
+## <a id="sec-generated-title-2"></a> <a id="format"></a>書式指定出力
+
 String.Fomat メソッドや、Console.Write メソッドは、
 数値などの体裁を整える書式指定機能を持っています。
 
@@ -168,7 +170,8 @@ String.Fomat メソッドや、Console.Write メソッドは、
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="regex"></a>正規表現
+## <a id="sec-generated-title-3"></a> <a id="regex"></a>正規表現
+
 System.Text.RegularExpressions.Regex クラスにより、
 正規表現による文字列探索を利用できます。
 
@@ -228,6 +231,7 @@ contact to      the     support
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 正規表現クラス Regex を使って、
 XML の中身を HTML 中に貼り付けれる形に変換します。
 

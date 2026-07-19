@@ -18,7 +18,8 @@ aliases:
 
 # マージソート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 マージ（merge: 併合、吸収）とは、
 2つのソート済み配列を、1つのソート済み配列にまとめる操作のことを言います。
 そして、<strong id="merge" class="keyword">マージソート</strong>（merge sort）は分割統治法に基づく、
@@ -45,7 +46,8 @@ aliases:
 
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=merge&i=0&s=0&w=300" width="304" height="332"></iframe></div>
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/MergeSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/MergeSort.cs)
 
 <pre class="source" title="ソート" lang="">

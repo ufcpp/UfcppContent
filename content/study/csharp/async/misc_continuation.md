@@ -19,12 +19,14 @@ aliases:
 
 # \[雑記\] 継続と先物
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>予定
+
 <strong id="key_future" class="keyword">先物</strong>（future）
 
 <strong id="key_continuation" class="keyword">継続</strong>（continuation）

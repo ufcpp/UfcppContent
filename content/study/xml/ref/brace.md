@@ -18,21 +18,25 @@ aliases:
 
 # {}括弧
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 {}の表示。
 （obsolete。bracket に移行。）
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;brace size="括弧の大きさ"&gt;括弧内の式&lt;/brace&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;brace size="1.2"&gt;&lt;paren&gt;x-ξ&lt;/paren&gt;&lt;sup&gt;2&lt;/sup&gt;+&lt;paren&gt;y-η&lt;/paren&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/brace&gt;&lt;sup&gt;1/2&lt;/sup&gt;
 </pre><div class="math"><span class="paren" style="font-size:1.2em;">{</span><span class="paren" style="font-size:em;">(</span>x-ξ<span class="paren" style="font-size:em;">)</span><sup>2</sup>+<span class="paren" style="font-size:em;">(</span>y-η<span class="paren" style="font-size:em;">)</span><sup>2</sup><span class="paren" style="font-size:1.2em;">}</span><sup>1/2</sup>
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:brace"&gt;
   &lt;span class="paren"&gt;
     &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
@@ -47,7 +51,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>span.paren
 {
   font-style:normal;

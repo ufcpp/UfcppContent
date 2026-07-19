@@ -18,7 +18,8 @@ aliases:
 
 # 選択ソート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="select" class="keyword">選択ソート</strong>（selection sort）は、
 以下のような手順でソートを行うアルゴリズムです。
 「[安定](sort.md#stable)」な「[内部](sort.md#inner)」ソート。
@@ -34,7 +35,8 @@ aliases:
 
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=select&i=0&s=0&w=300" width="304" height="332"></iframe></div>
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/SelectSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/SelectSort.cs)
 
 <pre class="source" title="選択ソート" lang="">

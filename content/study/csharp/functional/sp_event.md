@@ -18,7 +18,8 @@ aliases:
 
 # イベント
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# には、イベント駆動型のプログラム作成を容易にするため、
 イベント処理用の構文 event が用意されています。
 event は、デリゲートに対する「[プロパティ](../oop/oo_property.md#property)」のようなもので、
@@ -29,10 +30,12 @@ event は、デリゲートに対する「[プロパティ](../oop/oo_property.m
 * 外部からはデリゲートの追加/削除のみが可能。
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Event/EventDriven](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Event/EventDriven)
 
 
 ##### <a id="sec-generated-title-3"></a>ポイント
+
 * イベント： プロパティのデリゲート版。イベント駆動処理に使われるのでこの名前になっています。
 
 * イベント駆動処理には、単なるデリゲート型のプロパティでは機能が不十分で、 「呼び出しはクラス内からのみ、外部からできるのは登録・削除のみ」という制約が必要になります。
@@ -43,7 +46,8 @@ event は、デリゲートに対する「[プロパティ](../oop/oo_property.m
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="event-driven"></a>イベント駆動型
+## <a id="sec-generated-title-4"></a> <a id="event-driven"></a>イベント駆動型
+
 「キーボードのボタンが押された」とか「マウスが移動した」等の、
 コンピュータ上で発生するなんらかの事象のことを<strong id="event" class="keyword">イベント</strong>（event）といい、
 イベントが発生したときに行う処理のことを<strong id="eventhandler" class="keyword">イベント ハンドラー</strong>（event handler）と呼びます。
@@ -69,7 +73,8 @@ GUI アプリでは、ユーザからのマウスやキーボード、タッチ�
 （GUI アプリに関しては「[GUI アプリケーション](../lib/lib_forms.md)」や「[Windows Presentation Foundation](../../dotnet/index.md#wpf)」参照。）
 
 
-##<a id="sec-generated-title-5"></a> <a id="ex"></a>イベント駆動型プログラムの例
+## <a id="sec-generated-title-5"></a> <a id="ex"></a>イベント駆動型プログラムの例
+
 イベント駆動の例として、
 キーボードからの入力を受け取って処理を行うプログラムを作っていきます。
 初めに、イベント発生側と受取側があまりわかれていないベタな例を示しましょう。
@@ -189,7 +194,8 @@ Main 関数内のループで時刻の表示を行い、
 すなわち、イベント発生待受け部(イベントループ)とイベント処理部(イベント ハンドラー)を分けて実装することにします。
 
 
-##<a id="sec-generated-title-6"></a> <a id="handler"></a>イベント ハンドラー
+## <a id="sec-generated-title-6"></a> <a id="handler"></a>イベント ハンドラー
+
 これまでで見てきたように、
 イベント駆動型のプログラムは大きく分けて
 <em>「イベント発生待受け部」（イベントループ）と「イベント処理部」（イベント ハンドラー）の2つの部分からなります</em>。
@@ -345,7 +351,8 @@ Main 関数内のループで時刻の表示を行い、
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="event-keyword"></a>C# の event 構文
+## <a id="sec-generated-title-7"></a> <a id="event-keyword"></a>C# の event 構文
+
 ここまでの話をもう1歩推し進めて、
 イベント ハンドラーの追加削除を自由にできるようにしたいと思います。
 これはイベント ハンドラー用のデリゲート変数を public にしてしまえば簡単にできたりもしますが、
@@ -461,7 +468,8 @@ Main 関数内のループで時刻の表示を行い、
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="auto-event"></a>補足: 自動イベント
+## <a id="sec-generated-title-8"></a> <a id="auto-event"></a>補足: 自動イベント
+
 前節で構文を説明した通り、event 構文には、add/remove アクセサーを明示的に書く方法と、省略して書く方法があります。
 省略して書く方では、add/remove がコンパイラーによって自動生成されています。
 ちなみに、この、コンパイラーによって自動生成されるもののことを自動イベント(auto-event)と言ったりします。

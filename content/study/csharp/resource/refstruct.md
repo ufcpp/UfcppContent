@@ -14,7 +14,8 @@ aliases:
 
 # ref構造体
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 [前項](span.md)では、C# 7.2 の新機能と深くかかわる `Span<T>` 構造体という型を紹介しました。
 この型は、論理的には `(ref T Reference, int Length)` というような、「参照フィールド」と長さのペアを持つ構造体です。
 「参照」を持っているので、参照戻り値や参照ローカル変数と同種の「出所の保証」が必要です。
@@ -27,7 +28,8 @@ aliases:
 ここでは、これらの `Span<T>` の「スタック上に置かれている必要がある」という制約や、「`ref` 構造体」について説明していきます。
 (`ref`構造体という機能ではありますが、主用途が`Span<T>`に関するものなので、span safety ruleと呼ばれたりもします。)
 
-##<a id="sec-generated-title-2"></a> <a id="ref-struct"></a>ref 構造体
+## <a id="sec-generated-title-2"></a> <a id="ref-struct"></a>ref 構造体
+
 `Span<T>` には制限が必要といっても、C# コンパイラーとしては `Span<T>` だけを特別扱いしたくはありません。
 そこで、<strong id="key-refstruct" class="keyword">`ref`構造体</strong> (`ref struct`)というものを導入しました。
 
@@ -61,7 +63,8 @@ aliases:
 
 そして、以下で説明する制約は、`Span<T>` 構造体だけでなく、すべての `ref` 構造体に対して掛かります。
 
-##<a id="sec-generated-title-3"></a> <a id="flow-analysis"></a>戻り値で返せるもの
+## <a id="sec-generated-title-3"></a> <a id="flow-analysis"></a>戻り値で返せるもの
+
 `ref` 構造体を戻り値として使いたい場合、
 [`ref` 戻り値・`ref` ローカル変数](sp_ref.md#ref-returns)と同様に、大元をたどって調べて(フロー解析して)、返していいものかどうかを判定します。
 以下のようなルールがあります([`ref`戻り値と同じルール](sp_ref.md#flow-analysis)です)。
@@ -132,7 +135,8 @@ aliases:
 }
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="readonly-ref"></a>readonly ref
+### <a id="sec-generated-title-4"></a> <a id="readonly-ref"></a>readonly ref
+
 C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readonlyness.md#readonly-struct)というものもあります。
 `readonly`修飾は、一見、参照がらみの機能とは無関係に見えますが、実はこれも「参照として返せるかどうか」の判定に関係しています。
 
@@ -182,7 +186,8 @@ C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readon
 その結果「ローカルの`Span<T>`が外に漏れる可能性がある」という判定を受けるため、コンパイル エラーになります。
 `readonly`がついている方では「書き換えがあり得ない」ということで、「外にも漏れない」という判定になります。
 
-###<a id="sec-generated-title-5"></a> <a id="unsafe"></a>余談: さすがに unsafe までは追えない
+### <a id="sec-generated-title-5"></a> <a id="unsafe"></a>余談: さすがに unsafe までは追えない
+
 参照がらみのフロー解析は、あくまで`ref`ローカル変数や、`ref`構造体に対してだけ働きます。
 `unsafe`を使って、ポインターなどを介するとさすがに追跡できません。
 
@@ -201,7 +206,8 @@ C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readon
 }
 </code></pre>
 
-##<a id="sec-generated-title-6"></a> <a id="stack-only"></a>「スタックのみ」制約
+## <a id="sec-generated-title-6"></a> <a id="stack-only"></a>「スタックのみ」制約
+
 `ref`構造体はスタック上に置かれている必要があります。
 この性質から、`ref`構造体は「stack-only 型」と呼ばれることもあります。
 この制限が必要になるのは以下の2つの理由からです。
@@ -287,7 +293,8 @@ C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readon
 </code></pre>
 
 
-###<a id="sec-generated-title-7"></a> <a id="TypedReference"></a>余談: TypedReference
+### <a id="sec-generated-title-7"></a> <a id="TypedReference"></a>余談: TypedReference
+
 「[型付き参照](../interop/sp_makeref.md)」で説明している`TypedReference`型も、内部的に参照を持っている型の1つです。
 `TypedReference` は ref 構造体の仕様よりも古くからあって、昔はこの型だけに対して特殊対応をしていました。
 
@@ -298,7 +305,8 @@ C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readon
 結果的に元よりも制約が厳しくなっていて、昔は(バグっている可能性が非常に高いものの)一応コンパイルできていたコードがコンパイル エラーになる可能性があります。
 (ただ、`TypedReference` 自体利用頻度が非常に低いので問題にはなっていません。)
 
-##<a id="sec-generated-title-8"></a> <a id="ref-field">ref フィールド</a>
+## <a id="sec-generated-title-8"></a> <a id="ref-field">ref フィールド</a>
+
 <h5 class="version version11">Ver. 11</h5>
 
 C# 11 で、[ref 構造体](#key-refstruct)のフィールドを [`ref` (参照渡し)](sp_ref.md#byref)で持てるようになりました。
@@ -340,7 +348,8 @@ ref フィールドが入ったことで、通常の C# コードで同様のこ
 }
 </pre>
 
-###<a id="sec-generated-title-9"></a> <a id="readonly-ref">readonly ref</a>
+### <a id="sec-generated-title-9"></a> <a id="readonly-ref">readonly ref</a>
+
 C# 7.2 の頃に [`ref readonly`](sp_ref.md#ref-readonly) というものがありました。
 これは、「参照先の値の変更不可」というものです。
 一方で、ref フィールドになると、`ref readonly` と `readonly ref` の2種類の readonly ができます(あるいは両方付けて `readonly ref readonly` もできます)。
@@ -418,7 +427,8 @@ C# 7.2 の頃に [`ref readonly`](sp_ref.md#ref-readonly) というものがあ�
 }
 </pre>
 
-##<a id="sec-generated-title-10"></a> <a id="escape-analysis">エスケープ解析</a>
+## <a id="sec-generated-title-10"></a> <a id="escape-analysis">エスケープ解析</a>
+
 参照を使う上では、「漏らしてはいけないものを漏らさない」ということが必要になります。
 簡単に言うと、メソッド内のローカル変数はメソッドを抜けると消えるので、
 その参照は外に漏らしてはいけません。
@@ -517,7 +527,8 @@ C# 11 で ref フィールドが入ったわけですが、
 }
 </pre>
 
-###<a id="sec-generated-title-11"></a> <a id="scoped"></a><a id="scoped-modifier">scoped 修飾子</a>
+### <a id="sec-generated-title-11"></a> <a id="scoped"></a><a id="scoped-modifier">scoped 修飾子</a>
+
 ただ、ここまで細かい指定に需要があるかというと微妙です。
 そこで C# 11 では、以下の2種類だけに絞ることにしました。
 
@@ -613,7 +624,8 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 }
 </pre>
 
-###<a id="sec-generated-title-12"></a> <a id="caller">呼び出し元の挙動</a>
+### <a id="sec-generated-title-12"></a> <a id="caller">呼び出し元の挙動</a>
+
 この手の機能は、
 「メソッド内でできることを制限する代わりに、呼び出し元でできることを増やす」というものです。
 
@@ -676,7 +688,8 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 `scoped` 修飾子を付けた引数には `ScopedRef` 属性が付きます。
 (ユーザーが自分の手でこの属性を付けることは認められていません。)
 
-###<a id="sec-generated-title-13"></a> <a id="ref-this">構造体の this</a>
+### <a id="sec-generated-title-13"></a> <a id="ref-this">構造体の this</a>
+
 構造体の `this` は参照になっています。
 この参照はデフォルトで scoped 扱いになっていて、外に漏らすことができません。
 
@@ -711,7 +724,8 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 }
 </pre>
 
-##<a id="sec-generated-title-14"></a> <a id="ref-struct-interface">ref 構造体のインターフェイス実装</a>
+## <a id="sec-generated-title-14"></a> <a id="ref-struct-interface">ref 構造体のインターフェイス実装</a>
+
 <h5 class="version version13">Ver. 13</h5>
 
 C# 13 で、ref 構造体にインターフェイスを実装できるようになりました。
@@ -755,7 +769,8 @@ C# 13 で、ref 構造体にインターフェイスを実装できるように�
 
 したがって、この機能の肝は「ref 構造体をジェネリクスで使えるようにする」ということになります。
 
-###<a id="sec-generated-title-15"></a> <a id="allows-ref-struct">allows ref struct</a>
+### <a id="sec-generated-title-15"></a> <a id="allows-ref-struct">allows ref struct</a>
+
 ref 構造体に課せられている「ボックス化できない」などの制限は、C# のジェネリクスにとっては後付けなので、
 そのままでは「ref 構造体の制限を満たしている」ということを保証できません。
 例えば以下のコードは C# 2 以来ずっと合法なわけですが、
@@ -833,7 +848,8 @@ ref 構造体のインターフェイス実装を活用できるようになり�
 }
 </pre>
 
-####<a id="sec-generated-title-16"></a> <a id="bcl-allows-ref-struct">標準ライブラリ中の allows ref struct</a>
+#### <a id="sec-generated-title-16"></a> <a id="bcl-allows-ref-struct">標準ライブラリ中の allows ref struct</a>
+
 C# 13 で `allows ref struct` が追加されると同時に、
 .NET 9 では、標準ライブラリ中のジェネリックなデリゲート型の大部分と、一部のインターフェイスの型引数に `allows ref struct` が付きました。
 以下のようなコードが書けるようになっています。
@@ -863,7 +879,8 @@ C# 13 で `allows ref struct` が追加されると同時に、
 }
 </pre>
 
-#####<a id="sec-generated-title-17"></a> <a id="ref-struct-delegate">余談: ref 構造体引数のデリゲートの自然な型</a>
+##### <a id="sec-generated-title-17"></a> <a id="ref-struct-delegate">余談: ref 構造体引数のデリゲートの自然な型</a>
+
 C# 10 の頃にデリゲートに[自然な型](../functional/sp_delegate.md#natural-type)が入りましたが、
 「可能であれば `Action`、`Action<T>`、`Func<T>` を使う」という仕様になっています。
 これに対して、.NET 9 でこれらのデリゲートに `allows ref strcut` が付いたことで、「可能であれば」の範囲が広がっています。
@@ -877,7 +894,8 @@ C# 10 の頃にデリゲートに[自然な型](../functional/sp_delegate.md#nat
 <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span><span class="operator">.</span><span class="method">GetType</span>()<span class="operator">.</span><span class="property">Name</span>);
 </pre>
 
-####<a id="sec-generated-title-18"></a> <a id="ienumerable-not-allow">余談: IEnumerable 問題</a>
+#### <a id="sec-generated-title-18"></a> <a id="ienumerable-not-allow">余談: IEnumerable 問題</a>
+
 ref 構造体がらみで非常に多い要望の1つに、`Span<T>`、`ReadOnlySpan<T>` に対して LINQ を使いたいというものがあります。
 しかし、ref 構造体にインターフェイスを実装できるようになっても、`Span<T>` に `IEnumerable<T>` は実装できなくて、この要望はかないません。
 問題は、以下のように、`IEnumerator<T>` インターフェイスを戻り値に返す部分が ref 構造体と合いません。

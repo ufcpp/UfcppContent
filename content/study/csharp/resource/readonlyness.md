@@ -14,14 +14,16 @@ aliases:
 
 # readonly の注意点
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[定数](../start/sp_const.md#readonly)」で、読み取り専用のフィールドが作れるという話をしました。
 この時点ではまだ[クラス](../oop/oo_class.md)や[構造体](rm_struct.md)、[値型と参照型の違い](oo_reference.md)などについて触れていなかったので`readonly`修飾子の簡単な紹介だけに留めましたが、
 本項で改めて`readonly`について説明します。
 
 整数などの基本的な型に対して使う分には特に問題は起きないんですが、構造体やクラスなど、複合型に対して使うときには注意が必要です。
 
-##<a id="sec-generated-title-2"></a> <a id="class-readonly"></a>参照型のフィールドに対して readonly
+## <a id="sec-generated-title-2"></a> <a id="class-readonly"></a>参照型のフィールドに対して readonly
+
 `readonly`に関して最も注意が必要な点は、`readonly`は再帰的には働かないという点です。
 `readonly`を付けたその場所だけが読み取り専用になり、参照先などについては書き換えが可能です。
 
@@ -65,7 +67,8 @@ aliases:
 クラスを書き換えできないように作る場合、クラス自体を書き換え不能に作りましょう。
 (クラスの方で、フィールドを`readonly`にしたり、プロパティを[get-only](../oop/oo_property.md#get-only)にします。)
 
-##<a id="sec-generated-title-3"></a> <a id="struct-readonly"></a>値型のフィールドに対して readonly
+## <a id="sec-generated-title-3"></a> <a id="struct-readonly"></a>値型のフィールドに対して readonly
+
 クラス(参照型)とは対照的に、構造体(値型)の場合はデータを直接持ちます。
 そのため、構造体のフィールドに対して`readonly`を付けると、構造体の中身も読み取り専用になります。
 ただし、メソッドの呼び出しなどを行う際、コピーが発生するという別の注意が必要です。
@@ -134,7 +137,8 @@ C# では、こういう場合に、`readonly`であることを保証しつつ�
 この問題は、[`in`引数](sp_ref.md#in)などでも発生しまえます。
 後述する[`readonly struct`](#readonly-struct)や[readonly 関数メンバー](#readonly-member)を使えばこの問題は少し緩和するので、そちらも参照してください。
 
-##<a id="sec-generated-title-4"></a> <a id="this-rewrite"></a>構造体の this 書き換え
+## <a id="sec-generated-title-4"></a> <a id="this-rewrite"></a>構造体の this 書き換え
+
 C# の`readonly`フィールドには少し片手落ちなところがあって、実は、構造体の場合にちょっとした問題を起こせたりします。
 
 構造体のメソッドの中では`this`が「自分自身の参照」の意味なんですが、この`this`参照は書き換えできてしまいます。
@@ -180,7 +184,8 @@ C# の`readonly`フィールドには少し片手落ちなところがあって�
 わざわざこんな紛らわしいことをしようとは思わないのでめったに問題になることはないんですが、一応は注意が必要です。
 また、この問題は、次節で説明する通り、C# 7.2で少し緩和されます。
 
-##<a id="sec-generated-title-5"></a> <a id="readonly-struct"></a>readonly struct
+## <a id="sec-generated-title-5"></a> <a id="readonly-struct"></a>readonly struct
+
 <h5 class="version version7">Ver. 7.2</h5>
 
 C# 7.2で、構造体自体に`readonly`修飾を付けられるようになりました。
@@ -223,7 +228,8 @@ C# 7.2で、構造体自体に`readonly`修飾を付けられるようになり�
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="avoid-copy"></a>readonly struct によるコピー回避
+### <a id="sec-generated-title-6"></a> <a id="avoid-copy"></a>readonly struct によるコピー回避
+
 [前述](#struct-readonly)の通り、(無印の)構造体の`readonly`フィールドに対してメソッドを呼ぶと防衛的コピーが発生するという問題があります。
 これに対して、`readonly struct`であれば、このコピーを回避できます。
 
@@ -282,7 +288,8 @@ C# 7.2 以降では、書き換えを意図していない構造体に対して�
 また、「フィールド直接参照なら大丈夫だけど、メソッドを(プロパティも)呼ぶとコピー発生」という性質上、
 書き換えを最初から意図している構造体の場合は、プロパティよりも、フィールドを直接`public`にしてしまう方が都合がいいことがあります。
 
-##<a id="sec-generated-title-7"></a> <a id="ref-readonly"></a>readonly参照と不変性
+## <a id="sec-generated-title-7"></a> <a id="ref-readonly"></a>readonly参照と不変性
+
 [`in`引数](sp_ref.md#in)や[`ref readonly`](sp_ref.md#ref-readonly)で、読み取り専用の参照を作れます。
 この読み取り専用参照は、「そのメソッド内で書き換えない」、「その引数・変数を通した書き換えをしない」という意思表明としては非常に有用です。
 その一方で、「外で書き換わる」、「参照元の値が書き換わる」という意味で、不変性(immutability)の保証はありません。
@@ -331,7 +338,8 @@ C# 7.2 以降では、書き換えを意図していない構造体に対して�
 一方、`ByRef`の方では`value`自身は`in`が付いていて書き換えられませんが、その参照元になっている`_value` の方が書き換わると、`value`の値も一緒に変化します。
 書き換え不能(readonly)だからと言って、値の不変性(immutable)の保証はなく、こうして値が変化する場合があります。
 
-##<a id="sec-generated-title-8"></a> <a id="readonly-member"></a>readonly 関数メンバー
+## <a id="sec-generated-title-8"></a> <a id="readonly-member"></a>readonly 関数メンバー
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-member)単位で「フィールドを書き換えてない」ということを保証できるようになりました。
@@ -421,7 +429,8 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="similar-but-different"></a>注意: 似て非なるもの(ref readonly)
+### <a id="sec-generated-title-9"></a> <a id="similar-but-different"></a>注意: 似て非なるもの(ref readonly)
+
 この `readonly` 関数メンバーは、構文上、[`ref readonly`](sp_ref.md#ref-readonly)と似ているのでちょっと注意が必要かもしれません。
 
 <pre class="source" title="readonly ref との兼ね合い">

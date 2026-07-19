@@ -18,7 +18,8 @@ aliases:
 
 # リーマン球面
 
-##<a id="sec-generated-title-1"></a> <a id="riemann"></a>リーマン球面
+## <a id="sec-generated-title-1"></a> <a id="riemann"></a>リーマン球面
+
 リーマン球面という考え方を用いて、
 複素数に ∞ を付け加えることができます。
 リーマン球面の概要を説明すると、以下のようになります（図1）。
@@ -70,7 +71,8 @@ aliases:
 数学としての表現の幅が広がることがよくあります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d70e124"></a>∞の逆数
+## <a id="sec-generated-title-2"></a> <a id="d70e124"></a>∞の逆数
+
 リーマン球面上に、図2で示すような座標
 <span class="math"><span class="paren" style="font-size:em;">(</span>
 φ, θ
@@ -118,7 +120,8 @@ aliases:
 と言えます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="d70e207"></a>0 で割っても意味がない
+## <a id="sec-generated-title-3"></a> <a id="d70e207"></a>0 で割っても意味がない
+
 詳しい説明は省きますが、
 ∞には何をかけてもやはり∞です。
 <div class="math">
@@ -140,7 +143,8 @@ aliases:
 ただ「∞になった」という意味のない結果だけが残ります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="d70e227"></a>まとめ
+## <a id="sec-generated-title-4"></a> <a id="d70e227"></a>まとめ
+
 リーマン球面という考え方を使うと、
 0 の逆数として ∞ を定義できます。
 しかしながら、

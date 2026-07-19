@@ -18,7 +18,8 @@ aliases:
 
 # メールフォーム
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ウェブサイト上にメールアドレスを掲載しちゃうと SPAM メールの餌食になるし、
 ASP.NET ごしにメールしてもらうように、メールフォームを作成。
 
@@ -31,7 +32,8 @@ System.Net.Mail の MailMessage とか SmtpClient とか、
 マスタページを使って、他のページと見た目やメニューなどを統一してみる。
 
 
-##<a id="sec-generated-title-2"></a> <a id="master"></a>マスタページ
+## <a id="sec-generated-title-2"></a> <a id="master"></a>マスタページ
+
 サイト中の全てのページに対して、
 そろえておきたい部分ってのがあります。
 例えば、全ページにサイトのロゴを表示したいとか、
@@ -172,7 +174,8 @@ ASP.NET を使ったサイト構築の一例。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="mailform"></a>メールフォーム
+## <a id="sec-generated-title-3"></a> <a id="mailform"></a>メールフォーム
+
 マスタページもできたところで、本題のメールフォームを作ってみましょう。
 
 とりえあえず、Web コンテンツフォームの &lt;asp:Content&gt; の中に、

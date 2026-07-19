@@ -18,10 +18,12 @@ aliases:
 
 # デモアプリ
 
-##<a id="sec-generated-title-1"></a> <a id="demo"></a>デモ
+## <a id="sec-generated-title-1"></a> <a id="demo"></a>デモ
+
 <div class="silverlightControlHost" style="margin:1em;height:600;"><object data="data:application/x-silverlight-2," type="application/x-silverlight-2" width="800" height="600"><param name="source" value="/media/ufcpp2000/dsl/ClientBin/StackMachine.xap"></param><param name="onerror" value="onSilverlightError"></param><param name="background" value="white"></param><param name="minRuntimeVersion" value="2.0"></param><param name="autoUpgrade" value="false"></param><a href="http://go.microsoft.com/fwlink/?LinkID=124807" style="text-decoration: none;"><img src="http://go.microsoft.com/fwlink/?LinkId=108181" alt="Microsoft Silverlight プラグインを入れてね" style="border-style: none"></img></a></object><iframe style="visibility:hidden;height:0;width:0;border:0px"></iframe></div>
 
 ##### <a id="sec-generated-title-2"></a>このデモでやっていること
+
 * デモ用に簡単な言語を作りました。（仕様は後述）
 
 * Silverlight 上でソースコードの編集ができます。 （デモ中の左上の部分。）
@@ -35,6 +37,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-3"></a>独自言語の仕様
+
 * 扱えるのは整数のみ。型なんて概念ないよ。
 
 * 加減乗除、比較、条件演算子くらいは使える。
@@ -47,7 +50,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="source"></a>付属品
+## <a id="sec-generated-title-4"></a> <a id="source"></a>付属品
+
 * 独自言語
     * 文法ファイル：
 [stack.mg](../../../../assets/media/ufcpp2000/dsl/source/stack.mg)
@@ -65,7 +69,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-5"></a> <a id="plan"></a>予定
+
 <pre>
 目的
 • 関数呼び出し（特に再帰）を理解する

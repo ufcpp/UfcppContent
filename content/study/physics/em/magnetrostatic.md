@@ -18,7 +18,8 @@ aliases:
 
 # 静磁場
 
-##<a id="sec-generated-title-1"></a> <a id="maxwell"></a>静磁場中のマクスウェルの方程式
+## <a id="sec-generated-title-1"></a> <a id="maxwell"></a>静磁場中のマクスウェルの方程式
+
 時間的に変化しない磁場を<strong id="static" class="keyword">静磁場</strong>といいます。
 静磁場中では、時間微分に関する項が0になるので、マクスウェルの方程式は
 
@@ -60,7 +61,8 @@ aliases:
 と表せます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="vectorpotential"></a>ベクトルポテンシャル
+## <a id="sec-generated-title-2"></a> <a id="vectorpotential"></a>ベクトルポテンシャル
+
 静磁場中でのマクスウェルの方程式で、<span class="math">
         <a href="variable.md#B" title="磁束密度ベクトル"><span class="vector">B</span></a>
       </span>は<span class="math">
@@ -103,7 +105,8 @@ aliases:
 通常、静磁場のベクトルポテンシャルはこのように発散が<span class="math">0</span>になるように取ります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="howtopotential"></a>静磁場におけるベクトルポテンシャルの求め方
+## <a id="sec-generated-title-3"></a> <a id="howtopotential"></a>静磁場におけるベクトルポテンシャルの求め方
+
 <span class="math">
         <a href="variable.md#B" title="磁束密度ベクトル"><span class="vector">B</span></a> = <span class="vector">∇</span>×<a href="variable.md#A" title="ベクトルポテンシャル"><span class="vector">A</span></a>, <span class="vector">∇</span>・<a href="variable.md#A" title="ベクトルポテンシャル"><span class="vector">A</span></a> = 0
       </span>をアンペアマクスウェルの法則に代入すると
@@ -159,7 +162,8 @@ aliases:
       </span>である。
 
 
-##<a id="sec-generated-title-4"></a> <a id="howtofield"></a>静磁場における磁場の求め方
+## <a id="sec-generated-title-4"></a> <a id="howtofield"></a>静磁場における磁場の求め方
+
 磁場<span class="math">
         <a href="variable.md#H" title="磁場ベクトル"><span class="vector">H</span></a>
       </span>は<span class="math">

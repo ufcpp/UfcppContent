@@ -18,7 +18,8 @@ aliases:
 
 # IIRフィルタ
 
-##<a id="sec-generated-title-1"></a> <a id="schedule"></a>執筆予定
+## <a id="sec-generated-title-1"></a> <a id="schedule"></a>執筆予定
+
 <pre>
 概要、IIRフィルタの特徴
  フィードバックあり
@@ -44,11 +45,13 @@ aliases:
  s→z変換でディジタルに。
 </pre>
 
-##<a id="sec-generated-title-2"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-2"></a> <a id="abstract"></a>概要
+
 <strong id="iir" class="keyword">IIRフィルタ</strong>とは
 
 
-##<a id="sec-generated-title-3"></a> <a id="abstract"></a>フィルタ設計
+## <a id="sec-generated-title-3"></a> <a id="abstract"></a>フィルタ設計
+
 IIR フィルタの設計手法は大きく分けて2種類あります。
 
 1. アナログフィルタ設計手法に基づいてフィルタ設計を行う。 その後、<span class="math">s→z</span>変換でディジタルフィルタに変換する。
@@ -68,7 +71,8 @@ IIR フィルタの設計手法は大きく分けて2種類あります。
 などがあります。
 
 
-###<a id="sec-generated-title-4"></a> <a id="analog"></a>アナログプロトタイプ設計
+### <a id="sec-generated-title-4"></a> <a id="analog"></a>アナログプロトタイプ設計
+
 アナログ設計手法に基づくディジタル設計手法（1. の手法）で、
 ディジタルフィルタの元となるアナログフィルタのことをアナログプロトタイプと呼びます。
 有名なものとしては、以下のようなアナログフィルタがあります。
@@ -91,13 +95,15 @@ IIR フィルタの設計手法は大きく分けて2種類あります。
 通常、カットオフ周波数を 1 として設計して、 s → z 変換時にカットオフ周波数を変える。
 
 
-###<a id="sec-generated-title-5"></a> <a id="s-z-trans"></a>s→z変換
+### <a id="sec-generated-title-5"></a> <a id="s-z-trans"></a>s→z変換
+
 通常、アナログフィルタ設計は<span class="math">s</span>領域で、ディジタルフィルタ設計は<span class="math">z</span>領域で行う。 <span class="math">s</span>領域とは、連続信号<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>をラプラス変換し、伝達関数<span class="math">F<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span></span>で表したものをさし、 <span class="math">z</span>領域とは、離散信号<span class="math">f<span class="paren" style="font-size:em;">[</span>t<span class="paren" style="font-size:em;">]</span></span>をZ変換し、伝達関数<span class="math">F<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span></span>で表したものをさす。
  
 双1次変換などがある。
 
 
-##<a id="sec-generated-title-6"></a> <a id="z"></a>伝達関数とブロック図
+## <a id="sec-generated-title-6"></a> <a id="z"></a>伝達関数とブロック図
+
 伝達関数
 <div class="math">
 Y

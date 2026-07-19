@@ -18,7 +18,8 @@ aliases:
 
 # その他のライブラリ
 
-##<a id="sec-generated-title-1"></a> <a id="math"></a>数学関数
+## <a id="sec-generated-title-1"></a> <a id="math"></a>数学関数
+
 System.Math クラスに、数学用の関数・定数などが定義されています。
 表1に Math クラスのメンバーを示します（全て static）。
 
@@ -223,11 +224,13 @@ Console.Write(<span class="literal">"{0}\n"</span>, Math.Pow(2, 8));
 
 
 ##### <a id="sec-generated-title-2"></a>Log と Log10
+
 自然対数と常用対数については、
 「[常用対数と自然対数](../../math/hs/m2.md#log_e)」を参照。
 
 
 ##### <a id="sec-generated-title-3"></a>Atan2
+
 Math.Atan2、
 C 言語にも atan2 という関数があるんですが、
 意外と知らない人が多いみたい。
@@ -261,6 +264,7 @@ atan(y / x) だと、<span class="math">
 
 
 ##### <a id="sec-generated-title-4"></a>Round
+
 上の表では“四捨五入”と説明しましたが、
 正確には、ぴったり真ん中（例えば 0.5, 1.5, 2.5, ・・・）のときの動作は四捨五入ではありません。
 
@@ -284,7 +288,8 @@ MidpointRounding.AwayFromZero を指定します。
 ToEven の場合は、0.5 のときに条件分岐したりテーブル参照したりが必要。）
 
 
-##<a id="sec-generated-title-5"></a> <a id="datetime"></a>時刻
+## <a id="sec-generated-title-5"></a> <a id="datetime"></a>時刻
+
 時刻は System.DateTime で、
 時刻の差、すなわち、経過時間は System.TimeSpan クラスで表されます。
 
@@ -312,7 +317,8 @@ Console.Write(<span class="literal">"キーを押すまでの時間: {0}[ms]"</s
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="collection"></a>コレクション
+## <a id="sec-generated-title-6"></a> <a id="collection"></a>コレクション
+
 System.Collections 名前空間以下に、
 さまざまなコレクションクラスがあります。
 

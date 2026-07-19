@@ -18,7 +18,8 @@ aliases:
 
 # ヤコビの楕円関数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>ヤコビの楕円関数
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>ヤコビの楕円関数
+
 第1種不完全楕円積分 <span class="math">F<span class="paren" style="font-size:em;">(</span>φ, k<span class="paren" style="font-size:em;">)</span></span> の逆関数として定義される楕円関数群を<strong id="jacobi" class="keyword">ヤコビの楕円関数</strong>（Jacobian elliptic functions）と呼びます。
 
 * <span class="math">φ<span class="paren" style="font-size:em;">(</span>u, k<span class="paren" style="font-size:em;">)</span> ＝ F<sup>-1</sup><span class="paren" style="font-size:em;">(</span>φ, k<span class="paren" style="font-size:em;">)</span></span>この<span class="math">φ</span>を（ヤコビの楕円関数の）振幅（amplitude）と呼ぶ。
@@ -31,14 +32,16 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ヤコビの楕円関数の公式
 θ（テータ）関数
 テータ関数とヤコビの楕円関数との関係
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="memo"></a>メモ
+## <a id="sec-generated-title-3"></a> <a id="memo"></a>メモ
+
 <h3>諸定数</h3><pre>
 k  … ヤコビの楕円関数の率（modulus、複数形 moduli。母数、法と訳す場合も）。
 k' … 補率（complementary modulus）。k' ＝ √(1 － k^2)
@@ -341,7 +344,8 @@ dn(K/2) = √(k')
 (d/du)dn = -k^2 sn cn
 </pre>
 
-##<a id="sec-generated-title-4"></a> <a id="d78e302"></a>メモ（theta 関数）
+## <a id="sec-generated-title-4"></a> <a id="d78e302"></a>メモ（theta 関数）
+
 <pre>
 ・テータ関数
 

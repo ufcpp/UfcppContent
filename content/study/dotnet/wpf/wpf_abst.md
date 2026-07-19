@@ -18,7 +18,8 @@ aliases:
 
 # Windows Presentation Foundation 概要（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="wpf" class="keyword">Windows Presentation Foundation</strong> は .NET Framework 3.0 で追加された3つの主軸ライブラリの1つで、
 非常に高機能な GUI 構築用ライブラリです。
 <strong id="wpf0" class="keyword">WPF</strong> と略します。
@@ -31,8 +32,10 @@ WPF は、Windows アプリケーション・ウェブアプリケーション�
 RIA を開発するためのライブラリと位置づけられています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="feature"></a>特徴と利点
+## <a id="sec-generated-title-2"></a> <a id="feature"></a>特徴と利点
+
 ##### <a id="sec-generated-title-3"></a>GPU の恩恵が受けられる
+
 今までの Windows アプリケーション開発用ライブラリ（GDI や GDI+ ）は、
 レンダリング処理を CPU で行っていました。
 グラフィック用のプロセッサ（GPU）のアクセラレーション機能の恩恵を受けようと思うと、
@@ -48,6 +51,7 @@ DirectX 等の特別なライブラリの利用が必須でした。
 
 
 ##### <a id="sec-generated-title-4"></a>2D ビットマップ・ベクタグラフィック、3D グラフィック、動画像の統合
+
 今までの Windows アプリケーション開発では、
 2D ならGDI、3D なら Direct3D、動画なら DirectShow などと、
 物によって設計方針の違う複数のライブラリを使う必要がありました。
@@ -58,6 +62,7 @@ WPF では、2D も 3D も、静止画も動画も、ビットマップもベク
 
 
 ##### <a id="sec-generated-title-5"></a>ビジュアルとロジックの分離
+
 ビジュアルデザイン（GUI の見た目）とロジックデザイン（処理内容）は分離しろと言われるようになってもうずいぶんと経ちます。
 （前者は美的センスが、後者は論理的なセンスが問われるため、
 それぞれ別の人による分業をやりやすくしたい。）
@@ -75,6 +80,7 @@ WPF では、ビジュアルデザインは XAML と呼ばれる XML ベース�
 
 
 ##### <a id="sec-generated-title-6"></a>カスタマイズの柔軟性
+
 WPF は非常に柔軟なカスタマイズ可能性を持っています。
 
 たいていの GUI ライブラリでは、
@@ -89,7 +95,8 @@ WPF では、さらに、
 かなり柔軟なカスタマイズが可能です。
 
 
-##<a id="sec-generated-title-7"></a> <a id="element"></a>主な構成要素
+## <a id="sec-generated-title-7"></a> <a id="element"></a>主な構成要素
+
 * XAML（eXtensible Application Markup Language） … XML （HTML のようなタグ付け言語）を用いた GUI 構築
 
 * GUI 部品のレイアウト機能（コンテナ）
@@ -123,14 +130,17 @@ WPF では、さらに、
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="app"></a>アプリケーションの種類
+## <a id="sec-generated-title-8"></a> <a id="app"></a>アプリケーションの種類
+
 ##### <a id="sec-generated-title-9"></a>Windows アプリケーション
+
 もちろん、Windows 上で動く GUI アプリケーション開発が可能です。
 
 Windows アプリに関しては、制限なく全ての機能が利用可能。
 
 
 ##### <a id="sec-generated-title-10"></a>ブラウザアプリケーション
+
 WPF では、
 XBAP（XAML Browser APplication、エックスバップとか読むみたい）と呼ばれるウェブアプリケーション開発が可能です。
 
@@ -141,12 +151,14 @@ XBAP（XAML Browser APplication、エックスバップとか読むみたい）�
 
 
 ##### <a id="sec-generated-title-11"></a>Loose XAML
+
 コードなしで未コンパイルの XAML もブラウザ中で実行可能で、
 これを Loose XAML と呼びます。
 Loose XAML だけでもかなり多彩なことを実現可能です。
 
 
 ##### <a id="sec-generated-title-12"></a>MIME Type
+
 ちなみに、ウェブサーバ上に Loose XAML や XBAP をアップロードして、
 ブラウザ越しに実行するためには、
 ウェブサーバの MIME 設定が必要になります。
@@ -198,7 +210,8 @@ AddType application/x-ms-xbap xbap
 
 
 
-##<a id="sec-generated-title-13"></a> <a id="compare"></a>他のプレゼンテーション層技術との比較
+## <a id="sec-generated-title-13"></a> <a id="compare"></a>他のプレゼンテーション層技術との比較
+
 WPF を使ったアプリケーションにしても Windows アプリと XBAP がありますし、
 WPF とコンセプトの近いアプリケーション構築技術として、Silverlight や ASP.NET＋AJAX などがあります。
 

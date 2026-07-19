@@ -18,13 +18,15 @@ aliases:
 
 # 数列と漸化式
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 高校でならう数列と漸化式は、基本的にパターンを覚えるだけ。
 高校のとき先生が、漸化式のパターンとその解き方一覧みたなプリントを1枚くれたんですけど、
 それがすごくよかったです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="convergence"></a>収束値
+## <a id="sec-generated-title-2"></a> <a id="convergence"></a>収束値
+
 まあ、パターン丸暗記以外に、いくつか覚えるこつはあって、
 そのうちの1つは収束値という考え方。
 例えば、以下のような漸化式を考えてみます。
@@ -93,7 +95,8 @@ a<sub>n <span class="normal">+</span><span class="normal">1</span></sub><span cl
 でもまあ、漸化式を解くことはできます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="homogeneous"></a>斉次式
+## <a id="sec-generated-title-3"></a> <a id="homogeneous"></a>斉次式
+
 前項で、数列が収束しない場合でも、収束値に相当する値を先に求めてしまうことで漸化式が解けると説明しました。
 収束しないんだから収束値を先に求めているという考え方はできませんが、
 この場合は斉次式という物を使って説明できます。
@@ -138,7 +141,8 @@ x
 という2段階で解けることになります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="characteristic"></a>特性方程式
+## <a id="sec-generated-title-4"></a> <a id="characteristic"></a>特性方程式
+
 ちなみに、定数係数の斉次な漸化式（元から斉次項しかない漸化式）の解は、
 漸化式の階数によらず冪関数になることが知られています。
 ここでは、2階の漸化式（高校風に言うと、3項間漸化式）を例にとって説明してみましょう。
@@ -187,7 +191,8 @@ q
 参考： 「[Z変換](../../sp/dsp/z.md)」。
 
 
-##<a id="sec-generated-title-5"></a> <a id="imaginary"></a>虚数解の場合
+## <a id="sec-generated-title-5"></a> <a id="imaginary"></a>虚数解の場合
+
 漸化式の特性方程式が虚数解を持つ場合、
 その一般解となる数列は周期性を持ちます。
 例えば、以下のような漸化式を考えてみましょう。
@@ -262,7 +267,8 @@ a<sub>n</sub></span>
 という発想から来ます。）
 
 
-##<a id="sec-generated-title-6"></a> <a id="matrix"></a>行列
+## <a id="sec-generated-title-6"></a> <a id="matrix"></a>行列
+
 2つの数列が同時に出てくるような漸化式だって考えられます。
 例えば、以下のようなもの。
 <div class="math">
@@ -339,7 +345,8 @@ a<sub>n <span class="normal">+</span><span class="normal">1</span></sub></span>
 結局、行列の n 乗問題として解くこともできます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="linear"></a>定数係数線形漸化式
+## <a id="sec-generated-title-7"></a> <a id="linear"></a>定数係数線形漸化式
+
 （書きかけ）
 
 <span class="math">a<sub>n</sub></span> から
@@ -374,7 +381,8 @@ a<sub>n</sub><span class="normal">=</span><span class="normal">0</span></div>
 非斉次項に <span class="math">n<sup>k</sup></span> があった場合、これの次数を1つ下げれる。
 
 
-##<a id="sec-generated-title-8"></a> <a id="general"></a>一般的には
+## <a id="sec-generated-title-8"></a> <a id="general"></a>一般的には
+
 係数とか非斉次項が定数の場合には、これまでに説明したような特性方程式とかの考え方を使って、
 確実に漸化式から数列の一般解を得ることができます。
 でも、
@@ -388,7 +396,8 @@ a<sub>n</sub><span class="normal">=</span><span class="normal">0</span></div>
 それは幸運なケースです。
 
 
-##<a id="sec-generated-title-9"></a> <a id="other"></a>見方を変えて
+## <a id="sec-generated-title-9"></a> <a id="other"></a>見方を変えて
+
 数列は、無限次元のベクトルと考えることも可能。
 <span class="math">N</span> 次元ベクトルの要素を、
 <span class="math">x<sub>i</sub></span>（<span class="math">i <span class="normal">=</span> 1 <span class="normal">∼</span> N</span>）

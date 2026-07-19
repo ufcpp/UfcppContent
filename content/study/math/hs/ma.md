@@ -18,7 +18,8 @@ aliases:
 
 # 数学A
 
-##<a id="sec-generated-title-1"></a> <a id="figure"></a>平面図形
+## <a id="sec-generated-title-1"></a> <a id="figure"></a>平面図形
+
 * 三角形の性質
 
 * 円の性質
@@ -32,7 +33,8 @@ aliases:
 あと、三角関数がらみの定理の証明にいくつかの幾何学の定理を使うくらい。
 
 
-###<a id="sec-generated-title-2"></a> <a id="coordinate"></a>座標系の導入
+### <a id="sec-generated-title-2"></a> <a id="coordinate"></a>座標系の導入
+
 数IIの「[図形と方程式](m2.md#geometry)」で習うように、
 座標系を導入してしまえば、方程式やベクトルの問題に帰着されてしまう問題がほとんど。
 まあ、もちろん、幾何学の定理を覚えてる方が解くの簡単だけど。
@@ -41,7 +43,8 @@ aliases:
 要するに、幾何的な図形である矢印に座標系を導入したような物。
 
 
-###<a id="sec-generated-title-3"></a> <a id="kika"></a>“幾何”
+### <a id="sec-generated-title-3"></a> <a id="kika"></a>“幾何”
+
 数学の用語ってちゃんと意訳されている語が多くて、
 漢字の字面を見ればある程度その言葉の意味が分かるんですが、
 「幾何学」は例外。
@@ -55,14 +58,16 @@ geometory という原語の意味は、geo- （土地）＋metry（測定学）
 いっそのこと、geometry とか geometric の訳語を図形学とか図形的にしてしまう方がいいかも。
 
 
-##<a id="sec-generated-title-4"></a> <a id="d22e42"></a>集合と論理
+## <a id="sec-generated-title-4"></a> <a id="d22e42"></a>集合と論理
+
 * 集合と要素の個数
 
 * 命題と証明
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="set"></a>集合
+### <a id="sec-generated-title-5"></a> <a id="set"></a>集合
+
 現代数学的視点でみると、
 自然数とか複素数とかも集合だし、
 微分可能な実関数全体とかも集合。
@@ -85,7 +90,8 @@ geometory という原語の意味は、geo- （土地）＋metry（測定学）
 参考：「[数学](../index.md)」。
 
 
-###<a id="sec-generated-title-6"></a> <a id="sufficient"></a>必要性と十分性
+### <a id="sec-generated-title-6"></a> <a id="sufficient"></a>必要性と十分性
+
 <span class="math">a <span class="normal">⇒</span> b</span> といわれた場合、
 命題 <span class="math">a</span> が真の時には <span class="math">b</span> は確実に真なんですが、
 <span class="math">a</span> が偽だった時のことは何も分かりません。
@@ -139,7 +145,8 @@ geometory という原語の意味は、geo- （土地）＋metry（測定学）
 「100％ ＝ 十分」、「少なくとも ＝ 必要」と考えれば、多少は迷いにくくなると思います。
 
 
-##<a id="sec-generated-title-7"></a> <a id="probability"></a>場合の数と確率
+## <a id="sec-generated-title-7"></a> <a id="probability"></a>場合の数と確率
+
 * 順列・組み合わせ
 
 * 確率とその基本的な法則
@@ -148,7 +155,8 @@ geometory という原語の意味は、geo- （土地）＋metry（測定学）
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="combinational"></a>組み合わせ論的確率
+### <a id="sec-generated-title-8"></a> <a id="combinational"></a>組み合わせ論的確率
+
 高校で習う確率というと「組み合わせ論的確率」。
  
 これの問題はもう、正直、法則もクソもなくて、
@@ -157,7 +165,8 @@ geometory という原語の意味は、geo- （土地）＋metry（測定学）
 やっぱり最終的にはひたすら数え上げるしかない。
 
 
-###<a id="sec-generated-title-9"></a> <a id="metrical"></a>測度論的確率
+### <a id="sec-generated-title-9"></a> <a id="metrical"></a>測度論的確率
+
 組み合わせ論的な確率ばっかりやるもんだから、
 大学とか入って、確率変数が実数になったとたんにわけ分からなくなることあり。
 でも、実数みたいな連続なものに対する確率をまじめに考えようとすると、

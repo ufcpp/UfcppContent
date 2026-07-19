@@ -18,19 +18,22 @@ aliases:
 
 # 組込み型
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 プログラミング言語にあらかじめ用意されている変数の型を組込み型といいます。
 ここでは、C# の組み込み型について説明します。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 整数（int）や文字列（string）などは、C# 言語に組み込まれた型です
 
 * 整数、浮動小数点数、文字、文字列、10進小数、論理値
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="type"></a>C# の型
+## <a id="sec-generated-title-3"></a> <a id="type"></a>C# の型
+
 C# の型は、以下のように分類されます。
 
 <figure>
@@ -59,7 +62,8 @@ C# の型は、以下のように分類されます。
 
 
 
-###<a id="sec-generated-title-4"></a> <a id="embedded"></a>組込み型の種類
+### <a id="sec-generated-title-4"></a> <a id="embedded"></a>組込み型の種類
+
 C# には以下のような組込み型が用意されています。
 
 <table summary="">
@@ -124,7 +128,8 @@ C# には以下のような組込み型が用意されています。
 
 ※ C# 9.0 以降はこれに加えて、サイズが環境によって変わる [`nint`、`nuint`](../cheatsheet/ap_ver9.md#nint) という型もあります。
 
-###<a id="sec-generated-title-5"></a> <a id="literal"></a>リテラル
+### <a id="sec-generated-title-5"></a> <a id="literal"></a>リテラル
+
 <code>int x = 10;</code> というように書くとき、10 のような値をそのまま書いた部分のことをリテラル（literal: 「文字通りの」という意味。見たまんまの定数）と呼びます。
 組み込み型には、型ごとにリテラルの書き方があります。
 
@@ -133,7 +138,8 @@ C# には以下のような組込み型が用意されています。
 literal を和訳する場合には、直定数と訳されます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="integer"></a>整数型
+## <a id="sec-generated-title-6"></a> <a id="integer"></a>整数型
+
 数学では無限の桁数の数字を扱えますが、コンピュータの内部では値を記憶しておく場所が限られているため、扱える値の範囲も限られています。
 当然、桁の大きな値ほど大きな記憶領域を必要とします。
 また、符号の有無によっても扱える値の範囲は変わります。
@@ -229,7 +235,8 @@ literal を和訳する場合には、直定数と訳されます。
 ただし、どちらのタイプの CPU で実行するかは事前にはわからないので、
 ソースコード中に書けるリテラルとしては32ビット分(`int`、`uint` と同じ)しか使えません。
 
-###<a id="sec-generated-title-7"></a> <a id="intl"></a>整数リテラル
+### <a id="sec-generated-title-7"></a> <a id="intl"></a>整数リテラル
+
 C# のソースコード中に直接整数値を書き込むと整数リテラルとみなされます。
 また、整数値の後ろに「u」か「U」を付けると符号なし整数とみなされ、
 「l」か「L」を付けると <code>long</code> 型のリテラルとみなされます。
@@ -243,7 +250,8 @@ C# のソースコード中に直接整数値を書き込むと整数リテラ�
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="char"></a>文字型
+## <a id="sec-generated-title-8"></a> <a id="char"></a>文字型
+
 コンピュータは基本的に数値しか扱えません。
 そのため、文字もコンピュータの内部では整数値として扱われています。
 どの文字に対して何番の数字を割り当てるかは、標準化団体によって取り決めがなされています。
@@ -258,7 +266,8 @@ C# では、内部的に Unicode という2バイトの文字コードが使わ�
             </code> (characterの略)は2バイトの数値として扱われます。
 
 
-###<a id="sec-generated-title-9"></a> <a id="charl"></a>文字リテラル
+### <a id="sec-generated-title-9"></a> <a id="charl"></a>文字リテラル
+
 文字リテラルは <code>
                     <span class="string">'a'</span>
                 </code> といったように <code>'</code> (シングルクォーテーション)で囲んで表現します。
@@ -279,7 +288,8 @@ C# では、内部的に Unicode という2バイトの文字コードが使わ�
 <code><span class="reserved">char</span> c = <span class="literal">'a'</span>;                       <span class="comment">// 文字リテラル</span>
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="escape-sequence"></a>エスケープ シーケンス
+### <a id="sec-generated-title-10"></a> <a id="escape-sequence"></a>エスケープ シーケンス
+
 C# では `\` 記号(バックスラッシュ。日本語環境だと ¥ マークで表示されることもあり)が特別な意味を持っていて、`\` に続く数文字を一定のルールで別の文字に置き換えます。
 以下のような用途で使います。
 
@@ -355,7 +365,8 @@ C# は以下のようなエスケープ シーケンスを持っています。
 <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">nameof</span>(<span class="variable">\u0061</span>)); <span class="comment">// a と表示される</span>
 </code></pre>
 
-##<a id="sec-generated-title-11"></a> <a id="float"></a>浮動小数点型(実数型)
+## <a id="sec-generated-title-11"></a> <a id="float"></a>浮動小数点型(実数型)
+
 整数型のところでも述べたように、コンピュータの中では有限桁の数しか扱えませんので、
 厳密にはコンピュータの中で「実数型」というものは扱うことが出来ません。
 しかし、科学技術計算などでは、非常に大きな数や、非常に小さな数を扱いたい場面がしばしばあります。
@@ -401,7 +412,8 @@ C# は以下のようなエスケープ シーケンスを持っています。
 ほとんどの CPU やプログラミング言語では IEEE 754 という名前の規格を使っています。
 
 
-###<a id="sec-generated-title-12"></a> <a id="floatl"></a>浮動小数点リテラル
+### <a id="sec-generated-title-12"></a> <a id="floatl"></a>浮動小数点リテラル
+
 C# のソースコード中に小数を書き込むと浮動小数点リテラルとみなされます。
 数値の後ろに「f」か「F」を付けると <code>float</code> 型とみなされ、
 「d」か「D」を付けると <code>double</code> 型とみなされ、
@@ -416,7 +428,8 @@ C# のソースコード中に小数を書き込むと浮動小数点リテラ�
 
 
 
-##<a id="sec-generated-title-13"></a> <a id="decimal"></a>デシマル（10進小数）
+## <a id="sec-generated-title-13"></a> <a id="decimal"></a>デシマル（10進小数）
+
 float や double などの浮動小数点数は、コンピュータの内部では2進小数になっています。
 表1に、2進小数と10進小数の対応関係の例をいくつか挙げます。
 
@@ -519,7 +532,8 @@ double 型と比べて、大きな数を表すことは出来ない代わりに�
 しかし、C# の誕生よりも後なため、C# の decimal 型の内部表現はこの IEEE 754-2008 規格と互換性がありません。
 
 
-###<a id="sec-generated-title-14"></a> <a id="decimall"></a>デシマルリテラル
+### <a id="sec-generated-title-14"></a> <a id="decimall"></a>デシマルリテラル
+
 小数の後ろに「m」か「M」を付けると <code>decimal</code> 型とみなされます。
 
 <pre class="source" title="" lang="">
@@ -528,7 +542,8 @@ double 型と比べて、大きな数を表すことは出来ない代わりに�
 
 
 
-##<a id="sec-generated-title-15"></a> <a id="bool"></a>論理値型
+## <a id="sec-generated-title-15"></a> <a id="bool"></a>論理値型
+
 論理値とは条件式が正しいか間違っているかをあらわすものです。
 正しい状態(<em>真</em>または true という)と、
 間違った状態(偽または false という)の2つの値を持ちます。
@@ -538,7 +553,8 @@ C# では論理値型は <code>
             </code> (boolean の略。論理代数を考案した George Bool という人物にちなんで論理値のことを英語で boolean という)といいます。
 
 
-###<a id="sec-generated-title-16"></a> <a id="booll"></a>論理値リテラル
+### <a id="sec-generated-title-16"></a> <a id="booll"></a>論理値リテラル
+
 論理値リテラルは真を表す <code>
                     <span class="reserved">true</span>
                 </code> と、
@@ -556,7 +572,8 @@ C# では論理値型は <code>
 ちなみに、1行目を見ての通り、== などの比較演算の結果は bool 値になります。
 
 
-##<a id="sec-generated-title-17"></a> <a id="string"></a>文字列型
+## <a id="sec-generated-title-17"></a> <a id="string"></a>文字列型
+
 文字列は名前通り、文字の列なわけですから、<code>
                 <span class="reserved">char</span>
             </code> 型の配列で十分な気もします。
@@ -567,7 +584,8 @@ C# では論理値型は <code>
             </code> という文字列用の型が用意されています。
 
 
-###<a id="sec-generated-title-18"></a> <a id="stringl"></a>文字列リテラル
+### <a id="sec-generated-title-18"></a> <a id="stringl"></a>文字列リテラル
+
 文字列リテラルは <code>
                     <span class="string">"文字列の例"</span>
                 </code> といったように <code>"</code> (ダブルクォーテーション)で囲んで表現します。
@@ -585,7 +603,8 @@ C# では論理値型は <code>
 
 
 
-###<a id="sec-generated-title-19"></a> <a id="verbatim-string"></a>逐語的文字列リテラル
+### <a id="sec-generated-title-19"></a> <a id="verbatim-string"></a>逐語的文字列リテラル
+
 ※ C# 11 からは「[生文字列](st_string.md#raw-string)]」という同用途の別構文があります。こちらの方が書きこごちがよかったりするので、こちらの記事もご確認ください。
 
 文字列リテラルの書き方にはもう1種類あって、<code><span class="string">@"@-quoted string"</span></code> というように、
@@ -628,21 +647,24 @@ var s = "here 文字列中の引用符";
 
 
 
-###<a id="sec-generated-title-20"></a> <a id="special-string"></a>特殊な文字列
+### <a id="sec-generated-title-20"></a> <a id="special-string"></a>特殊な文字列
+
 <h5 class="version version6">Ver. 6</h5>
 
 C# 6 で、文字列関連の機能が増えました。
 詳しくは、「[特殊な文字列リテラル](st_string.md)」 で説明します。
 
 
-##<a id="sec-generated-title-21"></a> <a id="object"></a>オブジェクト型
+## <a id="sec-generated-title-21"></a> <a id="object"></a>オブジェクト型
+
 <code>object</code> はオブジェクト型と呼ばれ、任意の型の値を格納できる型です。
 
 C# では、組込み型・ユーザー定義型を問わずすべての型は <code>object</code> から派生しています。
 (ユーザー定義型や派生については後ほど説明します。)
 
 
-###<a id="sec-generated-title-22"></a> <a id="null"></a>null
+### <a id="sec-generated-title-22"></a> <a id="null"></a>null
+
 string 型や object 型は、有効な値の他に、無効な（まだ初期化されていない）状態を表す null という値を持つことができます。
 
 <pre class="source" title="複数行にわたる文字列" lang="">
@@ -654,7 +676,8 @@ null （無効な値）を代入できるのは、参照型か Nullable 型の�
 （参考： 「[値型と参照型](../resource/oo_reference.md)」、「[Nullable 型](../resource/sp2_nullable.md)」）。
 
 
-##<a id="sec-generated-title-23"></a> <a id="dotnet"></a>.NET の型
+## <a id="sec-generated-title-23"></a> <a id="dotnet"></a>.NET の型
+
 .NET では、組み込み型を可能な限り他の型（詳細は後述）と区別しないようにしています。
 int のような組み込み型も、「.NET の標準ライブラリ中の型の1つ」に見えるように作られています。
 
@@ -742,7 +765,8 @@ int のような組み込み型も、「.NET の標準ライブラリ中の型�
 ただし、実際のところ、ここで紹介したような「組み込み型」は、コンパイルの挙動的には結構特別扱いされています。
 
 
-##<a id="sec-generated-title-24"></a> <a id="default-value"></a>既定値
+## <a id="sec-generated-title-24"></a> <a id="default-value"></a>既定値
+
 C# では、変数を明示的に初期化しなかった場合に与えられる、既定値（default value）というものが決まってます。
 （Main メソッドなどの内部で使う変数（＝ローカル変数と言います）の場合は、必ず明示的な初期化が必要です。
 一方で、今後説明していくような、クラスのフィールドや、配列の要素では、明示的に初期値を与えず、既定値で初期化することができます。）

@@ -18,12 +18,15 @@ aliases:
 
 # Silverlight とは
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 Silverlight は Microsoft が提供する RIA 環境です。
 
 
-##<a id="sec-generated-title-2"></a> <a id="position"></a>Silverlight の位置付け
+## <a id="sec-generated-title-2"></a> <a id="position"></a>Silverlight の位置付け
+
 ##### <a id="sec-generated-title-3"></a>RIA 開発環境
+
 インターネットの普及からもうずいぶんと経ち、
 今では多くのアプリケーションがサーバー上で実行されるようになりました。
 とはいえ、クライアント側での処理が一切必要ないかというとそうでもなくて、
@@ -39,6 +42,7 @@ Silverlight は、
 
 
 ##### <a id="sec-generated-title-4"></a>クロスプラットフォーム
+
 一般に、RIA は HTML やブラウザープラグインを用いて、
 ブラウザー上で実行されます。
 Silverlight も、ブラウザープラグインとして提供されていて、ブラウザー上で動くアプリを作ることができます。
@@ -60,6 +64,7 @@ Silverlight は Microsoft の技術ですが、Windows/IE に限らず、さま�
 
 
 ##### <a id="sec-generated-title-5"></a>3 screens and a cloud の中核技術
+
 「クラウド」という単語が流行るに至った背景には、
 非常に多くアプリが「インターネットの向こう側」で実行されるようになったというものがあります。
 ただ、RIA の説明でも書きましたが、
@@ -79,33 +84,39 @@ PC 版と比べると機能に一部制限があるものの、
 すなわち、Silverlight でアプリ開発を行えば、将来的に Windows Phone 7 向けの RIA にすることができます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="user"></a>ユーザー視点から見た Silverlight
+## <a id="sec-generated-title-6"></a> <a id="user"></a>ユーザー視点から見た Silverlight
+
 ユーザー視点から見ると、Silverlight には以下のような利点があります。
 
 
 ##### <a id="sec-generated-title-7"></a>RIA
+
 位置付けでも述べたように、Silverlight は RIA 用フレームワークです。
 RIA は、下手すると過剰装飾にもなりがちですが、
 適切に使えば非常に使い勝手のいいアプリを構築できます。
 
 
 ##### <a id="sec-generated-title-8"></a>ディジタル著作権管理（DRM）
+
 Silverlight は動画像の DRM に対応していて、
 商用の動画コンテンツが数多く提供されています。
 Silverlight なら、Windows でも Mac でも DRM 付き動画を視聴することができます。
 
 
 ##### <a id="sec-generated-title-9"></a>アクセシビリティ
+
 RIA ではアクセシビリティ（視覚障害者などでもアクセスできるかどうか）に問題が出がちですが、
 Silverlight では音声読み上げに対応するなど、アクセシビリティにも取り組んでいます。
 
 
-##<a id="sec-generated-title-10"></a> <a id="dev"></a>開発者視点から見た Silverlight
+## <a id="sec-generated-title-10"></a> <a id="dev"></a>開発者視点から見た Silverlight
+
 Silverlight は、
 ユーザー視点以上に、開発者視点での利点が非常に魅力的です。
 
 
 ##### <a id="sec-generated-title-11"></a>C#/.NET Framework が利用できる
+
 WPF と同モデル：
 デスクトップアプリ開発用のフレームワークである 「[WPF](../wpf/wpf_abst.md#wpf0)」 とほぼ同様のモデルで RIA を開発できます。
 
@@ -117,6 +128,7 @@ WPF と同モデル：
 
 
 ##### <a id="sec-generated-title-12"></a>Visual Studio が利用できる
+
 Windows アプリ開発環境として、歴史も古く、利用者も多い Visual Studio を使って RIA 開発ができます。
 プロジェクトテンプレート、コード補完、単体テスト、ステップイン実行デバッグなど、開発を支援するさまざまな機能を持っています。
 また、Team Foundation Server も併用することで、
@@ -124,10 +136,12 @@ Windows アプリ開発環境として、歴史も古く、利用者も多い Vi
 
 
 ##### <a id="sec-generated-title-13"></a>視覚的なデザインとロジックの分離
+
 Silverlight は、視覚デザイン面を担当するデザイナーと、ロジック実装を担当する開発者が協業しやすいようにフレームワークが作られています。
 
 
 ##### <a id="sec-generated-title-14"></a>柔軟な UI 開発
+
 Silverlight では、非常に柔軟な UI を作れます。
 例えば、ボタンなどのコントロールを自由に拡大・縮小・回転させたり、コントロール内で動画を再生したりすることができます。
 また、Silverlight では、ビットマップ画像、ベクター画像、動画像など、さまざまなメディアを統一的な記述で表示できます。
@@ -136,7 +150,8 @@ Silverlight では、非常に柔軟な UI を作れます。
 Silverlight では、標準でさまざまなコントロールが用意されています。
 
 
-##<a id="sec-generated-title-15"></a> <a id="link"></a>関連リンク
+## <a id="sec-generated-title-15"></a> <a id="link"></a>関連リンク
+
 [公式サイト（英語）](http://www.silverlight.net/)
 : 
 

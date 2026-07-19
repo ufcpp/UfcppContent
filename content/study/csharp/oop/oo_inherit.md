@@ -18,13 +18,15 @@ aliases:
 
 # 継承
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="derive" class="keyword">継承</strong>（inheritance）とはオブジェクト指向の中核を担う概念で、
 あるクラスから性質を受け継いだ新しいクラスを作ることです。
 継承は<em>派生</em>（derivation）とも呼ばれます。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * オブジェクト指向の中核概念その2: 継承。
 
 * 「人間」⊃「学生」のように、包含関係のあるものを表現する方法。
@@ -35,7 +37,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="about"></a>継承関係とは
+## <a id="sec-generated-title-3"></a> <a id="about"></a>継承関係とは
+
 継承関係の例として、「人間」と「学生」という2つのクラスについて考えて見ましょう。
 
 「学生」は「人間」の一部です。
@@ -63,7 +66,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="inherit"></a>クラスの継承
+## <a id="sec-generated-title-4"></a> <a id="inherit"></a>クラスの継承
+
 C# を始めとするオブジェクト指向言語では、
 このような継承関係を表現するため、
 あるクラスが他のクラスを継承するための構文が用意されています。
@@ -120,7 +124,8 @@ C# では、派生クラスのインスタンスは基底クラスの変数に�
 すなわち、すべて人間が学生というわけではないですから、「人間を無条件に学生として扱ってはいけない」ということです。
 
 
-##<a id="sec-generated-title-5"></a> <a id="object"></a>object型
+## <a id="sec-generated-title-5"></a> <a id="object"></a>object型
+
 C# では、基底クラスを指定せずに作成した型は全て自動的に <code>object</code> 型を継承することになります。
 (構造体等の値型は明示的に他の型を継承できないので、必ず <code>object</code> を継承します。)
 つまり、C# における全ての型は <code>object</code> の派生クラスになります。
@@ -128,7 +133,8 @@ C# では、基底クラスを指定せずに作成した型は全て自動的�
 <code>object</code> 型には <code>Equals</code> (他のインスタンスとの比較)や <code>ToString</code> (インスタンスを文字列化する)等の機能があります。
 
 
-##<a id="sec-generated-title-6"></a> <a id="ctor"></a>基底クラスのコンストラクタ呼び出し
+## <a id="sec-generated-title-6"></a> <a id="ctor"></a>基底クラスのコンストラクタ呼び出し
+
 派生クラスのインスタンスが生成される際、
 派生クラスのコンストラクタが呼び出される前に
 基底クラスのコンストラクタが呼び出されます。
@@ -229,7 +235,8 @@ Derived コンストラクター
 </pre>
 
 
-##<a id="sec-generated-title-7"></a> <a id="base_ctor"></a>基底クラスのコンストラクタを明示的に呼び出す
+## <a id="sec-generated-title-7"></a> <a id="base_ctor"></a>基底クラスのコンストラクタを明示的に呼び出す
+
 先ほど行ったように、派生クラスのインスタンスを生成する際、
 自動的に基底クラスのコンストラクタも呼び出されます。
 しかし、この際、呼び出されるコンストラクタは引数なしのコンストラクタになります。
@@ -292,7 +299,8 @@ Derived コンストラクター
 この構文は[コンストラクター初期化子](oo_construct.md#initializer)の一種です。
 `this`の方と区別して base 初期化子と呼ぶ場合もあります。
 
-##<a id="sec-generated-title-8"></a> <a id="protected"></a>protected
+## <a id="sec-generated-title-8"></a> <a id="protected"></a>protected
+
 「[実装の隠蔽](oo_conceal.md)」で、クラスのメンバーのアクセスレベルについて説明しました。その際、public と private については説明しましたが、ここでは継承と関係の深い protected について説明します。
 
 public はクラス内外とわずどこからでもアクセス可能なレベルで、
@@ -340,7 +348,8 @@ private はクラス内部からのみアクセス可能なレベルです。
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="conceal"></a>基底クラスのメンバーの隠蔽
+## <a id="sec-generated-title-9"></a> <a id="conceal"></a>基底クラスのメンバーの隠蔽
+
 派生クラスには自由にメンバーを追加することが出来ますが、
 基底クラスの public メンバーと同名のメンバーを再定義してしまうと
 基底クラスのメンバーが新しく追加されたメンバーに隠れてしまいます。
@@ -406,7 +415,8 @@ Base.Test()
 }
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="base-access"></a>base アクセス
+### <a id="sec-generated-title-10"></a> <a id="base-access"></a>base アクセス
+
 ちなみに、`base` キーワードを使って基底クラスのメンバーを参照できます。
 この機能を使って、以下のように、隠蔽されたメンバーを呼び出すこともできます。
 
@@ -449,7 +459,8 @@ Base.Test()
 }
 </code></pre>
 
-###<a id="sec-generated-title-11"></a> <a id="non-virtual-base-access"></a>base(T) アクセス
+### <a id="sec-generated-title-11"></a> <a id="non-virtual-base-access"></a>base(T) アクセス
+
 <h5 class="version version8">Ver. 未定</h5>
 
 ※ 本節の `base(T)` の機能は、元々 C# 8.0 で入る予定だったものが、9.0 以降で改めて検討しなおすことになったものです。
@@ -506,7 +517,8 @@ C# 8.0 から外れたのは、以下のような `base` の方との挙動の�
 後々改めて取り組むことになりました。
 (その後結局あまり進んでいなくて、.NET 7 / C# 11 の時点でも未実装です。)
 
-##<a id="sec-generated-title-12"></a> <a id="sealed"></a>sealed
+## <a id="sec-generated-title-12"></a> <a id="sealed"></a>sealed
+
 C# のクラスは基本的に常に継承して派生クラスを作ることができるのですが、
 場合によっては絶対に継承されたくないと言うこともあります。
 このような場合、クラス定義時に sealed （封印された）というキーワードをつけることで、
@@ -520,7 +532,8 @@ C# のクラスは基本的に常に継承して派生クラスを作ること�
 }
 </code></pre>
 
-##<a id="sec-generated-title-13"></a> <a id="single"></a>単一継承
+## <a id="sec-generated-title-13"></a> <a id="single"></a>単一継承
+
 C#のクラス継承では、1つのクラスしか継承できません。これを単一継承(single inheritance)と呼びます。
 (逆を意味するのは多重継承(multiple inheritance)で、「C#では多重継承を認めていない」などと言ったりもします。)
 つまり、以下のように、2つ以上のクラスを継承しようとするとコンパイル エラーになります。

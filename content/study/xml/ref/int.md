@@ -18,20 +18,24 @@ aliases:
 
 # 積分記号
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 積分記号を表示する
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;int&gt;&lt;sub&gt;積分記号の下に来る文字&lt;/sub&gt;&lt;sup&gt;積分記号の上に来る文字&lt;/sup&gt;&lt;/int&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;int&gt;&lt;sub&gt;a&lt;/sub&gt;&lt;sup&gt;b&lt;/sup&gt;&lt;/int&gt; f(x) &lt;d/&gt;x
 </pre><div class="math"><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> b</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">a</td></tr></table> f(x) <span class="normal">d</span>x
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:int"&gt;
   &lt;span class="integral"&gt;∫&lt;/span&gt;
   &lt;table class="integral" summary="integral"&gt;
@@ -51,7 +55,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>span.integral
 {
   font-size:140%;

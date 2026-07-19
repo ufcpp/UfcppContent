@@ -19,7 +19,8 @@ aliases:
 
 # C# 6 の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="ver6"></a>C# 6
+## <a id="sec-generated-title-1"></a> <a id="ver6"></a>C# 6
+
 <div class="version version6">Ver. 6</div>
 
 <table>
@@ -64,10 +65,12 @@ C# に関わるもう1つの大きな変化としては、C# コンパイラー�
 これに関しては、本項の最後に補足。
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/Demo/Csharp6](https://github.com/ufcpp/UfcppSample/tree/master/Demo/Csharp6)
 
 
-##<a id="sec-generated-title-3"></a> <a id="auto-property"></a>自動プロパティの拡張
+## <a id="sec-generated-title-3"></a> <a id="auto-property"></a>自動プロパティの拡張
+
 プロパティの自動実装(自動プロパティ、auto-property などと呼びます)自体は C# 3.0 で入った機能です。
 
 <table summary="">
@@ -111,7 +114,8 @@ C# に関わるもう1つの大きな変化としては、C# コンパイラー�
 しかし、この自動プロパティではいくつか不便な点がありました。それが、C# 6 で改善されています。
 
 
-###<a id="sec-generated-title-4"></a> <a id="auto-property-initializer"></a>初期化子
+### <a id="sec-generated-title-4"></a> <a id="auto-property-initializer"></a>初期化子
+
 C# 6 では、自動プロパティに初期化子(プロパティの後ろに = 値; )を与えて、初期値指定ができるようになりました。
 後述する getter のみの自動プロパティとの組み合わせが特に便利です。
 
@@ -174,7 +178,8 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="getter-only"></a>getter のみの自動プロパティ
+### <a id="sec-generated-title-5"></a> <a id="getter-only"></a>getter のみの自動プロパティ
+
 初期化子での初期値指定ができるようになったことで、「[getter](../oop/oo_property.md#getter)」 のみの自動プロパティが作れるようになりました。
 
 <table summary="">
@@ -284,7 +289,8 @@ getだけ書いたプロパティは、readonlyフィールドと同じような
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="sec-expression-bodied"></a>expression-bodied な関数メンバー
+## <a id="sec-generated-title-6"></a> <a id="sec-expression-bodied"></a>expression-bodied な関数メンバー
+
 <h5 class="version version6">Ver. 6</h5>
 C# 6 では、関数メンバーの関数本体の部分が1つの式だけからなる場合に =&gt; を使った簡易文法で関数定義できるようになりました。
 { get } や { return } などの記述で間延びしがちな関数メンバー定義が楽になります。
@@ -388,7 +394,8 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="null-conditional"></a>null 条件演算子
+## <a id="sec-generated-title-7"></a> <a id="null-conditional"></a>null 条件演算子
+
 詳しくは「[null の使い方](../resource/rm_nullusage.md)」で説明します(予定)が、「引数が有効な値の時だけメソッドやプロパティを参照して、null だったら何も呼ばずに null を返す」というような処理を書きたいことが結構あります。
 このような処理を、?. という1つの演算子で簡単に書けるようになりました。
 これを <strong id="key-null-conditional" class="keyword">null 条件演算子</strong>(null conditional operator)といいます。
@@ -450,7 +457,8 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="string-interpolation"></a>文字列挿入
+## <a id="sec-generated-title-8"></a> <a id="string-interpolation"></a>文字列挿入
+
 文字列の整形用の構文が追加されました。
 
 <table summary="">
@@ -479,7 +487,8 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 詳しくは「[文字列挿入](../start/st_string.md#string-interpolation)」 で説明します。
 
 
-##<a id="sec-generated-title-9"></a> <a id="nameof-operator"></a>nameof 演算子
+## <a id="sec-generated-title-9"></a> <a id="nameof-operator"></a>nameof 演算子
+
 <strong id="key-nameof" class="keyword">nameof 演算子</strong>(nameof operator)というものが追加され、変数や、クラス、メソッド、プロパティなどの名前(識別子)を文字列リテラルとして取得できるようになりました。
 
 <table summary="" style="table-layout:fixed; width:100%;">
@@ -541,7 +550,8 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 普通の文字列リテラルと比べた時の nameof 演算子の利点は、ソースコード解析の対象にできることです。
 
 
-##<a id="sec-generated-title-10"></a> <a id="using-static"></a>using static
+## <a id="sec-generated-title-10"></a> <a id="using-static"></a>using static
+
 これまで必ず「クラス名.メンバー名」の形で参照する必要があった静的メンバーを、using ディレクティブでクラス指定することで、メンバー名だけで参照できるようになりました。
 
 <table summary="">
@@ -590,7 +600,8 @@ Math クラス(System 名前空間)など、純粋な関数のみを持ったク
 
 詳しくは「[静的メンバー](../oop/oo_static.md#using-static)」で説明しています。
 
-##<a id="sec-generated-title-11"></a> <a id="index-initializer"></a>インデックス初期化子
+## <a id="sec-generated-title-11"></a> <a id="index-initializer"></a>インデックス初期化子
+
 オブジェクト初期化子(参考: 「[初期化子](../functional/sp3_lambda.md#init)」 )を書く際に、インデクサーを混ぜれるようになりました。
 これを<strong id="key-index-initializer" class="keyword">インデックス初期化子</strong>(index initializer)といいます。
 
@@ -675,7 +686,8 @@ dic[<span class="literal">"two"</span>] = 2;
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="exception-filter"></a>例外フィルター
+## <a id="sec-generated-title-12"></a> <a id="exception-filter"></a>例外フィルター
+
 catch 句に追加の条件を付けれるようになりました。
 
 <pre class="source" title="" lang="">
@@ -718,7 +730,8 @@ catch 句に追加の条件を付けれるようになりました。
 例えば、二種類の例外に対して同じ処理を掛けたい場合や、catchした例外自体ではなくInnerExceptionを見て分岐したい場合などに使えます。
 
 
-##<a id="sec-generated-title-13"></a> <a id="await-in-catch"></a>catch/finally 句内での await 演算子
+## <a id="sec-generated-title-13"></a> <a id="await-in-catch"></a>catch/finally 句内での await 演算子
+
 C# 5.0 で導入された await 演算子ですが、5.0では、catch 句と finally 句内には書けないという制限がありました。C# 6 でこの制限がなくなります。
 
 <pre class="source" title="" lang="">
@@ -746,7 +759,8 @@ catch 句や finally 句での await は、一度全ての例外を拾ってか�
 C# 5.0 の頃に制限がかかっていた理由は、複雑なコード生成を避けた(最初から難しいことをしてトラブるのを避けた)結果でしょう。
 
 
-##<a id="sec-generated-title-14"></a> <a id="add-extensions"></a>拡張メソッドでコレクション初期化子
+## <a id="sec-generated-title-14"></a> <a id="add-extensions"></a>拡張メソッドでコレクション初期化子
+
 C# 3.0 で「[コレクション初期化子](../functional/sp3_lambda.md#collectioninit)」が追加されましたが、これは、Add メソッドの呼び出しに展開されるものです。
 
 <pre class="source" title="" lang="">
@@ -794,7 +808,8 @@ x2.Add(3);
 
 
 
-##<a id="sec-generated-title-15"></a> <a id="add-extensions"></a>ユーザー定義コード解析に対する #pragma warning
+## <a id="sec-generated-title-15"></a> <a id="add-extensions"></a>ユーザー定義コード解析に対する #pragma warning
+
 「[.NET Compiler Platform](../misc/misc_roslyn.md#compiler-platform)」 によって誰でもコード解析を追加できるようになりました。
 コード解析の追加できるということは、C#に特定用途専用の警告やエラー(と、それに対する修正方法)を追加できるということです。
 
@@ -819,7 +834,8 @@ x2.Add(3);
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-16"></a> <a id="misc"></a>その他、細かい変更
+## <a id="sec-generated-title-16"></a> <a id="misc"></a>その他、細かい変更
+
 C# 6はコンパイラーを1から作りなおしたのもあって、「計画して」というわけでなく、「ついでに」といった感じの細かい改善がちらほらあります。
 それほど大きなインパクトもなく、あまり宣伝はされず、作業履歴的なドキュメントにだけこそっと残っていたりします。
 
@@ -827,7 +843,8 @@ C# 6はコンパイラーを1から作りなおしたのもあって、「計画
 「ちょっと手間をかけて調べればバグだとわかるコード」に対する解析能力が上がっていたり、
 ちょっとした使い勝手の向上だったりです。
 
-###<a id="sec-generated-title-17"></a> <a id="struct-property-init"></a>構造体のプロパティ初期化
+### <a id="sec-generated-title-17"></a> <a id="struct-property-init"></a>構造体のプロパティ初期化
+
 <pre class="source" title="構造体のプロパティ初期化">
 <code><reserved></span><span class="reserved">struct</span> <span class="type">Point</span>
 {
@@ -846,7 +863,8 @@ C# 5.0までは、上記のコードはこの制限にプロパティ アクセ�
 
 C# 6では、自動実装プロパティのsetは、対応する[バックフィールド](../oop/oo_property.md#auto)の初期化と同じ扱いをするようになりました。これにより、プロパティへのsetが制限に引っかからなくなりました。
 
-###<a id="sec-generated-title-18"></a> <a id="cyclic-ctor"></a>コンストラクターの循環参照
+### <a id="sec-generated-title-18"></a> <a id="cyclic-ctor"></a>コンストラクターの循環参照
+
 <pre class="source" title="コンストラクターの循環参照">
 <code><reserved></span><span class="reserved">class</span> <span class="type">C</span>
 {
@@ -859,7 +877,8 @@ C# 6では、自動実装プロパティのsetは、対応する[バックフィ
 
 一方で、C# 6では、このコードは最初からコンパイル エラーになります。
 
-###<a id="sec-generated-title-19"></a> <a id="definite-assignment"></a>「確実な初期化」の判定改善
+### <a id="sec-generated-title-19"></a> <a id="definite-assignment"></a>「確実な初期化」の判定改善
+
 <pre class="source" title="">
 <code><reserved></span><span class="reserved">static</span> <span class="reserved">void</span> Main()
 {
@@ -878,7 +897,8 @@ C#は、[未初期化領域](../resource/rm_default.md)の問題を避けるた�
 
 上記のコードは`&&`の性質(左側が偽だったら右側は評価しない)上、「絶対に通らない場所なので判定外」としてもいいはずですが、C# 5.0まではエラーになっていました。C# 6ではエラーになりません。
 
-###<a id="sec-generated-title-20"></a> <a id="enum-base-type"></a>列挙型の基底型
+### <a id="sec-generated-title-20"></a> <a id="enum-base-type"></a>列挙型の基底型
+
 <pre class="source" title="">
 <code><reserved></span><span class="reserved">enum</span> <span class="type">X</span> : System.<span class="type">Int32</span> <span class="comment">// C# 5.0まではエラーに</span>
 {
@@ -903,7 +923,8 @@ C#は、[未初期化領域](../resource/rm_default.md)の問題を避けるた�
 
 これが、C# 6では受け付けられるようになりました。
 
-###<a id="sec-generated-title-21"></a> <a id="invaliant-meaning"></a>変数の「意味不変」ルール
+### <a id="sec-generated-title-21"></a> <a id="invaliant-meaning"></a>変数の「意味不変」ルール
+
 <pre class="source" title="">
 <code><reserved></span><span class="reserved">class</span> <span class="type">InvariantMeaningInBlock</span>
 {
@@ -938,7 +959,8 @@ C# 5.0まではこの方針を徹底していて、上記コードの前半の�
 
 ところが、C# 6では、この前半のような判定は、大変な割にメリットが少ないということで、判定しない(エラーにならない)よう変更されました。
 
-###<a id="sec-generated-title-22"></a> <a id="overload-resolution"></a>オーバーロード解決の改善
+### <a id="sec-generated-title-22"></a> <a id="overload-resolution"></a>オーバーロード解決の改善
+
 <pre class="source" title="">
 <code><reserved></span><span class="reserved">static</span> <span class="reserved">void</span> Main()
 {
@@ -963,7 +985,8 @@ C# 6では、このbetternessルールの判定が少し賢くなりました。
 
 C# 5.0までは、`Func<Func<int>>`というような、入れ子になったジェネリックに対する判定ルールが仕様書レベルで欠けていて、1段階のジェネリックは「仕様外動作」としてたまたまうまくオーバーロード解決できていたものの、多段に入れ子になったものは解決できなかったそうです。C# 6では、仕様自体に訂正が入って、こういう場合に対応できるようにしました。
 
-###<a id="sec-generated-title-23"></a> <a id="optimazation"></a>内部的な最適化
+### <a id="sec-generated-title-23"></a> <a id="optimazation"></a>内部的な最適化
+
 コンパイラーを作り直して整理したことによって、最適化のかかり方がよくなったようです。
 
 - [公式ドキュメント](https://github.com/dotnet/roslyn/blob/main/docs/compilers/CSharp/CodeGen%20Differences.md) (英語のみ)
@@ -1007,6 +1030,7 @@ C# 5.0までは、`Func<Func<int>>`というような、入れ子になったジ
 
 
 ## <a id="sec-generated-title-24"></a>おまけ: Visual Basic 11から一気に14に
+
 Visual Basicは、VB6時代からの習慣で、プログラミング言語と開発ツールをあまり分けて考えません。
 結果的に、Visual Studioの内部バージョン番号が、その世代でのVBのバージョンとして使われます。
 Visual Studioの内部バージョンは以下の通りです。

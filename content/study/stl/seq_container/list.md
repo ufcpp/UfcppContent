@@ -16,7 +16,8 @@ aliases:
 
 # list
 
-##<a id="sec-generated-title-1"></a> <a id="about"></a>listとは
+## <a id="sec-generated-title-1"></a> <a id="about"></a>listとは
+
 STLのlistはいわゆる双方向連結リストと言われているものです。
 
 双方向連結リストを言うものを説明する前に、まずリストについての説明をします。
@@ -226,7 +227,8 @@ STLのlistはいわゆる双方向連結リストと言われているもので�
 こういう構造のリストを循環リストといいます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="feature"></a>listの特徴
+## <a id="sec-generated-title-2"></a> <a id="feature"></a>listの特徴
+
 * 先頭から順番にしかアクセスできない(<code>[]</code>を使って添え字を指定してのアクセスができない)
 
 * 任意の箇所への要素の追加、削除が O(1) で行える

@@ -20,7 +20,8 @@ aliases:
 
 # DSL へのアプローチ（内部言語）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 前節では、「DSL を作ってから、それを使って開発」というのがはやりつつありますが、
 言語作りといってもそれほど大げさな話ではないというような話をしました。
 また、DSL のアプローチとして、
@@ -31,7 +32,8 @@ aliases:
 具体例を挙げて紹介します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="inner"></a>内部言語
+## <a id="sec-generated-title-2"></a> <a id="inner"></a>内部言語
+
 何かプログラムを作る際、
 まずはライブラリを整備してからプログラムを作ることが多々あります。
 そして、
@@ -62,7 +64,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="library"></a>ライブラリ
+## <a id="sec-generated-title-3"></a> <a id="library"></a>ライブラリ
+
 元言語の文法に準拠して、ライブラリ提供という形で、
 元言語のモデリングパラダイムを越えようとしているようなものもあったり。
 
@@ -77,6 +80,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-4"></a>C++ template
+
 まず、マクロとして提供されていたものが、後に言語拡張として新しい構文になった例として、
 C++ の template があります。
 
@@ -84,6 +88,7 @@ C++ 自身も、その起源は C 言語に対するプリプロセスで実現�
 
 
 ##### <a id="sec-generated-title-5"></a>SystemC
+
 SystemC は C++ のライブラリとして提供されてるハードウェア設計言語。
 ソフトウェア的に動作検証もできるし、
 ハードウェア記述を生成することも可能。
@@ -102,6 +107,7 @@ SystemC が業界標準の地位に納まりそうな雰囲気。
 
 
 ##### <a id="sec-generated-title-6"></a>OpenMP
+
 C/C++ に並列プログラミング機能を追加するためのライブラリ。
 ライブラリと、
 \#pragma （対応していないコンパイラには無視される）擬似命令を使って記述。
@@ -117,7 +123,8 @@ PS3 とかの、Cell プロセッサ向け開発環境はこれを使ってる�
 なので、#pragma を使ったりといった、「対応していないコンパイラへの配慮」みたいなものが必要なんだと思います。
 
 
-##<a id="sec-generated-title-7"></a> <a id="meta"></a>メタプログラミング
+## <a id="sec-generated-title-7"></a> <a id="meta"></a>メタプログラミング
+
 言語によっては、言語内に別のミニ言語を構築できるような機能を持つものがあります。
 その手の言語では、
 ライブラリ作りと言語作りの境目があいまいで、
@@ -128,7 +135,8 @@ LISP などの関数型言語や、Ruby などの動的スクリプト言語が�
 こういう機能を<strong id="meta_prog" class="keyword">メタプログラミング</strong>といいます。
 
 
-###<a id="sec-generated-title-8"></a> <a id="meta_sample"></a>メタプログラミングの例
+### <a id="sec-generated-title-8"></a> <a id="meta_sample"></a>メタプログラミングの例
+
 まあ、サイト内に解説があることですし、
 ここでは 「[PowerShell](../../powershell/intro/abstract.md#powershell)」 を使った例をあげてみます。
 （参考： 「[Windows PowerShell](../../powershell/index.md)」。）
@@ -204,7 +212,8 @@ Def-Class や New-Instance、var、method などの正体はいずれも関数�
 むしろ無茶苦茶なコード生みかねない欠点と考えるか、結構人それぞれなんですが。
 
 
-###<a id="sec-generated-title-9"></a> <a id="meta_problem"></a>メタプログラミングの問題
+### <a id="sec-generated-title-9"></a> <a id="meta_problem"></a>メタプログラミングの問題
+
 こういうメタプログラミングという発想は、
 非常に熱狂的な信者がいる一方で、
 一般にはあまりはやってはいません。
@@ -213,6 +222,7 @@ Def-Class や New-Instance、var、method などの正体はいずれも関数�
 
 
 ##### <a id="sec-generated-title-10"></a>普通のプログラミング言語としては貧弱
+
 1つの問題は、
 普通のプログラミングがやりやすい言語と、
 メタプログラミングしやすい言語は違うというものです。
@@ -224,6 +234,7 @@ LISP なんかは、信者の方曰く「メタプログラミングができる
 
 
 ##### <a id="sec-generated-title-11"></a>複数の設計方針の混在
+
 もう1つ、こちらの方が深刻だと思うんですが、
 言語内に複数の設計方針が混在してしまうという問題もあります。
 
@@ -238,6 +249,7 @@ LISP なんかは、信者の方曰く「メタプログラミングができる
 
 
 ##### <a id="sec-generated-title-12"></a>方言の発生
+
 上述のような奇抜な構文作りは、さらに悪いことに、
 みんな好き勝手に構文を作れるわけです。
 
@@ -252,6 +264,7 @@ LISP なんかは、信者の方曰く「メタプログラミングができる
 
 
 ##### <a id="sec-generated-title-13"></a>ツールによるサポート
+
 最近では、プログラミングは IDE（Integraged Development Environment： 統合開発環境）などのツールのサポートを受ける前提で作られています。
 ツールが優秀になっていて、サポートを受けながらなら学習も利用もずいぶん楽になっています。
 
@@ -261,7 +274,8 @@ DSL 作成のハードルが高くなっています。
 という事態も起こっています。
 
 
-##<a id="sec-generated-title-14"></a> <a id="extend"></a>言語拡張
+## <a id="sec-generated-title-14"></a> <a id="extend"></a>言語拡張
+
 C++ の template なんかがそうですが、
 マクロなどを使って構築された言語もどきは、
 有用性が認められれば最終的には新しい言語になったり、
@@ -285,6 +299,7 @@ DSL（ドメイン特化言語）という言葉がはやってる昨今、
 
 
 ##### <a id="sec-generated-title-15"></a>LINQ
+
 言語拡張で、最近話題のものというとまずは C# 3.0 の LINQ（Language Integrated Query）。
 
 詳細は「[C# 3.0 の新機能](../../csharp/cheatsheet/ap_ver3.md)」を見てもらうとして、
@@ -312,6 +327,7 @@ LINQ は、
 
 
 ##### <a id="sec-generated-title-16"></a>VB9 の XML 統合
+
 VB9 では、（C# 3.0 にも追加された）LINQ に加えて、
 「XML 統合」もありました。
 要するに、以下のような感じで VB のソースコード中に XML を埋め込むことができます。
@@ -340,7 +356,8 @@ XML 統合も、LINQ と同じくある程度の要望はあります。
 XML 統合が VB9 にはあって C# 3.0 にはないのはそういう理由からです。
 
 
-##<a id="sec-generated-title-17"></a> <a id="inline"></a>インラインコード
+## <a id="sec-generated-title-17"></a> <a id="inline"></a>インラインコード
+
 C/C++ にはインラインアセンブラといって、アセンブリ言語を C 言語コード中に埋め込める機能があります。
 （標準機能ではないですが、ほとんどのコンパイラがこの機能を持っています。）
 これも一種の言語内言語ですよね。
@@ -358,6 +375,7 @@ C/C++ にはインラインアセンブラといって、アセンブリ言語�
 
 
 ##### <a id="sec-generated-title-18"></a>Perl の inline 文
+
 Perl には、ほんとにソース内に別言語を埋め込める仕組みがあるみたい。
 
 * まず、<code>install Inline::言語名</code>でモジュールをインストールする
@@ -381,6 +399,7 @@ Perl には、ほんとにソース内に別言語を埋め込める仕組みが
 
 
 ##### <a id="sec-generated-title-19"></a>Fortress の構文拡張
+
 Fortress には syntax expander（直訳するなら構文拡張器？）ってのがあるみたい。
 
 Fortress の構文拡張では、まず、

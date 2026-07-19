@@ -18,14 +18,16 @@ aliases:
 
 # サンプルプログラム
 
-##<a id="sec-generated-title-1"></a> <a id="xaml"></a>XAML 雛形
+## <a id="sec-generated-title-1"></a> <a id="xaml"></a>XAML 雛形
+
 ボタンを押したらメッセージボックスが表示されるだけの単純なものです。
 Visual Studio を使わずに、コマンドラインで MSBuild を使って XAML Windows アプリケーションを作りたい場合の雛形にどうぞ。
 
 [ファイル一式（ZIP 圧縮）](../../../../assets/sample/XamlApplication.zip)
 
 
-##<a id="sec-generated-title-2"></a> <a id="lineart"></a>ラインアート
+## <a id="sec-generated-title-2"></a> <a id="lineart"></a>ラインアート
+
 C# でもやってるんですけど（「[ラインアート](../../csharp/sample/ap_sample.md#lineart)」）、
 僕は GUI 開発環境の提供されているプログラミング言語を新しく覚えるたびにラインアートを作っています。
 （比較とか勉強のため、とりあえず作る。）
@@ -44,7 +46,8 @@ C# でもやってるんですけど（「[ラインアート](../../csharp/samp
 。
 
 
-##<a id="sec-generated-title-3"></a> <a id="bubble3d"></a>3次元バブルチャート（雛形）
+## <a id="sec-generated-title-3"></a> <a id="bubble3d"></a>3次元バブルチャート（雛形）
+
 バブルチャートの3次元版、ようするに、
 値に応じた大きさのバブルを3次元に表示するプログラムが欲しかったので作ったもの。
 現状の WPF の System.Windows.Media.Media3D では、三角メッシュしか使えないみたいなので、
@@ -72,7 +75,8 @@ C# でもやってるんですけど（「[ラインアート](../../csharp/samp
 [XAML ファイル](../../../../assets/sample/viewport3d.xaml) … コードビハインドなしの、XAML のみ。固定位置に同じサイズの正8面体を6つ配置したもの。（セキュリティ権限上、ブラウザ中で直接実行付加。一度ローカルに保存してください。）
 
 
-##<a id="sec-generated-title-4"></a> <a id="convexclosure"></a>凸包計算プログラム
+## <a id="sec-generated-title-4"></a> <a id="convexclosure"></a>凸包計算プログラム
+
 後輩に、「任意に与えられた点を全て囲む面積最小の長方形を求めたいんですが」と言われてノリで作ったもの。
 せっかくだからサンプルプログラムとして公開。
 
@@ -85,7 +89,8 @@ C# でもやってるんですけど（「[ラインアート](../../csharp/samp
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="algorithm"></a>計算アルゴリズム
+### <a id="sec-generated-title-5"></a> <a id="algorithm"></a>計算アルゴリズム
+
 「全点囲む最小の長方形」は以下の条件を満たしてそう。
 
 * 与えられた点列の凸包を囲む面積最小の長方形を求めれば OK。
@@ -107,7 +112,8 @@ C# でもやってるんですけど（「[ラインアート](../../csharp/samp
 面積最小の長方形は簡単に求まる。
 
 
-###<a id="sec-generated-title-6"></a> <a id="gui"></a>GUI プログラム
+### <a id="sec-generated-title-6"></a> <a id="gui"></a>GUI プログラム
+
 ↑のアルゴリズムの確認のために、
 以下のような GUI プログラムを作成。
 
@@ -124,7 +130,8 @@ System.Windows.Shapes 名前空間内の、
 Ellipse や Polyline を使用。
 
 
-###<a id="sec-generated-title-7"></a> <a id="ref"></a>参考
+### <a id="sec-generated-title-7"></a> <a id="ref"></a>参考
+
 ちなみに、最初プログラムを作った目的は、
 求めたい長方形が本当に凸包に接してるのか、証明するのが面倒だし、
 総当りで試してみようというものです。
@@ -146,7 +153,8 @@ Ellipse や Polyline を使用。
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="fitting"></a>Multi-line fitting
+## <a id="sec-generated-title-8"></a> <a id="fitting"></a>Multi-line fitting
+
 最小二乗法でフィッティングできるようなデータ列が2種類異常混ざっているような場合に、
 n 本の回帰直線を求めるプログラム。
 
@@ -166,7 +174,8 @@ n 本の回帰直線を求めるプログラム。
 あと、回帰直線を何本くらい使えばうまくクラスタリングできるかを自動計算したりという機能はないです。
 
 
-###<a id="sec-generated-title-9"></a> <a id="fitting_algorithm"></a>計算アルゴリズム
+### <a id="sec-generated-title-9"></a> <a id="fitting_algorithm"></a>計算アルゴリズム
+
 クラスタリングと最小二乗法を組み合わせで実装しています。
 
 要するに、
@@ -188,7 +197,8 @@ Technical report of IEICE. PRMU,
 Vol.99, No.449(19991119) pp. 81-86.
 
 
-##<a id="sec-generated-title-10"></a> <a id="dynamics"></a>曲面上の物体の運動シミュレーション
+## <a id="sec-generated-title-10"></a> <a id="dynamics"></a>曲面上の物体の運動シミュレーション
+
 せっかく Orcas（Visual Studio の次期バージョンのコードネーム）の新β版が出たことだし
 （2007/4末）、
 なにか WPF を使ったプログラミングをしてみたくて作ったもの。
@@ -205,12 +215,14 @@ Orcas で作ったので、Visual Studio 2005 だとコンパイルが通らな�
 多分、using System.Linq とかをコメントアウトするくらいでコンパイルできると思いますが。
 
 
-###<a id="sec-generated-title-11"></a> <a id="numerical"></a>数値計算
+### <a id="sec-generated-title-11"></a> <a id="numerical"></a>数値計算
+
 ソリューション内にいくつかのプロジェクトがあって、
 数値計算がらみは MyMath プロジェクト中にまとめています。
 
 
 ##### <a id="sec-generated-title-12"></a>Lambda 計算
+
 拘束面の式（
 <span class="math">
           x<span class="paren" style="font-size:em;">(</span>u, v<span class="paren" style="font-size:em;">)</span><span class="normal">=</span><span class="normal">1.5</span> v <span class="normal">cos</span> u
@@ -244,11 +256,13 @@ Function x_u = x.Differentiate(u);
 
 
 ##### <a id="sec-generated-title-13"></a>微分方程式の数値解
+
 4次のルンゲクッタ法を使ってハミルトンの微分方程式を解いています。
 （MyMath.DifferentialEquation 名前空間内。）
 
 
-###<a id="sec-generated-title-14"></a> <a id="plot3d"></a>3次元プロット
+### <a id="sec-generated-title-14"></a> <a id="plot3d"></a>3次元プロット
+
 数値計算結果を3次元的に表示するユーザコントロールを作りました。
 （Plot3D プロジェクト。）
 
@@ -261,7 +275,8 @@ Viewport3D（参考：「[3次元モデル](../wpf/wpf_uielement.md#Media3D)」�
 また、左クリックで、カメラの向きをある程度変化させることができます。
 
 
-###<a id="sec-generated-title-15"></a> <a id="dynamics_sample"></a>サンプル GUI プログラム
+### <a id="sec-generated-title-15"></a> <a id="dynamics_sample"></a>サンプル GUI プログラム
+
 実例として、下図に示すようなプログラムを作りました。
 
 <figure>
@@ -292,5 +307,6 @@ Viewport3D（参考：「[3次元モデル](../wpf/wpf_uielement.md#Media3D)」�
 まあ、実用目的じゃなくてデモ用だと思ってご容赦ください。
 
 
-###<a id="sec-generated-title-16"></a> <a id="new_version"></a>バージョンアップ
+### <a id="sec-generated-title-16"></a> <a id="new_version"></a>バージョンアップ
+
 何点か改善 → 「[[サンプル] 式木を WPF で GUI 表示](../../csharp/sample/sm_treeview.md)」。

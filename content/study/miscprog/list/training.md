@@ -18,7 +18,8 @@ aliases:
 
 # 講習用資料
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 プログラミングの新人講習のようなものをやる機会があったので、
 せっかくなのでそのときの資料をアップ。
 背景等は以下の通り。
@@ -46,7 +47,8 @@ OOP 概要は、ちょっと急ぎ足過ぎて演習問題やるのはきつか�
 概要説明だけにとどめるか、演習もするなら C++ の説明がもっと必要。
 
 
-##<a id="sec-generated-title-2"></a> <a id="bug"></a>C/C++ よくあるバグパターンと対策
+## <a id="sec-generated-title-2"></a> <a id="bug"></a>C/C++ よくあるバグパターンと対策
+
 C/C++ でやりがちなミスを列挙してみました。
 実例のソースファイル中にコメントで説明を入れています。
 C/C++ といいつつ、C 言語で書いています。
@@ -75,7 +77,8 @@ C/C++ といいつつ、C 言語で書いています。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="std"></a>非標準機能、処理系依存機能
+## <a id="sec-generated-title-3"></a> <a id="std"></a>非標準機能、処理系依存機能
+
 C/C++ でプログラミングするときに、
 「非標準機能を使うな」、
 「可能な限り処理系に依存しないように」
@@ -89,7 +92,8 @@ C/C++ でプログラミングするときに、
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="oop"></a>オブジェクト指向プログラミング概要
+## <a id="sec-generated-title-4"></a> <a id="oop"></a>オブジェクト指向プログラミング概要
+
 いまどき、オブジェクト指向的考え方は必須なわけですが、
 事細かに説明するほどの時間はないので、
 概要のみ。
@@ -103,7 +107,8 @@ C/C++ でプログラミングするときに、
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="rad"></a>RAD デモ
+## <a id="sec-generated-title-5"></a> <a id="rad"></a>RAD デモ
+
 RAD （Rapid Application Development）のデモンストレーションをしてみた。
  
 目的は、

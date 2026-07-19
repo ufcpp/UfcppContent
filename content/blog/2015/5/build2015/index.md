@@ -66,6 +66,7 @@ IoT、Phone、Tablet、デスクトップ、大スクリーン(XBoxゲーム、S
 いろんな言語・環境を使っている人が、フェアに相互に行き来できるよい環境ができそう。
 
 ### すべてのプラットフォームで.NET開発
+
 - [Visual Studio Code][5]
 - [.NET Core][6]
   - Windows x64環境向けはRCに
@@ -77,6 +78,7 @@ Visual Studio Codeとか、中身は単に[Electron + Monaco][11]、つまり、
 とはいえ、「Visual Studio」の名前を関したアプリとして.NET関連のどこかのチーム(たぶんASP.NET系な雰囲気がする)が提供・保守していくということの。
 
 ### Visual Studio利用者にすべてのプラットフォーム開発機能を提供
+
 - [Cross-Platform Mobile Apps in C++][7]
 - [Apache Cordova][8]
 - [Xamarin][9]
@@ -89,6 +91,7 @@ Office 2016がUniversal Apps化して、AndroidやiOS版もリリースされて
 Officeの影響はやっぱり大きいですねぇ。Officeの性能を出すためにXAMLにも結構新機能が入ったそうですし。
 
 ### すべてのプラットフォーム開発者にUniversal Windows Appsの開発機能を提供
+
 - [Universal Windows Platform Bridges][10]
   - Project "Astoria": 
   - Project "Islandwood": 

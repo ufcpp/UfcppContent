@@ -19,7 +19,8 @@ aliases:
 
 # dynamic
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 .NET Framework 4.0 では、クラスライブラリに Dynamic Language Runtime （DLR）が追加されました。
@@ -30,7 +31,8 @@ C# 4.0 で導入された、動的言語との連携の仕組みの1つが動的
 動的型付け変数を使うことで、動的な（コンパイル時にメンバー情報がわからない型の）メンバーアクセスが可能になります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="dynamic"></a>動的型付け変数
+## <a id="sec-generated-title-2"></a> <a id="dynamic"></a>動的型付け変数
+
 dynamic キーワードを使うことで、動的型付け変数を定義できます。
 使い方としては、<code>dynamic x;</code> というように、変数宣言の型のところに dynamic キーワードを入れます。
 （「dynamic 型」という型が C# に追加されたと考えて OK。）
@@ -75,7 +77,8 @@ obj が本当に X という名前のプロパティを持っているかどう�
 コンパイル時ではなく、実行時に調べられます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="how"></a>dynamic の仕組み
+## <a id="sec-generated-title-3"></a> <a id="how"></a>dynamic の仕組み
+
 dynamic の機能は、動的コード生成を使って実現されています（プログラム実行時に新たにコード生成される）。
 dynamic 型の変数に格納されたインスタンスの型に応じて、以下のいずれかのコードが生成されます。
 
@@ -94,7 +97,8 @@ C# の dynamic は、「型が動的」というよりは、「静的な型に�
 このような手法はインラインメソッドキャッシュ（inline method cache）と呼ばれています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="what"></a>dynamic で何ができるか
+## <a id="sec-generated-title-4"></a> <a id="what"></a>dynamic で何ができるか
+
 さて、じゃあ、この dynamic を使っていったい何ができるんでしょうか。
 先にキーワードだけ挙げると以下のような感じです。
 
@@ -114,7 +118,8 @@ C# の dynamic は、「型が動的」というよりは、「静的な型に�
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="late_binding"></a>遅延バインド
+## <a id="sec-generated-title-5"></a> <a id="late_binding"></a>遅延バインド
+
 DLL や COM 内のクラス・関数を（必要になったときに、必要な分だけ）実行時に読み込むことを遅延バインド（late binding）と呼びます。
 
 通常、C# では、ライブラリ（DLL）を利用するには、コンパイル時に「アセンブリの参照」というのをします。
@@ -218,7 +223,8 @@ C# 4.0 の dynamic を使うと、add.Invoke の部分を簡素化できて、�
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="dlr"></a>DLR 連携
+## <a id="sec-generated-title-6"></a> <a id="dlr"></a>DLR 連携
+
 遅延バインドは、動的言語との連携で特に威力を発揮します。
 .NET Framework 4 では、動的言語との連携の仕組みとして、DLR（Dynamic Language Runtime）というライブラリが追加されました。
 
@@ -263,7 +269,8 @@ Python の仕様では、スクリプトファイルが無名のクラスのよ�
 UseFile("helloworld.py") の実行結果は welcom というメソッドを1個持ったオブジェクトを返します。
 
 
-##<a id="sec-generated-title-7"></a> <a id="ducktype"></a>ダックタイピング
+## <a id="sec-generated-title-7"></a> <a id="ducktype"></a>ダックタイピング
+
 同じ名前のメンバーを持っている型ならすべて同列に扱うことを「[ダックタイピング](../appendix/ap_term.md#ducktype)」と呼びます。
 （「[インターフェース](../oop/oo_interface.md#interface)」等を実装している必要もなく、単純にメンバー名の一致性だけを見ます。）
 
@@ -368,7 +375,8 @@ X と Y なら両方のクラスが持っています。
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="data"></a>データ連携
+## <a id="sec-generated-title-8"></a> <a id="data"></a>データ連携
+
 静的型付け言語では、事前に型の決まっていない（スキーマの緩い）データへのアクセスは苦手です。
 この手のデータへのアクセスはダックタイピング的にならざるを得ません。
 
@@ -429,7 +437,8 @@ dynamic を使うと、
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="static"></a>ジェネリクス利用時の静的メソッド呼び出し
+## <a id="sec-generated-title-9"></a> <a id="static"></a>ジェネリクス利用時の静的メソッド呼び出し
+
 C# の「[ジェネリック](../oop/sp2_generics.md#generics)」は、メソッドやプロパティの呼び出しをインターフェースによって行います。
 「[[サンプル] ジェネリックな複素数型](../sample/sm_genericop.md)」でも書いていますが、
 それで何が問題になるかというと、静的メソッド（特に演算子）が呼べないこと。
@@ -464,7 +473,8 @@ dynamic を使うと一応、静的メソッド呼び出しが可能になりま
 パフォーマンスが要求される場面での利用には注意が必要です。
 
 
-##<a id="sec-generated-title-10"></a> <a id="multiple_dispatch"></a>多重ディスパッチ
+## <a id="sec-generated-title-10"></a> <a id="multiple_dispatch"></a>多重ディスパッチ
+
 複数のインスタンスの動的な型情報に基づいて実際に呼び出すメソッドを切り替えることを多重ディスパッチ（multiple dispatch）といいます。
 これは要するに、「[仮想メソッド](../oop/oo_polymorphism.md#virtual_method)」 の複数インスタンス版といえます。
 

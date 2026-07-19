@@ -14,7 +14,8 @@ aliases:
 
 # \[余談\] 暗黙的な派生
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 C# では「すべての[値型](../resource/oo_reference.md#valtype)は`ValueType`クラス(`System`名前空間)から派生する」というような、暗黙的な派生があります。
 
 また、通常、値型(組み込み型や、構造体、列挙型)は他の型からの派生、他の型への派生ができませんが、
@@ -22,13 +23,15 @@ C# では「すべての[値型](../resource/oo_reference.md#valtype)は`ValueTy
 ただ、内部的には、派生しているように見せかけるための特殊な変換処理が掛かっています。
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 - 全ての型は `Object` である
 - 全ての値型は `ValueType` である
 - 全ての列挙型は `Enum` である
 - 全てのデリゲートは `Delegate` である
 - 全ての配列は `Array` である
 
-##<a id="sec-generated-title-3"></a> <a id="special-types"></a>特殊な型
+## <a id="sec-generated-title-3"></a> <a id="special-types"></a>特殊な型
+
 以下の型は、.NET/C# にとって特別な意味を持ちます。
 いずれも `System` 名前空間中のクラスです。
 
@@ -85,7 +88,8 @@ array = <span class="reserved">new</span>[] { <span class="string">"a"</span>, <
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="boxing"></a>ValueType, Enum とボックス化
+## <a id="sec-generated-title-4"></a> <a id="boxing"></a>ValueType, Enum とボックス化
+
 前述の `ValueType` や `Enum` はクラス(もちろん参照型)です。
 これらに対して、値型である整数や列挙型の値を代入するとボックス化が起こります。
 
@@ -131,7 +135,8 @@ array = <span class="reserved">new</span>[] { <span class="string">"a"</span>, <
 
 できる限りはジェネリクスを使う方がいいでしょう。
 
-###<a id="sec-generated-title-5"></a> <a id="enum-hasflag"></a>Enum.HasFlag でのボックス化
+### <a id="sec-generated-title-5"></a> <a id="enum-hasflag"></a>Enum.HasFlag でのボックス化
+
 ちなみに、列挙型は、`Enum`型変数を経由しなくても、`HasFlag`メソッドを呼んだ時点でボックス化します。
 なので長らく、このメソッドは「地雷」として有名だったんですが、
 .NET Core 2.1では「`Enum.HasFlag`を見たら特別扱いして置き換える」と言うような最適化が掛かるようになったそうです。
@@ -157,7 +162,8 @@ array = <span class="reserved">new</span>[] { <span class="string">"a"</span>, <
 }
 </code></pre>
 
-##<a id="sec-generated-title-6"></a> <a id="constraints"></a>Enum制約とDelegate制約
+## <a id="sec-generated-title-6"></a> <a id="constraints"></a>Enum制約とDelegate制約
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 本項で紹介しているような「特殊な基底クラス」は、これまでジェネリクスの型制約には指定できませんでした。

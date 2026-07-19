@@ -18,7 +18,8 @@ aliases:
 
 # セット
 
-##<a id="sec-generated-title-1"></a> <a id="set"></a>セット
+## <a id="sec-generated-title-1"></a> <a id="set"></a>セット
+
 数学などにおいては、
 「集合（set）」というと、
 要素を包含するかどうかだけが問題で、
@@ -72,7 +73,8 @@ aliases:
 この ISet インターフェースを実装します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/Set.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/Set.cs)

@@ -18,7 +18,8 @@ aliases:
 
 # 不変(immutable)なコレクション
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 (書きかけ)
 
 Immutable Collections が出たわけですが。
@@ -31,7 +32,8 @@ Immutable Collections は、連結リスト的なデータ構造で、
 ある時点でのスナップショットを残しつつデータを追加したりしたい場合に有用。
 
 
-##<a id="sec-generated-title-2"></a> <a id="example"></a>例
+## <a id="sec-generated-title-2"></a> <a id="example"></a>例
+
 わかりやすい例は経路探索。
 
 例えば、図1のような、ゲームでよくある四角いマス目をつないだマップみたいなのを考えて

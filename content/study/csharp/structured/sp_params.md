@@ -18,20 +18,23 @@ aliases:
 
 # 可変長引数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# では <em>
         <code>params</code>
       </em> キーワードを用いることでメソッドの引数の数を可変にすることが出来ます。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 定義側の例：<code>int Sum(params int[] args) { ... }</code>
 
 * 利用側の例：<code>Sum(1, 2, 3, 4, 5);</code>… これで、<code>Sum(new int[] { 1, 2, 3, 4, 5 });</code>と同じ意味。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="params"></a>params キーワード
+## <a id="sec-generated-title-3"></a> <a id="params"></a>params キーワード
+
 例えば、可変個の整数のうち最大の整数を求めるメソッドを作りたいとします。
 可変長引数を使わずにメソッドを実装すると以下のようになるでしょう。
 
@@ -112,6 +115,7 @@ C# では <code>params</code> というキーワードを使って可変個の�
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
+
 今まで何気なく <code>Console.Write("(x, y) = ({0}, {1})\n", x, y)</code> というような書き方をしていましたが、この Console.Write メソッドは可変長引数の機構を使っています。
 
 ここでは、params の例として、
@@ -154,7 +158,8 @@ C# では <code>params</code> というキーワードを使って可変個の�
 x = 3.14, n = 99, s = test string, b = True
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="params-collections">params コレクション</a>
+## <a id="sec-generated-title-5"></a> <a id="params-collections">params コレクション</a>
+
 <h5 class="version version13">Ver. 13</h5>
 
 <!-- 昔この id のセクションがあったのでアンカーだけは残す -->
@@ -291,6 +296,7 @@ C# 13 で、配列以外にも `params` にできる型が増えました。
 </pre>
 
 #### <a id="sec-generated-title-6"></a> <a id="diff-from-collection-expr">余談:  コレクション式との差</a>
+
 ただ、実装都合でどうしても「全く同じ」にはできないこともあるそうで、ちょっとだけ差があります。
 例えば以下のようなコードの場合、`[]` の有無で呼ばれるオーバーロード解決ルールが変わるそうです。
 
@@ -306,6 +312,7 @@ C# 13 で、配列以外にも `params` にできる型が増えました。
 </pre>
 
 #### <a id="sec-generated-title-7"></a> <a id="params-ref-struct">余談:  params ref 構造体</a>
+
 ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた場合、
 暗黙的に [`scoped`](../resource/refstruct.md#scoped-modifier) 扱い(`scoped` 修飾子を付けた場合と同じルールで解析)になるそうです。
 
@@ -329,7 +336,8 @@ ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた�
 `params` の用途的に、定義側が `scoped` 困ることもなく、呼び出し側は `scoped` でないと困ることがありそうということでこういう仕様になりました。
 
 
-##<a id="sec-generated-title-8"></a> <a id="no-param"></a>余談: 可変長引数を引数なしで呼ぶ
+## <a id="sec-generated-title-8"></a> <a id="no-param"></a>余談: 可変長引数を引数なしで呼ぶ
+
 可変長引数にしたメソッドは、引数なしで呼ぶこともできます。
 この場合、呼び出された側のメソッドには、空配列(長さ0の配列)が渡ります。
 
@@ -410,7 +418,8 @@ ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた�
 }
 </code></pre>
 
-##<a id="sec-generated-title-9"></a> <a id="arglist"></a>__arglist
+## <a id="sec-generated-title-9"></a> <a id="arglist"></a>__arglist
+
 ちなみに、仕様書にない隠し機能ではあるんですが、
 マイクロソフト製や、Mono 製の C# コンパイラーには、可変長引数のための構文として、もう1つ、__arglist というものがあります。
 詳しくは「[型付き参照](../interop/sp_makeref.md)」で説明します。

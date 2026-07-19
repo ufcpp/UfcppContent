@@ -16,7 +16,8 @@ aliases:
 
 # ソート概要
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 まあ、結局の所、今現在世の中で使われているソートアルゴリズムの大半は、マージソートか「[クイックソート](sort_quick.md#quick)」をベースにしたものです。
 （基本的にこの2つのソートを使い、途中から「[挿入ソート](sort_insert.md#insert)」というソートに切り替えるという手法が有名。）
 
@@ -38,7 +39,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="demo"></a>デモ
+## <a id="sec-generated-title-2"></a> <a id="demo"></a>デモ
+
 説明に入る前に、先にソートの様子を視覚化したデモをお見せしておきましょう。
 
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?i=0&s=0&w=150" width="780" height="500"></iframe></div>
@@ -49,7 +51,8 @@ aliases:
 ソートの途中で、比較や入れ替えがどうおこなわれているのかという経過を表示しています。
 これで大まかなイメージをつかんでから説明を読んでもらうと、理解が深まるかと思います。
 
-##<a id="sec-generated-title-3"></a> <a id="common"></a>はじめに
+## <a id="sec-generated-title-3"></a> <a id="common"></a>はじめに
+
 まずはじめにいくつか留意点を。
 
 「[アルゴリズムとデータ構造](../index.md)」インデックスページでも書いたように、
@@ -77,7 +80,8 @@ ref というキーワードに関しては「[引数の参照渡し](../../csha
 &lt;T&gt; という部分に関しては「[ジェネリック](../../csharp/oop/sp2_generics.md)」を参照してください。
 
 
-##<a id="sec-generated-title-4"></a> <a id="stable"></a>安定性
+## <a id="sec-generated-title-4"></a> <a id="stable"></a>安定性
+
 数あるソートアルゴリズムを分類する方法の1つに、
 安定性の有無があります。
 
@@ -174,7 +178,8 @@ Array.Sort は、おそらく「[クイックソート](sort_quick.md#quick)」�
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="outer"></a>外部記憶の必要性
+## <a id="sec-generated-title-5"></a> <a id="outer"></a>外部記憶の必要性
+
 配列をソートする際に、
 配列内の要素の交換だけでソートできる物を<strong id="inner" class="keyword">内部</strong>ソートと呼びます。
 逆に、ソートしたい配列の他に、余分に記憶領域を確保して、
@@ -184,7 +189,8 @@ Array.Sort は、おそらく「[クイックソート](sort_quick.md#quick)」�
 有名どころのうちで、例外はマージソートのみ。
 
 
-##<a id="sec-generated-title-6"></a> <a id="order"></a>オーダー
+## <a id="sec-generated-title-6"></a> <a id="order"></a>オーダー
+
 ソートに限らず、アルゴリズムの良し悪しの判断基準として最も重要なのは計算量でしょう。
 計算量の評価は、厳密に行うのは難しい場合も多く、
 大まかな見積もりにとどめる場合もあります。
@@ -192,7 +198,8 @@ Array.Sort は、おそらく「[クイックソート](sort_quick.md#quick)」�
 計算量の大まかな見積もり指標の1つが<strong id="order" class="keyword">オーダー</strong>です。
 
 
-##<a id="sec-generated-title-7"></a> <a id="simple"></a>単純なソート
+## <a id="sec-generated-title-7"></a> <a id="simple"></a>単純なソート
+
 O(n<sup>2</sup>)の物。
 
 * 「[バブルソート](sort_bubble.md)」
@@ -208,7 +215,8 @@ O(n<sup>2</sup>)の物。
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="rapid"></a>高速なソート
+## <a id="sec-generated-title-8"></a> <a id="rapid"></a>高速なソート
+
 O(n lon n)の物。
 
 * 「[クイックソート](sort_quick.md)」
@@ -219,7 +227,8 @@ O(n lon n)の物。
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="integer"></a>整数限定のソート
+## <a id="sec-generated-title-9"></a> <a id="integer"></a>整数限定のソート
+
 範囲が予め分かっている整数に限って、
 O(n) で計算できる物。
 制限が強いけども、超高速。
@@ -230,7 +239,8 @@ O(n) で計算できる物。
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="src"></a>ソースファイル
+## <a id="sec-generated-title-10"></a> <a id="src"></a>ソースファイル
+
 紹介したソートプログラムのソースファイルを置いておきます。
 
 [ソースファイル](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/ufcpp2000/algorithm/src/Sort.cs)

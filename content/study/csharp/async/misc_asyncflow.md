@@ -18,7 +18,8 @@ aliases:
 
 # \[雑記\] 非同期制御フロー
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# 5.0のasync/awaitがなかったころ、少し複雑目な非同期制御フローをどうやって実現していたかという話。
 
 C# 5.0を使えない状況下で非同期処理を書くことになった場合の参考としてや、async/awaitがどうやって実現されているかを知るきっかけになると思います。
@@ -30,6 +31,7 @@ C# 5.0を使えない状況下で非同期処理を書くことになった場�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * C# 5.0（await演算子）便利だなー
 
 * await演算子が内部的にやっていることは、イテレーターに近い
@@ -38,7 +40,8 @@ C# 5.0を使えない状況下で非同期処理を書くことになった場�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="requirement"></a>サンプルの要件
+## <a id="sec-generated-title-3"></a> <a id="requirement"></a>サンプルの要件
+
 今回の例として使うのは、Figure 1に示すような、確認ダイアログ表示のフロー。
 
 <figure>
@@ -61,7 +64,8 @@ C# 5.0を使えない状況下で非同期処理を書くことになった場�
 など、確認すべき項目がいくつかあります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="control-flow"></a>制御フロー
+## <a id="sec-generated-title-4"></a> <a id="control-flow"></a>制御フロー
+
 ダイアログ表示のコードを同期的に書ける場合、特に問題もなく書けると思います。
 
 たとえばWPFだと、Windowクラス（System.Windows名前空間）のShowDialogメソッドで同期的にダイアログ表示できるので、それほど困りません（ダイアログを表示している間、呼び出し元のウィンドウは止まってしまいますが）。
@@ -201,13 +205,15 @@ C# 5.0を使えない状況下で非同期処理を書くことになった場�
 そして、仕様追加で4つ目のダイアログが必要になった時点でくじけることに。
 
 
-##<a id="sec-generated-title-5"></a> <a id="csharp5"></a>C# 5.0
+## <a id="sec-generated-title-5"></a> <a id="csharp5"></a>C# 5.0
+
 C# 5.0が使えるなら、つまり、Visual Studio 2012で、.NET Framework 4.5が入っていれば、非常に簡単な解決策があります。
 
 Taskクラスを返す非同期APIを用意して、await演算子を使うだけ。
 
 
-###<a id="sec-generated-title-6"></a> <a id="task-class"></a>Task クラス
+### <a id="sec-generated-title-6"></a> <a id="task-class"></a>Task クラス
+
 コールバックを渡すタイプのAPIだとawait演算子を使えないので、まずはTaskクラス（System.Threading.Tasks名前空間）を返すタイプのAPIに変換します。以下のようになります。
 
 <pre class="source" title="Task クラスを返すタイプの API" lang="">
@@ -225,7 +231,8 @@ Taskクラスを返す非同期APIを用意して、await演算子を使うだ�
 Taskクラス自体は.NET Framework 4の頃からあるので、それ以降のバージョンを使えるなら、このタイプのAPIを用意しておくといいでしょう。
 
 
-###<a id="sec-generated-title-7"></a> <a id="await-op"></a>await 演算子
+### <a id="sec-generated-title-7"></a> <a id="await-op"></a>await 演算子
+
 そして、ダイアログを表示する部分は以下のように書きます。
 
 <pre class="source" title="非同期メソッド（await 演算子）を使ったダイアログ表示フロー" lang="">
@@ -267,7 +274,8 @@ Taskクラス自体は.NET Framework 4の頃からあるので、それ以降の
 async修飾子やawait演算子の詳細は「[非同期メソッド](sp5_async.md#async)」 を参照してください。
 
 
-##<a id="sec-generated-title-8"></a> <a id="iterator"></a>イテレーター非同期
+## <a id="sec-generated-title-8"></a> <a id="iterator"></a>イテレーター非同期
+
 そう、C# 5.0ならね。
 
 ということで、問題は、C# 5.0が使えない場合。
@@ -349,7 +357,8 @@ C# 5.0以前、割と常套手段として知られていたのが、イテレ�
 実際、C# 5.0のawait演算子は、イテレーターがやっているのと同様のコード生成によって実現されています。
 
 
-##<a id="sec-generated-title-9"></a> <a id="conclusion"></a>まとめ
+## <a id="sec-generated-title-9"></a> <a id="conclusion"></a>まとめ
+
 C# 5.0で追加されたawait演算子が内部で行っていることは「中断と再開」で、イテレーターと同系統の技術です。
 
 逆に言うと、イテレーターを使って、await演算子と同じようなことをする方法があります。実際、C# 5.0以前には、この方法で非同期処理を行っている人もいました。

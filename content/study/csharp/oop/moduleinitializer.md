@@ -14,13 +14,15 @@ aliases:
 
 # モジュール初期化子
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 <h5 class="version version9">Ver. 9</h5>
 
 プログラムの実行時、最初に1回だけ呼び出したい処理が必要になることがあります。
 「[静的コンストラクター](oo_static.md#ctor)」で説明しているように、この静的コンストラクターという機能を使っても「最初に1回だけ呼ばれる」ということができますが、C# 9.0 ではモジュール初期化子という書き方もできるようになりました。
 
-##<a id="sec-generated-title-2"></a> <a id="module-initializer">モジュール初期化子</a>
+## <a id="sec-generated-title-2"></a> <a id="module-initializer">モジュール初期化子</a>
+
 「[静的コンストラクター](oo_static.md#ctor)」を使うとプログラム中で1回だけ呼び出される処理を書くことができます。
 静的コンストラクターが呼び出されるタイミングは、そのクラスのなんらかのメンバーに初めてアクセスしたときです。
 
@@ -53,7 +55,8 @@ C# 9.0 では、もう1種類、「最初に1回だけ呼ばれる」という�
 モジュール初期化子の呼び出しも「モジュールを読み込む」(モジュールに含まれているなんらかの型に触れる)という条件は付くんですが、静的コンストラクターと比べればだいぶ確実に呼ばれます。
 (一切何の型も使わないモジュールを参照すること自体がほとんどないので、実質的には「確実」と行ってしまっても構わないと思います。)
 
-###<a id="sec-generated-title-3"></a> <a id="module-initializer-impl">モジュール初期化子の実装方法</a>
+### <a id="sec-generated-title-3"></a> <a id="module-initializer-impl">モジュール初期化子の実装方法</a>
+
 「モジュール読み込み時に必ず呼ばれる」というもの自体は .NET Framework 1.0 の頃から実はありました(単に C# から使う手段がなかっただけ)。
 当初から、「`<Module>` という特殊な名前のクラスの静的コンストラクターは、モジュール読み込み時に必ず1回呼ばれる」という仕様があります。
 `<>` を含む名前なので通常の C# コードで書くことはできませんし、C# 8.0 まではこの型の静的コンストラクターを書き出す手段もありませんでした。
@@ -103,7 +106,8 @@ C# 9.0 のモジュール初期化子がやっていることはこの「`<Modul
 - (意図せずコードを残してしまうと)本当は不要であっても必ず呼ばれる
 - 呼び出しの負荷がモジュール読み込み時に集中する
 
-###<a id="sec-generated-title-4"></a> <a id="module-initialize-usage">モジュール初期化子の用途</a>
+### <a id="sec-generated-title-4"></a> <a id="module-initialize-usage">モジュール初期化子の用途</a>
+
 .NET 6.0 では iOS や [WebAssembly](https://ja.wikipedia.org/wiki/WebAssembly) 上での実行のサポートが入ります。
 (iOS や WebAssembly 上で C# が動くという状況はもっと前からあったんですが、
 Windows で動いていた .NET とは別系統で保守されていました。
@@ -229,7 +233,8 @@ source generator 導入の動機の1つに「これまでリフレクション�
 }
 </code></pre>
 
-##<a id="sec-generated-title-5"></a> <a id="generics"></a>ジェネリックな型
+## <a id="sec-generated-title-5"></a> <a id="generics"></a>ジェネリックな型
+
 逆に静的コンストラクターでないと書けないものもあります。
 ジェネリックな型に対してはモジュール初期化子を定義できません。
 

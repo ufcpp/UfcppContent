@@ -18,23 +18,27 @@ aliases:
 
 # 分数
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 分数を表示
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;frac&gt;
   &lt;num&gt;分子&lt;/num&gt;
   &lt;denom&gt;分母&lt;/denom&gt;
 &lt;/frac&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;frac&gt;&lt;num&gt;f(b)&amp;#x2212;f(a)&lt;/num&gt;&lt;denom&gt;b&amp;#x2212;a&lt;/denom&gt;&lt;/frac&gt; = f'(c)
 </pre><div class="math"><table class="frac" summary="fraction"><tr><td class="num">f(b)−f(a)</td></tr><tr><td>b−a</td></tr></table> = f'(c)
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:frac"&gt;
 
   &lt;table class="frac" summary="fraction"&gt;
@@ -53,7 +57,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>table.frac
 {
   display:inline;

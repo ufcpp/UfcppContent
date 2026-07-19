@@ -18,7 +18,8 @@ aliases:
 
 # 付録
 
-##<a id="sec-generated-title-1"></a> <a id="delta-fourier"></a>δ関数のフーリエ変換
+## <a id="sec-generated-title-1"></a> <a id="delta-fourier"></a>δ関数のフーリエ変換
+
 δ関数および指数関数のフーリエ変換は以下のようになります。
 <div class="math">
       <span class="normal">ℱ</span><span class="paren" style="font-size:em;">[</span>δ<span class="paren" style="font-size:em;">(</span>t ± T<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span>
@@ -31,7 +32,8 @@ aliases:
       <span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span> ＝
 2π δ<span class="paren" style="font-size:em;">(</span>ω ± ω<sub>0</sub><span class="paren" style="font-size:em;">)</span></div>
 
-##<a id="sec-generated-title-2"></a> <a id="delta-series"></a>δ関数級数
+## <a id="sec-generated-title-2"></a> <a id="delta-series"></a>δ関数級数
+
 離散関数を取り扱う際、以下のようにδ関数を等間隔で並べた級数<span class="math">δ<sub>T</sub></span>がしばしば用いられます。
 <div class="math">
 δ<sub>T</sub><span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span>
@@ -73,7 +75,8 @@ c<sub>n</sub> ＝
 級数<span class="math">δ<sub>T</sub></span>で表される信号を<strong id="i-series" class="keyword">インパルス列</strong>と呼びます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="sinc-function"></a>sinc関数
+## <a id="sec-generated-title-3"></a> <a id="sinc-function"></a>sinc関数
+
 以下のようにして定義された関数<span class="math"><span class="normal">sinc</span> x</span> を <strong id="sinc" class="keyword">sinc</strong> 関数と呼びます。
 <div class="math">
       <span class="normal">sinc</span> x ＝ 

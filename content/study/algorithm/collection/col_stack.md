@@ -18,7 +18,8 @@ aliases:
 
 # スタック
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="stack" class="keyword">スタック</strong>（stack: 積み重ね、堆積）とは、
 図1に示すように、最後に挿入した要素から順に取り出す（first in last out）ようなデータ構造です。
 first in last out の頭文字からとって、FILO バッファと読んだりもします。
@@ -37,14 +38,16 @@ first in last out の頭文字からとって、FILO バッファと読んだり
 上に積んだ荷物を先にどけないと、下の荷物が取りだせません。
 
 
-##<a id="sec-generated-title-2"></a> <a id="impl"></a>実装方法
+## <a id="sec-generated-title-2"></a> <a id="impl"></a>実装方法
+
 スタックは、コレクションの先頭あるいは末尾のどちらか一方に対してのみ要素の挿入・削除を行います。
 したがって、スタックの実装には、
 「[配列リスト](col_array.md#array)」や「[片方向連結リスト](col_flist.md#flist)」を使います。
 これらのコレクションは、先頭あるいは末尾への要素の挿入・削除が高速に行えます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 「[配列リスト](col_array.md#array)」を使った実装です。
 

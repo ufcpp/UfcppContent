@@ -18,11 +18,13 @@ aliases:
 
 # 主成分分析
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[固有値問題](eigen.md#eigen_problem)」の応用の1つとして、主成分分析を紹介。
 
 
-##<a id="sec-generated-title-2"></a> <a id="preparation"></a>記号の準備
+## <a id="sec-generated-title-2"></a> <a id="preparation"></a>記号の準備
+
 これから説明する主成分分析は、
 <span class="math">N</span> 個のベクトル
 <span class="math"><span class="vector">x</span><sub>1</sub> , <span class="vector">x</span><sub>2</sub> , 
@@ -133,12 +135,14 @@ A<sup>T</sup> R<sub>X</sub> A
 と表すことができます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="principal"></a>主成分分析
+## <a id="sec-generated-title-3"></a> <a id="principal"></a>主成分分析
+
 主成分分析にはいくつか表現のしかたがあります。
 （結局は同じ式、同じ結果に帰着。）
 
 
-###<a id="sec-generated-title-4"></a> <a id="d34e402"></a>線形結合結果の絶対値最大化
+### <a id="sec-generated-title-4"></a> <a id="d34e402"></a>線形結合結果の絶対値最大化
+
 1つ目は、ベクトル列 <span class="math">X</span> の線形結合
 <div class="math">
         <span class="vector">y</span>
@@ -209,7 +213,8 @@ R<sub>X</sub> <span class="vector">a</span>
 第一主成分、第二主成分・・・と呼びます。
 
 
-###<a id="sec-generated-title-5"></a> <a id="d34e599"></a>ベクトル列の直交化
+### <a id="sec-generated-title-5"></a> <a id="d34e599"></a>ベクトル列の直交化
+
 もう1つの考え方としては、
 ベクトル列 <span class="math">X</span> を、
 直交変換 <span class="math">A</span> によって直交したベクトル列 <span class="math">Y</span> に変換するという考え方です。
@@ -293,7 +298,8 @@ R<sub>X</sub> <span class="vector">a</span><sub>i</sub>
 を並べます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="conclusion"></a>まとめ
+### <a id="sec-generated-title-6"></a> <a id="conclusion"></a>まとめ
+
 要するに、以下のような手順でベクトル列 <span class="math">X</span> を
 ベクトル列 <span class="math">Y</span> に変換する手法を
 <strong id="principal" class="keyword">主成分分析</strong>（principal component analysis）と呼びます。
@@ -337,7 +343,8 @@ A
 残りは零ベクトルになります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="probability"></a>確率変数の主成分分析
+## <a id="sec-generated-title-7"></a> <a id="probability"></a>確率変数の主成分分析
+
 主成分分析の考え方は、
 内積、あるいは、内積に類する性質の演算を定義できる線形空間なら何にでも適用できます。
  

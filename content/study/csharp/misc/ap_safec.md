@@ -18,14 +18,16 @@ aliases:
 
 # “Safe C” としての C#
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 (書きかけ)
 
 C# は、企画段階では “Safe C” (安全な C 言語)と呼ばれていた時期もあるそうです。
 プログラマーが陥りがちなミスを避けるため、間違いそうな文法を避けたり、細かな規則を設けています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>予定
+
 <pre>
 http://www.slideshare.net/Coverity/the-psychology-of-c-analysis-24025354
 

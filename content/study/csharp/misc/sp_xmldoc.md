@@ -18,7 +18,8 @@ aliases:
 
 # XML Document
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 ライブラリなどを作成し、公開する場合、ライブラリの内容を他人に理解してもらえるようにドキュメントを作成してやる必要があります。
 ところが、プログラムのドキュメントを書く作業というのは結構面倒な作業です。
 少しでも面倒な作業を減らせるように、C#コンパイラはC#のソースファイルをコンパイルする際に、一緒にXML形式のドキュメントを作成してくれます。
@@ -29,6 +30,7 @@ javadocとの違いは、コンパイラと別のツールとして提供され�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * /// から始まるコメントは、ソースコードからドキュメントを生成するための特別なコメントになります。
 
 * 要するに、C#は、javadoc のような機能を標準で持っています。
@@ -40,7 +42,8 @@ javadocとの違いは、コンパイラと別のツールとして提供され�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="ex"></a>XML Documentの例
+## <a id="sec-generated-title-3"></a> <a id="ex"></a>XML Documentの例
+
 XML Documentを理解するために、まずは実際にXML Documentを作成してみましょう。
 以下のようなソースファイルをdoctest.csという名前で作成して見てください。
 
@@ -187,7 +190,8 @@ csc /out:DocumentTest.dll /target:library doctest.cs /doc:doctest.xml
 このように、C#コンパイラでは /doc オプションを指定してやることによって、ソースファイルからXML形式のドキュメントを自動で生成することが出来ます。
 
 
-##<a id="sec-generated-title-4"></a> <a id="doc"></a>Documentation Comment
+## <a id="sec-generated-title-4"></a> <a id="doc"></a>Documentation Comment
+
 上述のサンプル中には、<code>///</code> というように、 <code>/</code> 3つで始まるコメントがあります。
 C#では、この <code>///</code> で始まるコメントは特別な意味を持ち、<strong id="doccomment" class="keyword">ドキュメンテーションコメント</strong>と呼ばれています。
 クラスやメソッドの前にこのドキュメンテーションコメントを入れておくと、そのクラスやメソッドに関する説明をXMLファイルに書き出してくれます。

@@ -18,16 +18,19 @@ aliases:
 
 # 演算子
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 演算子。
 （短縮形: o）
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;operator name="name"&gt;operator&lt;/operator&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>x &lt;o&gt;+&lt;/o&gt; y,
 x &lt;o name="pm"/&gt; y,
 x &lt;o n="mp"/&gt; y
@@ -36,7 +39,8 @@ x <span class="normal">±</span> y,
 x <span class="normal">∓</span> y
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:math//ufcpp:o|ufcpp:math//ufcpp:operator|ufcpp:Math//ufcpp:o|ufcpp:Math//ufcpp:operator"&gt;
 &lt;xsl:variable name="n"&gt;&lt;xsl:choose&gt;&lt;xsl:when test="@name != ''"&gt;&lt;xsl:value-of select="@name"/&gt;&lt;/xsl:when&gt;&lt;xsl:otherwise&gt;&lt;xsl:value-of select="@n"/&gt;&lt;/xsl:otherwise&gt;&lt;/xsl:choose&gt;&lt;/xsl:variable&gt;
 
@@ -130,7 +134,8 @@ x <span class="normal">∓</span> y
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>span.normal
 {
   font-weight:normal;

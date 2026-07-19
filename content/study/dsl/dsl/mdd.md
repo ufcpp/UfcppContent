@@ -18,11 +18,13 @@ aliases:
 
 # モデル化
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 まずはじめに、｢モデル化って何？」って話から。
 
 
-##<a id="sec-generated-title-2"></a> <a id="modeling"></a>モデル化とは
+## <a id="sec-generated-title-2"></a> <a id="modeling"></a>モデル化とは
+
 モデル化とは、
 現実の問題から、問題解決に必要な部分だけを抜き出して<em>簡単化・抽象化</em>することです。
 
@@ -50,7 +52,8 @@ aliases:
 逆に、何でもかんでも扱おうとすると理論・計算が煩雑になります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="paradigm"></a>モデリングパラダイム
+## <a id="sec-generated-title-3"></a> <a id="paradigm"></a>モデリングパラダイム
+
 モデルとかモデル化って言葉にもう少し具体的なイメージを持ってもらうために、
 前節の物理学における物体の運動の例に関して、
 以下のような具体的な問題を考えてみます。
@@ -89,7 +92,8 @@ aliases:
 こういう意図を指し示す場合には「ドメインモデリング」って言葉を使った方がいい気もします。
 
 
-##<a id="sec-generated-title-4"></a> <a id="programming_model"></a>プログラミングモデル
+## <a id="sec-generated-title-4"></a> <a id="programming_model"></a>プログラミングモデル
+
 ようやくプログラミングの話に入ります。
 ソフトウェアのモデル化というと難しく聞こえますが、
 まあ、普通のプログラミング言語だってモデル（モデリングパラダイム）の一種です。
@@ -135,7 +139,8 @@ aliases:
 これまでの例でいうと、マシン語 → 手続き型言語 → オブジェクト指向言語の順で「高級」になります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="modeling_lang"></a>モデリング言語
+## <a id="sec-generated-title-5"></a> <a id="modeling_lang"></a>モデリング言語
+
 さて、時代は流れて、情報関連技術もずいぶんと高度になりました。
 情報関連技術を用いて解決したい問題はまずます複雑に、そして多種多様になっています。
 こういう背景から、オブジェクト指向モデルよりもさらに人間の直感に近い、
@@ -154,6 +159,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-6"></a>ビジュアル言語
+
 手続き型モデルにせよ OOP モデルにせよ、
 C 言語や Java など、テキストベースの言語で表現されます。
 このくらいの抽象度なら、下手に図で表すよりも、
@@ -175,6 +181,7 @@ C 言語や Java など、テキストベースの言語で表現されます。
 
 
 ##### <a id="sec-generated-title-7"></a>モデリング言語の歴史的背景
+
 少し話は変わりますが、元々明確にモデリング言語の概念があったわけではありません。
 
 よいプログラマというのは不精者で、無駄な労力をとにかく嫌います。
@@ -200,6 +207,7 @@ C 言語や Java など、テキストベースの言語で表現されます。
 
 
 ##### <a id="sec-generated-title-8"></a>UML
+
 そして、
 組織ごとに決められていた図の記法を統一して、
 世界中で通じるモデリング言語を作ろうということで生まれたのが <strong id="uml" class="keyword">UML</strong>（Unified Modeling Language）です。
@@ -212,11 +220,13 @@ UML の詳細に関しては、いろんなサイトで解説されているの�
 検討段階の討論や仕様書書きなどの用途では、UML が必須の言語だといわれています。
 
 
-##<a id="sec-generated-title-9"></a> <a id="howtouse"></a>モデリング言語の使い方
+## <a id="sec-generated-title-9"></a> <a id="howtouse"></a>モデリング言語の使い方
+
 モデリング言語の使い方としては、いくつかの段階があったりします。
 
 
 ##### <a id="sec-generated-title-10"></a>ドロー（drawing）
+
 まず最初。
 設計段階やミーティングの場、あるいは仕様書の中で、図による意思疎通を目的としてビジュアルなモデリング言語を使う。
 
@@ -226,15 +236,18 @@ UML は主にこの用途に使われるものです。
 
 
 ##### <a id="sec-generated-title-11"></a>モデル支援開発（model-assisted development）
+
 モデリング言語から汎用プログラミング言語のソースコードを生成したり、
 テスト用のデータを生成したり。
 
 
 ##### <a id="sec-generated-title-12"></a>モデル駆動開発（model-driven development）
+
 モデリング言語で記述したものを直接実行。
 
 
-##<a id="sec-generated-title-13"></a> <a id="plan"></a>予定
+## <a id="sec-generated-title-13"></a> <a id="plan"></a>予定
+
 <pre>
       モデル駆動開発（MDD: Model Driven Development）
       - モデリング言語を使って開発
@@ -263,7 +276,8 @@ UML は主にこの用途に使われるものです。
       - ドメイン（開発対象の領域）に特化したモデルを立てて開発
     </pre>
 
-##<a id="sec-generated-title-14"></a> <a id="summary"></a>まとめ
+## <a id="sec-generated-title-14"></a> <a id="summary"></a>まとめ
+
 * モデル化とは： 現実の問題から問題解決に必要な部分だけを抜き出して簡単化・抽象化すること
 
 * 極論を言うと、C 言語などのプログラミング言語もモデリングパラダイムの一種

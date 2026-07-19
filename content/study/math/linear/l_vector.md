@@ -18,7 +18,8 @@ aliases:
 
 # ベクトルと線形空間
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 ベクトルというのは元々は物理学で空間上の位置、速度、加速度などを表すためにできたものです。
 これは現在では幾何ベクトル（geometric vector）と呼ばれているものに相当します。
  
@@ -27,12 +28,14 @@ aliases:
 線形空間上における数学的議論を線形代数（linear algebra）と呼びます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル
+## <a id="sec-generated-title-2"></a> <a id="vector"></a>ベクトル
+
 ここではまず、元々の意味でのベクトル、
 すなわち、向きと大きさを持つ量としてのベクトルについて復習しましょう。
 
 
-###<a id="sec-generated-title-3"></a> <a id="geometric"></a>幾何ベクトル
+### <a id="sec-generated-title-3"></a> <a id="geometric"></a>幾何ベクトル
+
 高校数学などで最初に習う、
 向きと大きさを持つ量を幾何学的なイメージで捉えたものを<strong id="geometric_v" class="keyword">幾何ベクトル</strong>（geometric vector）と呼びます。
  
@@ -76,7 +79,8 @@ aliases:
 上述の定数倍はスカラー倍と呼ぶことも多いです。
 
 
-###<a id="sec-generated-title-4"></a> <a id="numeric"></a>数ベクトル
+### <a id="sec-generated-title-4"></a> <a id="numeric"></a>数ベクトル
+
 <span class="math">
           <span class="bold">K</span>
         </span> を実数または複素数全体の集合として、
@@ -114,7 +118,8 @@ k a
 それぞれに対応する幾何ベクトルの和・定数倍に一致します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="linear"></a>線形空間
+## <a id="sec-generated-title-5"></a> <a id="linear"></a>線形空間
+
 幾何ベクトルや、数ベクトルという具体的なものから離れて、
 ベクトルの持つ、線形性という特徴に着目して、
 抽象化した概念を <strong id="linearspace" class="keyword">線形空間</strong>（linear space）
@@ -132,7 +137,8 @@ a x ＋ b y ∈ V
 このような性質を<strong id="linearity" class="keyword">線形性</strong>（linearity）と呼びます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="d30e257"></a>例
+### <a id="sec-generated-title-6"></a> <a id="d30e257"></a>例
+
 抽象的に捕らえることで、さまざまなものが線形空間とみなせるようになります。
 <h4>微分方程式の解</h4>
 <span class="math">x<sub>1</sub> , x<sub>2</sub></span> がいずれも微分方程式
@@ -159,7 +165,8 @@ q x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style=
 <span class="math">n</span> 次多項式全体の集合は線形空間をなします。
 
 
-###<a id="sec-generated-title-7"></a> <a id="dimension"></a>次元
+### <a id="sec-generated-title-7"></a> <a id="dimension"></a>次元
+
 体 <span class="math">K</span> 上の線形空間 <span class="math">V</span> の <span class="math">m</span> 個の元
 <span class="math">v<sub>i</sub> ∈ V</span> （<span class="math">i ＝ 1 ～ m</span>）に対し、
 <div class="math">
@@ -187,7 +194,8 @@ s.t.
 <span class="math">N</span> を <span class="math">V</span> の<strong id="dim" class="keyword">次元</strong>（dimension）と呼びます。
 
 
-###<a id="sec-generated-title-8"></a> <a id="base"></a>基底
+### <a id="sec-generated-title-8"></a> <a id="base"></a>基底
+
 「[数ベクトル](#numeric)」で、
 「[幾何ベクトル](#geometric_v)」に適当な座標系を与えたものが「[数ベクトル](#numeric_v)」だと説明しましたが、
 座標系（coordinate system）の与え方は1通りではありません。
@@ -223,7 +231,8 @@ s.t.
 ちなみに、<em>任意の（有限次元の）線形空間は、適当な座標系を導入することで、数ベクトルとして表すことができます</em>。
 
 
-###<a id="sec-generated-title-9"></a> <a id="d30e597"></a>余談
+### <a id="sec-generated-title-9"></a> <a id="d30e597"></a>余談
+
 <h4>余談1</h4>
 力学等の、ベクトルが用いられる多くの分野では、
 ベクトルの絶対値や内積が頻出します。

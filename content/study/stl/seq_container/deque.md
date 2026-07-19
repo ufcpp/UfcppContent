@@ -18,7 +18,8 @@ aliases:
 
 # deque
 
-##<a id="sec-generated-title-1"></a> <a id="d21e4"></a>deque とは
+## <a id="sec-generated-title-1"></a> <a id="d21e4"></a>deque とは
+
 <strong id="deque" class="keyword">deque</strong>とはDouble Ended Queue、つまり両端キューのことです。
  
 ちなみに、queue(待ち行列、キュー)に格納された要素の取り出しのことをdequeue(デキュー)といいます。
@@ -120,7 +121,8 @@ dequeは内部的にはリングバッファというデータ構造になって
 同様にして、<code>push_front</code>, <code>pop_back</code>も定義すれば両端キューになります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d21e171"></a>dequeの特徴
+## <a id="sec-generated-title-2"></a> <a id="d21e171"></a>dequeの特徴
+
 * ランダムアクセス(<code>[]</code>を使って添え字を指定してのアクセス)が O(1) で行える
 
 * 先頭および末尾への要素の追加、削除は O(1) で行える

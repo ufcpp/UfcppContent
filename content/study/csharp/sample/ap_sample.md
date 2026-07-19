@@ -18,11 +18,13 @@ aliases:
 
 # C# サンプルプログラム
 
-##<a id="sec-generated-title-1"></a> <a id="licence"></a>ライセンスに関して
+## <a id="sec-generated-title-1"></a> <a id="licence"></a>ライセンスに関して
+
 置いてあるサンプルは [MIT/X ライセンス](http://www.opensource.gr.jp/licenses/mit-license.html)に準拠ということでお願いします。
 
 
-##<a id="sec-generated-title-2"></a> <a id="other"></a>他のページのサンプル
+## <a id="sec-generated-title-2"></a> <a id="other"></a>他のページのサンプル
+
 サイト内の他のページにもいくつか C# サンプルプログラムがあります。
 
 * 「[クラスライブラリ](../../dotnet/index.md)」→「[サンプルプログラム](../../dotnet/appendix/sample.md)」
@@ -33,20 +35,23 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="xslt"></a>XSL 変換一斉適用
+## <a id="sec-generated-title-3"></a> <a id="xslt"></a>XSL 変換一斉適用
+
 フォルダ中にある XML ファイルに一斉に XSL 変換をかけます。
 
 [ソースファイル(zip形式書庫)](../../../../assets/sample/ApplyXsl.zip)
 
 
-##<a id="sec-generated-title-4"></a> <a id="reversi"></a>オセロ
+## <a id="sec-generated-title-4"></a> <a id="reversi"></a>オセロ
+
 名前の通り、オセロです。
 今のところローカルコンピュータ上での人対人のみで、ネットワーク対戦やコンピュータ戦は出来ません。
 
 [ソースファイル(zip形式書庫)](../../../../assets/sample/reversi.zip)
 
 
-##<a id="sec-generated-title-5"></a> <a id="complex"></a>複素数クラス
+## <a id="sec-generated-title-5"></a> <a id="complex"></a>複素数クラス
+
 複素数をクラス化してみました。
 実用品ではなくて、実装の隠蔽・抽象基底クラスからの継承のサンプルとして作りました。
 以下のような2つの方法で実装しています。
@@ -61,7 +66,8 @@ aliases:
 [ソースファイル(zip形式書庫)](../../../../assets/sample/Complex.zip)
 
 
-##<a id="sec-generated-title-6"></a> <a id="lineart"></a>ラインアート
+## <a id="sec-generated-title-6"></a> <a id="lineart"></a>ラインアート
+
 僕はGUI開発環境の提供されているプログラミング言語を新しく覚えるたびに
 ラインアートを作っています。
 ほとんど同じプログラムを作ることでその言語の善し悪しを見比べているのですが、
@@ -75,7 +81,8 @@ aliases:
 [ソースファイル(zip形式書庫)](../../../../assets/sample/LineArt.zip)
 
 
-##<a id="sec-generated-title-7"></a> <a id="bitfield"></a>ビットフィールド
+## <a id="sec-generated-title-7"></a> <a id="bitfield"></a>ビットフィールド
+
 研究室の課題で Verilog HDL でソース書いてたんですが、
 途中で、エラーチェック甘いし動作の重たいシミュレーションツールにぶち切れて、
 ソフトウェアでアルゴリズムのチェックをしてから HDL 記述を書くことにしました。
@@ -119,7 +126,8 @@ aliases:
 [ソースファイル(zip形式書庫)](../../../../assets/sample/BitField.zip)
 
 
-##<a id="sec-generated-title-8"></a> <a id="wcf_demo"></a>WCF デモ
+## <a id="sec-generated-title-8"></a> <a id="wcf_demo"></a>WCF デモ
+
 * [ソース一式（zip圧縮）](../../../../assets/source/WcfGameSample.zip)
 
 * [PowerPoint（OpenXML）](../../../../assets/slide/WcfDemo.pptx)

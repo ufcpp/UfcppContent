@@ -19,7 +19,8 @@ aliases:
 
 # 型推論(暗黙的型付け)と匿名型
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （※修正予定: 
 型推論だけに絞って、「変数と式」の直後にでも移動。
 匿名型の話は「クラス」の辺りか、「メソッド指向」か「データ処理」の辺りに移動。
@@ -42,6 +43,7 @@ C# 2.0 以前、「静的型付け言語は冗長な記述が多くてめんど�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * var： 変数の型を推論してくれる。<code>var x = 1;</code>なら x は int になる。
 
 * 暗黙的配列：<code>new int[] { 1, 2, 3 }</code>を<code>new[] { 1, 2, 3 }</code>と書けるようになりました。
@@ -50,7 +52,8 @@ C# 2.0 以前、「静的型付け言語は冗長な記述が多くてめんど�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="implicit"></a>変数の型推論(変数の暗黙的型付け)
+## <a id="sec-generated-title-3"></a> <a id="implicit"></a>変数の型推論(変数の暗黙的型付け)
+
 var キーワードを用いて、<strong id="type-inference" class="keyword">型推論</strong>（type inference）して、
 暗黙的に型付けされたローカル変数（Implicitly typed local variables）を定義できるようになりました。
 
@@ -86,7 +89,8 @@ var は、この冗長さを省くため、左辺側の型名を省略できる�
 <code>TypeName x = new TypeName();</code> という冗長な書き方も悪いことばかりではありません。
 
 
-##<a id="sec-generated-title-4"></a> <a id="anonymous"></a>匿名型
+## <a id="sec-generated-title-4"></a> <a id="anonymous"></a>匿名型
+
 C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymous type）を作成できるようになりました。
 匿名型の作り方は以下の通りです。
 
@@ -136,6 +140,7 @@ C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymo
 
 
 ##### <a id="sec-generated-title-5"></a>不変性
+
 自動生成されたクラスを見てのとおり、自動実装されたプロパティには set アクセサーがありません。
 要するに、読み取り専用（immutable: 不変）になります。
 
@@ -157,6 +162,7 @@ C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymo
 
 
 ##### <a id="sec-generated-title-6"></a>プロパティ名の省略
+
 ちなみに、以下のように、他のクラスのプロパティを初期化子に渡す場合には、
 「プロパティ名 =」の部分を省略することもできます。
 （初期化子で渡したプロパティの名前がそのまま匿名クラスでも使われます。）
@@ -184,6 +190,7 @@ C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymo
 
 
 ##### <a id="sec-generated-title-7"></a>LINQ との組み合わせ
+
 まあ、匿名クラスは、その場限りの使い捨てなクラスになるわけで、
 普通はあまり使うような機能ではありません。
 基本的には、「[LINQ](../data/sp3_linq.md#linq)」 のための機能だと思っていいでしょう。
@@ -199,7 +206,8 @@ C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymo
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="impl_array"></a>暗黙型付け配列
+## <a id="sec-generated-title-8"></a> <a id="impl_array"></a>暗黙型付け配列
+
 new で配列を作成する際、
 型を省略できるようになりました。
 

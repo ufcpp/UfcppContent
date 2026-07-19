@@ -14,10 +14,12 @@ aliases:
 
 # 言語バージョンの指定
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 ここでは、C# の言語バージョンを明示的に指定する方法について説明します。
 
-##<a id="sec-generated-title-2"></a> <a id="lang-and-compiler">SDK バージョンと言語バージョン</a>
+## <a id="sec-generated-title-2"></a> <a id="lang-and-compiler">SDK バージョンと言語バージョン</a>
+
 最新の C# の機能を使うためには、コンパイラー自体も最新のものを使う必要があります。
 コンパイラーは [.NET SDK](https://dotnet.microsoft.com/) に付属しているので、
 最新バージョンの .NET SDK をインストールすると、C# コンパイラーも最新のものになります。
@@ -57,7 +59,8 @@ D:\src\app1\app1.cs(4,15): <span style="color:#FF8080">error CS9058</span>: 機�
 <sup>※</sup> かつての C# は破壊的変更をほとんどしませんでしたし、
 基準が緩くなった今でも悪影響よりもメリットが大幅に上回る場合にのみ破壊的変更を認めています。
 
-###<a id="sec-generated-title-3"></a> <a id="targetframework">ターゲット フレームワーク</a>
+### <a id="sec-generated-title-3"></a> <a id="targetframework">ターゲット フレームワーク</a>
+
 C# は .NET 上で動く言語です。
 C# で書いたプログラムを動かす環境には .NET Runtime をインストールする必要があります。
 
@@ -101,7 +104,8 @@ C# で書いたプログラムを動かす環境には .NET Runtime をインス
 
 - [ターゲット フレームワーク](https://docs.microsoft.com/ja-jp/dotnet/standard/frameworks?WT.mc_id=AI-MVP-123445)
 
-##<a id="sec-generated-title-4"></a> <a id="langversion"></a><a id="option">言語バージョンの指定方法</a>
+## <a id="sec-generated-title-4"></a> <a id="langversion"></a><a id="option">言語バージョンの指定方法</a>
+
 C# コンパイラーのオプションで、言語バージョンを明示的に指定することができます。
 言語バージョンは、Visual Studio 上で行う場合、プロジェクトのプロパティを開いて、以下の場所から設定できます。
 (※ ちょっと古いバージョンのスクショになります。最新バージョンでもプロジェクトのプロパティで設定できますが、UI は変わっています。)
@@ -151,7 +155,8 @@ C# コンパイラーのオプションで、言語バージョンを明示的�
 今となっては `preview` 以外の利用はあまり推奨しません。
 バージョン番号を明示するか、何も指定しないかのどちらかがおすすめです。
 
-###<a id="sec-generated-title-5"></a> <a id="new-options"></a><a id="default">何も指定しないときの挙動</a>
+### <a id="sec-generated-title-5"></a> <a id="new-options"></a><a id="default">何も指定しないときの挙動</a>
+
 `LangVersion` を指定しない場合、基本的には「`TargetFramework` に応じて自動選択」になります。
 .NET 9 (`net9.0`)なら C# 13、 .NET 10 (`net10.0`)なら C# 14 というように、
 同世代の言語バージョンが選ばれます。
@@ -165,7 +170,8 @@ C# コンパイラーのオプションで、言語バージョンを明示的�
 * [C# 14 の破壊的変更点(First-class Span)](../../../blog/2025/10/first-class-span-breaking-change/index.md)
 
 
-###<a id="sec-generated-title-6"></a> <a id="explict"></a><a id="explicit">バージョン番号の明示</a>
+### <a id="sec-generated-title-6"></a> <a id="explict"></a><a id="explicit">バージョン番号の明示</a>
+
 ある程度分かっている人向けですが、C# の言語バージョンを明示することができます。
 主に以下のような場面で使います。
 
@@ -225,7 +231,8 @@ C# コンパイラーのオプションで、言語バージョンを明示的�
 「C# 9 のときと 13 以降で解釈の違うコードを書いてしまうとどうやってもコンパイルできない」とか、
 いろいろな問題を起こす可能性があります。
 
-###<a id="sec-generated-title-7"></a> <a id="preview">プレビュー機能の利用</a>
+### <a id="sec-generated-title-7"></a> <a id="preview">プレビュー機能の利用</a>
+
 `LangVersion` に `preview` を指定すると、正式リリース前の C# の最新機能を先行して試すことができます。
 
 2020年(.NET 5, C# 9 の世代)から、.NET は年に1回(毎年11月に)正式リリース版を出しています。
@@ -241,7 +248,8 @@ C# の最新機能も少しずつ実装されています。
 開発環境依存なのは `latest` と同じく問題を起こしえるんですが、
 そもそも `preview` で最新の C# 言語機能を試そうという人は「相当詳しい人」のはずなので特に問題視はされません。
 
-###<a id="sec-generated-title-8"></a> <a id="other">その他のバージョン指定</a>
+### <a id="sec-generated-title-8"></a> <a id="other">その他のバージョン指定</a>
+
 `latest`、`latestMajor`、`default` の3つはおおむね「過去の名残」です。
 これから新規プロジェクトを作る場合、あまり利用はお勧めしません。
 

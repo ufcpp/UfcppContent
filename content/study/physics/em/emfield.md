@@ -18,7 +18,8 @@ aliases:
 
 # 時間的に変化する電磁場
 
-##<a id="sec-generated-title-1"></a> <a id="dynamic"></a>時間的に変化する電磁場
+## <a id="sec-generated-title-1"></a> <a id="dynamic"></a>時間的に変化する電磁場
+
 電荷も電流もない空間上ではマクスウェルの方程式の微分形は以下のようになります。
 
 <table summary="">
@@ -93,7 +94,8 @@ aliases:
 という関係式が得られます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="wave"></a>電磁波
+## <a id="sec-generated-title-2"></a> <a id="wave"></a>電磁波
+
 特に、<span class="math">
         <a href="variable.md#conductivity" title="電気伝導率">σ</a> = 0
       </span>すなわち、伝導電流が流れないとき、

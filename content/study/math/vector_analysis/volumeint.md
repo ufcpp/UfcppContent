@@ -18,7 +18,8 @@ aliases:
 
 # 体積積分
 
-##<a id="sec-generated-title-1"></a> <a id="volumeint"></a>体積積分とは
+## <a id="sec-generated-title-1"></a> <a id="volumeint"></a>体積積分とは
+
 空間上のある領域<span class="math">V</span>上で定義されるスカラー場<span class="math">f</span>に対して
 <div class="math">
       <em>
@@ -35,7 +36,8 @@ aliases:
       </span>は領域<span class="math">V</span>上での<span class="math">f</span>の総和という感じで捉えてください。
 
 
-##<a id="sec-generated-title-2"></a> <a id="cartesian"></a>体積積分の直交座標系での表現
+## <a id="sec-generated-title-2"></a> <a id="cartesian"></a>体積積分の直交座標系での表現
+
 直交座標系における体積素<span class="math">
         <span class="normal">d</span>V
       </span>は図1のようなものをイメージしてもらってかまいません。

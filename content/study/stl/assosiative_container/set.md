@@ -18,7 +18,8 @@ aliases:
 
 # set, mutiset
 
-##<a id="sec-generated-title-1"></a> <a id="d26e4"></a>set,multisetとは
+## <a id="sec-generated-title-1"></a> <a id="d26e4"></a>set,multisetとは
+
 <strong id="set" class="keyword">set</strong>は要素の重複を許さない集合、<strong id="multiset" class="keyword">multiset</strong>は要素の重複を許す集合です。
 集合には次のような操作があります。
  
@@ -55,7 +56,8 @@ STLで2分探索木はxtreeというヘッダーファイル中に<code>tree</co
 したがってユーザーが直接このクラスを使う必要はありません。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d26e60"></a>setの特徴
+## <a id="sec-generated-title-2"></a> <a id="d26e60"></a>setの特徴
+
 * 要素の追加、検索、削除が O(log n) で行える
 
 * 要素の重複を許さない
@@ -64,7 +66,8 @@ STLで2分探索木はxtreeというヘッダーファイル中に<code>tree</co
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="d26e75"></a>multisetの特徴
+## <a id="sec-generated-title-3"></a> <a id="d26e75"></a>multisetの特徴
+
 * 要素の追加、検索、削除が O(log n) で行える
 
 * 要素の重複を許す

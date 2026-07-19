@@ -18,7 +18,8 @@ aliases:
 
 # XAML 概要（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[Windows Presentation Foundation](wpf_abst.md#wpf)」 では、
 これまでと同様の C# コードベースの GUI 構築もできますが、
 それと同時に、
@@ -63,17 +64,20 @@ Page タグから始まる XAML ファイルは、ブラウザ中で実行する
 
 
 
-###<a id="sec-generated-title-2"></a> <a id="encoding"></a>文字コードに関して
+### <a id="sec-generated-title-2"></a> <a id="encoding"></a>文字コードに関して
+
 XAML 中に日本語を使いたければ [UTF-8](http://ja.wikipedia.org/wiki/UTF-8) でないと駄目っぽいです。
 
 
-##<a id="sec-generated-title-3"></a> <a id="merit"></a>利点
+## <a id="sec-generated-title-3"></a> <a id="merit"></a>利点
+
 XAML の利点は大きく分けて2つあります。
 1つは、GUI 開発とマークアップ言語（XML）の親和性の高さで、
 もう1つは、インターフェースとロジックの分離です。
 
 
 ##### <a id="sec-generated-title-4"></a>XML による GUI 開発
+
 1つ目の、XML であることによる利点ですが、
 これはまあ、実例を挙げてみれば分かりやすいんで、
 例として、パネルの中に2つのテキストボックスを表示することを考えて見ましょう。
@@ -139,6 +143,7 @@ panel.Children.Add(textbox2);
 
 
 ##### <a id="sec-generated-title-5"></a>インターフェースとロジックの分離
+
 もう1つの、インターフェースとロジックの分離という奴に関しては、
 インターフェースってのは、ボタンとかテキストボックスなどのユーザが直接触れる部分で、
 ロジックってのは、実際に処理を行う部分のことです。
@@ -167,7 +172,8 @@ Windows アプリをローカルで実行したい場合もあります。
 インターフェース部分は美的センスのある人に（直感的に分かりやすい XAML を使って）設計してもらうということも可能です。
 
 
-##<a id="sec-generated-title-6"></a> <a id="loose"></a>Loose XAML
+## <a id="sec-generated-title-6"></a> <a id="loose"></a>Loose XAML
+
 XAML 中には、C# などのプログラミング言語のコードを埋め込むこともできるのですが、
 この場合には、次節で説明するようなコンパイル作業が必要になります。
 対して、プログラムコードを含まず、
@@ -201,7 +207,8 @@ XAML 単体で完結している場合、
 <span class="bracket">&lt;</span>/<span class="element">Page</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="compile"></a>XAML のコンパイル
+## <a id="sec-generated-title-7"></a> <a id="compile"></a>XAML のコンパイル
+
 XAML にプログラムコードを埋め込む場合、
 MSBuild を用いてコンパイルする必要があります。
 

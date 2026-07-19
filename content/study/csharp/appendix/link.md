@@ -18,7 +18,8 @@ aliases:
 
 # リンク集（C#）
 
-##<a id="sec-generated-title-1"></a> <a id="community"></a>Community
+## <a id="sec-generated-title-1"></a> <a id="community"></a>Community
+
 [.NET/C# 初心者のためのメーリングリスト](http://www.egroups.co.jp/group/dotnet-csharp)
 : [
           	[![Yahoo!グループ .NET/C#](../../../../assets/media/ufcpp2000/banner/logo_dotnet_csharp.gif)](../../../../assets/media/ufcpp2000/banner/logo_dotnet_csharp.gif)
@@ -33,7 +34,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="csharp"></a>C
+## <a id="sec-generated-title-2"></a> <a id="csharp"></a>C
+
 [MSDN Online .Net Developer Center](http://www.microsoft.com/japan/msdn/netframework/)
 : マイクロソフトの.Netフレームワーク公式ホームページ。.Netフレームワークはここからダウンロードすることができます。
 
@@ -72,7 +74,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="aspdotnet"></a>ASP.net
+## <a id="sec-generated-title-3"></a> <a id="aspdotnet"></a>ASP.net
+
 [ASP.NET Developer Center](http://www.microsoft.com/japan/msdn/asp.net/)
 : 日本語公式サイト。
 

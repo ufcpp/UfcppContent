@@ -14,7 +14,8 @@ aliases:
 
 # C# 7.2 の新機能
 
-##<a id="sec-generated-title-1"></a> <a id="ver7_2"></a>C# 7.2
+## <a id="sec-generated-title-1"></a> <a id="ver7_2"></a>C# 7.2
+
 <div class="version version7_1">Ver. 7.2</div>
 
 <table>
@@ -53,7 +54,8 @@ C# 7.2で追加された機能の多くは「構造体と参照の活用によ�
 (具体的なバグについては[昔書いたブログ](../../../blog/2017/12/バグ報告祭り/index.md)があるのでそちらを参照。)
 本サイト内で説明している機能がうまく動かなかったときには、一度コンパイラーやVisual Studioのバージョンを挙げてみてください。
 
-##<a id="sec-generated-title-2"></a> <a id="leading-separator"></a>先頭区切り文字
+## <a id="sec-generated-title-2"></a> <a id="leading-separator"></a>先頭区切り文字
+
 `0b`、`0x`の直後に区切り文字の `_` を入れることができるようになりました。
 
 <pre class="source" title="">
@@ -70,7 +72,8 @@ C# 7.2で追加された機能の多くは「構造体と参照の活用によ�
 区切り文字に関しては「[数字区切り文字](../start/stnumber.md#digit-separator)」を参照してください。
 
 
-##<a id="sec-generated-title-3"></a> <a id="non-trailing-named"></a>非末尾名前付き引数
+## <a id="sec-generated-title-3"></a> <a id="non-trailing-named"></a>非末尾名前付き引数
+
 <h5 class="version version7_1">Ver. 7.2</h5>
 
 前の方の引数を名前付きにできるようになりました。
@@ -85,18 +88,21 @@ Sum(x: 1, 2, 3);
 詳しくは「[オプション引数・名前付き引数](../structured/sp4_optional.md#non-trailing-named)」で説明します。
 
 
-##<a id="sec-generated-title-4"></a> <a id="private-protected"></a>private protected
+## <a id="sec-generated-title-4"></a> <a id="private-protected"></a>private protected
+
 `private protected`というキーワード(語順は自由)で、「`protected`かつ`internal`」なアクセシビリティを指定できるようになりました。
 
 ![private protected](../../../../assets/media/1142/accessibilitycs72.png)
 
 詳しくは「[実装の隠蔽](../oop/oo_conceal.md#protected-internal)」で説明します。
 
-##<a id="sec-generated-title-5"></a> <a id="ref"></a>参照の活用
+## <a id="sec-generated-title-5"></a> <a id="ref"></a>参照の活用
+
 ここから先が、C# 7.2 の大部分を占める「参照の活用」になります。
 小さな機能の組み合わせになっているのでそれぞれについて説明します。
 
-###<a id="sec-generated-title-6"></a> <a id="conditional-ref"></a>条件演算子での ref 利用
+### <a id="sec-generated-title-6"></a> <a id="conditional-ref"></a>条件演算子での ref 利用
+
 [条件演算子](../start/st_operator.md#condition)の2項目、3項目を参照にできるようになりました。
 以下のような書き方ができます。
 
@@ -106,7 +112,8 @@ Sum(x: 1, 2, 3);
 
 詳しくは「[条件演算子での ref 利用](../resource/sp_ref.md#conditional-ref)」で説明します。
 
-###<a id="sec-generated-title-7"></a> <a id="ref-readonly"></a>ref readonly
+### <a id="sec-generated-title-7"></a> <a id="ref-readonly"></a>ref readonly
+
 「参照渡しだけども読み取り専用」というような渡し方ができるようになりました。
 読み取り専用参照(ref readonly)と呼ばれています。
 
@@ -151,7 +158,8 @@ Sum(x: 1, 2, 3);
 
 詳しくは「[入力参照引数 (in 引数)](../resource/sp_ref.md#in)」、「[ref readonly](../resource/sp_ref.md#ref-readonly)」で説明します。
 
-####<a id="sec-generated-title-8"></a> <a id="in-operator"></a>演算子のin引数
+#### <a id="sec-generated-title-8"></a> <a id="in-operator"></a>演算子のin引数
+
 これまで、[演算子オーバーロード](../oop/oo_operator.md)の引数は値渡しである必要がありました。
 C# 7.2では、`in`引数も演算子の引数にできるようになりました。
 
@@ -176,7 +184,8 @@ C# 7.2では、`in`引数も演算子の引数にできるようになりまし�
 }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="ref-extensions"></a>参照渡しの拡張メソッド
+### <a id="sec-generated-title-9"></a> <a id="ref-extensions"></a>参照渡しの拡張メソッド
+
 拡張メソッドの第1引数(`this`が付いている引数)を参照渡し([`ref`](../resource/sp_ref.md#sec-byref)もしくは[`in`](../resource/sp_ref.md#in))で渡せるようになりました。
 
 <pre class="source" title="参照渡しの拡張メソッドの例">
@@ -204,7 +213,8 @@ C# 7.2では、`in`引数も演算子の引数にできるようになりまし�
 
 詳しくは「[参照渡しの拡張メソッド](../functional/sp3_extension.md#ref-extensions)」で説明します。
 
-###<a id="sec-generated-title-10"></a> <a id="readonly-struct"></a>readonly struct
+### <a id="sec-generated-title-10"></a> <a id="readonly-struct"></a>readonly struct
+
 構造体に `readonly` 修飾子を付けることで、以下のような制約を掛けれるようになりました。
 
 - すべてのフィールドに`readonly`を付けることが必須
@@ -229,7 +239,8 @@ C# 7.2では、`in`引数も演算子の引数にできるようになりまし�
 
 「参照」とは直接は関係ないですが、[in 引数](../resource/sp_ref.md#in)や、ref safety rule (今後追加予定)と関連して必要になった機能です。
 
-###<a id="sec-generated-title-11"></a> <a id="safe-stackalloc"></a>安全な stackalloc
+### <a id="sec-generated-title-11"></a> <a id="safe-stackalloc"></a>安全な stackalloc
+
 `Span<T>`構造体と併用することで、unsafe なしで [`stackalloc`](../interop/sp_unsafe.md#stackalloc) を使えるようになりました。
 
 <pre class="source" title="ファイル読み込みの一時バッファーに stackalloc を使う例">
@@ -257,7 +268,8 @@ C# 7.2では、`in`引数も演算子の引数にできるようになりまし�
 
 詳しくは「[`Span<T>`構造体](../resource/span.md#safe-stackalloc)」で説明します。
 
-###<a id="sec-generated-title-12"></a> <a id="span-safety"></a>ref 構造体
+### <a id="sec-generated-title-12"></a> <a id="span-safety"></a>ref 構造体
+
 C# 7.2 と深く関連する型に[`Span<T>`](../resource/span.md)という構造体があります。
 この `Span<T>` は、C#7.2 の主たる目的の「構造体と参照の活用によってパフォーマンス改善」の主役となる構造体です。
 
@@ -326,7 +338,8 @@ C# 7.2 と深く関連する型に[`Span<T>`](../resource/span.md)という構�
 
 詳しくは「[ref構造体](../resource/refstruct.md)」で説明します。
 
-##<a id="sec-generated-title-13"></a> <a id="minor-change"></a>マイナーな更新
+## <a id="sec-generated-title-13"></a> <a id="minor-change"></a>マイナーな更新
+
 C# の[コンパイラー](https://www.nuget.org/packages/Microsoft.Net.Compilers/)のバージョン 2.7 や、Visual Studio 15.6 というバージョン(2018/3リリース)で、
 C# にちょっとした修正が入っています。
 かなりマイナーな更新なので、「C# 7.3」とはせず「C# 7.2 fix」(バグ修正扱い、あるいは、バグ修正とまとめてリリースして差し支えない程度の更新)としています。

@@ -19,7 +19,8 @@ aliases:
 
 # 標準クエリ演算子（その他）
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 LINQ は、元々はシーケンス（IEnumerable 実装クラス）やデータベーステーブルに対するメソッド群としてのみ提供される予定だったそうです。
@@ -40,7 +41,8 @@ join や let などがどうしてもきれいに表現できなかったので�
 （というか、むしろクエリ式で書けないものの方が多数）あります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="list"></a>その他の標準クエリ演算子
+## <a id="sec-generated-title-2"></a> <a id="list"></a>その他の標準クエリ演算子
+
 クエリ式で書けるもの以外にも、
 メソッド呼び出しの形でだけ利用できる標準クエリ演算子として、以下のようなものもあります。
 
@@ -96,7 +98,8 @@ Count、LongCount、Sum、Min、Max、Average、Aggregate
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="partition"></a>パーティション分割演算子
+## <a id="sec-generated-title-3"></a> <a id="partition"></a>パーティション分割演算子
+
 シーケンスを部分的に区切るため、
 Take、Skip、TakeWhile、SkipWhile
 の4つのメソッドがあります。
@@ -141,7 +144,8 @@ Show(a.SkipWhile(x =&gt; x != 2));
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="concat"></a>連結演算子
+## <a id="sec-generated-title-4"></a> <a id="concat"></a>連結演算子
+
 Concat で、2つのシーケンスを連結できます。
 
 <pre class="source" title="連結演算子の例" lang="">
@@ -161,7 +165,8 @@ Concat で、2つのシーケンスを連結できます。
 ちょっと悩みますが、お好きな方をご利用ください。
 
 
-##<a id="sec-generated-title-5"></a> <a id="reverse"></a>順序付け演算子
+## <a id="sec-generated-title-5"></a> <a id="reverse"></a>順序付け演算子
+
 Reverse で、シーケンスの中身の順序を真逆にできます。
 
 <pre class="source" title="順序付け演算子の例" lang="">
@@ -175,7 +180,8 @@ Reverse で、シーケンスの中身の順序を真逆にできます。
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="set"></a>セット演算子
+## <a id="sec-generated-title-6"></a> <a id="set"></a>セット演算子
+
 Distinct、Union、Intersect、Except の4つの
 セット（set： 数学の集合論でいうところの集合。Collection と区別するために横文字にしておきます）演算子があります。
 
@@ -220,11 +226,13 @@ Show(a.Except(b));
 セット演算子の結果は重複が除かれたものになります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="cast"></a>変換演算子
+## <a id="sec-generated-title-7"></a> <a id="cast"></a>変換演算子
+
 型の変換のための演算子がいくつかあります。
 
 
 ##### <a id="sec-generated-title-8"></a>シーケンス → シーケンス
+
 まず、AsEnumerable、ToArray、ToList は、
 シーケンスをそれぞれ、
 IEnumeragle&lt;T&gt;、配列、List&lt;T&gt; に変換します。
@@ -283,6 +291,7 @@ before <em>0011223344</em> middle  after
 
 
 ##### <a id="sec-generated-title-9"></a>シーケンス → 辞書
+
 ToDictionary と ToLookup は、シーケンスを辞書（キーと値のペア）化します。
 ToDictionary は Dictionary（1つのキーに対して1つの値を持つ）を、
 ToLookup は Lookup型（1つのキーに対して複数の値（1つの IEnumerable）を持つ辞書）の値を返します。
@@ -350,6 +359,7 @@ Show(lookupByFirstChar[<span class="literal">'小'</span>]);
 
 
 ##### <a id="sec-generated-title-10"></a>要素の型変換
+
 OfType、Cast で要素の型を変換できます。
 Cast はすべての要素のキャストを試みます。
 キャストに失敗した場合は例外が発生します。
@@ -386,7 +396,8 @@ List`1 Stack`1 Queue`1
 <code>.Where(x =&gt; x is T).Cast&lt;T&gt;()</code> と同じ結果になります。
 
 
-##<a id="sec-generated-title-11"></a> <a id="equal"></a>等価演算子
+## <a id="sec-generated-title-11"></a> <a id="equal"></a>等価演算子
+
 SequenceEqual で、2つのシーケンスの中身が（順序も含めて）一致するかどうかを調べられます。
 
 <pre class="source" title="SequenceEqualの例" lang="">
@@ -408,7 +419,8 @@ False
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="element"></a>要素演算子
+## <a id="sec-generated-title-12"></a> <a id="element"></a>要素演算子
+
 シーケンスの中から特定の要素を1つ取り出すため、
 First、FirstOrDefault、Last、LastOrDefault、Single、SingleOrDefault、ElementAt、ElementAtOrDefault、DefaultIfEmpty という演算子が用意されています。
 
@@ -481,7 +493,8 @@ First、Last、Single には引数を持たないバージョンもあって、
 
 
 
-##<a id="sec-generated-title-13"></a> <a id="generate"></a>生成演算子
+## <a id="sec-generated-title-13"></a> <a id="generate"></a>生成演算子
+
 シーケンスに対するフィルタリングではなく、
 シーケンスそのものを生成するような演算子が3つあります。
 
@@ -525,7 +538,8 @@ abc abc abc
 
 
 
-##<a id="sec-generated-title-14"></a> <a id="quantifier"></a>限定子
+## <a id="sec-generated-title-14"></a> <a id="quantifier"></a>限定子
+
 Any、All、Contains は、
 シーケンスがある条件を満たすかどうかを調べるための演算子（限定子（quantifier））です。
 
@@ -560,7 +574,8 @@ Console.Write(<span class="literal">"{0}\n"</span>, a.Contains(0)); <span class=
 
 
 
-##<a id="sec-generated-title-15"></a> <a id="aggregate"></a>集計演算子
+## <a id="sec-generated-title-15"></a> <a id="aggregate"></a>集計演算子
+
 シーケンス中の要素の個数、和、平均値などを集計するための演算子が7つあります。
 
 <table summary="">

@@ -18,18 +18,21 @@ aliases:
 
 # 列挙型
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# では、<strong id="enum" class="keyword">列挙型</strong>（enumeration type）と呼ばれるものを利用することで、曜日などの特定の値しかとらないデータを表現することが出来ます。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 列挙型: 特定の値しか取らないようなもの（例えば曜日など）に対して使う型
 
 * enum DayOfWeek { Monday, Tuesday, ... }
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="about"></a>列挙型とは
+## <a id="sec-generated-title-3"></a> <a id="about"></a>列挙型とは
+
 例えば、曜日は月・火・水・木・金・土・日の7つの値しか取りませんし、
 英語の月は January, February, March, April, May, June, July, August, September, October, November, December の12個の値しか取りません。
 その他にも、
@@ -107,7 +110,8 @@ C# で、このような特定の値しか取らない型を表現するため�
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="value"></a>列挙型の値
+## <a id="sec-generated-title-4"></a> <a id="value"></a>列挙型の値
+
 列挙型はプログラムの内部では整数として扱われていて、
 整数型に変換することでその値を取り出すことが出来ます。
 特に値や型を指定しなければ、列挙型は <code>int</code> として扱われ、
@@ -180,7 +184,8 @@ C# で、このような特定の値しか取らない型を表現するため�
 列挙型を文字列化（ToString）すると、列挙型のメンバー名が表示されます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="flag"></a>フラグ
+## <a id="sec-generated-title-5"></a> <a id="flag"></a>フラグ
+
 ときには、以下のような定数を定義したい場合もあります。
 
 * 条件が n 個ある（例えば X, Y, Z の3つ）
@@ -286,7 +291,8 @@ X, Y, Z
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="plan"></a>追加予定
+## <a id="sec-generated-title-6"></a> <a id="plan"></a>追加予定
+
 System.Enum クラスから派生。
 特別扱い（他の値型同様）。
 

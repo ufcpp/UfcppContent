@@ -18,7 +18,8 @@ aliases:
 
 # 経過日数の計算
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 2つの日付（例えば、自分の誕生日と今日）の間の経過日数を求めたくなったとします。
 ぱっとは出てきませんね。
 原因は主に、毎月の日数がばらばらなのと、うるう年のせいなんですが。
@@ -64,7 +65,8 @@ aliases:
 <span class="math">dm</span>（<span class="math">m</span> 月までの日数）に関してを説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="leap"></a>うるう年
+## <a id="sec-generated-title-2"></a> <a id="leap"></a>うるう年
+
 うるう年かどうかの判定は、
 
 * 4の倍数の年はうるう年。
@@ -135,7 +137,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="month"></a>月ごとの日数
+## <a id="sec-generated-title-3"></a> <a id="month"></a>月ごとの日数
+
 とりあえず、
 「1月1日から <span class="math">m</span> 月1日までの経過日数」とかいう長い言葉を何度も言いたくないので、
 記号を定義しておきます。
@@ -370,7 +373,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="sample"></a>完成品
+## <a id="sec-generated-title-4"></a> <a id="sample"></a>完成品
+
 結局、これまでに説明した内容をまとめると、
 1年1月1日からの経過日数を求めるプログラムは以下のようになります。
 

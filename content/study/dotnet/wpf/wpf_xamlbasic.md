@@ -18,7 +18,8 @@ aliases:
 
 # XAML の基本構造（WPF）
 
-##<a id="sec-generated-title-1"></a> <a id="structure"></a>基本構造
+## <a id="sec-generated-title-1"></a> <a id="structure"></a>基本構造
+
 XAML の基本を説明するために、
 「[XAML 概要（WPF）](wpf_xaml.md)」で例に出した、
 テキストボックスを2つ表示するコードをもう1度見てみましょう。
@@ -104,7 +105,8 @@ XAML 中で使えるタグ名は、
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="property"></a>プロパティの設定
+## <a id="sec-generated-title-2"></a> <a id="property"></a>プロパティの設定
+
 これまでにも何度か例に出ていますが、
 XAML では、XML の属性として「[プロパティ](../../csharp/oop/oo_property.md#property)」の値を設定できます。
 
@@ -154,7 +156,8 @@ XML 要素の子要素としてプロパティの値を設定する Property Ele
 複雑な型でなければたいていは Attribute Syntax が利用できます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="content"></a>コンテントプロパティ
+## <a id="sec-generated-title-3"></a> <a id="content"></a>コンテントプロパティ
+
 基本的に、XAML 中のある要素（例えば &lt;Button&gt;）の子は、
 その要素に対応するクラス（&lt;Button&gt; の場合、Button クラス）のプロパティになります。
 
@@ -206,7 +209,8 @@ TextBox の場合、Text がコンテントプロパティです。
 <span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="collection"></a>プロパティがコレクションの場合
+## <a id="sec-generated-title-4"></a> <a id="collection"></a>プロパティがコレクションの場合
+
 「[基本構造](#structure)」で挙げた例で、
 WrapPanel の直下に TextBox タグが書けるのも実はコンテントプロパティによる省略です。
 
@@ -248,7 +252,8 @@ WrapPanel の「[コンテントプロパティ](#content)」は Children なん
 要するに、コレクション（IList、IDictionary を実装するクラスか、配列）の場合、タグを1レベル省略することが可能です。
 
 
-##<a id="sec-generated-title-5"></a> <a id="xmlns"></a>XML 名前空間
+## <a id="sec-generated-title-5"></a> <a id="xmlns"></a>XML 名前空間
+
 今までさらっと流していましたが、
 XAML 中で使う XML 名前空間について説明します。
 （「XML 名前空間」の概念自体は XML の入門サイトを探してもらうことにして、

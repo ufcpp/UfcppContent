@@ -20,7 +20,8 @@ aliases:
 
 # 非同期メソッド
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 注意： 2010年10月時点での CTP （community technology preview）版を元にした記事になっています。
 製品版までに変更の可能性があります。
 （async や await というキーワードも変更される可能性あり。）
@@ -42,17 +43,20 @@ async/await の導入でかなり簡素化されることになります。
 
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 * [C# Async の例](http://code.msdn.microsoft.com/C-Async-3185c2e8)
 
 * [EAPをTAP化するラッパー クラスの自動生成](http://code.msdn.microsoft.com/EAPTAP-bb69ab56)
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="ppt_summary"></a>要約 スライド資料
+## <a id="sec-generated-title-3"></a> <a id="ppt_summary"></a>要約 スライド資料
+
 <div style="width: 352px; max-width: 100%; margin-bottom:5px;"><a href="https://docs.com/iwanaga-nobuyuk/7317/gui" title="GUIと非同期" target="_blank" style="font-family: 'Segoe UI'">GUIと非同期</a><span style="font-family: 'Segoe UI Light'">—</span><a href="https://docs.com/iwanaga-nobuyuk" target="_blank" style="font-family: 'Segoe UI'">Iwanaga Nobuyuki</a></div><iframe src="https://docs.com/d/embed/D25194461-3915-9236-8750-000130209706%7eMd2f0fde0-d68b-9095-2ec5-841305bd4fb1" frameborder="0" scrolling="no" width="352px" height="299px" style="max-width:100%" allowfullscreen="False"></iframe>
 
 
-##<a id="sec-generated-title-4"></a> <a id="old_style"></a>非ブロッキング処理、旧来的な書き方
+## <a id="sec-generated-title-4"></a> <a id="old_style"></a>非ブロッキング処理、旧来的な書き方
+
 URL 指定してダウンロードしてきた文字列をテキストボックスに表示という GUI アプリケーションを考えてみましょう。
 同期的に書くなら、ボタンに対して以下のようなイベント ハンドラーを登録します。
 
@@ -152,7 +156,8 @@ URL 指定してダウンロードしてきた文字列をテキストボック�
 手間はかなりかかりますし、可読性は大きく下がります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="async"></a>非同期メソッド
+## <a id="sec-generated-title-5"></a> <a id="async"></a>非同期メソッド
+
 <h5 class="version version5">Ver. 5.0</h5>
 
 C# 5.0 の新機能で、この手の非ブロッキング処理が簡単になりました。
@@ -207,6 +212,7 @@ C# 5.0 の新機能で、この手の非ブロッキング処理が簡単にな�
 
 
 ##### <a id="sec-generated-title-6"></a>同期処理からの変更点
+
 追加されたのは、async/await の2つのキーワードと、末尾に「TaskAsync」と付いた拡張メソッドです。
 
 * async（asynchronous: 非同期 の略）
@@ -239,6 +245,7 @@ C# 5.0 の新機能で、この手の非ブロッキング処理が簡単にな�
 
 
 ##### <a id="sec-generated-title-7"></a>非同期メソッドの戻り値の型
+
 C# 6まででは、非同期メソッドの戻り値の型は void、Task、もしくは、Task&lt;T&gt; のいずれかである必要があります。
 
 まず、非同期処理を、最終的に Task.Wait メソッドで完了待ちする必要があるかどうかで戻り値の型選びます。
@@ -293,7 +300,8 @@ task.Wait();
 }
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="task-like"></a>一般化非同期戻り値(Task-like)
+### <a id="sec-generated-title-8"></a> <a id="task-like"></a>一般化非同期戻り値(Task-like)
+
 C# 5.0で非同期メソッドが導入された当初、非同期メソッドの戻り値は`Task`、`Task<T>`型である必要がありました。
 一方で、C# 7からは、特定の条件を満たす任意の型を非同期メソッドの戻り値として使えるようになりました。
 この機能を一般化非同期戻り値(generalized async return types)とよびます。
@@ -355,7 +363,8 @@ Task-likeであるための条件は以下の通りです。
 }
 </code></pre>
 
-####<a id="sec-generated-title-9"></a> <a id="valuetask"></a>ValueTask構造体
+#### <a id="sec-generated-title-9"></a> <a id="valuetask"></a>ValueTask構造体
+
 Task-likeを自作しようと思う場面はほとんどないでしょう。
 実質的には、この仕様はあるたった1つの型のために追加された構文です。
 その1つの型が`ValueTask<TResult>`構造体です。
@@ -411,7 +420,8 @@ C# 6までこの仕組みがなかった理由など、背景説明をBuild Inds
 
 - [C# 7、そしてその先へ： 非同期処理（前編） － Task-like](http://www.buildinsider.net/column/iwanaga-nobuyuki/009)
 
-###<a id="sec-generated-title-10"></a> <a id="misc0"></a>余談： 実は必ずしも非同期ではない
+### <a id="sec-generated-title-10"></a> <a id="misc0"></a>余談： 実は必ずしも非同期ではない
+
 async（非同期）や await（待つ）という名前に反して、
 実は必ずしも非同期実行にはなりません。
 というのも、Task クラスの値を await する際、タスクがすでに完了済み（IsCompleted プロパティが true）の可能性もあります。
@@ -424,7 +434,8 @@ async/await が Task クラスの上に成り立っているため、
 （参考： 「[スレッド プール](misc_task.md#thread_pool)」）
 
 
-###<a id="sec-generated-title-11"></a> <a id="misc2"></a>余談2： 戻り値は Task
+### <a id="sec-generated-title-11"></a> <a id="misc2"></a>余談2： 戻り値は Task
+
 （書きかけ）
 
 ITask インターフェイスとかにはしなかった。
@@ -436,7 +447,8 @@ Task 的なものの独自実装は結構危険。
 
 なので、たぶん、インターフェイスや抽象クラスではなく、具象クラスである Task 固定に。
 
-##<a id="sec-generated-title-12"></a> <a id="restriction"></a>非同期メソッドの制限
+## <a id="sec-generated-title-12"></a> <a id="restriction"></a>非同期メソッドの制限
+
 `await` 演算を書ける場所には、いくつか制限があります。
 
 まず、以下のような制限があります。
@@ -483,21 +495,25 @@ catch句内では、起きた例外の内容をログに記録する処理を書
 なので、C# 5.0にかかっていたこの制限は結構嫌な制限でした。C# 6ではその問題がなくなります。
 
 #### <a id="sec-generated-title-13"></a>余談: 今後
+
 unsafe コンテキスト内でも、ポインターを使わない限り(fixedステートメント以外では)`await`を書けるようにしようという案はあるようです。
 
 
-##<a id="sec-generated-title-14"></a> <a id="cancel"></a>進捗報告とキャンセル処理
+## <a id="sec-generated-title-14"></a> <a id="cancel"></a>進捗報告とキャンセル処理
+
 （書きかけ）
 
 非同期メソッドの引数として、CancellationToke と IProgress を渡す。
 
 
 ##### <a id="sec-generated-title-15"></a>キャンセル
+
 <pre>
 CancellationToken を利用。
 </pre>
 
 ##### <a id="sec-generated-title-16"></a>進捗報告
+
 （参考： [サンプルの ProgressSample プロジェクト](http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105652)。）
 <pre>
 IProgress インターフェイスと EventProgress クラス
@@ -515,7 +531,8 @@ async/await では、
 
 </pre>
 
-##<a id="sec-generated-title-17"></a> <a id="async-stream"></a>非同期ストリーム
+## <a id="sec-generated-title-17"></a> <a id="async-stream"></a>非同期ストリーム
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 では非同期メソッドが大幅に拡張されました。

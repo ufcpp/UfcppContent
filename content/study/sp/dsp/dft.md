@@ -18,7 +18,8 @@ aliases:
 
 # 離散フーリエ変換
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 アナログとディジタルの違いを大雑把に説明すると、
 
 * アナログは連続量を取り扱う
@@ -31,7 +32,8 @@ aliases:
 ここでは、連続関数と離散関数の間の関係および離散関数に対するフーリエ変換（離散フーリエ変換）について説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="periodic"></a>周期関数のフーリエ変換
+## <a id="sec-generated-title-2"></a> <a id="periodic"></a>周期関数のフーリエ変換
+
 「[フーリエ変換](fourier.md#transform)」では、
 非周期関数を、「関数の周期<span class="math">T</span>を<span class="math">T→∞</span>としたものである」とみなすことで、
 「[フーリエ級数展開](fourierseries.md#series)」を拡張し、「[フーリエ変換](fourier.md#f-trans)」を導き出しました。
@@ -87,7 +89,8 @@ F<span class="paren" style="font-size:em;">[</span>n<span class="paren" style="f
 その値はフーリエ級数展開係数<span class="math">F<span class="paren" style="font-size:em;">[</span>n<span class="paren" style="font-size:em;">]</span></span>にδ関数を掛けたものになります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="discrete"></a>離散関数のフーリエ変換
+## <a id="sec-generated-title-3"></a> <a id="discrete"></a>離散関数のフーリエ変換
+
 「[周期関数のフーリエ変換](#periodic)」の結果から、離散関数と連続関数はδ関数を用いて関係付けることで、離散関数に対するフーリエ変換が定義可能ではないかという類推が出来ます。
 すなわち、離散関数<span class="math">f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="font-size:em;">]</span></span>に対して、
 <span class="math">
@@ -142,7 +145,8 @@ F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="
 </div>
     </em>
 
-##<a id="sec-generated-title-4"></a> <a id="discrete"></a>離散フーリエ変換
+## <a id="sec-generated-title-4"></a> <a id="discrete"></a>離散フーリエ変換
+
 これまでの話から、
 周期関数のフーリエ変換は離散関数になり、
 離散関数のフーリエ変換は周期関数になるということがいえます。
@@ -255,12 +259,14 @@ F<span class="paren" style="font-size:em;">[</span>n<span class="paren" style="f
 この式を<strong id="dft" class="keyword">離散フーリエ変換</strong>と呼びます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="property"></a>離散フーリエ変換の性質
+## <a id="sec-generated-title-5"></a> <a id="property"></a>離散フーリエ変換の性質
+
 離散フーリエ変換はフーリエ変換に離散信号を代入し、式変形しただけのものなので、
 フーリエ変換と同様に以下のような性質を持っています。
 
 
-###<a id="sec-generated-title-6"></a> <a id="linear"></a>線形性
+### <a id="sec-generated-title-6"></a> <a id="linear"></a>線形性
+
 <div class="math">
         <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 a f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="font-size:em;">]</span>
@@ -276,7 +282,8 @@ b
 <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 g<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">[</span>n<span class="paren" style="font-size:em;">]</span></div>
 
-###<a id="sec-generated-title-7"></a> <a id="timeshift"></a>時間シフト
+### <a id="sec-generated-title-7"></a> <a id="timeshift"></a>時間シフト
+
 <div class="math">
         <span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 f<span class="paren" style="font-size:em;">(</span>t±T<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:2em;">]</span>
@@ -298,7 +305,8 @@ f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="f
 <span class="normal">exp</span><span class="paren" style="font-size:em;">(</span>±iTω<span class="paren" style="font-size:em;">)</span><span class="normal">ℱ</span><span class="paren" style="font-size:2em;">[</span>
 f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">[</span>n<span class="paren" style="font-size:em;">]</span></div>
 
-###<a id="sec-generated-title-8"></a> <a id="product"></a>積のフーリエ変換
+### <a id="sec-generated-title-8"></a> <a id="product"></a>積のフーリエ変換
+
 <div class="math">
 f＊g<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="font-size:em;">]</span>
 ＝
@@ -318,11 +326,13 @@ g<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="f
 畳込み積<span class="math">f＊g</span>の定義の仕方が連続関数のフーリエ変換の場合と微妙に異なっていることに注意してください。
 
 
-##<a id="sec-generated-title-9"></a> <a id="adc"></a>アナログ信号→ディジタル信号
+## <a id="sec-generated-title-9"></a> <a id="adc"></a>アナログ信号→ディジタル信号
+
 ここでは、アナログ信号（連続関数で表される）からディジタル信号（離散関数）を得る方法について説明します。
 
 
-###<a id="sec-generated-title-10"></a> <a id="sampling"></a>標本化
+### <a id="sec-generated-title-10"></a> <a id="sampling"></a>標本化
+
 通常、連続関数<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>で表されるアナログ信号を一定周期<span class="math">T<sub>s</sub></span>で<strong id="d20e1330" class="keyword">標本化</strong>（サンプリング: sampling）することでディジタル信号（離散関数<span class="math">f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="font-size:em;">]</span></span>）を得ます。
 <div class="math">
 f<span class="paren" style="font-size:em;">[</span>n<span class="paren" style="font-size:em;">]</span> ＝ f<span class="paren" style="font-size:em;">(</span>nT<sub>s</sub><span class="paren" style="font-size:em;">)</span></div>
@@ -334,7 +344,8 @@ f<span class="paren" style="font-size:em;">[</span>n<span class="paren" style="f
 以下では、このために必要となる条件について説明していきます。
 
 
-###<a id="sec-generated-title-11"></a> <a id="sampling"></a>標本化関数
+### <a id="sec-generated-title-11"></a> <a id="sampling"></a>標本化関数
+
 「[離散関数のフーリエ変換 離散フーリエ変換](#discrete)」で説明したように、離散関数と連続関数の間はδ関数を用いて関連付けることができます。
 そこで、
 連続関数<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>
@@ -377,7 +388,8 @@ F＊δ<sub>ω<sub>s</sub></sub><span class="paren" style="font-size:em;">(</span
 標本化周波数に<span class="math">2π</span>を掛けたもの<span class="math">ω<sub>s</sub> ＝ 2πf<sub>s</sub> ＝ <table class="frac" summary="fraction"><tr><td class="num">2π</td></tr><tr><td>T<sub>s</sub></td></tr></table></span>を<strong id="d20e1518" class="keyword">標本化角周波数</strong>といいます。
 
 
-###<a id="sec-generated-title-12"></a> <a id="shanonn"></a>シャノンの標本化定理
+### <a id="sec-generated-title-12"></a> <a id="shanonn"></a>シャノンの標本化定理
+
 前節で示したように、関数<span class="math">f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>のフーリエ変換<span class="math">F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>と、それを標本化したもの<span class="math">f'<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span>のフーリエ変換<span class="math">F’<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>の間には以下のような関係が成り立っています。
 <div class="math">
 F'<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>
@@ -426,7 +438,8 @@ F<span class="paren" style="font-size:em;">(</span>ω － nω<sub>s</sub><span c
 
 
 
-##<a id="sec-generated-title-13"></a> <a id="summay"></a>まとめ
+## <a id="sec-generated-title-13"></a> <a id="summay"></a>まとめ
+
 <table summary="離散フーリエ変換の公式">
 	<caption>
 		離散フーリエ変換の公式

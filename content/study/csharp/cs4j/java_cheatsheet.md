@@ -18,13 +18,15 @@ aliases:
 
 # Java 開発者向けチート シート
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 キーワードや演算子の対訳表。
 
 参考: [Moving to C# and the .NET Framework, for Java Developers](http://msdn.microsoft.com/en-us/gg715299.aspx)。
 
 
-##<a id="sec-generated-title-2"></a> <a id="keyword"></a>キーワード
+## <a id="sec-generated-title-2"></a> <a id="keyword"></a>キーワード
+
 <table summary="">
 
 	<tr>
@@ -256,7 +258,8 @@ aliases:
 
 
 
-###<a id="sec-generated-title-3"></a> <a id="not-in-java-keyword"></a>Java にないキーワード
+### <a id="sec-generated-title-3"></a> <a id="not-in-java-keyword"></a>Java にないキーワード
+
 Java にはないか、あっても少し挙動の違うキーワードの一覧です。
 
 <table summary="">
@@ -350,7 +353,8 @@ Java にはないか、あっても少し挙動の違うキーワードの一覧
 
 
 
-###<a id="sec-generated-title-4"></a> <a id="not-in-java-context"></a>Java にないコンテキスト キーワード
+### <a id="sec-generated-title-4"></a> <a id="not-in-java-context"></a>Java にないコンテキスト キーワード
+
 C# のいくつかのキーワードはコンテキスト キーワードになっていて、特定の文脈でのみキーワード扱いされます。
 
 <table summary="">
@@ -404,7 +408,8 @@ C# のいくつかのキーワードはコンテキスト キーワードにな�
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="operator"></a>演算子
+## <a id="sec-generated-title-5"></a> <a id="operator"></a>演算子
+
 <table summary="">
 
 	<tr>
@@ -531,7 +536,8 @@ C# のいくつかのキーワードはコンテキスト キーワードにな�
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="not-in-java-operator"></a>Java にない演算子
+### <a id="sec-generated-title-6"></a> <a id="not-in-java-operator"></a>Java にない演算子
+
 <table summary="">
 
 	<tr>
@@ -583,7 +589,8 @@ C# のいくつかのキーワードはコンテキスト キーワードにな�
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="type"></a>基礎的な型
+## <a id="sec-generated-title-7"></a> <a id="type"></a>基礎的な型
+
 参考: 「[組込み型](../start/st_embeddedtype.md)」
 
 <table summary="">

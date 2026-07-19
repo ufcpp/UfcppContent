@@ -21,7 +21,8 @@ aliases:
 
 # 静的メンバー
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <strong id="static-member" class="keyword">静的メンバー</strong>（static member）とは、
 特定のインスタンスにではなく、クラスに属するフィールドやメソッドのことです。
 そのため、静的変数のとこを<em>クラス メンバー</em>とも呼びます。
@@ -33,6 +34,7 @@ C言語から派生したというC#の歴史的な背景のため、静的変�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 静的メンバー: この呼び方は歴史的なもので、実際にはクラス メンバー（クラス メソッド、クラス フィールド）と呼ぶ方がいいかも。
     * static キーワードをつけると静的メンバーになる。
 
@@ -44,7 +46,8 @@ C言語から派生したというC#の歴史的な背景のため、静的変�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="use"></a>静的メンバーの使い方
+## <a id="sec-generated-title-3"></a> <a id="use"></a>静的メンバーの使い方
+
 クラスのメンバー（フィールドやメソッド）を定義する際に、<em><code>static</code></em>キーワードを付けることで、
 その変数は静的メンバー変数・静的メソッドになります。
 例えば、静的フィールドであれば以下のように書きます。
@@ -150,6 +153,7 @@ Person.scientificName = <span class="literal">"Homo Sapiens"</span>;
 
 
 ##### <a id="sec-generated-title-4"></a>補足: 関数
+
 オブジェクト指向ではない（クラス的な概念を持たない）プログラミング言語でいう「関数」に一番近いのは、この静的メソッドです。
 
 ちなみに、「[関数メンバー](../structured/st_function.md#function-member)」で説明していますが、
@@ -157,7 +161,8 @@ C# には「関数」的な動作をするメンバーとして、コンスト�
 これらの総称として「関数メンバー」という呼び方をします。
 
 
-##<a id="sec-generated-title-5"></a> <a id="ctor"></a>静的コンストラクター
+## <a id="sec-generated-title-5"></a> <a id="ctor"></a>静的コンストラクター
+
 静的フィールドの初期化には、通常のコンストラクターではなく、<strong id="stconst" class="keyword">静的コンストラクター</strong>（static constructor）というものを使います。
 静的コンストラクターの定義の仕方は、コンストラクターの前に <code>static</code> キーワードを付ける以外は通常のコンストラクターの定義の仕方と同じです。
 例えば、先ほどの <code>Person</code> クラスを例に挙げると以下のようになります。
@@ -192,6 +197,7 @@ C# には「関数」的な動作をするメンバーとして、コンスト�
 
 
 ##### <a id="sec-generated-title-6"></a>サンプル
+
 <pre class="source" title="静的フィールドのサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -253,7 +259,8 @@ ID: 9
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="class"></a>静的クラス
+## <a id="sec-generated-title-7"></a> <a id="class"></a>静的クラス
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 標準ライブラリ中の <code>Math</code> クラスのように、
@@ -298,7 +305,8 @@ C# 1.0 では、private なコンストラクタを持つ sealed クラスとし
 （例えば Visual Basic なんかがそう。）
 
 
-##<a id="sec-generated-title-8"></a> <a id="extension"></a>拡張メソッド
+## <a id="sec-generated-title-8"></a> <a id="extension"></a>拡張メソッド
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 では、（本来、前置き記法である）静的メソッドを、
@@ -337,7 +345,8 @@ C# 3.0 では、（本来、前置き記法である）静的メソッドを、
 詳細は「[拡張メソッド](../functional/sp3_extension.md)」で説明します。
 
 
-##<a id="sec-generated-title-9"></a> <a id="using-static"></a>using static
+## <a id="sec-generated-title-9"></a> <a id="using-static"></a>using static
+
 <h5 class="version version6">Ver. 6</h5>
 
 名前空間(参考: 「[名前空間](../structured/sp_namespace.md)」)に対しては、「[using ディレクティブ](../structured/sp_namespace.md#using)」を使うことで、
@@ -382,7 +391,8 @@ C# 6 で、これと同じようなことが、静的メソッドに対しても
 }
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="using-static-enum"></a>using staticと列挙型
+### <a id="sec-generated-title-10"></a> <a id="using-static-enum"></a>using staticと列挙型
+
 列挙型のメンバーも静的なので、using staticを使って、型名を省略して参照できます。
 
 <pre class="source" title="using static と列挙型">
@@ -407,7 +417,8 @@ C# 6 で、これと同じようなことが、静的メソッドに対しても
 }
 </code></pre>
 
-###<a id="sec-generated-title-11"></a> <a id="using-static-extensions"></a>using staticと拡張メソッド
+### <a id="sec-generated-title-11"></a> <a id="using-static-extensions"></a>using staticと拡張メソッド
+
 using static を使う場合でも、そのクラス中の[拡張メソッド](../functional/sp3_extension.md)はあくまで拡張メソッドとしてだけ使えます。
 using static だけでは、拡張メソッドを普通の静的メソッドと同じ呼び方で呼べません。
 
@@ -434,6 +445,7 @@ using static だけでは、拡張メソッドを普通の静的メソッドと�
 </code></pre>
 
 ### <a id="sec-generated-title-12"></a>補足: 名前空間の using と違う理由
+
 ちなみに、名前空間の using ディレクティブと区別を付けるために、「using static クラス名;」というように、static キーワードが必要です。
 名前空間の using と静的クラスの using の区別がつかないと結構ひどいコードが書けてしまう問題があったので、この文法に落ち着きました。
 static キーワードを付けなくてよい場合、以下のように、名前空間と同名のクラスを後から足すことで、既存のコードを壊せます。

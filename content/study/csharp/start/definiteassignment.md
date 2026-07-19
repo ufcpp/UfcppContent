@@ -14,10 +14,12 @@ aliases:
 
 # \[雑記\] 明確な代入ルール
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 C# には「明確な代入(definite assignment)ルール」と呼ばれる、未初期化変数を避ける仕組みがあります。
 
-##<a id="sec-generated-title-2"></a> <a id="undefined">未定義動作問題</a>
+## <a id="sec-generated-title-2"></a> <a id="undefined">未定義動作問題</a>
+
 大昔のプログラミング言語では、
 変数に対して誰も何の値も代入していないことで、不定な値が返ってくるということがありました。
 不定な値が得られてしまうことで、[未定義な動作](../resource/rm_default.md#uninitialized)になります。
@@ -33,7 +35,8 @@ C# には「明確な代入(definite assignment)ルール」と呼ばれる、�
 C# では、[クラス](../oop/oo_class.md)のフィールドや[配列](../structured/st_array.md)の中身については前者の「既定値による初期化」を行っていて、ローカル変数については後者の「代入の義務付け」を行っています。
 この「代入の義務付け」が「明確な代入ルール」です。
 
-##<a id="sec-generated-title-3"></a> <a id="rule">ルールの例</a>
+## <a id="sec-generated-title-3"></a> <a id="rule">ルールの例</a>
+
 まずわかりやすい例から見ていきましょう。
 分岐も何もなければ簡単です。以下のようなコードはコンパイル エラーになります。
 
@@ -222,7 +225,8 @@ C# では、この明確な代入を判定する際、分岐も見てくれま�
 <span class="type"><span class="static"><span class="warning" title="CS0162">Console</span></span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span>);
 </pre>
 
-##<a id="sec-generated-title-4"></a> <a id="improved-rule">ルールの改善</a>
+## <a id="sec-generated-title-4"></a> <a id="improved-rule">ルールの改善</a>
+
 <h5 class="version version10">Ver. 10</h5>
 
 長らく、`?.` や `??` が絡んだ時の明確な代入の判定はあまり賢くありませんでした。

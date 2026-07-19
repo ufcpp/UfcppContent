@@ -14,12 +14,14 @@ aliases:
 
 # \[雑記\] インライン化
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 [前述](st_function.md)の通り、関数によって「同じ処理を何度も繰り返し書かない」、「意味のある単位で明確な名前を付ける」ということができ、プログラムを読みやすく・書きやすくすることができます。
 
 一方で、ここでは、プログラムのパフォーマンスの面から関数を見てみましょう。関数呼び出しには多少のコストが掛かります。このコストをなくすため、コンパイラーによってインライン化という最適化が行われます。
 
-##<a id="sec-generated-title-2"></a> <a id="invoke-cost"></a>関数呼び出しのコスト
+## <a id="sec-generated-title-2"></a> <a id="invoke-cost"></a>関数呼び出しのコスト
+
 読みやすさ・書きやすさの面は抜きにして、関数のパフォーマンス面だけを考えてみます。
 
 ![関数呼び出しのパフォーマンス上のメリット・コスト](../../../../assets/media/1152/functioncall.png)
@@ -33,7 +35,8 @@ aliases:
 特に、関数の中身が小さい時には、コードの共通化によってサイズが減るメリットがほとんどなく、
 ただ単にコストが掛かるだけになってしまいます。
 
-##<a id="sec-generated-title-3"></a> <a id="inlining"></a>インライン化
+## <a id="sec-generated-title-3"></a> <a id="inlining"></a>インライン化
+
 関数化にはコストが掛かるといっても、
 パフォーマンス改善のために、関数化すべきところをわざわざ手作業でコピペ展開する必要はありません。
 コンパイラーが自動的に最適化してくれます。
@@ -43,7 +46,8 @@ aliases:
 
 ![インライン化の例](../../../../assets/media/1153/inlining.png)
 
-##<a id="sec-generated-title-4"></a> <a id="dotnet-inlining"></a>C# のインライン化
+## <a id="sec-generated-title-4"></a> <a id="dotnet-inlining"></a>C# のインライン化
+
 C# の場合、C# コンパイラー自身はインライン化を全くしません。
 .NET ランタイムが[IL](../../il/index.md)を解釈する際にインライン化が行われます。
 すなわち、インライン化が掛かるタイミングは[JITコンパイル](../framework/fwjitcompilation.md#jit-compilation)時です。
@@ -96,7 +100,8 @@ C# の場合、C# コンパイラー自身はインライン化を全くしま�
 一方、`NoInlining`を付けると絶対にインライン化されなくなります。
 わざわざ最適化を阻害するものなので、かなり特殊な用途でしか使わないでしょう。
 
-###<a id="sec-generated-title-5"></a> <a id="inlining-perf"></a>インライン化によるパフォーマンス改善
+### <a id="sec-generated-title-5"></a> <a id="inlining-perf"></a>インライン化によるパフォーマンス改善
+
 このインライン化の有無によってどの程度性能が変わるかを見てみましょう。
 以下に、計測用のコードを示します。
 
@@ -106,7 +111,8 @@ C# の場合、C# コンパイラー自身はインライン化を全くしま�
 どちらもかなり関数の中身が小さいものなので、インライン化の有無が顕著に効いてきます。
 単純な加算の方に至っては倍以上の速度差があります。
 
-###<a id="sec-generated-title-6"></a> <a id="common-execution-path"></a>頻出経路の最適化
+### <a id="sec-generated-title-6"></a> <a id="common-execution-path"></a>頻出経路の最適化
+
 反復処理や例外処理でインライン化が阻害される性質を考えると、
 阻害する部分だけを切り出してしまうことでプログラムを高速化できることがあります。
 

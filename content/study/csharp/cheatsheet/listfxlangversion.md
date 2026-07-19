@@ -14,7 +14,8 @@ aliases:
 
 # C#の言語バージョンと.NETバージョン
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C#の言語機能のバージョンと.NET のバージョン([ターゲット フレームワーク](langversionoption.md#targetframework)。実行環境には大して手が入っていないので、おおむね標準ライブラリのバージョンのこと。どのクラス・どのメソッドが使えるか)は、
 基本的には独立しています。なので、C#の新機能の多くは古い .NET 上でも動きます。
 
@@ -24,7 +25,8 @@ C#の言語機能のバージョンと.NET のバージョン([ターゲット �
 どうやっても動かないのか、それとも、動かしようがあるのか。
 ということについて書いていきます。
 
-##<a id="sec-generated-title-2"></a> <a id="background"></a>具体例
+## <a id="sec-generated-title-2"></a> <a id="background"></a>具体例
+
 例えば、諸事情あってWindows XP (標準インストールの状態で .NET Framework 2.0)から抜けられないという場合でも、Visual Studio 2015を使って、C# 6で開発したアプリを動かすこともできます。
 
 しかし、いくつかの機能は.NETのライブラリに依存しています。
@@ -44,9 +46,11 @@ C#の言語機能のバージョンと.NET のバージョン([ターゲット �
 両手放しに「どんな機能でも古いバージョンで動く」とは言い難かったりします。
 
 ##### <a id="sec-generated-title-3"></a>サンプル
+
 [https://github.com/ufcpp/UfcppSample/tree/master/LanguageAndFrameworkVersion](https://github.com/ufcpp/UfcppSample/tree/master/LanguageAndFrameworkVersion)
 
 ## <a id="sec-generated-title-4"></a>C# 8.0 以降の default バージョン
+
 「[言語バージョンの指定](langversionoption.md#new-options)」で説明していますが、
 C# 8.0 以降、規定動作(オプション未指定時の動作)では、ターゲット フレームワークに合わせて C# のバージョンが自動選択されるようになっています。
 
@@ -54,7 +58,8 @@ C# 8.0 以降、規定動作(オプション未指定時の動作)では、タ�
 カジュアルにサポートはされません。
 
 
-##<a id="sec-generated-title-5"></a> <a id="feature-table"></a>古いバージョンで動くかどうか
+## <a id="sec-generated-title-5"></a> <a id="feature-table"></a>古いバージョンで動くかどうか
+
 まず、バックポーティングなしでも動く機能について。
 一覧表で、C# のどの機能がどのバージョンの .NET Framework 上で動くのかを示しましょう。
 
@@ -62,7 +67,8 @@ C# 8.0 以降、規定動作(オプション未指定時の動作)では、タ�
 つまり、以下の表で、「2.0で動く」となっているものは実質的に「どこでも動くもの」になります。
 
 
-###<a id="sec-generated-title-6"></a> <a id="v3"></a>C# 3.0
+### <a id="sec-generated-title-6"></a> <a id="v3"></a>C# 3.0
+
 C# 3.0 = Visual Studio 2008, .NET Framework 3.5 と同時期リリース。Windows 7 よりちょっと前。
 
 <table summary="">
@@ -111,7 +117,8 @@ C# 3.0 = Visual Studio 2008, .NET Framework 3.5 と同時期リリース。Windo
 † … 補足あり
 
 
-###<a id="sec-generated-title-7"></a> <a id="v4"></a>C# 4.0
+### <a id="sec-generated-title-7"></a> <a id="v4"></a>C# 4.0
+
 C# 4.0 = Visual Studio 2010, .NET Framework 4 と同時期リリース。
 
 <table summary="">
@@ -139,7 +146,8 @@ C# 4.0 = Visual Studio 2010, .NET Framework 4 と同時期リリース。
 × … dynamicは古いバージョンの.NET Frameworkで動かすのがほぼ無理臭い唯一の機能かも。
 
 
-###<a id="sec-generated-title-8"></a> <a id="v5"></a>C# 5.0
+### <a id="sec-generated-title-8"></a> <a id="v5"></a>C# 5.0
+
 C# 5.0 = Visual Studio 2012, .NET Framework 4.5と同時期リリース。Windows 8 ともほぼ同時期。
 
 <table summary="">
@@ -163,7 +171,8 @@ C# 5.0 = Visual Studio 2012, .NET Framework 4.5と同時期リリース。Window
 
 ※2 … 2.0で動かすすべあり
 
-###<a id="sec-generated-title-9"></a> <a id="v6"></a>C# 6
+### <a id="sec-generated-title-9"></a> <a id="v6"></a>C# 6
+
 C# 6 = Visual Studio 2015, .NET Framework 4.6と同時期リリース。Windows 10とも同時期。
 
 <table summary="">
@@ -220,7 +229,8 @@ C# 6 = Visual Studio 2015, .NET Framework 4.6と同時期リリース。Windows 
 
 ※3 … 同様に、await演算子の制限。4で動かすすべあり
 
-###<a id="sec-generated-title-10"></a> <a id="v7"></a>C# 7
+### <a id="sec-generated-title-10"></a> <a id="v7"></a>C# 7
+
 C# 7 = Visual Studio 2017と同時期リリース。
 
 <table summary="">
@@ -270,7 +280,8 @@ C# 7 = Visual Studio 2017と同時期リリース。
 
 ※2 … 2.0で動かすすべあり
 
-##<a id="sec-generated-title-11"></a> <a id="how-to"></a>具体的な方法・補足
+## <a id="sec-generated-title-11"></a> <a id="how-to"></a>具体的な方法・補足
+
 前節の表で、2.0で動くとなっているものは、要は、ライブラリ依存がなくて、単純にC#コンパイラーだけの仕事で実現できる機能です。
 
 逆に、特定のバージョンに依存しているものは、そのバージョンで追加されたクラスに依存しています。
@@ -282,7 +293,8 @@ C# 7 = Visual Studio 2017と同時期リリース。
 
 とは言え、C#機能ごとに、その依存するクラスを実装する大変さが全然違うので、現実的には全部とはいかないでしょう。
 
-###<a id="sec-generated-title-12"></a> <a id="attribute"></a>拡張メソッド、Caller Info
+### <a id="sec-generated-title-12"></a> <a id="attribute"></a>拡張メソッド、Caller Info
+
 かなり簡単なのがこの2つ。この2つは、単にメソッドや引数に属性が付くだけのものです。
 
 * 拡張メソッド → ExtensionAttribute(System.Runtime.CompilerServices名前空間)
@@ -304,7 +316,8 @@ C# 7 = Visual Studio 2017と同時期リリース。
 
 
 
-###<a id="sec-generated-title-13"></a> <a id="query-expression"></a>クエリ式
+### <a id="sec-generated-title-13"></a> <a id="query-expression"></a>クエリ式
+
 System.Linq名前空間のクラスがなくて動くの？と一瞬思うかもしれませんが、SelectとかWhereとかを自前実装すれば使えます。そんなに難易度も高くないものなので割とちょろい。
 例えば、Select の実装は以下のような感じです(本物と比べるとちょっとだけ手抜き実装。引数の null チェックがない)。
 
@@ -328,7 +341,8 @@ System.Linq名前空間のクラスがなくて動くの？と一瞬思うかも
 あと、SelectとかWhereは、普通のインスタンス メソッドでも拡張メソッドでもどちらでもOKです。
 
 
-###<a id="sec-generated-title-14"></a> <a id="variance"></a>変性(genericのin/out型注釈)
+### <a id="sec-generated-title-14"></a> <a id="variance"></a>変性(genericのin/out型注釈)
+
 インターフェイスやデリゲートを定義する側は何の問題もなく、.NET Framework 3.5以前の上で動くんですが…
 
 残念なの点としては、標準ライブラリ(BCL: Base Class Library)中のクラスにちゃんとした変性注釈がついたのは.NET Framework 4 からということです。
@@ -344,13 +358,15 @@ System.Linq名前空間のクラスがなくて動くの？と一瞬思うかも
 (インターフェイスを自作する分には恩恵があるけども、標準ライブラリを使う範囲では 4 以降でないと恩恵がない。)
 
 
-###<a id="sec-generated-title-15"></a> <a id="dynamic"></a>dynamic
+### <a id="sec-generated-title-15"></a> <a id="dynamic"></a>dynamic
+
 dynamicが使っているのはSystem.Dynamic名前空間以下のクラスなんですが… こいつの自前実装はさすがにちょっと…
 
 実質的に、古い.NET Framework上で動かしようがない唯一の機能かも。もちろん、monoの実装をとってきて使うなどすれば、無理ではないはず。
 
 
-###<a id="sec-generated-title-16"></a> <a id="async"></a>async/await
+### <a id="sec-generated-title-16"></a> <a id="async"></a>async/await
+
 これも、.NET Framework 4.5で入ったTaskクラスに対する拡張が必須になります。
 自前で実装できる規模も超えていると思います。
 
@@ -368,7 +384,8 @@ dynamicが使っているのはSystem.Dynamic名前空間以下のクラスな�
 
 - [Rackspace Threading Library for .NET](https://github.com/rackerlabs/dotnet-threading)
 
-###<a id="sec-generated-title-17"></a> <a id="string-interpolation"></a>string interpolation
+### <a id="sec-generated-title-17"></a> <a id="string-interpolation"></a>string interpolation
+
 (現行の Visual Studio 2015 Preview (2014/11 版)とは文法が変わることが確定しているんですが、新しい方の(2014/11 版では動かない)文法で説明します)
 (日本語での呼称も決まってないので string interpolation。文字列補間？文字列挿入？)
 
@@ -428,7 +445,8 @@ dynamicが使っているのはSystem.Dynamic名前空間以下のクラスな�
 }
 </code></pre>
 
-##<a id="sec-generated-title-18"></a> <a id="ValueTuple"></a>タプル
+## <a id="sec-generated-title-18"></a> <a id="ValueTuple"></a>タプル
+
 タプルは、`ValueTuple`構造体(`System`名前空間)と`TupleElementNames`属性(`System.Runtime.CompilerServices`名前空間)という型に依存しています。
 
 これらの型は、.NET 4.5 以降であれば、
@@ -437,7 +455,8 @@ dynamicが使っているのはSystem.Dynamic名前空間以下のクラスな�
 
 これらの型は[ほんの数ファイルほどで実装されている](https://github.com/dotnet/corefx/tree/master/src/System.ValueTuple/src/System)くらい単純なものなので、.NET 2.0 向けのバックポーティングもそれほど難しくありません。
 
-##<a id="sec-generated-title-19"></a> <a id="closing"></a>最後に
+## <a id="sec-generated-title-19"></a> <a id="closing"></a>最後に
+
 あれこれ書きましたが
 まあ、さすがに最近(2014年末)、.NET Framework 2.0 案件の話は聞くこと減って来たかなぁ…
 

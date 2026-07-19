@@ -18,7 +18,8 @@ aliases:
 
 # 片方向連結リスト
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[配列リスト](col_array.md#array)」や「[循環バッファ](col_circular.md#circular)」を使う場合、
 要素の追加に柔軟に対応するためには、
 実際に格納している要素の数よりも多めにメモリを確保しておく必要があります。
@@ -43,7 +44,8 @@ aliases:
 制約も多く、使い道は限定されています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+## <a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+
 片方向連結リストは以下のような利点を持っています。
 
 * 「[配列リスト](col_array.md#array)」や「[循環バッファ](col_circular.md#circular)」のように、予め大きめのメモリを確保しておく必要がなく、常に要素数分のメモリだけ確保しておける。
@@ -66,7 +68,8 @@ aliases:
 （この特徴から、スタックというデータ構造の実装にはよく使われます。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法
+## <a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法
+
 まず、ノードを実装します。
 最初に説明したように、
 ノードは要素を格納しておくための変数と、
@@ -234,7 +237,8 @@ aliases:
 この方法はあまり使われません。
 
 
-##<a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/ForwardLinkedList.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/ForwardLinkedList.cs)

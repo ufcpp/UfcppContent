@@ -19,7 +19,8 @@ aliases:
 
 # dynamic の内部実装
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 dynamic って内部的にはどうなってるの？という話。
@@ -34,13 +35,15 @@ C# の dynamic は、「型が動的」というよりは、「静的な型に�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * dynamic 型ってのは実はなくて、内部的には object。
 
 * CallSite クラスを使って動的コード生成。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="callsite"></a>動的 callsite
+## <a id="sec-generated-title-3"></a> <a id="callsite"></a>動的 callsite
+
 dynamic を使ったコードは、内部的には CallSite というクラスを使ったコードに展開されます。
 （多分、「動的呼び出し（call）用の動的コードを生成するための用地（site）というような意味合い。）
 例えば、以下のような C# 4.0 コードは、
@@ -117,7 +120,8 @@ dynamic を使ったコードは、内部的には CallSite というクラス�
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="DynamicAttribute"></a>Dynamic 属性
+## <a id="sec-generated-title-4"></a> <a id="DynamicAttribute"></a>Dynamic 属性
+
 前述の通り、コンパイル結果的には dynamic 型ってものはなくて、
 実際のところは単なる object 型の変数になります。
 特に、ローカル変数の型を dynamic にした場合には、完璧に単なる object 型の変数になります。
@@ -207,7 +211,8 @@ dynamic を使ったコードは、内部的には CallSite というクラス�
 bool[] の引数付きの Dynamic 属性が付きます。
 
 
-##<a id="sec-generated-title-5"></a> <a id="CallSiteBinder"></a>CallSiteBinder
+## <a id="sec-generated-title-5"></a> <a id="CallSiteBinder"></a>CallSiteBinder
+
 続いて CallSite の初期化部分。
 上述のコードのうち、以下のようなコードの部分について。
 
@@ -246,7 +251,8 @@ C# 4.0 の場合（要するに、CSharpGetMemberBinder の中の挙動として
 
 
 
-##<a id="sec-generated-title-6"></a> <a id="DynamicCodeGeneration"></a>CallSite.Target 内での動的コード生成
+## <a id="sec-generated-title-6"></a> <a id="DynamicCodeGeneration"></a>CallSite.Target 内での動的コード生成
+
 最後に、実際に動的コード生成。
 CallSite.Target デリゲートを呼んでいる部分について。
 
@@ -326,16 +332,19 @@ Point 以外の型のインスタンスが来ると、当然また Target の更
 となります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="misc"></a>余談
+## <a id="sec-generated-title-7"></a> <a id="misc"></a>余談
+
 その他、いくつか小ネタを。
 
 
 ##### <a id="sec-generated-title-8"></a>typeof(dynamic)
+
 <code>typeof(dynamic)</code> はそもそもエラーになります。
 <code>typeof(object)</code> が得られたりはしません。
 
 
 ##### <a id="sec-generated-title-9"></a>dynamic の ToString 呼び出し
+
 dynamic の実体は object なわけですが、
 じゃあ、ToString() や GetHashCode() 等の object 型のメソッドはどうなるかというと・・・、
 CallSite を介した動的コード生成になります。
@@ -343,6 +352,7 @@ ToString() だけ特別扱いされて静的なコードになったりはしま
 
 
 ##### <a id="sec-generated-title-10"></a>Dynamic 属性を直接使う
+
 dynamic キーワードを使わず、
 Dynamic 属性を直接付けようとするとコンパイルエラーになります。
 「DynamicAttribute は直接は使えない。dynamic キーワードを使ってくれ」というような感じで怒られます。

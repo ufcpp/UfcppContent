@@ -14,7 +14,8 @@ aliases:
 
 # \[雑記\] エントリーポイント
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 C# では通常、1つのプログラムは複数の C# ソースコードからなり、そのソースコード中には複数の関数が含まれています。
 その、多数ある関数の中で、プログラム起動時に最初に呼ばれるものを<strong id="entry-point" class="keyword">エントリーポイント</strong>(entry point: 入場地点)と呼びます。
 
@@ -24,11 +25,13 @@ C# では、`Main`という名前の関数が自動的にエントリーポイ�
 (「[関数](st_function.md)」内でも補足していますが、
 正確にいうと、`Main`という名前のメソッドがエントリーポイントになります。)
 
-###<a id="sec-generated-title-2"></a> <a id="cs-script"></a>[補足] C# スクリプト
+### <a id="sec-generated-title-2"></a> <a id="cs-script"></a>[補足] C# スクリプト
+
 [スクリプト実行](../cheatsheet/apscripting.md)の場合は関数で囲わなくてもどこにでも処理を書けます。
 `Main`関数も不要です。
 
-##<a id="sec-generated-title-3"></a> <a id="Main"></a>Main の引数、戻り値
+## <a id="sec-generated-title-3"></a> <a id="Main"></a>Main の引数、戻り値
+
 `Main`の引数と戻り値は、以下のいずれかである必要があります。
 これ以外のオーバーロードはエントリーポイントになりません。
 
@@ -48,7 +51,8 @@ C# では、`Main`という名前の関数が自動的にエントリーポイ�
 [Windows の場合](https://msdn.microsoft.com/ja-jp/library/ms194959(v=vs.100).aspx)は0が正常終了、1が部分的な成功、…などの意味があるようです。
 戻り値なし版の場合は常に0(正常終了)扱いです。
 
-##<a id="sec-generated-title-4"></a> <a id="no-main"></a>Main がないタイプのプロジェクト
+## <a id="sec-generated-title-4"></a> <a id="no-main"></a>Main がないタイプのプロジェクト
+
 GUI アプリや Web アプリでは、`Main`関数を書かない場合があります。
 この場合、以下のいずれかです。
 
@@ -57,7 +61,8 @@ GUI アプリや Web アプリでは、`Main`関数を書かない場合があ�
 
 例えば、ASP.NETの場合は前者、WPF アプリの場合は後者になります。
 
-##<a id="sec-generated-title-5"></a> <a id="explicit-entry-point"></a>エントリーポイントの指定
+## <a id="sec-generated-title-5"></a> <a id="explicit-entry-point"></a>エントリーポイントの指定
+
 1つのプログラムの中に複数のクラスがあって、
 複数のクラスの中に`Main`関数がある場合、そのままではエントリーポイントを決定できず、コンパイル エラーになります。
 
@@ -68,7 +73,8 @@ GUI アプリや Web アプリでは、`Main`関数を書かない場合があ�
 - [方法 : アプリケーションのスタートアップ オブジェクトを変更する](https://msdn.microsoft.com/ja-jp/library/17k74w0c.aspx)
 - [/main (C# Compiler Options](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/main-compiler-option)
 
-##<a id="sec-generated-title-6"></a> <a id="async-main"></a>非同期 Main
+## <a id="sec-generated-title-6"></a> <a id="async-main"></a>非同期 Main
+
 <h5 class="version version7_1">Ver. 7.1</h5>
 
 C# 7.1で、以下のように、`Main`関数の戻り値に`Task`クラス(`System.Threading.Tasks`名前空間)を使えるようになりました。
@@ -96,7 +102,8 @@ C# 7.1で、以下のように、`Main`関数の戻り値に`Task`クラス(`Sys
 }
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="internal-async-main"></a>非同期 Main の仕組み
+### <a id="sec-generated-title-7"></a> <a id="internal-async-main"></a>非同期 Main の仕組み
+
 ちなみに、この機能は、コンパイラーが通常の(`void`/`int`戻り値の)エントリーポイントを別途自動生成することで実現しています。
 例えば、先ほどの例のように、`Task Main()`を書くと、追加で以下のような関数が作られ、これが実際のエントリーポイントとして機能します。
 
@@ -110,7 +117,8 @@ C# 7.1で、以下のように、`Main`関数の戻り値に`Task`クラス(`Sys
 
 中身は`GetAwaiter().GetResult()`を呼んでいるだけです。
 
-###<a id="sec-generated-title-8"></a> <a id="compatibility"></a>通常の Main がすでにある場合
+### <a id="sec-generated-title-8"></a> <a id="compatibility"></a>通常の Main がすでにある場合
+
 非同期 Main の仕様は C# 7.1 で追加されたものです。
 そのため、これまでに書いたコードの中にすでに、エントリーポイントにするつもりがない `Task Main()` が含まれている場合に対する考慮が必要です。
 

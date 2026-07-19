@@ -18,18 +18,21 @@ aliases:
 
 # foreach
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 foreachとは、コレクションのすべての要素を1回ずつ読み出すための構文です。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 配列みたいに for (int i = 0; i &lt; array.Length; ++i) { array[i] ... } という形で要素の列挙ができないようなコレクションも、foreach なら列挙可能。
 
 * foreach (変数 in コレクション) { ... }
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="collection"></a>コレクション
+## <a id="sec-generated-title-3"></a> <a id="collection"></a>コレクション
+
 <em>コレクション</em>(「コンテナ」ともいいます)とは配列やリスト、辞書などの複数の要素をひとつにまとめるクラスのことです。
 複数の要素をまとめておく方法にはさまざまな方法があり、
 その方法によって呼び名が変わります。
@@ -119,7 +122,8 @@ foreachとは、コレクションのすべての要素を1回ずつ読み出す
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="iEnumerable"></a>IEnumerable インターフェース
+## <a id="sec-generated-title-4"></a> <a id="iEnumerable"></a>IEnumerable インターフェース
+
 ここで1つ問題があります。
 データの格納方式が違えば、当然データの読み出し方も変わってくるということです。
 例えば、配列の場合、以下のようにすれば全ての要素を読み出せます。
@@ -177,7 +181,8 @@ IEnumerator e = array.GetEnumerator();
 <code>IEnumerator</code> インターフェースについては後ほど説明します。
 
 
-##<a id="sec-generated-title-5"></a> <a id="foreach"></a>foreach文とは
+## <a id="sec-generated-title-5"></a> <a id="foreach"></a>foreach文とは
+
 <strong id="foreach" class="keyword">foreach 文</strong>を用いるとこで <code>IEnumerable</code> インターフェースを介した要素へのアクセスを簡単化することが出来ます。
 以下のように、foreachを使うことでコレクションのすべての要素を1回ずつ読み出すことができます。
 
@@ -261,13 +266,15 @@ foreach文の実態は<code>IEnumerable</code> インターフェースを介し
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="pattern-based"></a>余談： パターン ベース
+### <a id="sec-generated-title-6"></a> <a id="pattern-based"></a>余談： パターン ベース
+
 余談になりますが、
 foreach で使うコレクションは、実は IEnumerable を実装している必要はなくて、
 GetEnumerator という名前のメソッドを持っていればどんな型でもよかったりします。
 （要するに、「[パターン ベース](../misc/miscpatternbased.md)」。） 
 
-###<a id="sec-generated-title-7"></a> <a id="extension-getenumerator"></a>拡張メソッドでの GetEnumerator 実装
+### <a id="sec-generated-title-7"></a> <a id="extension-getenumerator"></a>拡張メソッドでの GetEnumerator 実装
+
 <h5 class="version version9">Ver. 9</h5>
 
 C# 8.0 まではパターン ベースと言っても、`GetEnumerator` メソッドはインスタンス メソッドである必要がありました。
@@ -307,7 +314,8 @@ C# 8.0 まではパターン ベースと言っても、`GetEnumerator` メソ�
 (これまでは単に C# 1.0 時代からある文法に下手に手を入れるのが怖くて認められていなかっただけです。)
 
 
-##<a id="sec-generated-title-8"></a> <a id="ownmaking"></a>コレクションクラスの自作
+## <a id="sec-generated-title-8"></a> <a id="ownmaking"></a>コレクションクラスの自作
+
 <code>IEnumrable</code>インターフェースを実装することで、foreach文で利用できるコレクションクラスを自作できます。
 
 <code>IEnumrable</code>インターフェースには<code>GetEnumerator</code>メソッドがあり、このメソッドは<code>IEnumerator</code>インターフェースを返します。
@@ -444,7 +452,8 @@ C# 2.0 ではこの作業を簡単化するための「[イテレーター](sp2_
 詳しくは、「[イテレーター](sp2_iterator.md)」で説明します。
 
 
-##<a id="sec-generated-title-9"></a> <a id="performance"></a>foreach 文のパフォーマンス
+## <a id="sec-generated-title-9"></a> <a id="performance"></a>foreach 文のパフォーマンス
+
 「[foreach文とは](#foreach)」で説明したように、
 一般には、foreach 文は以下のようなコードに展開されます。
 （IDispose を実装しない場合。
@@ -470,7 +479,8 @@ MoveNext() や Current などのメソッド呼び出しのオーバーヘッド
 最適化がかかって for 文相当のコードに変換されるようで、
 そこまで大きな差はなくなるようです。
 
-##<a id="sec-generated-title-10"></a> <a id="await-foreach"></a>非同期 foreach
+## <a id="sec-generated-title-10"></a> <a id="await-foreach"></a>非同期 foreach
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0で非同期版の`foreach`が追加されました。

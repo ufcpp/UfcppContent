@@ -18,7 +18,8 @@ aliases:
 
 # Silverlight の開発モデル
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 Silverlight アプリは、以下のようなモデルに基づいて開発することになります。
 
 * XAML ＋ C#
@@ -29,7 +30,8 @@ Silverlight アプリは、以下のようなモデルに基づいて開発す�
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="xaml"></a>XAML ＋ C
+## <a id="sec-generated-title-2"></a> <a id="xaml"></a>XAML ＋ C
+
 Silvelight では、<strong id="xaml" class="keyword">XAML</strong>（Xml Application Markup Language）と呼ばれるマークアップ言語と C# を用いてアプリ開発を行います。
 
 XAML は、XML 形式でビュー（view： アプリの見た目に関する部分）を記述するための言語です。
@@ -45,6 +47,7 @@ XAML で書いたビューに加えて、ロジックが必要な部分には C#
 		<td markdown="1">
 
 ##### <a id="sec-generated-title-3"></a>XAML
+
 以下のような XML でビューを記述します。
 
 
@@ -58,6 +61,7 @@ XAML で書いたビューに加えて、ロジックが必要な部分には C#
 		<td markdown="1">
 
 ##### <a id="sec-generated-title-4"></a>C
+
 イベント処理などを行う場合は C# で記述します。
 
 <pre class="source" title="C# でイベント処理" lang="">
@@ -75,6 +79,7 @@ XAML で書いたビューに加えて、ロジックが必要な部分には C#
 
 
 ##### <a id="sec-generated-title-5"></a>XAML 利用の利点
+
 XAML の利用には、以下のような利点があります。
 
 * デザイナー向けのツール（例えば、Microsoft から Expression Blend というツールが提供されています）での編集が容易。 （XML 形式はツールでの読み書きがしやすい。）
@@ -89,8 +94,10 @@ XAML の利用には、以下のような利点があります。
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="xap"></a>xap ファイル
+### <a id="sec-generated-title-6"></a> <a id="xap"></a>xap ファイル
+
 ##### <a id="sec-generated-title-7"></a>実態は ZIP
+
 Silverlight アプリのビルド結果は xap という拡張子のファイルになります。
 xap は、実は単なる ZIP 形式書庫になっていて、
 xap の中には、dll など、いくつかのファイルが入っています。
@@ -109,6 +116,7 @@ xap の中には、dll など、いくつかのファイルが入っています
 
 
 ##### <a id="sec-generated-title-8"></a>ビルドの流れ
+
 XAML と C# で書いたアプリは、下図のような手順で dll 化されます。
 xap ファイル中に入っている dll はこのようにして作られたものです。
 
@@ -126,6 +134,7 @@ BAML をローディングするためのコードが含まれています。
 
 
 ##### <a id="sec-generated-title-9"></a>Silverlight を実行
+
 作成した xap ファイルを HTML ページ中に埋め込むには object タグを使います。
 
 
@@ -139,7 +148,8 @@ BAML をローディングするためのコードが含まれています。
 &lt;/</span><span class="element">object</span><span class="attvalue">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-10"></a> <a id="vtree"></a>Visual Tree
+## <a id="sec-generated-title-10"></a> <a id="vtree"></a>Visual Tree
+
 Silverlight でビューの作成に使える視覚要素（ボタンなどのコントロールや、矩形・円など）は、階層構造を持っています。
 例えば、以下のような XAML を書くと、
 
@@ -195,7 +205,8 @@ Silverlight でビューの作成に使える視覚要素（ボタンなどの�
 
 
 
-##<a id="sec-generated-title-11"></a> <a id="data"></a>データ駆動
+## <a id="sec-generated-title-11"></a> <a id="data"></a>データ駆動
+
 Silverlight では、<strong id="binding" class="keyword">データバインディング</strong>（data binding）という仕組みを使って、データ駆動なアプリを簡単に記述することができます。
 
 データバインディングでは、

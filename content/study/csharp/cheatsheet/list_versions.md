@@ -18,7 +18,8 @@ aliases:
 
 # バージョン
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <figure>
 	[![C#、.NET Framework、Visual Studio のバージョン](../../../../assets/media/ufcpp2000/csharp/fig/Index/versions.png)](../../../../assets/media/ufcpp2000/csharp/fig/Index/versions.png)
 	<figcaption>C#、.NET Framework、Visual Studio のバージョン</figcaption>
@@ -26,7 +27,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="cs"></a>C
+## <a id="sec-generated-title-2"></a> <a id="cs"></a>C
+
 C\# のバージョンアップに関しては、以下の各ページを参照してください。
 
 <div><ul>
@@ -50,11 +52,13 @@ C# 1.2 は標準化も行われていない（標準規格的には 1st Edition 
 （C# 2.0 ≒ VB 8.0、 C# 3.0 ≒ VB 9.0、…）
 
 
-##<a id="sec-generated-title-3"></a> <a id="dotnet"></a>.NET Framework
+## <a id="sec-generated-title-3"></a> <a id="dotnet"></a>.NET Framework
+
 .NET Framework は頻繁にバージョンアップしているように見えますが、実際のところほとんどはライブラリの追加のみです。
 
 
-###<a id="sec-generated-title-4"></a> <a id="ves"></a>実行環境
+### <a id="sec-generated-title-4"></a> <a id="ves"></a>実行環境
+
 実行環境としての .NET Framework （図1中の CLR の列）に関して、大きな修正（命令の追加）があったのは 2.0 の時だけです。
 
 * 1.1 … バグ修正のみ
@@ -84,7 +88,8 @@ JIT コンパイル結果の最適化が効いたりします
 5 でも、「今までのコードほぼそのままで、ネイティブ配布やソースコード配布にも対応します」というもので、C# 開発者が使える機能としては変わっていません。
 
 
-###<a id="sec-generated-title-5"></a> <a id="library"></a>ライブラリ
+### <a id="sec-generated-title-5"></a> <a id="library"></a>ライブラリ
+
 ということで、.NET Framework 2.0 以降のバージョンアップはほとんどライブラリの追加のみといえます。
 
 * 1.1 … バグ修正のみ

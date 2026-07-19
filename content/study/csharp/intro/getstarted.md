@@ -18,12 +18,14 @@ aliases:
 
 # はじめてのプログラミング
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 まず、初心者の人向けに、プログラミングの勉強の仕方について、
 個人的に思うところを書いてみようかと。
 
 
-##<a id="sec-generated-title-2"></a> <a id="fist"></a>はじめから C
+## <a id="sec-generated-title-2"></a> <a id="fist"></a>はじめから C
+
 <span style="color:red;font-size:large;">Q.</span>
 はじめから C# でいいの？
 <br></br>
@@ -53,6 +55,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-3"></a>注意:
+
 とはいえ、C# だけ覚えていればすべてが片付くというものでもありません。
 
 OS レベルやハードウェア レベルに近い低水準機能に触れたいとき、
@@ -63,7 +66,8 @@ C 言語や C++ などの言語を学ぶことになるでしょう。
 最近の洗練された言語から学習を初めて、徐々に過去の言語に触れるという順序は悪くないです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="tool"></a>ツールに頼ろう
+## <a id="sec-generated-title-4"></a> <a id="tool"></a>ツールに頼ろう
+
 C# を学び始めるなら、まず最初にやることは以下の通り。
 
 1. 何よりも先に[Visual Studio や Visual Studio Code](../devenv/ab_devenv.md)などの開発環境をインストールする。
@@ -126,7 +130,8 @@ C# ソースファイル（拡張子 .cs）しかないならそれをクリッ�
 ソリューションファイル（拡張子 .sln）が付いてるならそっちをクリック。
 
 
-##<a id="sec-generated-title-5"></a> <a id="public"></a>人に見せることを意識しよう
+## <a id="sec-generated-title-5"></a> <a id="public"></a>人に見せることを意識しよう
+
 プログラミングに限った話でもないんですが、
 何かを学ぶ時は、人に見せることを意識して勉強する方がいいです。
 

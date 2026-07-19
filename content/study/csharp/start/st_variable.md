@@ -18,7 +18,8 @@ aliases:
 
 # 変数と式
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 数学では、“整数 <span class="math">n</span>”とか、“実数 <span class="math">x</span>”などといった変数を用意し、
 “<span class="math">
         ax<sup><span class="normal">2</span></sup><span class="normal">+</span> bx <span class="normal">+</span> c
@@ -27,6 +28,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * <code>int x</code>… int が型で、x が変数名。
 
 * <code>int x = 1 + 2;</code>… 式も数学っぽく書ける。
@@ -35,7 +37,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="variable"></a>変数
+## <a id="sec-generated-title-3"></a> <a id="variable"></a>変数
+
 数学では“整数”とか“実数”といったさまざまな種類の「型」が存在します。
 「<span style="font-style:italic;">n</span> は整数に使うことが多い」といったような暗黙の了解も存在しますが、基本的には、「整数 <span style="font-style:italic;">n</span>」といったように、「型」を明示します。
 
@@ -68,7 +71,8 @@ C# 6.0 までは、変数宣言は単独で書く必要がありましたが、
 C# 7.0 以降、[式](#expression)の途中で変数宣言をできる構文がいくつか追加されています。
 詳しくは「[特殊な変数宣言](../datatype/declarationexpressions.md)」で説明します。
 
-##<a id="sec-generated-title-4"></a> <a id="literal"></a>リテラル
+## <a id="sec-generated-title-4"></a> <a id="literal"></a>リテラル
+
 <strong id="literal" class="keyword">リテラル</strong>(literal: “文字通りの定数”という意味。直定数などと訳されることもある。)とは、要するに、「10」や「4.56」というように、直接ソースファイル中に値が書かれた定数のことです。
 
 <pre class="source" title="リテラルの例" lang="">
@@ -88,10 +92,12 @@ C# 7.0 以降、[式](#expression)の途中で変数宣言をできる構文が�
 ちなみに、定数（constant）というとリテラルとは別の意味で使われます
 （参考: 「[定数](sp_const.md)」）。
 
-##<a id="sec-generated-title-5"></a> <a id="updates"></a>いろいろな変数宣言の仕方
+## <a id="sec-generated-title-5"></a> <a id="updates"></a>いろいろな変数宣言の仕方
+
 C# のアップデートで、いろいろな変数宣言の仕方が追加されています。
 
-###<a id="sec-generated-title-6"></a> <a id="infer"></a>型推論
+### <a id="sec-generated-title-6"></a> <a id="infer"></a>型推論
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0 から、<strong id="var" class="keyword">var</strong> キーワードを使って、型を明示せずに変数を定義できるようになりました。
@@ -130,7 +136,8 @@ n = <span class="literal">""</span>;    <span class="comment">// これはコン
 参考：「[[雑記] 型推論の是非](sp3_var.md)」。
 
 
-###<a id="sec-generated-title-7"></a> <a id="dynamic"></a>dynamic
+### <a id="sec-generated-title-7"></a> <a id="dynamic"></a>dynamic
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4.0 では、動的な型の扱いもできるようになりました。
@@ -146,7 +153,8 @@ C# 4.0 では、動的な型の扱いもできるようになりました。
 
 この例のように、dynamic は主に「連携」のための機能です。
 
-###<a id="sec-generated-title-8"></a> <a id="tuple"></a>タプル
+### <a id="sec-generated-title-8"></a> <a id="tuple"></a>タプル
+
 <h5 class="version version7">Ver. 7.0</h5>
 
 C# 7.0 で[タプル](../datatype/tuples.md)という機能が追加されて、
@@ -161,7 +169,8 @@ var (sum, dif) = (x + y, x - y);
 この例のように、`x`, `y` などの変数を同時に宣言したり、
 `x + y`, `x - y` の計算を一緒に行ったりできます。
 
-##<a id="sec-generated-title-9"></a> <a id="identifier"></a>識別子名
+## <a id="sec-generated-title-9"></a> <a id="identifier"></a>識別子名
+
 変数など、プログラマが自由に名前を付けることの出来るものを<strong id="identifier" class="keyword">識別子</strong>(identifier)と呼びます。
 
 詳細は「[[雑記] 識別子名に使える文字](misc_identifier.md)」にて説明しますが、
@@ -178,6 +187,7 @@ var (sum, dif) = (x + y, x - y);
 
 
 ##### <a id="sec-generated-title-10"></a>逐語的識別子
+
 先頭に @ を付けることで、
 キーワードも識別子として利用可能になります。
 たとえば、<code>@this</code> や <code>@for</code> と書くことで、それぞれ this、for という名前の変数を作ることができます。
@@ -192,7 +202,8 @@ C# ではキーワードになっていても、他のプログラミング言�
 例えば、x と @x は全く同じ識別子名として認識されます。
 
 
-##<a id="sec-generated-title-11"></a> <a id="expression"></a>式と演算子
+## <a id="sec-generated-title-11"></a> <a id="expression"></a>式と演算子
+
 変数の用意が出来たら式を立てて計算を行っていきます。
 それでは具体的な例を見ながら説明して行くことにしましょう。
 
@@ -221,7 +232,8 @@ C# では、数学などで使う記法とほぼ同じ書き方で四則演算�
 C# の演算子の一覧と優先順位は「[組込み演算子](st_operator.md)」で説明します。
 
 
-##<a id="sec-generated-title-12"></a> <a id="statement"></a>文
+## <a id="sec-generated-title-12"></a> <a id="statement"></a>文
+
 <strong id="statement" class="keyword">文</strong>(statement)とはプログラムの処理の単位のことです。
 
 <pre class="source" title="文" lang="">
@@ -250,6 +262,7 @@ C# では、文と文は <code>;</code> (セミコロン)で区切られます�
 
 
 ##### <a id="sec-generated-title-13"></a>サンプル
+
 <pre class="source" title="変数と式のサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -287,7 +300,8 @@ input y : <span class="input">4</span>
 
 
 
-###<a id="sec-generated-title-14"></a> <a id="sentencse"></a>余談: 平叙文
+### <a id="sec-generated-title-14"></a> <a id="sentencse"></a>余談: 平叙文
+
 statement という単語の訳語が「文」なのは少し不正確だったりします。
 （なので、カタカナ語でステートメントと表現することも多いです。）
 一般に、「文」というと、英単語としては sentense になりますが、sentense に対する分類として、以下のようなものがあります。
@@ -306,7 +320,8 @@ statement という単語の訳語が「文」なのは少し不正確だった�
 「何かを表明する」という意味合いが強くて、
 例えば、政策や企業理念などを端的に表す言葉を statement と呼んだりします。
 
-##<a id="sec-generated-title-15"></a> <a id="var-expression"></a>式の中での変数宣言
+## <a id="sec-generated-title-15"></a> <a id="var-expression"></a>式の中での変数宣言
+
 <h5 class="version version7">Ver. 7</h5>
 
 変数の宣言は、前述の通り、以下のような書き方が必要でした。

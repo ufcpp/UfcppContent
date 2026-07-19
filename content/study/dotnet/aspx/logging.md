@@ -18,7 +18,8 @@ aliases:
 
 # アクセスログを取ろう
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 まず、
 アクセスログの記録を例に、
 以下の2点について説明します。
@@ -29,7 +30,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="global_asax"></a>Global.asax
+## <a id="sec-generated-title-2"></a> <a id="global_asax"></a>Global.asax
+
 Web アプリケーションとして構築した（ASP.NET などを実行する設定で作った）仮想ディレクトリの直下に、
 Global.asax という名前のファイルを置くことで、
 Web アプリケーション全体に対する処理を記述することができます。
@@ -91,6 +93,7 @@ MSDN ライブラリ中の[ASP.NET アプリケーションのライフ サイ�
 
 
 ##### <a id="sec-generated-title-3"></a>ログを記録するタイミング
+
 アクセスログを取るという用途を考えると、
 Application_BeginRequest か Session_Start 内にログ記録コードを書くのがいいと思います。
 
@@ -105,6 +108,7 @@ ASP.NET を介してページが表示される（.aspx ページなどが開か
 
 
 ##### <a id="sec-generated-title-4"></a>Global.asax によるログ記録の対象
+
 Global.asax には Web アプリケーション全体に対する処理を記述するといっても、
 Global.asax 中に記述したコードが呼ばれるのは、
 あくまで ASP.NET エンジンを介して表示されるページだけです。
@@ -121,7 +125,8 @@ CGI でよく行われるような、
 （HTML 中の &lt;img&gt; タグから ASP.NET で記述された画像カウンタを呼びだすとか）。
 
 
-##<a id="sec-generated-title-5"></a> <a id="logging"></a>ログの記録
+## <a id="sec-generated-title-5"></a> <a id="logging"></a>ログの記録
+
 ログ記録のタイミングを決めたところで、
 実際のログ記録の説明に入ります。
 
@@ -146,6 +151,7 @@ CGI でよく行われるような、
 
 
 ##### <a id="sec-generated-title-6"></a>サーバ上のファイルパスの取得
+
 Web アプリケーションの物理パスは
 Request.PhysicalApplicationPath で取得できます。
 （Request は、System.Web.HttpApplication とか System.Web.UI.Page クラスのプロパティ。
@@ -169,6 +175,7 @@ DateTime now = DateTime.Now;
 
 
 ##### <a id="sec-generated-title-7"></a>排他制御
+
 Web アプリケーションにいつ誰がアクセスしてくるかは分かりません。
 当然、複数の人が同時にアクセスしてくることもありえます。
 このような状況下では、ファイルの読み書きに排他制御を掛ける必要があります。
@@ -242,6 +249,7 @@ Application.UnLock();
 
 
 ##### <a id="sec-generated-title-8"></a>サンプル
+
 まとめると、
 Global.asax.cs（Global.asax のコードビハインド）に以下のようなコードを書くことでアクセスログの記録ができます。
 
@@ -291,7 +299,8 @@ Global.asax.cs（Global.asax のコードビハインド）に以下のような
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="global_asax"></a>検索エンジンのクローラの除外
+## <a id="sec-generated-title-9"></a> <a id="global_asax"></a>検索エンジンのクローラの除外
+
 前節の状態だとおそらく、検索エンジンのクローラロボットでアクセスログが埋まります。
 なので、クローラだった場合にはログを記録しない仕組みが必要になります。
 

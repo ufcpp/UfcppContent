@@ -19,7 +19,8 @@ aliases:
 
 # イテレーター
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# の foreach 構文は、コレクションクラスの利用者側から見ると非常に便利な機能です。
 しかしながら、実装側から見た場合、<code>IEnumerable</code>や<code>IEnumerator</code>インターフェースを実装する必要があり、結構面倒な作業が必要でした。
 
@@ -27,13 +28,15 @@ C# の foreach 構文は、コレクションクラスの利用者側から見�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * イテレーター構文： IEnumerator を簡単に実装するための機能。
 
 * return の代わりに yield return
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="block"></a>イテレーター ブロック
+## <a id="sec-generated-title-3"></a> <a id="block"></a>イテレーター ブロック
+
 メソッドやプロパティのgetアクセサーなどを定義する際、ブロック中に`return`の代わりに`yield return`もしくは`yield break`を書くことで、通常のメソッドやプロパティとは違った動作が得られます。この、`yield return`もしくは`yield break`を含むブロックのことを<strong id="iterator" class="keyword">イテレーター</strong> ブロック（iterator block）と言いいます。
 
 イテレーター ブロックを使うことで、「[foreach 文](sp_foreach.md#foreach)」で利用可能なコレクションを返すメソッドやプロパティを簡単に実装することができます。
@@ -133,7 +136,8 @@ for 文や while 文を使わず、ベタに yield return を並べても OK で
 }
 </code></pre>
 
-##<a id="sec-generated-title-4"></a> <a id="restriction"></a>イテレーターの制限
+## <a id="sec-generated-title-4"></a> <a id="restriction"></a>イテレーターの制限
+
 イテレーター ブロックは、戻り値を返せるような関数メンバー(メソッド、演算子、プロパティのget、インデクサーのget)なら基本的には何に対してでも使えます。
 
 ただし、いくつか制限があります。
@@ -160,7 +164,8 @@ for 文や while 文を使わず、ベタに yield return を並べても OK で
   - (finally 句のみを持つ try 句内には`yield return`を書けます)
 - catch 句内
 
-##<a id="sec-generated-title-5"></a> <a id="GetEnum"></a>GetEnumerator
+## <a id="sec-generated-title-5"></a> <a id="GetEnum"></a>GetEnumerator
+
 「[コレクションクラスの自作](sp_foreach.md#ownmaking)」で説明したように、
 通常、foreach 文で利用できるコレクションクラスを自作するには、
 IEnumerable インターフェースを継承し、
@@ -191,6 +196,7 @@ GetEnumerator と言う名前のイテレーター ブロックを定義する�
 
 
 ##### <a id="sec-generated-title-6"></a>サンプル
+
 「[foreach](sp_foreach.md)」で挙げた例を、
 ジェネリックスとイテレーターを用いて書き直してみます。
 
@@ -271,7 +277,8 @@ GetEnumerator と言う名前のイテレーター ブロックを定義する�
 
 
 
-##<a id="sec-generated-title-7"></a> <a id="complied"></a>イテレーターのコンパイル結果
+## <a id="sec-generated-title-7"></a> <a id="complied"></a>イテレーターのコンパイル結果
+
 イテレーターは、
 コレクションクラスを実装する際の手間が大幅に削減できる、
 非常に便利な機能です。
@@ -389,7 +396,8 @@ Current = x;    <span class="comment">// 戻り値を Current に保持</span>
 Reset を呼ぼうとすると NotSupportedException がスローされます。
 
 
-##<a id="sec-generated-title-8"></a> <a id="dispose"></a>リソースの破棄
+## <a id="sec-generated-title-8"></a> <a id="dispose"></a>リソースの破棄
+
 「[リソースの破棄](../resource/oo_dispose.md)」で説明したように、
 ファイルなどの、.NET Framework の「[ガーベジコレクション](../cs4j/ab_csspec.md#gc)」の管理対象外のリソースは明示的な破棄が必要です。
 

@@ -18,7 +18,8 @@ aliases:
 
 # 実行基盤
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 （書きかけ）
 
 MS 実装の名前「.NET Framework」、あるいは、標準規格の名前「CLI（Common Language Infrastructure）」とは。
@@ -31,7 +32,8 @@ MS 実装の名前「.NET Framework」、あるいは、標準規格の名前「
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="cli"></a>CLI
+## <a id="sec-generated-title-2"></a> <a id="cli"></a>CLI
+
 IL（メタデータ含めて）、VES、BCL それぞれの意味合いを
 
 共通型システム
@@ -43,7 +45,8 @@ IL（メタデータ含めて）、VES、BCL それぞれの意味合いを
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="android"></a>余談: Android は Java か？
+## <a id="sec-generated-title-3"></a> <a id="android"></a>余談: Android は Java か？
+
 とか言われる理由。
 要は、「Java 言語だけど、実行システムもライブラリも Java じゃない」。
 

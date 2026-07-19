@@ -18,7 +18,8 @@ aliases:
 
 # 辞書
 
-##<a id="sec-generated-title-1"></a> <a id="dic"></a>辞書
+## <a id="sec-generated-title-1"></a> <a id="dic"></a>辞書
+
 「辞書」というと、
 例えば国語辞書などがその代表例なわけですが、
 「項目名」と「項目の説明」等がペアになっています。
@@ -117,7 +118,8 @@ Perl 等いくつかの言語では「連想配列（associated array）」と�
 おそらく、Perl の連想配列は「[ハッシュテーブル](col_hash.md#hashtable)」を使って実装されているのでしょう。
 
 
-##<a id="sec-generated-title-2"></a> <a id="impl"></a>実装方法
+## <a id="sec-generated-title-2"></a> <a id="impl"></a>実装方法
+
 ここでは、
 「[ハッシュテーブル](col_hash.md#hashtable)」を使った実装で説明したいと思います。
 名前は HashDictionary としておきましょう。
@@ -236,7 +238,8 @@ Perl 等いくつかの言語では「連想配列（associated array）」と�
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 上述の HashDictionary に加え、
 「[ソート済み配列](col_sorted.md#sorted)」、

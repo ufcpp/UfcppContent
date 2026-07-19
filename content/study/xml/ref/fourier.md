@@ -18,17 +18,20 @@ aliases:
 
 # フーリエ変換など
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 フーリエ変換、ラプラス変換、Z変換の記号。
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;Fourier&gt;変換元&lt;/Fourier&gt;
 &lt;Laplace&gt;変換元&lt;/Laplace&gt;
 &lt;Z&gt;変換元&lt;/Z&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;Fourier&gt;f&lt;paren&gt;t&lt;/paren&gt;&lt;/Fourier&gt;&lt;paren&gt;ω&lt;/paren&gt;, 
 &lt;Laplace&gt;f&lt;paren&gt;t&lt;/paren&gt;&lt;/Laplace&gt;&lt;paren&gt;s&lt;/paren&gt;, 
 &lt;Z&gt;f&lt;paren&gt;t&lt;/paren&gt;&lt;/Z&gt;&lt;paren&gt;z&lt;/paren&gt;
@@ -37,7 +40,8 @@ aliases:
 <span class="script">Z</span><span class="paren" style="font-size:em;">[</span>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span>
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:Fourier"&gt;
   &lt;span class="normal"&gt;&amp;#x2131;&lt;/span&gt;
   &lt;xsl:if test="@inv!=''"&gt;
@@ -90,7 +94,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>span.cursive
 {
   font-family:cursive;

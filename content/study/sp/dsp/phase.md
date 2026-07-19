@@ -18,7 +18,8 @@ aliases:
 
 # 線形位相と最小位相
 
-##<a id="sec-generated-title-1"></a> <a id="pahse-variation"></a>位相の変化
+## <a id="sec-generated-title-1"></a> <a id="pahse-variation"></a>位相の変化
+
 <pre>
 ・振幅は同じだけど位相の異なる2つの信号
 時間領域で波形を見ると、全然違う見た目になるけど、
@@ -51,7 +52,8 @@ aliases:
 コサイン変換では、そもそも位相を得られないし、変化させれない。
 </pre>
 
-##<a id="sec-generated-title-2"></a> <a id="allpass"></a>オールパス特性
+## <a id="sec-generated-title-2"></a> <a id="allpass"></a>オールパス特性
+
 <pre>
 「振幅は同じだけど位相の異なる2つの信号」を作ろうと思ったら、
 「振幅特性が周波数によらず1で固定で、位相だけ変化する特性」を考えればいい。
@@ -89,7 +91,8 @@ z ＝ exp(jTω) ＝ cos Tω ＋ j sin Tω
 それぞれ振幅特性が等しく、位相だけが異なる伝達関数になる。
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="plan"></a>線形位相
+## <a id="sec-generated-title-3"></a> <a id="plan"></a>線形位相
+
 <strong id="linear_phase" class="keyword">線形位相</strong>
 <pre>
 周波数によらず遅延が一定ならば、位相は線形（φ ＝ kω … ωの1次式）になる。
@@ -115,7 +118,8 @@ z ＝ exp(jTω) ＝ cos Tω ＋ j sin Tω
 実関数 × exp jTω ＝ 位相 Tω ＝ 線形位相
 </pre>
 
-##<a id="sec-generated-title-4"></a> <a id="plan"></a>最小位相
+## <a id="sec-generated-title-4"></a> <a id="plan"></a>最小位相
+
 <strong id="minimum_phase" class="keyword">最小位相</strong>
 <pre>
 1. 最小位相とは何か
@@ -203,8 +207,10 @@ log|X| のヒルベルト変換で求まります。
 (計算手順的にはケプストラム解析に似ている。)
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="apendix"></a>付録
-###<a id="sec-generated-title-6"></a> <a id="apendix"></a>最小位相特性のエネルギー
+## <a id="sec-generated-title-5"></a> <a id="apendix"></a>付録
+
+### <a id="sec-generated-title-6"></a> <a id="apendix"></a>最小位相特性のエネルギー
+
 最小位相特性のエネルギーが「時刻 0 付近に集まる」というのは、
 任意の時刻 <span class="math">k ＞ 0</span> に対して、
 <div class="math">

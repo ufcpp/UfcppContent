@@ -14,7 +14,8 @@ aliases:
 
 # コレクション式
 
-##<a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abstract">概要</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 C# 12 で、`[]` 記号を使って配列などの初期化ができるようになりました。
@@ -42,7 +43,8 @@ C# 12 で、`[]` 記号を使って配列などの初期化ができるように
 <span class="reserved">int</span>[] <span class="variable">combined</span> <span class="operator">=</span> [<span class="number">0</span>, <em>..</em><span class="variable">array1</span>, <em>..</em><span class="variable">array2</span>, <span class="number">7</span>];
 </pre>
 
-##<a id="sec-generated-title-2"></a> <a id="background">背景: これまでのコレクションの初期化</a>
+## <a id="sec-generated-title-2"></a> <a id="background">背景: これまでのコレクションの初期化</a>
+
 これまでだと、以下のように型に応じて書き方を変える必要がありました。
 
 <pre class="source" title="これまでの書き方いろいろ">
@@ -59,6 +61,7 @@ C# 12 で、`[]` 記号を使って配列などの初期化ができるように
 1つずつ、もう少し補足を加えます。
 
 #### <a id="sec-generated-title-3"></a>配列(1)
+
 `new[] { }` という書き方で配列を作れます。
 
 <pre class="source" title="配列の new">
@@ -79,6 +82,7 @@ C# 12 で、`[]` 記号を使って配列などの初期化ができるように
 また、「要素の中身から型決定」だと、ブログ「[共変配列事故](../../../blog/2022/11/covariantarrayincident/index.md)」で書いたような問題を踏むことがあります。
 
 #### <a id="sec-generated-title-4"></a>配列(2)
+
 配列の変数宣言時に限り、以下のように `{}` だけで初期化できます。
 
 <pre class="source" title="配列初期化子">
@@ -94,6 +98,7 @@ C# 12 で、`[]` 記号を使って配列などの初期化ができるように
 </pre>
 
 #### <a id="sec-generated-title-5"></a>コレクション初期化子
+
 所定の条件を満たす型に対して、`new T() { }` という書き方で初期化ができます。
 これを[コレクション初期化子](../functional/sp3_lambda.md#collectioninit)と言います。
 
@@ -120,6 +125,7 @@ ObservableCollection&lt;int&gt;
 </pre>
 
 #### <a id="sec-generated-title-6"></a>stackalloc
+
 パフォーマンス的に配列を使いたくない場面があり、
 そういう場合 [stackalloc](../interop/sp_unsafe.md#safe-stackalloc)というものが使えることがあります。
 
@@ -140,7 +146,8 @@ C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)の導入とともに saf
 </pre>
 
 
-####<a id="sec-generated-title-7"></a> <a id="static-data">静的データ最適化</a>
+#### <a id="sec-generated-title-7"></a> <a id="static-data">静的データ最適化</a>
+
 `ReadOnlySpan<T>` 型に対して配列を渡すと、
 最適化で配列が消えてくれて、stackalloc を使うよりもパフォーマンスがよくなることがあります。
 
@@ -157,6 +164,7 @@ C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)の導入とともに saf
 結構な混乱を招いています。
 
 #### <a id="sec-generated-title-8"></a>ImmutableArray
+
 [`ImmutableArray<T>`](https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.immutable.immutablearray-1) という型に対しては初期化子の類が使えません。
 以下のように地道に `Create` メソッドを呼ぶ必要があります。
 
@@ -175,7 +183,8 @@ C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)の導入とともに saf
 <span class="type struct">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">immutable</span> <span class="operator">=</span> <span class="reserved">new</span>() { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
 </pre>
 
-##<a id="sec-generated-title-9"></a> <a id="collection-expr">コレクション式</a>
+## <a id="sec-generated-title-9"></a> <a id="collection-expr">コレクション式</a>
+
 前節で説明したような「型によって初期化の方法が違う」という問題と、補足で書いた諸問題に対処するため、
 C# 12 で<strong id="key-collection-expr" class="keyword">コレクション式</strong>(collection expression)というものを導入することになりました。
 
@@ -299,7 +308,8 @@ stackalloc と違って、参照型の `Span<T>` に対しても使えます。
 (おおむね目標は達成しているので、以前の書き方を積極的に選ぶ理由はありません。
 配列やコレクションの初期化は、C# 12 以降を使えるのであればすべて `[]` を使っていいと思います。)
 
-###<a id="sec-generated-title-10"></a> <a id="square-bracket">余談: [] 括弧</a>
+### <a id="sec-generated-title-10"></a> <a id="square-bracket">余談: [] 括弧</a>
+
 C# ではこれまで、
 配列の `new[] { }` にしろ、コレクション初期化子の `new() { }` にしろ、
 コレクション系の構文には `{}` を使うものが多かったわけですが、
@@ -399,7 +409,8 @@ C# 8 の頃からある[プロパティ パターン](patterns.md#property)と�
 <span class="reserved">_</span> <span class="operator">=</span> <span class="variable">list</span> <span class="reserved">is</span> [<span class="number">1</span>, ..];
 </pre>
 
-###<a id="sec-generated-title-11"></a> <a id="null-conditional-foreach">余談: null 条件 foreach</a>
+### <a id="sec-generated-title-11"></a> <a id="null-conditional-foreach">余談: null 条件 foreach</a>
+
 「C# に追加して欲しい機能」としてそこそこ高頻度で挙がるものの1つに、
 「null 条件 foreach」があったりします。
 これは要するに、以下のようなコードを、
@@ -473,7 +484,8 @@ C# 8 の頃からある[プロパティ パターン](patterns.md#property)と�
 
 (これが十分に便利なので、`foreach?` 提案が通る可能性はかなり低くなりました。)
 
-##<a id="sec-generated-title-12"></a> <a id="spread">スプレッド</a>
+## <a id="sec-generated-title-12"></a> <a id="spread">スプレッド</a>
+
 コレクション式の中では、`..` を使って「他のコレクションの中身を展開」みたいなことができます。
 これを<strong id="key-spread" class="keyword">スプレッド</strong>(spread: 広げる、伸ばす、まき散らす)演算子と言います。
 
@@ -531,7 +543,8 @@ C# 8 の頃からある[プロパティ パターン](patterns.md#property)と�
 </pre>
 
 
-##<a id="sec-generated-title-13"></a> <a id="type-inference">型推論・オーバーロード解決</a>
+## <a id="sec-generated-title-13"></a> <a id="type-inference">型推論・オーバーロード解決</a>
+
 元々あった配列やコレクション初期化子の構文では、`new T[]` や `new List<T>()` などというように、型名を明示できます。
 それに対して、コレクション式は `[]` しか書かないので何の型になるかは完全に推論だよりになります。
 
@@ -541,7 +554,8 @@ C# 13 以降で検討中です。
 <pre class="source" title="C# 12 時点では型決定できない var">
 <span class="reserved">var</span> <span class="variable">list</span> <span class="operator">=</span> <span class="error" title="CS9176">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span>;</pre>
 
-###<a id="sec-generated-title-14"></a> <a id="target-typed">ターゲットの型から</a>
+### <a id="sec-generated-title-14"></a> <a id="target-typed">ターゲットの型から</a>
+
 基本的にコレクション式の型はターゲット(代入先の変数・引数の型)から決定します。
 
 この点は `new[] {}` の場合と異なります。
@@ -584,7 +598,8 @@ C# 13 以降で検討中です。
 };
 </pre>
 
-###<a id="sec-generated-title-15"></a> <a id="from-element">要素の型から</a>
+### <a id="sec-generated-title-15"></a> <a id="from-element">要素の型から</a>
+
 一方で、メソッドのオーバーロード解決などが絡む場合、
 コレクション式の中身からの型解決も働きます。
 
@@ -612,7 +627,8 @@ C# 13 以降で検討中です。
 <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Print</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type param">T</span>[] <span class="variable local">args</span>) { }
 </pre>
 
-###<a id="sec-generated-title-16"></a> <a id="priority">オーバーロード解決の優先度</a>
+### <a id="sec-generated-title-16"></a> <a id="priority">オーバーロード解決の優先度</a>
+
 `[]` は配列や `List<T>`, `Span<T>` など、いろいろな型になるわけですが、
 では、そのいずれも候補になるオーバーロードの場合はどれが優先されるでしょうか。
 
@@ -747,13 +763,15 @@ C# 13 以降で検討中です。
 }
 </pre>
 
-##<a id="sec-generated-title-17"></a> <a id="after12">将来計画(C# 13 以降)</a>
+## <a id="sec-generated-title-17"></a> <a id="after12">将来計画(C# 13 以降)</a>
+
 スケジュールの関係で C# 12 からは外れて、
 C# 13 以降で実装される予定になっている機能がいくつかあります。
 詳細は実装されてから追記しますが、
 簡単に紹介だけしておきます。
 
 #### <a id="sec-generated-title-18"></a>自然な型
+
 `var x = [1, 2];` みたいに、`var` と組み合わせでは「ターゲットからの型推論」ができないわけですが、
 この時にデフォルトで何の型になるかは C# 12 時点では決めかねました。
 
@@ -761,6 +779,7 @@ C# 13 以降で実装される予定になっている機能がいくつかあ�
 一方で、パフォーマンスを考えると `Span<T>` がいいです(検討中)。
 
 #### <a id="sec-generated-title-19"></a>拡張メソッドからの型推論
+
 単純に `var x = [1, 2];` とは書けない一方で、
 C# 12 時点でも、`var x = (int[])[1, 2];` みたいにキャストを挟めば型を決定できます。
 
@@ -784,6 +803,7 @@ C# 12 時点でも、`var x = (int[])[1, 2];` みたいにキャストを挟め�
 C# 13 以降で取り組むそうです。
 
 #### <a id="sec-generated-title-20"></a>Dictionary 式
+
 `Dictionary<TKey, TValue>` などのキーを持つタイプのコレクションに対して、
 以下のような構文で初期化できるようにしたいという案があって、これも C# 13 で検討中です。
 
@@ -796,6 +816,7 @@ C# 13 以降で取り組むそうです。
 </pre>
 
 #### <a id="sec-generated-title-21"></a>非ジェネリック コレクション
+
 C# 12 では以下のようなコードに対応しなかったんですが、これも C# 13 で検討中です。
 
 <pre class="source" title="非ジェネリック コレクション">

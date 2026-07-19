@@ -18,7 +18,8 @@ aliases:
 
 # インターフェース
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 インターフェース(interface)という言葉の意味は直訳すると「境界面」になります。
 すなわち、物と物との間の仲介をする部分のことです。
 
@@ -32,6 +33,7 @@ aliases:
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * インターフェース: クラス外部からみた規約だけを定めるもの。「クラスの内外の境界」という意味。
 
 * public な抽象メソッドだけを持つクラスのようなもの。
@@ -42,9 +44,11 @@ aliases:
 * class キーワードの代わりに interface キーワードを使う。
 
 ##### <a id="sec-generated-title-3"></a>サンプル
+
 -[https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Oop/InterfaceSample](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Oop/InterfaceSample)
 
-##<a id="sec-generated-title-4"></a> <a id="contract"></a>メソッドの規約と実装
+## <a id="sec-generated-title-4"></a> <a id="contract"></a>メソッドの規約と実装
+
 メソッドを設計する場合、規約の決定と実装という2つの段階を経ることになります。
 
 <strong id="contract" class="keyword">規約</strong>あるいは<em>契約</em>（contract）とは、
@@ -75,7 +79,8 @@ aliases:
 「年齢を答える」という規約は満たされています。
 
 
-##<a id="sec-generated-title-5"></a> <a id="interface"></a>C# のインターフェース
+## <a id="sec-generated-title-5"></a> <a id="interface"></a>C# のインターフェース
+
 インターフェースとは、規約のみを定めるものです。
 上述したように、C# では抽象メソッドを用いることでメソッドの規約のみを定めることが出来ます。
 つまり、C# の<strong id="interface" class="keyword">インターフェース</strong>（interface）とは、抽象メソッドのみを持つ抽象クラスだと考えることが出来ます。
@@ -123,11 +128,13 @@ C# 8.0 では、制限がいくつか緩和されています。
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-6"></a> <a id="lib"></a>標準クラスライブラリ中のインターフェース
+## <a id="sec-generated-title-6"></a> <a id="lib"></a>標準クラスライブラリ中のインターフェース
+
 .NET Framework の標準クラスライブラリでは、汎用性の高いいくつかのインターフェースを標準で用意しています。
 ここでは、そのうちのいくつかを紹介します。
 
-###<a id="sec-generated-title-7"></a> <a id="IComparable"></a>IComparable
+### <a id="sec-generated-title-7"></a> <a id="IComparable"></a>IComparable
+
 `IComparable<T>`インターフェイス(`System`名前空間)は、順序比較ができるものを表します。
 配列の整列などに使います。
 
@@ -191,7 +198,8 @@ C# 8.0 では、制限がいくつか緩和されています。
 }
 </code></pre>
 
-###<a id="sec-generated-title-8"></a> <a id="collection"></a>コレクション
+### <a id="sec-generated-title-8"></a> <a id="collection"></a>コレクション
+
 コレクション(参考: 「[コレクション概要](../../algorithm/collection/collection.md)」)には、
 同じ操作ができる様々な実装方法があります(それぞれにメリット・デメリット、適切な利用場面があります)。
 
@@ -354,7 +362,8 @@ C# 8.0 では、制限がいくつか緩和されています。
 }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="IDisposable"></a>IDisposable
+### <a id="sec-generated-title-9"></a> <a id="IDisposable"></a>IDisposable
+
 `IDisposable`インターフェイス(`System`名前空間)は、[ガベージ コレクション](../resource/rm_gc.md#garbage-collection)任せではなく、
 明示的なタイミングで破棄処理を行いたいものに使います。詳細は「[リソースの破棄](../resource/oo_dispose.md)」で説明します。
 
@@ -394,7 +403,8 @@ C# 8.0 では、制限がいくつか緩和されています。
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-10"></a> <a id="multiple"></a>複数のインターフェイスを実装
+## <a id="sec-generated-title-10"></a> <a id="multiple"></a>複数のインターフェイスを実装
+
 C#は多重継承を認めていません(1つのクラスしか[継承](oo_inherit.md)できない)。この制約はクラスに対してのみかかります。すなわち、インターフェイスは複数実装できます。
 
 例えば、以下のような型を作れます。
@@ -410,7 +420,8 @@ C#は多重継承を認めていません(1つのクラスしか[継承](oo_inhe
 }
 </code></pre>
 
-##<a id="sec-generated-title-11"></a> <a id="orverload"></a>型引数違いのジェネリック インターフェイス
+## <a id="sec-generated-title-11"></a> <a id="orverload"></a>型引数違いのジェネリック インターフェイス
+
 C#では、[オーバーロード](../structured/st_function.md#overload)解決ができる限り、同名のメンバーを持つインターフェイスを複数、普通に実装することができます(オーバーロード解決できない場合には、次節の[明示的実装](#explicit-impl)が必要になります)。
 
 これは特に、[ジェネリック](sp2_generics.md#generics)なインターフェイスを、型引数違いで複数実装する際に有効です。
@@ -467,7 +478,8 @@ C#では、[オーバーロード](../structured/st_function.md#overload)解決�
 }
 </code></pre>
 
-##<a id="sec-generated-title-12"></a> <a id="explicit-impl"></a>明示的実装
+## <a id="sec-generated-title-12"></a> <a id="explicit-impl"></a>明示的実装
+
 インターフェイスの場合、1つのクラスで複数のインターフェイスを実装することができます。
 このとき、複数のインターフェイスに同名・同引数のメソッドがあった場合、衝突が起こりえます。
 
@@ -594,14 +606,16 @@ C#では、[オーバーロード](../structured/st_function.md#overload)解決�
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-13"></a> <a id="usage"></a>インターフェイスの明示的実装の用途
+## <a id="sec-generated-title-13"></a> <a id="usage"></a>インターフェイスの明示的実装の用途
+
 もう少し具体的に、インターフェイスの明示的実装の用途をいくつか紹介しましょう。
 
 インターフェイスの明示的実装は、同じ名前のメンバーを持ったインターフェイスを複数同時に実装できるようにするための機能です。
 では、それが必要になる場面というのは具体的にはどういう状況でしょう。
 また、メンバーをいったんインターフェイス型にキャストしてからでないと呼べなくなるという性質も、有効に使える場面があります。
 
-###<a id="sec-generated-title-14"></a> <a id="legacy-member"></a>消したいけど消せないメソッドを隠す
+### <a id="sec-generated-title-14"></a> <a id="legacy-member"></a>消したいけど消せないメソッドを隠す
+
 まず一般論として、public なものは、足すより消す方が難しいです。他人の作ったライブラリを使っていて、ある日突然、自分の使っているメソッドが消えたらどうでしょう。自分は何もしていないのに、自分の書いたコードがコンパイルできなくなります。
 
 この問題はライブラリが広く使われれば使われるほど影響範囲が広がります。標準ライブラリに至っては、まず削除はできないものだと思ってください。
@@ -647,13 +661,15 @@ C#では、[オーバーロード](../structured/st_function.md#overload)解決�
 }
 </code></pre>
 
-####<a id="sec-generated-title-15"></a> <a id="legacy-nongeneric"></a>補足1： 非ジェネリック インターフェイス
+#### <a id="sec-generated-title-15"></a> <a id="legacy-nongeneric"></a>補足1： 非ジェネリック インターフェイス
+
 特に、[ジェネリック](sp2_generics.md#generics)関連に多いです。
 ジェネリックが.NET 1.0には間に合わず、2.0からの追加だったので、多くのインターフェイスで非ジェネリック版と、ジェネリック版が2重保守されています。
 
 `IEnumerable`もその例の1つで、.NET 1.0時代に非ジェネリック版が、2.0でジェネリック版が入りました。2.0で入ったジェネリック版は、1.0時代のコードとの互換性のために非ジェネリック版から派生しています。もし、最初から.NETにジェネリックがあれば、非ジェネリック版の機能は不要でした。
 
-####<a id="sec-generated-title-16"></a> <a id="legacy-isreadonly"></a>補足2: IsReadOnly
+#### <a id="sec-generated-title-16"></a> <a id="legacy-isreadonly"></a>補足2: IsReadOnly
+
 インターフェイスが増えるというのはそれなりのコストがかかるそうで、.NETリリース初期の頃は、インターフェイスを減らす方向で設計を進めたそうです。`ICollection<T>`インターフェイスが`IsReadOnly`というプロパティを持っているのはその頃の名残です。しかし今となっては、インターフェイスが増えてもいいからちゃんと「読み取り専用なコレクション」と「書き換え可能なコレクション」は別インターフェイスに分けるべきだということになっています(そのため、.NET 4.5で、`IReadOnlyCollection<T>`インターフェイスが(`System.Collections.Generic`名前空間)が追加されました)。
 
 つまり、今と昔で以下のような思想の差があります。
@@ -663,13 +679,15 @@ C#では、[オーバーロード](../structured/st_function.md#overload)解決�
 
 こうなると、`IsReadOnly`プロパティははっきり言って邪魔です。`ICollection<T>`を選んだ時点で書き換え可能にしたいんだから、おそらくは常にtrueを返すだけになるでしょう。
 
-###<a id="sec-generated-title-17"></a> <a id="access-restriction"></a>メンバーのアクセスを制限する
+### <a id="sec-generated-title-17"></a> <a id="access-restriction"></a>メンバーのアクセスを制限する
+
 (書きかけ)
 
 - internal set 隠し
 - internal interface 実装できるのとの組み合わせ
 
 ### <a id="sec-generated-title-18"></a>ジェネリック版とobject版
+
 (書きかけ)
 
 ときどき、「特定のインターフェイスを実装している時だけ特別な動作を挟む」みたいな処理を書きたい場合があります。
@@ -681,7 +699,8 @@ C#では、[オーバーロード](../structured/st_function.md#overload)解決�
 <!-- original-page-break -->
 
 
-##<a id="sec-generated-title-19"></a> <a id="dim"></a>インターフェイスのデフォルト実装
+## <a id="sec-generated-title-19"></a> <a id="dim"></a>インターフェイスのデフォルト実装
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 (.NET Core 3.0)で、インターフェイスの制限が緩和されました。
@@ -717,7 +736,8 @@ C# 8.0 (.NET Core 3.0)で、インターフェイスの制限が緩和されま�
 
 <sup>※</sup> Java 由来で、「インターフェイスのデフォルト メソッド」(default interface method、略して DIM)と呼ばれたりもします。
 
-###<a id="sec-generated-title-20"></a> <a id="runtime-feature"></a>ランタイム側の修正
+### <a id="sec-generated-title-20"></a> <a id="runtime-feature"></a>ランタイム側の修正
+
 インターフェイスのデフォルト実装は C# コンパイラー上のトリックだけでは実装できず、 .NET ランタイム側の対応が必要な機能です。
 C# 8.0 以降を使っていても、ターゲットとなるランタイム(TargetFramework)が古いと使えません。
 .NET Core 3.0 (かそれと同世代)以降のランタイムである必要があります。
@@ -725,14 +745,16 @@ C# 8.0 以降を使っていても、ターゲットとなるランタイム(Tar
 
 詳しくは以前書いたブログ「[RuntimeFeature クラス](../../../blog/2018/12/runtimefeature/index.md)」で説明しています。
 
-###<a id="sec-generated-title-21"></a> <a id="dim-motivation"></a>導入の動機
+### <a id="sec-generated-title-21"></a> <a id="dim-motivation"></a>導入の動機
+
 この制限緩和には、以下のような動機ががあります。
 
 - 既存のインターフェイスにメンバーを追加しても破壊的変更にならない
 - 同様の機能を持っている Android (Java (8以降))や iOS (Swift)との相互運用
 - [トレイト](https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AC%E3%82%A4%E3%83%88)的にも使える
 
-####<a id="sec-generated-title-22"></a> <a id="breaking-change"></a>メンバー追加による破壊的変更
+#### <a id="sec-generated-title-22"></a> <a id="breaking-change"></a>メンバー追加による破壊的変更
+
 最大の動機は1番目の「破壊的変更にならない」という部分です。
 抽象メンバーは派生クラスでの実装が必須で、実装しなければコンパイル エラーを起こします。
 その結果、「後から追加したら派生クラスがコンパイル エラーを起こす」という状態になります。
@@ -777,7 +799,8 @@ Java 8 の同様の機能も同じ動機に基づいています。
 (小さい規模だと、自分たちで作ったインターフェイスを自分たちで使うということが多くなりますし、
 その場合は別に破壊的変更が気になること自体あまりありません。)
 
-####<a id="sec-generated-title-23"></a> <a id="trait"></a>トレイト用途
+#### <a id="sec-generated-title-23"></a> <a id="trait"></a>トレイト用途
+
 [トレイト](https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AC%E3%82%A4%E3%83%88)的な用途としては、フィールドを持てないなどの制限があるので、恩恵は限定的です。
 C# の場合には[拡張メソッド](../functional/sp3_extension.md)でも似たようなことができるので、特に恩恵は少なめです。
 
@@ -799,7 +822,8 @@ C# の場合には[拡張メソッド](../functional/sp3_extension.md)でも似�
 そのため、[実際の `Count` の実装](https://source.dot.net/#System.Linq/System/Linq/Count.cs)には `is` 演算子による分岐が挟まっています。
 この分岐をするくらいなら、拡張メソッドではなく、インターフェイスのデフォルト実装としてトレイト的に実装する方が素直(virtual なので `ICollection` 側でオーバーライドできる)です。
 
-###<a id="sec-generated-title-24"></a> <a id="function-implementation"></a>実装を持つ関数メンバー
+### <a id="sec-generated-title-24"></a> <a id="function-implementation"></a>実装を持つ関数メンバー
+
 ということで、インターフェイスが実装を持てるようになりました。
 
 <pre class="source" title="デフォルト実装">
@@ -845,7 +869,8 @@ C# の場合には[拡張メソッド](../functional/sp3_extension.md)でも似�
 
 主目的(新規メンバー追加での破壊的変更の回避)のためにはインスタンス メンバーだけ実装を持てればいいわけですが、ついでにいろいろと緩和されています。
 
-####<a id="sec-generated-title-25"></a> <a id="static-member"></a>静的メンバー
+#### <a id="sec-generated-title-25"></a> <a id="static-member"></a>静的メンバー
+
 静的メンバーも持てるようになりました。
 インスタンス メンバーと違って、静的コンストラクターや静的フィールドは持てます。
 [定数](../start/sp_const.md)や、[演算子](oo_operator.md)、[入れ子](../package/toplevelaccessibility.md#key-nested)の型も持てます。
@@ -881,7 +906,8 @@ C# の場合には[拡張メソッド](../functional/sp3_extension.md)でも似�
 次節で説明する通り、アクセシビリティは特に指定しなければ `public` です。
 明示すれば `protected` や `private` にすることもできます。
 
-####<a id="sec-generated-title-26"></a> <a id="accessibility"></a>アクセシビリティ
+#### <a id="sec-generated-title-26"></a> <a id="accessibility"></a>アクセシビリティ
+
 C# 7.3 までは、インターフェイスのメンバーは常に `public` で `virtual` でした。
 C# 8.0 からは、明示的に指定することでクラスと同じく、`protected` などのアクセシビリティを指定できます。
 
@@ -918,7 +944,8 @@ C# 8.0 からは、明示的に指定することでクラスと同じく、`pro
 また、[後述しますが](#mics-restriction)、`protected` なメンバーにアクセスできるのは派生インターフェイスからだけです。
 クラスの場合、派生(実装)しているクラスであっても `protected` メンバーは見えません。
 
-####<a id="sec-generated-title-27"></a> <a id="default-virtual"></a>既定で仮想
+#### <a id="sec-generated-title-27"></a> <a id="default-virtual"></a>既定で仮想
+
 アクセシビリティを明示して `protected` や `internal` などを付けても、`protected virtual` や `internal virtual` の意味になります。
 仮想呼び出しになる方が既定動作です。
 これも、クラスとは既定動作が違います。
@@ -957,7 +984,8 @@ C# のクラスは何も指定しなければ仮想関数にはなりません�
 
 (多重継承があり得るインターフェイスでは、ある経路で `sealed` を付けてオーバーライドを禁止しても、別のある経路では `sealed` が付いていないなど、不整合があるため認められません。)
 
-####<a id="sec-generated-title-28"></a> <a id="multiple-inheritance"></a>多重継承
+#### <a id="sec-generated-title-28"></a> <a id="multiple-inheritance"></a>多重継承
+
 クラスとの最大の差は多重継承ができる点です。
 
 デフォルト実装があっても、
@@ -1025,7 +1053,8 @@ C# のクラスは何も指定しなければ仮想関数にはなりません�
 ちなみに、将来的にはこの書き方も認めたいという計画はあります
 (参考: 「[base(T) アクセス](oo_inherit.md#non-virtual-base-access)」)。
 
-###<a id="sec-generated-title-29"></a>#<a id="reabstraction"></a>再抽象化
+### <a id="sec-generated-title-29"></a>#<a id="reabstraction"></a>再抽象化
+
 デフォルト実装を持つメンバーを、派生インターフェイス側で再び抽象メンバーに戻すこともできます。
 以下のように、明示的実装っぽい書き方の前に `abstract` 修飾を付けます。
 
@@ -1053,7 +1082,8 @@ C# のクラスは何も指定しなければ仮想関数にはなりません�
 
 この機能を再抽象化(re-abstraction)と言います。
 
-####<a id="sec-generated-title-30"></a> <a id="mics-restriction"></a>その他の制限
+#### <a id="sec-generated-title-30"></a> <a id="mics-restriction"></a>その他の制限
+
 主に既存の(C# 7.3 以前の)コードを壊さないようにするためですが、
 その他にもいくつか制限が掛かっています。
 派生クラスと派生インターフェイスで挙動が変わったりもするので注意が必要です。
@@ -1136,7 +1166,8 @@ C# のクラスは何も指定しなければ仮想関数にはなりません�
 
 <!-- original-page-break -->
 
-##<a id="sec-generated-title-31"></a> <a id="static-abstract"></a>インターフェイスの静的抽象メンバー
+## <a id="sec-generated-title-31"></a> <a id="static-abstract"></a>インターフェイスの静的抽象メンバー
+
 <h5 class="version version11">Ver. 11.0</h5>
 
 C# 11 (.NET 7) で、インターフェイスの静的メンバーを abstract/virtual にできるようになりました。
@@ -1182,7 +1213,8 @@ C# 11 (.NET 7) で、インターフェイスの静的メンバーを abstract/v
 
 [C# 8 のときのデフォルト実装](#dim)と同じく、ランタイム側の修正が必要な機能で、C# バージョンだけを 11 に上げても、古い .NET をターゲットにしていると利用できません。
 
-###<a id="sec-generated-title-32"></a> <a id="static-abstract-declaration">静的抽象メンバーの宣言</a>
+### <a id="sec-generated-title-32"></a> <a id="static-abstract-declaration">静的抽象メンバーの宣言</a>
+
 文法的には割かし素直で、 `abstract`/`virtual` と `static` を併用できるようになりました。
 
 <pre class="source" title="">
@@ -1231,7 +1263,8 @@ C# 11 (.NET 7) で、インターフェイスの静的メンバーを abstract/v
 }
 </pre>
 
-###<a id="sec-generated-title-33"></a> <a id="static-abstract-implementation">静的抽象メンバーの実装</a>
+### <a id="sec-generated-title-33"></a> <a id="static-abstract-implementation">静的抽象メンバーの実装</a>
+
 インターフェイスの静的メンバーの実装方法はインスタンス メンバーの場合とそれほど変わりません。
 以下のように、`public` で同名のメソッドを定義する(暗黙的実装)か、
 `インターフェイス名.` で実装する(明示的実装)かです。
@@ -1282,7 +1315,8 @@ C# 11 (.NET 7) で、インターフェイスの静的メンバーを abstract/v
 </pre>
 
 
-###<a id="sec-generated-title-34"></a> <a id="static-abstract-invocation">静的抽象メンバーの呼び出し</a>
+### <a id="sec-generated-title-34"></a> <a id="static-abstract-invocation">静的抽象メンバーの呼び出し</a>
+
 インターフェイスの静的抽象メンバーは、[ジェネリック型引数](sp2_generics.md#typeparam)越しにしか呼べません。
 
 例えば前節で例に挙げた `IA` インターフェイスの場合、以下のような呼び出し方になります。
@@ -1311,7 +1345,8 @@ C# 11 (.NET 7) で、インターフェイスの静的メンバーを abstract/v
     <span class="reserved">static</span> <span class="reserved">virtual</span> <span class="reserved">void</span> <span class="method"><span class="static">StaticVirtual</span></span>() { }
 }</pre>
 
-####<a id="sec-generated-title-35"></a> <a id="type-class">注意: 静的抽象メンバー呼び出しは静的な型に紐づく</a>
+#### <a id="sec-generated-title-35"></a> <a id="type-class">注意: 静的抽象メンバー呼び出しは静的な型に紐づく</a>
+
 インスタンス メンバーと違って、
 静的抽象メンバーの呼び出しは静的な型に紐づきます。
 
@@ -1363,7 +1398,8 @@ C# 11 (.NET 7) で、インターフェイスの静的メンバーを abstract/v
 このことを指して、他のプログラミングの機能名と照らし合わせて、
 「インターフェイスの静的抽象メンバーは、インターフェイスというよりも型クラス(type class)だ」と説明する人もいるくらいです。
 
-####<a id="sec-generated-title-36"></a> <a id="type-argument">注意: 静的抽象メンバーを持っていると型実引数に渡せない</a>
+#### <a id="sec-generated-title-36"></a> <a id="type-argument">注意: 静的抽象メンバーを持っていると型実引数に渡せない</a>
+
 前節で説明したように、静的な型に紐づく以上、
 `abstract` な(実装を持っていない)型を型引数にすることはできません。
 
@@ -1406,7 +1442,8 @@ C# 11 (.NET 7) で、インターフェイスの静的メンバーを abstract/v
 }
 </pre>
 
-###<a id="sec-generated-title-37"></a> <a id="interface-operator">演算子</a>
+### <a id="sec-generated-title-37"></a> <a id="interface-operator">演算子</a>
+
 静的メンバーを `virtual` / `abstract` にできて一番うれしいのは、
 演算子を定義できることでしょう。
 
@@ -1464,7 +1501,8 @@ C# 11 でインターフェイスに `virtual` / `abstract` な演算子を持�
 <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="method"><span class="static">Sum</span></span>(<span class="reserved">new</span> <span class="reserved">decimal</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
 </pre>
 
-####<a id="sec-generated-title-38"></a> <a id="generic-math">Generic Math</a>
+#### <a id="sec-generated-title-38"></a> <a id="generic-math">Generic Math</a>
+
 加減乗除や論理演算はもちろん、`float`, `double` などの一部の型は `Math.Sin` などの数学関数も使えます。
 コンセプト的に、この新機能を使ったジェネリックな数値処理の事を通称 Generic Math と呼んでいたりします。
 

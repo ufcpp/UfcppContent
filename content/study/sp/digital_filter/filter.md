@@ -18,14 +18,16 @@ aliases:
 
 # ディジタルフィルタ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 ここでは、ディジタルフィルタの設計手法などについて説明していきます。
 （筆者の専門の関係で、音声フィルタを前提とした1次元線形フィルタを中心に説明します。）
 ディジタル信号処理の知識が必須ですので、
 先に「[信号処理](../index.md)」を通読しておいてください。
 
 
-##<a id="sec-generated-title-2"></a> <a id="introduction"></a>ディジタルフィルタとは
+## <a id="sec-generated-title-2"></a> <a id="introduction"></a>ディジタルフィルタとは
+
 ディジタルフィルタとは、
 ディジタル電子計算機などを用いて、
 ディジタル信号の特性を変化させるようなもののことを言います。
@@ -59,7 +61,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="d28e45"></a>ディジタル信号処理おさらい
+## <a id="sec-generated-title-3"></a> <a id="d28e45"></a>ディジタル信号処理おさらい
+
 ディジタルフィルタの話に入る前に、
 軽く「[信号処理](../index.md)」のおさらいをしておきましょう。
 
@@ -82,7 +85,8 @@ D … 遅延
 x[k-N] ＝ D^n x[k] を「N サンプル前の値」という。
 </pre>
 
-##<a id="sec-generated-title-4"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-4"></a> <a id="plan"></a>執筆予定
+
 <pre>
 電子計算機などを使って信号処理
 ↓

@@ -18,7 +18,8 @@ aliases:
 
 # まえがき
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>背景： 釣り記事ごめんなさい
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>背景： 釣り記事ごめんなさい
+
 はてなにこんな記事を書いたりしました。
 
 * [僕が TeX を使うのを辞めた3つの理由](http://d.hatena.ne.jp/ufcpp/20100216/1266337507)
@@ -42,7 +43,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="interest"></a>とりあえず見てみて
+## <a id="sec-generated-title-2"></a> <a id="interest"></a>とりあえず見てみて
+
 つくづく思うわけですが、
 「好きの反対は、嫌いじゃなくて無関心」って言葉はほんとにその通り。
 「Word はダメだ」って思ってる人の大半はそもそも Word をほとんど触っていない様子。
@@ -62,7 +64,8 @@ aliases:
 30秒～1分程度の動画 ＋ 説明文っていう構成はなかなか成功だったようです。
 
 
-##<a id="sec-generated-title-3"></a> <a id="lifelong"></a>ほんとに使うの？
+## <a id="sec-generated-title-3"></a> <a id="lifelong"></a>ほんとに使うの？
+
 「大学の卒論は TeX で書いたけど、就職してから一度たりとも TeX 触ったことがない」って人が多いんですよねぇ。
 僕の周りの話なので、主に情報系の話になりますが。
 知ってる範囲で家電・自動車・SI・ウェブ・ゲームなど、どこに聞いても Word（もしくは OpenOffice や iWork）。
@@ -82,7 +85,8 @@ Word には章立てのアウトラインとか、図表番号の参照とか、
 [方眼紙にできる](http://www.excite.co.jp/News/column/20091104153200/Slashdot_09_11_04_0633213.html)ことの方が大事らしいです。
 
 
-##<a id="sec-generated-title-4"></a> <a id="progress"></a>10年の月日
+## <a id="sec-generated-title-4"></a> <a id="progress"></a>10年の月日
+
 今回書いた釣り記事の1つのテーマに「10年前の最良は今でも最良ですか？」というのがあります。
 釣り記事中で書いたセリフの中でも、以下の文章は我ながら気に入っています。
 
@@ -105,6 +109,7 @@ SVG や MathML や XSL-FO が未来だったあの頃を思い出します・・
 
 
 ##### <a id="sec-generated-title-5"></a>ちょっと昔話
+
 昔は Unicode に数学記号なんてなかったわけですよ。
 不足も多かったですし（拡充されたのは Unicode 4.0 から）、
 コード的に入っていても、フォントが対応していませんでしたし。

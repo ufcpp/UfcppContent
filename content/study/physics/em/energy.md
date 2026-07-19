@@ -18,7 +18,8 @@ aliases:
 
 # 電磁場の持つエネルギー
 
-##<a id="sec-generated-title-1"></a> <a id="preserve"></a>電磁場のエネルギー保存則
+## <a id="sec-generated-title-1"></a> <a id="preserve"></a>電磁場のエネルギー保存則
+
 電磁場にはエネルギーを蓄えることが出来ます。
 この電磁エネルギーにも当然エネルギー保存則
 <div class="math">
@@ -87,7 +88,8 @@ aliases:
 それでは式の導き出し方や、それぞれの文字の意味を順を追って見ていきましょう。
 
 
-##<a id="sec-generated-title-2"></a> <a id="poynting"></a>ポインティングの定理
+## <a id="sec-generated-title-2"></a> <a id="poynting"></a>ポインティングの定理
+
 ファラデー・マクスウェルおよびアンペア・マクスウェルの法則より
 
 <table summary="">

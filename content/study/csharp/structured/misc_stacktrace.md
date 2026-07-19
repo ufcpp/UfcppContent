@@ -18,12 +18,14 @@ aliases:
 
 # \[雑記\] 例外のスタックトレース
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 「[例外](oo_exception.md#exc)」のいいところの1つに、スタックトレース情報が残るという点が挙げられます。
 ただし、「例外の投げ直し」を行いたい場合には少し注意が必要です。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * デバッグ モードでコンパイルすると、行番号やスタックトレースなどの情報が得られる。
 
 * 例外にはスタックトレースが保存されている。
@@ -32,7 +34,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="stacktrace"></a>スタックトレースと例外
+## <a id="sec-generated-title-3"></a> <a id="stacktrace"></a>スタックトレースと例外
+
 どの関数を、どういう階層をたどって呼び出したというような情報を、呼び出しスタック(call stack: 呼び出し(call)履歴が階層的につみあがっていくもの(stack))といいます。
 
 プログラムをデバッグする際、実行時に何かエラーが出たとき、エラーが出た場所がわかるとデバッグが楽になります。
@@ -135,7 +138,8 @@ stack trace:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="rethrow"></a>例外の投げ直し
+## <a id="sec-generated-title-4"></a> <a id="rethrow"></a>例外の投げ直し
+
 例外は、1度キャッチして、ログなどの記録だけして、実際の例外処理はさらに上位の呼び出し元に任せたい場合も多々あります。
 こういう場合、catch 句の中で再度例外を throw することになりますが、この際には少し注意が必要です。
 
@@ -293,7 +297,8 @@ stack trace:
 1度 catch したことを残したいなら別の例外で包んで新たに throw、
 残したくないなら throw; とだけ書きます(変数名(この例の場合でいう ex)を書かない)。
 
-###<a id="sec-generated-title-5"></a> <a id="ExceptionDispatchInfo">ExceptionDispatchInfo</a>
+### <a id="sec-generated-title-5"></a> <a id="ExceptionDispatchInfo">ExceptionDispatchInfo</a>
+
 `catch` 句の外で例外の再 throw を、スタックトレースを紛失せずに行えるよう、`ExceptionDispatchInfo` というクラスが追加されました。
 ([非同期メソッドの実装](../async/sp5_awaitable.md)に必要だったため、これと同世代の .NET Framework 4.5 の頃に追加されたものです。)
 

@@ -18,7 +18,8 @@ aliases:
 
 # チェビシェフフィルタ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="chebyshev" class="keyword">チェビシェフフィルタ</strong>（Chebyshev filter）は、
 通過域で等リプルとなるようなローパスフィルタです。
 リプルを許容することで急峻なカットオフ特性を得ることができます。
@@ -30,7 +31,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="idea"></a>基本アイディア
+## <a id="sec-generated-title-2"></a> <a id="idea"></a>基本アイディア
+
 「[バターワースフィルタ](butterworth.md#butterworth)」は通過域で平坦な周波数特性を示すローパスフィルタでした。
 これに対して、通過域での平坦性を犠牲にし、リプルを許容することによって、
 少ない誤差および急峻なカットオフ特性を持つフィルタを得ることができます。
@@ -55,7 +57,8 @@ aliases:
 <span class="math"><span class="normal">|</span>H<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">|</span><sup>2</sup></span>がローパス特性になります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="cheb-poly"></a>チェビシェフ多項式
+## <a id="sec-generated-title-3"></a> <a id="cheb-poly"></a>チェビシェフ多項式
+
 前節で述べたローパス特性において、
 <span class="math">F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>として、
 <span class="math">ω＜1</span>の範囲での最大値が最も小さくなるような多項式を選ぶことで、
@@ -167,7 +170,8 @@ C<sub>7</sub><span class="paren" style="font-size:em;">(</span>x<span class="par
 の <span class="math">2<sup>n － 1</sup></span> になります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="property"></a>周波数特性
+## <a id="sec-generated-title-4"></a> <a id="property"></a>周波数特性
+
 「[基本アイディア](#idea)」で述べたローパス特性の式中の<span class="math">F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>を、チェビシェフ多項式<span class="math">C<sub>n</sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span>と任意定数<span class="math">ε</span>を用いて
 <span class="math">F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span> ＝ ε C<sub>n</sub><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span></span>
 と置いたものを<em>チェビシェフフィルタ</em>と呼びます。
@@ -196,8 +200,10 @@ C<sub>7</sub><span class="paren" style="font-size:em;">(</span>x<span class="par
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="analog"></a>アナログプロトタイプの設計
-###<a id="sec-generated-title-6"></a> <a id="zp"></a>極配置
+## <a id="sec-generated-title-5"></a> <a id="analog"></a>アナログプロトタイプの設計
+
+### <a id="sec-generated-title-6"></a> <a id="zp"></a>極配置
+
 バターワースフィルタのときと同様に、
 <span class="math"><span class="normal">|</span>H<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span><span class="normal">|</span><sup>2</sup></span>の分母は<span class="math">2n</span>次の多項式であり、
 <span class="math">2n</span>個の極の中から安定な<span class="math">n</span>個の極を選び、
@@ -280,7 +286,8 @@ s ＝ σ ＋ i ω
 すなわち、チェビシェフフィルタの極は複素数平面の楕円上に分布しています。
 
 
-###<a id="sec-generated-title-7"></a> <a id="aptf"></a>アナログプロトタイプ伝達関数
+### <a id="sec-generated-title-7"></a> <a id="aptf"></a>アナログプロトタイプ伝達関数
+
 決定された極配置から、チェビシェフフィルタの伝達関数<span class="math">H<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span></span>は以下のようになります。
 <div class="math">
 H<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span>
@@ -312,7 +319,8 @@ t ＝ <span class="paren" style="font-size:2.5em;">(</span><table class="frac" s
 ＋
 <span class="normal">sin</span><sup>2</sup><span class="paren" style="font-size:1.5em;">(</span><table class="frac" summary="fraction"><tr><td class="num">n － 2 k － 1</td></tr><tr><td>2 n</td></tr></table>π<span class="paren" style="font-size:1.5em;">)</span></div>
 
-###<a id="sec-generated-title-8"></a> <a id="spec"></a>設計仕様
+### <a id="sec-generated-title-8"></a> <a id="spec"></a>設計仕様
+
 透過域/阻止域の周波数/リプル
 （<span class="math">A<sub>p</sub>, r<sub>s</sub>, ω<sub>s</sub></span>）
 を仕様として与えたとき、
@@ -380,7 +388,8 @@ N
 この式を満たすような最小の N を選びます。
 
 
-##<a id="sec-generated-title-9"></a> <a id="digital"></a>ディジタルフィルタ設計
+## <a id="sec-generated-title-9"></a> <a id="digital"></a>ディジタルフィルタ設計
+
 「[アナログプロトタイプの設計](#analog)」で得られた式を、
 カットオフ周波数<span class="math">ω<sub>c</sub></span>で双1次変換することで以下の式が得られる。
 <div class="math">

@@ -18,7 +18,8 @@ aliases:
 
 # .NET とは
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# は「.NET 上で動く言語」（正確には Common Language Infrastructure (CLI) 規格上で動く言語）です。
 （規格上は、C# と .NET は独立していますが、実質的には一体的に開発されています。）
 
@@ -33,7 +34,8 @@ Mono は現在では iOS や Android 上でも動いていて、[Xamarin](https:
 2019年現在、Mono と .NET Core の統合作業が行われています。
 統合された暁にはこれを指して「.NET」と呼ばれる予定です。
 
-##<a id="sec-generated-title-2"></a> <a id="framework"></a>.NET Framework
+## <a id="sec-generated-title-2"></a> <a id="framework"></a>.NET Framework
+
 Microsoft <strong id="dotnet" class="keyword">.NET Framework</strong> とは Microsft が提供する、（2000年6月に発表された）開発プラットフォームです。
 
 .NET Framework では、プログラムはネイティブコードではなく、<strong id="il" class="keyword">IL</strong> (Intermediate Language)と呼ばれる中間コードにコンパイルされます。
@@ -87,7 +89,8 @@ VB、JScript、C++ などの既存の言語は、.NET Framework に対応出来�
 	</tr>
 </table>
 
-##<a id="sec-generated-title-3"></a> <a id="netcore"></a>.NET Core
+## <a id="sec-generated-title-3"></a> <a id="netcore"></a>.NET Core
+
 2014年頃から Microsoft はオープンソース化の動きを見せるようになりました。
 今では、GitHub 最大のコミット数を誇る会社になっています。
 
@@ -106,7 +109,8 @@ Mono も徐々に .NET Framework のソースコードを取り込みつつあ�
 しかし、2019年9月リリースの .NET Core 3.0 では(Windows でしか動かないものはありますが)主要なものが一通り移植され、
 新規開発では .NET Framework ではなく .NET Core を使うことが推奨されています。
 
-##<a id="sec-generated-title-4"></a> <a id="dotnet"></a>.NET
+## <a id="sec-generated-title-4"></a> <a id="dotnet"></a>.NET
+
 前述の通り、作り直しのために一度は分岐した .NET Framework と .NET Core ですが、
 現在は再統合の流れ(というより、.NET Core を推奨して、.NET Framework は保守モード)になっています。
 また、.NET Core と Mono の統合も進められています。
@@ -117,5 +121,6 @@ Mono も徐々に .NET Framework のソースコードを取り込みつつあ�
 ちなみに、.NET Framework 4.X との混乱を避けて、 
 .NET Core 3.1 の次は .NET 5 となる予定です。
 
-##<a id="sec-generated-title-5"></a> <a id="version"></a>.NET Framework のバージョン
+## <a id="sec-generated-title-5"></a> <a id="version"></a>.NET Framework のバージョン
+
 移転: 「[バージョン](../cheatsheet/list_versions.md)」

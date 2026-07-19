@@ -18,7 +18,8 @@ aliases:
 
 # unsafe
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# や Java などのプログラミング言語では、
 コンピュータのメモリ上の任意の場所に自由にアクセスするための手段、
 すなわち、ポインターの利用が禁止もしくは制限されています。
@@ -38,6 +39,7 @@ C言語などの既存のプログラミング言語との相互運用性や、
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * unsafe キーワードの付いたメソッド内や、unsafe ブロック内限定で、ポインターなどの低レベル機能が使える。
 
 * unsafe を使うためには、コンパイル時に /unsafe オプション(`AllowUnsafeBlocks`)を付ける必要がある。
@@ -46,7 +48,8 @@ C言語などの既存のプログラミング言語との相互運用性や、
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="about-pointer"></a>ポインターとは
+## <a id="sec-generated-title-3"></a> <a id="about-pointer"></a>ポインターとは
+
 （
 「[コンピュータの基礎知識](../../computer/index.md)」に、
 もう少し詳しいポインターの説明を書いたので、
@@ -129,7 +132,8 @@ C# においてどのような機能で代替出来るのかだけ、
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="unsafe"></a>unsafe コード
+## <a id="sec-generated-title-4"></a> <a id="unsafe"></a>unsafe コード
+
 従来のプログラミング言語でポインターを必要としていた場面のほとんどは、
 他の機能で代替することが出来るため、
 C# や Java 言語にとってポインターは必須なものではありません。
@@ -183,7 +187,8 @@ C# ではこのような強い制限を設けています。
 <span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
 </code></pre>
 
-##<a id="sec-generated-title-5"></a> <a id="managed-pointer"></a>補足: managed ポインター
+## <a id="sec-generated-title-5"></a> <a id="managed-pointer"></a>補足: managed ポインター
+
 「[参照渡しとポインター](../resource/sp_ref.md#pointer)」などでも触れていますが、
 内部的には、[参照渡し](../resource/sp_ref.md#byref)はポインターと同じような処理です。
 また、[参照型](../resource/oo_reference.md#reftype)の変数も、内部的にはポインターになっています。
@@ -297,7 +302,8 @@ GCにとってはあずかり知らぬ存在で、コンパクションの結果
 
 これではまずいので、「unmanaged ポインターを使っている間はコンパクションでオブジェクトを移動させないでほしい」という制約を書けるのが、後述する [`fixed` ステートメント](#fixed)です。
 
-##<a id="sec-generated-title-6"></a> <a id="function"></a>unsafe コード限定機能
+## <a id="sec-generated-title-6"></a> <a id="function"></a>unsafe コード限定機能
+
 unsafe コード内では以下の機能が利用可能となります。
 
 * ポインターの使用。
@@ -312,7 +318,8 @@ unsafe コード内では以下の機能が利用可能となります。
 詳しくは次節以降で説明していきます。
 
 
-###<a id="sec-generated-title-7"></a> <a id="unmanaged-types"></a>アンマネージ型
+### <a id="sec-generated-title-7"></a> <a id="unmanaged-types"></a>アンマネージ型
+
 ちなみに、
 [ガベージ コレクション](../../computer/essential-software/memorymanagement.md#garbage-collection)の管理対象(managed)になっている型に対してunsafeなことをされると破滅的な結果を招くので、そういう型に対してはポインターなどの利用を制限する必要があります。
 
@@ -325,7 +332,8 @@ unsafe コード内では以下の機能が利用可能となります。
 
 <sup>※</sup> この条件は過剰で、C# 7.3 (「[unmanaged制約](#unmanaged-constraints)」参照) と C# 8.0 ([アンマネージなジェネリック構造体](#unmanaged-generic-struct))で緩和されています。
 
-##<a id="sec-generated-title-8"></a> <a id="pointer"></a>ポインター
+## <a id="sec-generated-title-8"></a> <a id="pointer"></a>ポインター
+
 C# では、C++ 言語と似た文法でポインターを使用できます。
 すなわち、<code>&amp;</code> 演算子を用いてアドレスの取り出し、
 <code>*</code> 演算子を用いてポインターの指している先を参照、
@@ -413,7 +421,8 @@ C# では、C++ 言語と似た文法でポインターを使用できます。
 }
 </code></pre>
 
-###<a id="sec-generated-title-9"></a> <a id="unsafe-using">unsafe 型に対する using エイリアス</a>
+### <a id="sec-generated-title-9"></a> <a id="unsafe-using">unsafe 型に対する using エイリアス</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 C# 12 で [using エイリアスで使える型が増えました](../structured/sp_namespace.md#using-any-type)。
@@ -427,7 +436,8 @@ C# 12 で [using エイリアスで使える型が増えました](../structured
 <span class="reserved">using</span> <span class="reserved">unsafe</span> <span class="type struct">FuncPointer</span> <span class="operator">=</span> <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">int</span>, <span class="reserved">void</span>&gt;;
 </pre>
 
-##<a id="sec-generated-title-10"></a> <a id="stackalloc"></a>スタック上への配列の確保(stackalloc)
+## <a id="sec-generated-title-10"></a> <a id="stackalloc"></a>スタック上への配列の確保(stackalloc)
+
 C# で通常使用している配列はヒープ領域にメモリを確保しています（参考: 「[[雑記] スタックとヒープ](../resource/misc_heap.md)」 ）。
 しかしながら、ヒープ領域への読み書きは、スタック領域と比べ、少しですが効率が悪くなります。
 そのため、C# では unsafe コード内限定で、配列をスタック上に確保するための構文を用意しています。
@@ -444,6 +454,7 @@ C# で通常使用している配列はヒープ領域にメモリを確保し�
 
 
 ##### <a id="sec-generated-title-11"></a>サンプル
+
 <pre class="source" title="stackalloc の例" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -493,7 +504,8 @@ C# で通常使用している配列はヒープ領域にメモリを確保し�
 13, 23, 27, 39, 56, 67, 78, 82, 86, 92,
 </pre>
 
-###<a id="sec-generated-title-12"></a> <a id="safe-stackalloc"></a>安全な stackalloc
+### <a id="sec-generated-title-12"></a> <a id="safe-stackalloc"></a>安全な stackalloc
+
 <h5 class="version version7">Ver. 7.2</h5>
 
 C# 7.2から、[`Span<T>`構造体](../resource/span.md)を使うことで、
@@ -515,7 +527,8 @@ unsafe なしで `stackalloc` 演算子を使うことができるようにな�
 
 詳しくは、「[安全な stackalloc](../resource/span.md#safe-stackalloc)」で説明します。
 
-###<a id="sec-generated-title-13"></a> <a id="stackalloc-initializer"></a>stackalloc 初期化子
+### <a id="sec-generated-title-13"></a> <a id="stackalloc-initializer"></a>stackalloc 初期化子
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 C# 7.3から、`stackalloc`に対して、配列と同じような初期化子を使えるようになりました。
@@ -532,7 +545,8 @@ C# 7.3から、`stackalloc`に対して、配列と同じような初期化子�
 <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x3 = <span class="reserved">stackalloc</span>[] { 0xEF, 0xBB, 0xBF };
 </code></pre>
 
-###<a id="sec-generated-title-14"></a> <a id="loop"></a>注意: ループ中の stackalloc
+### <a id="sec-generated-title-14"></a> <a id="loop"></a>注意: ループ中の stackalloc
+
 `stackalloc` で確保したスタック領域は、実は関数を抜けるまで解放されません。
 例えば以下のようにループ中で `stackalloc` を使うと結構あっさり stack overflow (要はメモリ不足)を起こします。
 
@@ -579,7 +593,8 @@ C# 7.3から、`stackalloc`に対して、配列と同じような初期化子�
 }
 </code></pre>
 
-##<a id="sec-generated-title-15"></a> <a id="sizeof"></a>sizeof 演算子
+## <a id="sec-generated-title-15"></a> <a id="sizeof"></a>sizeof 演算子
+
 unsafe コード内では、sizeof 演算子で構造体の領域サイズを取得できます。
 （通常（unsafe コードの外では）、sizeof 演算子でサイズを取得できるのは int や char など、C# の規格上サイズが決まっている数値型のみです。）
 
@@ -617,7 +632,8 @@ CPU の種類によって、最適な間隔は変わります。）
 上記の例でも、1バイトの x と、4バイトの y の間に隙間が空いて、X 構造体全体では8バイトの領域を占めています。
 
 
-##<a id="sec-generated-title-16"></a> <a id="fixed"></a>アドレス固定(fixed)
+## <a id="sec-generated-title-16"></a> <a id="fixed"></a>アドレス固定(fixed)
+
 [前述の通り](#managed-pointer)、GC 管理下にあるオブジェクトは、GC 発生時に異動する可能性があります。
 そして、GC 管理下にあるオブジェクトに対してポインターを使いたい場合には、
 しばらくの間オブジェクトの移動を停止してもらう(<em>アドレスを固定する</em>)処理が必要になります。
@@ -646,7 +662,8 @@ CPU の種類によって、最適な間隔は変わります。）
 ちなみに、C# では、配列と文字列に対して、`fixed`ステートメントを使うことで、
 配列・文字列の先頭要素・文字のアドレスを取得することができます。
 
-###<a id="sec-generated-title-17"></a> <a id="array"></a>配列
+### <a id="sec-generated-title-17"></a> <a id="array"></a>配列
+
 `fixed`ステートメント中で、
 配列をポインターに暗黙的に変換することができます。
 
@@ -713,7 +730,8 @@ CPU の種類によって、最適な間隔は変わります。）
 }
 </code></pre>
 
-###<a id="sec-generated-title-18"></a> <a id="string"></a>文字列
+### <a id="sec-generated-title-18"></a> <a id="string"></a>文字列
+
 配列と同様に、文字列に対しても `fixed` ステートメントが使えます。
 この場合は先頭1文字の場所のアドレスが得られます。
 
@@ -759,7 +777,8 @@ CPU の種類によって、最適な間隔は変わります。）
 [`OffsetToStringData`](https://msdn.microsoft.com/ja-jp/library/system.runtime.compilerservices.runtimehelpers.offsettostringdata.aspx)というプロパティから実際のバイト数が取れるので、このプロパティからの読み出しコードも追加されています。
 )
 
-####<a id="sec-generated-title-19"></a> <a id="mutate-string"></a>文字列の書き換え
+#### <a id="sec-generated-title-19"></a> <a id="mutate-string"></a>文字列の書き換え
+
 .NET の文字列(`string`)は、通常は書き換えできません。
 しかし、unsafe を使ってポインター越しになら書き換えできてしまいます。
 
@@ -784,7 +803,8 @@ CPU の種類によって、最適な間隔は変わります。）
 ほとんどの場合、文字列を書き換えるのはバグの原因にこそなれど何の利益もないんですが、
 「桁数がわかっている数値を整形して文字列化したい」といったときなど、新規に文字列を作るときに利用価値があったりします。
 
-###<a id="sec-generated-title-20"></a> <a id="custom-fixed"></a>ユーザー定義型での fixed ステートメント利用
+### <a id="sec-generated-title-20"></a> <a id="custom-fixed"></a>ユーザー定義型での fixed ステートメント利用
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 前述の通り、[配列](#array)と[文字列](#string)に対して`fixed`ステートメントを使うと、
@@ -857,7 +877,8 @@ CPU の種類によって、最適な間隔は変わります。）
 }
 </code></pre>
 
-##<a id="sec-generated-title-21"></a> <a id="fixed-buffer"></a>固定長バッファ
+## <a id="sec-generated-title-21"></a> <a id="fixed-buffer"></a>固定長バッファ
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 C# 2.0 で、unsafe な構造体のメンバーとして、
@@ -887,7 +908,8 @@ C 言語の配列風の固定長バッファを定義できるようになりま
 サイズを変えたりすることはできません。
 
 
-##<a id="sec-generated-title-22"></a> <a id="cppcli"></a>余談： C++/CLI
+## <a id="sec-generated-title-22"></a> <a id="cppcli"></a>余談： C++/CLI
+
 C# の unsafe の目的は、実行効率の向上と既存言語との相互運用性ですが、
 この目的のためなら、C# で unsafe を使う以外に、
 <strong id="cppcli" class="keyword">C++/CLI</strong> を使うという選択肢もあります。
@@ -905,7 +927,8 @@ TypeName^ や TypeName^% などの追加の記号を使って記述します。
 C# と比べるとお世辞にも書きやすいとは言えない言語ですが、
 native / managed 混在プログラムを書きたい場合には最良の選択肢となるでしょう。
 
-##<a id="sec-generated-title-23"></a> <a id="how-unsafe"></a>unsafeコードはどのくらいunsafeか
+## <a id="sec-generated-title-23"></a> <a id="how-unsafe"></a>unsafeコードはどのくらいunsafeか
+
 unsafeコードが名前通りunsafe(安全でない)なところを、一例出しておきます。
 
 通常、C#の文字列(`string`型)は書き換えできません。
@@ -946,7 +969,8 @@ unsafeコードが名前通りunsafe(安全でない)なところを、一例出
 無制限にやられてしますと結構怖いコードです。
 このように、unsafeコードの利用には注意が必要です。|
 
-##<a id="sec-generated-title-24"></a> <a id="unmanaged-constraints"></a>unmanaged制約
+## <a id="sec-generated-title-24"></a> <a id="unmanaged-constraints"></a>unmanaged制約
+
 <h5 class="version version7">Ver. 7.3</h5>
 
 これまでに、ポインターなどの機能を使えるのは[アンマネージ型](#unmanaged-types)に限るという話をしました。
@@ -1025,7 +1049,8 @@ unsafeコードが名前通りunsafe(安全でない)なところを、一例出
 1つ注意すべきは、ジェネリックな型を再帰的に追えるようになるのは C# 8.0 以降です。
 C# 7.3 では `Wrap<int>` みたいな、`unmanaged` 制約を満たしているはずの型であってもアンマネージ型と認識できません。
 
-##<a id="sec-generated-title-25"></a> <a id="unmanaged-generic-struct"></a>アンマネージなジェネリック構造体
+## <a id="sec-generated-title-25"></a> <a id="unmanaged-generic-struct"></a>アンマネージなジェネリック構造体
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネージ型かどうかの判定するようになりました。
@@ -1076,7 +1101,8 @@ C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネ�
 <span class="reserved">var</span> <span class="variable">py</span> = <span class="error">&amp;<span class="variable">y</span></span>;
 </code></pre>
 
-##<a id="sec-generated-title-26"></a> <a id="skip-locals-init"></a>ローカル変数の0初期化抑止
+## <a id="sec-generated-title-26"></a> <a id="skip-locals-init"></a>ローカル変数の0初期化抑止
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 C# では通常、[未初期化](../resource/rm_default.md#uninitialized)のままの変数を読むことはできません。
@@ -1189,14 +1215,16 @@ C# 9.0 で、unsafe 限定で、この0初期化をスキップできるよう�
 (C# 9.0 以前は、特殊なビルド処理を掛けることで同様の処理を無理やり実現していたようですが、
 C# 9.0 (.NET 5.0) からはこの機能を使うようになったようです。)
 
-##<a id="sec-generated-title-27"></a> <a id="function-pointer"></a>関数ポインター
+## <a id="sec-generated-title-27"></a> <a id="function-pointer"></a>関数ポインター
+
 <h5 class="version version9">Ver. 9</h5>
 
 C# 9.0 で、関数ポインターも使えるようになりました。
 
 詳しくは「[関数ポインター](functionpointer.md)」で説明します。
 
-##<a id="sec-generated-title-28"></a> <a id="pointer-of-managed-types">マネージ型のポインター</a>
+## <a id="sec-generated-title-28"></a> <a id="pointer-of-managed-types">マネージ型のポインター</a>
+
 C# 11 から、マネージ型のポインターを使えるようになりました。
 すなわち、
 参照型 `T` や [ref 構造体](../resource/refstruct.md) `R` に対して、

@@ -19,20 +19,23 @@ aliases:
 
 # \[雑記\] 多重ディスパッチ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 dynamic の用途の1つとして、多重ディスパッチというものを説明します。
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * 多重ディスパッチ（multiple dispatch）： 複数のインスタンスの動的な型情報に基づいて、実際に呼び出すメソッドを切り替える （「[仮想メソッド](../oop/oo_polymorphism.md#virtual_method)」の複数インスタンス版）。
 
 * dynamic を使うことで、ほんのちょっと多重ディスパッチの実装が楽に。
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="dispatch"></a>ディスパッチ
+## <a id="sec-generated-title-3"></a> <a id="dispatch"></a>ディスパッチ
+
 多重ディスパッチの話の前に、まずそもそもディスパッチ（dispatch）、訳すなら「配送」になるわけですが、
 このディスパッチって何？って話から。
 
@@ -95,7 +98,8 @@ Rectangle あるいは Circle の GetArea メソッドが呼び出されます�
 C# や C++ などの言語では、このディスパッチ処理を「[仮想関数テーブル](../oop/oo_vftable.md#vftable)」という仕組みを使って行っています。
 
 
-##<a id="sec-generated-title-4"></a> <a id="manual"></a>自前で動的ディスパッチ
+## <a id="sec-generated-title-4"></a> <a id="manual"></a>自前で動的ディスパッチ
+
 「[仮想関数テーブル](../oop/oo_vftable.md#vftable)」という仕組みに乗っかるだけが動的ディスパッチの実現方法ではありません。
 例えば、以下のようなコードを書くことで動的ディスパッチを実現できます。
 
@@ -125,7 +129,8 @@ C# や C++ などの言語では、このディスパッチ処理を「[仮想�
 次節で述べる多重ディスパッチを行いたい場合、むしろこういう書き方の方がすっきりしたりします。
 
 
-##<a id="sec-generated-title-5"></a> <a id="multiple_dispatch"></a>多重ディスパッチ
+## <a id="sec-generated-title-5"></a> <a id="multiple_dispatch"></a>多重ディスパッチ
+
 それでは、次に多重ディスパッチの話に。
 
 先ほどの GetArea の場合、1つの変数 s の中身だけを見てディスパッチ先を決定できていました。
@@ -188,7 +193,8 @@ Visitor パターンを使った多重ディスパッチはあまりきれいな
 ということで、ここではそのやり方は割愛。）
 
 
-##<a id="sec-generated-title-6"></a> <a id="dynamic_dispatch"></a>dynamic でディスパッチ
+## <a id="sec-generated-title-6"></a> <a id="dynamic_dispatch"></a>dynamic でディスパッチ
+
 さて、ようやくここからが本題。
 
 自前でディスパッチ用の <code>if (s is ...)</code> を書きたくない・・・。
@@ -246,7 +252,8 @@ Visitor パターンを使った多重ディスパッチはあまりきれいな
 dynamic が内部的にやってることは、この if (s is ...) を動的に生成してるだけだったりもします。
 
 
-###<a id="sec-generated-title-7"></a> <a id="appendix"></a>おまけ
+### <a id="sec-generated-title-7"></a> <a id="appendix"></a>おまけ
+
 Visitor パターンを使ったものを含め、多重ディスパッチのサンプル↓。
 
 
@@ -254,7 +261,8 @@ Visitor パターンを使ったものを含め、多重ディスパッチのサ
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="conclusion"></a>まとめ
+## <a id="sec-generated-title-8"></a> <a id="conclusion"></a>まとめ
+
 * 仮想メソッドのように、実行時の型に応じて実際に呼び出されるメソッドを切り替えることを動的ディスパッチと呼ぶ。
 
 * 動的ディスパッチは if (x is ...) みたいなコードを書くことで、手動でも行える。

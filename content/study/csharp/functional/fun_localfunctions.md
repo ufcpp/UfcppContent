@@ -14,7 +14,8 @@ aliases:
 
 # ローカル関数と匿名関数
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 C# には、関数内に関数を書く方法として、ローカル関数と匿名関数という2つの機能があります。
 
 いずれも共通して、以下のような性質があります。
@@ -27,7 +28,8 @@ C# には、関数内に関数を書く方法として、ローカル関数と�
 
 サンプル コード: [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Functional/LocalFunctions](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Functional/LocalFunctions)
 
-##<a id="sec-generated-title-2"></a> <a id="local-function"></a>ローカル関数
+## <a id="sec-generated-title-2"></a> <a id="local-function"></a>ローカル関数
+
 <h5 class="version version7">Ver. 7</h5>
 
 C# 7では、関数の中で別の関数を定義して使うことができます。
@@ -85,7 +87,8 @@ C# 7では、関数の中で別の関数を定義して使うことができま�
 }
 </code></pre>
 
-###<a id="sec-generated-title-3"></a> <a id="local-function-attribute"></a>ローカル関数への属性適用
+### <a id="sec-generated-title-3"></a> <a id="local-function-attribute"></a>ローカル関数への属性適用
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 ローカル関数の追加当初、ローカル関数には属性を付けれなかったんですが、C# 9.0 でできるようになりました。
@@ -123,7 +126,8 @@ C# 7では、関数の中で別の関数を定義して使うことができま�
 単純な割には実装コストが高くて後回しになっていただけ。
 C# 8.0 の [null 許容参照型](../resource/nullablereferencetype.md)がらみでローカル関数にも属性を付けたい需要が急激に増えたので実装優先度が上がったみたいです。)
 
-###<a id="sec-generated-title-4"></a> <a id="local-function-usage"></a>ローカル関数の使い道
+### <a id="sec-generated-title-4"></a> <a id="local-function-usage"></a>ローカル関数の使い道
+
 ローカル関数を使いたくなる一番の動機は、定義した関数内からだけ使えるというになるでしょう。
 
 あるメソッド`M`の中から、その`M`でしか使わないメソッドを呼び出したい場面が時々あります。
@@ -160,7 +164,8 @@ C# 8.0 の [null 許容参照型](../resource/nullablereferencetype.md)がらみ
 }
 </code></pre>
 
-####<a id="sec-generated-title-5"></a> <a id="iterator"></a>例1: イテレーターの引数チェック
+#### <a id="sec-generated-title-5"></a> <a id="iterator"></a>例1: イテレーターの引数チェック
+
 例えば、[イテレーター](../data/sp2_iterator.md#iterator)の引数チェックではこういうコードが必要になりがちです。
 
 例として、標準ライブラリ中の処理を1つ自作してみましょう。`Enumerable`クラス(`System.Linq`名前空間)の`Where`メソッドをまねてみます。
@@ -267,7 +272,8 @@ C# 8.0 の [null 許容参照型](../resource/nullablereferencetype.md)がらみ
 }
 </code></pre>
 
-####<a id="sec-generated-title-6"></a> <a id="ToArray"></a>例2: イテレーターをToArrayしてから返す
+#### <a id="sec-generated-title-6"></a> <a id="ToArray"></a>例2: イテレーターをToArrayしてから返す
+
 [イテレーター](../data/sp2_iterator.md#iterator)を使って書きたいものの、
 遅延実行(foreachで列挙されて初めて実行される)ではなく即座に実行するために、`ToArray`メソッド(`System.Enumerable`クラスの拡張メソッド)を掛けてから返したい場合があります。
 
@@ -315,7 +321,8 @@ C# 8.0 の [null 許容参照型](../resource/nullablereferencetype.md)がらみ
 }
 </code></pre>
 
-####<a id="sec-generated-title-7"></a> <a id="async-task"></a>例3: 非同期メソッドのキャッシュ
+#### <a id="sec-generated-title-7"></a> <a id="async-task"></a>例3: 非同期メソッドのキャッシュ
+
 最後の例は、非同期メソッドで作った`Task`のキャッシュです。
 
 非同期メソッドを呼び出すと、呼び出すたびに`Task`クラス(`System.Threading.Tasks`名前空間)のインスタンスが作られます。
@@ -367,7 +374,8 @@ C# 8.0 の [null 許容参照型](../resource/nullablereferencetype.md)がらみ
 <span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="reserved">string</span>&gt; _loadCache;
 </code></pre>
 
-##<a id="sec-generated-title-8"></a> <a id="anonymous-function"></a>匿名関数 (ラムダ式)
+## <a id="sec-generated-title-8"></a> <a id="anonymous-function"></a>匿名関数 (ラムダ式)
+
 <h5 class="version version2">Ver. 2.0</h5>
 <h5 class="version version3">Ver. 3.0</h5>
 
@@ -441,7 +449,8 @@ C#開発者も、「ラムダ式が最初からあれば、匿名メソッド式
 強調表示している部分が匿名関数です。
 匿名関数の引数(`n`)の型は、渡す先（`Where`や`Select`)から推論されます。
 
-##<a id="sec-generated-title-9"></a> <a id="pros-cons"></a>ローカル関数と匿名関数のそれぞれの利点
+## <a id="sec-generated-title-9"></a> <a id="pros-cons"></a>ローカル関数と匿名関数のそれぞれの利点
+
 前節の例のように、匿名関数は式(この例では`Where`メソッドや`Select`メソッドの引数)の中に書くことができます。
 ここがローカル関数との最大の違いになります。
 ローカル関数の場合は、関数(この場合`Main`メソッド)直下にしか書けません。
@@ -516,7 +525,8 @@ f2 = n =&gt; n &gt;= 1 ? n * f2(n - 1) : 1;
 多少、実行性能にも差があります。
 呼び出し方次第ではありますが、ローカル関数の方が高速になる場合があります。
 
-###<a id="sec-generated-title-10"></a> <a id="background-local-function"></a>余談: 経緯
+### <a id="sec-generated-title-10"></a> <a id="background-local-function"></a>余談: 経緯
+
 ちなみに、C# 7でローカル関数が導入されるに至った経緯としては、匿名関数の制限を緩和してほしいという要望から始まっています。
 すなわち、前述の、「匿名関数はイテレーター化できない、再帰呼び出しが大変」という問題の解決策がローカル関数です。
 
@@ -524,7 +534,8 @@ f2 = n =&gt; n &gt;= 1 ? n * f2(n - 1) : 1;
 しかし、「イテレーター化」あるいは「再帰呼び出し」をしたい場面を改めて考えてみたところ、
 「別に式中に書きたいわけじゃない」、「ローカル関数で十分」、「ローカル関数の方が実行性能的にお得になる場面もある」となったみたいです。
 
-##<a id="sec-generated-title-11"></a> <a id="capture-local"></a>ローカル変数の捕獲
+## <a id="sec-generated-title-11"></a> <a id="capture-local"></a>ローカル変数の捕獲
+
 ローカル関数でも匿名関数でも、周りの(定義している関数内の)ローカル変数や引数を取り込んで使うことができます。
 例えば以下のようなコードが書けます。
 
@@ -587,13 +598,15 @@ f2 = n =&gt; n &gt;= 1 ? n * f2(n - 1) : 1;
 実行性能への要求が極めて高い場合には、避けれるなら避けるべきです
 (ペナルティは小さいので、ボトルネックになっていない場所でまで無理に頑張る必要はありません)。
 
-##<a id="sec-generated-title-12"></a> <a id="avoid-capture"></a>ローカル変数捕獲の禁止
+## <a id="sec-generated-title-12"></a> <a id="avoid-capture"></a>ローカル変数捕獲の禁止
+
 前節での説明の通り、外部の変数を捕獲してしまうと少々ペナルティが掛かります。
 意図してやっているのならいいんですが、無自覚にやってしまうのは避けたいです。
 
 そこで、C# 8.0 では静的ローカル関数、C# 9.0 では静的匿名関数という仕様が入りました。
 
-###<a id="sec-generated-title-13"></a> <a id="static-local-function"></a>静的ローカル関数
+### <a id="sec-generated-title-13"></a> <a id="static-local-function"></a>静的ローカル関数
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 から、外部の変数を捕獲しないことを明示するため、
@@ -650,7 +663,8 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">m</span>());
 </code></pre>
 
-###<a id="sec-generated-title-14"></a> <a id="static-anonymous-function"></a>静的匿名関数
+### <a id="sec-generated-title-14"></a> <a id="static-anonymous-function"></a>静的匿名関数
+
 <h5 class="version version9">Ver. 9.0</h5>
 
 同様に、C# 9.0 では匿名関数に対しても `static` 修飾子を付けれるようになりました。
@@ -675,7 +689,8 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 ただちょっと構文解析が大変なので後回しになっていたものです。
 順当に「1バージョン遅れで実装」となりました。
 
-###<a id="sec-generated-title-15"></a> <a id="not-pure"></a>注意: 純粋関数(副作用なしのメソッド)ではない
+### <a id="sec-generated-title-15"></a> <a id="not-pure"></a>注意: 純粋関数(副作用なしのメソッド)ではない
+
 静的ローカル関数にしても静的匿名関数にしても、ローカル変数の捕獲(によるパフォーマンスのペナルティ)は避けることができますが、静的フィールドの読み書きは普通にできます。
 例えば以下のコードは有効な C# 8.0 コードになります。
 
@@ -697,7 +712,8 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 
 `static` を付けてもいわゆる純粋関数(pure function、同じ引数で呼べば必ず同じ戻り値が得られる)にはならないので注意してください。
 
-##<a id="sec-generated-title-16"></a> <a id="shadowing"></a>変数のシャドーイング
+## <a id="sec-generated-title-16"></a> <a id="shadowing"></a>変数のシャドーイング
+
 <h5 class="version version8">Ver. 8.0</h5>
 
 前節の静的ローカル関数に伴って新たに認められた機能に、変数の<strong id="key-shadowing" class="keyword">シャドーイング</strong>(shadowing)というものがあります。
@@ -722,7 +738,8 @@ C# 8.0 以降であれば、普通のローカル関数でも使えます。
 ただ、外側の変数を捕獲したものなのか、ローカル関数側でシャドーイングしたものなのかの区別がわかりにくくなるという問題があるので、静的ローカル関数と同時(C# 8.0)に認められました。
 静的ローカル関数でだけ認めるのも気持ち悪く、普通のローカル関数でも認めるようにしたそうです。
 
-##<a id="sec-generated-title-17"></a> <a id="lambda-csharp10"></a>ラムダ式の戻り値の明示と属性
+## <a id="sec-generated-title-17"></a> <a id="lambda-csharp10"></a>ラムダ式の戻り値の明示と属性
+
 <h5 class="version version10">Ver. 10</h5>
 
 C# 10.0 で、ラムダ式の戻り値を明示できるようになりました。
@@ -759,7 +776,8 @@ C# 10.0 で、ラムダ式の戻り値を明示できるようになりました
 この例では、HTTP GET で `/` (Web サイトのルート)にアクセスすると、`Hellow World!` という文字列を返します。
 ここで、`/` アクセス時に色々と凝ったことをしようと思うと、属性や戻り値の型を指定したくなります。
 
-###<a id="sec-generated-title-18"></a> <a id="lambda-explicit-return"></a>戻り値の型の明示
+### <a id="sec-generated-title-18"></a> <a id="lambda-explicit-return"></a>戻り値の型の明示
+
 ラムダ式に戻り値の型を明示できるようになりました。
 戻り値の型は、引数の `()` の前に書きます。
 例えば以下のような書き方ができます。
@@ -827,7 +845,8 @@ C# 10.0 で、ラムダ式の戻り値を明示できるようになりました
 <span class="reserved">var</span> <span class="variable">f6</span> = <span class="error"><span class="reserved">int</span> (<span class="variable">x</span>) =&gt; <span class="variable">x</span></span>;
 </code></pre>
 
-###<a id="sec-generated-title-19"></a> <a id="lambda-attribute"></a>属性
+### <a id="sec-generated-title-19"></a> <a id="lambda-attribute"></a>属性
+
 同じくラムダ式に属性を付けれるようになりました。
 
 <pre class="source" title="ラムダ式に対する属性付与">
@@ -881,7 +900,8 @@ C# 10.0 で、ラムダ式の戻り値を明示できるようになりました
 }
 </code></pre>
 
-##<a id="sec-generated-title-20"></a> <a id="lambda-default">ラムダ式のオプション引数(既定値)と params 引数</a>
+## <a id="sec-generated-title-20"></a> <a id="lambda-default">ラムダ式のオプション引数(既定値)と params 引数</a>
+
 <h5 class="version version12">Ver. 12</h5>
 
 C# 12 でラムダ式の引数に[オプション引数](../structured/sp4_optional.md#optional)にできる(既定値を与えられる)ようになりました。
@@ -958,7 +978,8 @@ C# 12 でラムダ式の引数に[オプション引数](../structured/sp4_optio
 <span class="reserved">delegate</span> <span class="reserved">void</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">x</span> <span class="operator">=</span> <span class="number">1</span>);
 </pre>
 
-##<a id="sec-generated-title-21"></a> <a id="simple-param-with-modifier">修飾子付きの引数の型名省略</a>
+## <a id="sec-generated-title-21"></a> <a id="simple-param-with-modifier">修飾子付きの引数の型名省略</a>
+
 <h5 class="version version14">Ver. 14.0</h5>
 
 ラムダ式には導入以来ずっと、「型を推論できる限り、引数の型は省略できる」という仕様があります。

@@ -18,11 +18,13 @@ aliases:
 
 # 既定値
 
-##<a id="sec-generated-title-1"></a> <a id="abst">概要</a>
+## <a id="sec-generated-title-1"></a> <a id="abst">概要</a>
+
 C# はメモリ領域の未初期化を認めていません。
 明示的な初期化を行わない場合、状況に応じて、コンパイル エラーになるか、既定値が入るかのどちらかです。
 
-##<a id="sec-generated-title-2"></a> <a id="uninitialized">補足: 未初期化領域</a>
+## <a id="sec-generated-title-2"></a> <a id="uninitialized">補足: 未初期化領域</a>
+
 C# で気にする場面はほとんどありませんが、プログラミング言語によっては、未初期化の状態のメモリにアクセスできてしまう場合があります。
 (特に、いわゆる低レイヤーな言語ほどそういうことが可能です。C# でも、「[unsafe](../interop/sp_unsafe.md#unsafe)」 コード内では起こり得ます。)
 
@@ -128,7 +130,8 @@ printf(<span class="literal">"%08x\n"</span>, px[0]);
 そのため、C# は未初期化を認めていません。
 
 
-##<a id="sec-generated-title-3"></a> <a id="sec-default-value">既定値</a>
+## <a id="sec-generated-title-3"></a> <a id="sec-default-value">既定値</a>
+
 とうことで、C# では、未初期化なメモリ領域へのアクセスを認めていません。
 明示的な変数の初期化を怠った場合、状況に応じて、以下のいずれかになります(コンパイル エラー、もしくは、0埋め = 本項の主題となる「既定値」で初期化される)。
 
@@ -196,7 +199,8 @@ printf(<span class="literal">"%08x\n"</span>, px[0]);
 }
 </code></pre>
 
-###<a id="sec-generated-title-4"></a> <a id="word-default">余談: default という英単語</a>
+### <a id="sec-generated-title-4"></a> <a id="word-default">余談: default という英単語</a>
+
 ちなみに、既定値は英語だと default value なわけですが。
 この「デフォルト」という言葉、IT 業界内では割かし基本単語っぽく感じるものの、
 他の業界の人に通じないことがたまにあったりします。
@@ -208,7 +212,8 @@ default の元々の意味は「債務不履行」とか「怠慢」です。
 
 なので、default value ＝ やるべきことやってない(初期化しないとまずいだろっていう変数を初期化してない)時に強制的に代入される値 ＝ 既定値 という感じ。
 
-##<a id="sec-generated-title-5"></a> <a id="default-keyword">default(T)</a>
+## <a id="sec-generated-title-5"></a> <a id="default-keyword">default(T)</a>
+
 C# 1.0 の頃には、既定値を作るための構文がありませんでした。
 数値の場合は 0 とか 0.0 とか、bool の場合には false とか、クラスの場合には null とかいったように、個別に既定値相当の値を与える必要がありました。
 
@@ -237,7 +242,8 @@ C# 2.0 で「[ジェネリック](../oop/sp2_generics.md#generics)」が導入�
 }
 </code></pre>
 
-###<a id="sec-generated-title-6"></a> <a id="default-constructor">default(T) と構造体のコンストラクター</a>
+### <a id="sec-generated-title-6"></a> <a id="default-constructor">default(T) と構造体のコンストラクター</a>
+
 前節で少し触れましたが、`default(T)` 構文が入るまで、
 構造体の既定値は `new T()` で作っていました。
 この仕様のせいで、C# では、構造体に引数なしのコンストラクターを定義できませんでした。
@@ -290,7 +296,8 @@ C# 10 から構造体に引数なしのコンストラクターを定義でき�
   - .NETランタイムの中でそういうコードがあって、C#よりも上のレイヤーでの回避ができない。
   - `Activator`クラス(`System`名前空間)の`CreateInstance`とかがそう。
 
-##<a id="sec-generated-title-7"></a> <a id="default-expr">default 式</a>
+## <a id="sec-generated-title-7"></a> <a id="default-expr">default 式</a>
+
 <h5 class="version version7_1">Ver. 7.1</h5>
 
 これまでの`default(T)`という構文では、型名が長い時にかなり煩雑なコードになっていました。
@@ -328,7 +335,8 @@ C# 10 から構造体に引数なしのコンストラクターを定義でき�
 
 この書き方をdefault式(default expression)、あるいは、defaultリテラル(default literal)と呼びます。
 
-##<a id="sec-generated-title-8"></a> <a id="constant">既定値は定数</a>
+## <a id="sec-generated-title-8"></a> <a id="constant">既定値は定数</a>
+
 既定値 `default(T)` は常に定数扱いされます。
 
 C# には定数(`readonly` の意味じゃなく、`const`)しか受け付けない文脈がいくつかあります。
@@ -342,7 +350,8 @@ C# には定数(`readonly` の意味じゃなく、`const`)しか受け付けな
 `int` とか `string` なら任意のリテラル(1, 2, 3, ... "abc" 何でも)を渡せますが、
 クラスと構造体は既定値(`null`、`default(T)`)しか渡せません。
 
-##<a id="sec-generated-title-9"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a>
+## <a id="sec-generated-title-9"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a>
+
 <h5 class="version version11">Ver. 11.0</h5>
 
 C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。

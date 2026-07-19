@@ -18,7 +18,8 @@ aliases:
 
 # 双2次フィルタ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 分母・分子がともに2次のIIRフィルタを双2次フィルタと呼びます。
 双2次フィルタは、以下のような理由から、非常によく利用されています。
 
@@ -30,7 +31,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="lcr"></a>LCR 回路
+## <a id="sec-generated-title-2"></a> <a id="lcr"></a>LCR 回路
+
 以下のような LCR 回路でローパスフィルタが作れます。
 
 <figure>
@@ -69,7 +71,8 @@ T<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="f
 RCL の配置をいろいろと変えることで、さまざまな特性を作ることができます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="biquad"></a>双2次フィルタ
+## <a id="sec-generated-title-3"></a> <a id="biquad"></a>双2次フィルタ
+
 伝達関数の分母・分子ともに2次のフィルタを<strong id="d33e162" class="keyword">双2次フィルタ</strong>（biquadratic filter、あるいは biquad filter）といいます。
 （余談ですが、quad- という接頭語は“4”という意味を表します。
 quadratic は“四角形の”という意味合いから“2次元の”という意味で使われる言葉です。

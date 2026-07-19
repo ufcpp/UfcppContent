@@ -19,7 +19,8 @@ aliases:
 
 # ラムダ式
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 <strong id="lambda" class="keyword">ラムダ式</strong>（lambda expression）と言うのは、
@@ -36,6 +37,7 @@ C# 3.0 で導入されたラムダ式は、
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * C# 3.0 で導入されたラムダ式には、2通りの意味があります。
     * 匿名メソッドを 2.0 の頃の記法より簡単に書ける。
 
@@ -47,7 +49,8 @@ C# 3.0 で導入されたラムダ式は、
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="anonymous"></a>匿名メソッドの記法の簡略化
+## <a id="sec-generated-title-3"></a> <a id="anonymous"></a>匿名メソッドの記法の簡略化
+
 まず、1つ目。
 ラムダ式は、
 C# 2.0 の匿名メソッドをさらに簡便な記法で書けるようにするものとして使われます。
@@ -138,7 +141,8 @@ int 型の引数を1つとって、bool 型を返すようなデリゲートを�
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="expression"></a>式木
+## <a id="sec-generated-title-4"></a> <a id="expression"></a>式木
+
 一方、2つ目に関してですが、こちらは完全に新機能で、ラムダ式特有のものです。
 匿名メソッドと違って、
 ラムダ式は本当に<strong id="exp_tree" class="keyword">式木</strong>（expression tree）データとして扱うこともできます。
@@ -222,8 +226,10 @@ WHERE [t0].[City] = @p0
 こういう動作は、<code>c.City == "London"</code> の部分をデリゲート（要するに実行コード）として受け取っていてはできません。式木データとして受け取って、その中身を見ながら SQL 文を作ります。
 
 
-##<a id="sec-generated-title-5"></a> <a id="init"></a>初期化子
-###<a id="sec-generated-title-6"></a> <a id="object-initializer"></a>オブジェクト初期化子
+## <a id="sec-generated-title-5"></a> <a id="init"></a>初期化子
+
+### <a id="sec-generated-title-6"></a> <a id="object-initializer"></a>オブジェクト初期化子
+
 C# 3.0 では、オブジェクトの初期化を以下のような記法でできるようになりました。
 このような記法を<strong id="objectinit" class="keyword">オブジェクト初期化子</strong> （object initializer）と呼びます。
 
@@ -275,7 +281,8 @@ p.Y = <span class="literal">1</span>;
 }
 </code></pre>
 
-####<a id="sec-generated-title-7"></a> <a id="trailing-comma"></a>末尾コンマ
+#### <a id="sec-generated-title-7"></a> <a id="trailing-comma"></a>末尾コンマ
+
 オブジェクト初期化子では、[配列の初期化子](../structured/st_array.md#use)と同様に、末尾のコンマはあってもなくてもかまいません。
 以下の2行は同じ意味になります。
 
@@ -286,7 +293,8 @@ p.Y = <span class="literal">1</span>;
 
 これは、後述するコレクション初期化子やインデックス初期化子でも同様です。
 
-###<a id="sec-generated-title-8"></a> <a id="collection-initializer"></a>コレクション初期化
+### <a id="sec-generated-title-8"></a> <a id="collection-initializer"></a>コレクション初期化
+
 また、コレクションの初期化を以下のような記法でできるようになりました。
 こちらは<strong id="collectioninit" class="keyword">コレクション初期化子</strong>（collection initializer）と呼びます。
 
@@ -334,7 +342,8 @@ C# 12 からはコレクション初期化子に代わって、以下のよう�
 
 
 
-###<a id="sec-generated-title-9"></a> <a id="index-initializer"></a>インデックス初期化
+### <a id="sec-generated-title-9"></a> <a id="index-initializer"></a>インデックス初期化
+
 <h5 class="version version6">Ver. 6.0</h5>
 
 C# 6.0 から、[オブジェクト初期化子](#object-initializer)に、インデクサーを混ぜれるようになりました。
@@ -378,7 +387,8 @@ C# 6.0 から、[オブジェクト初期化子](#object-initializer)に、イ�
 }
 </code></pre>
 
-###<a id="sec-generated-title-10"></a> <a id="recursive"></a>再帰初期化
+### <a id="sec-generated-title-10"></a> <a id="recursive"></a>再帰初期化
+
 ちなみに、再帰的な構造を持ったクラスの初期化もできます。
 
 <pre class="source" title="再帰的なオブジェクト初期化子" lang="">

@@ -18,7 +18,8 @@ aliases:
 
 # 周波数変換
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 カットオフ周波数 1 のローパスフィルタを設計すれば、
 ある変換ルールを用いて任意のローパス・ハイパス・バンドパス・バンドストップフィルタを設計できます。
  
@@ -26,7 +27,8 @@ aliases:
 （アナログ伝達関数をディジタル伝達関数に変換）することができます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="analog"></a>アナログ→アナログ
+## <a id="sec-generated-title-2"></a> <a id="analog"></a>アナログ→アナログ
+
 執筆予定
 <pre>
 ・アナログ
@@ -106,7 +108,8 @@ d ＝ √(√(D<sup>2</sup> ＋ 4) － D)
 
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sz"></a>アナログ→ディジタル
+## <a id="sec-generated-title-3"></a> <a id="sz"></a>アナログ→ディジタル
+
 執筆予定
 <pre>
 インパルス不変法

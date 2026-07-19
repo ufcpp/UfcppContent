@@ -18,7 +18,8 @@ aliases:
 
 # CPU
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[組み合わせ回路](../basis/combinationalcircuit.md)」や「[順序回路](../basis/sequentialcircuit.md)」では、
 ディジタル液晶表示回路やカウンター回路など、簡単な機能をディジタル回路化する方法について説明しました。
 しかしながら、これらの機能はかなり簡素な部類に入ります。
@@ -43,7 +44,8 @@ aliases:
 本稿では、CPUというハードウェアがどのようにして作られているかや、CPUへの命令の与え方について説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="structure"></a>汎用コンピューターの構造
+## <a id="sec-generated-title-2"></a> <a id="structure"></a>汎用コンピューターの構造
+
 現在の主流な汎用コンピューターの中枢部分は、図2に示すように、メイン・メモリ（main memory: 主記憶）とCPUと呼ばれる部分から構成されています。
 
 <figure>
@@ -80,7 +82,8 @@ CPU内部にある複数のレジスターをまとめた全体の呼称とし�
 ちょうど実行中の命令を記憶しておくのが命令レジスターです。
 
 
-###<a id="sec-generated-title-3"></a> <a id="word"></a>余談: ワード
+### <a id="sec-generated-title-3"></a> <a id="word"></a>余談: ワード
+
 よく、「32ビットCPU」とか「64ビットCPU」という呼び名を聞くと思いますが、
 この32とか64とかのビット数は、レジスターに記録し、ALUで演算できるデータのサイズのことを指します。
 例えば、32ビットCPUなら、32ビット単位でのデータの読み書きや演算が基本となります。
@@ -92,7 +95,8 @@ CPU内部にある複数のレジスターをまとめた全体の呼称とし�
 ここに流れるデータもワード単位になりますので、ワードのことをバス幅（bus width）と呼ぶこともあります。
 
 
-##<a id="sec-generated-title-4"></a> <a id="control"></a>CPUの制御
+## <a id="sec-generated-title-4"></a> <a id="control"></a>CPUの制御
+
 前節で説明したとおり、CPUは外部から命令（すなわち、ソフトウェア）を与えて初めて動作します。
 ここでは、CPUへの命令の与え方について説明します。簡単に言うと、CPUというのは以下のようなハードウェアです。
 
@@ -110,7 +114,8 @@ CPU内部にある複数のレジスターをまとめた全体の呼称とし�
 また、あるCPUと同じ命令セットを受け付けるような「互換CPU」というものも作られています。）
 
 
-###<a id="sec-generated-title-5"></a> <a id="machine-language"></a>機械語とアセンブリ言語
+### <a id="sec-generated-title-5"></a> <a id="machine-language"></a>機械語とアセンブリ言語
+
 CPUへの命令も、コンピューターの内部ではすべて0, 1の羅列で表現されています。
 この0, 1の羅列のままの命令列を<strong id="machine-language" class="keyword">機械語</strong>（machine language）と呼びます。
 もちろん、表記上、2進数の代わりに16進数を使って表現することもありますが、それでも0～9, A～Fの16進数字の羅列になります。
@@ -148,7 +153,8 @@ CPUへの命令も、コンピューターの内部ではすべて0, 1の羅列�
 例えば、Intel 8086 プロセッサーがまさにこういう命令セットでした。）
 
 
-##<a id="sec-generated-title-6"></a> <a id="instruction-set"></a>CPU の命令の種類
+## <a id="sec-generated-title-6"></a> <a id="instruction-set"></a>CPU の命令の種類
+
 命令には、大きく分けて以下のような種類があります。
 
 * データの移動
@@ -159,7 +165,8 @@ CPUへの命令も、コンピューターの内部ではすべて0, 1の羅列�
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="move-instruction"></a>データの移動
+### <a id="sec-generated-title-7"></a> <a id="move-instruction"></a>データの移動
+
 レジスターとメイン・メモリの間や、レジスター同士の間でデータをコピーしたり、定数値をレジスターに書き込んだりします。
 多くのCPUでは、以下のような命令を持っています。
 
@@ -197,7 +204,8 @@ CPUへの命令も、コンピューターの内部ではすべて0, 1の羅列�
 
 
 
-###<a id="sec-generated-title-8"></a> <a id="arithmetic-instruction"></a>演算
+### <a id="sec-generated-title-8"></a> <a id="arithmetic-instruction"></a>演算
+
 加減乗除などの算術演算や、AND/ORなどの論理演算など、さまざまな演算を行います。
 図10に演算命令の例として、加算命令を示します。
 通常、演算に使うオペランド（operand: 被演算子、演算対象）はレジスターから読み、演算結果もレジスターに書き込みます。
@@ -212,7 +220,8 @@ CPUによっては、オペランドを命令に埋め込んだり（即値命�
 加算器などの具体的なハードウェアの作り方については別途「[汎用コンピューターの作り方](generalcomputercircuit.md)」にて説明します。
 
 
-###<a id="sec-generated-title-9"></a> <a id="control-instruction"></a>実行制御
+### <a id="sec-generated-title-9"></a> <a id="control-instruction"></a>実行制御
+
 命令の実行フローはプログラム・カウンターと呼ばれる特別なレジスターで管理されています。
 プログラム・カウンターには、今、メイン・メモリのどこに格納された命令を実行中かを指し示すアドレス値（詳細は次節で説明）が格納されています。
 通常の実行フローでは、実行した命令長分ずつプログラム・カウンターの値が増加し、

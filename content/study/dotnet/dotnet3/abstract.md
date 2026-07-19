@@ -18,12 +18,14 @@ aliases:
 
 # .NET Framework 概要
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 .NET Framework 2.0 では、「[ジェネリック](../../csharp/oop/sp2_generics.md#generics)」への対応など、言語拡張が主でしたが、
 3.0 以降、ライブラリに大幅な強化が加えられています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="dotnet3"></a>.NET Framework 3.0
+## <a id="sec-generated-title-2"></a> <a id="dotnet3"></a>.NET Framework 3.0
+
 .NET Framework 3.0 では WPF、WCF、WF、WCS と呼ばれる新フレームワーク（ライブラリ）が追加されました。
 
 * Windows Presentation Foundation（<strong id="wpf" class="keyword">WPF</strong>）… 高機能 GUI フレームワーク。2D / 3D、ビットマップ/ベクタグラフィック、動画・音声などを統合。また、XAML と呼ばれる XML ファイルで GUI アプリケーションの視覚デザインができる。
@@ -43,7 +45,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="dotnet3_5"></a>.NET Framework 3.5
+## <a id="sec-generated-title-3"></a> <a id="dotnet3_5"></a>.NET Framework 3.5
+
 .NET Framework 3.5 では、LINQ（Language Integrated Query）と呼ばれる機能が追加されました。
 .NET Framework 3.0 がライブラリの追加のみだったのに対して、3.5 では C# も 3.0 にバージョンアップしました。
 CLI（実行インフラ）自体は 2.0 のままです。
@@ -61,7 +64,8 @@ CLI（実行インフラ）自体は 2.0 のままです。
 詳しくは「[LINQ](../../csharp/data/sp3_linq.md)」参照。
 
 
-##<a id="sec-generated-title-4"></a> <a id="dotnet4"></a>.NET Framework 4.0
+## <a id="sec-generated-title-4"></a> <a id="dotnet4"></a>.NET Framework 4.0
+
 .NET Framework 4.0 では非常に多岐にわたるライブラリの追加が行われています。
 また、CLI も、仕様こそ 2.0 から変更はされていないものの、
 パフォーマンス的な理由で1から作り直したとのことで、バージョンが変わっています。

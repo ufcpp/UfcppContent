@@ -20,7 +20,8 @@ aliases:
 
 # 超関数
 
-##<a id="sec-generated-title-1"></a> <a id="distribution"></a>超関数
+## <a id="sec-generated-title-1"></a> <a id="distribution"></a>超関数
+
 詳しくは別項「[超関数](distribution-e_distribution.md)」で述べますが、
 超関数という考え方では1点だけで値が∞になるような関数（を拡張したもの）を定義できます。
 基本的なアイディアとしては、
@@ -47,7 +48,8 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span> ＝
 <span class="paren" style="font-size:2em;">{</span><table class="branch" summary="conditional"><tr><td><span class="math">t</span>  </td><td><span class="paren">(</span><span class="math">t≠0</span><span class="paren">)</span></td></tr><tr><td><span class="math">1</span>  </td><td><span class="paren">(</span><span class="math">t＝0</span><span class="paren">)</span></td></tr></table></div>
 
-##<a id="sec-generated-title-2"></a> <a id="delta"></a>δ関数
+## <a id="sec-generated-title-2"></a> <a id="delta"></a>δ関数
+
 以下のような超関数を考えて見ましょう。
 <div class="math"><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> b</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">a</td></tr></table>δ<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span><span class="normal">d</span>x
 ＝
@@ -67,7 +69,8 @@ f<sub>a</sub><span class="paren" style="font-size:em;">(</span>x<span class="par
 <span class="math">x ＝ 0</span> に置いて∞の値を持ちます。
 
 
-##<a id="sec-generated-title-3"></a> <a id="d73e136"></a>まとめ
+## <a id="sec-generated-title-3"></a> <a id="d73e136"></a>まとめ
+
 超関数という概念を導入することで、
 1点でだけ∞になるような関数を考えることが出来ます。
 ただし、全くのノーリスクで∞の概念を得られるわけではなく、

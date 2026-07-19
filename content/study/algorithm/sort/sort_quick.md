@@ -18,7 +18,8 @@ aliases:
 
 # クイックソート
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 <strong id="quick" class="keyword">クイックソート</strong>（quick sort）は、
 名前に quick なんて単語を入れるだけあって、
 大半の状況下で最速となるソートアルゴリズムです。
@@ -54,7 +55,8 @@ aliases:
 
 <div><iframe src="https://black-ocean-009cb0000.2.azurestaticapps.net/?a=quick&i=0&s=0&w=300" width="304" height="332"></iframe></div>
 
-##<a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-2"></a> <a id="sample"></a>サンプルソース
+
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/QuickSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/QuickSort.cs)
 
 <pre class="source" title="クイックソート" lang="">

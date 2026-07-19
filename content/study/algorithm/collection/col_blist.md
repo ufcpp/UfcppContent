@@ -18,7 +18,8 @@ aliases:
 
 # 双方向連結リスト
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[片方向連結リスト](col_flist.md)」でも説明しましたが、
 ノードと呼ばれる物を1つずつ連結して作るコレクションを<strong id="linked" class="keyword">連結リスト</strong>
 と呼びます。
@@ -37,7 +38,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+## <a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+
 双方向連結リストは以下のような利点を持っています。
 
 * 「[片方向連結リスト](col_flist.md#flist)」と同様に、常に要素数分のメモリだけ確保しておける。
@@ -65,7 +67,8 @@ C++ の STL では双方向連結リストが単に list という名前です�
 C# でも LinkedList という名前になっています。
 
 
-##<a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法
+## <a id="sec-generated-title-3"></a> <a id="impl"></a>実装方法
+
 まず、ノードを実装します。
 「[片方向連結リスト](col_flist.md#flist)」の場合と比べて、
 「前のノード」を指す <code>prev</code> というメンバー変数が増えています。
@@ -291,7 +294,8 @@ C# でも LinkedList という名前になっています。
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/LinkedList.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Collections/LinkedList.cs)

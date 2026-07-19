@@ -18,7 +18,8 @@ aliases:
 
 # 体の拡大
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 実数体と有理数体のように、集合として包含関係のある体が存在します。
 このとき、その2つの体の関係を、拡大体・部分体という言葉で表します。
 また、有理数体から実数体を作るように、自身を部分集合として含む、より大きな体を作ることを体の拡大といいます。
@@ -26,7 +27,8 @@ aliases:
 実は、体に対して、機械的な操作で体の拡大を行うことが出来ます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="extension"></a>部分体と拡大体
+## <a id="sec-generated-title-2"></a> <a id="extension"></a>部分体と拡大体
+
 体 <span class="math">A</span> の部分代数系 <span class="math">B</span> が体になっているとき、
 <span class="math">B</span> を <span class="math">A</span> の<strong id="subfield" class="keyword">部分体</strong>（subfield）、
 <span class="math">A</span> を <span class="math">B</span> の<strong id="extension" class="keyword">拡大体</strong>（extended field または extension field）と言います。
@@ -49,7 +51,8 @@ aliases:
 になります。
 
 
-###<a id="sec-generated-title-3"></a> <a id="order"></a>拡大次数
+### <a id="sec-generated-title-3"></a> <a id="order"></a>拡大次数
+
 複素数体は実数体上の2次元ベクトルとして考えることも出来るわけですが、
 拡大体 <span class="math">E</span> は必ず体 <span class="math">K</span> のベクトル空間になっています。
 なぜならば、<span class="math">a, b ∈ K, x, y ∈ E</span> とすると、
@@ -106,7 +109,8 @@ a<sub>i</sub> b<sub>j</sub> |
 他の2つの体の間に挟まっている体を中間体（intermediate field）と呼びます。
 
 
-###<a id="sec-generated-title-4"></a> <a id="example"></a>拡大体の例
+### <a id="sec-generated-title-4"></a> <a id="example"></a>拡大体の例
+
 複素数、実数、有理数などの間の関係は分かりやすい例ですが、
 その他にもいくつか、拡大体の例を挙げます。
  
@@ -174,7 +178,8 @@ c ＋ d <span class="normal" style="font-size:em;">√</span><span class="bar">2
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="extend"></a>体の拡大方法
+## <a id="sec-generated-title-5"></a> <a id="extend"></a>体の拡大方法
+
 冒頭でも述べましたが、体に対して、機械的な操作で体の拡大を行うことが出来ます。
  
 例えば、ある体 <span class="math">K</span> 上の有理式 <span class="math">K<span class="paren" style="font-size:em;">(</span>X<span class="paren" style="font-size:em;">)</span></span> は体になりますが、有理式体 <span class="math">K<span class="paren" style="font-size:em;">(</span>X<span class="paren" style="font-size:em;">)</span></span> は体 <span class="math">K</span> を部分集合として含みます。
@@ -189,7 +194,8 @@ c ＋ d <span class="normal" style="font-size:em;">√</span><span class="bar">2
 以下のセクションではこの2つに関して説明していきます。
 
 
-##<a id="sec-generated-title-6"></a> <a id="algebraic"></a>代数拡大
+## <a id="sec-generated-title-6"></a> <a id="algebraic"></a>代数拡大
+
 1つ目の体の拡大方法は代数拡大と呼ばれるものです。
 「[拡大体の例](#example)」で説明したような、
 有理数体 <span class="math"><span class="bold">Q</span></span> から
@@ -222,7 +228,8 @@ c ＋ d <span class="normal" style="font-size:em;">√</span><span class="bar">2
 作られた拡大体のことを代数拡大体と呼びます。
 
 
-###<a id="sec-generated-title-7"></a> <a id="residual"></a>多項式環の剰余体
+### <a id="sec-generated-title-7"></a> <a id="residual"></a>多項式環の剰余体
+
 実は、
 体 <span class="math">K</span> の代数拡大体というのは、
 <span class="math">K</span> 上の多項式環 <span class="math">K<span class="paren" style="font-size:em;">[</span>X<span class="paren" style="font-size:em;">]</span></span> の「[剰余体](quotientfield.md#residual)」になっています。
@@ -265,7 +272,8 @@ c ＋ d <span class="normal" style="font-size:em;">√</span><span class="bar">2
 拡大体の<strong id="d56e945" class="keyword">生成多項式</strong>と呼びます。
 
 
-###<a id="sec-generated-title-8"></a> <a id="closed"></a>代数的閉体
+### <a id="sec-generated-title-8"></a> <a id="closed"></a>代数的閉体
+
 要するに、任意の体 <span class="math">K</span> に対して、
 「解けない方程式」さえあれば代数拡大体を作ることが出来ます。
  
@@ -281,7 +289,8 @@ c ＋ d <span class="normal" style="font-size:em;">√</span><span class="bar">2
 このような体を<strong id="closedfield" class="keyword">代数的閉体</strong>（algebraic closed field）といいます。
 
 
-###<a id="sec-generated-title-9"></a> <a id="finite"></a>有限体の代数拡大
+### <a id="sec-generated-title-9"></a> <a id="finite"></a>有限体の代数拡大
+
 「解けない方程式」さえあれば（すなわち代数的閉体でなければ）代数拡大体を作ることが出来るわけですが、
 ここでもう1つ拡大体の例を挙として、有限体（整数の剰余体）<span class="math"><span class="bold">Z</span>/p<span class="bold">Z</span></span> の代数拡大について説明します。
 （整数の剰余体に関しては、「[整数の剰余体](field.md#rasidualfield)」を参照してください。）
@@ -661,7 +670,8 @@ Y<sup>3</sup> ＋ Y<sup>2</sup> ＋ 1
 という線形写像で関係付けることが出来ます。
 
 
-##<a id="sec-generated-title-10"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-10"></a> <a id="plan"></a>執筆予定
+
 <pre>
 ・<strong id="completed" class="keyword">完備拡大</strong>（completed extension）
 	完備化（completion）するとも言う。

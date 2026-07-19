@@ -18,13 +18,15 @@ aliases:
 
 # ベクトル解析用記号
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 線素、面素、体積素。
 勾配、発散、回転。
 ナブラ記号。
 
 
-##<a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
+
 <pre>&lt;dV/&gt;
 &lt;dS/&gt;
 &lt;dl/&gt;
@@ -37,7 +39,8 @@ aliases:
 &lt;nabra/&gt;
 </pre>
 
-##<a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
+
 <pre>&lt;int&gt;&lt;sub&gt;V&lt;/sub&gt;&lt;/int&gt; &lt;divergence/&gt;&lt;vec&gt;f&lt;/vec&gt; &lt;dV/&gt;
 ＝
 &lt;oint&gt;&lt;sub&gt;∂V&lt;/sub&gt;&lt;/oint&gt; &lt;vec&gt;f&lt;/vec&gt;・&lt;dS/&gt;
@@ -72,7 +75,8 @@ aliases:
 <span class="vector">∇</span>
 </div>
 
-##<a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
+
 <pre>&lt;xsl:template match="ufcpp:dV"&gt;
   &lt;span class="normal"&gt;d&lt;/span&gt;V
 &lt;/xsl:template&gt;
@@ -115,7 +119,8 @@ aliases:
 
 </pre>
 
-##<a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
+
 <pre>span.normal
 {
   font-weight:normal;

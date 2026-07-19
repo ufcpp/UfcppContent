@@ -14,7 +14,8 @@ aliases:
 
 # \[雑記\] 型の決定
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 C# の[変数](st_variable.md#variable)や[式](st_variable.md#expression)はそれぞれが「型」を持っています。
 例えば `int x;` として宣言した変数 `x` は `int` 型になりますし、`"abc"` という式(文字列[リテラル](st_variable.md#literal)も式の一種)は `string` 型になります。
 
@@ -56,7 +57,8 @@ C# の[変数](st_variable.md#variable)や[式](st_variable.md#expression)はそ
 
 本項では、こういった「型の決定」について説明していきます。
 
-##<a id="sec-generated-title-2"></a> <a id="source-target"></a>型決定の「向き」
+## <a id="sec-generated-title-2"></a> <a id="source-target"></a>型決定の「向き」
+
 型の決定には「向き」があります。
 概要で話した通り、型決定の代表例は代入処理で、`=` 演算子の左右を指して「左辺」(left hand side)、「右辺」(right hand side)と言ったりします。
 ただ、同様の型決定は、必ずしも「左右」になっていない構文でも発生します。
@@ -144,7 +146,8 @@ C# の[変数](st_variable.md#variable)や[式](st_variable.md#expression)はそ
 }
 </code></pre>
 
-#####<a id="sec-generated-title-3"></a> <a id="source-typed"></a>ソース型からの決定
+##### <a id="sec-generated-title-3"></a> <a id="source-typed"></a>ソース型からの決定
+
 ソース型によって挙動が決まる構文として以下のようなものがあります。
 
 - [ローカル変数の型推論](sp3_inference.md#implicit)
@@ -152,7 +155,8 @@ C# の[変数](st_variable.md#variable)や[式](st_variable.md#expression)はそ
 - [オーバーロード解決](../structured/miscoverloadresolution.md)
   - 特に、[ジェネリック型引数の推論](../oop/sp2_generics.md#method)
 
-#####<a id="sec-generated-title-4"></a> <a id="source-typed"></a>ターゲット型からの決定
+##### <a id="sec-generated-title-4"></a> <a id="source-typed"></a>ターゲット型からの決定
+
 ターゲット型によって挙動が決まる構文として以下のようなものがあります。
 
 単に「ターゲットを見るまで型が確定しない」程度のものもあります。
@@ -193,7 +197,8 @@ C# の[変数](st_variable.md#variable)や[式](st_variable.md#expression)はそ
 };
 </code></pre>
 
-##<a id="sec-generated-title-5"></a> <a id="history"></a>自動型決定の歴史
+## <a id="sec-generated-title-5"></a> <a id="history"></a>自動型決定の歴史
+
 ソース/ターゲットのいずれか一方だけの型を指定して他方を自動決定するというのは、
 2000年代頃から増え始めたものです。
 20世紀の(1990年代以前の)プログラミング言語では少数派でしたし、
@@ -242,7 +247,8 @@ C# でも、C# 2.0 や 3.0 から導入された構文が多いです。
 <span class="reserved">byte</span>[] <span class="variable">e</span> = <span class="error"><span class="reserved">new</span>[] { 1, 2 }</span>;
 </code></pre>
 
-##<a id="sec-generated-title-6"></a> <a id="conflict"></a>自動型決定の競合
+## <a id="sec-generated-title-6"></a> <a id="conflict"></a>自動型決定の競合
+
 ソースから型決定する構文とターゲットから型決定する構文は、当然ですが両立はできません。
 どちらもあいまいでは型決定できません。片方は明示的な型指定が必要になります。
 
@@ -303,7 +309,8 @@ C# でも、C# 2.0 や 3.0 から導入された構文が多いです。
 }
 </code></pre>
 
-##<a id="sec-generated-title-7"></a> <a id="priority"></a>優先度付きのターゲットからの型決定
+## <a id="sec-generated-title-7"></a> <a id="priority"></a>優先度付きのターゲットからの型決定
+
 ターゲットの型を見て挙動が変わりはするものの、
 未指定の場合の既定の挙動が決まっていて、ソース型からの型推論と競合しないものもあります。
 
@@ -348,7 +355,8 @@ C# でも、C# 2.0 や 3.0 から導入された構文が多いです。
 }
 </code></pre>
 
-##<a id="sec-generated-title-8"></a> <a id="cost"></a>自動型決定のコスト
+## <a id="sec-generated-title-8"></a> <a id="cost"></a>自動型決定のコスト
+
 ソースとターゲットのどちらか片方から他方を決定できるといっても、
 その推論が低コストなものと、意外と高コストなものがあったりします。
 
@@ -445,7 +453,8 @@ C# でも、C# 2.0 や 3.0 から導入された構文が多いです。
 <span class="reserved">static</span> <span class="reserved">var</span> <span class="method">F</span>() =&gt; <span class="method">M</span>(1.2, <span class="reserved">new</span> <span class="reserved">object</span>());
 </code></pre>
 
-##<a id="sec-generated-title-9"></a> <a id="nest"></a>入れ子
+## <a id="sec-generated-title-9"></a> <a id="nest"></a>入れ子
+
 いくつかの構文では、多段に中身を追って型決定してくれます。
 例えば、以下のように、多重のラムダ式からオーバーロード解決することができます。
 (ただし制限あり。)
@@ -526,7 +535,8 @@ C# でも、C# 2.0 や 3.0 から導入された構文が多いです。
 <span class="reserved">static</span> <span class="type">T</span> <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">x</span>, <span class="type">T</span> <span class="variable">y</span>) =&gt; <span class="variable">x</span>;
 </code></pre>
 
-##<a id="sec-generated-title-10"></a> <a id="common-type"></a>共通型
+## <a id="sec-generated-title-10"></a> <a id="common-type"></a>共通型
+
 `switch` 式や条件演算子など、いくつかの「枝」を持つ構文では、枝ごとの型の「共通の型」(common type)を探す作業を一応行います。
 ただ、C# 8.0 時点では制約がきつく、「枝のうちいずれか1つ」しか選ばれません。
 

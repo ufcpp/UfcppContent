@@ -18,13 +18,15 @@ aliases:
 
 # グラフィック
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 System.Drawing 名前空間以下に、
 画像ファイルの読み書きや、
 直線や円などを画像に描くためのクラスが用意されています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="image"></a>Image
+## <a id="sec-generated-title-2"></a> <a id="image"></a>Image
+
 System.Drawing.Image はベクタ画像・ビットマップ画像問わず、画像を扱うためのクラスです。
 png, jpg, gif 等、さまざまな画像形式ファイルを読み書きできます。
 
@@ -69,7 +71,8 @@ System.Drawing.Imaging.ImageFormat で形式を明示的に指定します。
 出てきたダイアログボックス中から「System.Drawing」と言うのを探してダブルクリックします。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="bmp"></a>Bitmap
+## <a id="sec-generated-title-3"></a> <a id="bmp"></a>Bitmap
+
 System.Drawing.Bitmap はビットマップ画像を扱うためのクラスです。
 
 System.Windows.Forms はビットマップベースの GUI 環境なので、
@@ -79,7 +82,8 @@ System.Windows.Forms を使った GUI プログラミングでは Bitmap クラ�
 次節で説明する Graphics クラスという物を介して行うのが普通です。
 
 
-##<a id="sec-generated-title-4"></a> <a id="graphics"></a>Graphics
+## <a id="sec-generated-title-4"></a> <a id="graphics"></a>Graphics
+
 ビットマップ画像や、
 System.Windows.Forms GUI プログラムの画面上に、
 直線、曲線、矩形、円などを描くためのクラスとして、
@@ -129,7 +133,8 @@ Windows アプリケーション開発用のプロジェクトを作ると、
 
 
 
-##<a id="sec-generated-title-5"></a> <a id="gui"></a>GUI 雛形プログラム
+## <a id="sec-generated-title-5"></a> <a id="gui"></a>GUI 雛形プログラム
+
 Graphic クラス自体はシンプルなものですが、
 実際に GUI プログラムを書くためには、
 Graphic クラス以外にもいろいろと覚える必要があって、

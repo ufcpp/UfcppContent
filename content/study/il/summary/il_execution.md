@@ -14,7 +14,8 @@ aliases:
 
 # IL 命令の実行例
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 .NETの仮想マシンは、スタック型と呼ばれるタイプの構造をしています。
 
 スタック型の命令は、コンパイラー作りの基本だったりします。
@@ -24,7 +25,8 @@ aliases:
 ここでは、サンプル コードを示しつつ、それが実際どういう手順で実行されているかを説明します。
 
 
-##<a id="sec-generated-title-2"></a> <a id="sample1"></a>例1: 2 * (x + y)
+## <a id="sec-generated-title-2"></a> <a id="sample1"></a>例1: 2 * (x + y)
+
 例として、以下のような C# コードを考えてみます。
 
 <pre class="source" title="C# の例1" lang="">
@@ -140,7 +142,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="sample2"></a>例2: 値を2つ入力して、和を出力
+## <a id="sec-generated-title-3"></a> <a id="sample2"></a>例2: 値を2つ入力して、和を出力
+
 もう1つ、ローカル変数やメソッド呼び出しも行う例を示しましょう。
 以下のような C# コードを考えてみます。
 

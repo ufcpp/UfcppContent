@@ -18,7 +18,8 @@ aliases:
 
 # 2分探索木
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 一般に木構造というと、循環のない有向グラフのことなんですが、
 そういう一般論はまた別の機会に話をしましょう。
 
@@ -53,7 +54,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+## <a id="sec-generated-title-2"></a> <a id="character"></a>特徴
+
 2分探索木は以下のような利点を持っています。
 
 * 理想的には、要素の挿入・削除・検索が O(log n) で行える。
@@ -75,7 +77,8 @@ aliases:
 赤黒木あるいは2色木（red-black tree）と呼ばれるものがあります。
 
 
-##<a id="sec-generated-title-3"></a> <a id="btimpl"></a>2分探索木の実装
+## <a id="sec-generated-title-3"></a> <a id="btimpl"></a>2分探索木の実装
+
 まず、2分探索木も構造的には2分木なので、
 以下のような左右の子を持つノードを定義します。
 
@@ -221,7 +224,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+## <a id="sec-generated-title-4"></a> <a id="sample"></a>サンプルソース
+
 C# サンプルソースを示します。
 まずは、平衡化機構のないものです。
 
@@ -231,5 +235,6 @@ C# サンプルソースを示します。
 [Set.cs](../../../../assets/src/Set.cs) で定義しています。）
 
 
-##<a id="sec-generated-title-5"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-5"></a> <a id="plan"></a>執筆予定
+
 木構造の平衡化、赤黒木。

@@ -18,17 +18,20 @@ aliases:
 
 # 互換性の維持
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 C# は後方互換性に非常に注意を払っています。
 C# 自身についても、C# のバージョンを上げることで動かなくなるコードが出ないように気を付けて機能追加をしていますし、
 C# で書かれたライブラリについても、ライブラリ内の改修がライブラリ利用側で問題になりにくいように気を使って文法を決めています。
 
 
-##<a id="sec-generated-title-2"></a> <a id="lang"></a>C# 自体の後方互換性
+## <a id="sec-generated-title-2"></a> <a id="lang"></a>C# 自体の後方互換性
+
 プログラミング言語に機能を追加する際、既存のプログラム コードがそのままコンパイルできるように互換性を保つことは非常に重要です。
 
 
-###<a id="sec-generated-title-3"></a> <a id="contextual-keyword"></a>文脈キーワード
+### <a id="sec-generated-title-3"></a> <a id="contextual-keyword"></a>文脈キーワード
+
 C# 2.0 以降で追加されたキーワードは、全て文脈キーワード(contexual keyword) というものになっています。通常のキーワードとは違って、特定の文脈でしかキーワード扱いされません。
 
 文脈キーワードの作り方にも数パターンがありますが、いくつか例を挙げて見ましょう。
@@ -38,7 +41,8 @@ C# 2.0 以降で追加されたキーワードは、全て文脈キーワード(
 - `await`: `async`修飾子が付いたメソッドの中でだけキーワード扱い
 - `nameof`: `nameof`という名前のメソッドがない時に限りキーワード扱い
 
-####<a id="sec-generated-title-4"></a> <a id="yield"></a>yield
+#### <a id="sec-generated-title-4"></a> <a id="yield"></a>yield
+
 1つ目はC# 2.0で追加された「[イテレーター](../data/sp2_iterator.md#iterator)」に関する <code>yield</code> キーワードです。
 <code>yield</code> は、 <code>yield return</code> もしくは <code>yield break</code> という2単語並んだ状態でしかキーワード扱いされません。
 
@@ -79,7 +83,8 @@ C# 2.0 以降で追加されたキーワードは、全て文脈キーワード(
 }
 </code></pre>
 
-####<a id="sec-generated-title-5"></a> <a id="var"></a>var
+#### <a id="sec-generated-title-5"></a> <a id="var"></a>var
+
 もう1つ、C# 3.0で導入された「[型推論](../start/sp3_inference.md#type-inference)」に関する <code>var</code> キーワードは、変数宣言出来る文脈でだけキーワード扱いされます。
 以下のようなコードも C# 3.0 でコンパイルできます。
 
@@ -147,7 +152,8 @@ C#では型名を小文字始まりにする習慣があまりないのでめっ
 
 逆に、あまり褒められた手法ではないですが、この仕様を逆手にとって、「このプロジェクトでは型推論を使わせない」というコーディング規約を遵守させるためにわざと`var`型を定義しておく人もいるそうです。
 
-####<a id="sec-generated-title-6"></a> <a id="await"></a>await
+#### <a id="sec-generated-title-6"></a> <a id="await"></a>await
+
 C# 5.0 で導入された非同期メソッド用の <code>await</code> キーワードは、
 「<code>async</code> 修飾子がついているメソッドの中でだけキーワード扱いされる」という方法で文脈キーワードになっています
 （<code>async</code> はメソッドの手前でだけキーワード扱い）。
@@ -219,7 +225,8 @@ C# 5.0 で導入された非同期メソッド用の <code>await</code> キー�
 }
 </code></pre>
 
-####<a id="sec-generated-title-7"></a> <a id="nameof"></a>nameof
+#### <a id="sec-generated-title-7"></a> <a id="nameof"></a>nameof
+
 C# 6で導入された`nameof`演算子は、同名のメソッドがない場合に限ってキーワード扱いされます。
 
 <pre class="source" title="nameofメソッド">
@@ -291,13 +298,15 @@ C# 6で導入された`nameof`演算子は、同名のメソッドがない場�
 
 悪意を持ってわざとやらない限り書かれることはないであろうコードですが、一応注意してください。
 
-####<a id="sec-generated-title-8"></a> <a id="on-context"></a>余談1： 文脈依存の大変さ
+#### <a id="sec-generated-title-8"></a> <a id="on-context"></a>余談1： 文脈依存の大変さ
+
 文脈キーワードには、過去のバージョンとの互換性を取りやすいというだけでなく、識別子（変数名など）に使える単語が減らないという利点があります。
 その一方で、キーワードかどうかをプログラム的に判別するのが難しくなり、例えば、ブログとかでのキーワードの色付け表示がしづらかったりします。
 単にキーワードに色を付けるためだけでも単純な文字列マッチングではできず、C# の文法を理解する必要があります。
 
 
-####<a id="sec-generated-title-9"></a> <a id="yield-or-await"></a>余談2： yield と await
+#### <a id="sec-generated-title-9"></a> <a id="yield-or-await"></a>余談2： yield と await
+
 いくつか紹介してきたように、文脈キーワードの作り方は一種類ではありません。
 似たような機能であっても、文脈の作り方が異なる場合もあります。
 
@@ -342,13 +351,15 @@ C# 6で導入された`nameof`演算子は、同名のメソッドがない場�
 
 
 
-##<a id="sec-generated-title-10"></a> <a id="library"></a>C# で書かれたコードの互換性
+## <a id="sec-generated-title-10"></a> <a id="library"></a>C# で書かれたコードの互換性
+
 C# の開発者は互換性に対して非常に多くの注意を払っています。
 C# という言語自体の互換性だけでなく、
 C# を使って書いたライブラリが互換性を保って利用してもらいやすいように C# の文法を決めています。
 
 
-###<a id="sec-generated-title-11"></a> <a id="dependency"></a>依存関係と、コード修正の影響
+### <a id="sec-generated-title-11"></a> <a id="dependency"></a>依存関係と、コード修正の影響
+
 C# の文法の話をする前に、ライブラリの互換性維持について少し説明しておきましょう。
 シンプルな例ですが、図1に、ライブラリの開発体制としてありがちな状況を示します。
 
@@ -400,7 +411,8 @@ C# の文法の話をする前に、ライブラリの互換性維持につい�
 この状況下で、Base や Derived クラスに対する修正がどういう影響を及ぼすかを考える必要があります。
 
 
-###<a id="sec-generated-title-12"></a> <a id="add"></a>基底クラスへの追加
+### <a id="sec-generated-title-12"></a> <a id="add"></a>基底クラスへの追加
+
 当然ですが、public になっている部分を「変更」すると、利用側のコードが動かなくなります。
 これはわかりやすい互換性の問題なので、たいていの開発者は細心の注意を払うと思います（変更したくてもしないとか、互換性を破棄する旨をあらかじめ伝えるとか）。
 
@@ -457,7 +469,8 @@ Base 側開発者は Derived 側のことを何も知らないので、悪意な
 この場合でも、C# はエラーを起こさないようにしています。
 
 
-###<a id="sec-generated-title-13"></a> <a id="override"></a>new 修飾子、override 修飾子
+### <a id="sec-generated-title-13"></a> <a id="override"></a>new 修飾子、override 修飾子
+
 やむなく変更が必要な場合も考えてみましょう。
 例えば以下の例を見てください。
 
@@ -554,7 +567,8 @@ Derived 側で A メソッドをわざわざ再定義（new）しているわけ
 なので、この場合は、コンパイル エラーを起こします（Base 側の変更に合わせて Derived 側も直す必要がある）。
 
 
-###<a id="sec-generated-title-14"></a> <a id="overload"></a>オーバーロードの解決ルール
+### <a id="sec-generated-title-14"></a> <a id="overload"></a>オーバーロードの解決ルール
+
 もう少し複雑な例を。
 C# では、同じ名前で引数の型だけが違うメソッドを定義できます（「[オーバーロード](../structured/st_function.md#overload)」）。
 複数の候補がある場合には、もっとも型の一致度の高いものが選ばれます。
@@ -649,7 +663,8 @@ Derived 側の事情はお構いなしに Base 側が変更される場合があ
 この場合、Base 側に後からメソッドを追加しても、元々の挙動が変わらないようにした結果として、こういうオーバーロードの解決順になっています。
 
 
-##<a id="sec-generated-title-15"></a> <a id="breaking-change"></a>C# における破壊的変更
+## <a id="sec-generated-title-15"></a> <a id="breaking-change"></a>C# における破壊的変更
+
 注意は払っているといっても、C# にも破壊的変更（breaking change: 互換性を損ねる変更）がなくはないです。
 
 粗を探せば結構な数があるものの、既存コード（マイクロソフト社内でのコードや、オープンソース プロジェクトのコード）を使って、問題のあるコードがほとんどないことを確認しているそうです。
@@ -659,7 +674,8 @@ Derived 側の事情はお構いなしに Base 側が変更される場合があ
 （おそらく影響あるのは、ほとんどの人は思いつかないし、思いついても書かないようなコードだと思います）。
 
 
-###<a id="sec-generated-title-16"></a> <a id="generic"></a>ジェネリクスの導入
+### <a id="sec-generated-title-16"></a> <a id="generic"></a>ジェネリクスの導入
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 C# 2.0 で「[ジェネリック](../oop/sp2_generics.md)」が導入されました。
@@ -692,7 +708,8 @@ C# 1.0 では、このコードは2つの大小比較 <code>x &lt; y</code> と 
 「x はメソッドじゃない」「y, z という型はない」という理由でコンパイル エラーになります。
 
 
-###<a id="sec-generated-title-17"></a> <a id="is"></a>ジェネリックの変性と is 演算子
+### <a id="sec-generated-title-17"></a> <a id="is"></a>ジェネリックの変性と is 演算子
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 is 演算子は、例外を出さずにキャストできるかどうかを判定する演算子です（参考: 「[ダウンキャスト](../oop/oo_polymorphism.md#downcast)」）。
@@ -721,7 +738,8 @@ C# 4.0 で<sup>※</sup>、ジェネリックに「[変性注釈](../oop/sp4_var
 このコードは、.NET 4 以降で実行するか、.NET 3.5 以前で実行するかによって結果が変わることになります（コンパイルに使った C# のバージョンでなく、実行に使う .NET Framework の方のバージョンに依存）。
 
 
-###<a id="sec-generated-title-18"></a> <a id="event"></a>自動実装 event
+### <a id="sec-generated-title-18"></a> <a id="event"></a>自動実装 event
+
 <h5 class="version version4">Ver. 4.0</h5>
 
 C# 4.0 では、ひそかに自動実装イベント（add/remove アクセサーを持たないイベント。「[イベント](../functional/sp_event.md#event)」参照）の内部実装方法が変更されました。 
@@ -809,7 +827,8 @@ CompareExchange メソッドが正しく動かないという問題があって�
 （あくまで、C# 4.0（Visual Studio 2010）以上を使って作った DLL を古いバージョンの Mono 経由で iOS 上で使おうとするという状況下でだけ起きる問題です。）
 
 
-###<a id="sec-generated-title-19"></a> <a id="foreach"></a>foreach の変数スコープ
+### <a id="sec-generated-title-19"></a> <a id="foreach"></a>foreach の変数スコープ
+
 <h5 class="version version5">Ver. 5.0</h5>
 
 C# 5.0 で、foreach の仕様に変更がありました（参考「[foreach の仕様変更](../cheatsheet/ap_ver5.md#foreach)」）。
@@ -870,7 +889,8 @@ C# 5.0 で、foreach の仕様に変更がありました（参考「[foreach �
 ただし、その逆、C# 5.0 で作ったコードを古い環境に持っていってコンパイルしなおす場合には注意が必要です。
 環境が混在している場合には特に注意しましょう。
 
-###<a id="sec-generated-title-20"></a> <a id="unicode"></a>C#と文字コード(カタカナ中点・)
+### <a id="sec-generated-title-20"></a> <a id="unicode"></a>C#と文字コード(カタカナ中点・)
+
 <h5 class="version version6">Ver. 6</h5>
 
 C# 6で、コンパイラーを1から作り直した影響もあって、C#コンパイラーが参照しているUnicodeのバージョンが変わりました。
@@ -882,7 +902,8 @@ C# 6で、コンパイラーを1から作り直した影響もあって、C#コ�
 ちなみに、C#的には、C#のどのバージョンがUnicodeのどのバージョンを使うかは特に明記せず、「とりあえずその時点で最新のUnicodeバージョンを使う」という方針になります。
 (これまではマイクロソフト製C#コンパイラーは基本的にWindows上で動かすものだったので特に気にされることはありませんでしたが、C# 6以降の世代では、C#コンパイラーも.NETもオープンソース化、マルチプラットフォーム化した影響で、プラットフォームごとに多少、使える文字が変わる可能性があります。)
 
-###<a id="sec-generated-title-21"></a> <a id="infer-tuple-name"></a>タプル要素名の推論
+### <a id="sec-generated-title-21"></a> <a id="infer-tuple-name"></a>タプル要素名の推論
+
 <h5 class="version version7_1">Ver. 7.1</h5>
 
 C# 7.0で入ったタプルですが、[C# 7.1で少し機能追加がありました](../cheatsheet/ap_ver7_1.md#sec-generated-title-3)。
@@ -939,7 +960,8 @@ C# 7.0で入ったタプルですが、[C# 7.1で少し機能追加がありま�
 そこで、「C# 7.0の時点では先送りして、必要であれば7.1で推論を導入する」ということになっていたんですが、
 その結果、上記の拡張メソッドでの破壊的変更を生んでしまうことに気付いて慌てたようです。
 
-###<a id="sec-generated-title-22"></a> <a id="others"></a>その他
+### <a id="sec-generated-title-22"></a> <a id="others"></a>その他
+
 その他細々と、破壊的変更に関する情報のまとめページを以下に掲載して起きます。
 
 * [Visual C# 2008 Breaking Changes](http://msdn.microsoft.com/en-us/library/cc713578.aspx)

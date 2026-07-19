@@ -18,7 +18,8 @@ aliases:
 
 # Z変換
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 「[フーリエ変換](fourier.md#f-trans)」における微分を表す変数 <span class="math">iω</span> を <span class="math">s</span> と置いて、微分方程式の解析を行うのが「[ラプラス変換](laplace.md#Laplace)」です。
 これに対して、
 離散関数のフーリエ変換（「[離散関数のフーリエ変換 離散フーリエ変換](dft.md#discrete)」参照）における時間シフトを表す変数 <span class="math"><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>i T<sub>s</sub>ω<span class="paren" style="font-size:1em;">)</span></span> を <span class="math">z</span> と置いて、差分方程式の解析を行うのが Z 変換です。
@@ -27,7 +28,8 @@ aliases:
 一方、ディジタルシステム（離散信号）は差分・和分を用いて表現するので Z 変換の出番となります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="definition"></a>Z 変換の定義
+## <a id="sec-generated-title-2"></a> <a id="definition"></a>Z 変換の定義
+
 離散関数 <span class="math">f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="font-size:em;">]</span></span> に対して、
 <div class="math">
 F<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span>
@@ -66,12 +68,14 @@ Z 変換後の関数 <span class="math">F<span class="paren" style="font-size:em
 （ディジタル信号処理における用語。）
 
 
-##<a id="sec-generated-title-3"></a> <a id="property"></a>Z 変換の性質
+## <a id="sec-generated-title-3"></a> <a id="property"></a>Z 変換の性質
+
 フーリエ変換の性質から簡単に導き出すことができるので細かい説明は省略しますが、
 Z 変換は以下のような性質を持っています。
 
 
-###<a id="sec-generated-title-4"></a> <a id="linear"></a>線形性
+### <a id="sec-generated-title-4"></a> <a id="linear"></a>線形性
+
 <div class="math">
         <span class="script">Z</span><span class="paren" style="font-size:2em;">[</span>
 a f<span class="paren" style="font-size:em;">[</span>t<span class="paren" style="font-size:em;">]</span>
@@ -87,7 +91,8 @@ b
 <span class="script">Z</span><span class="paren" style="font-size:2em;">[</span>
 g<span class="paren" style="font-size:em;">[</span>t<span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:2em;">]</span><span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span></div>
 
-###<a id="sec-generated-title-5"></a> <a id="timeshift"></a>時間シフト
+### <a id="sec-generated-title-5"></a> <a id="timeshift"></a>時間シフト
+
 両側 Z 変換では、時間シフトは <span class="math">z</span> の多項式倍に変換されます。
 <div class="math">
         <span class="script">Z</span><span class="paren" style="font-size:2em;">[</span>
@@ -114,7 +119,8 @@ f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="f
 f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="font-size:em;">]</span>
 z<sup>n－k</sup></div>
 
-##<a id="sec-generated-title-6"></a> <a id="difference"></a>差分方程式
+## <a id="sec-generated-title-6"></a> <a id="difference"></a>差分方程式
+
 連続システムは微分方程式を用いて表しますが、
 それに対して、離散システムは差分方程式というものを用いて表します。
 差分方程式というのは、例えば、
@@ -173,8 +179,10 @@ a<sub>n</sub> D<sup>n</sup></div>
 したがって、<span class="math">H<span class="paren" style="font-size:em;">(</span>D<span class="paren" style="font-size:em;">)</span></span> の Z 変換は <span class="math">H<span class="paren" style="font-size:em;">(</span>z<sup>－1</sup><span class="paren" style="font-size:em;">)</span></span> となります。
 
 
-##<a id="sec-generated-title-7"></a> <a id="inverse"></a>逆変換
-###<a id="sec-generated-title-8"></a> <a id="d24e489"></a>逆変換の式
+## <a id="sec-generated-title-7"></a> <a id="inverse"></a>逆変換
+
+### <a id="sec-generated-title-8"></a> <a id="d24e489"></a>逆変換の式
+
 逆変換の式もラプラス変換と同じように、
 逆フーリエ変換の式に <span class="math">z ＝ <span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>i T<sub>s</sub>ω<span class="paren" style="font-size:1em;">)</span></span> という関係式を代入し、
 積分区間を変えたような形になります。
@@ -191,7 +199,8 @@ F<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="f
 ラプラス変換のときと一緒で、この式を直接使うことはあまりありませんので。
 
 
-###<a id="sec-generated-title-9"></a> <a id="d24e528"></a>変換公式を頼りに逆変換
+### <a id="sec-generated-title-9"></a> <a id="d24e528"></a>変換公式を頼りに逆変換
+
 Z 変換も、部分分数分解と公式だけ使ってたいていのものを逆変換できます。
 どうやるかを説明する前に、以下の公式を見てください。
 <div class="math">
@@ -217,7 +226,8 @@ f<span class="paren" style="font-size:em;">[</span>k<span class="paren" style="f
 有理式の逆 Z 変換が可能になります。
 
 
-###<a id="sec-generated-title-10"></a> <a id="d24e622"></a>級数展開
+### <a id="sec-generated-title-10"></a> <a id="d24e622"></a>級数展開
+
 有理式以外の場合ですが、
 ラプラス変換と比べればずいぶんと簡単で、
 要は <span class="math">F<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span></span> を
@@ -263,7 +273,8 @@ F<span class="paren" style="font-size:em;">(</span>z<span class="paren" style="f
 となって、最初に示した公式と一致します。
 
 
-##<a id="sec-generated-title-11"></a> <a id="stability"></a>安定性
+## <a id="sec-generated-title-11"></a> <a id="stability"></a>安定性
+
 フーリエ変換との間に、
 ラプラス変換は <span class="math">s ＝ iω</span>、
 Z 変換は <span class="math">z ＝ <span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>i T<sub>s</sub>ω<span class="paren" style="font-size:1em;">)</span></span> という関係を持っています。
@@ -306,7 +317,8 @@ z ＝ <span class="normal">exp</span><span class="paren" style="font-size:1em;">
 この例から、極の絶対値が 1 以上か 1 未満かで安定性が変わることが分かるかと思います。
 
 
-##<a id="sec-generated-title-12"></a> <a id="spectrum"></a>周波数特性
+## <a id="sec-generated-title-12"></a> <a id="spectrum"></a>周波数特性
+
 最初に述べたように、
 計算上、Z変換は「[フーリエ変換](fourier.md#f-trans)」の時間シフトを表す変数 <span class="math"><span class="normal">exp</span><span class="paren" style="font-size:1em;">(</span>i T<sub>s</sub>ω<span class="paren" style="font-size:1em;">)</span></span> を <span class="math">z</span> で置き換えたものです。
 したがって、
@@ -336,7 +348,8 @@ Z変換の結果得られた伝達関数 <span class="math">F<span class="paren"
 
 
 
-##<a id="sec-generated-title-13"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-13"></a> <a id="plan"></a>執筆予定
+
 <pre>
 z 平面上の安定な領域を図示。
 

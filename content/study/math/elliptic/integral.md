@@ -18,7 +18,8 @@ aliases:
 
 # 楕円積分
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 以下のような形式の積分を考えます。
 <div class="math">
       <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table>φ<span class="paren" style="font-size:em;">(</span>x, √p<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">)</span><span class="normal">d</span>x
@@ -45,7 +46,8 @@ aliases:
 そのため、楕円積分の性質に関する理論は、それだけで本1つになるほどのものです。
 
 
-##<a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
+
 <pre>
 一般形
 式変形を繰り返すと、楕円積分は以下のいずれかの形式に帰着

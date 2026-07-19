@@ -14,7 +14,8 @@ aliases:
 
 # トップ レベルのアクセシビリティ
 
-##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+
 クラスなどの型定義は、名前空間直下やファイル直下に書けます。この場合に指定できるアクセシビリティは public と internal の2種類になります。
 
 - public: 他のアセンブリから参照できる
@@ -23,12 +24,15 @@ aliases:
 省略すると internal 扱いになります。
 
 ##### <a id="sec-generated-title-2"></a>サンプル
+
 - [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Oop/TopLevelAccessibility](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Oop/TopLevelAccessibility)
 
-##<a id="sec-generated-title-3"></a> <a id="background"></a>前提知識
+## <a id="sec-generated-title-3"></a> <a id="background"></a>前提知識
+
 本題に入る前に少し用語の説明。
 
-###<a id="sec-generated-title-4"></a> <a id="assembly"></a>アセンブリ
+### <a id="sec-generated-title-4"></a> <a id="assembly"></a>アセンブリ
+
 まずは[前項](project.md)のおさらいから。
 
 通常、プログラムは複数のアセンブリ(assembly: 組み立て部品)を組み合わせて作り上げます。
@@ -37,7 +41,8 @@ aliases:
 - C# の場合、1つのプロジェクトで1つのアセンブリを作る
 - 複数のプロジェクト(アセンブリ)で、1つの課題を解決(ソリューション)する
 
-###<a id="sec-generated-title-5"></a> <a id="top-level"></a>トップ レベル要素
+### <a id="sec-generated-title-5"></a> <a id="top-level"></a>トップ レベル要素
+
 フィールドやプロパティなどのメンバーは、常にクラスもしくは構造体の内部にあります。
 一方で、型(クラス、構造体、インターフェイス、デリゲート、列挙型など)の定義は名前空間の直下や、ファイル直下(コンパイル単位(compilation unit)とか呼ばれたりします)に書けます。
 
@@ -46,7 +51,8 @@ aliases:
 
 ![トップ レベル](../../../../assets/media/1028/toplevel.png)
 
-###<a id="sec-generated-title-6"></a> <a id="top-level-accessibility"></a>トップ レベル要素に対するアクセシビリティ
+### <a id="sec-generated-title-6"></a> <a id="top-level-accessibility"></a>トップ レベル要素に対するアクセシビリティ
+
 [実装の隠蔽](../oop/oo_conceal.md)で、5種類のアクセシビリティ(4つのキーワードとその組み合わせ)を紹介しました。
 
 トップ レベルの型に対するアクセシビリティは、アセンブリをまたいでアクセスできるかどうかを表します。
@@ -141,7 +147,8 @@ aliases:
 }
 </code></pre>
 
-###<a id="sec-generated-title-7"></a> <a id="details"></a>いくつか細かいルール
+### <a id="sec-generated-title-7"></a> <a id="details"></a>いくつか細かいルール
+
 ちなみに、入れ子であれば、型に対しても5種類全部のアクセシビリティを指定できます。
 それぞれの意味は、[実装の隠蔽](../oop/oo_conceal.md)で紹介したメンバーに対するものと同じです。
 

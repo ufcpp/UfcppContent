@@ -19,7 +19,8 @@ aliases:
 
 # LINQ
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 <h5 class="version version3">Ver. 3.0</h5>
 
 C# 3.0（そして、同時に発表された VB 9.0）の目玉となる新機能は、
@@ -46,13 +47,15 @@ C# や VB.NET 言語中に SQL 風の問い合わせ構文を埋め込めるよ�
 
 
 ##### <a id="sec-generated-title-2"></a>ポイント
+
 * クエリ式：<code>var q = from x in collection where x &gt; 10 select x * x;</code>
 
 * メソッド形式で LINQ：<code>var q = collection.Where(x =&gt; x &gt; 10).Select(x =&gt; x * x);</code>
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="linq"></a>LINQ とは
+## <a id="sec-generated-title-3"></a> <a id="linq"></a>LINQ とは
+
 <strong id="linq" class="keyword">LINQ</strong> とは、
 Language Integrated Query の略称で、
 C# や VB などの .NET Framework 対応言語に、
@@ -82,7 +85,8 @@ C# や Java などの OOP 言語によって、
 すなわち、OOP 言語への問い合わせ構文の統合という考え方が必要になります。
 
 
-###<a id="sec-generated-title-4"></a> <a id="db"></a>データベース言語
+### <a id="sec-generated-title-4"></a> <a id="db"></a>データベース言語
+
 SQL などのデータベース操作言語をご存知の方ならば、
 すぐに LINQ になじむこと出来るでしょう。
 この手の言語のことをご存じない方のために、
@@ -289,7 +293,8 @@ SELECT などのキーワードに関して、
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="linqsample"></a>LINQ の例
+### <a id="sec-generated-title-5"></a> <a id="linqsample"></a>LINQ の例
+
 本当に簡単にですが、データベース操作言語の概要を述べた所で、
 LINQ の話に戻りましょう。
 改めて書きますが、LINQ とは、
@@ -354,7 +359,8 @@ C# 2.0 までの感覚でも割となじみやすいのではないかと思い�
 問い合わせ結果の一覧を画面に表示しています。
 
 
-##<a id="sec-generated-title-6"></a> <a id="linq_architecture"></a>LINQ の全体像
+## <a id="sec-generated-title-6"></a> <a id="linq_architecture"></a>LINQ の全体像
+
 LINQ の全体像を絵的に表すと、図1のようになります。
 
 <figure>
@@ -379,7 +385,8 @@ Where、Select などのメソッド呼び出しに変換されます。
 LINQ の実体は、標準クエリ演算子のメソッド呼び出しなので、クエリ式を実装していない言語からでも、これらのメソッド呼び出しによってさまざまな LINQ 対応データソースにアクセスできます。
 
 
-##<a id="sec-generated-title-7"></a> <a id="query"></a>クエリ式
+## <a id="sec-generated-title-7"></a> <a id="query"></a>クエリ式
+
 改めて書くと、
 C# 3.0 の目玉となる機能は<strong id="query" class="keyword">クエリ式</strong>（query expression）です。
 すでに何度か例を示していますが、

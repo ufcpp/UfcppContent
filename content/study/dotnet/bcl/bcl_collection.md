@@ -18,7 +18,8 @@ aliases:
 
 # コレクション
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 コレクション（collection: データの「集まり」）を管理する方法には色々な種類があって、
 それぞれ一長一短あります（目的に応じて使い分けます）。
 
@@ -28,7 +29,8 @@ aliases:
 それぞれの挙動について簡単に説明していきます。
 
 
-##<a id="sec-generated-title-2"></a> <a id="classification"></a>大まかな分類
+## <a id="sec-generated-title-2"></a> <a id="classification"></a>大まかな分類
+
 コレクションには、大きく分けると3系統のものがあります。
 
 ここで紹介するコレクションは、いずれも System.Collections.Generic 名前空間で定義されています。
@@ -41,7 +43,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-3"></a> <a id="sec-list"></a>リスト系
+## <a id="sec-generated-title-3"></a> <a id="sec-list"></a>リスト系
+
 挿入した順序に意味があるコレクションです。
 インデックスを使った（i 番目の要素の）読み書きができたり、
 挿入した順序通りに要素を取り出せたりするタイプです。
@@ -49,7 +52,8 @@ aliases:
 List&lt;T&gt;, LinkedList&lt;T&gt;, Stack&lt;T&gt;, Queue&lt;T&gt; があります。
 
 
-###<a id="sec-generated-title-4"></a> <a id="List"></a>List&lt;T&gt;
+### <a id="sec-generated-title-4"></a> <a id="List"></a>List&lt;T&gt;
+
 <table summary="">
 
 	<tr>
@@ -89,7 +93,8 @@ List&lt;T&gt;, LinkedList&lt;T&gt;, Stack&lt;T&gt;, Queue&lt;T&gt; がありま�
 
 
 
-###<a id="sec-generated-title-5"></a> <a id="LinkedList"></a>LinkedList&lt;T&gt;
+### <a id="sec-generated-title-5"></a> <a id="LinkedList"></a>LinkedList&lt;T&gt;
+
 <table summary="">
 
 	<tr>
@@ -119,7 +124,8 @@ List&lt;T&gt;, LinkedList&lt;T&gt;, Stack&lt;T&gt;, Queue&lt;T&gt; がありま�
 
 
 
-###<a id="sec-generated-title-6"></a> <a id="Stack"></a>Stack&lt;T&gt;
+### <a id="sec-generated-title-6"></a> <a id="Stack"></a>Stack&lt;T&gt;
+
 <table summary="">
 
 	<tr>
@@ -152,7 +158,8 @@ List&lt;T&gt;, LinkedList&lt;T&gt;, Stack&lt;T&gt;, Queue&lt;T&gt; がありま�
 
 
 
-###<a id="sec-generated-title-7"></a> <a id="Queue"></a>Queue&lt;T&gt;
+### <a id="sec-generated-title-7"></a> <a id="Queue"></a>Queue&lt;T&gt;
+
 <table summary="">
 
 	<tr>
@@ -187,7 +194,8 @@ List&lt;T&gt;, LinkedList&lt;T&gt;, Stack&lt;T&gt;, Queue&lt;T&gt; がありま�
 
 
 
-##<a id="sec-generated-title-8"></a> <a id="sec-set"></a>セット系
+## <a id="sec-generated-title-8"></a> <a id="sec-set"></a>セット系
+
 数学的な意味での集合（set）は、順序に意味を持ちません。
 要素を含んでいるかどうかということにだけ意味があります。
 
@@ -198,7 +206,8 @@ List&lt;T&gt;, LinkedList&lt;T&gt;, Stack&lt;T&gt;, Queue&lt;T&gt; がありま�
 HashSet&lt;T&gt;, SortedSet&lt;T&gt; があります。
 
 
-###<a id="sec-generated-title-9"></a> <a id="HashSet"></a>HashSet&lt;T&gt;
+### <a id="sec-generated-title-9"></a> <a id="HashSet"></a>HashSet&lt;T&gt;
+
 <table summary="">
 
 	<tr>
@@ -232,7 +241,8 @@ HashSet&lt;T&gt;, SortedSet&lt;T&gt; があります。
 
 
 
-###<a id="sec-generated-title-10"></a> <a id="SortedSet"></a>SortedSet&lt;T&gt;
+### <a id="sec-generated-title-10"></a> <a id="SortedSet"></a>SortedSet&lt;T&gt;
+
 <table summary="">
 
 	<tr>
@@ -262,7 +272,8 @@ HashSet&lt;T&gt;, SortedSet&lt;T&gt; があります。
 
 
 
-##<a id="sec-generated-title-11"></a> <a id="sec-dictionary"></a>辞書系
+## <a id="sec-generated-title-11"></a> <a id="sec-dictionary"></a>辞書系
+
 キーを指定して値を検索する必要がある場合に使うコレクションです。
 
 「キーと値のペア」を要素とするセットを作ればいいので、内部的なアルゴリズムはセットと同じになります。
@@ -271,7 +282,8 @@ HashSet&lt;T&gt;, SortedSet&lt;T&gt; があります。
 Dictionary&lt;TKey, TValue&gt;, SortedDictionary&lt;TKey, TValue&gt;, SortedList&lt;TKey, TValue&gt; があります。
 
 
-###<a id="sec-generated-title-12"></a> <a id="Dictionary"></a>Dictionary&lt;TKey, TValue&gt;
+### <a id="sec-generated-title-12"></a> <a id="Dictionary"></a>Dictionary&lt;TKey, TValue&gt;
+
 <table summary="">
 
 	<tr>
@@ -307,7 +319,8 @@ Dictionary&lt;TKey, TValue&gt;, SortedDictionary&lt;TKey, TValue&gt;, SortedList
 
 
 
-###<a id="sec-generated-title-13"></a> <a id="SortedDictionary"></a>SortedDictionary&lt;TKey, TValue&gt;
+### <a id="sec-generated-title-13"></a> <a id="SortedDictionary"></a>SortedDictionary&lt;TKey, TValue&gt;
+
 <table summary="">
 
 	<tr>
@@ -339,7 +352,8 @@ Dictionary&lt;TKey, TValue&gt;, SortedDictionary&lt;TKey, TValue&gt;, SortedList
 
 
 
-###<a id="sec-generated-title-14"></a> <a id="SortedList"></a>SortedList&lt;TKey, TValue&gt;
+### <a id="sec-generated-title-14"></a> <a id="SortedList"></a>SortedList&lt;TKey, TValue&gt;
+
 <table summary="">
 
 	<tr>
@@ -369,7 +383,8 @@ Dictionary&lt;TKey, TValue&gt;, SortedDictionary&lt;TKey, TValue&gt;, SortedList
 
 
 
-##<a id="sec-generated-title-15"></a> <a id="plan"></a>追記予定
+## <a id="sec-generated-title-15"></a> <a id="plan"></a>追記予定
+
 その他、特殊系
 <pre>
 BitArray

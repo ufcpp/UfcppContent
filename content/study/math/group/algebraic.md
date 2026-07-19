@@ -18,7 +18,8 @@ aliases:
 
 # 代数系
 
-##<a id="sec-generated-title-1"></a> <a id="algebraic"></a>代数系
+## <a id="sec-generated-title-1"></a> <a id="algebraic"></a>代数系
+
 集合<span class="math">S</span>に対して、<span class="math">S<sup>S×S</sup></span>の元(<span class="math">S×S</span>から<span class="math">S</span>への写像)を<span class="math">S</span>の<strong id="d52e26" class="keyword">算法</strong>(operation)もしくは演算と呼び、
 その性質に応じて、<span class="math">×, ＋, ・</span>などで表します。
 (算法は、2つの元の間に働くものであることを明示するため、2項演算(binary operation)などと呼ぶこともあります。)
@@ -32,12 +33,14 @@ aliases:
 例えば、自然数全体の集合を<span class="math">ω</span>、その加法を<span class="math">＋</span>、乗法を<span class="math">×</span>とすると、<span class="math"><span class="paren" style="font-size:em;">(</span>ω, <span class="paren" style="font-size:em;">{</span>＋, ×<span class="paren" style="font-size:em;">}</span><span class="paren" style="font-size:em;">)</span></span>は代数系となります。
 
 
-##<a id="sec-generated-title-2"></a> <a id="d52e111"></a>代数系の性質
+## <a id="sec-generated-title-2"></a> <a id="d52e111"></a>代数系の性質
+
 代数系が与えられたとき、その性質に応じて代数系を分類することが出来ます。
 ここでは、代数系を分類する際に用いるいくつかの性質について説明します。
 
 
-###<a id="sec-generated-title-3"></a> <a id="d52e116"></a>結合法則
+### <a id="sec-generated-title-3"></a> <a id="d52e116"></a>結合法則
+
 代数系<span class="math"><span class="paren" style="font-size:em;">(</span>A, ・<span class="paren" style="font-size:em;">)</span></span>が与えられたとき、
 <span class="math">A</span>の元<span class="math">x, y, z</span>について、
 <div class="math">(x ・ y) ・ z = x ・ (y ・ ｚ)</div>
@@ -45,7 +48,8 @@ aliases:
 <span class="math">A</span>は<span class="math">・</span>について結合的(associative)であるといいます。
 
 
-###<a id="sec-generated-title-4"></a> <a id="d52e150"></a>交換法則
+### <a id="sec-generated-title-4"></a> <a id="d52e150"></a>交換法則
+
 <span class="math">A</span>の元<span class="math">x, y</span>について、
 <div class="math">x ・ y = y ・ x</div>
 が成り立つとき、<span class="math">・</span>について<strong id="commutative" class="keyword">交換法則</strong>(commutative low)が成り立つといい、
@@ -54,7 +58,8 @@ aliases:
 結合法則および交換法則を満たす算法は<span class="math">＋</span>で表し、加法と呼ぶことが多いです。
 
 
-###<a id="sec-generated-title-5"></a> <a id="d52e186"></a>分配法則
+### <a id="sec-generated-title-5"></a> <a id="d52e186"></a>分配法則
+
 2つの算法<span class="math">＋, ×</span>を持つ代数系<span class="math"><span class="paren" style="font-size:em;">(</span>A, <span class="paren" style="font-size:em;">{</span>＋, ×<span class="paren" style="font-size:em;">}</span><span class="paren" style="font-size:em;">)</span></span>が与えられたとき、
 <span class="math">A</span>の元<span class="math">x, y, z</span>について、
 <div class="math">(x ＋ y) × z = (x × z) ＋ (y × z)</div><div class="math">z × (x ＋ y) = (z × x) ＋ (z × y)</div>
@@ -63,7 +68,8 @@ aliases:
 分配法則が成り立つとき、算法<span class="math">＋</span>を加法、<span class="math">×</span>を乗法と呼びます。
 
 
-###<a id="sec-generated-title-6"></a> <a id="d52e228"></a>単位元
+### <a id="sec-generated-title-6"></a> <a id="d52e228"></a>単位元
+
 <span class="math">A</span>の元<span class="math">e</span>で、
 任意の元<span class="math">x∈A</span>に対して
 <div class="math">e ・ x = x ・ e = x</div>
@@ -77,7 +83,8 @@ aliases:
 また、加法<span class="math">＋</span>に関する単位元は、<span class="math">0</span>で表し、零元と呼ぶこともあります。
 
 
-###<a id="sec-generated-title-7"></a> <a id="d52e292"></a>逆元
+### <a id="sec-generated-title-7"></a> <a id="d52e292"></a>逆元
+
 <span class="math">A</span>の元<span class="math">x</span>に対して、
 <div class="math">y ・ x = x ・ y = e</div>
 を満たすような<span class="math">A</span>の元<span class="math">y</span>が存在するとき、<span class="math">x</span>は<strong id="regular" class="keyword">正則</strong>(regular)であるといいます。ただし、<span class="math">e</span>は<span class="math">A</span>の単位元です。

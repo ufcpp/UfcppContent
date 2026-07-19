@@ -18,7 +18,8 @@ aliases:
 
 # \[サンプル\] SoundLibrary
 
-##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+
 Wave の読み書き、音声フィルタ、周波数解析などの機能を持つライブラリです。
 
 * 学生の頃、研究用に使っていたもの。

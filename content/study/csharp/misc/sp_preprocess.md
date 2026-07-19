@@ -18,7 +18,8 @@ aliases:
 
 # プリプロセス
 
-##<a id="sec-generated-title-1"></a> <a id="point"></a>ポイント
+## <a id="sec-generated-title-1"></a> <a id="point"></a>ポイント
+
 * プリプロセス命令： コンパイラや統合開発環境に特別な指示を出すために使う構文。
     * シンボル定義・条件コンパイル： 「デバッグ時のみ」など、条件によってコンパイル結果を変える。
 
@@ -30,7 +31,8 @@ aliases:
 
 
 
-##<a id="sec-generated-title-2"></a> <a id="abst"></a>概要
+## <a id="sec-generated-title-2"></a> <a id="abst"></a>概要
+
 <strong id="preprocess" class="keyword">プリプロセス命令</strong>（preprocessor directive）というものを用いることで、
 条件付きコンパイル、エラーや警告の通知、ソースコードの領域分けなどを行うことが出来ます。
 （directive はコンパイラへの指示という感じのニュアンスです。
@@ -49,12 +51,14 @@ C言語やC++言語のプリプロセス命令と似たような働きをして�
 やはりプリプロセス命令という呼称が使われています。
 
 
-##<a id="sec-generated-title-3"></a> <a id="prepro"></a>プリプロセス命令
+## <a id="sec-generated-title-3"></a> <a id="prepro"></a>プリプロセス命令
+
 C# のプリプロセス命令用のキーワードは、全て <code>#</code> から始まっています。
 C# のプリプロセス命令には以下のようなものがあります。
 
 
 ##### <a id="sec-generated-title-4"></a>シンボル定義
+
 * <code>#define</code>
 
 * <code>#undef</code>
@@ -62,6 +66,7 @@ C# のプリプロセス命令には以下のようなものがあります。
 
 
 ##### <a id="sec-generated-title-5"></a>条件付きコンパイル
+
 * <code>#if</code>
 
 * <code>#else</code>
@@ -73,6 +78,7 @@ C# のプリプロセス命令には以下のようなものがあります。
 
 
 ##### <a id="sec-generated-title-6"></a>エラー、警告の報告
+
 * <code>#warning</code>
 
 * <code>#error</code>
@@ -82,6 +88,7 @@ C# のプリプロセス命令には以下のようなものがあります。
 
 
 ##### <a id="sec-generated-title-7"></a>ソースコードの領域分け
+
 * <code>#region</code>
 
 * <code>#endregion</code>
@@ -89,13 +96,15 @@ C# のプリプロセス命令には以下のようなものがあります。
 
 
 ##### <a id="sec-generated-title-8"></a>プラグマ
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 * <code>#pragma</code>
 
 
 
-##<a id="sec-generated-title-9"></a> <a id="symbol"></a>シンボル定義
+## <a id="sec-generated-title-9"></a> <a id="symbol"></a>シンボル定義
+
 <code>#define</code> 命令を用いると、シンボルの定義を行うことが出来ます。
 定義したシンボルは <code>if</code> 命令の条件付きコンパイル命令で使用することが出来ます。
 (例えば、<code>DEBUG</code> という名前のシンボルが定義されている場合のみコンパイルされる部分を作ることが出来ます。)
@@ -132,7 +141,8 @@ csc <em>/define:DEBUG;QUIET</em> test.cs
 それ以外の場所にこれらの命令を記述するとコンパイルエラーになります。
 
 
-##<a id="sec-generated-title-10"></a> <a id="conditional"></a>条件付きコンパイル
+## <a id="sec-generated-title-10"></a> <a id="conditional"></a>条件付きコンパイル
+
 条件付きコンパイル命令を用いることで、
 あるシンボルが定義されているときのみコンパイルされる部分を作ることが出来ます。
 例えば、<code>#if</code> 命令を使って、
@@ -176,6 +186,7 @@ Console.Write(<span class="literal">"a = {0}, b = {0}"</span>, a, b); <span clas
 
 
 ##### <a id="sec-generated-title-11"></a>サンプル
+
 <pre class="source" title="条件付きコンパイルの例" lang="">
 <code><span class="reserved">#define</span> B
 
@@ -210,7 +221,8 @@ A という名前のシンボルが定義されています。
 
 
 
-##<a id="sec-generated-title-12"></a> <a id="error"></a>エラー、警告の報告
+## <a id="sec-generated-title-12"></a> <a id="error"></a>エラー、警告の報告
+
 <code>#warning</code> 命令を用いることでユーザー定義の警告メッセージを、
 <code>#error</code> 命令を用いることでユーザー定義のエラーメッセージを表示することが出来ます。
 
@@ -241,6 +253,7 @@ A という名前のシンボルが定義されています。
 
 
 ##### <a id="sec-generated-title-13"></a>サンプル
+
 <pre class="source" title="#line, #warning のサンプル" lang="">
 <code><span class="reserved">using</span> System;
 
@@ -272,7 +285,8 @@ c:\test\class1.cs(201,10): warning CS1030: #warning : '201行目'
 
 
 
-##<a id="sec-generated-title-14"></a> <a id="region"></a>ソースコードの領域分け
+## <a id="sec-generated-title-14"></a> <a id="region"></a>ソースコードの領域分け
+
 <code>#region</code>、<code>#endregion</code> 命令を用いることで、
 コードを領域分けすることが出来ます。
 
@@ -332,7 +346,8 @@ Visual Studio のコードエディタのアウトライン機能
 
 
 
-##<a id="sec-generated-title-15"></a> <a id="pragma"></a>プラグマ
+## <a id="sec-generated-title-15"></a> <a id="pragma"></a>プラグマ
+
 <h5 class="version version2">Ver. 2.0</h5>
 
 C# 2.0 から、<code>#pragma</code> 命令が追加されました。

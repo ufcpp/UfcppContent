@@ -18,7 +18,8 @@ aliases:
 
 # 数学の発展、新理論と厳密化
 
-##<a id="sec-generated-title-1"></a> <a id="intro"></a>はじめに
+## <a id="sec-generated-title-1"></a> <a id="intro"></a>はじめに
+
 数学の発展には2つの形があります。
 すなわち、
 
@@ -38,7 +39,8 @@ aliases:
 いくつか与太話でもしてみようと思います。
 
 
-##<a id="sec-generated-title-2"></a> <a id="limit"></a>極限
+## <a id="sec-generated-title-2"></a> <a id="limit"></a>極限
+
 長い間、厳密性は度外視で使われ続け、
 それでも科学の発展に多大に寄与した理論の代表格というと、
 極限の概念、特に微分法です。
@@ -73,7 +75,8 @@ aliases:
 でも、ε-δ論法が生まれなければ、その後の数学の更なる発展はありえませんでした。
 
 
-##<a id="sec-generated-title-3"></a> <a id="fourier"></a>フーリエ級数展開
+## <a id="sec-generated-title-3"></a> <a id="fourier"></a>フーリエ級数展開
+
 フーリエ級数展開も、厳密な理屈は抜きにして長年使われてきた理論です。
 厳密性度外視でいいならば、
 フーリエ級数は非常に簡単な理論ですね。
@@ -94,7 +97,8 @@ aliases:
 [カントール](http://ja.wikipedia.org/wiki/%E3%82%B2%E3%82%AA%E3%83%AB%E3%82%AF%E3%83%BB%E3%82%AB%E3%83%B3%E3%83%88%E3%83%BC%E3%83%AB)の公理的集合論（参考：「[数学](../index.md)」）などが生まれました。
 
 
-##<a id="sec-generated-title-4"></a> <a id="delta"></a>δ関数
+## <a id="sec-generated-title-4"></a> <a id="delta"></a>δ関数
+
 もう1つ、[ディラック](http://ja.wikipedia.org/wiki/%E3%83%87%E3%82%A3%E3%83%A9%E3%83%83%E3%82%AF)のδ関数というものについて話します。
  
 ディラックという物理学者は、厳密性の観点から言うともうむちゃくちゃな人だったみたいです。
