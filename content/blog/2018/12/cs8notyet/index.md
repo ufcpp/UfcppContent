@@ -34,16 +34,16 @@ aliases: []
 [前に1度書いていますが](../../7/pickuproslyn0711/index.md)、C# には単なるメソッド呼び出しに置き換えるような、シンタックスシュガーな文法が結構あります。
 例えば、クエリ式の場合、以下の2行は全く同じ意味になります。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> q1 =
-    <span class="reserved">from</span> x <span class="reserved">in</span> source
-    <span class="reserved">where</span> x &gt; 5
-    <span class="reserved">select</span> x * x;
+```csharp
+var q1 =
+    from x in source
+    where x > 5
+    select x * x;
  
-<span class="reserved">var</span> q2 = source
-    .Where(x =&gt; x &gt; 5)
-    .Select(x =&gt; x * x);
-</code></pre>
+var q2 = source
+    .Where(x => x > 5)
+    .Select(x => x * x);
+```
 
 問題はここから先。
 クエリ式の場合は、この`Where`や`Select`メソッドにかなり自由が効きます。
@@ -77,86 +77,86 @@ aliases: []
 ということで、以下のように、変数に対する修飾子として`using`を書くことで、
 その変数のスコープから抜けるときに`Dispose`を呼ぶという機能を追加する予定です。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">A</span>
+```csharp
+struct A
 {
-    <span class="reserved">void</span> Dispose() =&gt; <span class="type">Console</span>.WriteLine(<span class="string">&quot;A Disposed&quot;</span>);
+    void Dispose() => Console.WriteLine("A Disposed");
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">using</span> <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">A</span>();
-        <span class="reserved">using</span> <span class="reserved">var</span> b = <span class="reserved">new</span> <span class="type">A</span>();
+        using var a = new A();
+        using var b = new A();
  
         {
-            <span class="reserved">using</span> <span class="reserved">var</span> c = <span class="reserved">new</span> <span class="type">A</span>();
-            <span class="comment">// c のスコープはここまでなので、ここで c.Dispose()</span>
+            using var c = new A();
+            // c のスコープはここまでなので、ここで c.Dispose()
         }
  
-        <span class="comment">// ここで b.Dispose(); a.Dispose();</span>
-        <span class="comment">// ちなみに、宣言とは逆順で呼ばれる</span>
+        // ここで b.Dispose(); a.Dispose();
+        // ちなみに、宣言とは逆順で呼ばれる
     }
 }
-</code></pre>
+```
 
 ## Target-typed new
 
 C# 7.1で入った[`default`式](../../../../study/csharp/cheatsheet/ap_ver7_1.md#default-expr)と同様に、`new`に対しても左辺からの型推論が効くようになります。
 
-<pre class="source" title="">
-<code><span class="comment">// これは 右→左 の推論。C# 3.0 の頃から使える。</span>
-<span class="reserved">var</span> a1 = <span class="reserved">new</span> <span class="type">A</span>(1, 2);
+```csharp
+// これは 右→左 の推論。C# 3.0 の頃から使える。
+var a1 = new A(1, 2);
  
-<span class="comment">// C# 8.0 では、左→右 の推論が入る。</span>
-<span class="type">A</span> a2 = <span class="reserved">new</span>(1, 2);
-</code></pre>
+// C# 8.0 では、左→右 の推論が入る。
+A a2 = new(1, 2);
+```
 
 ## caller expression attribute
 
 C# 5.0で、[Caller Info 属性](../../../../study/csharp/cheatsheet/ap_ver5.md#CallerInfo)というものがいくつか入っています。
 以下のように、コンパイラーによって呼び出し元のメソッド名などを挿入してもらう機能です。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> M([<span class="type">CallerMemberName</span>]<span class="reserved">string</span> callerName = <span class="reserved">null</span>)
-        =&gt; <span class="type">Console</span>.WriteLine(callerName);
+    static void M([CallerMemberName]string callerName = null)
+        => Console.WriteLine(callerName);
  
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// M には何も引数を渡していないものの、</span>
-        <span class="comment">// CallerMemberName が付いているので null ではなく、呼び出し元のメソッド名</span>
-        <span class="comment">// (この場合は &quot;Main&quot;)がコンパイラーによって挿入される。</span>
+        // M には何も引数を渡していないものの、
+        // CallerMemberName が付いているので null ではなく、呼び出し元のメソッド名
+        // (この場合は "Main")がコンパイラーによって挿入される。
         M();
     }
 }
-</code></pre>
+```
 
 C# 8.0で、この手の属性が1つ増えます。
 `CallerArgumentExpression`属性を付けることで、
 引数に渡した式全体を受け取れます。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">int</span> x, [<span class="type">CallerArgumentExpression</span>(<span class="string">&quot;x&quot;</span>)]<span class="reserved">string</span> xExpression = <span class="reserved">null</span>)
-        =&gt; <span class="type">Console</span>.WriteLine(xExpression);
+    static void M(int x, [CallerArgumentExpression("x")]string xExpression = null)
+        => Console.WriteLine(xExpression);
  
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        M(1 + 2 + 3); <span class="comment">// &quot;1 + 2 + 3&quot; が xExpression に渡る</span>
-        M(2 * 3);     <span class="comment">// 同上、&quot;2 * 3&quot;</span>
+        M(1 + 2 + 3); // "1 + 2 + 3" が xExpression に渡る
+        M(2 * 3);     // 同上、"2 * 3"
     }
 }
-</code></pre>
+```
 
 わかりやすい用途は、例えば`XUnit.Assert`とかです。
 単体テストが失敗したときに、失敗の原因になった式をログに表示できます。
@@ -165,14 +165,14 @@ C# 8.0で、この手の属性が1つ増えます。
 
 属性にジェネリックなクラスを使えるようになります。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">MyAttribute</span>&lt;<span class="type">T</span>&gt; : <span class="type">Attribute</span> { }
+class MyAttribute<T> : Attribute { }
  
-[My&lt;<span class="reserved">int</span>&gt;]
-<span class="reserved">class</span> <span class="type">Target</span> { }
-</code></pre>
+[My<int>]
+class Target { }
+```
 
 ## 機能一覧
 

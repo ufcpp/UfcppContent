@@ -207,31 +207,31 @@ IEnumerable インターフェイスとイテレーターブロック（「[イ�
 例えば、C# 2.0 までで書きがちだった（IEnumrable の実装が面倒だったため）のは以下のようなコードです。
 （データ列に対して、全ての要素を二乗したデータ列を作る。）
 
-<pre class="source" title="List でデータ処理" lang="">
-<code><span class="reserved">static</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; Square(<span class="reserved">int</span>[] source)
+```csharp
+static List<int> Square(int[] source)
 {
-    <span class="reserved">var</span> results = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
+    var results = new List<int>();
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> source)
+    foreach (var x in source)
     {
         results.Add(x * x);
     }
-    <span class="reserved">return</span> results;
+    return results;
 }
-</code></pre>
+```
 
 
 C# 3.0 以降では以下のように書きます。
 
-<pre class="source" title="イテレーターブロックでデータ処理" lang="">
-<code><span class="reserved">static</span> IEnumerable&lt;<span class="reserved">int</span>&gt; Square(IEnumerable&lt;<span class="reserved">int</span>&gt; source)
+```csharp
+static IEnumerable<int> Square(IEnumerable<int> source)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> source)
+    foreach (var x in source)
     {
-        <span class="reserved">yield return</span> x * x;
+        yield return x * x;
     }
 }
-</code></pre>
+```
 
 
 前者のコードでは、データ列中のすべての要素を一気に読み出して、同じサイズの List を作ってしまっています。
@@ -240,15 +240,15 @@ C# 3.0 以降では以下のように書きます。
 
 もちろん、実際にはさらに、<code>x * x</code> の部分を外に出してしまって、以下のように書きます。
 
-<pre class="source" title="標準関数の Enumerable.Select 的に実装" lang="">
-<code><span class="reserved">static</span> IEnumerable&lt;<span class="reserved">int</span>&gt; Select(IEnumerable&lt;<span class="reserved">int</span>&gt; source, Func&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; filter)
+```csharp
+static IEnumerable<int> Select(IEnumerable<int> source, Func<int, int> filter)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> source)
+    foreach (var x in source)
     {
-        <span class="reserved">yield return</span> filter(x);
+        yield return filter(x);
     }
 }
-</code></pre>
+```
 
 
 
@@ -261,21 +261,21 @@ C# 3.0 以降では、「[拡張メソッド](../functional/sp3_extension.md#exm
 例えば、前節（「[データに対する基本的な操作](#basic_sample)」）の最後の例を、
 拡張メソッドを使わずに書くと、以下のようになります。
 
-<pre class="source" title="拡張メソッドを使わない場合" lang="">
-<code><span class="type">Enumerable</span>.<span style="background-color:#a0a0ff;">Aggregate</span>(
-    <span class="type">Enumerable</span>.<span style="background-color:#ffa0a0;">Where</span>(
-        <span class="type">Enumerable</span>.<span style="background-color:#a0ffa0;">Select</span>(
-            <span class="type">Enumerable</span>.<span style="background-color:#a0ffff;">Where</span>(
+```csharp
+Enumerable.Aggregate(
+    Enumerable.Where(
+        Enumerable.Select(
+            Enumerable.Where(
                 data,
-                <span style="background-color:#a0ffff;">x =&gt; (x % 2) == 1</span>
+                x => (x % 2) == 1
             ),
-            <span style="background-color:#a0ffa0;">x =&gt; x * x</span>
+            x => x * x
         ),
-        <span style="background-color:#ffa0a0;">x =&gt; x &gt; 20</span>
+        x => x > 20
     ),
-    <span style="background-color:#a0a0ff;">(x, y) =&gt; x + y</span>
+    (x, y) => x + y
 );
-</code></pre>
+```
 
 
 Enumerable と書かなきゃいけなくなった分うっとおしいというのもありますが、そこはまだ許容するとして、
@@ -285,12 +285,12 @@ Enumerable と書かなきゃいけなくなった分うっとおしいという
 
 一方で、拡張メソッドを使えば、以下のように書き換えることができます。
 
-<pre class="source" title="拡張メソッドを使う場合" lang="">
-<code>data.Where(x =&gt; (x % 2) == 1)
-    .Select(x =&gt; x * x)
-    .Where(x =&gt; x &gt; 20)
-    .Aggregate((x, y) =&gt; x + y);
-</code></pre>
+```csharp
+data.Where(x => (x % 2) == 1)
+    .Select(x => x * x)
+    .Where(x => x > 20)
+    .Aggregate((x, y) => x + y);
+```
 
 
 前から順に、データストリームをパイプライン的に処理している感が出ていると思います。
@@ -331,96 +331,96 @@ C# なら、「[イテレーター](sp2_iterator.md#iterator)」を使って以�
 
 まず始めに、連続した同じ値を1つにまとめる処理：
 
-<pre class="source" title="連続した同じ値を1つにまとめる" lang="">
-<code><span class="inactive">/// &lt;summary&gt;
-///</span><span class="comment"> 隣り合ってる同じ値を1つにまとめてしまう。</span>
-<span class="inactive">/// &lt;/summary&gt;
-/// &lt;typeparam name="T"&gt;</span><span class="comment">要素の型</span><span class="inactive">&lt;/typeparam&gt;
-/// &lt;param name="seq"&gt;</span><span class="comment">元データ列。</span><span class="inactive">&lt;/param&gt;
-/// &lt;returns&gt;</span><span class="comment">隣り合った重複を削除したデータ列。</span><span class="inactive">&lt;/returns&gt;</span>
-<span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;T&gt; DistinctAdjacently&lt;T&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;T&gt; seq)
-    <span class="reserved">where</span> T : <span class="reserved">struct</span>
+```csharp
+/// <summary>
+/// 隣り合ってる同じ値を1つにまとめてしまう。
+/// </summary>
+/// <typeparam name="T">要素の型</typeparam>
+/// <param name="seq">元データ列。</param>
+/// <returns>隣り合った重複を削除したデータ列。</returns>
+public static IEnumerable<T> DistinctAdjacently<T>(this IEnumerable<T> seq)
+    where T : struct
 {
-    T? prev = <span class="reserved">null</span>;
+    T? prev = null;
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> seq)
+    foreach (var x in seq)
     {
-        <span class="reserved">if</span> (prev == <span class="reserved">null</span> || !prev.Equals(x))
+        if (prev == null || !prev.Equals(x))
         {
-            <span class="reserved">yield return</span> x;
+            yield return x;
         }
 
         prev = x;
     }
 }
-</code></pre>
+```
 
 
 次に、連番になっている部分をグループ化する処理は、2段階に分けて考えましょう。
 まずは、階差を求めます。
 
-<pre class="source" title="階差を求める" lang="">
-<code><span class="inactive">/// &lt;summary&gt;
-///</span><span class="comment"> 整数列の階差を作る。</span>
-<span class="inactive">/// &lt;/summary&gt;
-/// &lt;param name="seq"&gt;</span><span class="comment">整数列。</span><span class="inactive">&lt;/param&gt;
-/// &lt;returns&gt;</span><span class="comment">値/階差のペアのデータ列。</span><span class="inactive">&lt;/returns&gt;</span>
-<span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="type">ValueDifferencePair</span>&gt; Differences(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; seq)
+```csharp
+/// <summary>
+/// 整数列の階差を作る。
+/// </summary>
+/// <param name="seq">整数列。</param>
+/// <returns>値/階差のペアのデータ列。</returns>
+public static IEnumerable<ValueDifferencePair> Differences(this IEnumerable<int> seq)
 {
-    <span class="reserved">int</span> prev = seq.First();
-    <span class="reserved">int</span> diff;
+    int prev = seq.First();
+    int diff;
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> seq.Skip(1))
+    foreach (var x in seq.Skip(1))
     {
         diff = x - prev;
 
-        <span class="reserved">yield return new</span> <span class="type">ValueDifferencePair</span>(prev, diff);
+        yield return new ValueDifferencePair(prev, diff);
 
         prev = x;
     }
 
-    <span class="reserved">yield return new</span> <span class="type">ValueDifferencePair</span>(prev, 0);
+    yield return new ValueDifferencePair(prev, 0);
 }
-</code></pre>
+```
 
 
 そして、「特定の条件を満たす場所でデータ列を切る」という処理を考えます。
 
-<pre class="source" title="特定の条件を満たす場所でデータ列を切る" lang="">
-<code><span class="inactive">/// &lt;summary&gt;
-///</span><span class="comment"> 特定の条件を満たすところでデータ列を分割する。</span>
-<span class="inactive">///</span><span class="comment"> （条件を満たした箇所がサブ データ列の末尾になる。）</span>
-<span class="inactive">/// 
-///</span><span class="comment"> 例えば、{ 1, 1, 0, 1, 0, 1 } というデータ列を渡して、</span>
-<span class="inactive">///</span><span class="comment"> 「要素が 0」という条件で分割すると、結果は</span>
-<span class="inactive">///</span><span class="comment"> { { 1, 1, 0 }, { 1, 0 }, { 1 } }</span>
-<span class="inactive">///</span><span class="comment"> となる。</span>
-<span class="inactive">/// &lt;/summary&gt;
-/// &lt;typeparam name="T"&gt;</span><span class="comment">要素の型</span><span class="inactive">&lt;/typeparam&gt;
-/// &lt;param name="seq"&gt;</span><span class="comment">元データ列。</span><span class="inactive">&lt;/param&gt;
-/// &lt;param name="splitCondition"&gt;</span><span class="comment">分割条件。</span><span class="inactive">&lt;/param&gt;
-/// &lt;returns&gt;</span><span class="comment">分割したサブ データ列群。</span><span class="inactive">&lt;/returns&gt;</span>
-<span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="type">IEnumerable</span>&lt;T&gt;&gt; Split&lt;T&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;T&gt; seq, <span class="type">Predicate</span>&lt;T&gt; splitCondition)
+```csharp
+/// <summary>
+/// 特定の条件を満たすところでデータ列を分割する。
+/// （条件を満たした箇所がサブ データ列の末尾になる。）
+/// 
+/// 例えば、{ 1, 1, 0, 1, 0, 1 } というデータ列を渡して、
+/// 「要素が 0」という条件で分割すると、結果は
+/// { { 1, 1, 0 }, { 1, 0 }, { 1 } }
+/// となる。
+/// </summary>
+/// <typeparam name="T">要素の型</typeparam>
+/// <param name="seq">元データ列。</param>
+/// <param name="splitCondition">分割条件。</param>
+/// <returns>分割したサブ データ列群。</returns>
+public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> seq, Predicate<T> splitCondition)
 {
-    <span class="reserved">var</span> sub = <span class="reserved">new</span> <span class="type">List</span>&lt;T&gt;();
+    var sub = new List<T>();
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> seq)
+    foreach (var x in seq)
     {
         sub.Add(x);
 
-        <span class="reserved">if</span> (splitCondition(x))
+        if (splitCondition(x))
         {
-            <span class="reserved">yield return</span> sub;
-            sub = <span class="reserved">new</span> <span class="type">List</span>&lt;T&gt;();
+            yield return sub;
+            sub = new List<T>();
         }
     }
 
-    <span class="reserved">if</span> (sub.Count != 0)
+    if (sub.Count != 0)
     {
-        <span class="reserved">yield return</span> sub;
+        yield return sub;
     }
 }
-</code></pre>
+```
 
 
 目的の連番のグループ化は、要するに、「階差が1でない場所で切る」ということになります。
@@ -428,33 +428,33 @@ C# なら、「[イテレーター](sp2_iterator.md#iterator)」を使って以�
 
 これらを繋いで、結局、所望の処理は、以下のようになります。（まさに、データストリームに対するパイプライン処理になっています。）
 
-<pre class="source" title="所望の処理" lang="">
-<code><span class="inactive">/// &lt;summary&gt;
-///</span><span class="comment"> 整数列から、連番になっている部分を、{ 初項, 項数 } のペアで抜き出す。</span>
-<span class="inactive">/// &lt;/summary&gt;
-/// &lt;param name="seq"&gt;</span><span class="comment">元整数列。</span><span class="inactive">&lt;/param&gt;
-/// &lt;returns&gt;</span><span class="comment">{ 初項, 項数 } のペアのデータ列。</span><span class="inactive">&lt;/returns&gt;</span>
-<span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="type">ContinuousSequence</span>&gt; GetContinuousSequence(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; seq)
+```csharp
+/// <summary>
+/// 整数列から、連番になっている部分を、{ 初項, 項数 } のペアで抜き出す。
+/// </summary>
+/// <param name="seq">元整数列。</param>
+/// <returns>{ 初項, 項数 } のペアのデータ列。</returns>
+public static IEnumerable<ContinuousSequence> GetContinuousSequence(this IEnumerable<int> seq)
 {
-    <span class="reserved">return</span> seq
+    return seq
         .DistinctAdjacently()
         .Differences()
-        .Split(x =&gt; x.Difference != 1)
-        .Select(x =&gt; <span class="reserved">new</span> <span class="type">ContinuousSequence</span>(x.First().Value, x.Count()));
+        .Split(x => x.Difference != 1)
+        .Select(x => new ContinuousSequence(x.First().Value, x.Count()));
 }
-</code></pre>
+```
 
 
 英語なせいでよく分からないかもしれませんが、
 じゃあ、日本語になっていたらどうでしょうか。
 （C# では、変数名やメソッド名に日本語を利用できます。）
 
-<pre class="source" title="所望の処理" lang="">
-<code>seq.連続した同じ値を1つにまとめる()
+```csharp
+seq.連続した同じ値を1つにまとめる()
    .階差を求める()
-   .分割(x =&gt; x.Difference != 1)
-   .加工(x =&gt; <span class="reserved">new</span> <span class="type">連番</span>(x.初項(), x.項数()));
-</code></pre>
+   .分割(x => x.Difference != 1)
+   .加工(x => new 連番(x.初項(), x.項数()));
+```
 
 
 割かし、意図の伝わるソースコードになっているんじゃないでしょうか。

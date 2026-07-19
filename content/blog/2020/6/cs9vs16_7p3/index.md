@@ -50,9 +50,9 @@ Function pointers だけで相当な時間しゃべることになったのが�
 
 以下のコード、解釈の仕方を間違う人があまりにも多いらしく。
 
-<pre class="source" title="!is">
-<code><span class="reserved">if</span> (x !<span class="reserved">is</span> 0) { }
-</code></pre>
+```csharp
+if (x !is 0) { }
+```
 
 `!x` が「x の否定」、not x の意味なせいで、それで勘違いしちゃう人がいたりします。
 上記のコードは正しくは `(x!) is 0` の意味で、この `!` は後置きの `x!`。
@@ -65,15 +65,15 @@ Function pointers だけで相当な時間しゃべることになったのが�
 
 リファクタリング1: 意味がないので `!` を消す
 
-<pre class="source" title="!is → is">
-<code><span class="reserved">if</span> (x <span class="reserved">is</span> 0) { }
-</code></pre>
+```csharp
+if (x is 0) { }
+```
 
 リファクタリング2: “ちゃんと”真逆に直す
 
-<pre class="source" title="!is → is">
-<code><span class="reserved">if</span> (x <span class="reserved">is not</span> 0) { }
-</code></pre>
+```csharp
+if (x is not 0) { }
+```
 
 ## is not T x
 
@@ -81,34 +81,34 @@ Function pointers だけで相当な時間しゃべることになったのが�
 微妙に今回の 16.7 Preview 3 リリースで入った修正もあります。
 以下のようなコードが有効になりました。
 
-<pre class="source" title="is not T x">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">object</span> x)
+```csharp
+static void M(object x)
 {
-    <span class="comment">// not パターンでも変数宣言できる</span>
-    <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">string</span> s)
+    // not パターンでも変数宣言できる
+    if (x is not string s)
     {
-        <span class="comment">// ちなみに、ここで s の中身を読もうとすると「未初期化」エラー</span>
+        // ちなみに、ここで s の中身を読もうとすると「未初期化」エラー
  
-        s = <span class="string">&quot;&quot;</span>;
+        s = "";
  
-        <span class="comment">// s を読めるのはこの行以降</span>
+        // s を読めるのはこの行以降
     }
  
-    <span class="comment">// ここは絶対 s が初期化されている保証あり</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(s);
+    // ここは絶対 s が初期化されている保証あり
+    Console.WriteLine(s);
 }
-</code></pre>
+```
 
 ## Top-level statements
 
 `Program.Main` が要らなくなります。
 C# スクリプト モードじゃなくても以下のように、Top-level  (クラスとか名前空間の外)にコードが書けます。
 
-<pre class="source" title="Top-level にステートメントを書けるように">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hellow World!&quot;</span>);
-</code></pre>
+Console.WriteLine("Hellow World!");
+```
 
 ちなみに、「C# スクリプト モード」とはまたちょっと挙動が違ったりします。
 
@@ -146,20 +146,20 @@ Top-level ステートメントの方が優先されます(書いてしまった
 以下のように、`delegate*` で「関数ポインター型」を作って、
 `&` でメソッドのアドレスを取得できる機能です。
 
-<pre class="source" title="関数ポインター">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    unsafe static void Main()
     {
-        <span class="reserved">delegate</span>*&lt;<span class="reserved">int</span>, <span class="reserved">void</span>&gt; f = &amp;<span class="method">M</span>;
+        delegate*<int, void> f = &M;
         f(1);
     }
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> x) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(x);
+    static void M(int x) => Console.WriteLine(x);
 }
-</code></pre>
+```
 
 .NET の仕様上は上記コードに相当する命令(ldftn, calli)が元々あったりします。
 ただ、C# からこれらの命令を使う手段が全くなくて、
@@ -178,20 +178,20 @@ P/Invoke の類も、 .NET Runtime の中で特殊対応するよりも、事前
 ただ、関数ポインターで `<void>` を認めてくれるんなら、普通のデリゲートでも同じように書きたい…
 (書けないし、今後もたぶんずっと無理)
 
-<pre class="source" title="要望としてはある(たぶん今後も無理)">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="error"><span class="reserved">void</span></span>&gt; f = <span class="method">M</span>; <span class="comment">// こう書きたい(無理)</span>
-        <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; a = <span class="method">M</span>; <span class="comment">// 戻り値が void かどうかで型が違う</span>
+        Func<int, void> f = M; // こう書きたい(無理)
+        Action<int> a = M; // 戻り値が void かどうかで型が違う
     }
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> x) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(x);
+    static void M(int x) => Console.WriteLine(x);
 }
-</code></pre>
+```
 
 ## Records
 
@@ -202,40 +202,40 @@ P/Invoke の類も、 .NET Runtime の中で特殊対応するよりも、事前
 プライマリ コンストラクター構文。
 引数の順序(position, 位置)に意味があるので positional record と言ったりもします。
 
-<pre class="source" title="プライマリ コンストラクターを使った “positional” record">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// 一番シンプルな書き方はこうなる</span>
-<span class="reserved">record</span> Point(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
+// 一番シンプルな書き方はこうなる
+record Point(int X, int Y);
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(p.X);
+        var p = new Point(1, 2);
+        Console.WriteLine(p.X);
     }
 }
-</code></pre>
+```
 
 `class` や `struct` と並んで、`record` という型定義用のキーワードが増えます。
 
 ちなみに上記コードは以下のコードとほぼ同じ意味になります。
 
-<pre class="source" title="プライマリ コンストラクターの展開結果">
-<code><span class="comment">// プライマリ コンストラクターの展開結果</span>
-<span class="reserved">record</span> Point
+```csharp
+// プライマリ コンストラクターの展開結果
+record Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int X { get; init; }
+    public int Y { get; init; }
  
-    <span class="reserved">public</span> <span class="type">Point</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y)
+    public Point(int X, int Y)
     {
-        <span class="reserved">this</span>.X = X;
-        <span class="reserved">this</span>.Y = Y;
+        this.X = X;
+        this.Y = Y;
     }
 }
-</code></pre>
+```
 
 残念ながら、今のところ(というか、おそらく C# 9.0 リリース時点では)、
 プライマリ コンストラクターを書けるのは `record` だけになりそうです。
@@ -243,20 +243,20 @@ P/Invoke の類も、 .NET Runtime の中で特殊対応するよりも、事前
 一方、`init` は `class` や `struct` でも使えます。
 例えば、以下のようなコードは有効な C# 9.0 コードになります。
 
-<pre class="source" title="init アクセサー">
-<code><span class="comment">// init に関しては çlass でも struct でも使える</span>
-<span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+// init に関しては çlass でも struct でも使える
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int X { get; init; }
+    public int Y { get; init; }
  
-    <span class="reserved">public</span> <span class="type">Point</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y)
+    public Point(int X, int Y)
     {
-        <span class="reserved">this</span>.X = X;
-        <span class="reserved">this</span>.Y = Y;
+        this.X = X;
+        this.Y = Y;
     }
 }
-</code></pre>
+```
 
 ということで、Records の説明をする上での本質は以下の2点からなります。
 
@@ -275,12 +275,12 @@ P/Invoke の類も、 .NET Runtime の中で特殊対応するよりも、事前
 ということになっています。
 ただ、以下のコードを自前で用意すれば、現時点の .NET 5 Preview や古い .NET ランタイムでも `record` や `init` を使えます。
 
-<pre class="source" title="IsExternalInit 属性">
-<code><span class="reserved">namespace</span> System.Runtime.CompilerServices
+```csharp
+namespace System.Runtime.CompilerServices
 {
-    <span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">IsExternalInit</span> { }
+    internal class IsExternalInit { }
 }
-</code></pre>
+```
 
 ちなみにこの型、中身空っぽでマーカー的に用意された型ですが、
 実際の使われ方は [modreq](https://github.com/ufcpp-live/UfcppLiveAgenda/issues/4) になります。
@@ -315,59 +315,59 @@ immutable なクラスの部分書き換えをする場合、基本的には Clo
 
 それをやってくれるのが `with` 式で、`record` に対して以下のような書き方ができます。
 
-<pre class="source" title="with 式">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">record</span> Point(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
+record Point(int X, int Y);
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
+        var p = new Point(1, 2);
  
-        <span class="comment">// p を部分書き換え(この場合 X だけ書き換え)</span>
-        <span class="reserved">var</span> p1 = p <span class="reserved">with</span> { X = 3 };
+        // p を部分書き換え(この場合 X だけ書き換え)
+        var p1 = p with { X = 3 };
  
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((p.X, p.Y));   <span class="comment">// (1, 2)。元の p は不変</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((p1.X, p1.Y)); <span class="comment">// (3, 2)。p を Clone した上で X だけ書き換えてる</span>
+        Console.WriteLine((p.X, p.Y));   // (1, 2)。元の p は不変
+        Console.WriteLine((p1.X, p1.Y)); // (3, 2)。p を Clone した上で X だけ書き換えてる
     }
 }
-</code></pre>
+```
 
 これと同じことを `class` の手書きでやろうとすると、以下のように、Clone 後の書き換えで immutable であることが破たんします。
 
-<pre class="source" title="with 式を使わず手書きしようとすると…">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="comment">// 本当は set できるとまずいけど、Clone 後の書き換えのために必須になってしまう。</span>
-    <span class="comment">// これを回避するために init アクセサー(後述)がある。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="type">Point</span>(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; (X, Y) = (x, y);
-    <span class="reserved">public</span> <span class="type">Point</span> <span class="method">Clone</span>() =&gt; <span class="reserved">new</span> <span class="type">Point</span>(X, Y);
+    // 本当は set できるとまずいけど、Clone 後の書き換えのために必須になってしまう。
+    // これを回避するために init アクセサー(後述)がある。
+    public int X { get; set; }
+    public int Y { get; set; }
+    public Point(int x, int y) => (X, Y) = (x, y);
+    public Point Clone() => new Point(X, Y);
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
+        var p = new Point(1, 2);
  
-        <span class="comment">// p を部分書き換え(この場合 X だけ書き換え)</span>
-        <span class="reserved">var</span> p1 = p.<span class="method">Clone</span>();
+        // p を部分書き換え(この場合 X だけ書き換え)
+        var p1 = p.Clone();
  
-        <span class="comment">// Clone 後の書き換えのためにやむを得ず public set。</span>
-        <span class="comment">// init とか with とか、新構文が必要になる理由。</span>
+        // Clone 後の書き換えのためにやむを得ず public set。
+        // init とか with とか、新構文が必要になる理由。
         p1.X = 3;
  
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((p.X, p.Y));   <span class="comment">// (1, 2)。元の p は不変</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((p1.X, p1.Y)); <span class="comment">// (3, 2)。p を Clone した上で X だけ書き換えてる</span>
+        Console.WriteLine((p.X, p.Y));   // (1, 2)。元の p は不変
+        Console.WriteLine((p1.X, p1.Y)); // (3, 2)。p を Clone した上で X だけ書き換えてる
     }
 }
-</code></pre>
+```
 
 (もっと複雑で、実行時コストも高い方法でよければもうちょっとやり様はあるんですが。
 後述する `init` プロパティで一応、実行時コストは掛けずにこの問題を解決できるので、それを採用することになりました。)
@@ -381,28 +381,28 @@ C# 9.0 時点では `record` 専用構文になりそうです。
 プロパティのアクセサーに、`set` の代わりに `init` を使うことで、
 初期化子や `with` 式でだけ書き換え可能なプロパティができます。
 
-<pre class="source" title="init アクセサー">
-<code><span class="reserved">class</span> <span class="type">InitOnly</span>
+```csharp
+class InitOnly
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int X { get; init; }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">InitOnly</span>
+        var p = new InitOnly
         {
-            X = 1, <span class="comment">// 初期化子を使える</span>
+            X = 1, // 初期化子を使える
         };
  
-        <span class="error">p.X</span> = 2; <span class="comment">// これはコンパイル エラー</span>
+        p.X = 2; // これはコンパイル エラー
  
-        <span class="comment">// with 式での書き換え(Clone 後の書き換え)もできる</span>
-        <span class="reserved">var</span> p1 = p <span class="reserved">with</span> { X = 3 };
+        // with 式での書き換え(Clone 後の書き換え)もできる
+        var p1 = p with { X = 3 };
     }
 }
-</code></pre>
+```
 
 `init` アクセサーは以下の場所からだけ呼び出せる制限付きの `set` みたいなものです。
 

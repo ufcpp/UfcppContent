@@ -38,37 +38,37 @@ C# では <em>
 例えば、可変個の整数のうち最大の整数を求めるメソッドを作りたいとします。
 可変長引数を使わずにメソッドを実装すると以下のようになるでしょう。
 
-<pre class="source" title="最大値を求めるメソッド" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> ParamsTest
+class ParamsTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span> a = 314, b = 159, c = 265, d = 358, e  = 979;
-    <span class="comment">// ↑こいつらの最大値を探したいとき、</span>
+    int a = 314, b = 159, c = 265, d = 358, e  = 979;
+    // ↑こいつらの最大値を探したいとき、
 
-    <span class="reserved">int</span>[] tmp = <span class="reserved">new int</span>[]{a, b, c, d, e};
-    <span class="comment">// ↑こんな風に一度配列に格納してから</span>
+    int[] tmp = new int[]{a, b, c, d, e};
+    // ↑こんな風に一度配列に格納してから
 
-    <span class="reserved">int</span> max = Max(tmp);
-    <span class="comment">// ↑Max メソッドを呼び出す必要がある。</span>
+    int max = Max(tmp);
+    // ↑Max メソッドを呼び出す必要がある。
 
-    Console.Write(<span class="literal">"{0}\n"</span>, max);
+    Console.Write("{0}\n", max);
   }
 
-  <span class="reserved">static int</span> Max(<span class="reserved">int</span>[] a)
+  static int Max(int[] a)
   {
-    <span class="reserved">int</span> max = a[0];
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=1; i&lt;a.Length; ++i)
+    int max = a[0];
+    for(int i=1; i<a.Length; ++i)
     {
-      <span class="reserved">if</span>(max &lt; a[i])
+      if(max < a[i])
         max = a[i];
     }
-    <span class="reserved">return</span> max;
+    return max;
   }
 }
-</code></pre>
+```
 
 
 この方法では、1度値を配列に格納してからメソッドを呼び出すという操作が必要になります。
@@ -79,34 +79,34 @@ C# では <em>
 C# では <code>params</code> というキーワードを使って可変個の引数を取るメソッドを定義することが出来ます。
 例えば、上の例を <code>params</code> キーワードを使って書き直すと以下のようになります。
 
-<pre class="source" title="最大値を求めるメソッド(可変長引数版)" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> ParamsTest
+class ParamsTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span> a = 314, b = 159, c = 265, d = 358, e  = 979;
-    <span class="comment">// ↑こいつらの最大値を探したいとき、</span>
+    int a = 314, b = 159, c = 265, d = 358, e  = 979;
+    // ↑こいつらの最大値を探したいとき、
 
-    <span class="reserved">int</span> max = Max(<em>a, b, c, d, e</em>);
-    <span class="comment">// ↑こうすると、自動的に配列を作って値を格納してくれる。</span>
+    int max = Max(a, b, c, d, e);
+    // ↑こうすると、自動的に配列を作って値を格納してくれる。
 
-    Console.Write(<span class="literal">"{0}\n"</span>, max);
+    Console.Write("{0}\n", max);
   }
 
-  <span class="reserved">static int</span> Max(<span class="reserved"><em>params</em> int</span>[] a)
+  static int Max(params int[] a)
   {
-    <span class="reserved">int</span> max = a[0];
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=1; i&lt;a.Length; ++i)
+    int max = a[0];
+    for(int i=1; i<a.Length; ++i)
     {
-      <span class="reserved">if</span>(max &lt; a[i])
+      if(max < a[i])
         max = a[i];
     }
-    <span class="reserved">return</span> max;
+    return max;
   }
 }
-</code></pre>
+```
 
 
 メソッド定義側の変更点は引数 <code>int[] a</code> の前に <code>params</code> キーワードが付いただけです。
@@ -121,42 +121,42 @@ C# では <code>params</code> というキーワードを使って可変個の�
 ここでは、params の例として、
 かなり簡略化したものですが、Console.Write もどきを作ってみます。
 
-<pre class="source" title="Console.Write もどき" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> TestParams
+class TestParams
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="reserved">double</span> x = 3.14;
-    <span class="reserved">int</span>    n = 99;
-    <span class="reserved">string</span> s = <span class="literal">"test string"</span>;
-    <span class="reserved">bool</span>   b = <span class="reserved">true</span>;
+    double x = 3.14;
+    int    n = 99;
+    string s = "test string";
+    bool   b = true;
 
-    Write(<span class="literal">"x = {0}, n = {1}, s = {2}, b = {3}\n"</span>, x, n, s, b);
+    Write("x = {0}, n = {1}, s = {2}, b = {3}\n", x, n, s, b);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// Console.Write もどき。
   /// {0:d5} のような書式指定は出来ません。
-  /// &lt;/summary&gt;
-  /// &lt;param name="format"&gt;書式指定文字列&lt;/param&gt;
-  /// &lt;param name="args"&gt;format を使用して書き込むオブジェクトの配列&lt;/param&gt;</span>
-  <span class="reserved">static void</span> Write(<span class="reserved">string</span> format, <span class="reserved">params object</span>[] args)
+  /// </summary>
+  /// <param name="format">書式指定文字列</param>
+  /// <param name="args">format を使用して書き込むオブジェクトの配列</param>
+  static void Write(string format, params object[] args)
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;args.Length; ++i)
+    for(int i=0; i<args.Length; ++i)
     {
-      format = format.Replace(<span class="literal">"{"</span> + i.ToString() + <span class="literal">"}"</span>, args[i].ToString());
+      format = format.Replace("{" + i.ToString() + "}", args[i].ToString());
     }
     Console.Write(format);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="Console.Write もどき">
+```console
 x = 3.14, n = 99, s = test string, b = True
-</pre>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="params-collections">params コレクション</a>
 
@@ -169,17 +169,17 @@ C# 13 で、配列以外にも `params` にできる型が増えました。
 [コレクション式](../datatype/collection-expression.md)で使える型であれば何でも `params` にできます。
 例えば、以下のコードの `M1`～`M4` のようなコードを書けます。
 
-<pre class="source" title="任意のコレクションに対して params を付ける例">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M1</span></span>(<span class="reserved">params</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M2</span></span>(<span class="reserved">params</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M3</span></span>(<span class="reserved">params</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M4</span></span>(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+```csharp
+static void M1(params List<int> x) { }
+static void M2(params IEnumerable<int> x) { }
+static void M3(params Span<int> x) { }
+static void M4(params ReadOnlySpan<int> x) { }
 
-<span class="method"><span class="static">M1</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="static"><span class="method">M2</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="method"><span class="static">M3</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="static"><span class="method">M4</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-</pre>
+M1(1, 2);
+M2(1, 2);
+M3(1, 2);
+M4(1, 2);
+```
 
 俗称として、このような機能を「`params` コレクション」と言います。
 
@@ -193,17 +193,17 @@ C# 13 で、配列以外にも `params` にできる型が増えました。
 そうなると今度は、「コレクション式だけもう十分なのでは？」という話になります。
 なんせ、コレクション式のおかげで、`params` がなくても `[]` のたった2文字の追加だけでほぼ同様のことができます。
 
-<pre class="source" title="params の価値とは…">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">A</span></span>(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">B</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+```csharp
+static void A(params ReadOnlySpan<int> x) { }
+static void B(ReadOnlySpan<int> x) { }
 
-<span class="comment">// params</span>
-<span class="static"><span class="method">A</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+// params
+A(1, 2, 3);
 
-<span class="comment">// params がなくても、[] を足すだけ。</span>
-<span class="comment">// params の価値とは…</span>
-<span class="static"><span class="method">B</span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
-</pre>
+// params がなくても、[] を足すだけ。
+// params の価値とは…
+B([1, 2, 3]);
+```
 
 なので、「パフォーマンス的に明らかに有利な `params ReadOnlySpan<T>` 以外は要らないのではないか」という話も出ました。
 実際、需要があるのはこれと、あとはせいぜい `params Span<T>` くらいな可能性があります。
@@ -215,28 +215,28 @@ C# 13 で、配列以外にも `params` にできる型が増えました。
 
 例えば元コードとして以下のようなものがあったとします。
 
-<pre class="source" title="params T[] な元コード">
-<span class="comment">// 初期状態。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">A</span></span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+```csharp
+// 初期状態。
+static void A(params int[] x) { }
 
-<span class="comment">// これはコンパイル結果的には</span>
-<span class="comment">// A(new int[] { 1, 2, 3 });</span>
-<span class="comment">// になる。</span>
-<span class="comment">// この new int[3] がそこそこ重たい。</span>
-<span class="static"><span class="method">A</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
-</pre>
+// これはコンパイル結果的には
+// A(new int[] { 1, 2, 3 });
+// になる。
+// この new int[3] がそこそこ重たい。
+A(1, 2, 3);
+```
 
 これが、以下のように、メソッド定義側だけの書き換えで、利用側はノータッチでパフォーマンス改善が見込めます。
 
-<pre class="source" title="params ReadOnlySpan に書き換え">
-<span class="comment">// メソッド定義側だけ ReadOnlySpan に変更。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">A</span></span>(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+```csharp
+// メソッド定義側だけ ReadOnlySpan に変更。
+static void A(params ReadOnlySpan<int> x) { }
 
-<span class="comment">// 呼び出し側はノータッチ。</span>
-<span class="comment">// (C# 13 で再コンパイルだけ必要。)</span>
-<span class="comment">// 何もせず、 new int[3] のアロケーションが消える。</span>
-<span class="static"><span class="method">A</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
-</pre>
+// 呼び出し側はノータッチ。
+// (C# 13 で再コンパイルだけ必要。)
+// 何もせず、 new int[3] のアロケーションが消える。
+A(1, 2, 3);
+```
 
 利用個所が非常に多い場合、
 「コレクション式があるから `[]` の2文字を足して回るだけ」というのもそんなに簡単な話ではないので、
@@ -245,11 +245,11 @@ C# 13 で、配列以外にも `params` にできる型が増えました。
 実際、 .NET 9 では、`string.Join` や `Task.WhenAll` などのメソッドに
 `params ReadOnlySpan<T>` なオーバーロードが増えています。
 
-<pre class="source" title="params ReadOnlySpan オーバーロードが増えている例">
-<span class="comment">// .NET 8 以前なら Join(string, string[])</span>
-<span class="comment">// .NET 9 以降なら Join(string, ReadOnlySpan&lt;string&gt;)</span>
-<span class="reserved">var</span> <span class="variable">joiend</span> <span class="operator">=</span> <span class="reserved">string</span><span class="operator">.</span><span class="method"><span class="static">Join</span></span>(<span class="string">&quot;,&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>);
-</pre>
+```csharp
+// .NET 8 以前なら Join(string, string[])
+// .NET 9 以降なら Join(string, ReadOnlySpan<string>)
+var joiend = string.Join(",", "a", "b", "c");
+```
 
 ちなみに、この理屈でのパフォーマンス改善のためには、
 コンパイラーを C# 13 にアップグレードした後、1度は再コンパイルが必要です。
@@ -262,75 +262,76 @@ C# 13 で、配列以外にも `params` にできる型が増えました。
 
 幸い、[コレクション式の時点でこの辺りは考慮していて](../datatype/collection-expression.md#priority)、`params` でも同様に配列よりも `ReadOnlySpan<T>` (パフォーマンス的に有利)の方が優先度が高い仕様になっています。
 
-<pre class="source" title="ReadOnlySpan が優先">
-<span class="comment">// ReadOnlySpan の方が呼ばれる。</span>
-<span class="type">A</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+```csharp
+// ReadOnlySpan の方が呼ばれる。
+A.M(1, 2, 3);
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="comment">// int[] と ReadOnlySpan&lt;int&gt; の両方ある。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">x</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
-}</pre>
+    // int[] と ReadOnlySpan<int> の両方ある。
+    public static void M(params int[] x) { }
+    public static void M(params ReadOnlySpan<int> x) { }
+}
+```
 
 こういった背景から、基本的に、コレクション式と `params` コレクションでは、どちらからも生成されるコードはほぼ同じになります。
 
-<pre class="source" title="コレクション式と params コレクション">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M1</span></span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+```csharp
+static void M1(params int[] x) { }
 
-<span class="comment">// どちらで呼んでも new int[] { 1 } 生成。</span>
-<span class="method"><span class="static">M1</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="method"><span class="static">M1</span></span>([<span class="number">1</span>, <span class="number">2</span>]);
+// どちらで呼んでも new int[] { 1 } 生成。
+M1(1, 2);
+M1([1, 2]);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M2</span></span>(<span class="reserved">params</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+static void M2(params Span<int> x) { }
 
-<span class="comment">// どちらで呼んでも <a href="https://ufcpp.net/study/csharp/datatype/inline-array/">InlineArray</a> に展開。</span>
-<span class="method"><span class="static">M2</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="static"><span class="method">M2</span></span>([<span class="number">1</span>, <span class="number">2</span>]);
+// どちらで呼んでも InlineArray に展開。
+M2(1, 2);
+M2([1, 2]);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M3</span></span>(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+static void M3(params ReadOnlySpan<int> x) { }
 
-<span class="comment">// どちらで呼んでも<a href="https://ufcpp.net/study/csharp/datatype/collection-expression/#static-data">静的データ最適化</a>が掛かる。</span>
-<span class="static"><span class="method">M3</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="static"><span class="method">M3</span></span>([<span class="number">1</span>, <span class="number">2</span>]);
-</pre>
+// どちらで呼んでも静的データ最適化が掛かる。
+M3(1, 2);
+M3([1, 2]);
+```
 
 #### <a id="sec-generated-title-6"></a> <a id="diff-from-collection-expr">余談:  コレクション式との差</a>
 
 ただ、実装都合でどうしても「全く同じ」にはできないこともあるそうで、ちょっとだけ差があります。
 例えば以下のようなコードの場合、`[]` の有無で呼ばれるオーバーロード解決ルールが変わるそうです。
 
-<pre class="source" title="コレクション式と params コレクション利用時で結果がちょっと変わる珍しい例">
-<span class="type">A</span><span class="operator">.</span><span class="method"><span class="error" title="CS0121"><span class="static">M</span></span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]); <span class="comment">// こちらは解決できなくてエラーに。</span>
-<span class="type">A</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// こちらは int[] 側に解決。</span>
+```csharp
+A.M([1, 2, 3]); // こちらは解決できなくてエラーに。
+A.M(1, 2, 3); // こちらは int[] 側に解決。
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">params</span> <span class="reserved">long</span>[] <span class="variable local">_</span>) { }
+    public static void M(params int[] _) { }
+    public static void M(params long[] _) { }
 }
-</pre>
+```
 
 #### <a id="sec-generated-title-7"></a> <a id="params-ref-struct">余談:  params ref 構造体</a>
 
 ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた場合、
 暗黙的に [`scoped`](../resource/refstruct.md#scoped-modifier) 扱い(`scoped` 修飾子を付けた場合と同じルールで解析)になるそうです。
 
-<pre class="source" title="params を付けた場合、暗黙的に scoped">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// 普通の ReadOnlySpan 引数は、戻り値に素通し可能。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="static"><span class="method">M1</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span>;
+    // 普通の ReadOnlySpan 引数は、戻り値に素通し可能。
+    public static ReadOnlySpan<int> M1(ReadOnlySpan<int> x) => x;
 
-    <span class="comment">// scoped を付けると外に漏らせなくなる。</span>
-    <span class="comment">// 戻り値に返そうとするとコンパイル エラー。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="static"><span class="method">M2</span></span>(<span class="reserved">scoped</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local"><span class="error" title="CS8352">x</span></span>;
+    // scoped を付けると外に漏らせなくなる。
+    // 戻り値に返そうとするとコンパイル エラー。
+    public static ReadOnlySpan<int> M2(scoped ReadOnlySpan<int> x) => x;
 
-    <span class="comment">// params を付けると自動的に scoped 扱い。</span>
-    <span class="comment">// 戻り値に返そうとするとコンパイル エラー。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="method"><span class="static">M3</span></span>(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="error" title="CS8352"><span class="variable local">x</span></span>;
+    // params を付けると自動的に scoped 扱い。
+    // 戻り値に返そうとするとコンパイル エラー。
+    public static ReadOnlySpan<int> M3(params ReadOnlySpan<int> x) => x;
 }
-</pre>
+```
 
 `scoped` が付いていると、メソッド定義側での自由が減る代わりに、呼び出し側の自由が増えます。
 `params` の用途的に、定義側が `scoped` 困ることもなく、呼び出し側は `scoped` でないと困ることがありそうということでこういう仕様になりました。
@@ -341,27 +342,27 @@ ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた�
 可変長引数にしたメソッドは、引数なしで呼ぶこともできます。
 この場合、呼び出された側のメソッドには、空配列(長さ0の配列)が渡ります。
 
-<pre class="source" title="可変長引数メソッドを引数なしで呼ぶと空配列が渡る">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> x = Sum();
-        <span class="type">Console</span>.WriteLine(x); <span class="comment">// 0</span>
+        var x = Sum();
+        Console.WriteLine(x); // 0
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span> Sum(<span class="reserved">params</span> <span class="reserved">int</span>[] source)
+    static int Sum(params int[] source)
     {
-        <span class="comment">// 引数なしで呼ばれた場合、source には空配列が入る</span>
-        <span class="comment">// source が null にはならない</span>
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> source) sum += x;
-        <span class="reserved">return</span> sum;
+        // 引数なしで呼ばれた場合、source には空配列が入る
+        // source が null にはならない
+        var sum = 0;
+        foreach (var x in source) sum += x;
+        return sum;
     }
 }
-</code></pre>
+```
 
 ちなみに、空配列の作られ方ですが、
 .NET Frameworkのバージョンによって変化します。
@@ -371,17 +372,17 @@ ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた�
 
 つまり、上記の`var x = Sum()`は、.NET Framework 4.5以前であれば以下のように解釈されます。
 
-<pre class="source" title=".NET 4.5以前での空配列の作り方">
-<code><span class="comment">// .NET Framework 4.5 以前はこういう扱い</span>
-<span class="reserved">var</span> x = Sum(<span class="reserved">new</span> <span class="reserved">int</span>[0]);
-</code></pre>
+```csharp
+// .NET Framework 4.5 以前はこういう扱い
+var x = Sum(new int[0]);
+```
 
 一方、.NET Framework 4.6以降であれば以下のように解釈されます。
 
-<pre class="source" title=".NET 4.6以降での空配列の作り方">
-<code><span class="comment">// .NET Framework 4.6 以降はこういう扱い</span>
-<span class="reserved">var</span> x = Sum(<span class="type">Array</span>.Empty&lt;<span class="reserved">int</span>&gt;());
-</code></pre>
+```csharp
+// .NET Framework 4.6 以降はこういう扱い
+var x = Sum(Array.Empty<int>());
+```
 
 これらの差・変更の理由は単純で、`Array.Empty`を使う方がパフォーマンスが良いです。
 `new int[0]`だと、メソッド呼び出しのために新しい配列のインスタンスが作られますが、
@@ -391,32 +392,32 @@ ref 構造体 (`Span<T>` や `ReadOnlySpan<T>` など)に `params` を付けた�
 狙ってやらないと起こせないような珍しい問題ですが、
 例えば以下のようなコードの挙動は、.NET Framework のバージョンによって変化します。
 
-<pre class="source" title="破壊的変更になる例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> x = IsCached();
-        <span class="type">Console</span>.WriteLine(x);
-        <span class="reserved">var</span> y = IsCached();
-        <span class="type">Console</span>.WriteLine(y); <span class="comment">// ターゲットによって結果が変わる</span>
+        var x = IsCached();
+        Console.WriteLine(x);
+        var y = IsCached();
+        Console.WriteLine(y); // ターゲットによって結果が変わる
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span>[] prev;
+    static int[] prev;
 
-    <span class="reserved">static</span> <span class="reserved">bool</span> IsCached(<span class="reserved">params</span> <span class="reserved">int</span>[] source)
+    static bool IsCached(params int[] source)
     {
-        <span class="comment">// .NET 4.5 以前だと、毎回違う配列がnewされて渡ってくる</span>
-        <span class="comment">// .NET 4.6 以降だと、毎回同じインスタンスが使いまわされる</span>
-        <span class="reserved">if</span> (prev == source) <span class="reserved">return</span> <span class="reserved">true</span>;
+        // .NET 4.5 以前だと、毎回違う配列がnewされて渡ってくる
+        // .NET 4.6 以降だと、毎回同じインスタンスが使いまわされる
+        if (prev == source) return true;
 
         prev = source;
-        <span class="reserved">return</span> <span class="reserved">false</span>;
+        return false;
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-9"></a> <a id="arglist"></a>__arglist
 

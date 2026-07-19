@@ -51,7 +51,7 @@ aliases:
 
 ## <a id="sec-generated-title-3"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 ・接ベクトル
 
 まず、3次元空間上の曲面で説明
@@ -104,4 +104,4 @@ du/dt ＝ V<sup>i</sup>∂/∂u<sup>i</sup>
 dv/dt ＝ V<sup>i</sup>(∂v<sup>j</sup>/∂u<sup>i</sup>)∂/∂v<sup>j</sup>
 の積分曲線を v(t) で、
 v(t) ＝ φ(u(t)) となるものが必ず存在する。
-</pre>
+```

@@ -25,39 +25,42 @@ sin,cos,tanの表示
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;sin/&gt; &lt;cos/&gt; &lt;tan/&gt;
-</pre>
+```xml
+<sin/> <cos/> <tan/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;sin/&gt;x = &lt;cos/&gt;(x-&lt;frac&gt;&lt;num&gt;π&lt;/num&gt;&lt;denom&gt;2&lt;/denom&gt;&lt;/frac&gt;),
-&lt;tan/&gt;x = &lt;frac&gt;&lt;num&gt;&lt;sin/&gt;x&lt;/num&gt;&lt;denom&gt;&lt;cos/&gt;x&lt;/denom&gt;&lt;/frac&gt;
-</pre><div class="math"><span class="normal">sin</span>x = <span class="normal">cos</span>(x-<table class="frac" summary="fraction"><tr><td class="num">π</td></tr><tr><td>2</td></tr></table>),
+```xml
+<sin/>x = <cos/>(x-<frac><num>π</num><denom>2</denom></frac>),
+<tan/>x = <frac><num><sin/>x</num><denom><cos/>x</denom></frac>
+```
+<div class="math"><span class="normal">sin</span>x = <span class="normal">cos</span>(x-<table class="frac" summary="fraction"><tr><td class="num">π</td></tr><tr><td>2</td></tr></table>),
 <span class="normal">tan</span>x = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">sin</span>x</td></tr><tr><td><span class="normal">cos</span>x</td></tr></table>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:sin"&gt;
-  &lt;span class="normal"&gt;sin&lt;/span&gt;
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:sin">
+  <span class="normal">sin</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:cos"&gt;
-  &lt;span class="normal"&gt;cos&lt;/span&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:cos">
+  <span class="normal">cos</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:tan"&gt;
-  &lt;span class="normal"&gt;tan&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:tan">
+  <span class="normal">tan</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.normal
+```css
+span.normal
 {
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

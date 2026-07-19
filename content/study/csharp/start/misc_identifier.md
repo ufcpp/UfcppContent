@@ -198,9 +198,9 @@ letter-character に加えて、
 案外、変な記号も識別子に使えちゃうんで、以下のようなまね可能。
 良い子は真似しちゃダメ。
 
-<pre class="source" title="コンパイル通るよ" lang="">
-<code>        <span class="reserved">var</span> ﾟあ゙か゚ː・ゝゞヽ⁀ヾ〱‿〲〳〴〵 = <span class="literal">123</span>;
-</code></pre>
+```csharp
+        var ﾟあ゙か゚ː・ゝゞヽ⁀ヾ〱‿〲〳〴〵 = 123;
+```
 
 
 <figure>
@@ -219,22 +219,22 @@ C# は2002年のリリースですが、開発自体は1990年代から始まっ
 
 C# の仕様上は「2バイトに収まるかどうか」には触れておらず、単に「letter であれば使える」となっているので、実は現在の C# コンパイラーは仕様を満たしていない状態です。
 
-<pre class="source" title="追加面文字識別子">
-<code><span class="comment">// 以下の文字はカテゴリー的には Other Letter なので本来は識別子として使えるはず。</span>
-<span class="comment">// 以下のコードがコンパイル エラーを起こすのは、現在の C# コンパイラーが仕様を満たしていない。</span>
-<span class="reserved">var</span> 𓀀 = 1; <span class="comment">// ヒエログリフ</span>
-<span class="reserved">var</span> 𩸽 = 2; <span class="comment">// 漢字の一部は追加面文字</span>
-<span class="reserved">var</span> 𐊀 = 3; <span class="comment">// 鉄器時代に使われていた古い文字</span>
+```csharp
+// 以下の文字はカテゴリー的には Other Letter なので本来は識別子として使えるはず。
+// 以下のコードがコンパイル エラーを起こすのは、現在の C# コンパイラーが仕様を満たしていない。
+var 𓀀 = 1; // ヒエログリフ
+var 𩸽 = 2; // 漢字の一部は追加面文字
+var 𐊀 = 3; // 鉄器時代に使われていた古い文字
  
-<span class="comment">// 以下の文字は Number なので、2文字目以降であれば使えたはず。</span>
-<span class="comment">// 現状はコンパイル エラー。</span>
-<span class="reserved">var</span> <span class="variable">a</span>𒐀 = 4; <span class="comment">// 楔形文字の数字</span>
+// 以下の文字は Number なので、2文字目以降であれば使えたはず。
+// 現状はコンパイル エラー。
+var a𒐀 = 4; // 楔形文字の数字
  
-<span class="comment">// 絵文字とかは Symbol カテゴリーなので追加面かどうかにかかわらず、仕様的にダメ。</span>
-<span class="comment">// 以下のコードがコンパイル エラーになるのは仕様通り。</span>
-<span class="reserved">var</span> <span class="error">😊</span> = 5;
-<span class="reserved">var</span> <span class="error">🀀 </span>= 6;
-</code></pre>
+// 絵文字とかは Symbol カテゴリーなので追加面かどうかにかかわらず、仕様的にダメ。
+// 以下のコードがコンパイル エラーになるのは仕様通り。
+var 😊 = 5;
+var 🀀 = 6;
+```
 
 ちなみに、これは C# コンパイラー開発チームも把握している既知の問題ですが、
 実際にこれで困ることが少なくて需要がないため、修正は先送りにされています。
@@ -244,12 +244,12 @@ C# の仕様上は「2バイトに収まるかどうか」には触れておら�
 [エスケープ シーケンス](st_embeddedtype.md#escape-sequence)のうち、`\u` と `\U` の2つは識別子としても使えます。
 例えば以下のコードは普通に有効な C# コードです。
 
-<pre class="source" title="エスケープ シーケンス識別子の例">
-<code><span class="reserved">var</span> <span class="variable">\u0061</span> = 1; <span class="comment">// var a = 1; と同じ意味</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span>); <span class="comment">// 1</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">\U00000061</span>); <span class="comment">// 記法が違ってもやっぱり a の意味で解釈されるので 1 が表示される</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">nameof</span>(<span class="variable">\u0061</span>)); <span class="comment">// a と表示される</span>
-</code></pre>
+```csharp
+var \u0061 = 1; // var a = 1; と同じ意味
+Console.WriteLine(a); // 1
+Console.WriteLine(\U00000061); // 記法が違ってもやっぱり a の意味で解釈されるので 1 が表示される
+Console.WriteLine(nameof(\u0061)); // a と表示される
+```
 
 ## <a id="sec-generated-title-10"></a> <a id="ignore-format"></a>formatting character の無視
 
@@ -259,20 +259,20 @@ C# では、識別子中に含まれる formatting character を完全に無視�
 なので、`ab` と `a\u200Db` は同じ識別子として認識されて、
 以下のコードはコンパイル可能なコードになります。
 
-<pre class="source" title="formatting character を含むい識別子の例">
-<code><span class="reserved">var</span> <span class="variable">ab</span> = 1;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a\u200Db</span>); <span class="comment">// 間に ZWJ が挟まっていても無視されて ab と同じ意味</span>
-</code></pre>
+```csharp
+var ab = 1;
+Console.WriteLine(a\u200Db); // 間に ZWJ が挟まっていても無視されて ab と同じ意味
+```
 
 [双方向テキスト](https://ja.wikipedia.org/wiki/%E5%8F%8C%E6%96%B9%E5%90%91%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88)がらみの formatting character を使うと、
 見た目がだいぶおかしいソースコードを書けたりもします。
 例えば以下のコードは、おそらく今見ているこのページ上では表示がおかしいと思います。
 (ちゃんとコンパイルできるコードです。)
 
-<pre class="source" title="双方向テキスト用 formatting character の例">
-<code><span class="reserved">var</span> <span class="variable">a‮bcd‭e</span> = 1;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">abcde</span>);
-</code></pre>
+```csharp
+var a‮bcd‭e = 1;
+Console.WriteLine(abcde);
+```
 
 このソースコードは環境によって以下のように表示されます。
 

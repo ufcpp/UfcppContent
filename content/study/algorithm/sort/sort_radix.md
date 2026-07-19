@@ -49,41 +49,41 @@ aliases:
 概念説明のために、
 まずは基数を10として、3桁までしかソートできない簡易版のソースを示します。
 
-<pre class="source" title="基数ソート（概念説明用）" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 基数ソート。
 /// 概念説明用の簡易版。
 /// 10進数で3桁(0～999)までしかソートできない。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="max"&gt;配列 a 中の最大値&lt;/param&gt;</span>
-<span class="reserved">public static void</span> RadixSort10(<span class="reserved">int</span>[] a)
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="max">配列 a 中の最大値</param>
+public static void RadixSort10(int[] a)
 {
-  <span class="comment">// バケツを用意</span>
-  List&lt;<span class="reserved">int</span>&gt;[] bucket = <span class="reserved">new</span> List&lt;<span class="reserved">int</span>&gt;[10];
+  // バケツを用意
+  List<int>[] bucket = new List<int>[10];
 
-  <span class="reserved">for</span> (<span class="reserved">int</span> d = 0, r = 1; d &lt; 3; ++d, r *= 10)
+  for (int d = 0, r = 1; d < 3; ++d, r *= 10)
   {
-    <span class="comment">// バケツに値を入れる</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    // バケツに値を入れる
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">int</span> key = (a[i] / r) % 10; <span class="comment">// a[i] の d 桁目だけを取り出す。</span>
-      <span class="reserved">if</span> (bucket[key] == <span class="reserved">null</span>) bucket[key] = <span class="reserved">new</span> List&lt;<span class="reserved">int</span>&gt;();
+      int key = (a[i] / r) % 10; // a[i] の d 桁目だけを取り出す。
+      if (bucket[key] == null) bucket[key] = new List<int>();
       bucket[key].Add(a[i]);
     }
 
-    <span class="comment">// バケツ中の値の結合</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = 0, i = 0; j &lt; bucket.Length; ++j)
-      <span class="reserved">if</span> (bucket[j] != <span class="reserved">null</span>)
-        <span class="reserved">foreach</span> (<span class="reserved">int</span> val <span class="reserved">in</span> bucket[j])
+    // バケツ中の値の結合
+    for (int j = 0, i = 0; j < bucket.Length; ++j)
+      if (bucket[j] != null)
+        foreach (int val in bucket[j])
           a[i++] = val;
 
-    <span class="comment">// バケツを一度空にする</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; bucket.Length; ++j)
-      bucket[j] = <span class="reserved">null</span>;
+    // バケツを一度空にする
+    for (int j = 0; j < bucket.Length; ++j)
+      bucket[j] = null;
   }
 }
-</code></pre>
+```
 
 
 「バケツに値を入れる」とか「バケツ中の値の結合」の部分は、
@@ -96,39 +96,39 @@ aliases:
 基数を256（＝1バイト）にした場合、
 32ビット整数は4桁（＝4バイト）なので、4回の反復で OK です。
 
-<pre class="source" title="基数ソート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 基数ソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="max"&gt;配列 a 中の最大値&lt;/param&gt;</span>
-<span class="reserved">public static void</span> RadixSort(<span class="reserved">int</span>[] a)
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="max">配列 a 中の最大値</param>
+public static void RadixSort(int[] a)
 {
-  <span class="comment">// バケツを用意</span>
-  List&lt;<span class="reserved">int</span>&gt;[] bucket = <span class="reserved">new</span> List&lt;<span class="reserved">int</span>&gt;[256];
+  // バケツを用意
+  List<int>[] bucket = new List<int>[256];
 
-  <span class="reserved">for</span> (<span class="reserved">int</span> d = 0, logR = 0; d &lt; 4; ++d, logR += 8)
+  for (int d = 0, logR = 0; d < 4; ++d, logR += 8)
   {
-    <span class="comment">// バケツに値を入れる</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    // バケツに値を入れる
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">int</span> key = (a[i] &gt;&gt; logR) &amp; 255; <span class="comment">// a[i] を256進 d 桁目だけを取り出す。</span>
-      <span class="reserved">if</span> (bucket[key] == <span class="reserved">null</span>) bucket[key] = <span class="reserved">new</span> List&lt;<span class="reserved">int</span>&gt;();
+      int key = (a[i] >> logR) & 255; // a[i] を256進 d 桁目だけを取り出す。
+      if (bucket[key] == null) bucket[key] = new List<int>();
       bucket[key].Add(a[i]);
     }
 
-    <span class="comment">// バケツ中の値の結合</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = 0, i = 0; j &lt; bucket.Length; ++j)
-      <span class="reserved">if</span> (bucket[j] != <span class="reserved">null</span>)
-        <span class="reserved">foreach</span> (<span class="reserved">int</span> val <span class="reserved">in</span> bucket[j])
+    // バケツ中の値の結合
+    for (int j = 0, i = 0; j < bucket.Length; ++j)
+      if (bucket[j] != null)
+        foreach (int val in bucket[j])
           a[i++] = val;
 
-    <span class="comment">// バケツを一度空にする</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; bucket.Length; ++j)
-      bucket[j] = <span class="reserved">null</span>;
+    // バケツを一度空にする
+    for (int j = 0; j < bucket.Length; ++j)
+      bucket[j] = null;
   }
 }
-</code></pre>
+```
 
 
 <code>KeyValuePair</code> や <code>List</code> は、

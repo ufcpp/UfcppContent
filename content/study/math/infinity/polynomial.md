@@ -20,15 +20,15 @@ aliases:
 
 ## <a id="sec-generated-title-1"></a> <a id="d71e4"></a>多項式環
 
-<pre>
+```text
 f[x] ＝ Σ a_n x^n
 
 などは環をなす。
-</pre>
+```
 
 ## <a id="sec-generated-title-2"></a> <a id="d71e7"></a>多項式環の順序
 
-<pre>
+```text
 実数係数の多項式同士の順序関係を以下のように定義
 
 ・2つの多項式 f[x] と g[x] の次数が異なる場合、
@@ -70,5 +70,4 @@ for(int n=0; n≦f.Order ＆＆ n≦g.Order; ++n)
 }
 
 にすると、「任意の正の実数 ＞ x」
-
-</pre>
+```

@@ -35,57 +35,57 @@ LINQは、正確に言うとデータ処理に関連する複数の構文やラ�
 
 1つ目は、データ列の入力元と出力先の組み合わせです。少し恣意的な例になりますが、「入力した整数列のうち、奇数のものだけ抜き出して、二乗したものを出力する」という処理を考えましょう。入力元・出力先が固定でいいならそう難しい話ではありません。例えば、コンソールからの入出力で考えると、以下のようになります。
 
-<pre class="source" title="入力から出力までを1つのメソッドで実装する例">
-<code><reserved></span><span class="reserved">while</span> (<span class="reserved">true</span>)
+```csharp
+while (true)
 {
-    <span class="comment">// コンソールから入力</span>
-    <span class="reserved">var</span> line = <span class="type">Console</span>.ReadLine();
-    <span class="reserved">if</span> (<span class="reserved">string</span>.IsNullOrEmpty(line)) <span class="reserved">break</span>;
-    <span class="reserved">var</span> x = <span class="reserved">int</span>.Parse(line);
+    // コンソールから入力
+    var line = Console.ReadLine();
+    if (string.IsNullOrEmpty(line)) break;
+    var x = int.Parse(line);
 
-    <span class="comment">// 条件選択</span>
-    <span class="reserved">if</span> ((x % 2) == 1)
+    // 条件選択
+    if ((x % 2) == 1)
     {
-        <span class="comment">// 値の変換</span>
-        <span class="reserved">var</span> y = x * x;
+        // 値の変換
+        var y = x * x;
 
-        <span class="comment">// コンソールに出力</span>
-        <span class="type">Console</span>.WriteLine(y);
+        // コンソールに出力
+        Console.WriteLine(y);
     }
 }
-</code></pre>
+```
 
 問題は、入力元/出力先はコンソールとは限らないことです。ファイルの読み書きであったり、ネット越しの受け渡しであったり、様々な入出力が考えられます。そのたびに、この例のような類のコードを書くのは非効率で、「奇数のものだけ抜き出して、二乗」という加工する部分だけを切り出して、様々な入出力と組み合わせて使えるようにすべきです。
 
 これは、`IEnumerable<T>`(`System.Collections.Generic`名前空間)を受け取り、`IEnumerable<T>`を返すメソッドを作れば実現できます。[イテレーター](sp2_iterator.md)を使えばそう難しくはありません。以下のような書き方ができます。
 
-<pre class="source" title="入力(Read)、加工(Filter)、出力(Write)の分離">
-<code><comment></span><span class="comment">// コンソールから入力</span>
-<span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Read()
+```csharp
+// コンソールから入力
+static IEnumerable<int> Read()
 {
-    <span class="reserved">while</span> (<span class="reserved">true</span>)
+    while (true)
     {
-        <span class="reserved">var</span> line = <span class="type">Console</span>.ReadLine();
-        <span class="reserved">if</span> (<span class="reserved">string</span>.IsNullOrEmpty(line)) <span class="reserved">break</span>;
-        <span class="reserved">yield</span> <span class="reserved">return</span> <span class="reserved">int</span>.Parse(line);
+        var line = Console.ReadLine();
+        if (string.IsNullOrEmpty(line)) break;
+        yield return int.Parse(line);
     }
 }
 
-<span class="comment">// 加工: 条件選択 + 変換</span>
-<span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Filter(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; source)
+// 加工: 条件選択 + 変換
+static IEnumerable<int> Filter(IEnumerable<int> source)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> source)
-        <span class="reserved">if</span> ((x % 2) == 1)
-            <span class="reserved">yield</span> <span class="reserved">return</span> x * x;
+    foreach (var x in source)
+        if ((x % 2) == 1)
+            yield return x * x;
 }
 
-<span class="comment">// コンソールに出力</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Write(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; source)
+// コンソールに出力
+static void Write(IEnumerable<int> source)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> source)
-        <span class="type">Console</span>.WriteLine(x);
+    foreach (var x in source)
+        Console.WriteLine(x);
 }
-</code></pre>
+```
 
 これで、下図に示すように、様々な入出力の組み合わせが使えるようになります。
 
@@ -109,12 +109,12 @@ LINQは、正確に言うとデータ処理に関連する複数の構文やラ�
 
 これらを使って前節のコードと同じ処理を書き直すと、(コード中の`Read`, `Write`に対して)以下のような書き方ができます。
 
-<pre class="source" title="汎用処理の組み合わせ">
-<code>Write(Read()
-    .Where(x =&gt; (x % 2) == 1)
-    .Select(x =&gt; x * x)
+```csharp
+Write(Read()
+    .Where(x => (x % 2) == 1)
+    .Select(x => x * x)
     );
-</code></pre>
+```
 
 ちなみに、`Where`, `Select`は、インスタンス メソッドと同じように`x.Where(...)`というような書き方をしていますが、実際に呼ばれるのは`Enumerable`クラスの`Where`静的メソッドです。これは、[拡張メソッド](../functional/sp3_extension.md)と呼ばれる機能を 使っています。
 

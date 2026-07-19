@@ -282,33 +282,33 @@ LINQ to SQL が使える状態になりました。
 
 あとは、例えば、以下のようにしてデータベースにアクセスすることができます。
 
-<pre class="source" title="LINQ to SQL でデータベースアクセス" lang="">
-<code><span class="reserved">static string</span> basedir = AppDomain.CurrentDomain.BaseDirectory;
-<span class="reserved">static string</span> ConnectionString =
-  <span class="literal">"Data Source=.\\SQLEXPRESS;AttachDbFilename=\""</span> +
-  basedir + <span class="literal">"Comic.mdf\";Integrated Security=True;User Instance=True"</span>;
+```csharp
+static string basedir = AppDomain.CurrentDomain.BaseDirectory;
+static string ConnectionString =
+  "Data Source=.\\SQLEXPRESS;AttachDbFilename=\"" +
+  basedir + "Comic.mdf\";Integrated Security=True;User Instance=True";
 
-<span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
+var db = new ComicDataContext(ConnectionString);
 
-<span class="reserved">var</span> q =
-  <span class="reserved">from</span> s <span class="reserved">in</span> db.Series
-  <span class="reserved">where</span> s.Name.Contains(<span class="literal">"先生"</span>)
-  <span class="reserved">select new</span> { Title = s.Name, Author = s.Author.Name };
+var q =
+  from s in db.Series
+  where s.Name.Contains("先生")
+  select new { Title = s.Name, Author = s.Author.Name };
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> q)
+foreach (var s in q)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}, {1}\n"</span>, s.Title, s.Author);
+  Console.Write("{0}, {1}\n", s.Title, s.Author);
 }
-</code></pre>
+```
 
 
 ConnectionString の .mdf ファイルのパスの部分は好きな場所に変更してもかまいません。
 例えば、以下のように My Documents フォルダにデータを記憶するのもいいと思います。
 
-<pre class="source" title="My Documents フォルダに .mdf ファイルを保存" lang="">
-<code><span class="reserved">static string</span> basedir =
-  System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + <span class="literal">"\\"</span>;
-</code></pre>
+```csharp
+static string basedir =
+  System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
+```
 
 
 
@@ -322,13 +322,13 @@ ConnectionString の .mdf ファイルのパスの部分は好きな場所に変
 データベースへのデータの追加も非常に簡単で、
 例えば以下のように、DataContext を作ってメンバー Table に InsertOnSubmit するだけです。
 
-<pre class="source" title="データの追加" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-Author a = <span class="reserved">new</span> Author();
-a.Name = <span class="literal">"赤松健"</span>;
+```csharp
+var db = new ComicDataContext(ConnectionString);
+Author a = new Author();
+a.Name = "赤松健";
 db.Author.InsertOnSubmit(a);
 db.SubmitChanges();
-</code></pre>
+```
 
 
 ここで、1つ注意する点は、
@@ -337,14 +337,14 @@ SubmitChanges メソッドを呼び出した時点で反映します。
 
 値の更新も、単にエンティティクラスのメンバーの値を変更するだけで OK です。
 
-<pre class="source" title="データの更新" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-Author a = db.Author.Single(x =&gt; x == <span class="literal">"赤松健"</span>);
-a.Kana = <span class="literal">"あかまつけん"</span>;
-a.Birthday = <span class="reserved">new</span> DateTime(1968, 7, 5);
-a.Url = <span class="literal">"http://www.ailove.net/main.html"</span>;
+```csharp
+var db = new ComicDataContext(ConnectionString);
+Author a = db.Author.Single(x => x == "赤松健");
+a.Kana = "あかまつけん";
+a.Birthday = new DateTime(1968, 7, 5);
+a.Url = "http://www.ailove.net/main.html";
 db.SubmitChanges();
-</code></pre>
+```
 
 
 まあ、1つ1つデータを追加していくのもばかばかしいので、
@@ -369,10 +369,10 @@ DataContext には Log プロパティ（TextWriter 型）があって、
 
 例えば、標準出力にログを表示したい場合、以下のようにします。
 
-<pre class="source" title="標準出力にログを出力" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-db.Log = <span class="type">Console</span>.Out;
-</code></pre>
+```csharp
+var db = new ComicDataContext(ConnectionString);
+db.Log = Console.Out;
+```
 
 
 
@@ -380,25 +380,25 @@ db.Log = <span class="type">Console</span>.Out;
 
 各シリーズの、作家名・出版社名・既刊の巻数を表示。
 
-<pre class="source" title="テーブル全部結合" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-db.Log = <span class="type">Console</span>.Out;
+```csharp
+var db = new ComicDataContext(ConnectionString);
+db.Log = Console.Out;
 
-<span class="reserved">var</span> q =
-  <span class="reserved">from</span> a <span class="reserved">in</span> db.Author
-  <span class="reserved">from</span> s <span class="reserved">in</span> a.Series
-  <span class="reserved">select new</span> {
+var q =
+  from a in db.Author
+  from s in a.Series
+  select new {
     Title = s.Name,
     Author = a.Name,
     Publisher = s.Publisher.Name,
     Num = s.Book.Count };
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> q)
+foreach (var s in q)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0} ({2}), {1} 作, 全 {3} 巻\n"</span>,
+  Console.Write("{0} ({2}), {1} 作, 全 {3} 巻\n",
     s.Title, s.Author, s.Publisher, s.Num);
 }
-</code></pre>
+```
 
 
 C# のコードはシンプルですが、生成される SQL 文は結構でかくなります。
@@ -410,79 +410,79 @@ C# のコードはシンプルですが、生成される SQL 文は結構でか
 クエリ式はなくて、一見するとデータベース問い合わせをしているようなコードには見えないんですが、
 Author、Series テーブルへのアクセスの際、サーバに問い合わせが行われます。
 
-<pre class="source" title="テーブルに直接アクセス" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-db.Log = <span class="type">Console</span>.Out;
+```csharp
+var db = new ComicDataContext(ConnectionString);
+db.Log = Console.Out;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> a <span class="reserved">in</span> db.Author) <span class="comment">// ここと</span>
+foreach (var a in db.Author) // ここと
 {
-  <span class="type">Console</span>.Write(<span class="literal">"・{0}\n"</span>, a.Name);
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> a.Series) <span class="comment">// ここでクエリ発行</span>
+  Console.Write("・{0}\n", a.Name);
+  foreach (var s in a.Series) // ここでクエリ発行
   {
-    <span class="type">Console</span>.Write(<span class="literal">"  - {0}\n"</span>, s.Name);
+    Console.Write("  - {0}\n", s.Name);
   }
 }
-</code></pre>
+```
 
 
 以下の例を実行すると分かるように、
 IQueryable は、クエリ式を使って作ったタイミングではなく、
 foreach のところでサーバへの問い合わせを行います。
 
-<pre class="source" title="サーバへの問い合わせのタイミングは foreach のところ" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-db.Log = <span class="type">Console</span>.Out;
+```csharp
+var db = new ComicDataContext(ConnectionString);
+db.Log = Console.Out;
 
-<span class="type">Console</span>.Write(<span class="literal">"begin query expression\n"</span>);
-<span class="comment">// この時点ではクエリは発行されない</span>
-<span class="reserved">var</span> q =
-  <span class="reserved">from</span> s <span class="reserved">in</span> db.Series
-  <span class="reserved">where</span> s.Name.Contains(<span class="literal">"先生"</span>)
-  <span class="reserved">select</span> s;
-<span class="type">Console</span>.Write(<span class="literal">"end query expression\n"</span>);
+Console.Write("begin query expression\n");
+// この時点ではクエリは発行されない
+var q =
+  from s in db.Series
+  where s.Name.Contains("先生")
+  select s;
+Console.Write("end query expression\n");
 
-<span class="type">Console</span>.Write(<span class="literal">"begin foreach\n"</span>);
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 2; ++i)
+Console.Write("begin foreach\n");
+for (int i = 0; i < 2; ++i)
 {
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> q) <span class="comment">// ここで毎回クエリ発行</span>
+  foreach (var s in q) // ここで毎回クエリ発行
   {
-    <span class="type">Console</span>.Write(<span class="literal">"  - {0}\n"</span>, s.Name);
+    Console.Write("  - {0}\n", s.Name);
   }
 }
-<span class="type">Console</span>.Write(<span class="literal">"end foreach\n"</span>);
-</code></pre>
+Console.Write("end foreach\n");
+```
 
 
 foreach のたびにサーバに問い合わせるのが嫌なら、
 以下のようにあらかじめ ToList などで in-memory オブジェクトに変換しておきます。
 
-<pre class="source" title="あらかじめリスト化" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-db.Log = <span class="type">Console</span>.Out;
+```csharp
+var db = new ComicDataContext(ConnectionString);
+db.Log = Console.Out;
 
-<span class="type">Console</span>.Write(<span class="literal">"begin query expression\n"</span>);
-<span class="comment">// この時点ではクエリは発行されない</span>
-<span class="reserved">var</span> q =
-  <span class="reserved">from</span> s <span class="reserved">in</span> db.Series
-  <span class="reserved">where</span> s.Name.Contains(<span class="literal">"先生"</span>)
-  <span class="reserved">select</span> s;
-<span class="type">Console</span>.Write(<span class="literal">"end query expression\n"</span>);
+Console.Write("begin query expression\n");
+// この時点ではクエリは発行されない
+var q =
+  from s in db.Series
+  where s.Name.Contains("先生")
+  select s;
+Console.Write("end query expression\n");
 
-<span class="type">Console</span>.Write(<span class="literal">"begin ToList\n"</span>);
-<span class="comment">// ここでクエリ発行</span>
-<span class="reserved">var</span> list = q.ToList();
-<span class="type">Console</span>.Write(<span class="literal">"end ToList\n"</span>);
+Console.Write("begin ToList\n");
+// ここでクエリ発行
+var list = q.ToList();
+Console.Write("end ToList\n");
 
-<span class="type">Console</span>.Write(<span class="literal">"begin foreach\n"</span>);
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 2; ++i)
+Console.Write("begin foreach\n");
+for (int i = 0; i < 2; ++i)
 {
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> list) <span class="comment">// ここではクエリは発行されない</span>
+  foreach (var s in list) // ここではクエリは発行されない
   {
-    <span class="type">Console</span>.Write(<span class="literal">"  - {0}\n"</span>, s.Name);
+    Console.Write("  - {0}\n", s.Name);
   }
 }
-<span class="type">Console</span>.Write(<span class="literal">"end foreach\n"</span>);
-</code></pre>
+Console.Write("end foreach\n");
+```
 
 
 ただし、サーバへの問い合わせを ToList の時点でしか行わないということは、
@@ -509,39 +509,39 @@ str LIKE xxx%、
 str LIKE %xxx、
 str LIKE %xxx% というような感じで解釈されます。
 
-<pre class="source" title="クエリ式中のメソッド呼び出し" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-db.Log = <span class="type">Console</span>.Out;
+```csharp
+var db = new ComicDataContext(ConnectionString);
+db.Log = Console.Out;
 
-<span class="reserved">var</span> q =
-  <span class="reserved">from</span> s <span class="reserved">in</span> db.Series
-  <span class="reserved">where</span> s.Name.Contains(<span class="literal">"先生"</span>)
-    || s.Name.StartsWith(<span class="literal">"吼"</span>)
-    || s.Name.EndsWith(<span class="literal">"社長"</span>)
-  <span class="reserved">select</span> s;
+var q =
+  from s in db.Series
+  where s.Name.Contains("先生")
+    || s.Name.StartsWith("吼")
+    || s.Name.EndsWith("社長")
+  select s;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> q)
+foreach (var s in q)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, s.Name);
+  Console.Write("{0}\n", s.Name);
 }
-</code></pre>
+```
 
 
 あと、面白そうなのでは、Array.Contains が IN 演算子に変換されます。
 
-<pre class="source" title="Array.Contains" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
-db.Log = <span class="type">Console</span>.Out;
+```csharp
+var db = new ComicDataContext(ConnectionString);
+db.Log = Console.Out;
 
-<span class="reserved">var</span> conds = <span class="reserved">new</span>[] { <span class="literal">"魔法先生ネギま！"</span>, <span class="literal">"かってに改蔵"</span>, <span class="literal">"アニメ店長"</span> };
+var conds = new[] { "魔法先生ネギま！", "かってに改蔵", "アニメ店長" };
 
-<span class="reserved">var</span> q =
-  <span class="reserved">from</span> s <span class="reserved">in</span> db.Series
-  <span class="reserved">where</span> conds.Contains(s.Name)
-  <span class="reserved">select</span> s;
+var q =
+  from s in db.Series
+  where conds.Contains(s.Name)
+  select s;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> q)
+foreach (var s in q)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, s.Name);
+  Console.Write("{0}\n", s.Name);
 }
-</code></pre>
+```

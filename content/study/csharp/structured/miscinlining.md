@@ -66,31 +66,31 @@ C# の場合、C# コンパイラー自身はインライン化を全くしま�
 .NET は、ある程度インライン化の有無を制御する手段も提供しています。
 以下のように、`MethodImpl`[属性](../dynamic/sp_attribute.md)(`System.Runtime.CompilerServices`[名前空間](sp_namespace.md))を付けます。
 
-<pre class="source" title="インライン化に関する属性">
-<code><span class="comment">// 積極的にインライン化してもらいたい</span>
-[<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.AggressiveInlining)]
-<span class="reserved">static</span> <span class="reserved">int</span> SumAgressive(<span class="reserved">int</span>[] a)
+```csharp
+// 積極的にインライン化してもらいたい
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+static int SumAgressive(int[] a)
 {
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">foreach</span> (var x <span class="reserved">in</span> a)
+    var sum = 0;
+    foreach (var x in a)
     {
         sum += x;
     }
-    <span class="reserved">return</span> sum;
+    return sum;
 }
 
-<span class="comment">// 全くインライン化させたくない</span>
-[<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.NoInlining)]
-<span class="reserved">static</span> <span class="reserved">int</span> SumNo(<span class="reserved">int</span>[] a)
+// 全くインライン化させたくない
+[MethodImpl(MethodImplOptions.NoInlining)]
+static int SumNo(int[] a)
 {
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">foreach</span> (var x <span class="reserved">in</span> a)
+    var sum = 0;
+    foreach (var x in a)
     {
         sum += x;
     }
-    <span class="reserved">return</span> sum;
+    return sum;
 }
-</code></pre>
+```
 
 `AggressiveInlining`が付いている場合、前述の「32バイト」「反復処理・例外処理を含む」という条件が緩和されます。
 あくまで「緩和」であって、無条件にインライン化されるわけではありません。
@@ -126,27 +126,27 @@ C# の場合、C# コンパイラー自身はインライン化を全くしま�
 
 - [サンプル](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/StructuredProgramming/Inlining/CommonExecutionPath.cs)
 
-<pre class="source" title="長さ1の時と2の時だけ特別扱いする総和">
-<code><span class="reserved">static</span> <span class="reserved">int</span> Sum(<span class="reserved">int</span>[] a)
+```csharp
+static int Sum(int[] a)
 {
-    <span class="comment">// ほとんどの場合、Length == 1 または 2 のところを通るという想定</span>
-    <span class="reserved">if</span> (a.Length == 1) <span class="reserved">return</span> a[0];
-    <span class="reserved">else</span> <span class="reserved">if</span> (a.Length == 2) <span class="reserved">return</span> a[0] + a[1];
-    <span class="reserved">else</span> <span class="reserved">if</span> (a.Length &gt;= 3)
+    // ほとんどの場合、Length == 1 または 2 のところを通るという想定
+    if (a.Length == 1) return a[0];
+    else if (a.Length == 2) return a[0] + a[1];
+    else if (a.Length >= 3)
     {
-        <span class="comment">// 反復がインライン化を阻害</span>
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (var x <span class="reserved">in</span> a)
+        // 反復がインライン化を阻害
+        var sum = 0;
+        foreach (var x in a)
         {
             sum += x;
         }
-        <span class="reserved">return</span> sum;
+        return sum;
     }
 
-    <span class="comment">// 例外がインライン化を阻害</span>
-    <span class="reserved">throw</span> <span class="reserved">new</span> IndexOutOfRangeException();
+    // 例外がインライン化を阻害
+    throw new IndexOutOfRangeException();
 }
-</code></pre>
+```
 
 単に配列の総和を取るコードですが、
 「ほとんどの場合長さ1か2の配列しか来ない」というような前提で、
@@ -156,29 +156,29 @@ C# の場合、C# コンパイラー自身はインライン化を全くしま�
 しかし、この反復処理と例外処理は、先ほどの前提から言うと、めったに通らない個所にあります。
 そこで、以下のように書き換えます。
 
-<pre class="source" title="めったに通らないくせにインライン化を阻害している部分を外に追い出す">
-<code><span class="reserved">static</span> <span class="reserved">int</span> OptimizedSum(<span class="reserved">int</span>[] a)
+```csharp
+static int OptimizedSum(int[] a)
 {
-    <span class="comment">// ほとんどの場合、Length == 1 または 2 のところを通るという想定</span>
-    <span class="reserved">if</span> (a.Length == 1) <span class="reserved">return</span> a[0];
-    <span class="reserved">else</span> <span class="reserved">if</span> (a.Length == 2) <span class="reserved">return</span> a[0] + a[1];
-    <span class="reserved">else</span> <span class="reserved">if</span> (a.Length &gt;= 3) <span class="reserved">return</span> LongSum(a);
+    // ほとんどの場合、Length == 1 または 2 のところを通るという想定
+    if (a.Length == 1) return a[0];
+    else if (a.Length == 2) return a[0] + a[1];
+    else if (a.Length >= 3) return LongSum(a);
     ThrowIndexOutOfRange();
-    <span class="reserved">return</span> 0;
+    return 0;
 }
 
-<span class="comment">// インライン化を阻害しているものを外に追い出す</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">int</span> LongSum(<span class="reserved">int</span>[] a)
+// インライン化を阻害しているものを外に追い出す
+private static int LongSum(int[] a)
 {
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">foreach</span> (var x <span class="reserved">in</span> a)
+    var sum = 0;
+    foreach (var x in a)
     {
         sum += x;
     }
-    <span class="reserved">return</span> sum;
+    return sum;
 }
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> ThrowIndexOutOfRange() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> IndexOutOfRangeException();
-</code></pre>
+private static void ThrowIndexOutOfRange() => throw new IndexOutOfRangeException();
+```
 
 めったに通らないくせにインライン化を阻害していた`foreach`ループと例外の`throw`を外に追い出しています。
 その結果、`OptimizedSum`メソッド自体にはインライン化が掛かるようになり、関数呼び出しのコストが消えます。

@@ -52,9 +52,9 @@ C言語から派生したというC#の歴史的な背景のため、静的変�
 その変数は静的メンバー変数・静的メソッドになります。
 例えば、静的フィールドであれば以下のように書きます。
 
-<pre class="source" title="static 変数の定義" lang="">
-<code><span class="reserved">static</span> <span class="input">型名</span> <span class="input">フィールド名</span>
-</code></pre>
+```csharp
+static 型名 フィールド名
+```
 
 
 静的メンバーはクラスごとに唯一つの実体を持ち、すべてのインスタンスの間で共有されます。
@@ -71,29 +71,29 @@ C言語から派生したというC#の歴史的な背景のため、静的変�
 ここでは説明のためということでご容赦を。
 定数の定義については後ほど説明します。)
 
-<pre class="source" title="インスタンス フィールドと静的フィールドの例" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">public string</span> name; <span class="comment">// 名前。個体ごとに違うので、インスタンス フィールドに。</span>
-  <span class="reserved">public int</span> age;     <span class="comment">// 年齢。同上、インスタンス フィールドに。</span>
+  public string name; // 名前。個体ごとに違うので、インスタンス フィールドに。
+  public int age;     // 年齢。同上、インスタンス フィールドに。
 
-  <span class="reserved">public <em>static</em> string</span> scientificName;
-  <span class="comment">// 学名。個体じゃなくて種によって決まるものなので、静的フィールドに。</span>
+  public static string scientificName;
+  // 学名。個体じゃなくて種によって決まるものなので、静的フィールドに。
 }
-</code></pre>
+```
 
 
 静的メンバーはクラスに属する値なので、値を参照するには、変数を介してではなく、以下のようにします。
 
-<pre class="source" title="静的変数の参照" lang="">
-<code>Person p = <span class="reserved">new</span> Person()
+```csharp
+Person p = new Person()
 
-p.name = <span class="literal">"野上冴子"</span>; <span class="comment">// インスタンス フィールドは [インスタンス名.フィールド名] で参照する。</span>
+p.name = "野上冴子"; // インスタンス フィールドは [インスタンス名.フィールド名] で参照する。
 p.age  = 40;
 
-Person.scientificName = <span class="literal">"Homo Sapiens"</span>;
-<span class="comment">// <em>静的フィールドは [クラス名.フィールド名] で参照する。</em></span>
-</code></pre>
+Person.scientificName = "Homo Sapiens";
+// 静的フィールドは [クラス名.フィールド名] で参照する。
+```
 
 
 また、メソッドに対して static を付けると、
@@ -104,51 +104,51 @@ Person.scientificName = <span class="literal">"Homo Sapiens"</span>;
 数学関数や数学定数などのように、そもそもインスタンスを持つ必要のないものもあります。
 この場合にも、静的メソッド・静的フィールド（あるいは別項で説明する「定数」）を使います。
 
-<pre class="source" title="インスタンスを持たない関数の例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> MyMath
+class MyMath
 {
-  <span class="comment">// sin x を求める関数。</span>
-  <span class="reserved">public</span> <span class="reserved"><em>static</em> double</span> Sin(<span class="reserved">double</span> x)
+  // sin x を求める関数。
+  public static double Sin(double x)
   {
-    <span class="reserved">double</span> xx = -x * x;
-    <span class="reserved">double</span> fact = 1;
-    <span class="reserved">double</span> sin = x;
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=2; i&lt;100;)
+    double xx = -x * x;
+    double fact = 1;
+    double sin = x;
+    for(int i=2; i<100;)
     {
       fact *= i; ++i; fact *= i; ++i;
       x *= xx;
       sin += x / fact;
     }
-    <span class="reserved">return</span> sin;
+    return sin;
   }
 }
 
-<span class="reserved">class</span> StaticSample
+class StaticSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
     Console.Write(MyMath.Sin(1));
   }
 }
-</code></pre>
+```
 
 
 標準ライブラリの <code>Math.Sin</code> や <code>Console.Write</code> などは静的メソッドです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> pi = 2 * <span class="type">Math</span>.Asin(1); <span class="comment">// 静的クラス Math の静的メソッド Asin を参照</span>
-        <span class="type">Console</span>.WriteLine(<span class="type">Math</span>.PI == pi); <span class="comment">// 静的クラス Math の定数 PI を参照</span>
+        var pi = 2 * Math.Asin(1); // 静的クラス Math の静的メソッド Asin を参照
+        Console.WriteLine(Math.PI == pi); // 静的クラス Math の定数 PI を参照
     }
 }
-</code></pre>
+```
 
 
 
@@ -167,28 +167,28 @@ C# には「関数」的な動作をするメンバーとして、コンスト�
 静的コンストラクターの定義の仕方は、コンストラクターの前に <code>static</code> キーワードを付ける以外は通常のコンストラクターの定義の仕方と同じです。
 例えば、先ほどの <code>Person</code> クラスを例に挙げると以下のようになります。
 
-<pre class="source" title="静的コンストラクターの例" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">string</span> name; <span class="comment">// 名前。インスタンス フィールド。</span>
-  <span class="reserved">int</span> age;     <span class="comment">// 年齢。インスタンス フィールド。</span>
+  string name; // 名前。インスタンス フィールド。
+  int age;     // 年齢。インスタンス フィールド。
 
-  <span class="reserved">static string</span> scientificName; <span class="comment">// 学名。静的フィールド。
+  static string scientificName; // 学名。静的フィールド。
 
-  // 通常のコンストラクター</span>
-  <span class="reserved">public</span> Person(<span class="reserved">string</span> name, <span class="reserved">int</span> age)
+  // 通常のコンストラクター
+  public Person(string name, int age)
   {
-    <span class="reserved">this</span>.name = name;
-    <span class="reserved">this</span>.age  = age;
+    this.name = name;
+    this.age  = age;
   }
 
-  <span class="comment">// 静的コンストラクター</span>
-  <span class="reserved"><em>static</em></span> Person()
+  // 静的コンストラクター
+  static Person()
   {
-    Person.scientificName = <span class="literal">"Homo sapiens"</span>;
+    Person.scientificName = "Homo sapiens";
   }
 }
-</code></pre>
+```
 
 
 通常のコンストラクターが新しいインスタンスが生成されるたびに呼び出されるのに対して、
@@ -198,53 +198,53 @@ C# には「関数」的な動作をするメンバーとして、コンスト�
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-<pre class="source" title="静的フィールドのサンプル" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 1台ごとに固有のIDが振られるような何らかの製品。</span>
-<span class="reserved">class</span> Product
+// 1台ごとに固有のIDが振られるような何らかの製品。
+class Product
 {
-  <span class="reserved">static int</span> id_generator;
-  <span class="reserved">int</span> id;
+  static int id_generator;
+  int id;
 
-  <span class="reserved">static</span> Product()
+  static Product()
   {
-    <span class="comment">// 最初に1度だけ呼ばれ、id_generator を 0 に初期化。</span>
+    // 最初に1度だけ呼ばれ、id_generator を 0 に初期化。
     id_generator = 0;
   }
 
-  <span class="reserved">public</span> Product()
+  public Product()
   {
-    <span class="comment">// 新しい製品が製造されるたびに新しい id を振る。</span>
+    // 新しい製品が製造されるたびに新しい id を振る。
     id = id_generator;
     id_generator++;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// その製品のIDを取得する。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public int</span> ID
+  /// </summary>
+  public int ID
   {
-    <span class="reserved">get</span>{<span class="reserved">return</span> id;}
+    get{return id;}
   }
 }
 
-<span class="reserved">class</span> StaticSample
+class StaticSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;10; i++)
+    for(int i=0; i<10; i++)
     {
-      Product p = <span class="reserved">new</span> Product();
+      Product p = new Product();
 
-      Console.Write(<span class="literal">"ID: {0}\n"</span>, p.ID);
+      Console.Write("ID: {0}\n", p.ID);
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 ID: 0
 ID: 1
 ID: 2
@@ -255,7 +255,7 @@ ID: 6
 ID: 7
 ID: 8
 ID: 9
-</pre>
+```
 
 
 
@@ -278,27 +278,27 @@ C# 1.0 では、private なコンストラクタを持つ sealed クラスとし
 静的メンバーしか定義できないクラスを作ることが出来ます。
 このようなクラスを<strong id="stclass" class="keyword">静的クラス</strong>（static class）と呼びます。
 
-<pre class="source" title="静的クラスの例" lang="">
-<code><span class="reserved"><em>static</em> class</span> MyMath
+```csharp
+static class MyMath
 {
-  <span class="comment">// double x; というような、非 static な変数・メソッドは定義できない。
+  // double x; というような、非 static な変数・メソッドは定義できない。
 
-  // sin x を求める関数。</span>
-  <span class="reserved">public static double</span> Sin(<span class="reserved">double</span> x)
+  // sin x を求める関数。
+  public static double Sin(double x)
   {
-    <span class="reserved">double</span> xx = -x * x;
-    <span class="reserved">double</span> fact = 1;
-    <span class="reserved">double</span> sin = x;
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=2; i&lt;100;)
+    double xx = -x * x;
+    double fact = 1;
+    double sin = x;
+    for(int i=2; i<100;)
     {
       fact *= i; ++i; fact *= i; ++i;
       x *= xx;
       sin += x / fact;
     }
-    <span class="reserved">return</span> sin;
+    return sin;
   }
 }
-</code></pre>
+```
 
 
 ちなみに、他のプログラミング言語には、こういう静的メンバーしか定義しない型のことを「モジュール」(module)と呼んでクラスと区別するものもあったりします。
@@ -316,30 +316,30 @@ C# 3.0 では、（本来、前置き記法である）静的メソッドを、
 すなわち、
 今までなら、
 
-<pre class="source" title="静的メソッド" lang="">
-<code><span class="reserved">int</span> x = <span class="reserved">int</span>.Parse(<span class="literal">"1"</span>); <span class="comment">// "1" よりも Parse が前</span>
-</code></pre>
+```csharp
+int x = int.Parse("1"); // "1" よりも Parse が前
+```
 
 
 と書いていたものを、
 
-<pre class="source" title="拡張メソッドの定義" lang="">
-<code><span class="reserved">static class</span> Extensions
+```csharp
+static class Extensions
 {
-    <span class="reserved">public static int</span> Parse(<span class="reserved">this string</span> str)
+    public static int Parse(this string str)
     {
-        <span class="reserved">return int</span>.Parse(str);
+        return int.Parse(str);
     }
 }
-</code></pre>
+```
 
 
 というような静的メソッドを用意することで、
 以下のような構文で呼び出せるようになります。
 
-<pre class="source" title="拡張メソッドの利用" lang="">
-<code><span class="reserved">int</span> x = <span class="literal">"1"</span>.Parse(); <span class="comment">// Parse が後に</span>
-</code></pre>
+```csharp
+int x = "1".Parse(); // Parse が後に
+```
 
 
 詳細は「[拡張メソッド](../functional/sp3_extension.md)」で説明します。
@@ -356,93 +356,93 @@ C# 6 で、これと同じようなことが、静的メソッドに対しても
 <strong id="key-using-static" class="keyword">using static</strong> ディレクティブを書くことで、クラス名を省略して、直接静的メソッドを呼べるようになります。
 例えば、Math クラス(System 名前空間)中のメソッド呼び出しであれば、以下のように書けます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<em><span class="reserved">using static</span> System.<span class="type">Math</span></em>;
+```csharp
+using System;
+using static System.Math;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> pi = 2 * <em>Asin(1)</em>;
-        <span class="type">Console</span>.WriteLine(<em>PI</em> == pi);
+        var pi = 2 * Asin(1);
+        Console.WriteLine(PI == pi);
     }
 }
-</code></pre>
+```
 
 ちなみに、using static は任意のクラスに対して使えます(静的クラスでないとダメとかの制限はありません)。
 たとえば以下の例では、`TimeSpan`構造体や`Task`クラスを using static していますが、これらは static 修飾子がついていない普通のクラスです。
 
-<pre class="source" title="static 修飾子がつかないクラスを using static">
-<code><reserved></span><span class="reserved">using</span> System.Threading.Tasks;
-<span class="reserved">using</span> <span class="reserved">static</span> System.Threading.Tasks.<span class="type">Task</span>;
-<span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">TimeSpan</span>;
+```csharp
+using System.Threading.Tasks;
+using static System.Threading.Tasks.Task;
+using static System.TimeSpan;
 
-<span class="reserved">class</span> <span class="type">UsingStaticNormalClass</span>
+class UsingStaticNormalClass
 {
-    <span class="reserved">public</span> <span class="reserved">async</span> <span class="type">Task</span> XAsync()
+    public async Task XAsync()
     {
-        <span class="comment">// TimeSpan.FromSeconds</span>
-        <span class="reserved">var</span> sec = FromSeconds(1);
+        // TimeSpan.FromSeconds
+        var sec = FromSeconds(1);
 
-        <span class="comment">// Task.Delay</span>
-        <span class="reserved">await</span> Delay(sec);
+        // Task.Delay
+        await Delay(sec);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="using-static-enum"></a>using staticと列挙型
 
 列挙型のメンバーも静的なので、using staticを使って、型名を省略して参照できます。
 
-<pre class="source" title="using static と列挙型">
-<code><reserved></span><span class="reserved">using</span> <span class="reserved">static</span> <span class="type">Color</span>;
+```csharp
+using static Color;
 
-<span class="reserved">class</span> <span class="type">UsingStaticEnum</span>
+class UsingStaticEnum
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> X()
+    public void X()
     {
-        <span class="comment">// enum のメンバーも using static で参照できる</span>
-        <span class="reserved">var</span> cyan = Blue | Green;
-        <span class="reserved">var</span> purple = Red | Blue;
-        <span class="reserved">var</span> yellow = Red | Green;
+        // enum のメンバーも using static で参照できる
+        var cyan = Blue | Green;
+        var purple = Red | Blue;
+        var yellow = Red | Green;
     }
 }
 
-<span class="reserved">enum</span> <span class="type">Color</span>
+enum Color
 {
     Red = 1,
     Green = 2,
     Blue = 4,
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-11"></a> <a id="using-static-extensions"></a>using staticと拡張メソッド
 
 using static を使う場合でも、そのクラス中の[拡張メソッド](../functional/sp3_extension.md)はあくまで拡張メソッドとしてだけ使えます。
 using static だけでは、拡張メソッドを普通の静的メソッドと同じ呼び方で呼べません。
 
-<pre class="source" title="拡張メソッドと using static">
-<code><reserved></span><span class="reserved">using</span> <span class="reserved">static</span> System.Linq.<span class="type">Enumerable</span>;
+```csharp
+using static System.Linq.Enumerable;
 
-<span class="reserved">class</span> <span class="type">UsingStaticSample</span>
+class UsingStaticSample
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> X()
+    public void X()
     {
-        <span class="comment">// 普通の静的メソッド</span>
-        <span class="comment">// Enumerable.Range が呼ばれる</span>
-        <span class="reserved">var</span> input = Range(0, 10);
+        // 普通の静的メソッド
+        // Enumerable.Range が呼ばれる
+        var input = Range(0, 10);
 
-        <span class="comment">// 拡張メソッド</span>
-        <span class="comment">// Enumerable.Select が呼ばれる</span>
-        <span class="reserved">var</span> output1 = input.Select(x =&gt; x * x);
+        // 拡張メソッド
+        // Enumerable.Select が呼ばれる
+        var output1 = input.Select(x => x * x);
 
-        <span class="comment">// 拡張メソッドを普通の静的メソッドとして呼ぼうとすると</span>
-        <span class="comment">// コンパイル エラー</span>
-        <span class="reserved">var</span> output2 = Select(input, x =&gt; x * x);
+        // 拡張メソッドを普通の静的メソッドとして呼ぼうとすると
+        // コンパイル エラー
+        var output2 = Select(input, x => x * x);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-12"></a>補足: 名前空間の using と違う理由
 
@@ -450,35 +450,35 @@ using static だけでは、拡張メソッドを普通の静的メソッドと�
 名前空間の using と静的クラスの using の区別がつかないと結構ひどいコードが書けてしまう問題があったので、この文法に落ち着きました。
 static キーワードを付けなくてよい場合、以下のように、名前空間と同名のクラスを後から足すことで、既存のコードを壊せます。
 
-<pre class="source" title="using クラス名; ではなく、using static クラス名; な理由" lang="">
-<code><span class="comment">// 正式な C# 6 ではコンパイルできない
-// プレビュー版のころにコンパイルできて問題になったコード</span>
+```csharp
+// 正式な C# 6 ではコンパイルできない
+// プレビュー版のころにコンパイルできて問題になったコード
 
-<span class="reserved">using</span> System;
-<span class="reserved">using</span> System.<span class="type">Linq</span>;
+using System;
+using System.Linq;
 
-<span class="comment">// ↑ 静的クラスの方の Linq が参照される。
+// ↑ 静的クラスの方の Linq が参照される。
 // 本来の LINQ (System.Linq.Enumerable クラス内の拡張メソッド)は呼べなくなるわ、
 // nameof の意味が下記の Linq クラスの nameof 静的メソッドで上書きされてしまうわ、
-// ろくなことにならない。</span>
+// ろくなことにならない。
 
-<span class="reserved">public class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public static void</span> Main()
+    public static void Main()
     {
-        <span class="reserved">var</span> name = <span class="reserved">nameof</span>(Main); <span class="comment">// 下記の System.Linq クラスの nameof 静的メソッドが呼ばれる。</span>
+        var name = nameof(Main); // 下記の System.Linq クラスの nameof 静的メソッドが呼ばれる。
         Console.WriteLine(name);
     }
 }
 
-<span class="reserved">namespace</span> System
+namespace System
 {
-    <span class="reserved">public static class</span> <span class="type">Linq</span>
+    public static class Linq
     {
-        <span class="reserved">public static string</span> nameof(Action x) =&gt; <span class="literal">""</span>;
+        public static string nameof(Action x) => "";
     }
 }
-</code></pre>
+```
 
 
 nameof も C# 6 で追加された新文法です。詳しくは「[特殊な文字列リテラル](../start/st_string.md)」を参照。
@@ -490,197 +490,197 @@ nameof も C# 6 で追加された新文法です。詳しくは「[特殊な文
 [クラス](oo_class.md)の[問題 1](oo_class.md#exercise-str1)の <code>Point</code> 構造体に、
 2点間の距離を求める static メソッド <code>GetDistance</code> を追加せよ。
 
-<pre class="source" title="GetDistance" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// A-B 間の距離を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;点A&lt;/param&gt;
-/// &lt;param name="b"&gt;点B&lt;/param&gt;
-/// &lt;returns&gt;距離AB&lt;/returns&gt;</span>
-<span class="reserved">public static double</span> GetDistance(Point a, Point b)
-</code></pre>
+/// </summary>
+/// <param name="a">点A</param>
+/// <param name="b">点B</param>
+/// <returns>距離AB</returns>
+public static double GetDistance(Point a, Point b)
+```
 
 
 また、<code>GetDistance</code> を用いて、
 <code>Triangle</code> クラスに三角形の周を求めるメソッド
 <code>GetPerimeter</code> を追加せよ。
 
-<pre class="source" title="GetPerimeter" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 三角形の周の長さを求める。
-/// &lt;/summary&gt;
-/// &lt;returns&gt;周&lt;/returns&gt;</span>
-<span class="reserved">public double</span> GetPerimeter()
-</code></pre>
+/// </summary>
+/// <returns>周</returns>
+public double GetPerimeter()
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Point/Triangle" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">double</span> y; <span class="comment">// y 座標</span>
+  double x; // x 座標
+  double y; // y 座標
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> X
+  /// </summary>
+  public double X
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    get { return this.x; }
+    set { this.x = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// y 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Y
+  /// </summary>
+  public double Y
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.y; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.y = value; }
+    get { return this.y; }
+    set { this.y = value; }
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// A-B 間の距離を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;距離AB&lt;/returns&gt;</span>
-  <span class="reserved">public static double</span> GetDistance(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>距離AB</returns>
+  public static double GetDistance(Point a, Point b)
   {
-    <span class="reserved">double</span> x = a.x - b.x;
-    <span class="reserved">double</span> y = a.y - b.y;
-    <span class="reserved">return</span> Math.Sqrt(x * x + y * y);
+    double x = a.x - b.x;
+    double y = a.y - b.y;
+    return Math.Sqrt(x * x + y * y);
   }
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle
+/// </summary>
+class Triangle
 {
   Point a;
   Point b;
   Point c;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点A。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point A
+  /// </summary>
+  public Point A
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> a; }
-    <span class="reserved">set</span> { a = value; }
+    get { return a; }
+    set { a = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点B。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point B
+  /// </summary>
+  public Point B
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> b; }
-    <span class="reserved">set</span> { b = value; }
+    get { return b; }
+    set { b = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点C。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point C
+  /// </summary>
+  public Point C
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> c; }
-    <span class="reserved">set</span> { c = value; }
+    get { return c; }
+    set { c = value; }
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">double</span> abx, aby, acx, acy;
+    double abx, aby, acx, acy;
     abx = b.X - a.X;
     aby = b.Y - a.Y;
     acx = c.X - a.X;
     acy = c.Y - a.Y;
-    <span class="reserved">return</span> 0.5 * Math.Abs(abx * acy - acx * aby);
+    return 0.5 * Math.Abs(abx * acy - acx * aby);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public double GetPerimeter()
   {
-    <span class="reserved">double</span> l = Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.b);
-    l += Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.c);
-    l += Point.GetDistance(<span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
-    <span class="reserved">return</span> l;
+    double l = Point.GetDistance(this.a, this.b);
+    l += Point.GetDistance(this.a, this.c);
+    l += Point.GetDistance(this.b, this.c);
+    return l;
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetArea());
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetPerimeter());
+    Console.Write("{0}\n", t.GetArea());
+    Console.Write("{0}\n", t.GetPerimeter());
   }
 }
-</code></pre>
+```

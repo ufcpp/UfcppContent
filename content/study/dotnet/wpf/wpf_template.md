@@ -40,24 +40,24 @@ Contorl クラス（Button などの親クラス）は Template という名前�
 例えば、以下のように書くことで、ボタンの見た目を四角と丸に変化させることができます。
 
 
-<pre class="xsource" title="ControlTemplate">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>
-    <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="test1"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button.Template</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ControlTemplate</span> <span class="attribute">TargetType</span><span class="attvalue">="Button"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Grid</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Fill</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Ellipse</span> <span class="attribute">Fill</span><span class="attvalue">="#ff8080"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">Grid</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Button.Template</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <Button Margin="5"
+    Width="100" Height="100" Content="test1">
+    <Button.Template>
+      <ControlTemplate TargetType="Button">
+        <Grid>
+          <Rectangle Fill="#8080ff"/>
+          <Ellipse Fill="#ff8080"/>
+        </Grid>
+      </ControlTemplate>
+    </Button.Template>
+  </Button>
+</WrapPanel>
+```
 <figure>
 	[![コントロールテンプレート](../../../../assets/media/ufcpp2000/dotnet/fig/template01.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template01.png)
 	<figcaption>コントロールテンプレート</figcaption>
@@ -72,27 +72,27 @@ Button や Label など、
 これを表示させるためには、ControlTemplate 中に、ContentPresenter というものを書き加えます。
 
 
-<pre class="xsource" title="ContentPresenter">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>
-    <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="test1"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button.Template</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ControlTemplate</span> <span class="attribute">TargetType</span><span class="attvalue">="Button"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Grid</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Fill</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Ellipse</span> <span class="attribute">Fill</span><span class="attvalue">="#ff8080"</span>/<span class="bracket">&gt;</span>
-<em>          <span class="bracket">&lt;</span><span class="element">ContentPresenter</span> <span class="attribute">HorizontalAlignment</span><span class="attvalue">="Center"</span>
-                            <span class="attribute">VerticalAlignment</span><span class="attvalue">="Center"</span>/<span class="bracket">&gt;</span></em>
-        <span class="bracket">&lt;</span>/<span class="element">Grid</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Button.Template</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <Button Margin="5"
+    Width="100" Height="100" Content="test1">
+    <Button.Template>
+      <ControlTemplate TargetType="Button">
+        <Grid>
+          <Rectangle Fill="#8080ff"/>
+          <Ellipse Fill="#ff8080"/>
+          <ContentPresenter HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+        </Grid>
+      </ControlTemplate>
+    </Button.Template>
+  </Button>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 <figure>
 	[![ContentPresenter](../../../../assets/media/ufcpp2000/dotnet/fig/template02.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template02.png)
 	<figcaption>ContentPresenter</figcaption>
@@ -102,57 +102,57 @@ Button や Label など、
 ControlTemplate は、リソース中に 書くこともできます。
 
 
-<pre class="xsource" title="リソース中に ControlTemplate">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ControlTemplate</span> <span class="attribute">x:Key</span><span class="attvalue">="buttonTemplate"</span> <span class="attribute">TargetType</span><span class="attvalue">="Button"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Grid</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Fill</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Ellipse</span> <span class="attribute">Fill</span><span class="attvalue">="#ff8080"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ContentPresenter</span> <span class="attribute">HorizontalAlignment</span><span class="attvalue">="Center"</span>
-                          <span class="attribute">VerticalAlignment</span><span class="attvalue">="Center"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">Grid</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <WrapPanel.Resources>
+    <ControlTemplate x:Key="buttonTemplate" TargetType="Button">
+      <Grid>
+        <Rectangle Fill="#8080ff"/>
+        <Ellipse Fill="#ff8080"/>
+        <ContentPresenter HorizontalAlignment="Center"
+                          VerticalAlignment="Center"/>
+      </Grid>
+    </ControlTemplate>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>
-    <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="test1"</span>
-    <span class="attribute">Template</span><span class="attvalue">="{StaticResource buttonTemplate}"</span>/<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+  <Button Margin="5"
+    Width="100" Height="100" Content="test1"
+    Template="{StaticResource buttonTemplate}"/>
+</WrapPanel>
+```
 全てのボタンに対して一律テンプレートを適用したければ、スタイルと併用します。
 
 
-<pre class="xsource" title="全てのボタンにテンプレートを適用">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ControlTemplate</span> <span class="attribute">x:Key</span><span class="attvalue">="buttonTemplate"</span> <span class="attribute">TargetType</span><span class="attvalue">="Button"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Grid</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Fill</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Ellipse</span> <span class="attribute">Fill</span><span class="attvalue">="#ff8080"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ContentPresenter</span> <span class="attribute">HorizontalAlignment</span><span class="attvalue">="Center"</span>
-                          <span class="attribute">VerticalAlignment</span><span class="attvalue">="Center"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">Grid</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Button}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Template"</span> <span class="attribute">Value</span><span class="attvalue">="{StaticResource buttonTemplate}"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <WrapPanel.Resources>
+    <ControlTemplate x:Key="buttonTemplate" TargetType="Button">
+      <Grid>
+        <Rectangle Fill="#8080ff"/>
+        <Ellipse Fill="#ff8080"/>
+        <ContentPresenter HorizontalAlignment="Center"
+                          VerticalAlignment="Center"/>
+      </Grid>
+    </ControlTemplate>
+    <Style TargetType="{x:Type Button}">
+      <Setter Property="Template" Value="{StaticResource buttonTemplate}"/>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>
-    <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="test1"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>
-    <span class="attribute">Width</span><span class="attvalue">="80"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="test2"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>
-    <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span> <span class="attribute">Content</span><span class="attvalue">="test1"</span>/<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+  <Button Margin="5"
+    Width="100" Height="100" Content="test1"/>
+  <Button Margin="5"
+    Width="80" Height="100" Content="test2"/>
+  <Button Margin="5"
+    Width="100" Height="80" Content="test1"/>
+</WrapPanel>
+```
 <figure>
 	[![全てのボタンにテンプレートを適用](../../../../assets/media/ufcpp2000/dotnet/fig/template03.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template03.png)
 	<figcaption>全てのボタンにテンプレートを適用</figcaption>
@@ -163,33 +163,33 @@ ControlTemplate は、リソース中に 書くこともできます。
 TemplateBinding マークアップ拡張を用います。
 
 
-<pre class="xsource" title="TemplateBinding マークアップ拡張">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ControlTemplate</span> <span class="attribute">x:Key</span><span class="attvalue">="buttonTemplate"</span> <span class="attribute">TargetType</span><span class="attvalue">="Button"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Grid</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Fill</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Ellipse</span> <em><span class="attribute">Fill</span><span class="attvalue">="{TemplateBinding Background}"</span></em>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ContentPresenter</span> <span class="attribute">HorizontalAlignment</span><span class="attvalue">="Center"</span>
-                          <span class="attribute">VerticalAlignment</span><span class="attvalue">="Center"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">Grid</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Button}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Template"</span> <span class="attribute">Value</span><span class="attvalue">="{StaticResource buttonTemplate}"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <WrapPanel.Resources>
+    <ControlTemplate x:Key="buttonTemplate" TargetType="Button">
+      <Grid>
+        <Rectangle Fill="#8080ff"/>
+        <Ellipse Fill="{TemplateBinding Background}"/>
+        <ContentPresenter HorizontalAlignment="Center"
+                          VerticalAlignment="Center"/>
+      </Grid>
+    </ControlTemplate>
+    <Style TargetType="{x:Type Button}">
+      <Setter Property="Template" Value="{StaticResource buttonTemplate}"/>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span> <em><span class="attribute">Background</span><span class="attvalue">="#80ff80"</span></em>
-    <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="test1"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span> <em><span class="attribute">Background</span><span class="attvalue">="#ffff80"</span></em>
-    <span class="attribute">Width</span><span class="attvalue">="80"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="test2"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span> <em><span class="attribute">Background</span><span class="attvalue">="#80ffff"</span></em>
-    <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span> <span class="attribute">Content</span><span class="attvalue">="test1"</span>/<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+  <Button Margin="5" Background="#80ff80"
+    Width="100" Height="100" Content="test1"/>
+  <Button Margin="5" Background="#ffff80"
+    Width="80" Height="100" Content="test2"/>
+  <Button Margin="5" Background="#80ffff"
+    Width="100" Height="80" Content="test1"/>
+</WrapPanel>
+```
 <figure>
 	[![TemplateBinding マークアップ拡張](../../../../assets/media/ufcpp2000/dotnet/fig/template04.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template04.png)
 	<figcaption>TemplateBinding マークアップ拡張</figcaption>
@@ -221,25 +221,25 @@ ItemsPresenter を記述します。
 例えば、角を丸めた ListBox を作りたければ以下のようにします。
 
 
-<pre class="xsource" title="ItemsPresenter">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">ListBox</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ListBox.Template</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ControlTemplate</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type ListBox}"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Border</span> <span class="attribute">CornerRadius</span><span class="attvalue">="10"</span> <span class="attribute">BorderBrush</span><span class="attvalue">="#808080"</span> <span class="attribute">BorderThickness</span><span class="attvalue">="1"</span><span class="bracket">&gt;</span>
-          <em><span class="bracket">&lt;</span><span class="element">ItemsPresenter</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span></em>
-        <span class="bracket">&lt;</span>/<span class="element">Border</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ListBox.Template</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ListBoxItem</span><span class="bracket">&gt;</span>1<span class="bracket">&lt;</span>/<span class="element">ListBoxItem</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ListBoxItem</span><span class="bracket">&gt;</span>2<span class="bracket">&lt;</span>/<span class="element">ListBoxItem</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ListBoxItem</span><span class="bracket">&gt;</span>3<span class="bracket">&lt;</span>/<span class="element">ListBoxItem</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">ListBox</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <ListBox>
+    <ListBox.Template>
+      <ControlTemplate TargetType="{x:Type ListBox}">
+        <Border CornerRadius="10" BorderBrush="#808080" BorderThickness="1">
+          <ItemsPresenter Margin="5"/>
+        </Border>
+      </ControlTemplate>
+    </ListBox.Template>
+    <ListBoxItem>1</ListBoxItem>
+    <ListBoxItem>2</ListBoxItem>
+    <ListBoxItem>3</ListBoxItem>
+  </ListBox>
+</WrapPanel>
+```
 <figure>
 	[![ItemsPresenter](../../../../assets/media/ufcpp2000/dotnet/fig/template05.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template05.png)
 	<figcaption>ItemsPresenter</figcaption>
@@ -251,30 +251,30 @@ ItemsPanel プロパティ（ItemsPanelTemplate 型）を設定します。
 例えば、ListBox の項目を、水平に並べたければ以下のようにします。
 
 
-<pre class="xsource" title="ItemsPanel">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">ListBox</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ListBox.Template</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ControlTemplate</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type ListBox}"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Border</span> <span class="attribute">CornerRadius</span><span class="attvalue">="10"</span> <span class="attribute">BorderBrush</span><span class="attvalue">="#808080"</span> <span class="attribute">BorderThickness</span><span class="attvalue">="1"</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">ItemsPresenter</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">Border</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ListBox.Template</span><span class="bracket">&gt;</span>
-<em>    <span class="bracket">&lt;</span><span class="element">ListBox.ItemsPanel</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ItemsPanelTemplate</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">StackPanel</span> <span class="attribute">Orientation</span><span class="attvalue">="Horizontal"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">ItemsPanelTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ListBox.ItemsPanel</span><span class="bracket">&gt;</span></em>
-    <span class="bracket">&lt;</span><span class="element">ListBoxItem</span><span class="bracket">&gt;</span>1<span class="bracket">&lt;</span>/<span class="element">ListBoxItem</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ListBoxItem</span><span class="bracket">&gt;</span>2<span class="bracket">&lt;</span>/<span class="element">ListBoxItem</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ListBoxItem</span><span class="bracket">&gt;</span>3<span class="bracket">&lt;</span>/<span class="element">ListBoxItem</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">ListBox</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <ListBox>
+    <ListBox.Template>
+      <ControlTemplate TargetType="{x:Type ListBox}">
+        <Border CornerRadius="10" BorderBrush="#808080" BorderThickness="1">
+          <ItemsPresenter Margin="5"/>
+        </Border>
+      </ControlTemplate>
+    </ListBox.Template>
+    <ListBox.ItemsPanel>
+      <ItemsPanelTemplate>
+        <StackPanel Orientation="Horizontal"/>
+      </ItemsPanelTemplate>
+    </ListBox.ItemsPanel>
+    <ListBoxItem>1</ListBoxItem>
+    <ListBoxItem>2</ListBoxItem>
+    <ListBoxItem>3</ListBoxItem>
+  </ListBox>
+</WrapPanel>
+```
 <figure>
 	[![ItemsPanel](../../../../assets/media/ufcpp2000/dotnet/fig/template06.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template06.png)
 	<figcaption>ItemsPanel</figcaption>
@@ -299,31 +299,31 @@ ItemsSource プロパティに XmlDataProvider を指定することで、
 XML からデータを読み込んで一覧表示することができます。
 
 
-<pre class="xsource" title="XML データを ListBox 中に一覧表示">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">XmlDataProvider</span> <span class="attribute">x:Key</span><span class="attvalue">="comics"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">x:XData</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">comics</span> <span class="attribute">xmlns</span>=""<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/2"</span><span class="bracket">&gt;</span>エム×ゼロ 3<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/2"</span><span class="bracket">&gt;</span>銀魂 18<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/8"</span><span class="bracket">&gt;</span>無敵看板娘Ｎ 4<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/17"</span><span class="bracket">&gt;</span>×××HOLIC 11<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/18"</span><span class="bracket">&gt;</span>絶対可憐チルドレン 9<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">comics</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">x:XData</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">XmlDataProvider</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <WrapPanel.Resources>
+    <XmlDataProvider x:Key="comics">
+      <x:XData>
+        <comics xmlns="">
+          <item date="2007/5/2">エム×ゼロ 3</item>
+          <item date="2007/5/2">銀魂 18</item>
+          <item date="2007/5/8">無敵看板娘Ｎ 4</item>
+          <item date="2007/5/17">×××HOLIC 11</item>
+          <item date="2007/5/18">絶対可憐チルドレン 9</item>
+        </comics>
+      </x:XData>
+    </XmlDataProvider>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">ListBox</span>
-    <span class="attribute">ItemsSource</span><span class="attvalue">="{Binding <span class="attribute">Source</span>={StaticResource comics},
-      <span class="attribute">XPath</span>=/comics/item}"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">ListBox</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+  <ListBox
+    ItemsSource="{Binding Source={StaticResource comics},
+      XPath=/comics/item}">
+  </ListBox>
+</WrapPanel>
+```
 <figure>
 	[![XML データを ListBox 中に一覧表示](../../../../assets/media/ufcpp2000/dotnet/fig/template07.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template07.png)
 	<figcaption>XML データを ListBox 中に一覧表示</figcaption>
@@ -335,50 +335,50 @@ XML の各項目に対してテンプレートを適用したければ、
 以下のように、ItemTemplate プロパティに DataTemplate を設定します。
 
 
-<pre class="xsource" title="DataTemplate">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">XmlDataProvider</span> <span class="attribute">x:Key</span><span class="attvalue">="comics"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">x:XData</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">comics</span> <span class="attribute">xmlns</span>=""<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/2"</span><span class="bracket">&gt;</span>エム×ゼロ 3<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/2"</span><span class="bracket">&gt;</span>銀魂 18<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/8"</span><span class="bracket">&gt;</span>無敵看板娘Ｎ 4<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/17"</span><span class="bracket">&gt;</span>×××HOLIC 11<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">item</span> <span class="attribute">date</span><span class="attvalue">="2007/5/18"</span><span class="bracket">&gt;</span>絶対可憐チルドレン 9<span class="bracket">&lt;</span>/<span class="element">item</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">comics</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">x:XData</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">XmlDataProvider</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+  <WrapPanel.Resources>
+    <XmlDataProvider x:Key="comics">
+      <x:XData>
+        <comics xmlns="">
+          <item date="2007/5/2">エム×ゼロ 3</item>
+          <item date="2007/5/2">銀魂 18</item>
+          <item date="2007/5/8">無敵看板娘Ｎ 4</item>
+          <item date="2007/5/17">×××HOLIC 11</item>
+          <item date="2007/5/18">絶対可憐チルドレン 9</item>
+        </comics>
+      </x:XData>
+    </XmlDataProvider>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">ListBox</span>
-    <span class="attribute">ItemsSource</span><span class="attvalue">="{Binding <span class="attribute">Source</span>={StaticResource comics},
-      <span class="attribute">XPath</span>=/comics/item}"</span><span class="bracket">&gt;</span>
-<em>    <span class="bracket">&lt;</span><span class="element">ListBox.ItemTemplate</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">DataTemplate</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">StackPanel</span> <span class="attribute">Orientation</span><span class="attvalue">="Horizontal"</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="{Binding <span class="attribute">XPath</span>=@date}"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Content</span><span class="attvalue">="{Binding <span class="attribute">XPath</span>=text()}"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">DataTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ListBox.ItemTemplate</span><span class="bracket">&gt;</span></em>
-    <span class="bracket">&lt;</span><span class="element">ListBox.Template</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ControlTemplate</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type ListBox}"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">StackPanel</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">StackPanel</span>  <span class="attribute">Orientation</span><span class="attvalue">="Horizontal"</span> <span class="attribute">Background</span><span class="attvalue">="#eeeeff"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Width</span><span class="attvalue">="100"</span> <span class="attribute">Content</span><span class="attvalue">="発売日"</span>/<span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Content</span><span class="attvalue">="タイトル"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">ItemsPresenter</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ListBox.Template</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">ListBox</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+  <ListBox
+    ItemsSource="{Binding Source={StaticResource comics},
+      XPath=/comics/item}">
+    <ListBox.ItemTemplate>
+      <DataTemplate>
+        <StackPanel Orientation="Horizontal">
+          <Label Width="100" Content="{Binding XPath=@date}"/>
+          <Label Width="200" Content="{Binding XPath=text()}"/>
+        </StackPanel>
+      </DataTemplate>
+    </ListBox.ItemTemplate>
+    <ListBox.Template>
+      <ControlTemplate TargetType="{x:Type ListBox}">
+        <StackPanel>
+          <StackPanel  Orientation="Horizontal" Background="#eeeeff">
+            <Label Width="100" Content="発売日"/>
+            <Label Width="200" Content="タイトル"/>
+          </StackPanel>
+          <ItemsPresenter/>
+        </StackPanel>
+      </ControlTemplate>
+    </ListBox.Template>
+  </ListBox>
+</WrapPanel>
+```
 <figure>
 	[![XML データを ListBox 中に一覧表示](../../../../assets/media/ufcpp2000/dotnet/fig/template08.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template08.png)
 	<figcaption>XML データを ListBox 中に一覧表示</figcaption>

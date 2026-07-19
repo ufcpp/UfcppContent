@@ -22,9 +22,9 @@ aliases: []
 C# 11 で [UTF-8 リテラル](../../../../study/csharp/start/st_string.md#utf8-literal)が入って、
 C# プログラム中に UTF-8 なバイト列を `ReadOnlySpan<byte>` で直接埋め込めるようになりました。
 
-<pre class="source" title="UTF-8 リテラル">
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">hex</span> <span class="operator">=</span> <span class="string">&quot;0123456789ABCDEF&quot;</span><span class="reserved">u8</span>;
-</pre>
+```csharp
+ReadOnlySpan<byte> hex = "0123456789ABCDEF"u8;
+```
 
 [割かし何度も書いてたりはしますが](../../../../study/csharp/start/st_string.md#history)、
 もう今となっては世の中の多くの文字列が UTF-8 でやり取りされています。
@@ -36,9 +36,9 @@ C# プログラム中に UTF-8 なバイト列を `ReadOnlySpan<byte>` で直接
 そうなると欲しくなるのが UTF-8 に直接書き込める[文字列補間](../../../../study/csharp/start/st_string.md#string-interpolation)。
 以下のようなことをできるといいなぁという要望があります。
 
-<pre class="source" title="(提案) UTF-8 リテラルの延長で、UTF-8 文字列補間が欲しい">
-<span class="reserved">static</span> <span class="reserved">byte</span>[] <span class="static"><span class="method">Format</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">(X: </span>{<span class="variable local">x</span>:<span class="string">X2</span>}<span class="string">, Y: </span>{<span class="variable local">y</span>:<span class="string">X2</span>}<span class="string">)&quot;</span><span class="reserved">u8</span></span>;
-</pre>
+```csharp
+static byte[] Format(int x, int y) => $"(X: {x:X2}, Y: {y:X2})"u8;
+```
 
 要は、文字列補間の `$""` にも `u8` を付けて、直接 UTF-8 を書き込むというもの。
 
@@ -52,44 +52,44 @@ C# プログラム中に UTF-8 なバイト列を `ReadOnlySpan<byte>` で直接
 
 前節の UTF-8 文字列補間(案)に類することをやるために、 .NET 8 移行、以下のような書き方ができます。
 
-<pre class="source" title="Utf8.TryWrite で UTF-8 文字列補間">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>Unicode;
+```csharp
+using System.Text.Unicode;
 
-<span class="reserved">static</span> <span class="reserved">byte</span>[] <span class="static"><span class="method">Format</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>)
+static byte[] Format(int x, int y)
 {
-    <span class="reserved">var</span> <span class="variable">temp</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="number">64</span>]);
+    var temp = (stackalloc byte[64]);
 
-    <span class="static"><span class="type">Utf8</span></span><span class="operator">.</span><span class="static"><span class="method">TryWrite</span></span>(<span class="variable">temp</span>, <span class="string">$&quot;</span><span class="string">(X: </span>{<span class="variable local">x</span>:<span class="string">X2</span>}<span class="string">, Y: </span>{<span class="variable local">y</span>:<span class="string">X2</span>}<span class="string">)&quot;</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">written</span>);
+    Utf8.TryWrite(temp, $"(X: {x:X2}, Y: {y:X2})", out var written);
 
-    <span class="control">return</span> <span class="variable">temp</span>[..<span class="variable">written</span>]<span class="operator">.</span><span class="method">ToArray</span>();
+    return temp[..written].ToArray();
 }
-</pre>
+```
 
 `Utf8` クラスの `TryWrite` メソッドを使って直接 UTF-8 なバイト列を作れます。
 
 ただ、文字列補間の部分は普通の `$""` で書きます。
 そして、この文字列補間の展開結果は以下の通り。
 
-<pre class="source" title="Utf8.TryWrite 中の文字列補間の展開結果">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>Unicode;
+```csharp
+using System.Text.Unicode;
 
-<span class="reserved">static</span> <span class="reserved">byte</span>[] <span class="method"><span class="static">Format</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>)
+static byte[] Format(int x, int y)
 {
-    <span class="reserved">var</span> <span class="variable">temp</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="number">64</span>]);
+    var temp = (stackalloc byte[64]);
 
-    <span class="type"><span class="static">Utf8</span></span><span class="operator">.</span><span class="type struct">TryWriteInterpolatedStringHandler</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="reserved">new</span>(<span class="number">9</span>, <span class="number">2</span>, <span class="variable">temp</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">shouldAppend</span>);
+    Utf8.TryWriteInterpolatedStringHandler handler = new(9, 2, temp, out var shouldAppend);
 
-    <span class="control">if</span> (<span class="variable">shouldAppend</span>
-        <span class="operator">&amp;&amp;</span> <span class="variable">handler</span><span class="operator">.</span><span class="method">AppendLiteral</span>(<span class="string">&quot;X: &quot;</span>)
-        <span class="operator">&amp;&amp;</span> <span class="variable">handler</span><span class="operator">.</span><span class="method">AppendFormatted</span>(<span class="variable local">x</span>, <span class="string">&quot;X2&quot;</span>)
-        <span class="operator">&amp;&amp;</span> <span class="variable">handler</span><span class="operator">.</span><span class="method">AppendLiteral</span>(<span class="string">&quot;, Y: &quot;</span>)
-        )  <span class="variable">handler</span><span class="operator">.</span><span class="method">AppendFormatted</span>(<span class="variable local">y</span>, <span class="string">&quot;X2&quot;</span>);
+    if (shouldAppend
+        && handler.AppendLiteral("X: ")
+        && handler.AppendFormatted(x, "X2")
+        && handler.AppendLiteral(", Y: ")
+        )  handler.AppendFormatted(y, "X2");
 
-    <span class="static"><span class="type">Utf8</span></span><span class="operator">.</span><span class="static"><span class="method">TryWrite</span></span>(<span class="variable">temp</span>, <span class="reserved">ref</span> <span class="variable">handler</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">written</span>);
+    Utf8.TryWrite(temp, ref handler, out var written);
 
-    <span class="control">return</span> <span class="variable">temp</span>[..<span class="variable">written</span>]<span class="operator">.</span><span class="method">ToArray</span>();
+    return temp[..written].ToArray();
 }
-</pre>
+```
 
 ## 定数文字列の最適化
 

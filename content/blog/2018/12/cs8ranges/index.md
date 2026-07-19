@@ -37,20 +37,20 @@ Ranges and Indicesと呼ばれていて、配列などに対して、
 どれがいいかは用途次第で、実際、どれもあり得ます。
 例えば、.NET でも、以下のようなメソッドがあります。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> r = <span class="reserved">new</span> <span class="type">Random</span>();
-<span class="reserved">var</span> a = <span class="reserved">new</span>[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+```csharp
+var r = new Random();
+var a = new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
  
-<span class="reserved">var</span> x = r.Next(3, 5); <span class="comment">// 3, 4 (5を含まない)</span>
-<span class="reserved">var</span> s = a.AsSpan(3, 5); <span class="comment">// 3, 4, 5, 6, 7 (3から始めて5つ)</span>
-</code></pre>
+var x = r.Next(3, 5); // 3, 4 (5を含まない)
+var s = a.AsSpan(3, 5); // 3, 4, 5, 6, 7 (3から始めて5つ)
+```
 
 ちょっとでもわかりやすくしたければ、以下のように名前付き引数にすべきかもしれません。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> x = r.Next(minValue: 3, maxValue: 5); <span class="comment">// 「5つ」でないことは明確なものの、5を含むかどうかわからず</span>
-<span class="reserved">var</span> s = a.AsSpan(start: 3, length: 5); <span class="comment">// これなら割とわかりやすく「3から始めて5つ」</span>
-</code></pre>
+```csharp
+var x = r.Next(minValue: 3, maxValue: 5); // 「5つ」でないことは明確なものの、5を含むかどうかわからず
+var s = a.AsSpan(start: 3, length: 5); // これなら割とわかりやすく「3から始めて5つ」
+```
 
 `Random.Next`の例のように、名前が「max」だけで、「含むかどうか」がわからないAPIも多いです。
 この区別のために、`Parallel.For`なんかは引数名が`fromInclusive`、`toExclusive`とかになっていたりします。
@@ -59,20 +59,19 @@ Ranges and Indicesと呼ばれていて、配列などに対して、
 
 さらにいうと、多次元データになるともっとしんどくなります。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> m = <span class="reserved">new</span>[,]
+```csharp
+var m = new[,]
 {
     { 1, 2, 3, 4 },
     { 5, 6, 7, 8 },
     { 9, 10, 11, 12 },
 };
  
-<span class="comment">// (x, y) が (1, 2) ～ (3, 4) の範囲？</span>
-<span class="comment">// x が 1～2、y が 3～4 の範囲？</span>
-<span class="comment">// 2, 4 は含む？含まない？</span>
-<span class="reserved">var</span> n = m.Slice(1, 2, 3, 4);
-
-</code></pre>
+// (x, y) が (1, 2) ～ (3, 4) の範囲？
+// x が 1～2、y が 3～4 の範囲？
+// 2, 4 は含む？含まない？
+var n = m.Slice(1, 2, 3, 4);
+```
 
 ということで、範囲を表す専用の文法が欲しいという話になります。
 
@@ -115,24 +114,24 @@ C# 8.0で導入される範囲構文は、後者のインデックス用途を�
 
 例えば以下のように書けます。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> data = <span class="reserved">new</span>[] { 0, 1, 2, 3, 4, 5 };
+```csharp
+var data = new[] { 0, 1, 2, 3, 4, 5 };
  
-<span class="comment">// 1～2要素目。2 は exclusive。なので、表示されるのは 1 だけ。</span>
+// 1～2要素目。2 は exclusive。なので、表示されるのは 1 だけ。
 Write(data[1..2]);
  
-<span class="comment">// 先頭から1～末尾から1。 1, 2, 3, 4</span>
+// 先頭から1～末尾から1。 1, 2, 3, 4
 Write(data[1..^1]);
  
-<span class="comment">// 先頭～末尾から1。 0, 1, 2, 3, 4</span>
+// 先頭～末尾から1。 0, 1, 2, 3, 4
 Write(data[..^1]);
  
-<span class="comment">// 先頭から1～末尾。 1, 2, 3, 4, 5</span>
+// 先頭から1～末尾。 1, 2, 3, 4, 5
 Write(data[1..]);
  
-<span class="comment">// 全体。0, 1, 2, 3, 4, 5</span>
+// 全体。0, 1, 2, 3, 4, 5
 Write(data[..]);
-</code></pre>
+```
 
 ![範囲構文](../../../../../assets/media/1167/ranges.png)
 
@@ -147,13 +146,13 @@ Write(data[..]);
 - `..j`は`Range.ToEnd(j)`になる
 - `..`は`Range.All()`になる
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> r1 = <span class="type">Range</span>.Create(1, 2);                  <span class="comment">// 1..2</span>
-<span class="reserved">var</span> r2 = <span class="type">Range</span>.Create(1, <span class="reserved">new</span> <span class="type">Index</span>(1, <span class="reserved">true</span>)); <span class="comment">// 1..^1</span>
-<span class="reserved">var</span> r3 = <span class="type">Range</span>.ToEnd(<span class="reserved">new</span> <span class="type">Index</span>(1, <span class="reserved">true</span>));     <span class="comment">// ..^1</span>
-<span class="reserved">var</span> r4 = <span class="type">Range</span>.FromStart(1);                  <span class="comment">// 1..</span>
-<span class="reserved">var</span> r5 = <span class="type">Range</span>.All();                         <span class="comment">// ..</span>
-</code></pre>
+```csharp
+var r1 = Range.Create(1, 2);                  // 1..2
+var r2 = Range.Create(1, new Index(1, true)); // 1..^1
+var r3 = Range.ToEnd(new Index(1, true));     // ..^1
+var r4 = Range.FromStart(1);                  // 1..
+var r5 = Range.All();                         // ..
+```
 
 ちなみに、`Range`、`Index`はそれぞれ、
 

@@ -49,33 +49,33 @@ NuGet v3 で、その project.json のサブセットを使って、.csproj/.vbp
 
 例えば、これまでの NuGet パッケージ管理「packages.confing」で、Rx-Main を参照すると以下のようになってたはず。
 
-<pre class="source" title="">
-<code>&lt;?<span class="pl-ent" style="box-sizing: border-box; color: rgb(99, 163, 92);">xml</span><span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);"> version</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>1.0<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span><span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);"> encoding</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>utf-8<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>?&gt;
-&lt;<span class="pl-ent" style="box-sizing: border-box; color: rgb(99, 163, 92);">packages</span>&gt;
-  &lt;<span class="pl-ent" style="box-sizing: border-box; color: rgb(99, 163, 92);">package</span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">id</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>Rx-Core<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">version</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>2.3.0-beta2<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">targetFramework</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>net46<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> /&gt;
-  &lt;<span class="pl-ent" style="box-sizing: border-box; color: rgb(99, 163, 92);">package</span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">id</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>Rx-Interfaces<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">version</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>2.3.0-beta2<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">targetFramework</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>net46<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> /&gt;
-  &lt;<span class="pl-ent" style="box-sizing: border-box; color: rgb(99, 163, 92);">package</span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">id</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>Rx-Linq<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">version</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>2.3.0-beta2<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">targetFramework</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>net46<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> /&gt;
-  &lt;<span class="pl-ent" style="box-sizing: border-box; color: rgb(99, 163, 92);">package</span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">id</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>Rx-Main<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">version</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>2.3.0-beta2<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">targetFramework</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>net46<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> /&gt;
-  &lt;<span class="pl-ent" style="box-sizing: border-box; color: rgb(99, 163, 92);">package</span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">id</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>Rx-PlatformServices<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">version</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>2.3.0-beta2<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> <span class="pl-e" style="box-sizing: border-box; color: rgb(121, 93, 163);">targetFramework</span>=<span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>net46<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span> /&gt;
-&lt;/<span class="pl-ent" style="box-sizing: border-box; color: rgb(99, 163, 92);">packages</span>&gt;
-</code></pre>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<packages>
+  <package id="Rx-Core" version="2.3.0-beta2" targetFramework="net46" />
+  <package id="Rx-Interfaces" version="2.3.0-beta2" targetFramework="net46" />
+  <package id="Rx-Linq" version="2.3.0-beta2" targetFramework="net46" />
+  <package id="Rx-Main" version="2.3.0-beta2" targetFramework="net46" />
+  <package id="Rx-PlatformServices" version="2.3.0-beta2" targetFramework="net46" />
+</packages>
+```
 
 これを、project.json という名前で、以下のような JSON ファイルに置き替える。
 
-<pre class="source" title="">
-<code>{
-  <span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>frameworks<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>: {
-    <span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>net46<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>: {}
+```json
+{
+  "frameworks": {
+    "net46": {}
   },
-  <span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>runtimes<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>: {
-    <span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>win<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>: {},
-    <span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>win-anycpu<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>: {}
+  "runtimes": {
+    "win": {},
+    "win-anycpu": {}
   },
-  <span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>dependencies<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>: {
-    <span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>Rx-Main<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>: <span class="pl-s" style="box-sizing: border-box; color: rgb(24, 54, 145);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span>2.3.0-beta2<span class="pl-pds" style="box-sizing: border-box; color: rgb(24, 54, 145);">"</span></span>
+  "dependencies": {
+    "Rx-Main": "2.3.0-beta2"
   }
 }
-</code></pre>
+```
 
 手動でファイルの置き換えをした後、プロジェクトを読み込みなおす(ソリューションを閉じて開きなおすとかでも OK)と、NuGet v3 でパッケージ管理される状態になる。
 

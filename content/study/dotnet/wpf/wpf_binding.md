@@ -91,30 +91,30 @@ WPF では、Binding クラスまたは Binding 「[マークアップ拡張](wp
 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 と Binding 「[マークアップ拡張](wpf_xamladv.md#extension)」 を使って、以下のように書きます。
 
 
-<pre class="xsource" title="バインディングの簡単な例（attribute syntax）">
-<code><span class="bracket">&lt;</span><span class="element">StackPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span><span class="bracket">&gt;</span>
+```xml
+<StackPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <span class="bracket">&lt;</span><span class="element">Slider</span> <span class="attribute">Name</span><span class="attvalue">="slider1"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span><span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Width</span><span class="attvalue">="80"</span>
-    <em><span class="attribute">Text</span><span class="attvalue">="{Binding ElementName=slider1, Path=Value}"</span></em><span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">StackPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+  <Slider Name="slider1" Width="200"/>
+  <TextBox Width="80"
+    Text="{Binding ElementName=slider1, Path=Value}"/>
+</StackPanel>
+```
 あるいは、「[Property Element Syntax](wpf_xamlbasic.md#property)」 と Binding クラスを使うなら、以下のような感じ。
 
 
-<pre class="xsource" title="バインディングの簡単な例（property syntax）">
-<code><span class="bracket">&lt;</span><span class="element">StackPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span><span class="bracket">&gt;</span>
+```xml
+<StackPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <span class="bracket">&lt;</span><span class="element">Slider</span> <span class="attribute">Name</span><span class="attvalue">="slider1"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span><span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Width</span><span class="attvalue">="80"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Binding</span> <span class="attribute">ElementName</span><span class="attvalue">="slider1"</span> <span class="attribute">Path</span><span class="attvalue">="Value"</span><span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">TextBox</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">StackPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+  <Slider Name="slider1" Width="200"/>
+  <TextBox Width="80">
+    <Binding ElementName="slider1" Path="Value"/>
+  </TextBox>
+</StackPanel>
+```
 これで、スライダーの値とテキストボックス中のテキストが結び付けられます。
 スライダーを動かすとテキストボックスの中身が変化しますし、
 その逆もまたしかりです。
@@ -155,22 +155,22 @@ Binding だけで、
 前節と似たようなものですが、再び例を挙げてみましょう。
 
 
-<pre class="xsource" title="テキストブロックの中身をテキストボックスの中身と同期">
-<code><span class="bracket">&lt;</span><span class="element">StackPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span><span class="bracket">&gt;</span>
+```xml
+<StackPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Name</span><span class="attvalue">="textBox"</span> <span class="attribute">FontSize</span><span class="attvalue">="18pt"</span>
-    <span class="attribute">Text</span><span class="attvalue">="テキストを入力してください"</span>/<span class="bracket">&gt;</span>
+  <TextBox Name="textBox" FontSize="18pt"
+    Text="テキストを入力してください"/>
 
-  <span class="bracket">&lt;</span><span class="element">TextBlock</span> <span class="attribute">FontSize</span><span class="attvalue">="18pt"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBlock.Text</span><span class="bracket">&gt;</span>
-      <em><span class="bracket">&lt;</span><span class="element">Binding</span> <span class="attribute">ElementName</span><span class="attvalue">="textBox"</span> <span class="attribute">Path</span><span class="attvalue">="Text"</span> /<span class="bracket">&gt;</span></em>
-    <span class="bracket">&lt;</span>/<span class="element">TextBlock.Text</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">TextBlock</span><span class="bracket">&gt;</span>
+  <TextBlock FontSize="18pt">
+    <TextBlock.Text>
+      <Binding ElementName="textBox" Path="Text" />
+    </TextBlock.Text>
+  </TextBlock>
 
-<span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</StackPanel>
+```
 この XAML コードによって、
 テキストボックスとテキストブロックの中身が同期します。
 すなわち、テキストボックス内のテキストが変更されたときに、
@@ -196,31 +196,31 @@ Path プロパティに同期したいプロパティの名前を指定します
 以下に示す XAML ファイルでは、簡単化のために、キャンバスの中身ははしょってあります。
 
 
-<pre class="xsource" title="Windows1.xaml">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="BindingDependencyProperty.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Title</span><span class="attvalue">="Binding デモ"</span> <span class="attribute">Height</span><span class="attvalue">="300"</span> <span class="attribute">Width</span><span class="attvalue">="300"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Window x:Class="BindingDependencyProperty.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="Binding デモ" Height="300" Width="300"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Slider</span> <span class="attribute">Name</span><span class="attvalue">="slider1"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span><span class="bracket">/&gt;</span>
+  <WrapPanel>
+    <Slider Name="slider1" Width="200"/>
 
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Width</span><span class="attvalue">="80"</span>
-      <span class="attribute">Text</span><span class="attvalue">="{Binding ElementName=slider1, Path=Value}"</span><span class="bracket">/&gt;</span>
+    <TextBox Width="80"
+      Text="{Binding ElementName=slider1, Path=Value}"/>
 
-    <span class="bracket">&lt;</span><span class="element">Canvas</span> <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Canvas.RenderTransform</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="100"</span> <span class="attribute">CenterY</span><span class="attvalue">="100"</span>
-          <span class="attribute">Angle</span><span class="attvalue">="{Binding ElementName=slider1, Path=Value}"</span><span class="bracket">/&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">Canvas.RenderTransform</span><span class="bracket">&gt;</span>
+    <Canvas Width="200" Height="200">
+      <Canvas.RenderTransform>
+        <RotateTransform CenterX="100" CenterY="100"
+          Angle="{Binding ElementName=slider1, Path=Value}"/>
+      </Canvas.RenderTransform>
 
-      <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="84"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="75"</span> <span class="attribute">FontSize</span><span class="attvalue">="20"</span><span class="bracket">&gt;</span>↑<span class="bracket">&lt;/</span><span class="element">Label</span><span class="bracket">&gt;</span>
+      <Label Canvas.Left="84" Canvas.Top="75" FontSize="20">↑</Label>
 
-    <span class="bracket">&lt;/</span><span class="element">Canvas</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
+    </Canvas>
+  </WrapPanel>
+</Window>
+```
 
 ##### <a id="sec-generated-title-6"></a>値の変換
 
@@ -236,74 +236,74 @@ Slider の Value プロパティの値の範囲は 0～10 なので、
 この手の変換を実現するのが、Binding.Converter プロパティ（System.Windows.Data.IValueConverter 型）です。
 まず、IValueConverter を実装する変換クラスを作ります。
 
-<pre class="source" title="値の変換用のクラス" lang="">
-<code><span class="reserved">using</span> System.Windows.Data;
+```csharp
+using System.Windows.Data;
 
-<span class="reserved">namespace</span> BindingDependencyProperty
+namespace BindingDependencyProperty
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// スライダーコントロールの Value （0～10）を角度（0 ～ 360）に変換。
-  /// &lt;/summary&gt;</span>
-  [ValueConversion(<span class="reserved">typeof</span>(<span class="reserved">double</span>), <span class="reserved">typeof</span>(<span class="reserved">string</span>))]
-  <span class="reserved">public class</span> SliderAngleConverter : IValueConverter
+  /// </summary>
+  [ValueConversion(typeof(double), typeof(string))]
+  public class SliderAngleConverter : IValueConverter
   {
-    <span class="reserved">const double</span> FACTOR = 360.0 / 10.0;
+    const double FACTOR = 360.0 / 10.0;
 
-    <span class="reserved">public object</span> Convert(<span class="reserved">object</span> value, System.Type targetType,
-      <span class="reserved">object</span> parameter, System.Globalization.CultureInfo culture)
+    public object Convert(object value, System.Type targetType,
+      object parameter, System.Globalization.CultureInfo culture)
     {
-      <span class="reserved">double</span> v = (<span class="reserved">double</span>)value;
-      <span class="reserved">return</span> v * FACTOR;
+      double v = (double)value;
+      return v * FACTOR;
     }
 
-    <span class="reserved">public object</span> ConvertBack(<span class="reserved">object</span> value, System.Type targetType,
-      <span class="reserved">object</span> parameter, System.Globalization.CultureInfo culture)
+    public object ConvertBack(object value, System.Type targetType,
+      object parameter, System.Globalization.CultureInfo culture)
     {
-      <span class="reserved">string</span> s = (<span class="reserved">string</span>)value;
-      <span class="reserved">double</span> v;
-      <span class="reserved">if</span> (!<span class="reserved">double</span>.TryParse(s, <span class="reserved">out</span> v))
-        <span class="reserved">return</span> 0;
-      <span class="reserved">return</span> v / FACTOR;
+      string s = (string)value;
+      double v;
+      if (!double.TryParse(s, out v))
+        return 0;
+      return v / FACTOR;
     }
   }
 }
-</code></pre>
+```
 
 
 で、XAML 側では、以下のようにして Binding に Converter を設定します。
 
 
-<pre class="xsource" title="Converter の設定">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="BindingDependencyProperty.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">xmlns:c</span><span class="attvalue">="clr-namespace:BindingDependencyProperty"</span>
-  <span class="attribute">Title</span><span class="attvalue">="Binding デモ"</span> <span class="attribute">Height</span><span class="attvalue">="300"</span> <span class="attribute">Width</span><span class="attvalue">="300"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Window.Resources</span><span class="bracket">&gt;</span>
-    <em><span class="bracket">&lt;</span><span class="element">c:SliderAngleConverter</span> <span class="attribute">x:Key</span><span class="attvalue">="dateConverter"</span><span class="bracket">/&gt;</span></em>
-  <span class="bracket">&lt;/</span><span class="element">Window.Resources</span><span class="bracket">&gt;</span>
+```xml
+<Window x:Class="BindingDependencyProperty.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:c="clr-namespace:BindingDependencyProperty"
+  Title="Binding デモ" Height="300" Width="300"
+  >
+  <Window.Resources>
+    <c:SliderAngleConverter x:Key="dateConverter"/>
+  </Window.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Slider</span> <span class="attribute">Name</span><span class="attvalue">="slider1"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span><span class="bracket">/&gt;</span>
+  <WrapPanel>
+    <Slider Name="slider1" Width="200"/>
 
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Width</span><span class="attvalue">="80"</span>
-      <span class="attribute">Text</span><span class="attvalue">="{Binding ElementName=slider1, Path=Value,
-        <em>Converter={StaticResource dateConverter}</em>}"</span><span class="bracket">/&gt;</span>
+    <TextBox Width="80"
+      Text="{Binding ElementName=slider1, Path=Value,
+        Converter={StaticResource dateConverter}}"/>
 
-    <span class="bracket">&lt;</span><span class="element">Canvas</span> <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Canvas.RenderTransform</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="100"</span> <span class="attribute">CenterY</span><span class="attvalue">="100"</span>
-          <span class="attribute">Angle</span><span class="attvalue">="{Binding ElementName=slider1, Path=Value,
-            <em>Converter={StaticResource dateConverter}</em>}"</span><span class="bracket">/&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">Canvas.RenderTransform</span><span class="bracket">&gt;</span>
+    <Canvas Width="200" Height="200">
+      <Canvas.RenderTransform>
+        <RotateTransform CenterX="100" CenterY="100"
+          Angle="{Binding ElementName=slider1, Path=Value,
+            Converter={StaticResource dateConverter}}"/>
+      </Canvas.RenderTransform>
 
-      <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="84"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="75"</span> <span class="attribute">FontSize</span><span class="attvalue">="20"</span><span class="bracket">&gt;</span>↑<span class="bracket">&lt;/</span><span class="element">Label</span><span class="bracket">&gt;</span>
+      <Label Canvas.Left="84" Canvas.Top="75" FontSize="20">↑</Label>
 
-    <span class="bracket">&lt;/</span><span class="element">Canvas</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
+    </Canvas>
+  </WrapPanel>
+</Window>
+```
 
 ##### <a id="sec-generated-title-7"></a>値の有効性の確認
 
@@ -318,71 +318,71 @@ WPF の Binding では、値の有効性の確認機能もあります。
 まず、ValidationRule を継承する確認用のクラスを作ります。
 不正な入力があった場合には、ValidationResult のコンストラクタの第一引数を false に設定します。
 
-<pre class="source" title="値の確認用のクラス" lang="">
-<code><span class="reserved">using</span> System.Windows.Controls;
+```csharp
+using System.Windows.Controls;
 
-<span class="reserved">namespace</span> BindingDependencyProperty
+namespace BindingDependencyProperty
 {
-  <span class="reserved">public class</span> AngleRangeRule : ValidationRule
+  public class AngleRangeRule : ValidationRule
   {
-    <span class="reserved">public override</span> ValidationResult Validate(<span class="reserved">object</span> value,
+    public override ValidationResult Validate(object value,
       System.Globalization.CultureInfo cultureInfo)
     {
-      <span class="reserved">double</span> result;
+      double result;
 
-      <span class="reserved">if</span> (!<span class="reserved">double</span>.TryParse(value <span class="reserved">as string</span>, <span class="reserved">out</span> result))
-        <span class="reserved">return new</span> ValidationResult(<span class="reserved">false</span>, <span class="literal">"文字列が不正です"</span>);
+      if (!double.TryParse(value as string, out result))
+        return new ValidationResult(false, "文字列が不正です");
 
-      <span class="reserved">if</span> (result &lt; 0 || result &gt; 360)
-        <span class="reserved">return new</span> ValidationResult(<span class="reserved">false</span>, <span class="literal">"値の範囲が不正です"</span>);
+      if (result < 0 || result > 360)
+        return new ValidationResult(false, "値の範囲が不正です");
 
-      <span class="reserved">return new</span> ValidationResult(<span class="reserved">true</span>, <span class="reserved">null</span>);
+      return new ValidationResult(true, null);
     }
   }
 }
-</code></pre>
+```
 
 
 XAML 側では、以下のようにして Binding に ValidationRules を設定します。
 
 
-<pre class="xsource" title="ValidationRules の設定">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="BindingDependencyProperty.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">xmlns:c</span><span class="attvalue">="clr-namespace:BindingDependencyProperty"</span>
-  <span class="attribute">Title</span><span class="attvalue">="Binding デモ"</span> <span class="attribute">Height</span><span class="attvalue">="300"</span> <span class="attribute">Width</span><span class="attvalue">="300"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Window.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">c:SliderAngleConverter</span> <span class="attribute">x:Key</span><span class="attvalue">="dateConverter"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">c:AngleRangeRule</span> <span class="attribute">x:Key</span><span class="attvalue">="angleRule"</span><span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">Window.Resources</span><span class="bracket">&gt;</span>
+```xml
+<Window x:Class="BindingDependencyProperty.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:c="clr-namespace:BindingDependencyProperty"
+  Title="Binding デモ" Height="300" Width="300"
+  >
+  <Window.Resources>
+    <c:SliderAngleConverter x:Key="dateConverter"/>
+    <c:AngleRangeRule x:Key="angleRule"/>
+  </Window.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Slider</span> <span class="attribute">Name</span><span class="attvalue">="slider1"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span><span class="bracket">/&gt;</span>
+  <WrapPanel>
+    <Slider Name="slider1" Width="200"/>
 
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Width</span><span class="attvalue">="80"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Binding</span> <span class="attribute">ElementName</span><span class="attvalue">="slider1"</span> <span class="attribute">Path</span><span class="attvalue">="Value"</span>
-               <span class="attribute">Converter</span><span class="attvalue">="{StaticResource dateConverter}"</span><span class="bracket">&gt;</span>
-<em>        <span class="bracket">&lt;</span><span class="element">Binding.ValidationRules</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">c:AngleRangeRule</span> <span class="bracket">/&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">Binding.ValidationRules</span><span class="bracket">&gt;</span></em>
-      <span class="bracket">&lt;/</span><span class="element">Binding</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">TextBox</span><span class="bracket">&gt;</span>
+    <TextBox Width="80">
+      <Binding ElementName="slider1" Path="Value"
+               Converter="{StaticResource dateConverter}">
+        <Binding.ValidationRules>
+          <c:AngleRangeRule />
+        </Binding.ValidationRules>
+      </Binding>
+    </TextBox>
 
-    <span class="bracket">&lt;</span><span class="element">Canvas</span> <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Canvas.RenderTransform</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="100"</span> <span class="attribute">CenterY</span><span class="attvalue">="100"</span>
-          <span class="attribute">Angle</span><span class="attvalue">="{Binding ElementName=slider1, Path=Value,
-            Converter={StaticResource dateConverter}}"</span><span class="bracket">/&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">Canvas.RenderTransform</span><span class="bracket">&gt;</span>
+    <Canvas Width="200" Height="200">
+      <Canvas.RenderTransform>
+        <RotateTransform CenterX="100" CenterY="100"
+          Angle="{Binding ElementName=slider1, Path=Value,
+            Converter={StaticResource dateConverter}}"/>
+      </Canvas.RenderTransform>
 
-      <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="84"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="75"</span> <span class="attribute">FontSize</span><span class="attvalue">="20"</span><span class="bracket">&gt;</span>↑<span class="bracket">&lt;/</span><span class="element">Label</span><span class="bracket">&gt;</span>
+      <Label Canvas.Left="84" Canvas.Top="75" FontSize="20">↑</Label>
 
-    <span class="bracket">&lt;/</span><span class="element">Canvas</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
+    </Canvas>
+  </WrapPanel>
+</Window>
+```
 これで値の有効性の確認が行われるようになります。
 デフォルトの動作では、無効な入力があった場合、
 テキストボックスの淵が赤くなります。
@@ -392,50 +392,50 @@ XAML 側では、以下のようにして Binding に ValidationRules を設定�
 （コントロールテンプレートに関しては、「[テンプレート（WPF）](wpf_template.md)」で説明。）
 
 
-<pre class="xsource" title="Validation.ErrorTemplate">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="BindingDependencyProperty.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">xmlns:c</span><span class="attvalue">="clr-namespace:BindingDependencyProperty"</span>
-  <span class="attribute">Title</span><span class="attvalue">="Binding デモ"</span> <span class="attribute">Height</span><span class="attvalue">="300"</span> <span class="attribute">Width</span><span class="attvalue">="300"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Window.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">c:SliderAngleConverter</span> <span class="attribute">x:Key</span><span class="attvalue">="dateConverter"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">c:AngleRangeRule</span> <span class="attribute">x:Key</span><span class="attvalue">="angleRule"</span><span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">Window.Resources</span><span class="bracket">&gt;</span>
+```xml
+<Window x:Class="BindingDependencyProperty.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:c="clr-namespace:BindingDependencyProperty"
+  Title="Binding デモ" Height="300" Width="300"
+  >
+  <Window.Resources>
+    <c:SliderAngleConverter x:Key="dateConverter"/>
+    <c:AngleRangeRule x:Key="angleRule"/>
+  </Window.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Slider</span> <span class="attribute">Name</span><span class="attvalue">="slider1"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span><span class="bracket">/&gt;</span>
+  <WrapPanel>
+    <Slider Name="slider1" Width="200"/>
 
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Width</span><span class="attvalue">="80"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Binding</span> <span class="attribute">ElementName</span><span class="attvalue">="slider1"</span> <span class="attribute">Path</span><span class="attvalue">="Value"</span>
-               <span class="attribute">Converter</span><span class="attvalue">="{StaticResource dateConverter}"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Binding.ValidationRules</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">c:AngleRangeRule</span> <span class="bracket">/&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">Binding.ValidationRules</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">Binding</span><span class="bracket">&gt;</span>
-<em>      <span class="bracket">&lt;</span><span class="element">Validation.ErrorTemplate</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Border</span> <span class="attribute">BorderBrush</span><span class="attvalue">="#ffff00"</span> <span class="attribute">BorderThickness</span><span class="attvalue">="3"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">AdornedElementPlaceholder</span><span class="bracket">/&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">Border</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">ControlTemplate</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">Validation.ErrorTemplate</span><span class="bracket">&gt;</span></em>
-    <span class="bracket">&lt;/</span><span class="element">TextBox</span><span class="bracket">&gt;</span>
+    <TextBox Width="80">
+      <Binding ElementName="slider1" Path="Value"
+               Converter="{StaticResource dateConverter}">
+        <Binding.ValidationRules>
+          <c:AngleRangeRule />
+        </Binding.ValidationRules>
+      </Binding>
+      <Validation.ErrorTemplate>
+        <ControlTemplate>
+          <Border BorderBrush="#ffff00" BorderThickness="3">
+            <AdornedElementPlaceholder/>
+          </Border>
+        </ControlTemplate>
+      </Validation.ErrorTemplate>
+    </TextBox>
 
-    <span class="bracket">&lt;</span><span class="element">Canvas</span> <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Canvas.RenderTransform</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="100"</span> <span class="attribute">CenterY</span><span class="attvalue">="100"</span>
-          <span class="attribute">Angle</span><span class="attvalue">="{Binding ElementName=slider1, Path=Value,
-            Converter={StaticResource dateConverter}}"</span><span class="bracket">/&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">Canvas.RenderTransform</span><span class="bracket">&gt;</span>
+    <Canvas Width="200" Height="200">
+      <Canvas.RenderTransform>
+        <RotateTransform CenterX="100" CenterY="100"
+          Angle="{Binding ElementName=slider1, Path=Value,
+            Converter={StaticResource dateConverter}}"/>
+      </Canvas.RenderTransform>
 
-      <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="84"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="75"</span> <span class="attribute">FontSize</span><span class="attvalue">="20"</span><span class="bracket">&gt;</span>↑<span class="bracket">&lt;/</span><span class="element">Label</span><span class="bracket">&gt;</span>
+      <Label Canvas.Left="84" Canvas.Top="75" FontSize="20">↑</Label>
 
-    <span class="bracket">&lt;/</span><span class="element">Canvas</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
+    </Canvas>
+  </WrapPanel>
+</Window>
+```
 もしくは、Validation.HasError プロパティをトリガーにしたり、
 Validation.Error イベントを拾ってイベント処理する方法もあります。
 
@@ -485,32 +485,32 @@ XML をバインディング
 XmlDataSouce とバインド→XPath
 
 
-<pre class="xsource" title="XML データをバインド">
-<code><span class="bracket">&lt;</span><span class="element">Page</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">Page.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">XmlDataProvider</span> <span class="attribute">x:Key</span><span class="attvalue">=" LagoonCompany"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">x:XData</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Members</span> <span class="attribute">xmlns</span><span class="attvalue">=""</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Member</span><span class="bracket">&gt;</span>Duch<span class="bracket">&lt;</span>/<span class="element">Member</span><span class="bracket">&gt;</span> 
-          <span class="bracket">&lt;</span><span class="element">Member</span><span class="bracket">&gt;</span>Benny<span class="bracket">&lt;</span>/<span class="element">Member</span><span class="bracket">&gt;</span> 
-          <span class="bracket">&lt;</span><span class="element">Member</span><span class="bracket">&gt;</span>Levy<span class="bracket">&lt;</span>/<span class="element">Member</span><span class="bracket">&gt;</span> 
-          <span class="bracket">&lt;</span><span class="element">Member</span><span class="bracket">&gt;</span>Rock<span class="bracket">&lt;</span>/<span class="element">Member</span><span class="bracket">&gt;</span> 
-        <span class="bracket">&lt;</span>/<span class="element">Members</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">x:XData</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">XmlDataProvider</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Page.Resources</span><span class="bracket">&gt;</span>
+  <Page.Resources>
+    <XmlDataProvider x:Key=" LagoonCompany">
+      <x:XData>
+        <Members xmlns="">
+          <Member>Duch</Member> 
+          <Member>Benny</Member> 
+          <Member>Levy</Member> 
+          <Member>Rock</Member> 
+        </Members>
+      </x:XData>
+    </XmlDataProvider>
+  </Page.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">ListBox</span> <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="300"</span> 
-           <span class="attribute">ItemsSource</span><span class="attvalue">="{Binding <span class="attribute">Source</span>={StaticResource LagoonCompany}, 
-           <span class="attribute">XPath</span>=/Members/Member}"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">ListBox</span><span class="bracket">&gt;</span>
+  <ListBox Width="200" Height="300" 
+           ItemsSource="{Binding Source={StaticResource LagoonCompany}, 
+           XPath=/Members/Member}">
+  </ListBox>
 
-<span class="bracket">&lt;</span>/<span class="element">Page</span><span class="bracket">&gt;</span>
-</code></pre>
+</Page>
+```
 ListBox が XML 中のデータを表示する機能を持っているので、
 Binding マークアップ拡張を使って ItemsSource と XML を同期させています。
 
@@ -523,7 +523,7 @@ ADO.NET のデータをバインディング
 ### <a id="sec-generated-title-15"></a> <a id="codebehind"></a>コード中でのデータバインディング設定
 
 コードビハインド中でのバインディング設定
-<pre>
+```csharp
 Binding myNewBindDef = new Binding("TheDate");
 
 myNewBindDef.Mode = BindingMode.OneWay;
@@ -537,7 +537,7 @@ BindingOperations.SetBinding(myDateText,
 
 BindingOperations.SetBinding(myDateText,
   TextBlock.ForegroundProperty, myNewBindDef);
-</pre>
+```
 
 ### <a id="sec-generated-title-16"></a> <a id="sample"></a>サンプル
 
@@ -545,16 +545,16 @@ BindingOperations.SetBinding(myDateText,
 
 [図3のソース](../../../../assets/sample/BindingCollectionData.zip)
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> Item
+```csharp
+class Item
 {
-  <span class="reserved">public double</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-  <span class="reserved">public double</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-  <span class="reserved">public double</span> Value { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+  public double X { get; set; }
+  public double Y { get; set; }
+  public double Value { get; set; }
 }
 
-ObservableCollection&lt;Item&gt; Data;
-</code></pre>
+ObservableCollection<Item> Data;
+```
 
 
 [一覧表示](../../../../assets/fig/BindingTableView.jpg)、

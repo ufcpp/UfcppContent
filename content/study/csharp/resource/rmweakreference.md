@@ -42,51 +42,51 @@ aliases:
 .NET では、WeakReference クラス(System 名前空間）を使うことで弱参照を扱えます。
 例えば以下のように使います。
 
-<pre class="source" title="WeakReference クラスの使い方" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
         RunAsync().Wait();
     }
 
-    <span class="reserved">private static async</span> <span class="type">Task</span> RunAsync()
+    private static async Task RunAsync()
     {
-        <span class="reserved">var</span> obj = (<span class="reserved">object</span>)123;
-        <span class="reserved">var</span> t = StartLoop(<span class="reserved">new</span> <span class="type">WeakReference</span>&lt;<span class="reserved">object</span>&gt;(obj));
+        var obj = (object)123;
+        var t = StartLoop(new WeakReference<object>(obj));
 
-        <span class="comment">// 2.5秒後にオブジェクトを消す</span>
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(2500);
-        obj = <span class="reserved">null</span>;
-        <span class="type">GC</span>.Collect();
+        // 2.5秒後にオブジェクトを消す
+        await Task.Delay(2500);
+        obj = null;
+        GC.Collect();
 
-        <span class="reserved">await</span> t;
+        await t;
     }
 
-    <span class="comment">// 1秒に1回、「参照中」メッセージを表示</span>
-    <span class="reserved">static async</span> <span class="type">Task</span> StartLoop(<span class="type">WeakReference</span>&lt;<span class="reserved">object</span>&gt; r)
+    // 1秒に1回、「参照中」メッセージを表示
+    static async Task StartLoop(WeakReference<object> r)
     {
-        <span class="reserved">while</span> (<span class="reserved">true</span>)
+        while (true)
         {
-            <span class="reserved">object</span> obj;
-            <span class="reserved">if</span> (r.TryGetTarget(<span class="reserved">out</span> obj))
+            object obj;
+            if (r.TryGetTarget(out obj))
             {
-                <span class="type">Console</span>.WriteLine(obj + <span class="literal">" を参照中"</span>);
+                Console.WriteLine(obj + " を参照中");
             }
-            <span class="reserved">else</span>
+            else
             {
-                <span class="type">Console</span>.WriteLine(<span class="literal">"参照がなくなりました"</span>);
-                <span class="reserved">break</span>;
+                Console.WriteLine("参照がなくなりました");
+                break;
             }
 
-            <span class="reserved">await</span> <span class="type">Task</span>.Delay(1000);
+            await Task.Delay(1000);
         }
     }
 }
-</code></pre>
+```
 
 
 この例では、RunAsync 側で GC.Collect (ガベージ コレクションを強制起動)を呼んだ時点で、<code>(object)123</code> (整数を object 化(ボックス化)したもの)の参照が消えます。
@@ -114,47 +114,47 @@ GC により元のオブジェクト(Target)が削除されていたら、TryGet
 
 例えば、以下のようなクラス(名簿か何かで使う、「個人」型)があったとします。
 
-<pre class="source" title="" lang="">
-<code><span class="inactive">/// &lt;summary&gt;
-///</span><span class="comment"> 仮に、このクラスが自作じゃなくて、どこか別のライブラリで定義されているものとする。</span>
-<span class="inactive">///</span><span class="comment"> 自分のプログラムでは、ID と名前だけじゃなくて、住所も足したくなったとして…</span>
-<span class="inactive">/// &lt;/summary&gt;</span>
-<span class="reserved">public class</span> <span class="type">Person</span>
+```csharp
+/// <summary>
+/// 仮に、このクラスが自作じゃなくて、どこか別のライブラリで定義されているものとする。
+/// 自分のプログラムでは、ID と名前だけじゃなくて、住所も足したくなったとして…
+/// </summary>
+public class Person
 {
-    <span class="reserved">public int</span> Id { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int Id { get; set; }
+    public string Name { get; set; }
 }
-</code></pre>
+```
 
 
 元々の名簿管理では ID と名前くらいしか使っていなかったものに対して、追加で別の情報を足すことになったとしましょう。
 一応、Dictionary を使えば、情報の関連付けはできます。
 例えば、所在地を足すなら以下のようにします。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> people = <span class="reserved">new</span>[]
+```csharp
+var people = new[]
 {
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 1, Name = <span class="literal">"Jurian Naul"</span> },
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 2, Name = <span class="literal">"Thomas Bent"</span> },
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 3, Name = <span class="literal">"Ellen Carson"</span> },
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 4, Name = <span class="literal">"Katrina Lauran"</span> },
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 5, Name = <span class="literal">"Monica Ausbach"</span> },
+    new Person {Id = 1, Name = "Jurian Naul" },
+    new Person {Id = 2, Name = "Thomas Bent" },
+    new Person {Id = 3, Name = "Ellen Carson" },
+    new Person {Id = 4, Name = "Katrina Lauran" },
+    new Person {Id = 5, Name = "Monica Ausbach" },
 };
 
-<span class="reserved">var</span> locations = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="type">Person</span>, <span class="reserved">string</span>&gt;();
+var locations = new Dictionary<Person, string>();
 
-locations[people[0]] = <span class="literal">"Shinon"</span>;
-locations[people[1]] = <span class="literal">"Lance"</span>;
-locations[people[2]] = <span class="literal">"Pidona"</span>;
-locations[people[3]] = <span class="literal">"Loanne"</span>;
-locations[people[4]] = <span class="literal">"Loanne"</span>;
+locations[people[0]] = "Shinon";
+locations[people[1]] = "Lance";
+locations[people[2]] = "Pidona";
+locations[people[3]] = "Loanne";
+locations[people[4]] = "Loanne";
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> p <span class="reserved">in</span> people)
+foreach (var p in people)
 {
-    <span class="reserved">var</span> location = locations[p];
-    <span class="type">Console</span>.WriteLine(p.Name + <span class="literal">" at "</span> + location);
+    var location = locations[p];
+    Console.WriteLine(p.Name + " at " + location);
 }
-</code></pre>
+```
 
 
 ここで、この Person 情報は追加・削除が結構あるとしましょう。
@@ -167,31 +167,31 @@ Dictionary のキー側を弱参照にすればいいわけです。
 ConditionalWeakTable というクラス(System.Runtime.CompilerServices 名前空間)です。
 (実際には WeakReference クラスを使って弱参照管理しているのではなく、ネイティブ実装で弱参照管理しているようですが。)
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> people = <span class="reserved">new</span>[]
+```csharp
+var people = new[]
 {
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 1, Name = <span class="literal">"Jurian Naul"</span> },
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 2, Name = <span class="literal">"Thomas Bent"</span> },
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 3, Name = <span class="literal">"Ellen Carson"</span> },
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 4, Name = <span class="literal">"Katrina Lauran"</span> },
-    <span class="reserved">new</span> <span class="type">Person</span> {Id = 5, Name = <span class="literal">"Monica Ausbach"</span> },
+    new Person {Id = 1, Name = "Jurian Naul" },
+    new Person {Id = 2, Name = "Thomas Bent" },
+    new Person {Id = 3, Name = "Ellen Carson" },
+    new Person {Id = 4, Name = "Katrina Lauran" },
+    new Person {Id = 5, Name = "Monica Ausbach" },
 };
 
-<span class="reserved">var</span> locations = <span class="reserved">new</span> <em><span class="type">ConditionalWeakTable</span>&lt;<span class="type">Person</span>, <span class="reserved">string</span>&gt;()</em>;
+var locations = new ConditionalWeakTable<Person, string>();
 
-locations.Add(people[0], <span class="literal">"Shinon"</span>);
-locations.Add(people[1], <span class="literal">"Lance"</span>);
-locations.Add(people[2], <span class="literal">"Pidona"</span>);
-locations.Add(people[3], <span class="literal">"Loanne"</span>);
-locations.Add(people[4], <span class="literal">"Loanne"</span>);
+locations.Add(people[0], "Shinon");
+locations.Add(people[1], "Lance");
+locations.Add(people[2], "Pidona");
+locations.Add(people[3], "Loanne");
+locations.Add(people[4], "Loanne");
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> p <span class="reserved">in</span> people)
+foreach (var p in people)
 {
-    <span class="reserved">string</span> location;
-    <span class="reserved">if</span> (locations.TryGetValue(p, <span class="reserved">out</span> location))
-        <span class="type">Console</span>.WriteLine(p.Name + <span class="literal">" at "</span> + location);
+    string location;
+    if (locations.TryGetValue(p, out location))
+        Console.WriteLine(p.Name + " at " + location);
 }
-</code></pre>
+```
 
 
 これなら、locations テーブルがあっても、キーになっている Person は GC の対象になります。
@@ -224,130 +224,130 @@ event 構文で弱イベントを使いにくい理由は、「[【雑記】イ�
 IDisposable Subscribe 型のイベント購読なら、意外と簡単に書けます。
 例えば、[Reactive Extensions](https://rx.codeplex.com/) を使って実装するなら以下のような感じ。
 
-<pre class="source" title="弱イベント購読" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reactive.Disposables;
+```csharp
+using System;
+using System.Reactive.Disposables;
 
-<span class="reserved">public static class</span> <span class="type">WeakEventExtensions</span>
+public static class WeakEventExtensions
 {
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> 弱イベント購読。</span>
-    <span class="inactive">///</span><span class="comment"> 戻り値の </span><span class="inactive">&lt;see cref="</span><span class="type">IDisposable</span><span class="inactive">"/&gt;</span><span class="comment"> が誰からも参照されなくなったら自動的にイベント購読解除する。</span>
-    <span class="inactive">/// &lt;/summary&gt;
-    /// &lt;typeparam name="</span><span class="type">T</span><span class="inactive">"&gt;</span><span class="comment">イベント引数の型。</span><span class="inactive">&lt;/typeparam&gt;
-    /// &lt;param name="</span>observable<span class="inactive">"&gt;</span><span class="comment">イベント発生側。</span><span class="inactive">&lt;/param&gt;
-    /// &lt;param name="</span>onNext<span class="inactive">"&gt;</span><span class="comment">イベント受取側。</span><span class="inactive">&lt;/param&gt;
-    /// &lt;returns&gt;</span><span class="comment">イベント購読解除用の disposable。</span><span class="inactive">&lt;/returns&gt;
-    /// &lt;remarks&gt;
-    ///</span><span class="comment"> 弱参照の性質上、</span><span class="inactive">&lt;see cref="</span><span class="type">GC</span><span class="inactive">"/&gt;</span><span class="comment"> がかかって初めて「誰も使ってない」判定を受ける。</span>
-    <span class="inactive">///</span><span class="comment"> それまではイベント購読解除されず、イベントが届き続ける。</span>
-    <span class="inactive">///</span><span class="comment"> GC タイミングに左右されるコードは推奨できないんで、可能な限り、</span>
-    <span class="inactive">///</span><span class="comment"> 戻り値の </span><span class="inactive">&lt;see cref="</span><span class="type">IDisposable</span>.Dispose<span class="inactive">"/&gt;</span><span class="comment"> を明示的に呼ぶべき。</span>
-    <span class="inactive">/// &lt;/remarks&gt;</span>
-    <span class="reserved">public static</span> <span class="type">IDisposable</span> WeakSubscribe&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IObservable</span>&lt;<span class="type">T</span>&gt; observable, <span class="type">Action</span>&lt;<span class="type">T</span>&gt; onNext)
+    /// <summary>
+    /// 弱イベント購読。
+    /// 戻り値の <see cref="IDisposable"/> が誰からも参照されなくなったら自動的にイベント購読解除する。
+    /// </summary>
+    /// <typeparam name="T">イベント引数の型。</typeparam>
+    /// <param name="observable">イベント発生側。</param>
+    /// <param name="onNext">イベント受取側。</param>
+    /// <returns>イベント購読解除用の disposable。</returns>
+    /// <remarks>
+    /// 弱参照の性質上、<see cref="GC"/> がかかって初めて「誰も使ってない」判定を受ける。
+    /// それまではイベント購読解除されず、イベントが届き続ける。
+    /// GC タイミングに左右されるコードは推奨できないんで、可能な限り、
+    /// 戻り値の <see cref="IDisposable.Dispose"/> を明示的に呼ぶべき。
+    /// </remarks>
+    public static IDisposable WeakSubscribe<T>(this IObservable<T> observable, Action<T> onNext)
     {
-        <span class="type">WeakReference</span>&lt;<span class="type">IDisposable</span>&gt; weakSubscription = <span class="reserved">null</span>;
-        <span class="type">IDisposable</span> subscription = <span class="reserved">null</span>;
+        WeakReference<IDisposable> weakSubscription = null;
+        IDisposable subscription = null;
 
-        subscription = observable.Subscribe(x =&gt;
+        subscription = observable.Subscribe(x =>
         {
-            <span class="type">IDisposable</span> d;
-            <span class="reserved">if</span> (!weakSubscription.TryGetTarget(<span class="reserved">out</span> d))
+            IDisposable d;
+            if (!weakSubscription.TryGetTarget(out d))
             {
-                <span class="comment">// 弱参照のターゲットが消えてたらイベント購読解除。</span>
+                // 弱参照のターゲットが消えてたらイベント購読解除。
                 subscription.Dispose();
-                <span class="reserved">return</span>;
+                return;
             }
             onNext(x);
         });
 
-        <span class="comment">// subscription は↑のラムダ式が参照を持っちゃうことになるので、
-        // 別の IDisposable を作ってラップ。</span>
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">SingleAssignmentDisposable</span>();
+        // subscription は↑のラムダ式が参照を持っちゃうことになるので、
+        // 別の IDisposable を作ってラップ。
+        var s = new SingleAssignmentDisposable();
         s.Disposable = subscription;
 
-        <span class="comment">// 作った、外から呼ぶ用 IDisposable の弱参照を作る。</span>
-        weakSubscription = <span class="reserved">new</span> <span class="type">WeakReference</span>&lt;<span class="type">IDisposable</span>&gt;(s);
-        <span class="reserved">return</span> s;
+        // 作った、外から呼ぶ用 IDisposable の弱参照を作る。
+        weakSubscription = new WeakReference<IDisposable>(s);
+        return s;
     }
 }
-</code></pre>
+```
 
 
 利用例も示しましょう。以下のようになります。
 
-<pre class="source" title="WeakSubcribe の利用例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reactive.Subjects;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        RunAsync(<span class="reserved">true</span>).Wait();
-        RunAsync(<span class="reserved">false</span>).Wait();
+        RunAsync(true).Wait();
+        RunAsync(false).Wait();
     }
 
-    <span class="reserved">private const int</span> Interval = 100;
+    private const int Interval = 100;
 
-    <span class="reserved">private static async</span> <span class="type">Task</span> RunAsync(<span class="reserved">bool</span> manualDispose)
+    private static async Task RunAsync(bool manualDispose)
     {
-        <span class="reserved">if</span> (manualDispose) <span class="type">Console</span>.WriteLine(<span class="literal">"ちゃんと Dispose"</span>);
-        <span class="reserved">else</span> <span class="type">Console</span>.WriteLine(<span class="literal">"GC 任せ"</span>);
+        if (manualDispose) Console.WriteLine("ちゃんと Dispose");
+        else Console.WriteLine("GC 任せ");
 
-        <span class="comment">// イベントを、
+        // イベントを、
         // d1: 通常のイベント購読
-        // d2: 弱イベント購読</span>
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Subject</span>&lt;<span class="reserved">int</span>&gt;();
-        <span class="reserved">var</span> d1 = x.Subscribe(i =&gt; <span class="type">Console</span>.WriteLine(<span class="literal">"subscribe "</span> + i));
-        <span class="reserved">var</span> d2 = x.WeakSubscribe(i =&gt; <span class="type">Console</span>.WriteLine(<span class="literal">"weak subscribe "</span> + i));
-        <span class="reserved">var</span> cts = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>();
-        <span class="reserved">var</span> t = EventSourceLoop(x, cts.Token);
+        // d2: 弱イベント購読
+        var x = new Subject<int>();
+        var d1 = x.Subscribe(i => Console.WriteLine("subscribe " + i));
+        var d2 = x.WeakSubscribe(i => Console.WriteLine("weak subscribe " + i));
+        var cts = new CancellationTokenSource();
+        var t = EventSourceLoop(x, cts.Token);
 
-        <span class="comment">// イベントが飛んでくる間隔の3倍待つ → 3回イベントが来る</span>
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(3 * Interval);
+        // イベントが飛んでくる間隔の3倍待つ → 3回イベントが来る
+        await Task.Delay(3 * Interval);
 
-        <span class="reserved">if</span> (manualDispose)
+        if (manualDispose)
         {
-            <span class="comment">// ちゃんと Dispose。
-            // 当たり前だけども、以後、イベントは受け取らなくなる。</span>
+            // ちゃんと Dispose。
+            // 当たり前だけども、以後、イベントは受け取らなくなる。
             d1.Dispose();
             d2.Dispose();
         }
-        <span class="reserved">else</span>
+        else
         {
-            <span class="comment">// Dispose 忘れたままオブジェクトを捨てる。
+            // Dispose 忘れたままオブジェクトを捨てる。
             // d1 は、Subscribe 内で参照を握っているので GC 対象にならない。メモリ リーク。
             // d2 は、WeakSubscribe 内は弱参照なので、こっちの参照なくせば GC 対象。
-            // 以後、イベントは subscribe 側にだけ届く。</span>
-            d1 = <span class="reserved">null</span>;
-            d2 = <span class="reserved">null</span>;
-            <span class="type">GC</span>.Collect();
+            // 以後、イベントは subscribe 側にだけ届く。
+            d1 = null;
+            d2 = null;
+            GC.Collect();
         }
 
-        <span class="comment">// 同じく3回分待つ</span>
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(300);
+        // 同じく3回分待つ
+        await Task.Delay(300);
 
         cts.Cancel();
-        <span class="reserved">await</span> t;
+        await t;
     }
 
-    <span class="comment">// イベントを飛ばし続けるループ</span>
-    <span class="reserved">static async</span> <span class="type">Task</span> EventSourceLoop(<span class="type">IObserver</span>&lt;<span class="reserved">int</span>&gt; observer, <span class="type">CancellationToken</span> ct)
+    // イベントを飛ばし続けるループ
+    static async Task EventSourceLoop(IObserver<int> observer, CancellationToken ct)
     {
-        <span class="reserved">for</span> (<span class="reserved">var</span> i = 0; !ct.IsCancellationRequested; ++i)
+        for (var i = 0; !ct.IsCancellationRequested; ++i)
         {
             observer.OnNext(i);
-            <span class="reserved">await</span> <span class="type">Task</span>.Delay(Interval);
+            await Task.Delay(Interval);
         }
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="WeakSubcribe の利用例">
+```console
 ちゃんと Dispose
 subscribe 0
 weak subscribe 0
@@ -365,7 +365,7 @@ weak subscribe 2
 subscribe 3
 subscribe 4
 subscribe 5
-</pre>
+```
 
 
 ちなみにこの例だと、戻り値の IDisposable が弱参照になっていますが、

@@ -129,37 +129,37 @@ VB（Visual Basic）、F#、C++/CLI などに対応します。
 </ul>
 <div>
 
-<pre class="source" title="最も簡単なC#プログラム" lang="C#">
-<code><span class="comment">// C#</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"Hello World"</span>);
-</code></pre>
+```csharp
+// C#
+Console.WriteLine("Hello World");
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="comment">' Visual Basic</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"Hello World"</span>)
-</code></pre>
+```vbnet
+' Visual Basic
+Console.WriteLine("Hello World")
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="F#">
-<code><span class="comment">// F#</span>
-Console.Write <span class="literal">"Hello World"</span>
-</code></pre>
+```fsharp
+// F#
+Console.Write "Hello World"
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="C++">
-<code><span class="comment">// C++/CLI</span>
-Console::WriteLine(L<span class="literal">"Hello World"</span>);
-</code></pre>
+```cpp
+// C++/CLI
+Console::WriteLine(L"Hello World");
+```
 
 
 </div>
@@ -171,14 +171,14 @@ Console::WriteLine(L<span class="literal">"Hello World"</span>);
 
 当コンテンツ中でサンプル コードは以下のようなスタイルで書いています。
 
-<pre class="source" title="サンプルコードの例" lang="">
-<code><span class="comment">// サンプルコード</span>
-<span class="reserved">if</span>(<span class="input">条件文</span>)
+```csharp
+// サンプルコード
+if(条件文)
 {
-  <span class="reserved">int</span> n = 0;
-  <span class="reserved">string</span> s = <span class="literal">"sample"</span>;
+  int n = 0;
+  string s = "sample";
 }
-</code></pre>
+```
 
 
 <span class="reserved">C# のキーワード</span>や、<span class="comment">コメント</span>、<span class="string">文字列</span>は色付けして強調表示してあります。
@@ -186,11 +186,11 @@ Console::WriteLine(L<span class="literal">"Hello World"</span>);
 
 また、ユーザーからの入力や、サンプルコードの出力は以下のようなスタイルで書いています。
 
-<pre class="console" title="サンプルコードの出力例">
+```console
 sample input/output
-<span class="comment"># ↓ この行に対するコメント</span>
-<span class="input">ユーザーからの入力</span>
-</pre>
+# ↓ この行に対するコメント
+ユーザーからの入力
+```
 
 
 サンプルコードとは異なる背景色で囲み、<span class="input">ユーザーからの入力</span>は太字で強調表示してあります。

@@ -31,59 +31,59 @@ Visual Studio 16.7 Preview 4 が出てるのと、Design Meeting 議事録を1�
 
 以下のような、`class Program` も `static void Main` も要らないコードが書けます。
 
-<pre class="source" title="Top-level statements">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">foreach</span> (var r <span class="reserved">in</span> <span class="string">"🥺😍🙄"</span>.EnumerateRunes())
+foreach (var r in "🥺😍🙄".EnumerateRunes())
 {
-    Console.WriteLine(<span class="string">$"</span>{r.Value:<span class="string">X</span>}<span class="string">"</span>);
+    Console.WriteLine($"{r.Value:X}");
 }
-</code></pre>
+```
 
 ![ぴえん](../../../../../assets/media/1180/toplevel-statements.png)
 
 これまで、C# 9.0 候補の機能は Preview としてだけ提供されていて、`LangVersion` に `preview` を指定しないと使えませんでした。
 
-<pre class="xsource" title="LangVersion preview">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net5.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span><em>preview</em><span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 これに対して、VS 16.7 Preview 4 で、「`9.0`」が追加され、以下のように言語バージョンを明示できるようになりました。
 
-<pre class="xsource" title="LangVersion 9.0">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net5.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span><em>9.0</em><span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 また、 .NET 5 がターゲット(`TargetFramework` が `net5.0`)の場合、
 デフォルト挙動(`LangVersion` を省略、もしくは、`default` 指定)が C# 9.0 になりました。
 なので、以下の書き方(`net5.0` で `LangVersion` 省略)でも C# 9.0 になります。
 
-<pre class="xsource" title="">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net5.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 ## 10.0 向けトリアージ
 

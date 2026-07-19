@@ -218,9 +218,9 @@ PowerShell には以下のような機能があります。
 まず、XML の読み出しですが、文字列を [xml] 型にキャストするだけで読み出せます。
 Get-Content（ファイルからの文字列の読み出し）と併せて、以下のような感じ。
 
-<pre class="source" title="PowerShell で XML 読み出し" lang="">
-<code>$xml = [xml](Get-Content $filename)
-</code></pre>
+```powershell
+$xml = [xml](Get-Content $filename)
+```
 
 
 で、XML の要素に対して、
@@ -228,24 +228,24 @@ Get-Content（ファイルからの文字列の読み出し）と併せて、以
 例えば、以下のような XML があったとして、
 
 
-<pre class="xsource" title="SimpleClass.xml">
-<code><span class="bracket">&lt;?</span><span class="element">xml</span> <span class="attribute">version</span><span class="attvalue">="1.0"</span> <span class="attribute">encoding</span><span class="attvalue">="UTF-8"</span><span class="bracket">?&gt;</span>
-<span class="bracket">&lt;</span><span class="element">class</span> <span class="attribute">name</span><span class="attvalue">="Sample"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">var</span> <span class="attribute">name</span><span class="attvalue">="x"</span> <span class="attribute">type</span><span class="attvalue">="double"</span><span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">var</span> <span class="attribute">name</span><span class="attvalue">="y"</span> <span class="attribute">type</span><span class="attvalue">="double"</span><span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">class</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<class name="Sample">
+  <var name="x" type="double"/>
+  <var name="y" type="double"/>
+</class>
+```
 これらの XML 要素を以下のようにして読み出せます。
 
-<pre class="source" title="PowerShell で XML 要素の読み出し" lang="">
-<code>$xml.class.name
+```csharp
+$xml.class.name
 
 foreach($var in $xml.class.var)
 {
   $var.type
   $var.name
 }
-</code></pre>
+```
 
 
 で、ヒア文字列（複数行にわたるテキストをソース中に埋め込む）と、
@@ -253,18 +253,18 @@ foreach($var in $xml.class.var)
 以下のような感じで C# などの汎用言語に変換します。
 （参考： 「[文字列](../../powershell/syntax/string.md)」。）
 
-<pre class="source" title="PowerShell で汎用言語に変換" lang="">
-<code>@"
+```powershell
+@"
 class $($xml.class.name)
 {
 "@
 
-<span class="input">中略</span>
+中略
 
 @"
 }
 "@
-</code></pre>
+```
 
 
 完成品は以下の通り。
@@ -319,22 +319,22 @@ class $($xml.class.name)
 ステートマシンだけで1つのクラスにしてみます。
 クラス名はまんま StateMachine で。
 
-<pre class="source" title="StateMachine クラス" lang="">
-<code><span class="reserved">namespace</span> StateMachine
+```csharp
+namespace StateMachine
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 有限ステートマシン実行エンジン。
-  /// &lt;/summary&gt;
-  /// &lt;typeparam name="State"&gt;ステートの型&lt;/typeparam&gt;
-  /// &lt;typeparam name="Event"&gt;イベントの型&lt;/typeparam&gt;</span>
-  <span class="reserved">public class</span> StateMachine&lt;State, Event&gt;
-    <span class="reserved">where</span> State : IComparable
-    <span class="reserved">where</span> Event : IComparable
+  /// </summary>
+  /// <typeparam name="State">ステートの型</typeparam>
+  /// <typeparam name="Event">イベントの型</typeparam>
+  public class StateMachine<State, Event>
+    where State : IComparable
+    where Event : IComparable
   {
-    <span class="input">略</span>
+    略
   }
 }
-</code></pre>
+```
 
 
 ステートマシンってのは、結局のところ、
@@ -342,57 +342,57 @@ class $($xml.class.name)
 辞書クラス（SortedDictionary）を使って表現します。
 あと、現在の状態を表すメンバーも必要ですね。
 
-<pre class="source" title="StateMachine クラスのメンバー" lang="">
-<code>    State current;
-    SortedDictionary&lt;Pair&lt;State, Event&gt;, Transition&gt; table;
-</code></pre>
+```csharp
+    State current;
+    SortedDictionary<Pair<State, Event>, Transition> table;
+```
 
 
 で、（現状態，イベント）→（次状態，アクション）の登録用のメソッドを用意。
 
-<pre class="source" title="（現状態, イベント）→（次状態、アクション）の登録" lang="">
-<code>    <span class="comment">/// &lt;summary&gt;
+```csharp
+    /// <summary>
     /// 状態遷移を遷移テーブルに登録。
-    /// &lt;/summary&gt;
-    /// &lt;param name="current"&gt;現状態&lt;/param&gt;
-    /// &lt;param name="e"&gt;イベント&lt;/param&gt;
-    /// &lt;param name="next"&gt;遷移先の状態&lt;/param&gt;
-    /// &lt;param name="action"&gt;遷移時のアクション&lt;/param&gt;</span>
-    <span class="reserved">public void</span> RegisterTransition(
+    /// </summary>
+    /// <param name="current">現状態</param>
+    /// <param name="e">イベント</param>
+    /// <param name="next">遷移先の状態</param>
+    /// <param name="action">遷移時のアクション</param>
+    public void RegisterTransition(
       State current, Event e,
-      State next, Action&lt;<span class="reserved">object</span>&gt; action)
+      State next, Action<object> action)
     {
-      <span class="reserved">this</span>.table[<span class="reserved">new</span> Pair&lt;State, Event&gt;(current, e)]
-        = <span class="reserved">new</span> Transition(next, action);
+      this.table[new Pair<State, Event>(current, e)]
+        = new Transition(next, action);
     }
-</code></pre>
+```
 
 
 実際のイベント処理は以下のような感じ。
 
-<pre class="source" title="イベント処理" lang="">
-<code>    <span class="comment">/// &lt;summary&gt;
+```csharp
+    /// <summary>
     /// イベントを発生させる。
-    /// &lt;/summary&gt;
-    /// &lt;param name="e"&gt;イベント&lt;/param&gt;
-    /// &lt;param name="parameter"&gt;イベントに付随するパラメータ&lt;/param&gt;
-    /// &lt;remarks&gt;
+    /// </summary>
+    /// <param name="e">イベント</param>
+    /// <param name="parameter">イベントに付随するパラメータ</param>
+    /// <remarks>
     /// パラメータは、例えば、Digit(n) （10進数字 n が入力された）
     /// みたいなイベントを表すときに使う。
-    /// &lt;/remarks&gt;</span>
-    <span class="reserved">public void</span> Raise(Event e, <span class="reserved">object</span> parameter)
+    /// </remarks>
+    public void Raise(Event e, object parameter)
     {
-      <span class="reserved">var</span> pair = <span class="reserved">new</span> Pair&lt;State, Event&gt;(<span class="reserved">this</span>.current, e);
+      var pair = new Pair<State, Event>(this.current, e);
 
-      <span class="reserved">if</span> (<span class="reserved">this</span>.table.ContainsKey(pair))
+      if (this.table.ContainsKey(pair))
       {
-        Transition t = <span class="reserved">this</span>.table[pair];
-        <span class="reserved">this</span>.current = t.Next;
-        <span class="reserved">if</span> (t.Action != <span class="reserved">null</span>)
+        Transition t = this.table[pair];
+        this.current = t.Next;
+        if (t.Action != null)
           t.Action(parameter);
       }
     }
-</code></pre>
+```
 
 
 
@@ -405,14 +405,14 @@ class $($xml.class.name)
 あとは電卓の状態遷移をステートマシンに登録すれば OK です。
 以下のようなコードがひたすら10数組続きます。
 
-<pre class="source" title="状態遷移の登録" lang="">
-<code>      <span class="reserved">this</span>.fsm.RegisterTransition(
+```csharp
+      this.fsm.RegisterTransition(
         StateType.Initial, EventType.Digit,
         StateType.InputDigit,
-        x =&gt; {
-          dspValue = (<span class="reserved">double</span>)x;
+        x => {
+          dspValue = (double)x;
         });
-</code></pre>
+```
 
 
 まあ、今回は、そんなに高機能な電卓は想定していないので、
@@ -425,32 +425,32 @@ class $($xml.class.name)
 以下のような XML を書いてみます。
 
 
-<pre class="xsource" title="">
-<code><span class="bracket">&lt;</span><span class="element">Fsm</span> <span class="attribute">Namespace</span><span class="attvalue">="CalcForm"</span> <span class="attribute">Class</span><span class="attvalue">="Calculator"</span> <span class="attribute">InitialState</span><span class="attvalue">="Initial"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">States</span> <span class="attribute">TypeName</span><span class="attvalue">="StateType"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">State</span> <span class="attribute">Name</span><span class="attvalue">="Initial"</span><span class="bracket">/&gt;</span>
-    <span class="input">中略</span>
-  <span class="bracket">&lt;/</span><span class="element">States</span><span class="bracket">&gt;</span>
+```xml
+<Fsm Namespace="CalcForm" Class="Calculator" InitialState="Initial">
+  <States TypeName="StateType">
+    <State Name="Initial"/>
+    中略
+  </States>
 
-  <span class="bracket">&lt;</span><span class="element">Events</span> <span class="attribute">TypeName</span><span class="attvalue">="EventType"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Event</span> <span class="attribute">Name</span><span class="attvalue">="Digit"</span> <span class="attribute">OptionType</span><span class="attvalue">="double"</span><span class="bracket">/&gt;</span>
-    <span class="input">中略</span>
-  <span class="bracket">&lt;/</span><span class="element">Events</span><span class="bracket">&gt;</span>
+  <Events TypeName="EventType">
+    <Event Name="Digit" OptionType="double"/>
+    中略
+  </Events>
 
-  <span class="bracket">&lt;</span><span class="element">Transitions</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Transition</span> <span class="attribute">From</span><span class="attvalue">="Initial"</span> <span class="attribute">Event</span><span class="attvalue">="Digit"</span>
-      <span class="attribute">To</span><span class="attvalue">="InputDigit"</span> <span class="attribute">Param</span><span class="attvalue">="x"</span><span class="bracket">&gt;</span>
+  <Transitions>
+    <Transition From="Initial" Event="Digit"
+      To="InputDigit" Param="x">
       dspValue = x;
-    <span class="bracket">&lt;/</span><span class="element">Transition</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Transition</span> <span class="attribute">From</span><span class="attvalue">="Initial"</span> <span class="attribute">Event</span><span class="attvalue">="Operator"</span>
-      <span class="attribute">To</span><span class="attvalue">="Compute"</span> <span class="attribute">Param</span><span class="attvalue">="x"</span><span class="bracket">&gt;</span>
+    </Transition>
+    <Transition From="Initial" Event="Operator"
+      To="Compute" Param="x">
       CalKey();
       op = x;
-    <span class="bracket">&lt;/</span><span class="element">Transition</span><span class="bracket">&gt;</span>
-    <span class="input">中略</span>
-  <span class="bracket">&lt;/</span><span class="element">Transitions</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">Fsm</span><span class="bracket">&gt;</span>
-</code></pre>
+    </Transition>
+    中略
+  </Transitions>
+</Fsm>
+```
 で、これを PowerShell を使って C# に変換。
 他のソースコードと併せて改めてコンパイルします。
  
@@ -479,12 +479,11 @@ XML エディタの類を使ったり、
  
 最近の流行的には、「こういうツールまで含めて1つの言語」という雰囲気みたいです。
 ただ単にテキスト上の文法を定めるだけでは言語として未完成。
-<pre>
+```text
 余談：C# の partial キーワード
 元々 partial は、tool-generated コード＋人手で書いたコードでの開発用機能。
 DSL ＋ GPL 混在開発でかなり活躍
   (例)
     Window1.xaml → Window1.g.cs を作って、
     Window1.cs ＋ Window1.g.cs をコンパイル
-
-</pre>
+```

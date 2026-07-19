@@ -237,16 +237,16 @@ Orcas で作ったので、Visual Studio 2005 だとコンパイルが通らな�
 以下のような感じで使える Lambda 計算的なライブラリを作りました。
 （MyMath.Lambda 名前空間内。）
 
-<pre class="source" title="Lambda" lang="">
-<code>Variable u = <span class="reserved">new</span> Variable(<span class="literal">"u"</span>);
-Variable v = <span class="reserved">new</span> Variable(<span class="literal">"v"</span>);
+```powershell
+Variable u = new Variable("u");
+Variable v = new Variable("v");
 Function x = 1.5 * v Function.Cos(u);
 Function x_u = x.Differentiate(u);
 
-<span class="reserved">double</span> uu = 0.1;
-<span class="reserved">double</span> vv = 2;
-<span class="reserved">double</span> xx = x_u.GetValue(u.Set(uu), v.Set(vv));
-</code></pre>
+double uu = 0.1;
+double vv = 2;
+double xx = x_u.GetValue(u.Set(uu), v.Set(vv));
+```
 
 
 ただ、あまり賢くはないです。

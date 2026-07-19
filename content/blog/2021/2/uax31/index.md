@@ -146,17 +146,17 @@ Alternative Identifier (現在の Immutable Identifier)を採用しようとし�
 
 と言うことで現在、たいていの C++ コンパイラーで以下のコードがコンパイルできます。
 
-<pre class="source" title="Emoji C++">
-<code><span class="reserved">#include</span> <span class="string">&lt;iostream&gt;</span>
+```cpp
+#include <iostream>
  
-<span class="reserved">int</span> <span class="method">main</span>()
+int main()
 {
-    <span class="reserved">int</span> 😱 = 2;
-    <span class="reserved">int</span> 😇 = 3;
-    <span class="reserved">int</span> 🥺 = 5;
-    std::cout &lt;&lt; 😱 * 😇 * 🥺 &lt;&lt; std::endl;
+    int 😱 = 2;
+    int 😇 = 3;
+    int 🥺 = 5;
+    std::cout << 😱 * 😇 * 🥺 << std::endl;
 }
-</code></pre>
+```
 
 ### UAX31 Default Identifier
 
@@ -186,9 +186,9 @@ Alternative Identifier (現在の Immutable Identifier)を採用しようとし�
 
 まんま抜粋。
 
-<pre class="source" title="Throwing Pile of Poo">
-<code><span class="reserved">class</span> 💩 : <span class="reserved">public</span> std::<span class="type">exception</span> { };
-</code></pre>
+```cpp
+class 💩 : public std::exception { };
+```
 
 > Throwing “PILE OF POO” becomes ill-formed. Conference slide-ware will be less entertaining.
 
@@ -209,22 +209,22 @@ Immutable Identifier は
 みたいなことをしているので…
 以下のように、使える絵文字と使えない絵文字があります(not valid コメントの行のものだけダメ)。
 
-<pre class="source" title="Immutable Identifier での絵文字">
-<code><span class="reserved">int</span> ⏰ = 0; <span class="comment">//not valid</span>
-<span class="reserved">int</span> 🕐 = 0;
+```csharp
+int ⏰ = 0; //not valid
+int 🕐 = 0;
  
-<span class="reserved">int</span> ☠ = 0; <span class="comment">//not valid</span>
-<span class="reserved">int</span> 💀 = 0;
+int ☠ = 0; //not valid
+int 💀 = 0;
  
-<span class="reserved">int</span> ✋ = 0; <span class="comment">//not valid</span>
-<span class="reserved">int</span> 👊 = 0;
+int ✋ = 0; //not valid
+int 👊 = 0;
  
-<span class="reserved">int</span> ✈ = 0; <span class="comment">//not valid</span>
-<span class="reserved">int</span> 🚀 = 0;
+int ✈ = 0; //not valid
+int 🚀 = 0;
  
-<span class="reserved">int</span> ☹ = 0; <span class="comment">//not valid</span>
-<span class="reserved">int</span> 😀 = 0;
-</code></pre>
+int ☹ = 0; //not valid
+int 😀 = 0;
+```
 
 要するに、「基本的に記号を禁止しているのに、サロゲートペアなやつは禁止されない」という状態。
 上から順に文字コードは以下のようになっています。
@@ -242,10 +242,10 @@ Immutable Identifier は
 
 この辺りはまあ、「なんか変だな」で済む話なんですが、1個、ポリコレ的な地雷を踏みそうな事案も発見されています。
 
-<pre class="source" title="ポリコレ地雷を踏みそうな絵文字">
-<code><span class="reserved">bool</span> 👷 = <span class="reserved">true</span>; <span class="comment">//  Construction Worker</span>
-<span class="reserved">bool</span> 👷‍♀ = <span class="reserved">false</span>; <span class="comment">// Woman Construction Worker ({Construction Worker}{ZWJ}{Female Sign})</span>
-</code></pre>
+```csharp
+bool 👷 = true; //  Construction Worker
+bool 👷‍♀ = false; // Woman Construction Worker ({Construction Worker}{ZWJ}{Female Sign})
+```
 
 男の建築作業員はよくて女の建築作業員はダメなのか！
 

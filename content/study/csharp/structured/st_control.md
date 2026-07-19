@@ -42,19 +42,19 @@ C# では、if, switch（条件分岐）や while, for, foreach（反復）と�
 
 C# で書くと以下のようになります。
 
-<pre class="source" title="n 個の整数の中から、正の数だけの和を求める処理" lang="">
-<code><span class="reserved">int</span> sum = 0;
-<span class="reserved">int</span> i = 0;
-<span class="reserved">while</span> (i &lt; N)
+```csharp
+int sum = 0;
+int i = 0;
+while (i < N)
 {
-    <span class="reserved">int</span> x = a[i];
-    <span class="reserved">if</span> (x &gt; 0)
+    int x = a[i];
+    if (x > 0)
     {
         sum = x + sum;
     }
     i = i + 1;
 }
-</code></pre>
+```
 
 
 if は条件分岐、while は反復処理、 a[i] は配列というものです
@@ -70,17 +70,17 @@ if は条件分岐、while は反復処理、 a[i] は配列というもので�
 </figure>
 
 
-<pre class="source" title="n 個の整数の中から、正の数だけの和を求める処理（for 文を利用）" lang="">
-<code><span class="reserved">int</span> sum = 0;
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; N; ++i)
+```csharp
+int sum = 0;
+for (int i = 0; i < N; ++i)
 {
-    <span class="reserved">int</span> x = a[i];
-    <span class="reserved">if</span> (x &gt; 0)
+    int x = a[i];
+    if (x > 0)
     {
         sum = x + sum;
     }
 }
-</code></pre>
+```
 
 
 さらに言うと、「配列の各要素に対して処理を行う」というような反復が非常に多いです。
@@ -92,16 +92,16 @@ if は条件分岐、while は反復処理、 a[i] は配列というもので�
 </figure>
 
 
-<pre class="source" title="n 個の整数の中から、正の数だけの和を求める処理（foreach 文を利用）" lang="">
-<code><span class="reserved">int</span> sum = 0;
-<span class="reserved">foreach</span> (<span class="reserved">int</span> x <span class="reserved">in</span> a)
+```csharp
+int sum = 0;
+foreach (int x in a)
 {
-    <span class="reserved">if</span> (x &gt; 0)
+    if (x > 0)
     {
         sum = x + sum;
     }
 }
-</code></pre>
+```
 
 
 これらの構文の詳細は次節以降で行っていきます。

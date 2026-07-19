@@ -23,48 +23,48 @@ aliases:
 $ を使って変数の読み書きをする以外に、
 <strong id="set_variable" class="keyword">Set-Variable</strong> と <strong id="get_variable" class="keyword">Get-Variable</strong> という Cmdlet を使うことでも変数の読み書きができます。
 
-<pre class="console" title="Set-Variable, Get-Variable">
-<span class="prompt">&gt; </span> Set-Variable a 1
-<span class="prompt">&gt; </span> Get-Variable a
+```console
+>  Set-Variable a 1
+>  Get-Variable a
 
 Name                           Value
 ----                           -----
 a                              1
 
-<span class="prompt">&gt; </span> $a = 2
-<span class="prompt">&gt; </span> Get-Variable a
+>  $a = 2
+>  Get-Variable a
 
 Name                           Value
 ----                           -----
 a                              2
-</pre>
+```
 
 
 まあ、単に値を代入するだけなら Set-Variable は必要ないんですが、
 Set-Variable を使うと、
 ReadOnly / Constant 属性を付与することができます。
 
-<pre class="console" title="Set-Variable -option">
-<span class="prompt">&gt; </span> Set-Variable a 1 -option ReadOnly
-<span class="prompt">&gt; </span> $a = 0
+```console
+>  Set-Variable a 1 -option ReadOnly
+>  $a = 0
 変数 a は読み取り専用または定数であるため、上書きできません。
-</pre>
+```
 
 
 また、
 Get-Variable では任意のレベルのスコープの変数にアクセスしたりできます。
 
-<pre class="console" title="Get-Variable -scope">
-<span class="prompt">&gt; </span> Get-Variable a –scope 1  # 親スコープから値を取得
-<span class="prompt">&gt; </span> $Get-Variable a –scope 2  # 祖父
-</pre>
+```console
+>  Get-Variable a –scope 1  # 親スコープから値を取得
+>  $Get-Variable a –scope 2  # 祖父
+```
 
 
 その他、<strong id="remove_variable" class="keyword">Remove-Variable</strong> で変数を削除したりもできます。
 
-<pre class="console" title="Remove-Variable">
-<span class="prompt">&gt; </span> $a = 0
-<span class="prompt">&gt; </span> Remove-Variable a
-<span class="prompt">&gt; </span> Get-Variable a
+```console
+>  $a = 0
+>  Remove-Variable a
+>  Get-Variable a
 Get-Variable : 名前 'a' の変数が見つかりません。
-</pre>
+```

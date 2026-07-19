@@ -44,12 +44,12 @@ C# コンパイラーは現在(というかそれぞれ C# 6.0 世代と C# 9.0 
 C# チームや .NET チームが公式に提供する機能としても、今はコンパイラーの内部に実装するよりも、プラグインとして実装するものが増えています。
 例えば、以下のコードを書いたとします。
 
-<pre class="source" title="C# の文法としては問題ないものの、修正したくなるコード">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">int</span> x;
+    int x;
 }
-</code></pre>
+```
 
 C# の文法上は特に問題のない書き方なんですが、推奨されているコーディング規約としては、[アクセシビリティ](../oop/oo_conceal.md#level)を明示(`private` 修飾子を付けた方がいい)と言うことになっています。
 こういう、「文法としては間違っていないけども、規約的には推奨されていない」みたいなものに対する情報はプラグインとして提供されていたりします。
@@ -69,24 +69,24 @@ C# の文法上は特に問題のない書き方なんですが、推奨され�
 
 例えば、[クエリ式](../data/sp3_linq.md#query)がわかりやすい例ですが、以下のコードの `a`、`b`、`c` の3行は全く同じ意味のコードになります。
 
-<pre class="source" title="クエリ式の展開結果">
-<code><span class="reserved">using</span> System.Linq;
+```csharp
+using System.Linq;
  
-<span class="reserved">var</span> <span class="variable">data</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4 };
+var data = new[] { 1, 2, 3, 4 };
  
-<span class="reserved">var</span> <span class="variable">a</span> =
-    <span class="reserved">from</span> x <span class="reserved">in</span> <span class="variable">data</span>
-    <span class="reserved">where</span> x &gt; 2
-    <span class="reserved">select</span> x * x;
+var a =
+    from x in data
+    where x > 2
+    select x * x;
  
-<span class="reserved">var</span> <span class="variable">b</span> = <span class="variable">data</span>
-    .<span class="method">Where</span>(<span class="variable">x</span> =&gt; <span class="variable">x</span> &gt; 2)
-    .<span class="method">Select</span>(<span class="variable">x</span> =&gt; <span class="variable">x</span> * <span class="variable">x</span>);
+var b = data
+    .Where(x => x > 2)
+    .Select(x => x * x);
  
-<span class="reserved">var</span> <span class="variable">c</span> = <span class="type">Enumerable</span>.<span class="method">Select</span>(
-    <span class="type">Enumerable</span>.<span class="method">Where</span>(<span class="variable">data</span>, <span class="variable">x</span> =&gt; <span class="variable">x</span> &gt; 2),
-    <span class="variable">x</span> =&gt; <span class="variable">x</span> * <span class="variable">x</span>);
-</code></pre>
+var c = Enumerable.Select(
+    Enumerable.Where(data, x => x > 2),
+    x => x * x);
+```
 
 `a`の行と`b`の行のどちらが読みやすいかは好みの問題になったりしますが、`c`の行は少し読みにくいと思います。
 [クエリ式](../data/sp3_linq.md#query)や[拡張メソッド](../functional/sp3_extension.md#exmethod)はこういう、原理的には他の書き方もできるけど、書きやすさのために使う構文糖衣です。
@@ -99,40 +99,41 @@ C# の文法上は特に問題のない書き方なんですが、推奨され�
 
 例えば、以下のようなコードを書きたい場面があるわけですが、
 
-<pre class="source" title="PropertyChanged の実装">
-<code><span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.ComponentModel;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
  
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">INotifyPropertyChanged</span>
+class C : INotifyPropertyChanged
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">PropertyChangedEventHandler</span>? PropertyChanged;
-    <span class="reserved">protected</span> <span class="reserved">void</span> <span class="method">OnPropertyChanged</span>(<span class="type">PropertyChangedEventArgs</span> <span class="variable">args</span>)
-        =&gt; PropertyChanged?.<span class="method">Invoke</span>(<span class="reserved">this</span>, <span class="variable">args</span>);
-    <span class="reserved">protected</span> <span class="reserved">void</span> <span class="method">SetValue</span>&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> <span class="variable">store</span>, <span class="type">T</span> <span class="variable">value</span>, [<span class="type">CallerMemberName</span>] <span class="reserved">string</span>? <span class="variable">propertyName</span> = <span class="reserved">null</span>)
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged(PropertyChangedEventArgs args)
+        => PropertyChanged?.Invoke(this, args);
+    protected void SetValue<T>(ref T store, T value, [CallerMemberName] string? propertyName = null)
     {
-        <span class="control">if</span> (!<span class="type">EqualityComparer</span>&lt;<span class="type">T</span>&gt;.Default.<span class="method">Equals</span>(<span class="variable">store</span>, <span class="variable">value</span>))
+        if (!EqualityComparer<T>.Default.Equals(store, value))
         {
-            <span class="variable">store</span> = <span class="variable">value</span>;
-            <span class="method">OnPropertyChanged</span>(<span class="reserved">new</span>(<span class="variable">propertyName</span>));
+            store = value;
+            OnPropertyChanged(new(propertyName));
         }
     }
  
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span> =&gt; _x; <span class="reserved">set</span> =&gt; <span class="method">SetValue</span>(<span class="reserved">ref</span> _x, <span class="reserved">value</span>); }
+    private int _x;
+    public int X { get => _x; set => SetValue(ref _x, value); }
 }
- </code></pre>
+ 
+```
 
 このコードのうち、実質的に意味を持っているのは「`X` プロパティを持っていて、それに `PropertyChanged` を実装したい」というだけです。
 だったら、以下のような簡素なコードから複雑なコードを「コード生成」したいという話になります。
 
-<pre class="source" title="上記コードのうち意味のある部分(このコードを元にコード生成してほしい)">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    [<span class="type">AutoNotify</span>] <span class="comment">// 一例。こういう属性が欲しいという話。</span>
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
+    [AutoNotify] // 一例。こういう属性が欲しいという話。
+    private int _x;
 }
-</code></pre>
+```
 
 本当に限られた場面でですが、その場面に行き当たった人にとっては非常に欲しくなる機能です。
 
@@ -145,25 +146,25 @@ generator のサンプルを提供しています。
 
 この generator を使うと、上記の `AutoNotify` 属性付きのフィールドから以下のようなソースコードを生成します。
 
-<pre class="source" title="上記のコードからの自動生成物">
-<code><span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">C</span> : System.ComponentModel.<span class="type">INotifyPropertyChanged</span>
+```csharp
+public partial class C : System.ComponentModel.INotifyPropertyChanged
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> System.ComponentModel.<span class="type">PropertyChangedEventHandler</span> PropertyChanged;
-    <span class="reserved">public</span> <span class="reserved">int</span> X
+    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    public int X
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="control">return</span> <span class="reserved">this</span>._x;
+            return this._x;
         }
  
-        <span class="reserved">set</span>
+        set
         {
-            <span class="reserved">this</span>._x = <span class="reserved">value</span>;
-            <span class="reserved">this</span>.PropertyChanged?.<span class="method">Invoke</span>(<span class="reserved">this</span>, <span class="reserved">new</span> System.ComponentModel.<span class="type">PropertyChangedEventArgs</span>(<span class="reserved">nameof</span>(X)));
+            this._x = value;
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(X)));
         }
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="tool-vs-plugin"></a>外部ツール VS プラグイン
 
@@ -179,12 +180,12 @@ C# では、書いたところからリアルタイムにコンパイルが掛�
 
 例えば以下のようなコードを書いたとします。
 
-<pre class="source" title="警告が出るソースコードの例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">var</span> <span class="variable">x</span> = 1;
-<span class="reserved">var</span> <span class="warning"><span class="variable">y</span></span> = 2;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
-</code></pre>
+```csharp
+using System;
+var x = 1;
+var y = 2;
+Console.WriteLine(x);
+```
 
 変数 `y` が未使用(何の役にも立っていない)のでミスの可能性が高いコードです。
 そこで、C# コンパイラーはこの役に立たないコードに対して警告を出してくれるんですが、
@@ -230,46 +231,46 @@ C#/.NET チームによる公式提供のものは .NET SDK や Visual Studio �
 通常は「コピーされてまずいなら構造体を使うな」という方針にすることが多いです。
 ただ、パフォーマンス的にどうしても構造体にした上でコピーを禁止したいという場面がまれにあって、そういう場合に使います。
 
-<pre class="source" title="構造体のコピーを禁止">
-<code><span class="comment">// NonCopyableAnalyzer の機能:</span>
-<span class="type">S</span> <span class="variable">s1</span> = <span class="reserved">new</span>();
-<span class="type">S</span> <span class="variable">s2</span> = <span class="error"><span class="variable">s1</span></span>; <span class="comment">// 構造体の代入(コピー)を禁止する</span>
+```csharp
+// NonCopyableAnalyzer の機能:
+S s1 = new();
+S s2 = s1; // 構造体の代入(コピー)を禁止する
  
-[<span class="type">NonCopyable</span>]
-<span class="reserved">struct</span> <span class="type">S</span> { }
-</code></pre>
+[NonCopyable]
+struct S { }
+```
 
 StringLiteralGenerator は C# の通常の[文字列リテラル](../start/st_embeddedtype.md#stringl)から UTF-8 のバイト列を生成するものです。
 例えば以下のようなコードを書いて、
 
-<pre class="source" title="UTF-8 バイト列の生成元の例">
-<code><span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Literal</span>
+```csharp
+partial class Literal
 {
-    [<span class="type">Utf8</span>(<span class="string">&quot;aあ</span><span style="color:#b776fb;">😀</span><span class="string">&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="method">M</span>();
+    [Utf8("aあ😀")]
+    public static partial ReadOnlySpan<byte> M();
 }
-</code></pre>
+```
 
 以下のようなコードを自動生成します。
 
-<pre class="source" title="UTF-8 バイト列の生成結果の例">
-<code><span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Literal</span>
+```csharp
+partial class Literal
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> System.ReadOnlySpan&lt;<span class="reserved">byte</span>&gt; <span class="method">M</span>() =&gt; <span class="reserved">new</span> <span class="reserved">byte</span>[] {97, 227, 129, 130, 240, 159, 152, 128, };
+    public static partial System.ReadOnlySpan<byte> M() => new byte[] {97, 227, 129, 130, 240, 159, 152, 128, };
 }
-</code></pre>
+```
 
 どちらも読みやすさや書きやすさよりもパフォーマンスを最優先したい場合に限って使えるもので、あまり汎用に使えるものではありません。
 汎用的でないからこそプラグインに向いているものです。
 
 [以下のようなパッケージ参照](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2021/AnalyzerPackageReference/AnalyzerPackageReference/AnalyzerPackageReference.csproj#L8-L11)をすることでこれらのプラグインを追加できます。
 
-<pre class="xsource" title="パッケージ参照の例(csproj 内に以下の行を追加)">
-<code><span class="attvalue">  &lt;</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">PackageReference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>&quot;<span class="attvalue">NonCopyableAnalyzer</span>&quot;<span class="attvalue"> </span><span class="attribute">Version</span><span class="attvalue">=</span>&quot;<span class="attvalue">0.6.0</span>&quot;<span class="attvalue"> /&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">PackageReference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>&quot;<span class="attvalue">StringLiteralGenerator</span>&quot;<span class="attvalue"> </span><span class="attribute">Version</span><span class="attvalue">=</span>&quot;<span class="attvalue">1.0.1</span>&quot;<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+  <ItemGroup>
+    <PackageReference Include="NonCopyableAnalyzer" Version="0.6.0" />
+    <PackageReference Include="StringLiteralGenerator" Version="1.0.1" />
+  </ItemGroup>
+```
 
 ## <a id="sec-generated-title-6"></a> <a id="empty-body">括弧の省略</a>
 
@@ -285,28 +286,28 @@ C# 12 から、`class A;` というように、クラスの本体の `{}` を省
 一例が `System.Text.Json` なんですが、
 以下のように、[`JsonSerializable` 属性](https://learn.microsoft.com/ja-jp/dotnet/api/system.text.json.serialization.jsonserializableattribute)を使ったコード生成をします。
 
-<pre class="source" title="コード生成だよりで中身空っぽのクラスの例">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>Json<span class="operator">.</span>Serialization;
+```csharp
+using System.Text.Json.Serialization;
 
-<span class="comment">// JsonSerializable 属性を付けていると、シリアライズ処理に必要なメンバーをコード生成する。</span>
-[<span class="type">JsonSerializable</span>(<span class="reserved">typeof</span>(<span class="type">Person</span>))]
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">MyJsonContext</span> : <span class="type">JsonSerializerContext</span>
+// JsonSerializable 属性を付けていると、シリアライズ処理に必要なメンバーをコード生成する。
+[JsonSerializable(typeof(Person))]
+partial class MyJsonContext : JsonSerializerContext
 {
-    <span class="comment">// 手書きでは何もする必要がないので空っぽ。</span>
+    // 手書きでは何もする必要がないので空っぽ。
 }
 
-<span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable local">FirstName</span>, <span class="reserved">string</span> <span class="variable local">LastName</span>);
-</pre>
+record Person(string FirstName, string LastName);
+```
 
 ここで `{}` の省略が使えます。
 たかだか2行、1文字の差ですが、以下のように書けるようになります。
 
-<pre class="source" title="中身空っぽなら ; を使おうという例">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>Json<span class="operator">.</span>Serialization;
+```csharp
+using System.Text.Json.Serialization;
 
-<span class="comment">// JsonSerializable 属性を付けていると、シリアライズ処理に必要なメンバーをコード生成する。</span>
-[<span class="type">JsonSerializable</span>(<span class="reserved">typeof</span>(<span class="type">Person</span>))]
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">MyJsonContext</span> : <span class="type">JsonSerializerContext</span>;
+// JsonSerializable 属性を付けていると、シリアライズ処理に必要なメンバーをコード生成する。
+[JsonSerializable(typeof(Person))]
+partial class MyJsonContext : JsonSerializerContext;
 
-<span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable local">FirstName</span>, <span class="reserved">string</span> <span class="variable local">LastName</span>);
-</pre>
+record Person(string FirstName, string LastName);
+```

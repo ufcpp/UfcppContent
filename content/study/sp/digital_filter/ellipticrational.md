@@ -67,11 +67,11 @@ exp
 ヤコビの楕円関数の詳細は
 「[ヤコビの楕円関数](../../math/elliptic/jacobi.md#abstract)」 
 参照。
-<pre>
+```text
 関数のグラフ。
 ↑の導出の過程。
 零点と極 → 有理式で表す。
-</pre>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="memo"></a>メモ
 

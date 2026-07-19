@@ -21,7 +21,7 @@ aliases:
 ## <a id="sec-generated-title-1"></a> <a id="plan"></a>執筆予定
 
 <strong id="fir" class="keyword">FIRフィルタ</strong>とは
-<pre>
+```text
 概要、FIRフィルタの特徴
  フィードバックなし
  IRがかならず有限長
@@ -42,7 +42,7 @@ aliases:
   もしくは、数値解析的な手法（例えば、Remez法）を使って等リプル化したり。
 
  最小位相化（次数が少なめで済む）したりすることも。
-</pre>
+```
 伝達関数
 <div class="math">
 Y

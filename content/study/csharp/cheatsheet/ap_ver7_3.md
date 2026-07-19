@@ -48,15 +48,15 @@ C# 7.0 以降の「小数点リリース」も3つ目となりました。
 タプル同士を `==`、`!=` 演算子で比較できるようになりました。
 以下のように、メンバーごとの`==`を[`&&`](../start/st_operator.md#short-circuit)で繋いだものに展開されます。
 
-<pre class="source" title="タプル ==">
-<code><span class="reserved">void</span> M((<span class="reserved">int</span> a, (<span class="reserved">int</span> x, <span class="reserved">int</span> y) b) t)
+```csharp
+void M((int a, (int x, int y) b) t)
 {
-    <span class="comment">// このタプル == 比較は、</span>
-    <span class="type">Console</span>.WriteLine(t == (1, (2, 3)));
-    <span class="comment">// こんな感じで、メンバーごとの == を &amp;&amp; で繋いだものに展開される。</span>
-    <span class="type">Console</span>.WriteLine(t.a == 1 &amp;&amp; t.b.x == 2 &amp;&amp; t.b.y == 3);
+    // このタプル == 比較は、
+    Console.WriteLine(t == (1, (2, 3)));
+    // こんな感じで、メンバーごとの == を && で繋いだものに展開される。
+    Console.WriteLine(t.a == 1 && t.b.x == 2 && t.b.y == 3);
 }
-</code></pre>
+```
 
 詳しくは「[==、!= での比較](../datatype/tuples.md#equality)」で説明します。
 
@@ -65,25 +65,25 @@ C# 7.0 以降の「小数点リリース」も3つ目となりました。
 参照引数、参照ローカル変数に対して、
 参照先の値の書き換えではなく、「どこを参照しているか」自体を書き換えることができるようになりました。
 
-<pre class="source" title="ref 再代入">
-<code><span class="reserved">int</span> x = 1;
-<span class="reserved">int</span> y = 2;
+```csharp
+int x = 1;
+int y = 2;
 
-<span class="comment">// x を参照。</span>
-<span class="reserved">ref</span> var r = <span class="reserved">ref</span> x;
+// x を参照。
+ref var r = ref x;
 
-<span class="comment">// このとき、r に対する代入は x に反映される。</span>
-r = 10; <span class="comment">// x が 10 になる。</span>
+// このとき、r に対する代入は x に反映される。
+r = 10; // x が 10 になる。
 
-<span class="comment">// これが ref 再代入。</span>
-<span class="comment">// r が y を参照するようになる。</span>
-r = <span class="reserved"><em>ref</em></span> y;
+// これが ref 再代入。
+// r が y を参照するようになる。
+r = ref y;
 
-<span class="comment">// 今度は、r に対する代入が y に反映される。</span>
-r = 20; <span class="comment">// y が 20 になる。</span>
+// 今度は、r に対する代入が y に反映される。
+r = 20; // y が 20 になる。
 
-<span class="type">Console</span>.WriteLine((x, y)); <span class="comment">// (10, 20)</span>
-</code></pre>
+Console.WriteLine((x, y)); // (10, 20)
+```
 
 また、同時に、`for`ステートメントと`foreach`ステートメントのループ変数を参照ローカル変数にできるようになりました。
 
@@ -103,36 +103,36 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 - [クエリ式](../start/st_scope.md#query-expression)
 - [初期化子](../start/st_scope.md#initializer)
 
-<pre class="source" title="クエリ式中での変数宣言">
-<code><span class="reserved">var</span> q =
-    <span class="reserved">from</span> s <span class="reserved">in</span> <span class="reserved">new</span>[] { <span class="string">"a"</span>, <span class="string">"abc"</span>, <span class="string">"112"</span>, <span class="string">"132"</span>, <span class="string">"451"</span>, <span class="reserved">null</span> }
-    <span class="reserved">where</span> s <span class="reserved">is</span> <span class="reserved">string</span> <em>x</em> &amp;&amp; x.Length &gt; 1
-    <span class="reserved">where</span> <span class="reserved">int</span>.TryParse(s, <span class="reserved">out var</span> <em>x</em>) &amp;&amp; (x % 3) == 0
-    <span class="reserved">select</span> s;
-</code></pre>
+```csharp
+var q =
+    from s in new[] { "a", "abc", "112", "132", "451", null }
+    where s is string x && x.Length > 1
+    where int.TryParse(s, out var x) && (x % 3) == 0
+    select s;
+```
 
-<pre class="source" title="初期化子内での変数宣言">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">base</span>
+class Derived : base
 {
-    <span class="reserved">public</span> Derived(<span class="reserved">string</span> s) : <span class="reserved">this</span>(<span class="reserved">int</span>.TryParse(s, <span class="reserved">out var</span> <em>x</em>) ? x : -1)
+    public Derived(string s) : this(int.TryParse(s, out var x) ? x : -1)
     {
-        <span class="comment">// コンストラクター初期化子中で宣言した x は、コンストラクター本体内で利用可能。</span>
-        <span class="type">Console</span>.WriteLine(x);
+        // コンストラクター初期化子中で宣言した x は、コンストラクター本体内で利用可能。
+        Console.WriteLine(x);
     }
 
-    <span class="reserved">public</span> Derived(<span class="reserved">int</span> a) : <span class="reserved">base</span>(<span class="reserved">out var</span> <em>x</em>)
+    public Derived(int a) : base(out var x)
     {
-        <span class="comment">// base の場合でも同様。</span>
-        <span class="type">Console</span>.WriteLine(x);
+        // base の場合でも同様。
+        Console.WriteLine(x);
     }
 
-    <span class="comment">// フィールド初期化子、プロパティ初期化子中で宣言した x は、その初期化子内でのみ有効。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Field = <span class="reserved">int</span>.TryParse(<span class="string">"123"</span>, <span class="reserved">out var</span> <em>x</em>) ? x : -1;
-    <span class="reserved">public</span> <span class="reserved">int</span> Property{ <span class="reserved">get</span>; <span class="reserved">set</span>; } = <span class="reserved">int</span>.TryParse(<span class="string">"123"</span>, <span class="reserved">out var</span> <em>x</em>) ? x : -1;
+    // フィールド初期化子、プロパティ初期化子中で宣言した x は、その初期化子内でのみ有効。
+    public int Field = int.TryParse("123", out var x) ? x : -1;
+    public int Property{ get; set; } = int.TryParse("123", out var x) ? x : -1;
 }
-</code></pre>
+```
 
 詳しくは「[C# 7での新しいスコープ ルール](../start/st_scope.md#csharp7)」で説明します。
 
@@ -179,38 +179,38 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 
 例えば、型制約だと、以下のような拡張メソッドの呼び分けができるようになりました。
 
-<pre class="source" title="class 制約と struct 制約の呼び分け">
-<code><span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Linq;
+```csharp
+using System.Collections.Generic;
+using System.Linq;
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">ClassExtensions</span>
+static class ClassExtensions
 {
-    <span class="comment">// クラスの場合は LINQ の FirstOrDefault そのまま。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> FirstOrNull&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt; source)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
-        =&gt; source.FirstOrDefault();
+    // クラスの場合は LINQ の FirstOrDefault そのまま。
+    public static T FirstOrNull<T>(this IEnumerable<T> source)
+        where T : class
+        => source.FirstOrDefault();
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">StructExtensions</span>
+static class StructExtensions
 {
-    <span class="comment">// 構造体の場合は null 許容型に変える必要がある。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span>? FirstOrNull&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt; source)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span>
-        =&gt; source.Select(x =&gt; (<span class="type">T</span>?)x).FirstOrDefault();
+    // 構造体の場合は null 許容型に変える必要がある。
+    public static T? FirstOrNull<T>(this IEnumerable<T> source)
+        where T : struct
+        => source.Select(x => (T?)x).FirstOrDefault();
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// ClassExtensions の方のが呼ばれる。</span>
-        <span class="reserved">new</span>[] { <span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span> }.FirstOrNull();
+        // ClassExtensions の方のが呼ばれる。
+        new[] { "a", "b", "c" }.FirstOrNull();
 
-        <span class="comment">// StructExtensions の方のが呼ばれる。</span>
-        <span class="reserved">new</span>[] { 1, 2, 3 }.FirstOrNull();
+        // StructExtensions の方のが呼ばれる。
+        new[] { 1, 2, 3 }.FirstOrNull();
     }
 }
-</code></pre>
+```
 
 詳しくは「[[雑記]オーバーロード解決](../structured/miscoverloadresolution.md)」で説明します。
 
@@ -219,55 +219,55 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 `stackalloc`に対して、配列と同じような初期化子を使えるようになりました。
 配列同様、初期化子中の要素の型からの推論も効きます。
 
-<pre class="source" title="">
-<code><span class="comment">// 初期化子。{ } を使って初期値を与えられる。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x1 = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[3] { 0xEF, 0xBB, 0xBF };
+```csharp
+// 初期化子。{ } を使って初期値を与えられる。
+Span<int> x1 = stackalloc int[3] { 0xEF, 0xBB, 0xBF };
 
-<span class="comment">// 初期化子があるとき、サイズは省略可能。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x2 = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[] { 0xEF, 0xBB, 0xBF };
+// 初期化子があるとき、サイズは省略可能。
+Span<int> x2 = stackalloc int[] { 0xEF, 0xBB, 0xBF };
 
-<span class="comment">// 初期化子から推論できるときは型名も省略可能。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x3 = <span class="reserved">stackalloc</span>[] { 0xEF, 0xBB, 0xBF };
-</code></pre>
+// 初期化子から推論できるときは型名も省略可能。
+Span<int> x3 = stackalloc[] { 0xEF, 0xBB, 0xBF };
+```
 
 ## <a id="sec-generated-title-7"></a> <a id="custom-fixed"></a>ユーザー定義型の fixed ステートメント利用
 
 所定のパターンを満たす型に対して `fixed` ステートメントが使えるようになりました。
 以下のように、`GetPinnableReference`という名前のメソッドを用意すれば使えます。
 
-<pre class="source" title="ユーザー定義型に対する fixed ステートメント">
-<code><span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Array</span>&lt;<span class="type">T</span>&gt;
+```csharp
+readonly struct Array<T>
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">T</span>[] _array;
-    <span class="reserved">public</span> Array(<span class="reserved">int</span> length) =&gt; _array = <span class="reserved">new</span> <span class="type">T</span>[length];
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] =&gt; <span class="reserved">ref</span> _array[index];
-    <span class="reserved">public</span> <span class="reserved">int</span> Length =&gt; _array.Length;
+    private readonly T[] _array;
+    public Array(int length) => _array = new T[length];
+    public ref T this[int index] => ref _array[index];
+    public int Length => _array.Length;
 
-    <span class="comment">// このメソッドがあれば fixed ステートメントを使えるようになる</span>
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> GetPinnableReference() =&gt; <span class="reserved">ref</span> _array[0];
+    // このメソッドがあれば fixed ステートメントを使えるようになる
+    public ref T GetPinnableReference() => ref _array[0];
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">Array</span>&lt;<span class="reserved">int</span>&gt;(5);
+        var a = new Array<int>(5);
 
-        <span class="reserved">unsafe</span>
+        unsafe
         {
-            <span class="comment">// fixed (int* p = &amp;a.GetPinnableReference()) に展開される。</span>
-            <span class="reserved">fixed</span> (<span class="reserved">int</span>* p = a)
+            // fixed (int* p = &a.GetPinnableReference()) に展開される。
+            fixed (int* p = a)
             {
-                <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++)
+                for (int i = 0; i < 5; i++)
                     p[i] = i;
             }
         }
 
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++)
-            System.<span class="type">Console</span>.WriteLine(a[i]);
+        for (int i = 0; i < 5; i++)
+            System.Console.WriteLine(a[i]);
     }
 }
-</code></pre>
+```
 
 詳しくは「[ユーザー定義型の fixed ステートメント利用](../interop/sp_unsafe.md#custom-fixed)」で説明します。
 
@@ -279,16 +279,16 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 
 前者は、[自動プロパティ](../oop/oo_property.md#auto)に対して `field` 指定の属性が付けられるようになりました。
 
-<pre class="source" title="自動プロパティが内部的に生成しているフィールドへの属性付け">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">XAttribute</span> : <span class="type">Attribute</span> { }
+class XAttribute : Attribute { }
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    [<span class="reserved">field</span>:<span class="type">X</span>] <span class="comment">// 自動実装で生成されるフィールドに対する属性の指定</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> AutoProperty { <span class="reserved">get</span>; }
-</code></pre>
+    [field:X] // 自動実装で生成されるフィールドに対する属性の指定
+    public int AutoProperty { get; }
+```
 
 詳しくは「[プロパティ、イベントと属性の対象](../dynamic/sp_attribute.md#auto-impl)」で説明します。
 
@@ -297,34 +297,34 @@ C# 7.3で、これまではできなかった以下の個所でも変数宣言�
 [固定長バッファー](../interop/sp_unsafe.md#fixed-buffer)の読み書きをする際、
 [`fixed`ステートメント](../interop/sp_unsafe.md#fixed)が不要になる場面が増えたそうです。
 
-<pre class="source" title="fixed なしで固定長バッファーの読み書き">
-<code><span class="reserved">unsafe</span> <span class="reserved">struct</span> <span class="type">Buffer</span>
+```csharp
+unsafe struct Buffer
 {
-    <span class="reserved">public</span> <span class="reserved">fixed</span> <span class="reserved">byte</span> A[8];
+    public fixed byte A[8];
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="type">Buffer</span> _buffer;
+    static Buffer _buffer;
 
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    unsafe static void Main()
     {
-        <span class="reserved">var</span> buffer = <span class="reserved">new</span> <span class="type">Buffer</span>();
-        buffer.A[0] = 1; <span class="comment">// 元々 OK</span>
-        _buffer.A[0] = 2; <span class="comment">// C# 7.3 から OK</span>
+        var buffer = new Buffer();
+        buffer.A[0] = 1; // 元々 OK
+        _buffer.A[0] = 2; // C# 7.3 から OK
 
-        RefFixedBuffer(<span class="reserved">ref</span> buffer);
+        RefFixedBuffer(ref buffer);
 
-        System.<span class="type">Console</span>.WriteLine(buffer.A[0]);  <span class="comment">// 元々 OK</span>
-        System.<span class="type">Console</span>.WriteLine(_buffer.A[0]); <span class="comment">// C# 7.3 から OK</span>
+        System.Console.WriteLine(buffer.A[0]);  // 元々 OK
+        System.Console.WriteLine(_buffer.A[0]); // C# 7.3 から OK
     }
 
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> RefFixedBuffer(<span class="reserved">ref</span> <span class="type">Buffer</span> buffer)
+    unsafe static void RefFixedBuffer(ref Buffer buffer)
     {
-        buffer.A[1] = 3; <span class="comment">// C# 7.3 から OK</span>
+        buffer.A[1] = 3; // C# 7.3 から OK
     }
 }
-</code></pre>
+```
 
 [提案文書](https://github.com/dotnet/csharplang/blob/master/proposals/csharp-7.3/indexing-movable-fixed-fields.md)にすら、「言語仕様上どうしてこの条件緩和が許されるのかを説明するのが難しい」とか書かれる始末な機能です…
 

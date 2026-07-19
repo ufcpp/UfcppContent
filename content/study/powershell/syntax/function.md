@@ -34,14 +34,14 @@ PowerShell では、
 
 呼び出しは、単に関数名を記述するだけです。
 
-<pre class="console" title="関数の定義">
-<span class="prompt">&gt; </span> function f { pwd }
-<span class="prompt">&gt; </span> f
+```console
+>  function f { pwd }
+>  f
 
 Path
 ----
 C:\Users\Public
-</pre>
+```
 
 
 
@@ -61,16 +61,16 @@ PowerShell の関数は引数を持てるんですが、
 「f param1 param2 param3」というように引数を与えると、
 param1, param2, param3 が自動的に配列 $args に格納されます。
 
-<pre class="console" title="$args 自動変数">
-<span class="prompt">&gt; </span> function f { $args.Length }
-<span class="prompt">&gt; </span> f a b c
+```console
+>  function f { $args.Length }
+>  f a b c
 3
-<span class="prompt">&gt; </span> f 1 2 3 4
+>  f 1 2 3 4
 4
-<span class="prompt">&gt; </span> function f { $args[0] * $args[1] }
-<span class="prompt">&gt; </span> f 2 3
+>  function f { $args[0] * $args[1] }
+>  f 2 3
 6
-</pre>
+```
 
 
 ちなみに、関数の呼び出しはコマンド扱いです（引数の取り方は「[コマンドモード](basic.md#commandmode)」になる）。
@@ -79,22 +79,22 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 明示的に引数を宣言する構文もあります。
 関数名の後ろに、「function f($x, $y)」というように引数リストを書きます。
 
-<pre class="console" title="引数リスト">
-<span class="prompt">&gt; </span> function f($x, $y) { $x * $y }
-<span class="prompt">&gt; </span> f 2 3
+```console
+>  function f($x, $y) { $x * $y }
+>  f 2 3
 6
-</pre>
+```
 
 
 もう1つ、param キーワードを使う方法があります。
 関数名の後とかではなくて、
 関数本体内部に param($x, $y) というような書き方をします。
 
-<pre class="console" title="param キーワード">
-<span class="prompt">&gt; </span> function f { param($x, $y); $x * $y }
-<span class="prompt">&gt; </span> f 2 3
+```console
+>  function f { param($x, $y); $x * $y }
+>  f 2 3
 6
-</pre>
+```
 
 
 関数では、普通に引数リストを書けばいい話なので、
@@ -108,28 +108,28 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 引数リストによる方法と、param キーワードを使う方法では、
 引数の型を明示することもできます。
 
-<pre class="console" title="引数の型の明示">
-<span class="prompt">&gt; </span> function f([int]$x, [int]$y) { $x * $y }
-<span class="prompt">&gt; </span> f 2 3
+```console
+>  function f([int]$x, [int]$y) { $x * $y }
+>  f 2 3
 6
-<span class="prompt">&gt; </span> f 2.2 3.4
-<span class="comment"># ↓ int に型変換される</span>
+>  f 2.2 3.4
+# ↓ int に型変換される
 6
-</pre>
+```
 
 
 型を明示する場合としない場合とで、
 型変換によって挙動が代わる場合もあるので注意してください。
 （できるだけ型は明示すべき。）
 
-<pre class="console" title="型変換による挙動の変化">
-<span class="prompt">&gt; </span> function f($x, $y) { $x * $y }
-<span class="prompt">&gt; </span> f "2" 3
+```console
+>  function f($x, $y) { $x * $y }
+>  f "2" 3
 222
-<span class="prompt">&gt; </span> function f([int]$x, [int]$y) { $x * $y }
-<span class="prompt">&gt; </span> f "2" 3
+>  function f([int]$x, [int]$y) { $x * $y }
+>  f "2" 3
 6
-</pre>
+```
 
 
 
@@ -139,21 +139,21 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 （参照渡しに関しては、「[引数の参照渡し](../../csharp/resource/sp_ref.md)」参照。）
 参照渡しをするには、引数の前に [ref] をつけます。
 
-<pre class="console" title="[ref]">
-<span class="prompt">&gt; </span>function swap([ref]$a, [ref]$b) {
+```console
+> function swap([ref]$a, [ref]$b) {
   $t = $a.Value; $a.Value = $b.Value; $b.Value = $t
 }
 
-<span class="prompt">&gt; </span>$x = 1
-<span class="prompt">&gt; </span>$y = 2
-<span class="prompt">&gt; </span>$x, $y
+> $x = 1
+> $y = 2
+> $x, $y
 1
 2
-<span class="prompt">&gt; </span>swap ([ref]$x) ([ref]$y)
-<span class="prompt">&gt; </span>$x, $y
+> swap ([ref]$x) ([ref]$y)
+> $x, $y
 2
 1
-</pre>
+```
 
 
 ただし、上の例を見ての通り、
@@ -173,15 +173,15 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 「f -x 2 -y 3」と言うような書式でも関数の呼び出しが可能です。
 （オプション的な渡し方と、並べる順番による渡し方の併用も可能。）
 
-<pre class="console" title="名前付きパラメータ">
-<span class="prompt">&gt; </span> function f($x, $y) { $x * $y }
-<span class="prompt">&gt; </span> f -x 2 -y 3
+```console
+>  function f($x, $y) { $x * $y }
+>  f -x 2 -y 3
 6
-<span class="prompt">&gt; </span> f 2 -y 3
+>  f 2 -y 3
 6
-<span class="prompt">&gt; </span> f -x 2 3
+>  f -x 2 3
 6
-</pre>
+```
 
 
 
@@ -193,17 +193,17 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 デフォルト値の設定の書式は、
 引数リスト（もしくは param）で変数を宣言する際に、値を代入しておくだけです。
 
-<pre class="console" title="引数のデフォルト値">
-<span class="prompt">&gt; </span> function f($x = 3, $y = 5) { $x * $y }
-<span class="prompt">&gt; </span> f
+```console
+>  function f($x = 3, $y = 5) { $x * $y }
+>  f
 15
-<span class="prompt">&gt; </span> f 2
+>  f 2
 10
-<span class="prompt">&gt; </span> f -x 2
+>  f -x 2
 10
-<span class="prompt">&gt; </span> f -y 2
+>  f -y 2
 6
-</pre>
+```
 
 
 
@@ -211,13 +211,13 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 
 関数中に return と書くと、そこで関数の処理を終了します。
 
-<pre class="console" title="return">
-<span class="prompt">&gt; </span> function f($x) { if($x -lt 5) {return}; $x }
-<span class="prompt">&gt; </span> f 3
-<span class="comment"># ↓ 値を出力する前に return してる</span>
-<span class="prompt">&gt; </span> f 5
+```console
+>  function f($x) { if($x -lt 5) {return}; $x }
+>  f 3
+# ↓ 値を出力する前に return してる
+>  f 5
 5
-</pre>
+```
 
 
 
@@ -228,28 +228,28 @@ param1, param2, param3 が自動的に配列 $args に格納されます。
 値を出力するコマンドを複数並べた場合、
 出力が配列になります。
 
-<pre class="console" title="戻り値">
-<span class="prompt">&gt; </span> function f {1; "test"; pwd}
-<span class="prompt">&gt; </span> f
+```console
+>  function f {1; "test"; pwd}
+>  f
 1
 test
 
 Path
 ----
 C:\Users\Public
-</pre>
+```
 
 
 return の後ろに戻り値を書くこともできますが、
 まあ、どこに書いても戻り値が出力されちゃうんで、あんまり意味もないです。
 
-<pre class="console" title="return で戻り値">
-<span class="prompt">&gt; </span> function f { 1; 2; return 3}
-<span class="prompt">&gt; </span> f
+```console
+>  function f { 1; 2; return 3}
+>  f
 1
 2
 3
-</pre>
+```
 
 
 で、気をつけないといけないのは、
@@ -259,38 +259,38 @@ return の後ろに戻り値を書くこともできますが、
 ちゃんと変数で戻り値を受け取るか、
 [void] を書いておかないと不要な値が出力されてしまいます。
 
-<pre class="console" title="戻り値をちゃんと受け取らないと">
-<span class="prompt">&gt; </span> function parse($str)
+```console
+>  function parse($str)
 {
   [int] $local:a = 0;
   [int]::TryParse($str, [ref]$local:a)
-<span class="comment"># ↓ TryParse が結果を返すことを忘れると</span>
+# ↓ TryParse が結果を返すことを忘れると
   $str
 }
 
-<span class="prompt">&gt; </span> parse "128"
+>  parse "128"
 True
-<span class="comment"># ↓ 不要な出力が混ざる</span>
+# ↓ 不要な出力が混ざる
 128
-<span class="prompt">&gt; </span> parse "test"
+>  parse "test"
 False
 0
-</pre>
+```
 
 
-<pre class="console" title="[void] で戻り値を消す">
-<span class="prompt">&gt; </span> function parse($str)
+```console
+>  function parse($str)
 {
   [int] $local:a = 0;
   [void][int]::TryParse($str, [ref]$local:a)
   $str
 }
 
-<span class="prompt">&gt; </span> parse "128"
+>  parse "128"
 128
-<span class="prompt">&gt; </span> parse "test"
+>  parse "test"
 0
-</pre>
+```
 
 
 
@@ -306,8 +306,8 @@ PowerShell の関数は、コマンド（Cmdlet や 外部スクリプト）と�
 $input という自動変数に格納されます。
 $input は Enumerator なので、foreach 文などを使って要素を参照します。
 
-<pre class="console" title="$input 自動変数">
-<span class="prompt">&gt; </span> function times([int] $a)
+```console
+>  function times([int] $a)
 {
   foreach($x in $input)
   {
@@ -315,11 +315,11 @@ $input は Enumerator なので、foreach 文などを使って要素を参照�
   }
 }
 
-<span class="prompt">&gt; </span> 1,2,3 | times 2
+>  1,2,3 | times 2
 2
 4
 6
-</pre>
+```
 
 
 
@@ -327,14 +327,14 @@ $input は Enumerator なので、foreach 文などを使って要素を参照�
 
 PowerShell の関数には、パイプライン処理専用の以下のような構文も用意されています。
 
-<pre class="console" title="begin, process, end">
-<span class="prompt">&gt; </span> function 関数名
+```console
+>  function 関数名
 {
-  begin   { <span class="input">最初に1回呼ばれる</span> }
-  process { <span class="input">パイプラインで受け取ったオブジェクトごとに呼ばれる</span> }
-  end     { <span class="input">最後に1回呼ばれる</span> }
+  begin   { 最初に1回呼ばれる }
+  process { パイプラインで受け取ったオブジェクトごとに呼ばれる }
+  end     { 最後に1回呼ばれる }
 }
-</pre>
+```
 
 
 パイプラインで受け取ったオブジェクトは $_ という自動変数に格納されます。
@@ -354,20 +354,20 @@ PowerShell の関数には、パイプライン処理専用の以下のような
 
 例えば、以下のように使います。
 
-<pre class="console" title="begin, process, end の例">
-<span class="prompt">&gt; </span> function f()
+```console
+>  function f()
 {
   begin   { $local:count = 0 }
   process { $_; $local:count += 1 }
   end     { "total {0} objects" -f $local:count }
 }
 
-<span class="prompt">&gt; </span> 1,2,3 | f
+>  1,2,3 | f
 1
 2
 3
 total 3 objects
-</pre>
+```
 
 
 
@@ -379,38 +379,38 @@ total 3 objects
 書式は関数とほとんど一緒なんですが、function の変わりに <strong id="keyfilter" class="keyword">filter</strong> キーワードを使って、
 「filter フィルタ名 { 処理内容 }」と書きます。
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span> filter square { $_ * $_}
-<span class="prompt">&gt; </span> 1,2,3 | square
+```console
+>  filter square { $_ * $_}
+>  1,2,3 | square
 1
 4
 9
-</pre>
+```
 
 
 関数と同様に、引数を取ったりもできます。
 
-<pre class="console" title="引数付きのフィルタ">
-<span class="prompt">&gt; </span> filter times($a) { $a * $_}
-<span class="prompt">&gt; </span> 1,2,3 | times 2
+```console
+>  filter times($a) { $a * $_}
+>  1,2,3 | times 2
 2
 4
 6
-</pre>
+```
 
 
 複数の戻り値を返すこともできます。
 
-<pre class="console" title="複数の戻り値を返すフィルタ">
-<span class="prompt">&gt; </span> filter duplicate { $_; $_ }
-<span class="prompt">&gt; </span> 1,2,3 | duplicate
+```console
+>  filter duplicate { $_; $_ }
+>  1,2,3 | duplicate
 1
 1
 2
 2
 3
 3
-</pre>
+```
 
 
 
@@ -420,9 +420,9 @@ total 3 objects
 匿名関数のような物も作れます。
 作り方は以下のような感じで、{} で囲ったコードを書くだけ。
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span> $block = { $a * $a }
-</pre>
+```console
+>  $block = { $a * $a }
+```
 
 
 これを、<strong id="scriptblock" class="keyword">スクリプトブロック</strong>と呼びます。
@@ -430,29 +430,29 @@ total 3 objects
 スクリプトブロックは、関数と同じように呼び出し可能なんですが、
 呼び出すためにはスクリプトブロックを代入した変数の前に &amp; を付ける必要があります。
 
-<pre class="console" title="スクリプトブロックの呼び出し">
-<span class="prompt">&gt; </span> $block = { $a * $a }
-<span class="prompt">&gt; </span> $block
-<span class="comment"># ↓ &amp; を付けないと、中身が表示される</span>
+```console
+>  $block = { $a * $a }
+>  $block
+# ↓ & を付けないと、中身が表示される
 $a * $a
-<span class="prompt">&gt; </span> $a = 2
-<span class="prompt">&gt; </span> &amp; $block
+>  $a = 2
+>  & $block
 4
-<span class="prompt">&gt; </span> $a = 3
-<span class="prompt">&gt; </span> &amp; $block
+>  $a = 3
+>  & $block
 9
-</pre>
+```
 
 
 &amp; 演算子の詳細については「[実行演算子](#execute)」で説明します。
 
 $args や param を使って引数を受け取ることもできます。
 
-<pre class="console" title="スクリプトブロックで引数を使う">
-<span class="prompt">&gt; </span> $block = { param($a); $a * $a }
-<span class="prompt">&gt; </span> &amp; $block 3
+```console
+>  $block = { param($a); $a * $a }
+>  & $block 3
 9
-</pre>
+```
 
 
 &amp; を使ったスクリプトブロックも、
@@ -464,11 +464,11 @@ $args や param を使って引数を受け取ることもできます。
 ScriptBlock 型は、Invoke メソッドを持っていて、
 この Invoke を呼び出すことでもスクリプトブロックの中身を実行可能です。
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span> $block = { $args[0] * $args[0] }
-<span class="prompt">&gt; </span> $block.Invoke(2)
+```console
+>  $block = { $args[0] * $args[0] }
+>  $block.Invoke(2)
 4
-</pre>
+```
 
 
 ただし、この記法だと param を使った引数は受け取れないので注意。
@@ -477,13 +477,13 @@ ScriptBlock 型は、Invoke メソッドを持っていて、
 &amp; で呼ぶ際には引数は「[コマンドモード](basic.md#commandmode)」で呼ぶのに対して、
 Invoke の方は () を使って , 区切りで与えるので注意してください。
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span> $block = { $args[0] * $args[1] }
-<span class="prompt">&gt; </span> &amp; $block 2 3
+```console
+>  $block = { $args[0] * $args[1] }
+>  & $block 2 3
 6
-<span class="prompt">&gt; </span> $block.Invoke(2, 3)
+>  $block.Invoke(2, 3)
 6
-</pre>
+```
 
 
 
@@ -510,24 +510,24 @@ process ブロック内では $_ も使えます。
 例えば、
 square.ps1 という名前のファイルに以下の内容を書いておいたとします。
 
-<pre class="source" title="square.ps1" lang="">
-<code>param($factor)
+```powershell
+param($factor)
 
 process
 {
   $factor * $_ * $_
 }
-</code></pre>
+```
 
 
 すると、以下のようなスクリプト呼び出しが可能です。
 
-<pre class="console" title="スクリプト呼び出し">
-<span class="prompt">&gt; </span> 1,2,3 | .\test.ps1 -factor 2
+```console
+>  1,2,3 | .\test.ps1 -factor 2
 2
 8
 18
-</pre>
+```
 
 
 
@@ -555,13 +555,13 @@ process
 
 3番目は以下のような感じ。
 
-<pre class="console" title="&amp; で文字列をコマンドとして実行">
-<span class="prompt">&gt; </span> &amp; "pwd"
+```console
+>  & "pwd"
 
 Path
 ----
 C:\Users\Public
-</pre>
+```
 
 
 ちなみに、これは、文字列内全体が1つのコマンドとみなされます。
@@ -592,13 +592,13 @@ C:\Users\Public
 
 例えば以下のコードを見てください。
 
-<pre class="console" title="普通の呼び出しは1段階下のスコープ">
-<span class="prompt">&gt; </span> function f { $x = 0 }
-<span class="prompt">&gt; </span> $x = 1
-<span class="prompt">&gt; </span> f
-<span class="prompt">&gt; </span> $x
+```console
+>  function f { $x = 0 }
+>  $x = 1
+>  f
+>  $x
 1
-</pre>
+```
 
 
 関数 f 内の $x と、呼び出し元で 1 を代入している $x は別物です。
@@ -609,13 +609,13 @@ C:\Users\Public
 これを . で呼び出すとどうなるかと言うと、
 以下の通り。
 
-<pre class="console" title="普通の呼び出しは1段階下のスコープ">
-<span class="prompt">&gt; </span> function f { $x = 0 }
-<span class="prompt">&gt; </span> $x = 1
-<span class="prompt">&gt; </span> . f
-<span class="prompt">&gt; </span> $x
+```console
+>  function f { $x = 0 }
+>  $x = 1
+>  . f
+>  $x
 0
-</pre>
+```
 
 
 関数の中身が、呼び出し元と同じスコープで実行されます。

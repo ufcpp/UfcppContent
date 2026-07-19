@@ -30,28 +30,28 @@ GUI アプリケーションを記述するための XML フォーマットで�
 例えば、以下のように記述します。
 
 
-<pre class="xsource" title="XAML の例">
-<code><span class="bracket">&lt;</span><span class="element">Page</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Background</span><span class="attvalue">="White"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Background="White"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">FlowDocument</span><span class="bracket">&gt;</span>
+  <FlowDocument>
 
-  <span class="bracket">&lt;</span><span class="element">Paragraph</span> <span class="attribute">FontSize</span><span class="attvalue">="30"</span> <span class="attribute">Foreground</span><span class="attvalue">="Blue"</span><span class="bracket">&gt;</span>
+  <Paragraph FontSize="30" Foreground="Blue">
   Example
-  <span class="bracket">&lt;</span>/<span class="element">Paragraph</span><span class="bracket">&gt;</span>
+  </Paragraph>
 
-  <span class="bracket">&lt;</span><span class="element">Paragraph</span><span class="bracket">&gt;</span>
+  <Paragraph>
   This is an example of
-  a <span class="bracket">&lt;</span><span class="element">Span</span> <span class="attribute">FontStyle</span><span class="attvalue">="Italic"</span> <span class="attribute">Foreground</span><span class="attvalue">="Red"</span><span class="bracket">&gt;</span>xaml<span class="bracket">&lt;</span>/<span class="element">Span</span><span class="bracket">&gt;</span>
+  a <Span FontStyle="Italic" Foreground="Red">xaml</Span>
   application.
-  <span class="bracket">&lt;</span>/<span class="element">Paragraph</span><span class="bracket">&gt;</span>
+  </Paragraph>
 
-  <span class="bracket">&lt;</span>/<span class="element">FlowDocument</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Page</span><span class="bracket">&gt;</span>
-</code></pre>
+  </FlowDocument>
+</Page>
+```
 Page タグから始まる XAML ファイルは、ブラウザ中で実行する事ができます。
 .NET Framework 3.0 をインストールした状態で、
 上記の内容を、拡張子 .xaml を付けたファイルに書き込み、
@@ -84,27 +84,27 @@ XAML の利点は大きく分けて2つあります。
 C# 中に直接 GUI 部品構築のコードを記述する場合、
 以下のようになります。
 
-<pre class="source" title="C# でテキストボックス2つを表示" lang="">
-<code>WrapPanel panel = <span class="reserved">new</span> WrapPanel();
+```csharp
+WrapPanel panel = new WrapPanel();
 
-TextBox textbox1 = <span class="reserved">new</span> TextBox();
+TextBox textbox1 = new TextBox();
 textbox1.Width = 100;
 textbox1.FontSize = 30;
 textbox1.Background = Colors.White;
 textbox1.Foreground = Colors.Blue;
-textbox1.Text = <span class="literal">"text 1"</span>;
+textbox1.Text = "text 1";
 
 panel.Children.Add(textbox1);
 
-TextBox textbox2 = <span class="reserved">new</span> TextBox();
+TextBox textbox2 = new TextBox();
 textbox2.Width = 100;
 textbox2.FontSize = 30;
 textbox2.Background = Colors.White;
 textbox2.Foreground = Colors.Green;
-textbox2.Text = <span class="literal">"text 2"</span>;
+textbox2.Text = "text 2";
 
 panel.Children.Add(textbox2);
-</code></pre>
+```
 
 
 これで何が面倒かと言うと、
@@ -120,23 +120,23 @@ panel.Children.Add(textbox2);
 以下のように変わります。
 
 
-<pre class="xsource" title="XAML でテキストボックス2つを表示">
-<code><span class="bracket">&lt;</span><span class="element">Page</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Background</span><span class="attvalue">="White"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Background="White"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> 
-      <span class="attribute">Width</span> <span class="attvalue">= "100"</span> <span class="attribute">FontSize</span> <span class="attvalue">= "30"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 1"</span>
-      <span class="attribute">Background</span> <span class="attvalue">= "White"</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Blue"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> 
-      <span class="attribute">Width</span> <span class="attvalue">= "100"</span> <span class="attribute">FontSize</span> <span class="attvalue">= "30"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 2"</span>
-      <span class="attribute">Background</span> <span class="attvalue">= "White"</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Green"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Page</span><span class="bracket">&gt;</span>
-</code></pre>
+  <WrapPanel>
+    <TextBox 
+      Width = "100" FontSize = "30" Text = "text 1"
+      Background = "White" Foreground = "Blue" />
+    <TextBox 
+      Width = "100" FontSize = "30" Text = "text 2"
+      Background = "White" Foreground = "Green" />
+  </WrapPanel>
+</Page>
+```
 まあ、XML は元々階層的に記述するものなので、
 当たり前なんですが、
 非常に階層構造が分かりやすくなります。
@@ -189,23 +189,23 @@ XAML 単体で完結している場合、
 ブラウザ中に GUI が表示されるはずです。
 
 
-<pre class="xsource" title="XAML でテキストボックス2つを表示">
-<code><span class="bracket">&lt;</span><span class="element">Page</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Background</span><span class="attvalue">="White"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Background="White"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> 
-      <span class="attribute">Width</span> <span class="attvalue">= "100"</span> <span class="attribute">FontSize</span> <span class="attvalue">= "30"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 1"</span>
-      <span class="attribute">Background</span> <span class="attvalue">= "White"</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Blue"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> 
-      <span class="attribute">Width</span> <span class="attvalue">= "100"</span> <span class="attribute">FontSize</span> <span class="attvalue">= "30"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 2"</span>
-      <span class="attribute">Background</span> <span class="attvalue">= "White"</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Green"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Page</span><span class="bracket">&gt;</span>
-</code></pre>
+  <WrapPanel>
+    <TextBox 
+      Width = "100" FontSize = "30" Text = "text 1"
+      Background = "White" Foreground = "Blue" />
+    <TextBox 
+      Width = "100" FontSize = "30" Text = "text 2"
+      Background = "White" Foreground = "Green" />
+  </WrapPanel>
+</Page>
+```
 
 ## <a id="sec-generated-title-7"></a> <a id="compile"></a>XAML のコンパイル
 
@@ -217,28 +217,28 @@ MSBuild は、.NET Framework 付属のビルドツールで、
 適切なコンパイラを呼び出し、アプリケーションをビルドしてくれます。
 
 
-<pre class="xsource" title="">
-<code><span class="bracket">&lt;</span><span class="element">Project</span> <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/developer/msbuild/2003"</span> <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">PropertyGroup</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">AssemblyName</span><span class="bracket">&gt;</span>XamlApplication<span class="bracket">&lt;</span>/<span class="element">AssemblyName</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">OutputType</span><span class="bracket">&gt;</span>winexe<span class="bracket">&lt;</span>/<span class="element">OutputType</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">PropertyGroup</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">ItemGroup</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Reference</span> <span class="attribute">Include</span><span class="attvalue">="System"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Reference</span> <span class="attribute">Include</span><span class="attvalue">="WindowsBase"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Reference</span> <span class="attribute">Include</span><span class="attvalue">="PresentationCore"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Reference</span> <span class="attribute">Include</span><span class="attvalue">="PresentationFramework"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">ItemGroup</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">ItemGroup</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ApplicationDefinition</span> <span class="attribute">Include</span><span class="attvalue">="App.xaml"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Compile</span> <span class="attribute">Include</span><span class="attvalue">="App.xaml.cs"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Page</span> <span class="attribute">Include</span><span class="attvalue">="MainWindow.xaml"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Compile</span> <span class="attribute">Include</span><span class="attvalue">="MainWindow.xaml.cs"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">ItemGroup</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Import</span> <span class="attribute">Project</span><span class="attvalue">="$(MSBuildBinPath)\Microsoft.CSharp.targets"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Import</span> <span class="attribute">Project</span><span class="attvalue">="$(MSBuildBinPath)\Microsoft.WinFX.targets"</span> /<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Project</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+  <PropertyGroup>
+    <AssemblyName>XamlApplication</AssemblyName>
+    <OutputType>winexe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+    <Compile Include="App.xaml.cs" />
+    <Page Include="MainWindow.xaml" />
+    <Compile Include="MainWindow.xaml.cs"/>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
+</Project>
+```
 詳しくは、MSBuild のヘルプを見てもらうとして、
 ポイントだけ。
 XAML を含む WPF アプリケーションのビルドは、

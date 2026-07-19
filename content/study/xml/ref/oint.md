@@ -25,39 +25,43 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;oint&gt;&lt;sub&gt;積分記号の下に来る文字&lt;/sub&gt;&lt;sup&gt;積分記号の上に来る文字&lt;/sup&gt;&lt;/oint&gt;
-</pre>
+```xml
+<oint><sub>積分記号の下に来る文字</sub><sup>積分記号の上に来る文字</sup></oint>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;oint&gt;&lt;sub&gt;C&lt;/sub&gt;&lt;/oint&gt; &lt;vec&gt;f(x)&lt;/vec&gt;・&lt;dl/&gt;
-</pre><div class="math"><span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table> <span class="vector">f(x)</span>・<span class="normal">d</span><span class="vector">l</span>
+```xml
+<oint><sub>C</sub></oint> <vec>f(x)</vec>・<dl/>
+```
+<div class="math"><span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">C</td></tr></table> <span class="vector">f(x)</span>・<span class="normal">d</span><span class="vector">l</span>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:oint"&gt;
-  &lt;span class="ointegral"&gt;∮&lt;/span&gt;
-  &lt;table class="integral" summary="integral"&gt;
-    &lt;tr&gt;&lt;td class="intsup"&gt;&amp;#xA0;&lt;xsl:apply-templates select="ufcpp:sup"/&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td style="font-size:30%;"&gt;&amp;#xA0;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td class="intsub"&gt;&lt;xsl:apply-templates select="ufcpp:sub"/&gt;&lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:oint">
+  <span class="ointegral">∮</span>
+  <table class="integral" summary="integral">
+    <tr><td class="intsup">&#xA0;<xsl:apply-templates select="ufcpp:sup"/></td></tr>
+    <tr><td style="font-size:30%;">&#xA0;</td></tr>
+    <tr><td class="intsub"><xsl:apply-templates select="ufcpp:sub"/></td></tr>
+  </table>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:oint/ufcpp:sup|ufcpp:int/ufcpp:sup|ufcpp:doubleint/ufcpp:sup|ufcpp:tripleint/ufcpp:sup"&gt;
-  &lt;xsl:apply-templates/&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:oint/ufcpp:sup|ufcpp:int/ufcpp:sup|ufcpp:doubleint/ufcpp:sup|ufcpp:tripleint/ufcpp:sup">
+  <xsl:apply-templates/>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:oint/ufcpp:sub|ufcpp:int/ufcpp:sub|ufcpp:doubleint/ufcpp:sub|ufcpp:tripleint/ufcpp:sub"&gt;
-  &lt;xsl:apply-templates/&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:oint/ufcpp:sub|ufcpp:int/ufcpp:sub|ufcpp:doubleint/ufcpp:sub|ufcpp:tripleint/ufcpp:sub">
+  <xsl:apply-templates/>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.integral
+```css
+span.integral
 {
   font-size:140%;
   font-style:normal;
@@ -95,5 +99,4 @@ table.integral td.intsub
   margin:0;
   padding:0;
 }
-
-</pre>
+```

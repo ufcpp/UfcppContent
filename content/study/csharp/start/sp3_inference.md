@@ -30,10 +30,10 @@ aliases:
 C# 2.0 以前、「静的型付け言語は冗長な記述が多くてめんどくさい」などと言われることがありました。
 例えば、以下の例について考えてみてください。
 
-<pre class="source" title="" lang="">
-<code>System.Collections.Generic.<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; list =
-  <span class="reserved">new</span> System.Collections.Generic.<span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-</code></pre>
+```csharp
+System.Collections.Generic.List<int> list =
+  new System.Collections.Generic.List<int>();
+```
 
 
 「なんでこんな長ったらしい型名を左辺と右辺の両方で書かなきゃいけないんだ、
@@ -57,11 +57,11 @@ C# 2.0 以前、「静的型付け言語は冗長な記述が多くてめんど�
 var キーワードを用いて、<strong id="type-inference" class="keyword">型推論</strong>（type inference）して、
 暗黙的に型付けされたローカル変数（Implicitly typed local variables）を定義できるようになりました。
 
-<pre class="source" title="var" lang="">
-<code><span class="reserved">var</span> n = <span class="literal">1</span>;
-<span class="reserved">var</span> x = <span class="literal">1.0</span>;
-<span class="reserved">var</span> s = <span class="literal">"test"</span>;
-</code></pre>
+```csharp
+var n = 1;
+var x = 1.0;
+var s = "test";
+```
 
 
 var を用いる際には、必ず初期値を伴う必要があります。
@@ -76,9 +76,9 @@ var を用いる際には、必ず初期値を伴う必要があります。
 <em>任意の型の値を代入できる万能な変数を作れるわけではない</em>ということです。
 したがって、以下のように、初期値を伴わない宣言は（型の推論ができないので）エラーになります。
 
-<pre class="source" title="var（間違い）" lang="">
-<code><span class="reserved">var</span> n; <span class="comment">// エラー。初期値が必要。</span>
-</code></pre>
+```csharp
+var n; // エラー。初期値が必要。
+```
 
 
 <code>TypeName x = new TypeName();</code> というように、
@@ -94,48 +94,48 @@ var は、この冗長さを省くため、左辺側の型名を省略できる�
 C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymous type）を作成できるようになりました。
 匿名型の作り方は以下の通りです。
 
-<pre class="source" title="匿名型" lang="">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> { FamilyName = <span class="literal">"糸色"</span>, FirstName=<span class="literal">"望"</span>};
-</code></pre>
+```csharp
+var x = new { FamilyName = "糸色", FirstName="望"};
+```
 
 
 このようなコードから、自動的に、以下のような型が生成されます。
 
-<pre class="source" title="匿名型によって自動生成されるクラス" lang="">
-<code><span class="comment">// ↓この __Anonymous という名前はプログラマが参照できるわけではない。</span>
-<span class="reserved">class</span> <span class="type">__Anonymous1</span>
+```csharp
+// ↓この __Anonymous という名前はプログラマが参照できるわけではない。
+class __Anonymous1
 {
-  <span class="reserved">private string</span> f1;
-  <span class="reserved">private string</span> f2;
+  private string f1;
+  private string f2;
   
-  <span class="reserved">public</span> __Anonymous1(<span class="reserved">string</span> f1, <span class="reserved">string</span> f2)
+  public __Anonymous1(string f1, string f2)
   {
-    <span class="reserved">this</span>.f1 = f1;
-    <span class="reserved">this</span>.f2 = f2;
+    this.f1 = f1;
+    this.f2 = f2;
   }
 
-  <span class="reserved">public string</span> FamilyName
+  public string FamilyName
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.f1}
+    get { return this.f1}
   };
-  <span class="reserved">public string</span> FirstName
+  public string FirstName
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.f2}
+    get { return this.f2}
   };
   
-  <span class="comment">// あと、Equals, GetHashCode, ToString も実装</span>
+  // あと、Equals, GetHashCode, ToString も実装
 }
-</code></pre>
+```
 
 
 そして、変数 x に対して、
 2つのプロパティ FamilyName と FirstName が使えます。
 
-<pre class="source" title="匿名型の変数" lang="">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> { FamilyName = <span class="literal">"糸色"</span>, FirstName=<span class="literal">"望"</span>};
+```csharp
+var x = new { FamilyName = "糸色", FirstName="望"};
 
-<span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, <em>x.FamilyName, x.FirstName</em>);
-</code></pre>
+Console.Write("{0}\n", x.FamilyName, x.FirstName);
+```
 
 
 
@@ -147,17 +147,17 @@ C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymo
 通常の「[オブジェクト初期化子](../functional/sp3_lambda.md#objectinit)」では、public な set アクセサーを持つプロパティしか初期化できませんでしたが、
 匿名型の場合には、コンストラクター呼び出しに置き換えられます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">2</span> };
-<span class="comment">// Point p = new Point();
+```csharp
+var p = new Point { X = 1, Y = 2 };
+// Point p = new Point();
 // p.X = 1;
 // p.Y = 2;
-// と同じ意味。</span>
+// と同じ意味。
 
-<span class="reserved">var</span> anonymous = <span class="reserved">new</span> { X = <span class="literal">1</span>, Y = <span class="literal">2</span> };
-<span class="comment">// __Anonymous anonymous = new __Anonymous(1, 2);
-// みたいなコードが生成される。</span>
-</code></pre>
+var anonymous = new { X = 1, Y = 2 };
+// __Anonymous anonymous = new __Anonymous(1, 2);
+// みたいなコードが生成される。
+```
 
 
 
@@ -167,25 +167,25 @@ C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymo
 「プロパティ名 =」の部分を省略することもできます。
 （初期化子で渡したプロパティの名前がそのまま匿名クラスでも使われます。）
 
-<pre class="source" title="プロパティ名の省略" lang="">
-<code><span class="reserved">struct</span> <span class="type">A</span>
+```csharp
+struct A
 {
-  <span class="reserved">public int</span> X { <span class="reserved">set</span>; <span class="reserved">get</span>; }
-  <span class="reserved">public int</span> Y { <span class="reserved">set</span>; <span class="reserved">get</span>; }
-  <span class="reserved">public int</span> Z { <span class="reserved">set</span>; <span class="reserved">get</span>; }
+  public int X { set; get; }
+  public int Y { set; get; }
+  public int Z { set; get; }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    A a = <span class="reserved">new</span> A { X = <span class="literal">0</span>, Y = <span class="literal">1</span>, Z = <span class="literal">2</span>};
-    <em><span class="reserved">var</span> b = <span class="reserved">new</span> { a.X, a.Y };</em>
-    <span class="comment">//↑ new { X = a.X, Y = a.Y } と同じ意味。</span>
-    <span class="type">Console</span>.Write(<span class="literal">"{0}, {1}\n"</span>, b.X, b.Y);
+    A a = new A { X = 0, Y = 1, Z = 2};
+    var b = new { a.X, a.Y };
+    //↑ new { X = a.X, Y = a.Y } と同じ意味。
+    Console.Write("{0}, {1}\n", b.X, b.Y);
   }
 }
-</code></pre>
+```
 
 
 
@@ -196,13 +196,13 @@ C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymo
 基本的には、「[LINQ](../data/sp3_linq.md#linq)」 のための機能だと思っていいでしょう。
 例えば、後述するクエリ式中で、以下のように利用します。
 
-<pre class="source" title="匿名型の利用" lang="">
-<code><span class="reserved">var</span> list1 =
-  <span class="reserved">from</span> p <span class="reserved">in</span> list
-  <span class="reserved">where</span> p.id &lt;= <span class="literal">15</span>
-  <span class="reserved">orderby</span> p.id
-  <em><span class="reserved">select new</span> { p.FamilyName, p.FirstName }</em>;
-</code></pre>
+```csharp
+var list1 =
+  from p in list
+  where p.id <= 15
+  orderby p.id
+  select new { p.FamilyName, p.FirstName };
+```
 
 
 
@@ -211,9 +211,9 @@ C# 3.0 では<strong id="anonytype" class="keyword">匿名型</strong>（anonymo
 new で配列を作成する際、
 型を省略できるようになりました。
 
-<pre class="source" title="配列の暗黙的型付け" lang="">
-<code><span class="reserved">int</span>[] array = <em><span class="reserved">new</span>[] {<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span>}</em>;
-</code></pre>
+```csharp
+int[] array = new[] {1, 2, 3, 4};
+```
 
 
 見ての通り、
@@ -227,17 +227,17 @@ new の後ろの型を省略しています。
 var および「[匿名型](#anonytype)」と組み合わせることによって、
 真価が発揮されます。
 
-<pre class="source" title="var と匿名型との組み合わせ" lang="">
-<code><span class="reserved">var</span> array = <span class="reserved">new</span>[]
+```csharp
+var array = new[]
   {
-    <span class="reserved">new</span> {X =  <span class="literal">0</span>, Y =  <span class="literal">1</span>},
-    <span class="reserved">new</span> {X =  <span class="literal">3</span>, Y = -<span class="literal">1</span>},
-    <span class="reserved">new</span> {X =  <span class="literal">7</span>, Y =  <span class="literal">3</span>},
-    <span class="reserved">new</span> {X = <span class="literal">13</span>, Y = -<span class="literal">5</span>},
+    new {X =  0, Y =  1},
+    new {X =  3, Y = -1},
+    new {X =  7, Y =  3},
+    new {X = 13, Y = -5},
   };
 
-<span class="reserved">foreach</span>(<span class="reserved">var</span> p <span class="reserved">in</span> array) Console.Write(<span class="literal">"{0}\n"</span>, p);
-</code></pre>
+foreach(var p in array) Console.Write("{0}\n", p);
+```
 
 
 配列宣言の中身が匿名なんだから、

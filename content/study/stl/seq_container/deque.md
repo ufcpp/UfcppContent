@@ -59,31 +59,31 @@ dequeは内部的にはリングバッファというデータ構造になって
 リングバッファの実装には配列を用います。
 普通、配列の末尾(<code>rear</code>)に要素を加えるとき、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span> array[SIZE];
-<span class="reserved">int</span> rear;
+```csharp
+int array[SIZE];
+int rear;
 
-<span class="reserved">void</span> push_back(<span class="reserved">int</span> data)
+void push_back(int data)
 {
-  <span class="reserved">if</span>(rear==SIZE)<span class="comment">//full</span>
-    <span class="reserved">return</span>;
+  if(rear==SIZE)//full
+    return;
 
   array[rear] = data;
   rear++;
 }
-</code></pre>
+```
 
 
 という風にします。
 これに対し、リングバッファでは
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">void</span> push_back(<span class="reserved">int</span> data)
+```csharp
+void push_back(int data)
 {
   array[rear] = data;
   rear = (rear+1)%SIZE;
 }
-</code></pre>
+```
 
 
 とします。
@@ -91,30 +91,30 @@ dequeは内部的にはリングバッファというデータ構造になって
 <code>rear</code>は領域の一番前に戻ります。
 ここで、<code>rear</code>の他に、先頭の場所を記憶しておく変数(<code>front</code>)も用意します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span> array[SIZE];
-<span class="reserved">int</span> rear, front;
+```csharp
+int array[SIZE];
+int rear, front;
 
-<span class="reserved">void</span> push_back(int data)
+void push_back(int data)
 {
-  <span class="reserved">if</span>(rear==front)<span class="comment">//full</span>
-    <span class="reserved">return</span>;
+  if(rear==front)//full
+    return;
 
   array[rear] = data;
   rear = (rear+1)%SIZE;
 }
 
-<span class="reserved">void</span> pop_front()
+void pop_front()
 {
-  <span class="reserved">int</span> data;
+  int data;
 
-  <span class="reserved">if</span>(rear==front)<span class="comment">//empty</span>
-    <span class="reserved">return</span>;
+  if(rear==front)//empty
+    return;
 
   data = array[front];
   front = (front+1)%SIZE;
 }
-</code></pre>
+```
 
 
 これでリングバッファを用いたキューが完成します(ここではrear,frontの初期化を行っていませんが、本来は初期化の必要あり)。

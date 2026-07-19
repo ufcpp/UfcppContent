@@ -25,23 +25,28 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;conjugate&gt;共役にしたい式&lt;/conjugate&gt;
-</pre>
+```xml
+<conjugate>共役にしたい式</conjugate>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>z=a+ib, &lt;conjugate&gt;z&lt;/conjugate&gt;=a&amp;#x2212;ib
-</pre><div class="math">z=a+ib, z<sup>*</sup>=a−ib
+```xml
+z=a+ib, <conjugate>z</conjugate>=a&#x2212;ib
+```
+<div class="math">z=a+ib, z<sup>*</sup>=a−ib
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:conjugate"&gt;
-  &lt;xsl:apply-templates/&gt;&lt;sup&gt;*&lt;/sup&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:conjugate">
+  <xsl:apply-templates/><sup>*</sup>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre></pre>
+```text
+
+```

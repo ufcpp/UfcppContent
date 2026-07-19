@@ -89,9 +89,9 @@ aliases: []
 この話は前述の[gist に上げた例](https://gist.github.com/ufcpp/ae78b9e06d77a573cd5f2fcdbefb92cd)にも書いてあるんですけども。
 以下のような非同期イテレーターを書いた場合、
 
-<pre class="source" title="非同期イテレーター">
-<code><span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">X</span>([<span class="type">EnumeratorCancellation</span>]<span class="type">CancellationToken</span> <span class="variable">ct</span> = <span class="reserved">default</span>)
-</code></pre>
+```csharp
+async IAsyncEnumerable<int> X([EnumeratorCancellation]CancellationToken ct = default)
+```
 
 `CancellationToken` は、`X(ct)` というのと、`X().WithCancellation(ct)` というの、どちらで書いても最終的に `X` の引数に渡ってきます。
 

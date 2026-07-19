@@ -47,49 +47,49 @@ JavaやC++がこの機能を持ってないことからも分かると思いま�
 オブジェクトの状態の変更はすべてメソッドを通して行うべきだと書きました。
 これを忠実に実行すると、クラスを利用する側のコードは以下の例のように少々見栄えの悪いものになってしまいます。
 
-<pre class="source" title="「実装の隠蔽」で作った複素数クラスその2の利用例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 「実装の隠蔽」で作った複素数クラス</span>
-<span class="reserved">class</span> Complex
+// 「実装の隠蔽」で作った複素数クラス
+class Complex
 {
-  <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
-  <span class="reserved">private double</span> re; <span class="comment">// 実部を記憶しておく</span>
-  <span class="reserved">private double</span> im; <span class="comment">// 虚部を記憶しておく</span>
+  // 実装は外部から隠蔽(privateにしておく)
+  private double re; // 実部を記憶しておく
+  private double im; // 虚部を記憶しておく
 
-  <span class="reserved">public double</span> Re(){<span class="reserved">return this</span>.re;}    <span class="comment">// 実部を取り出す</span>
-  <span class="reserved">public void</span> Re(<span class="reserved">double</span> x){<span class="reserved">this</span>.re = x;} <span class="comment">// 実部を書き換え</span>
+  public double Re(){return this.re;}    // 実部を取り出す
+  public void Re(double x){this.re = x;} // 実部を書き換え
 
-  <span class="reserved">public double</span> Im(){<span class="reserved">return this</span>.im;}    <span class="comment">// 虚部を取り出す</span>
-  <span class="reserved">public void</span> Im(<span class="reserved">double</span> y){<span class="reserved">this</span>.im = y;} <span class="comment">// 虚部を書き換え</span>
+  public double Im(){return this.im;}    // 虚部を取り出す
+  public void Im(double y){this.im = y;} // 虚部を書き換え
 
-  <span class="reserved">public double</span> Abs(){<span class="reserved">return</span> Math.Sqrt(re*re + im*im);}  <span class="comment">// 絶対値を取り出す</span>
+  public double Abs(){return Math.Sqrt(re*re + im*im);}  // 絶対値を取り出す
 }
 
-<span class="comment">// クラス利用側</span>
-<span class="reserved">class</span> ConcealSample
+// クラス利用側
+class ConcealSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// x = 5 + 1i</span>
-    Complex x = <span class="reserved">new</span> Complex();
-    x.Re(5);  <span class="comment">// x.re = 5</span>
-    x.Im(1);  <span class="comment">// x.im = 1
+    // x = 5 + 1i
+    Complex x = new Complex();
+    x.Re(5);  // x.re = 5
+    x.Im(1);  // x.im = 1
 
-    // y = -2 + 3i</span>
-    Complex y = <span class="reserved">new</span> Complex();
-    y.Re(-2); <span class="comment">// y.re = -2</span>
-    y.Im( 3); <span class="comment">// y.im =  3</span>
+    // y = -2 + 3i
+    Complex y = new Complex();
+    y.Re(-2); // y.re = -2
+    y.Im( 3); // y.im =  3
 
-    Complex z = <span class="reserved">new</span> Complex();
-    z.Re(x.Re() + y.Re()); <span class="comment">// z.re = x.re + y.re</span>
-    z.Im(x.Im() + y.Im()); <span class="comment">// z.im = x.im + y.im</span>
+    Complex z = new Complex();
+    z.Re(x.Re() + y.Re()); // z.re = x.re + y.re
+    z.Im(x.Im() + y.Im()); // z.im = x.im + y.im
 
-    Console.Write(<span class="literal">"|{0} + {1}i| = {2}\n"</span>, z.Re(), z.Im(), z.Abs());
-    <span class="comment">// |3 + 4i| = 5 と表示される</span>
+    Console.Write("|{0} + {1}i| = {2}\n", z.Re(), z.Im(), z.Abs());
+    // |3 + 4i| = 5 と表示される
   }
 }
-</code></pre>
+```
 
 
 <code>void Re(double x)</code>、<code>double Re()</code>などの、
@@ -110,23 +110,23 @@ C#では
 プロパティという機能を用意しました。
 プロパティの定義の仕方は以下のような書式になります。
 
-<pre class="source" title="" lang="">
-<code><span class="input">アクセスレベル</span> <span class="input">型名</span> <span class="input">プロパティ名</span>
+```csharp
+アクセスレベル 型名 プロパティ名
 {
-    <span class="reserved">set</span>
+    set
     {
-        <span class="comment">// setアクセサー（setter とも言う）
+        // setアクセサー（setter とも言う）
         //  ここに値の変更時の処理を書く。
-        //  value という名前の変数に代入された値が格納される。</span>
+        //  value という名前の変数に代入された値が格納される。
     }
-    <span class="reserved">get</span>
+    get
     {
-        <span class="comment">// getアクセサー （getter とも言う）
+        // getアクセサー （getter とも言う）
         //  ここに値の取得時の処理を書く。
-        //  メソッドの場合と同様に、値はreturnキーワードを用いて返す。</span>
+        //  メソッドの場合と同様に、値はreturnキーワードを用いて返す。
     }
 }
-</code></pre>
+```
 
 
 set 以降のブロックに値の変更用の処理を、
@@ -136,58 +136,58 @@ get 以降のに値の取得用の処理を書きます。
 
 例えば先ほどの複素数クラスのアクセサーをプロパティを使って書き換えると以下のようになります。
 
-<pre class="source" title="複素数クラス その3" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// クラス定義</span>
-<span class="reserved">class</span> <span class="type">Complex</span>
+// クラス定義
+class Complex
 {
-    <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
-    <span class="reserved">private double</span> re; <span class="comment">// 実部を記憶しておく</span>
-    <span class="reserved">private double</span> im; <span class="comment">// 虚部を記憶しておく
+    // 実装は外部から隠蔽(privateにしておく)
+    private double re; // 実部を記憶しておく
+    private double im; // 虚部を記憶しておく
 
-    // 実部の取得・変更用のプロパティ</span>
-<em>    <span class="reserved">public double</span> Re</em>
+    // 実部の取得・変更用のプロパティ
+    public double Re
     {
-        <span class="reserved">set</span> { <span class="reserved">this</span>.re = <span class="reserved">value</span>; }
-        <span class="reserved">get</span> { <span class="reserved">return this</span>.re; }
+        set { this.re = value; }
+        get { return this.re; }
     }
-    <span class="comment">/* ↑のコードは意味的には以下のコードと同じ。
+    /* ↑のコードは意味的には以下のコードと同じ。
     public void SetRe(double value){this.re = value;}
     public double GetRe(){return this.re;}
     メソッドと同じ感覚で使える。
     */
 
-    // 実部の取得・変更用のプロパティ</span>
-<em>    <span class="reserved">public double</span> Im</em>
+    // 実部の取得・変更用のプロパティ
+    public double Im
     {
-        <span class="reserved">set</span> { <span class="reserved">this</span>.im = <span class="reserved">value</span>; }
-        <span class="reserved">get</span> { <span class="reserved">return this</span>.im; }
+        set { this.im = value; }
+        get { return this.im; }
     }
 
-    <span class="comment">// 絶対値の取得用のプロパティ</span>
-    <span class="reserved">public double</span> Abs
+    // 絶対値の取得用のプロパティ
+    public double Abs
     {
-        <span class="comment">// 読み取り専用プロパティ。
-        // setブロックを書かない。</span>
-        <span class="reserved">get</span> { <span class="reserved">return</span> <span class="type">Math</span>.Sqrt(re * re + im * im); }
+        // 読み取り専用プロパティ。
+        // setブロックを書かない。
+        get { return Math.Sqrt(re * re + im * im); }
     }
 }
 
-<span class="comment">// クラス利用側</span>
-<span class="reserved">class</span> <span class="type">PropertySample</span>
+// クラス利用側
+class PropertySample
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="type">Complex</span> c = <span class="reserved">new</span> <span class="type">Complex</span>();
-        c.Re = 4; <span class="comment">// Reプロパティのsetアクセサーが呼び出される。</span>
-        c.Im = 3; <span class="comment">// Imプロパティのsetアクセサーが呼び出される。</span>
-        <span class="type">Console</span>.Write(<span class="literal">"|{0} + "</span>, c.Re); <span class="comment">// Reプロパティのgetアクセサーが呼び出される。</span>
-        <span class="type">Console</span>.Write(<span class="literal">"{0}i| ="</span>, c.Im); <span class="comment">// Imプロパティのgetアクセサーが呼び出される。</span>
-        <span class="type">Console</span>.Write(<span class="literal">" {0}\n"</span>, c.Abs); <span class="comment">// Absプロパティのgetアクセサーが呼び出される。</span>
+        Complex c = new Complex();
+        c.Re = 4; // Reプロパティのsetアクセサーが呼び出される。
+        c.Im = 3; // Imプロパティのsetアクセサーが呼び出される。
+        Console.Write("|{0} + ", c.Re); // Reプロパティのgetアクセサーが呼び出される。
+        Console.Write("{0}i| =", c.Im); // Imプロパティのgetアクセサーが呼び出される。
+        Console.Write(" {0}\n", c.Abs); // Absプロパティのgetアクセサーが呼び出される。
     }
 }
-</code></pre>
+```
 
 
 「[実装の隠蔽](oo_conceal.md)」のときと同様に、
@@ -196,67 +196,67 @@ get 以降のに値の取得用の処理を書きます。
 「絶対値と偏角をメンバー変数に記憶しておく」方法に変更しても、
 以下のように、クラス利用側のコードに手を加える必要は一切ありません。
 
-<pre class="source" title="複素数クラスその3の実装を変更" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// クラス定義</span>
-<span class="reserved">class</span> <span class="type">Complex</span>
+// クラス定義
+class Complex
 {
-    <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
-    <span class="reserved">private double</span> abs; <span class="comment">// 絶対値を記憶しておく</span>
-    <span class="reserved">private double</span> arg; <span class="comment">// 偏角を記憶しておく
+    // 実装は外部から隠蔽(privateにしておく)
+    private double abs; // 絶対値を記憶しておく
+    private double arg; // 偏角を記憶しておく
 
-    // 実部の取得・変更用のプロパティ</span>
-    <span class="reserved">public double</span> Re
+    // 実部の取得・変更用のプロパティ
+    public double Re
     {
-        <span class="reserved">set</span>
+        set
         {
-            <span class="reserved">double</span> im = <span class="reserved">this</span>.abs * <span class="type">Math</span>.Sin(<span class="reserved">this</span>.arg);
-            <span class="reserved">this</span>.abs = <span class="type">Math</span>.Sqrt(<span class="reserved">value</span> * <span class="reserved">value</span> + im * im);
-            <span class="reserved">this</span>.arg = <span class="type">Math</span>.Atan2(im, <span class="reserved">value</span>);
+            double im = this.abs * Math.Sin(this.arg);
+            this.abs = Math.Sqrt(value * value + im * im);
+            this.arg = Math.Atan2(im, value);
         }
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">return this</span>.abs * <span class="type">Math</span>.Cos(<span class="reserved">this</span>.arg);
+            return this.abs * Math.Cos(this.arg);
         }
     }
 
-    <span class="comment">// 実部の取得・変更用のプロパティ</span>
-    <span class="reserved">public double</span> Im
+    // 実部の取得・変更用のプロパティ
+    public double Im
     {
-        <span class="reserved">set</span>
+        set
         {
-            <span class="reserved">double</span> re = <span class="reserved">this</span>.abs * <span class="type">Math</span>.Cos(<span class="reserved">this</span>.arg);
-            <span class="reserved">this</span>.abs = <span class="type">Math</span>.Sqrt(<span class="reserved">value</span> * <span class="reserved">value</span> + re * re);
-            <span class="reserved">this</span>.arg = <span class="type">Math</span>.Atan2(<span class="reserved">value</span>, re);
+            double re = this.abs * Math.Cos(this.arg);
+            this.abs = Math.Sqrt(value * value + re * re);
+            this.arg = Math.Atan2(value, re);
         }
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">return this</span>.abs * <span class="type">Math</span>.Sin(<span class="reserved">this</span>.arg);
+            return this.abs * Math.Sin(this.arg);
         }
     }
 
-    <span class="comment">// 絶対値の取得用のプロパティ</span>
-    <span class="reserved">public double</span> Abs
+    // 絶対値の取得用のプロパティ
+    public double Abs
     {
-        <span class="reserved">get</span> { <span class="reserved">return this</span>.abs; }
+        get { return this.abs; }
     }
 }
 
-<span class="comment">// クラス利用側</span>
-<span class="reserved">class</span> <span class="type">PropertySample</span>
+// クラス利用側
+class PropertySample
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="type">Complex</span> c = <span class="reserved">new</span> <span class="type">Complex</span>();
-<em>        c.Re = 4; <span class="comment">// クラス利用側は一切変更せず</span>
-        c.Im = 3;</em>
-        <span class="type">Console</span>.Write(<span class="literal">"|{0} + "</span>, c.Re);
-        <span class="type">Console</span>.Write(<span class="literal">"{0}i| ="</span>, c.Im);
-        <span class="type">Console</span>.Write(<span class="literal">" {0}\n"</span>, c.Abs);
+        Complex c = new Complex();
+        c.Re = 4; // クラス利用側は一切変更せず
+        c.Im = 3;
+        Console.Write("|{0} + ", c.Re);
+        Console.Write("{0}i| =", c.Im);
+        Console.Write(" {0}\n", c.Abs);
     }
 }
-</code></pre>
+```
 
 
 
@@ -267,18 +267,18 @@ get 以降のに値の取得用の処理を書きます。
 C# 2.0 の新機能で、
 プロパティの set/get アクセサーそれぞれ異なるアクセスレベルを設定できるようになりました。
 
-<pre class="source" title="異なるアクセスレベル" lang="">
-<code><span class="reserved">class</span> A
+```csharp
+class A
 {
-  <span class="reserved">private int</span> n;
+  private int n;
 
-  <span class="reserved">public int</span> N
+  public int N
   {
-    <span class="reserved">get</span>{ <span class="reserved">return this</span>.n; }
-    <span class="reserved"><em>protected</em> set</span>{ <span class="reserved">this</span>.n = value; }
+    get{ return this.n; }
+    protected set{ this.n = value; }
   }
 }
-</code></pre>
+```
 
 
 
@@ -291,22 +291,22 @@ C# 3.0 では、プロパティの get/set の中身の省略もできるよう�
 
 例えば、
 
-<pre class="source" title="プロパティの set/get の省略" lang="">
-<code><span class="reserved">public string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-</code></pre>
+```csharp
+public string Name { get; set; }
+```
 
 
 というように、
 <code>get; set;</code> とだけ書いておくと、
 
-<pre class="source" title="set/get の自動生成結果" lang="">
-<code><span class="reserved">private string</span> __name;
-<span class="reserved">public string</span> Name
+```csharp
+private string __name;
+public string Name
 {
-  <span class="reserved">get</span> { <span class="reserved">return this</span>.__name; }
-  <span class="reserved">set</span> { <span class="reserved">this</span>.__name = value; }
+  get { return this.__name; }
+  set { this.__name = value; }
 }
-</code></pre>
+```
 
 
 というようなコードに相当するものが自動的に生成されます。
@@ -322,20 +322,20 @@ C# プログラミングでは、
 
 複素数の例でも、直交座標による実装のものは、以下のようにだいぶシンプルに書けるようになります。
 
-<pre class="source" title="自動プロパティを使った複素数クラス定義" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Complex</span>
+class Complex
 {
-    <span class="reserved">public double</span> Re { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public double</span> Im { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public double Re { get; set; }
+    public double Im { get; set; }
 
-    <span class="reserved">public double</span> Abs
+    public double Abs
     {
-        <span class="reserved">get</span> { <span class="reserved">return</span> <span class="type">Math</span>.Sqrt(Re * Re + Im * Im); }
+        get { return Math.Sqrt(Re * Re + Im * Im); }
     }
 }
-</code></pre>
+```
 
 
 ちなみに、元々 C# 2.0 以前でも、
@@ -352,46 +352,46 @@ C# プログラミングでは、
 C# 6 では、get アクセサーだけのプロパティを定義できるようになりました。
 この場合、コンストラクターでだけ値を代入できて、以降は書き換え不能になります。
 
-<pre class="source" title="get-only なプロパティ" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Complex</span>
+class Complex
 {
-    <span class="reserved">public double</span> Re { <em><span class="reserved">get</span>;</em> }
-    <span class="reserved">public double</span> Im { <em><span class="reserved">get</span>;</em> }
+    public double Re { get; }
+    public double Im { get; }
 
-    <span class="reserved">public</span> Complex(<span class="reserved">double</span> re, <span class="reserved">double</span> im)
+    public Complex(double re, double im)
     {
-        <span class="comment">// コンストラクター内でだけ代入可能。</span>
+        // コンストラクター内でだけ代入可能。
         Re = re;
         Im = im;
     }
 }
-</code></pre>
+```
 
 このように `get` アクセサーのみを持つプロパティは通称 <strong id="key-get-only" class="keyword">get-only プロパティ</strong>(get-only property)と呼ばれています。
 
 「コンストラクターでだけ値を代入できる」という挙動は [readonly フィールド](../start/sp_const.md#readonly)と同じです。
 実際、上記の get-only プロパティからは以下のように、readonly なバッキング フィールドが作られます。
 
-<pre class="source" title="get-only なプロパティから生成されるコード" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Complex</span>
+class Complex
 {
-    <span class="reserved">public double</span> Re { <span class="reserved">get</span> { <span class="reserved">return</span> _re; } }
-    <span class="reserved">private readonly double</span> _re;
-    <span class="reserved">public double</span> Im { <span class="reserved">get</span> { <span class="reserved">return</span> _im; } }
-    <span class="reserved">private readonly double</span> _im;
+    public double Re { get { return _re; } }
+    private readonly double _re;
+    public double Im { get { return _im; } }
+    private readonly double _im;
 
-    <span class="reserved">public</span> Complex(<span class="reserved">double</span> re, <span class="reserved">double</span> im)
+    public Complex(double re, double im)
     {
-        <span class="comment">// コンストラクター内でだけ代入可能。</span>
+        // コンストラクター内でだけ代入可能。
         _re = re;
         _im = im;
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-7"></a> <a id="property-initializer"></a>プロパティ初期化子
 
@@ -399,13 +399,13 @@ C# 6 では、get アクセサーだけのプロパティを定義できるよ�
 
 同じくC# 6.0から、自動プロパティに対して初期化子を与えられるようになりました。
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }<em> = 10;</em>
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; } <em>= 20;</em>
+    public int X { get; set; } = 10;
+    public int Y { get; set; } = 20;
 }
-</code></pre>
+```
 
 これで、コンストラクターを書かなくてもプロパティに対して初期値を与えることができます。
 
@@ -416,17 +416,17 @@ get-only のプロパティに限りますが、他のいくつかの関数メ�
 
 先ほどから例に挙げている複素数クラスでいうと、Abs プロパティの定義が楽になります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using static</span> System.<span class="type">Math</span>;
+```csharp
+using static System.Math;
 
-<span class="reserved">class</span> <span class="type">Complex</span>
+class Complex
 {
-    <span class="reserved">public double</span> Re { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public double</span> Im { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public double Re { get; set; }
+    public double Im { get; set; }
 
-<em>    <span class="reserved">public double</span> Abs =&gt; Sqrt(Re * Re + Im * Im);</em>
+    public double Abs => Sqrt(Re * Re + Im * Im);
 }
-</code></pre>
+```
 
 
 
@@ -436,37 +436,37 @@ VB にはある「インデックス付きプロパティ」は、C# にはあ�
 C# の流儀的には、「インデックス付きプロパティ」よりも、「コレクションクラスを返す普通のプロパティ」推奨です。
 （その方が、foreach が使えたり、色々便利だから。）
 
-<pre class="source" title="ダメな例： インデックス付きプロパティ" lang="">
-<code><span class="reserved">int</span>[] x;
-<span class="comment">// ↓これは文法違反。</span>
-<span class="reserved">public int</span> X[<span class="reserved">int</span> i]
+```csharp
+int[] x;
+// ↓これは文法違反。
+public int X[int i]
 {
-    <span class="reserved">get</span> { <span class="reserved">return</span> x[i]; }
-    <span class="reserved">private set</span> { x[i] = value; }
+    get { return x[i]; }
+    private set { x[i] = value; }
 }
-</code></pre>
+```
 
 
-<pre class="source" title="一応、可能： 配列を返すプロパティ" lang="">
-<code><span class="reserved">int</span>[] x;
-<span class="comment">// ↓これなら OK。</span>
-<span class="reserved">public int</span>[] X
+```csharp
+int[] x;
+// ↓これなら OK。
+public int[] X
 {
-    <span class="reserved">get</span> { <span class="reserved">return</span> x; }
+    get { return x; }
 }
-</code></pre>
+```
 
 
 C# 2.0 や C# 3.0 を見こすなら、以下のように、配列や ICollection ではなく、IEnumerable を返すようにする方がいいかもしれません。
 （詳細は「[イテレーター](../data/sp2_iterator.md)」参照。）
 
-<pre class="source" title="C# 2.0 的には： イテレーターを使って IEnumerable で返す" lang="">
-<code><span class="reserved">int</span>[] x;
-<span class="reserved">public</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; X
+```csharp
+int[] x;
+public IEnumerable<int> X
 {
-    <span class="reserved">get</span> { <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> x) <span class="reserved">yield return</span> item; }
+    get { foreach (var item in x) yield return item; }
 }
-</code></pre>
+```
 
 
 ちなみに、VB にはあることからわかるように、.NET 的にはインデックス付きプロパティを認めています。
@@ -484,13 +484,13 @@ C# からは get_X(0) というように呼び出します。
 C# 9.0 では、`set` に代わって、`init` という名前のアクセサーを定義できるようになりました。
 例えば以下のように書けます(ちなみに、`set` と `init` は同時には書けません。排他です)。
 
-<pre class="source" title="init アクセサー">
-<code><span class="reserved">class</span> <span class="type">Complex</span>
+```csharp
+class Complex
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> Re { <span class="reserved">get</span>; <span class="reserved"><em>init</em></span>; }
-    <span class="reserved">public</span> <span class="reserved">double</span> Im { <span class="reserved">get</span>; <span class="reserved"><em>init</em></span>; }
+    public double Re { get; init; }
+    public double Im { get; init; }
 }
-</code></pre>
+```
 
 `init` アクセサーを持っているプロパティは通称 <strong id="key-get-only" class="keyword">init-only プロパティ</strong>(init-only property)と呼ばれます。
 
@@ -500,20 +500,20 @@ C# 9.0 では、`set` に代わって、`init` という名前のアクセサー
 
 まず、`readonly` と同じ点として、コンストラクター内での書き換えはできます。
 
-<pre class="source" title="init はコンストラクター内から書き換え可能">
-<code><span class="reserved">class</span> <span class="type">Complex</span>
+```csharp
+class Complex
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> Re { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">double</span> Im { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public double Re { get; init; }
+    public double Im { get; init; }
  
-    <span class="reserved">public</span> <span class="type">Complex</span>(<span class="reserved">double</span> <span class="variable">re</span>, <span class="reserved">double</span> <span class="variable">im</span>)
+    public Complex(double re, double im)
     {
-        <span class="comment">// この2行は OK。</span>
-        Re = <span class="variable">re</span>;
-        Im = <span class="variable">im</span>;
+        // この2行は OK。
+        Re = re;
+        Im = im;
     }
 }
-</code></pre>
+```
 
 一方、`readonly` では認められてないことで、`init` であればできることが3つあります。
 
@@ -523,79 +523,79 @@ C# 9.0 では、`set` に代わって、`init` という名前のアクセサー
 
 例えば、以下のコード(get-only プロパティを利用)はコンパイルできませんが、
 
-<pre class="source" title="get-only プロパティはオブジェクト初期化子を使えない">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span> { <span class="error">X</span> = 1, <span class="error">Y</span> = 2 };
+```csharp
+var p = new Point { X = 1, Y = 2 };
  
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    public int X { get; }
+    public int Y { get; }
 }
-</code></pre>
+```
 
 以下のように init-only プロパティに書き換えるとコンパイルできます。
 
-<pre class="source" title="init-only プロパティならオブジェクト初期化子を使える">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
+```csharp
+var p = new Point { X = 1, Y = 2 };
  
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved"><em>init</em></span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved"><em>init</em></span>; }
+    public int X { get; init; }
+    public int Y { get; init; }
 }
-</code></pre>
+```
 
 初期化子の外で書き換えようとすると、`readonly`と同じくコンパイル エラーになります。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-<span class="error"><span class="variable">p</span>.X</span> = 3; <span class="comment">// ダメ。</span>
-</code></pre>
+```csharp
+var p = new Point { X = 1, Y = 2 };
+p.X = 3; // ダメ。
+```
 
 `with` 式については別途解説予定(トラッキング issue: [C# 9.0](https://github.com/ufcpp/UfcppSample/issues/297))ですが、
 例えば以下のようなコードが書けます。
 
-<pre class="source" title="with 式で init-only プロパティを書き換え">
-<code><span class="reserved">var</span> <span class="variable">p0</span> = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
-<span class="reserved">var</span> <span class="variable">p1</span> = <span class="variable">p0</span> <span class="reserved">with</span> { X = 3 }; <span class="comment">// p0 のクローンを作った上で、X だけ 3 で上書き。</span>
+```csharp
+var p0 = new Point(1, 2);
+var p1 = p0 with { X = 3 }; // p0 のクローンを作った上で、X だけ 3 で上書き。
  
-<span class="reserved">record</span> <span class="type">Point</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>);
-</code></pre>
+record Point(int X, int Y);
+```
 
 他の `init` アクセサーからの書き換えは、例えば以下のようなコードを書けます。
 
-<pre class="source" title="他の init アクセサーからの書き換え">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">Squared</span> { ValueSquared = 4 };
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>.Value); <span class="comment">// 2</span>
+var x = new Squared { ValueSquared = 4 };
+Console.WriteLine(x.Value); // 2
  
-<span class="reserved">class</span> <span class="type">Squared</span>
+class Squared
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> Value { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public double Value { get; init; }
  
-    <span class="reserved">public</span> <span class="reserved">double</span> ValueSquared
+    public double ValueSquared
     {
-        <span class="reserved">get</span> =&gt; Value * Value;
-        <span class="reserved">init</span> =&gt; Value = <span class="type">Math</span>.<span class="method">Sqrt</span>(<span class="reserved">value</span>);
+        get => Value * Value;
+        init => Value = Math.Sqrt(value);
     }
 }
-</code></pre>
+```
 
 ちなみに、`init` アクセサー内では `readonly` フィールドも書き換え可能です。
 
-<pre class="source" title="init アクセサー内で readonly フィールドを書き換え">
-<code><span class="reserved">class</span> <span class="type">Squared</span>
+```csharp
+class Squared
 {
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">double</span> Value;
+    public readonly double Value;
  
-    <span class="reserved">public</span> <span class="reserved">double</span> ValueSquared
+    public double ValueSquared
     {
-        <span class="reserved">get</span> =&gt; Value * Value;
-        <span class="reserved">init</span> =&gt; Value = <span class="type">Math</span>.<span class="method">Sqrt</span>(<span class="reserved">value</span>); <span class="comment">// OK。</span>
+        get => Value * Value;
+        init => Value = Math.Sqrt(value); // OK。
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-11"></a> <a id="init-only-internal">init-only プロパティの中身</a>
 
@@ -621,19 +621,19 @@ C# 11 でプロパティとフィールドに対する `required` 修飾子と�
 例えば以下のようなコードを書いたとき、`a1` 以外の `new A` はエラーになります。
 (警告ではなくエラーにします。)
 
-<pre class="source" title="required 修飾子">
-<span class="reserved">var</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span> { <span class="property">X</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>, <span class="property">Y</span> <span class="operator">=</span> <span class="number">123</span> };
+```csharp
+var a1 = new A { X = "abc", Y = 123 };
 
-<span class="reserved">var</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type"><span class="error" title="CS9035">A</span></span> { <span class="property">X</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span> }; <span class="comment">// Y を代入していないのでエラー。</span>
-<span class="reserved">var</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type"><span class="error" title="CS9035">A</span></span> { <span class="property">Y</span> <span class="operator">=</span> <span class="number">123</span> };   <span class="comment">// X を代入していないのでエラー。</span>
-<span class="reserved">var</span> <span class="variable">a4</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type"><span class="error" title="CS9035"><span class="error" title="CS9035">A</span></span></span>();             <span class="comment">// X も Y も代入していないのでエラー。</span>
+var a2 = new A { X = "abc" }; // Y を代入していないのでエラー。
+var a3 = new A { Y = 123 };   // X を代入していないのでエラー。
+var a4 = new A();             // X も Y も代入していないのでエラー。
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <em><span class="reserved">required</span></em> <span class="reserved">string</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <em><span class="reserved">required</span></em> <span class="reserved">int</span> <span class="property">Y</span>;
+    public required string X { get; init; }
+    public required int Y;
 }
-</pre>
+```
 
 この機能を指して、<strong id="key-required" class="keyword">required メンバー</strong> (required members)と言います。
 
@@ -655,67 +655,67 @@ C# 3 当時は名前指定初期化という考え方もなくて、あくまで
 まず、単にコンストラクターが増えるだけで手間。
 よく言われる話ですが、プロパティ1個に対して同じような文字列を4回は繰り返す必要が出ます。
 
-<pre class="source" title="コンストラクターを用意する手間">
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>(<span class="string">&quot;abc&quot;</span>, <span class="number">123</span>); <span class="comment">// 使う側は簡潔。</span>
+```csharp
+var a = new A("abc", 123); // 使う側は簡潔。
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">X</span> { <span class="reserved">get</span>; } <span class="comment">// ここに X を書いて</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; }
+    public string X { get; } // ここに X を書いて
+    public int Y { get; }
 
-    <span class="reserved">public</span> <span class="type">A</span>(<span class="reserved">string</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>) <span class="comment">// ここにも x</span>
+    public A(string x, int y) // ここにも x
     {
-        <span class="property">X</span> <span class="operator">=</span> <span class="variable local">x</span>; <span class="comment">// ここに至っては2個の X</span>
-        <span class="property">Y</span> <span class="operator">=</span> <span class="variable local">y</span>;
+        X = x; // ここに至っては2個の X
+        Y = y;
     }
 }
-</pre>
+```
 
 さらに、このクラス `A` を継承して、もう1個 `Z` プロパティを持った型 `B` を作ることを考えます。
 以下のように、さらに追加で2か所同じ文字列を追加する必要があります。
 
-<pre class="source" title="継承するとさらにかかる手間">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// A の中身はさっきと一緒。</span>
+    // A の中身はさっきと一緒。
 }
 
-<span class="comment">// 派生クラスで1プロパティ増やしたくなった時</span>
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+// 派生クラスで1プロパティ増やしたくなった時
+class B : A
 {
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="property">Z</span> { <span class="reserved">get</span>; }
+    public bool Z { get; }
 
-    <span class="reserved">public</span> <span class="type">B</span>(<span class="reserved">string</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>, <span class="reserved">bool</span> <span class="variable local">z</span>) <span class="comment">// さらにここと、</span>
-        : <span class="reserved">base</span>(<span class="variable local">x</span>, <span class="variable local">y</span>) <span class="comment">// ここにも x が必要。</span>
+    public B(string x, int y, bool z) // さらにここと、
+        : base(x, y) // ここにも x が必要。
     {
-        <span class="property">Z</span> <span class="operator">=</span> <span class="variable local">z</span>;
+        Z = z;
     }
 }
-</pre>
+```
 
 これに対して、名前指定初期化の場合はプロパティだけ書けばいいのでずいぶんと楽です。
 
-<pre class="source" title="名前指定初期化はクラス定義側が楽">
-<span class="comment">// 使う側は多少長いものの、名前を明示してる分読みやすいかも。</span>
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">B</span>
+```csharp
+// 使う側は多少長いものの、名前を明示してる分読みやすいかも。
+var a = new B
 {
-    <span class="property">X</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>,
-    <span class="property">Y</span> <span class="operator">=</span> <span class="number">123</span>,
-    <span class="property">Z</span> <span class="operator">=</span> <span class="reserved">true</span>,
+    X = "abc",
+    Y = 123,
+    Z = true,
 };
 
-<span class="comment">// クラス定義側は簡素に。</span>
-<span class="reserved">class</span> <span class="type">A</span>
+// クラス定義側は簡素に。
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property"><span class="warning" title="CS8618">X</span></span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public string X { get; init; }
+    public int Y { get; init; }
 }
 
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+class B : A
 {
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="property">Z</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public bool Z { get; init; }
 }
-</pre>
+```
 
 ところがこれには1つ問題があります。
 このコードの例で、`X` プロパティのところに警告(CS8618)が出てしまっています。
@@ -726,102 +726,103 @@ C# 3 当時は名前指定初期化という考え方もなくて、あくまで
 そこで `required` が導入されました。
 「名前指定にはしたいけど、明示的な初期化も義務付けたい」という要件です。
 
-<pre class="source" title="名前指定にはしたいけど、明示的な初期化も義務付けたいときには required">
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>
+```csharp
+var a = new A
 {
-    <span class="property">X</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>, <span class="comment">// 非 null に初期化される保証がこの行でできる.</span>
-    <span class="property">Y</span> <span class="operator">=</span> <span class="number">123</span>,
+    X = "abc", // 非 null に初期化される保証がこの行でできる.
+    Y = 123,
 };
 
-<span class="comment">// 明示的な初期化を義務付けたいプロパティ/フィールドには required を付ける。</span>
-<span class="comment">// これを使えば null 許容参照型での問題も回避可能。</span>
-<span class="reserved">class</span> <span class="type">A</span>
+// 明示的な初期化を義務付けたいプロパティ/フィールドには required を付ける。
+// これを使えば null 許容参照型での問題も回避可能。
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">string</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public required string X { get; init; }
+    public required int Y { get; init; }
 }
-</pre>
+```
 
 ちなみに、null 許容参照型は「わかりやすい需要の例」ではありますが、
 別にその他の場面でも `required` は使えます。
 とにかく「初期化を明示させたい」というものなので、値型や null 許容型でも使えます。
 
-<pre class="source" title="とにかく「初期化を明示させたい」">
-<span class="comment">// 全部 0 か null なので、別に new A() でも結果は同じものの、明示させたいという意図があるなら required。</span>
-<span class="reserved">var</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span> { <span class="property">X</span> <span class="operator">=</span> <span class="reserved">null</span>, <span class="property">Y</span> <span class="operator">=</span> <span class="number">0</span>, <span class="property">Z</span> <span class="operator">=</span> <span class="reserved">null</span> };
+```csharp
+// 全部 0 か null なので、別に new A() でも結果は同じものの、明示させたいという意図があるなら required。
+var a1 = new A { X = null, Y = 0, Z = null };
 
-<span class="reserved">var</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type"><span class="error" title="CS9035">A</span></span> { <span class="property">X</span> <span class="operator">=</span> <span class="reserved">null</span>, <span class="property">Y</span> <span class="operator">=</span> <span class="number">0</span> }; <span class="comment">// Z がないのでエラー。</span>
+var a2 = new A { X = null, Y = 0 }; // Z がないのでエラー。
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="comment">// default 値(0 や null)でもいいけども、とにかく明示はさせたい。</span>
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">int</span><span class="operator">?</span> <span class="property">Z</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    // default 値(0 や null)でもいいけども、とにかく明示はさせたい。
+    public required string? X { get; init; }
+    public required int Y { get; init; }
+    public required int? Z { get; init; }
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-14"></a> <a id="applicable">required の適用範囲</a>
 
 `required` は、`virtual` や `abstract` なプロパティに対しても使えます。
 ただし、基底クラス側が `required` なものは派生クラス側にも `required` を付ける必要があります。
 
-<pre class="source" title="派生と required">
-<span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">A</span>
+```csharp
+abstract class A
 {
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">abstract</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">virtual</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">int</span> <span class="property">Z</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public required abstract int X { get; init; }
+    public required virtual int Y { get; init; }
+    public virtual int Z { get; init; }
 }
 
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+class B : A
 {
-    <span class="comment">// 基底クラス側が required なら、こっちも required でないとダメ。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    // 基底クラス側が required なら、こっちも required でないとダメ。
+    public override required int X { get; init; }
 
-    <span class="comment">// 逆は大丈夫。基底クラスになくても、派生クラス側だけ required を足すことはできる。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property">Z</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    // 逆は大丈夫。基底クラスになくても、派生クラス側だけ required を足すことはできる。
+    public override required int Z { get; init; }
 }
 
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">A</span>
+class C : A
 {
-    <span class="comment">// 派生側で required を取ってしまうとコンパイル エラー。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS9030">X</span></span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    // 派生側で required を取ってしまうとコンパイル エラー。
+    public override int X { get; init; }
 }
-</pre>
+```
 
 そして、`required` はオブジェクト初期化で使うことが前提なので、
 `new` できないインターフェイスに対しては使えません。
 
-<pre class="source" title="インターフェイスには required を使えない">
-<span class="reserved">interface</span> <span class="type">I</span>
+```csharp
+interface I
 {
-    <span class="comment">// エラー。</span>
-    <span class="reserved">required</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS0106">X</span></span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-}</pre>
+    // エラー。
+    required int X { get; init; }
+}
+```
 
 また、オブジェクト初期化子で値を渡せるように、
 プロパティ/フィールドのアクセシビリティは、それを含む型よりも広い必要があります。
 例えば、`internal` クラスの `internal` プロパティには使えますが、
 `public` クラスの `protected` プロパティには使えません。
 
-<pre class="source" title="required メンバーのアクセシビリティの制限">
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">A</span>
+```csharp
+internal class A
 {
-    <span class="comment">// internal クラスの internal プロパティなので OK。</span>
-    <span class="reserved">internal</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    // internal クラスの internal プロパティなので OK。
+    internal required int X { get; init; }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">B</span>
+public class B
 {
-    <span class="comment">// public 未満のアクセシビリティは全部不可。以下は全部エラー。</span>
-    <span class="reserved">protected</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS9032">X1</span></span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">internal</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS9032">X2</span></span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">internal</span> <span class="reserved">protected</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS9032">X3</span></span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">protected</span> <span class="reserved">private</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS9032">X4</span></span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">private</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="field"><span class="error" title="CS9032">X5</span></span>;
+    // public 未満のアクセシビリティは全部不可。以下は全部エラー。
+    protected required int X1 { get; init; }
+    internal required int X2 { get; init; }
+    internal protected required int X3 { get; init; }
+    protected private required int X4 { get; init; }
+    private required int X5;
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-15"></a> <a id="SetsRequiredMembers">SetsRequiredMembers</a>
 
@@ -831,84 +832,84 @@ C# 3 当時は名前指定初期化という考え方もなくて、あくまで
 `SetsRequiredMembers` という属性(`System.Diagnostics.CodeAnalysis` 名前空間)を使って「このコンストラクターを呼んだ場合は `required` メンバーの初期化をする必要はない」
 という指定もできます。
 
-<pre class="source" title="SetsRequiredMembers 属性の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="comment">// required メンバーは A() (引数なしコンストラクター)で初期化するので、</span>
-<span class="comment">// この場合は { X = &quot;&quot; } とかがなくてもエラーにならない。</span>
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
+// required メンバーは A() (引数なしコンストラクター)で初期化するので、
+// この場合は { X = "" } とかがなくてもエラーにならない。
+var a = new A();
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">string</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public required string X { get; init; }
+    public int Y { get; init; }
 
-    [<span class="type">SetsRequiredMembers</span>]
-    <span class="reserved">public</span> <span class="type">A</span>()
+    [SetsRequiredMembers]
+    public A()
     {
-        <span class="property">X</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>;
-        <span class="property">Y</span> <span class="operator">=</span> <span class="number">123</span>;
+        X = "abc";
+        Y = 123;
     }
 }
-</pre>
+```
 
 ただ、この `SetsRequiredMembers` は、利用側(呼び出した側)のエラーはなくしてくれる一方で、
 作る側(コンストラクターの実装側)では特に何もしてくれません。
 単にエラーを消します。
 
-<pre class="source" title="自称 SetsRequiredMembers">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="comment">// 自称 SetsRequiredMembers を信じてエラーは出さない。</span>
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
+// 自称 SetsRequiredMembers を信じてエラーは出さない。
+var a = new A();
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span><span class="operator">.</span><span class="property">X</span>); <span class="comment">// null</span>
+Console.WriteLine(a.X); // null
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">string</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public required string X { get; init; }
+    public int Y { get; init; }
 
-    [<span class="type">SetsRequiredMembers</span>]
-    <span class="reserved">public</span> <span class="type"><span class="warning" title="CS8618">A</span></span>()
+    [SetsRequiredMembers]
+    public A()
     {
-        <span class="comment">// 「requierd メンバーをセットする」と自称しているくせに、実際は何もしない。</span>
-        <span class="comment">// X に関しては nullability のフロー解析で、null 許容参照型警告が出るけども、全くの別件。</span>
-        <span class="comment">// Y に関しては一切何もチェックが働かない。</span>
-        <span class="comment">// 少なくとも C# 11 リリース時点では「仕様」(問題はわかっているものの、実装が大変なので妥協)。</span>
-        <span class="comment">// 現状の SetsRequiredMembers は「使う側はコンパイラーが守るけど、作る側は自分で頑張って」という姿勢。</span>
+        // 「requierd メンバーをセットする」と自称しているくせに、実際は何もしない。
+        // X に関しては nullability のフロー解析で、null 許容参照型警告が出るけども、全くの別件。
+        // Y に関しては一切何もチェックが働かない。
+        // 少なくとも C# 11 リリース時点では「仕様」(問題はわかっているものの、実装が大変なので妥協)。
+        // 現状の SetsRequiredMembers は「使う側はコンパイラーが守るけど、作る側は自分で頑張って」という姿勢。
     }
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-16"></a> <a id="required-internal">required メンバーの中身</a>
 
 required メンバーを含む型は、内部的には属性を付けて表現しているようです。
 例えば、以下のようなクラスがあったとします。
 
-<pre class="source" title="シンプルな required メンバーの例">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public required int X { get; init; }
 }
-</pre>
+```
 
 これをコンパイルすると、以下のようなコードに展開されます。
 
-<pre class="source" title="上記の例の展開結果">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-[<span class="type">RequiredMember</span>]
-<span class="reserved">class</span> <span class="type">A</span>
+[RequiredMember]
+class A
 {
-    [<span class="type">RequiredMember</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    [RequiredMember]
+    public int X { get; init; }
 
-    [<span class="type">Obsolete</span>(<span class="string">&quot;Constructors of types with required members are not supported in this version of your compiler.&quot;</span>, <span class="reserved">true</span>)]
-    [<span class="type">CompilerFeatureRequired(<span class="string">&quot;RequiredMembers&quot;</span>)</span>]
-    <span class="reserved">public</span> <span class="type">A</span>() { }
+    [Obsolete("Constructors of types with required members are not supported in this version of your compiler.", true)]
+    [CompilerFeatureRequired("RequiredMembers")]
+    public A() { }
 }
-</pre>
+```
 
 型と、required メンバー自体には `RequiredMember` 属性(`System.Runtime.CompilerServices` 名前空間)が付いていて、これで required かどうかを判断しています。
 
@@ -928,21 +929,21 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 (不意に、コンパイラーが裏で勝手に作るコンストラクターが増えることがある。
 不意に増えるものに使うには modreq は強すぎる。)
 
-<pre class="source" title="">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">required</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public required int X { get; init; }
 
-    <span class="comment">// SetsRequiredMembers なコンストラクターを明示。</span>
-    <span class="comment">// この場合、Obsolete, CompilerFeatureRequired 付きのコンストラクターはコンパイラー生成されない。</span>
-    <span class="comment">// もし、このコンストラクターを消すと…</span>
-    <span class="comment">// コンパイラーが裏で Obsolete, CompilerFeatureRequired 付きを作ってしまう。</span>
-    [<span class="type">SetsRequiredMembers</span>]
-    <span class="reserved">public</span> <span class="type">A</span>() { }
+    // SetsRequiredMembers なコンストラクターを明示。
+    // この場合、Obsolete, CompilerFeatureRequired 付きのコンストラクターはコンパイラー生成されない。
+    // もし、このコンストラクターを消すと…
+    // コンパイラーが裏で Obsolete, CompilerFeatureRequired 付きを作ってしまう。
+    [SetsRequiredMembers]
+    public A() { }
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-17"></a> <a id="field-keyword">field キーワード</a>
 
@@ -952,85 +953,85 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 これに対して、ちょこっとだけ実装をいじりたいことが結構あります。
 特によくあるのが「バッキング フィールドの生成は自動でやってほしいけど、`get`/`set` の中身は自分で書きたい」という状況で、例えば下のような例があります。
 
-<pre class="source" title="惜しくも自動にならないプロパティ">
-<span class="reserved">using</span> System<span class="operator">.</span>ComponentModel;
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">class</span> <span class="type">FieldBackedProperties</span> : <span class="type">INotifyPropertyChanged</span>
+class FieldBackedProperties : INotifyPropertyChanged
 {
-    <span class="comment">// 遅延初期化: 最初のアクセス時にインスタンスを生成。</span>
-    <span class="reserved">private</span> <span class="reserved">string</span><span class="operator">?</span> <span class="field">_x</span>;
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">X</span> <span class="operator">=&gt;</span> <span class="field">_x</span> <span class="operator">??=</span> <span class="string">&quot;&quot;</span>;
+    // 遅延初期化: 最初のアクセス時にインスタンスを生成。
+    private string? _x;
+    public string X => _x ??= "";
 
-    <span class="comment">// set 側だけ null 許容(get 側で ?? で非 null 化)。</span>
-    <span class="reserved">private</span> <span class="reserved">string</span><span class="operator">?</span> <span class="field">_y</span>;
+    // set 側だけ null 許容(get 側で ?? で非 null 化)。
+    private string? _y;
 
-    [<span class="type">AllowNull</span>]
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">Y</span>
+    [AllowNull]
+    public string Y
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_y</span> <span class="operator">??</span> <span class="string">&quot;&quot;</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">_y</span> <span class="operator">=</span> <span class="reserved">value</span>;
+        get => _y ?? "";
+        set => _y = value;
     }
 
-    <span class="comment">// INotifyPropertyChanged の実装: get 側だけ素通し。</span>
-    <span class="reserved">private</span> <span class="reserved">string</span><span class="operator">?</span> <span class="field">_z</span>;
+    // INotifyPropertyChanged の実装: get 側だけ素通し。
+    private string? _z;
 
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Z</span>
+    public string? Z
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_z</span>;
-        <span class="reserved">set</span>
+        get => _z;
+        set
         {
-            <span class="control">if</span> (<span class="field">_x</span> <span class="operator">!=</span> <span class="reserved">value</span>)
+            if (_x != value)
             {
-                <span class="field">_z</span> <span class="operator">=</span> <span class="reserved">value</span>;
-                PropertyChanged<span class="operator">?</span><span class="operator">.</span><span class="method">Invoke</span>(<span class="reserved">this</span>, <span class="reserved">new</span>(<span class="reserved">nameof</span>(<span class="property">Z</span>)));
+                _z = value;
+                PropertyChanged?.Invoke(this, new(nameof(Z)));
             }
         }
     }
 
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">PropertyChangedEventHandler</span><span class="operator">?</span> PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 }
-</pre>
+```
 
 これに対して C# 14 では、 `field` キーワードというものを追加しました。
 プロパティの `get`/`set` の中に `field` と書くと、
 バッキング フィールドを生成した上で、そのフィールドの読み書きができます。
 例えば前述の例を `field` を使って書き直すと以下のようになります。
 
-<pre class="source" title="field キーワードを使って書き直し">
-<span class="reserved">using</span> System<span class="operator">.</span>ComponentModel;
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">class</span> <span class="type">FieldBackedProperties</span> : <span class="type">INotifyPropertyChanged</span>
+class FieldBackedProperties : INotifyPropertyChanged
 {
-    <span class="comment">// 遅延初期化: 最初のプロパティ アクセス時にインスタンスを生成。</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">X</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??=</span> <span class="string">&quot;&quot;</span>;
+    // 遅延初期化: 最初のプロパティ アクセス時にインスタンスを生成。
+    public string X => field ??= "";
 
-    <span class="comment">// set 側だけ null 許容(get 側で ?? で非 null 化)。</span>
-    [<span class="type">AllowNull</span>]
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">Y</span>
+    // set 側だけ null 許容(get 側で ?? で非 null 化)。
+    [AllowNull]
+    public string Y
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??</span> <span class="string">&quot;&quot;</span>;
-        <span class="reserved">set</span>;
+        get => field ?? "";
+        set;
     }
 
-    <span class="comment">// INotifyPropertyChanged の実装: get 側だけ素通し。</span>
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Z</span>
+    // INotifyPropertyChanged の実装: get 側だけ素通し。
+    public string? Z
     {
-        <span class="reserved">get</span>;
-        <span class="reserved">set</span>
+        get;
+        set
         {
-            <span class="control">if</span> (<span class="reserved">field</span> <span class="operator">!=</span> <span class="reserved">value</span>)
+            if (field != value)
             {
-                <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span>;
-                PropertyChanged<span class="operator">?</span><span class="operator">.</span><span class="method">Invoke</span>(<span class="reserved">this</span>, <span class="reserved">new</span>(<span class="reserved">nameof</span>(<span class="property">Z</span>)));
+                field = value;
+                PropertyChanged?.Invoke(this, new(nameof(Z)));
             }
         }
     }
 
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">PropertyChangedEventHandler</span><span class="operator">?</span> PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 }
-</pre>
+```
 
 `field` キーワードには以下のようなメリットがあります。
 
@@ -1053,49 +1054,49 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 
 以下は一例ですが、「`get` だけ書くと [get-only プロパティ](#get-only)になる」という挙動は完全に一致します。
 
-<pre class="source" title="field-backed プロパティの get-only 化">
-<span class="reserved">class</span> <span class="type">GetOnly</span>
+```csharp
+class GetOnly
 {
-    <span class="comment">// 元々ある get-only プロパティ。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; }
+    // 元々ある get-only プロパティ。
+    public int X { get; }
 
-    <span class="comment">// get =&gt; field; と get; は全く同じ意味で、これも get-only プロパティになる。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>; }
+    // get => field; と get; は全く同じ意味で、これも get-only プロパティになる。
+    public int Y { get => field; }
 
-    <span class="comment">// 何ならこれも get =&gt; field; の省略形なので get-only プロパティになる。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Z</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>;
+    // 何ならこれも get => field; の省略形なので get-only プロパティになる。
+    public int Z => field;
 
-    <span class="comment">// 中身をカスタマイズしても、field キーワードを使っている時点で get-only プロパティ。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">W</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">+</span> <span class="number">1</span>;
+    // 中身をカスタマイズしても、field キーワードを使っている時点で get-only プロパティ。
+    public int W => field + 1;
 
-    <span class="reserved">public</span> <span class="type">GetOnly</span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>, <span class="reserved">int</span> <span class="variable local">z</span>, <span class="reserved">int</span> <span class="variable local">w</span>)
+    public GetOnly(int x, int y, int z, int w)
     {
-        <span class="comment">// なので set; を省略していても、コンストラクター内に限り値の代入が可能。</span>
-        <span class="comment">// (バッキング フィールドへの直代入扱い。)</span>
-        <span class="property">X</span> <span class="operator">=</span> <span class="variable local">x</span>;
-        <span class="property">Y</span> <span class="operator">=</span> <span class="variable local">y</span>;
-        <span class="property">Z</span> <span class="operator">=</span> <span class="variable local">z</span>;
-        <span class="property">W</span> <span class="operator">=</span> <span class="variable local">w</span>;
+        // なので set; を省略していても、コンストラクター内に限り値の代入が可能。
+        // (バッキング フィールドへの直代入扱い。)
+        X = x;
+        Y = y;
+        Z = z;
+        W = w;
     }
 }
-</pre>
+```
 
 他の例として、`ref` 付きのバッキング フィールドは作れないという制限も共通です。
 
-<pre class="source" title="ref 付きのプロパティは field-backed プロパティにできない">
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">RefField</span>
+```csharp
+ref struct RefField
 {
-    <span class="comment">// ref 付きのプロパティは自動実装にできない。</span>
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="error" title="CS8145"><span class="property">X</span></span> { <span class="reserved">get</span>; }
+    // ref 付きのプロパティは自動実装にできない。
+    public ref int X { get; }
 
-    <span class="comment">// 同じく field キーワードは使えない。</span>
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS8145">Y</span></span> <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="reserved">field</span>;
+    // 同じく field キーワードは使えない。
+    public ref int Y => ref field;
 
-    <span class="comment">// 参考: これなら書ける。(警告は別件。)</span>
-    <span class="reserved">private</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="field"><span class="warning" title="CS9265">_z</span></span>;
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="property">Z</span> <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="field">_z</span>;
+    // 参考: これなら書ける。(警告は別件。)
+    private ref int _z;
+    public ref int Z => ref _z;
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-19"></a> <a id="field-contextual-keyword">文脈キーワード</a>
 
@@ -1103,104 +1104,104 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 他の例にもれず `field` は[文脈キーワード](../misc/ap_compatibility.md#contextual-keyword)です。
 プロパティの `get`/`set` 内でだけキーワード扱いされます。
 
-<pre class="source" title="field は文脈キーワード">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// これは普通にフィールド。</span>
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field"><span class="warning" title="CS0169">field</span></span>;
+    // これは普通にフィールド。
+    private int field;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">M</span>()
+    public int M()
     {
-        <span class="comment">// これは普通にローカル変数。</span>
-        <span class="reserved">var</span> <span class="variable">field</span> <span class="operator">=</span> <span class="number">123</span>;
-        <span class="control">return</span> <span class="variable">field</span>;
+        // これは普通にローカル変数。
+        var field = 123;
+        return field;
     }
 
-    <span class="comment">// これは文脈キーワードの field。</span>
-    <span class="comment">// (ちなみにこの例では「同名のフィールドがあるけど大丈夫？」と警告される。)</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> <span class="operator">=&gt;</span> <span class="reserved"><span class="warning" title="CS9258">field</span></span>;
+    // これは文脈キーワードの field。
+    // (ちなみにこの例では「同名のフィールドがあるけど大丈夫？」と警告される。)
+    public int X => field;
 }
 
-<span class="comment">// これも警告は出るものの合法。普通に型名。</span>
-<span class="comment">// (「小文字アルファベット始まるの型名は将来の文脈キーワードと被る可能性が高いからやめてほしい」という警告。)</span>
-<span class="reserved">class</span> <span class="type"><span class="warning" title="CS8981">field</span></span>;
+// これも警告は出るものの合法。普通に型名。
+// (「小文字アルファベット始まるの型名は将来の文脈キーワードと被る可能性が高いからやめてほしい」という警告。)
+class field;
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="comment">// こんなのすら合法。</span>
-    <span class="reserved">public</span> <span class="type">field</span> <span class="method">field</span>(<span class="type">field</span> <span class="variable local">field</span>) <span class="operator">=&gt;</span> <span class="variable local">field</span>;
+    // こんなのすら合法。
+    public field field(field field) => field;
 }
-</pre>
+```
 
 この例のような「`field` という名前のフィールド」は元々書けていたわけで、
 `field` キーワードの追加はたとえ文脈キーワードだとしても破壊的変更です。
 以下のコードは C# 13 と 14 で解釈が異なります。
 
-<pre class="source" title="field キーワードの追加は破壊的変更">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field"><span class="warning" title="CS0649">field</span></span>;
+    private int field;
 
-    <span class="comment">// C# 13: field フィールドを参照。</span>
-    <span class="comment">// C# 14: X のバッキング フィールドが自動生成されて、それを参照。</span>
-    <span class="comment">//        (field フィールドとは別のフィールドが生成される。)</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> <span class="operator">=&gt;</span> <span class="reserved"><span class="warning" title="CS9258">field</span></span>;
+    // C# 13: field フィールドを参照。
+    // C# 14: X のバッキング フィールドが自動生成されて、それを参照。
+    //        (field フィールドとは別のフィールドが生成される。)
+    public int X => field;
 
-    <span class="comment">// 以前の挙動を得るためには:</span>
+    // 以前の挙動を得るためには:
 
-    <span class="comment">// @ を付けるとキーワードではなくなる。この名前のフィールドを参照。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> <span class="operator">=&gt;</span> <span class="field">@field</span>;
+    // @ を付けるとキーワードではなくなる。この名前のフィールドを参照。
+    public int Y => @field;
 
-    <span class="comment">// this. を付けてもフィールド参照にできる。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Z</span> <span class="operator">=&gt;</span> <span class="reserved">this</span><span class="operator">.</span><span class="field">field</span>;
+    // this. を付けてもフィールド参照にできる。
+    public int Z => this.field;
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-20"></a> <a id="field-keyword-initializer">プロパティ初期化子</a>
 
 プロパティ初期化子を使う場合ちょっと注意が必要になります。
 初期化子で値を渡す場合、プロパティの `set` アクセサー呼び出しではなく、バッキング フィールドへの直代入になります。
 
-<pre class="source" title="プロパティ初期化子では set が呼ばれない">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">PropertyInitializer</span>(<span class="number">10</span>);
+```csharp
+var x = new PropertyInitializer(10);
 
-<span class="comment">// x.X は 10 になる。</span>
-<span class="comment">// set が呼ばれていなくて、バッキング フィールドに直接 10 が渡る。</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span><span class="operator">.</span><span class="property">X</span>);
+// x.X は 10 になる。
+// set が呼ばれていなくて、バッキング フィールドに直接 10 が渡る。
+Console.WriteLine(x.X);
 
-<span class="reserved">class</span> <span class="type">PropertyInitializer</span>(<span class="reserved">int</span> <span class="variable local">x</span>)
+class PropertyInitializer(int x)
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">get</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span> <span class="operator">+</span> <span class="number">1</span>; <span class="comment">// 値を1ずらす</span>
-    } <span class="operator">=</span> <span class="variable local">x</span>;
+        get;
+        set => field = value + 1; // 値を1ずらす
+    } = x;
 }
-</pre>
+```
 
 コンストラクターの場合はこんなことはなくて、ちゃんと `set` アクセサーが呼ばれます。
 
-<pre class="source" title="コンストラクター内で初期化するとちゃんと set が呼ばれる">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">Constructor</span>(<span class="number">10</span>);
+```csharp
+var x = new Constructor(10);
 
-<span class="comment">// x.X は 11 になる。</span>
-<span class="comment">// ちゃんと set 経由でバッキング フィールドの初期化が行われる。</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">x</span><span class="operator">.</span><span class="property">X</span>);
+// x.X は 11 になる。
+// ちゃんと set 経由でバッキング フィールドの初期化が行われる。
+Console.WriteLine(x.X);
 
-<span class="reserved">class</span> <span class="type">Constructor</span>
+class Constructor
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">get</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span> <span class="operator">+</span> <span class="number">1</span>; <span class="comment">// 値を1ずらす</span>
+        get;
+        set => field = value + 1; // 値を1ずらす
     }
 
-    <span class="reserved">public</span> <span class="type">Constructor</span>(<span class="reserved">int</span> <span class="variable local">x</span>)
+    public Constructor(int x)
     {
-        <span class="property">X</span> <span class="operator">=</span> <span class="variable local">x</span>; <span class="comment">// この場合は set アクセサーが呼ばれる。</span>
+        X = x; // この場合は set アクセサーが呼ばれる。
     }
 }
-</pre>
+```
 
 変な挙動ではありますが、これは初期化子やコンストラクターの実行順序に関係しています。
 「[コンストラクター](oo_construct.md#initializer-order)」や
@@ -1215,44 +1216,44 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 本節冒頭の例でも挙げたように、`field` キーワードの用途の1つに遅延初期化があります。
 この場合、「`T` 型のプロパティのバッキング フィールドは `T?` の方が都合がいい」ということになります。
 
-<pre class="source" title="T 型の遅延初期化では T? が都合がいい">
-<span class="reserved">class</span> <span class="type">LazyInit</span>
+```csharp
+class LazyInit
 {
-    <span class="comment">// field は string? でも大丈夫。</span>
-    <span class="comment">// 一方で、field が string だとすると「コンストラクターで非 null に初期化しろ」警告が出るはず。</span>
-    <span class="comment">// つまり、field は string? の方が都合がいい。</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">X</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??</span> <span class="string">&quot;&quot;</span>;
+    // field は string? でも大丈夫。
+    // 一方で、field が string だとすると「コンストラクターで非 null に初期化しろ」警告が出るはず。
+    // つまり、field は string? の方が都合がいい。
+    public string X => field ?? "";
 }
-</pre>
+```
 
 かといって常に `T?` にすればいいというものでもなく、`T` でないとまずい場合もあります。 
 ちょっと複雑な例ですが、以下のコードを見てください。
 
-<pre class="source" title="string プロパティのバッキング フィールドは string か string? か">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">class</span> <span class="type">AllowNullSetter</span>
+class AllowNullSetter
 {
-    <span class="comment">// AllowNull を付けると set 側だけ nullable になる。</span>
-    <span class="comment">// obj.X = null; を渡せて、でも、var x = obj.X; は null にならない。</span>
+    // AllowNull を付けると set 側だけ nullable になる。
+    // obj.X = null; を渡せて、でも、var x = obj.X; は null にならない。
 
-    <span class="comment">// フィールドは string? であってほしい例: </span>
-    [<span class="type">AllowNull</span>]
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">X</span>
+    // フィールドは string? であってほしい例: 
+    [AllowNull]
+    public string X
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??</span> <span class="string">&quot;&quot;</span>; <span class="comment">// こっちで非 null を保証。</span>
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span>;
+        get => field ?? ""; // こっちで非 null を保証。
+        set => field = value;
     }
 
-    <span class="comment">// フィールドは string であってほしい例: </span>
-    [<span class="type">AllowNull</span>]
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">Y</span>
+    // フィールドは string であってほしい例: 
+    [AllowNull]
+    public string Y
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span> <span class="operator">??</span> <span class="string">&quot;&quot;</span>; <span class="comment">// こっちで非 null を保証。</span>
-    } <span class="operator">=</span> <span class="string">&quot;&quot;</span>;
+        get => field;
+        set => field = value ?? ""; // こっちで非 null を保証。
+    } = "";
 }
-</pre>
+```
 
 これをコンパイラーが正しく判断できるように、`get`/`set` 両方合わせてフロー解析する仕様になっています
 (通常、null 許容性のフロー解析は2つ以上のメソッドをまたいで行いません。
@@ -1260,51 +1261,51 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 `get` 側で `field` が `T?` だと思ってフロー解析してみて警告にならなかった場合、
 `set` 側も `field` が `T?` かもしれない前提でフロー解析します。
 
-<pre class="source" title="get の解析結果を踏まえて set をフロー解析">
-<span class="reserved">class</span> <span class="type">Nullability</span>
+```csharp
+class Nullability
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">X</span>
+    public string X
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??</span> <span class="string">&quot;&quot;</span>; <span class="comment">// field は string? でも問題ない。</span>
-        <span class="reserved">set</span>
+        get => field ?? ""; // field は string? でも問題ない。
+        set
         {
-            <span class="comment">// string? 扱いでフロー解析。</span>
-            <span class="reserved">string</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved"><span class="warning" title="CS8600">field</span></span>; <span class="comment">// ここで警告。</span>
+            // string? 扱いでフロー解析。
+            string x = field; // ここで警告。
         }
     }
 
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property"><span class="warning" title="CS9264">Y</span></span> <span class="comment">// ここに「非 null 初期化しろ」警告が出る。</span>
+    public string Y // ここに「非 null 初期化しろ」警告が出る。
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>; <span class="comment">// field は string でないとおかしい。</span>
-        <span class="reserved">set</span>
+        get => field; // field は string でないとおかしい。
+        set
         {
-            <span class="comment">// string 扱いでフロー解析。</span>
-            <span class="reserved">string</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">field</span>; <span class="comment">// 警告なし。</span>
+            // string 扱いでフロー解析。
+            string x = field; // 警告なし。
         }
     }
 
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">Z</span>
+    public string Z
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??</span> <span class="string">&quot;&quot;</span>;
-        <span class="reserved">set</span>
+        get => field ?? "";
+        set
         {
-            <span class="comment">// string? 扱いでフロー解析するとしても、</span>
-            <span class="comment">// value が string なのでここより後ろでは field は非 null。</span>
-            <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span>;
-            <span class="reserved">string</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">field</span>; <span class="comment">// 警告なし。</span>
+            // string? 扱いでフロー解析するとしても、
+            // value が string なのでここより後ろでは field は非 null。
+            field = value;
+            string x = field; // 警告なし。
         }
     }
 
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">W</span>
+    public string W
     {
-        <span class="reserved">set</span>
+        set
         {
-            <span class="comment">// ちなみに get を省略すると field は string? 扱いになる。</span>
-            <span class="reserved">string</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved"><span class="warning" title="CS8600">field</span></span>; <span class="comment">// ここで警告。</span>
+            // ちなみに get を省略すると field は string? 扱いになる。
+            string x = field; // ここで警告。
         }
     }
 }
-</pre>
+```
 
 ちなみにこの挙動はあくまで [null 許容参照型](../resource/nullablereferencetype.md)に対するものです。
 [null 許容値型](../resource/sp2_nullable.md)の場合は「`T` 型プロパティのバッキング フィールドは常に `T`」になります。
@@ -1321,143 +1322,143 @@ required メンバーを含む型は、内部的には属性を付けて表現�
 #### 解答例 1
 
 
-<pre class="source" title="Point/Triangle" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">double</span> y; <span class="comment">// y 座標</span>
+  double x; // x 座標
+  double y; // y 座標
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> X
+  /// </summary>
+  public double X
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    get { return this.x; }
+    set { this.x = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// y 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Y
+  /// </summary>
+  public double Y
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.y; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.y = value; }
+    get { return this.y; }
+    set { this.y = value; }
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle
+/// </summary>
+class Triangle
 {
   Point a;
   Point b;
   Point c;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点A。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point A
+  /// </summary>
+  public Point A
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> a; }
-    <span class="reserved">set</span> { a = value; }
+    get { return a; }
+    set { a = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点B。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point B
+  /// </summary>
+  public Point B
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> b; }
-    <span class="reserved">set</span> { b = value; }
+    get { return b; }
+    set { b = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点C。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point C
+  /// </summary>
+  public Point C
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> c; }
-    <span class="reserved">set</span> { c = value; }
+    get { return c; }
+    set { c = value; }
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">double</span> abx, aby, acx, acy;
+    double abx, aby, acx, acy;
     abx = b.X - a.X;
     aby = b.Y - a.Y;
     acx = c.X - a.X;
     acy = c.Y - a.Y;
-    <span class="reserved">return</span> 0.5 * Math.Abs(abx * acy - acx * aby);
+    return 0.5 * Math.Abs(abx * acy - acx * aby);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetArea());
+    Console.Write("{0}\n", t.GetArea());
   }
 }
-</code></pre>
+```

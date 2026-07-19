@@ -29,13 +29,13 @@ STL は、template という機能を用いた直交性の高いライブラリ�
 <em>template</em>は型をパラメータとして与えることで、任意の型に対応したコンテナやアルゴリズムを記述できる機能です。
 例えば、2つの値のうち大きいほうを取り出す関数<code>max()</code>を作りたいとします。<code>int</code>型に限定したものなら簡単に作れて以下のようになります。
 
-<pre class="source" title="int用max関数" lang="">
-<code><span class="reserved">inline
-int</span> max(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+```csharp
+inline
+int max(int x, int y)
 {
-  <span class="reserved">return</span> x &gt; y ? x : y;
+  return x > y ? x : y;
 }
-</code></pre>
+```
 
 
 しかし、<code>double</code>型や文字列に対して同じことをしたい場合、
@@ -44,14 +44,14 @@ int</span> max(<span class="reserved">int</span> x, <span class="reserved">int</
 templateを用いるとこの問題を解決できます。
 template版の<code>max()</code>関数は以下のようになります。
 
-<pre class="source" title="template版max関数" lang="">
-<code><span class="reserved">template</span>&lt;typename T&gt;
-<span class="reserved">inline</span>
-T max(<span class="reserved">const</span> T&amp; x, <span class="reserved">const</span> T&amp; y)
+```cpp
+template<typename T>
+inline
+T max(const T& x, const T& y)
 {
-  <span class="reserved">return</span> x &gt; y ? x : y;
+  return x > y ? x : y;
 }
-</code></pre>
+```
 
 
 <code>template</code>というキーワードを用いてtemplate関数を定義します。

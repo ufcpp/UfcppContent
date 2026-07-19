@@ -28,18 +28,18 @@ C# は極力互換性を保つ(破壊的変更になるものを避ける)よう
 
 ということで、以下のようなコードを書いた場合、C# 9.0 現在、1単語目の `var` はクラスの `var` になります。
 
-<pre class="source" title="1単語目の var はクラスの var">
-<code><span class="type">var</span> <span class="variable">var</span> = <span class="reserved">new</span> <span class="type">var</span>();
-<span class="reserved">class</span> <span class="type">var</span> { }
-</code></pre>
+```csharp
+var var = new var();
+class var { }
+```
 
 一方で、以下のコードの場合、1単語目はキーワードの `var` です。
 (先ほどのコードとの差はクラス名が大文字始まりの `Var` な点だけ。)
 
-<pre class="source" title="1単語目はキーワードの var">
-<code><span class="reserved">var</span> <span class="variable">var</span> = <span class="reserved">new</span> <span class="type">Var</span>();
-<span class="reserved">class</span> <span class="type">Var</span> { }
-</code></pre>
+```csharp
+var var = new Var();
+class Var { }
+```
 
 ## 文脈キーワードのわかりにくさ
 
@@ -53,11 +53,11 @@ IDE 上は型名とキーワードで色が違うのでギリギリ判別は付�
 例えば単に Markdown 記法で以下のようなコードを書いたとき、
 大体の環境で、`var` は無条件にキーワード扱いされると思います。
 
-<pre class="source" title="1単語目はキーワードの var">
-<code>```cs
+````csharp
+```cs
 var var = new var();
 ```
-</code></pre>
+````
 
 「文脈を見る」みたいなこと自体学習ハードルを上げてしまうものですし、
 挙句、インターネットで調べものをしていて変な色付けで表示されるとなると、
@@ -68,10 +68,10 @@ var var = new var();
 ところで、C# 9.0 で導入された[レコード型](../../../2020/6/record0609/index.md)についてはちょっと条件が違ったりします。
 以下のコードはコンパイル エラー。
 
-<pre class="source" title="record は型名よりもキーワードの優先度が高い">
-<code><span class="reserved">record</span> <span class="type"><span class="warning">record</span></span> <span class="error">= <span class="reserved">new</span> <span class="type">record</span>();</span>
-<span class="reserved">record</span> <span class="error"><span class="type">record</span></span> { }
-</code></pre>
+```csharp
+record record = new record();
+record record { }
+```
 
 1単語目の `record` がキーワード扱いされていて、結果的に、以下の警告・エラーが出ます。
 
@@ -82,26 +82,26 @@ var var = new var();
 ここで、2行目を `class` に書き換えて、あと、C# 8.0 の文法として成立するように1行目をクラスで覆ってみます。
 C# 8.0 ではこれは有効な C# コードでした。
 
-<pre class="source" title="C# 8.0 で普通にコンパイルできるコード">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="type">record</span> record = <span class="reserved">new</span> <span class="type">record</span>();
+    record record = new record();
 }
  
-<span class="reserved">class</span> <span class="type">record</span> { }
-</code></pre>
+class record { }
+```
 
 これを C# 9.0 でコンパイルすると以下のようになります。
 色付けが変わって、コンパイル エラーが出ます。
 
-<pre class="source" title="さっきと同じコード。C# 9.0 では無効">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">record</span> <span class="type"><span class="warning">record</span></span> <span class="error">=</span> <span class="reserved">new</span> <span class="type"><span class="error">record</span></span>();
+    record record = new record();
 }
  
-<span class="reserved">class</span> <span class="type"><span class="warning">record</span></span> { }
-</code></pre>
+class record { }
+```
 
 ということで、実は `record` キーワードの追加は破壊的変更を起こしています。
 
@@ -110,18 +110,18 @@ C# 8.0 ではこれは有効な C# コードでした。
 1単語目だけ `@` を付けて「キーワードではない」ことを明示しています。
 `new` の後ろなら`@` なしでも型名。
 
-<pre class="source" title="@ を付ければキーワードじゃなくなる">
-<code><span class="type">@record</span> <span class="variable">record</span> = <span class="reserved">new</span> <span class="type">record</span>();
-<span class="reserved">class</span> <span class="type">record</span> { }
-</code></pre>
+```csharp
+@record record = new record();
+class record { }
+```
 
 あと、以下の書き方でも大丈夫です。
 `global::` (`global` はキーワード)の後ろなので型名であることが明白。
 
-<pre class="source" title="global:: の後ろは常に型名">
-<code><span class="reserved">global</span>::<span class="type">record</span> <span class="variable">record</span> = <span class="reserved">new</span> <span class="type">record</span>();
-<span class="reserved">class</span> <span class="type">record</span> { }
-</code></pre>
+```csharp
+global::record record = new record();
+class record { }
+```
 
 `record record = new record();` を書けるようにしようと思ったら判定がかなり複雑になるのであきらめたみたいです。
 

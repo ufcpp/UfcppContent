@@ -20,21 +20,21 @@ aliases: []
 
 例として、以下のようなC#コードを考えます。単純にvirtualなメソッドを呼び出すだけのコードです。主に、Mainメソッドの中身を見ていきます。
 
-<pre class="source" title="簡単なC#コード">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Base</span> { <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">void</span> M() =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Base.M"</span>); }
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span> { <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">void</span> M() =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Derived.M"</span>); }
+class Base { public virtual void M() => Console.WriteLine("Base.M"); }
+class Derived : Base { public override void M() => Console.WriteLine("Derived.M"); }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Base</span> b = <span class="reserved">new</span> <span class="type">Derived</span>();
+        Base b = new Derived();
         b.M();
     }
 }
-</code></pre>
+```
 
 ## IL逆アセンブル
 
@@ -48,17 +48,17 @@ aliases: []
 
 これを使って先ほどのC#コードのコンパイル結果を覗いてみると、`Main`メソッドは以下のようになっています。
 
-<pre class="source" title="Mainメソッドの逆アセンブル結果">
-<code>.method <span class="reserved">private</span> <span class="reserved">hidebysig</span> <span class="reserved">static</span> <span class="reserved">void</span>  Main() <span class="reserved">cil</span> <span class="reserved">managed</span>
+```cil
+.method private hidebysig static void  Main() cil managed
 {
   .entrypoint
-  <span class="comment">// コード サイズ       11 (0xb)
-</span>  .maxstack  8
-  IL_0000:  newobj     <span class="reserved">instance</span> <span class="reserved">void</span> Derived::<span class="reserved">.ctor</span>()
-  IL_0005:  callvirt   <span class="reserved">instance</span> <span class="reserved">void</span> Base::M()
+  // コード サイズ       11 (0xb)
+  .maxstack  8
+  IL_0000:  newobj     instance void Derived::.ctor()
+  IL_0005:  callvirt   instance void Base::M()
   IL_000a:  ret
-} <span class="comment">// end of method Program::Main
-</code></pre>
+} // end of method Program::Main
+```
 
 ILは、インスタンス生成や仮想メソッド呼び出し用の命令を持っています。
 
@@ -97,26 +97,26 @@ ILからネイティブ コードへの変換はJIT (Just-in-Time)、すなわ�
 
 そこで、ちゃんと狙った場所でプログラムを止めるためには、`Debugger`クラス(`System.Diagnostics`名前空間)の`Break`メソッドを使うといいでしょう。このメソッドを書いた位置で必ずプログラムが止まってくれます。
 
-<pre class="source" title="Debugger.Breakメソッドでプログラムを止める">
-<code>        System.Diagnostics.<span class="type">Debugger</span>.Break();
-        <span class="type">Base</span> b = <span class="reserved">new</span> <span class="type">Derived</span>();
+```csharp
+        System.Diagnostics.Debugger.Break();
+        Base b = new Derived();
         b.M();
-        System.Diagnostics.<span class="type">Debugger</span>.Break();
-</code></pre>
+        System.Diagnostics.Debugger.Break();
+```
 
 ## 生成されたネイティブ コード
 
 さて、先ほどの`Main`メソッドからどういうネイティブ コードが生成されるかを改めてみてみましょう。
 x64環境で実行すると以下のようになります。
 
-<pre class="source" title="Mainメソッドから生成されるネイティブ コード">
-<code>01960450  mov         ecx,1874E58h  
+```csharp
+01960450  mov         ecx,1874E58h  
 01960455  call        018630F4  
 0196045A  mov         ecx,eax  
 0196045C  mov         eax,dword ptr [ecx]  
 0196045E  mov         eax,dword ptr [eax+28h]  
 01960461  call        dword ptr [eax+10h]  
-</code></pre>
+```
 
 それぞれの命令がどういう意味かというと、以下の通りです。
 

@@ -25,36 +25,40 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;ddt/&gt;
-</pre>
+```xml
+<ddt/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;ddt/&gt;x = -kx
-</pre><div class="math"><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>x = -kx
+```xml
+<ddt/>x = -kx
+```
+<div class="math"><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span>t</td></tr></table>x = -kx
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:ddt"&gt;
-  &lt;table class="frac" summary="differential"&gt;
-    &lt;tr&gt;&lt;td class="num"&gt;&lt;span class="normal"&gt;d&lt;/span&gt;&lt;xsl:choose&gt;&lt;xsl:when test="@var != ''"&gt;&lt;xsl:value-of select="@var"/&gt;&lt;/xsl:when&gt;&lt;xsl:when test="@v != ''"&gt;&lt;xsl:value-of select="@v"/&gt;&lt;/xsl:when&gt;&lt;xsl:otherwise&gt;&lt;xsl:apply-templates/&gt;&lt;/xsl:otherwise&gt;&lt;/xsl:choose&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;&lt;span class="normal"&gt;d&lt;/span&gt;t&lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:ddt">
+  <table class="frac" summary="differential">
+    <tr><td class="num"><span class="normal">d</span><xsl:choose><xsl:when test="@var != ''"><xsl:value-of select="@var"/></xsl:when><xsl:when test="@v != ''"><xsl:value-of select="@v"/></xsl:when><xsl:otherwise><xsl:apply-templates/></xsl:otherwise></xsl:choose></td></tr>
+    <tr><td><span class="normal">d</span>t</td></tr>
+  </table>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:math//ufcpp:dd|ufcpp:Math//ufcpp:dd"&gt;
-  &lt;table class="frac" summary="differential"&gt;
-    &lt;tr&gt;&lt;td class="num"&gt;&lt;span class="normal"&gt;d&lt;/span&gt;&lt;xsl:choose&gt;&lt;xsl:when test="@num != ''"&gt;&lt;xsl:value-of select="@num"/&gt;&lt;/xsl:when&gt;&lt;xsl:when test="@n != ''"&gt;&lt;xsl:value-of select="@n"/&gt;&lt;/xsl:when&gt;&lt;xsl:otherwise&gt;&lt;xsl:apply-templates select="ufcpp:num"/&gt;&lt;/xsl:otherwise&gt;&lt;/xsl:choose&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;&lt;span class="normal"&gt;d&lt;/span&gt;&lt;xsl:choose&gt;&lt;xsl:when test="@denom != ''"&gt;&lt;xsl:value-of select="@denom"/&gt;&lt;/xsl:when&gt;&lt;xsl:when test="@d != ''"&gt;&lt;xsl:value-of select="@d"/&gt;&lt;/xsl:when&gt;&lt;xsl:otherwise&gt;&lt;xsl:apply-templates select="ufcpp:denom"/&gt;&lt;/xsl:otherwise&gt;&lt;/xsl:choose&gt;&lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:math//ufcpp:dd|ufcpp:Math//ufcpp:dd">
+  <table class="frac" summary="differential">
+    <tr><td class="num"><span class="normal">d</span><xsl:choose><xsl:when test="@num != ''"><xsl:value-of select="@num"/></xsl:when><xsl:when test="@n != ''"><xsl:value-of select="@n"/></xsl:when><xsl:otherwise><xsl:apply-templates select="ufcpp:num"/></xsl:otherwise></xsl:choose></td></tr>
+    <tr><td><span class="normal">d</span><xsl:choose><xsl:when test="@denom != ''"><xsl:value-of select="@denom"/></xsl:when><xsl:when test="@d != ''"><xsl:value-of select="@d"/></xsl:when><xsl:otherwise><xsl:apply-templates select="ufcpp:denom"/></xsl:otherwise></xsl:choose></td></tr>
+  </table>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>table.frac
+```css
+table.frac
 {
   display:inline;
   vertical-align:middle;
@@ -73,5 +77,4 @@ span.normal
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

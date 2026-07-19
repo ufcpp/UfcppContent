@@ -18,19 +18,19 @@ aliases: []
 C#では、以下のようなコードが書けたりします。変数`ab`を用意して、`a\u200db`って変数に書き込むと、`ab`の値が変わるという。
 要するに、この2つは識別子としては同一扱いされます。
 
-<pre class="source" title="Zero Width Joiner 識別子">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> ab = 0;
-        a\u200db = 1; <span class="comment">// ab と同じ扱い。\u200d は Zero Width Joiner</span>
-        <span class="type">Console</span>.WriteLine(ab); <span class="comment">// 1</span>
+        var ab = 0;
+        a\u200db = 1; // ab と同じ扱い。\u200d は Zero Width Joiner
+        Console.WriteLine(ab); // 1
     }
 }
-</code></pre>
+```
 
 この挙動を説明するには、以下の2つの仕様が出てきます。
 
@@ -41,19 +41,19 @@ C#では、以下のようなコードが書けたりします。変数`ab`を�
 
 1つのUnicodeエスケープ シーケンスは、`\u`に続けて4桁の16進数を打つか、`\U`に続けて8桁の16進数を打つと、その番号に対応したUnicode文字に変換されるというものです。このエスケープ シーケンスは、文字列リテラルの外、どこででも有効です。例えば、以下のようなことも可能。aの文字は、UnicodeではU+61です。
 
-<pre class="source" title="a と \u0061 は同じ">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> a = 0;
+        var a = 0;
         \u0061 = 1;
-        <span class="type">Console</span>.WriteLine(a);
+        Console.WriteLine(a);
     }
 }
-</code></pre>
+```
 
 もう1つは、フォーマット文字は識別子に含められるけど、除外して考えるという仕様。
 フォーマット文字ってのは、文字を描画方法とかを指定するための不可視文字で、例えば以下のようなものがあります。

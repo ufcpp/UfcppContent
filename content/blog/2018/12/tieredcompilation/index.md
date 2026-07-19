@@ -78,13 +78,13 @@ Java とか C# みたいな Just-In-Time コンパイル方式の言語では、
 
 例えば、ジェネリックなメソッド `M<T>` で、以下のように、`T` が値型かどうかを判別するハックがあったりします。
 
-<pre class="source" title="型引数が値型かどうかを判別する方法">
-<code><span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;()
+```csharp
+void M<T>()
 {
-    <span class="reserved">if</span> (<span class="reserved">default</span>(<span class="type">T</span>) == <span class="reserved">null</span>) <span class="type">Console</span>.WriteLine(<span class="string">&quot;T は参照型&quot;</span>);
-    <span class="reserved">else</span> <span class="type">Console</span>.WriteLine(<span class="string">&quot;T は値型&quot;</span>);
+    if (default(T) == null) Console.WriteLine("T は参照型");
+    else Console.WriteLine("T は値型");
 }
-</code></pre>
+```
 
 この C# コードで、`T` が値型のとき、IL 上は、`default(T) == null` のところでボックス化が起きるコードになっています。
 `default(T)` を一度 `object` 型にした上で null と比較するような IL が生成されます。

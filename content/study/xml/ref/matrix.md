@@ -25,64 +25,68 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;matrix size="行列の高さ"&gt;
-  &lt;row&gt;&lt;elem&gt;1,1成分&lt;/elem&gt;...&lt;elem&gt;1,n成分&lt;/elem&gt;
+```xml
+<matrix size="行列の高さ">
+  <row><elem>1,1成分</elem>...<elem>1,n成分</elem>
   .
   .
   .
-  &lt;row&gt;&lt;elem&gt;m,1成分&lt;/elem&gt;...&lt;elem&gt;m,n成分&lt;/elem&gt;
-&lt;/matrix&gt;
-</pre>
+  <row><elem>m,1成分</elem>...<elem>m,n成分</elem>
+</matrix>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;vervec size="3"&gt;&lt;elem&gt;x'&lt;/elem&gt;&lt;elem&gt;y'&lt;/elem&gt;&lt;elem&gt;z'&lt;/elem&gt;&lt;/vervec&gt; = 
-&lt;matrix size="3"&gt;
-&lt;row&gt;&lt;elem&gt;a&lt;/elem&gt;&lt;elem&gt;b&lt;/elem&gt;&lt;elem&gt;c&lt;/elem&gt;&lt;/row&gt;
-&lt;row&gt;&lt;elem&gt;d&lt;/elem&gt;&lt;elem&gt;e&lt;/elem&gt;&lt;elem&gt;f&lt;/elem&gt;&lt;/row&gt;
-&lt;row&gt;&lt;elem&gt;g&lt;/elem&gt;&lt;elem&gt;h&lt;/elem&gt;&lt;elem&gt;i&lt;/elem&gt;&lt;/row&gt;
-&lt;/matrix&gt;
-&lt;vervec size="3"&gt;&lt;elem&gt;x&lt;/elem&gt;&lt;elem&gt;y&lt;/elem&gt;&lt;elem&gt;z&lt;/elem&gt;&lt;/vervec&gt;
-</pre><div class="math"><span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="vector"><tr><td>x'</td></tr><tr><td>y'</td></tr><tr><td>z'</td></tr></table><span class="paren" style="font-size:3em;">]</span> = 
+```xml
+<vervec size="3"><elem>x'</elem><elem>y'</elem><elem>z'</elem></vervec> = 
+<matrix size="3">
+<row><elem>a</elem><elem>b</elem><elem>c</elem></row>
+<row><elem>d</elem><elem>e</elem><elem>f</elem></row>
+<row><elem>g</elem><elem>h</elem><elem>i</elem></row>
+</matrix>
+<vervec size="3"><elem>x</elem><elem>y</elem><elem>z</elem></vervec>
+```
+<div class="math"><span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="vector"><tr><td>x'</td></tr><tr><td>y'</td></tr><tr><td>z'</td></tr></table><span class="paren" style="font-size:3em;">]</span> =
 <span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="matrix"><tr><td>a</td><td>b</td><td>c</td></tr><tr><td>d</td><td>e</td><td>f</td></tr><tr><td>g</td><td>h</td><td>i</td></tr></table><span class="paren" style="font-size:3em;">]</span>
 <span class="paren" style="font-size:3em;">[</span><table class="matrix" summary="vector"><tr><td>x</td></tr><tr><td>y</td></tr><tr><td>z</td></tr></table><span class="paren" style="font-size:3em;">]</span>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:matrix"&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+```xml
+<xsl:template match="ufcpp:matrix">
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     [
-  &lt;/span&gt;
-  &lt;table class="matrix" summary="matrix"&gt;
-    &lt;xsl:apply-templates select="ufcpp:row"/&gt;
-  &lt;/table&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size" /&gt;em;&lt;/xsl:attribute&gt;
+  </span>
+  <table class="matrix" summary="matrix">
+    <xsl:apply-templates select="ufcpp:row"/>
+  </table>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size" />em;</xsl:attribute>
     ]
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
+  </span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:array"&gt;
-  &lt;table class="matrix" summary="array"&gt;
-    &lt;xsl:apply-templates select="ufcpp:row"/&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:array">
+  <table class="matrix" summary="array">
+    <xsl:apply-templates select="ufcpp:row"/>
+  </table>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:matrix/ufcpp:row|ufcpp:array/ufcpp:row"&gt;
-  &lt;tr&gt;&lt;xsl:apply-templates select="ufcpp:elem"/&gt;&lt;/tr&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:matrix/ufcpp:row|ufcpp:array/ufcpp:row">
+  <tr><xsl:apply-templates select="ufcpp:elem"/></tr>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:matrix/ufcpp:row/ufcpp:elem|ufcpp:array/ufcpp:row/ufcpp:elem"&gt;
-  &lt;td&gt;&lt;xsl:apply-templates/&gt;&lt;/td&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:matrix/ufcpp:row/ufcpp:elem|ufcpp:array/ufcpp:row/ufcpp:elem">
+  <td><xsl:apply-templates/></td>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>table.matrix
+```css
+table.matrix
 {
   display:inline;
   font-style:italic;
@@ -96,5 +100,4 @@ span.paren
   font-style:normal;
   vertical-align:middle;
 }
-
-</pre>
+```

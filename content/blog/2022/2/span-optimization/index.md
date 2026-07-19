@@ -29,25 +29,25 @@ aliases: []
 今日は、以下のような、
 全要素が定数の配列を書いたときの最適化の話になります。
 
-<pre class="source" title="全要素が定数の配列">
-<code><span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">data</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-</code></pre>
+```csharp
+ReadOnlySpan<int> data = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+```
 
 例えば以下のような2つのメソッドを比べてみましょう。
 
-<pre class="source" title="ReadOnlySpan int と sbyte">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M1</span>(<span class="reserved">int</span> <span class="variable">i</span>)
+```csharp
+static int M1(int i)
 {
-    <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">table</span> = <span class="reserved">new</span>[] { 1, 0, -1, 0 }; <span class="comment">// 差はこの行だけ</span>
-    <span class="control">return</span> <span class="variable">table</span>[<span class="variable">i</span> % 4];
+    ReadOnlySpan<int> table = new[] { 1, 0, -1, 0 }; // 差はこの行だけ
+    return table[i % 4];
 }
 
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M2</span>(<span class="reserved">int</span> <span class="variable">i</span>)
+static int M2(int i)
 {
-    <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">sbyte</span>&gt; <span class="variable">table</span> = <span class="reserved">new</span> <span class="reserved">sbyte</span>[] { 1, 0, -1, 0 }; <span class="comment">// 差はこの行だけ</span>
-    <span class="control">return</span> <span class="variable">table</span>[<span class="variable">i</span> % 4];
+    ReadOnlySpan<sbyte> table = new sbyte[] { 1, 0, -1, 0 }; // 差はこの行だけ
+    return table[i % 4];
 }
-</code></pre>
+```
 
 4要素の定数テーブルを引いているだけのシンプルなコードです。
 `M1` と `M2` の差はテーブルが `int` か `sbyte` かという点だけになりますが、

@@ -59,88 +59,88 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/QuickSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/QuickSort.cs)
 
-<pre class="source" title="クイックソート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// クイックソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;</span>
-<span class="reserved">public static void</span> QuickSort&lt;T&gt;(T[] a)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+public static void QuickSort<T>(T[] a)
+  where T : IComparable<T>
 {
   QuickSort(a, 0, a.Length - 1);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// クイックソート → 挿入ソートに切り替える配列長の閾値。
-/// &lt;/summary&gt;</span>
-<span class="reserved">const int</span> THREASHOLD = 64;
+/// </summary>
+const int THREASHOLD = 64;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 挿入ソート。
 /// 配列のどこからどこまでをソートするかを指定するバージョン。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="first"&gt;ソート対象の先頭インデックス&lt;/param&gt;
-/// &lt;param name="last"&gt;ソート対象の末尾インデックス&lt;/param&gt;</span>
-<span class="reserved">static void</span> InsertSort&lt;T&gt;(T[] a, <span class="reserved">int</span> first, <span class="reserved">int</span> last)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="first">ソート対象の先頭インデックス</param>
+/// <param name="last">ソート対象の末尾インデックス</param>
+static void InsertSort<T>(T[] a, int first, int last)
+  where T : IComparable<T>
 {
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = first + 1; i &lt;= last; i++)
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = i; j &gt; first &amp;&amp; a[j - 1].CompareTo(a[j]) &gt; 0; --j)
-      Swap(<span class="reserved">ref</span> a[j], <span class="reserved">ref</span> a[j - 1]);
+  for (int i = first + 1; i <= last; i++)
+    for (int j = i; j > first && a[j - 1].CompareTo(a[j]) > 0; --j)
+      Swap(ref a[j], ref a[j - 1]);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// クイックソート本体。
 /// 配列のどこからどこまでをソートするかを指定するバージョン。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="first"&gt;ソート対象の先頭インデックス&lt;/param&gt;
-/// &lt;param name="last"&gt;ソート対象の末尾インデックス&lt;/param&gt;</span>
-<span class="reserved">static void</span> QuickSort&lt;T&gt;(T[] a, <span class="reserved">int</span> first, <span class="reserved">int</span> last)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="first">ソート対象の先頭インデックス</param>
+/// <param name="last">ソート対象の末尾インデックス</param>
+static void QuickSort<T>(T[] a, int first, int last)
+  where T : IComparable<T>
 {
-  <span class="comment">// 要素数が少なくなってきたら挿入ソートに切り替え</span>
-  <span class="reserved">if</span> (last - first &lt; THREASHOLD)
+  // 要素数が少なくなってきたら挿入ソートに切り替え
+  if (last - first < THREASHOLD)
   {
     InsertSort(a, first, last);
-    <span class="reserved">return</span>;
+    return;
   }
 
-  <span class="comment">// 枢軸決定（配列の先頭、ど真ん中、末尾の3つの値の中央値を使用。）</span>
+  // 枢軸決定（配列の先頭、ど真ん中、末尾の3つの値の中央値を使用。）
   T pivot = Median(a[first], a[(first + last) / 2], a[last]);
 
-  <span class="comment">// 左右分割</span>
-  <span class="reserved">int</span> l = first;
-  <span class="reserved">int</span> r = last;
+  // 左右分割
+  int l = first;
+  int r = last;
 
-  <span class="reserved">while</span>(l &lt;= r)
+  while(l <= r)
   {
-    <span class="reserved">while</span> (l &lt; last &amp;&amp; a[l].CompareTo(pivot) &lt; 0) l++;
-    <span class="reserved">while</span> (r &gt; first &amp;&amp; a[r].CompareTo(pivot) &gt;= 0) r--;
-    <span class="reserved">if</span> (l &gt; r) <span class="reserved">break</span>;
-    Swap(<span class="reserved">ref</span> a[l], <span class="reserved">ref</span> a[r]);
+    while (l < last && a[l].CompareTo(pivot) < 0) l++;
+    while (r > first && a[r].CompareTo(pivot) >= 0) r--;
+    if (l > r) break;
+    Swap(ref a[l], ref a[r]);
     l++; r--;
   }
 
-  <span class="comment">// 再帰呼び出し</span>
+  // 再帰呼び出し
   QuickSort(a, first, l-1);
   QuickSort(a, l, last);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 3つの値の中央値を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;オペランドa&lt;/param&gt;
-/// &lt;param name="b"&gt;オペランドb&lt;/param&gt;
-/// &lt;param name="c"&gt;オペランドc&lt;/param&gt;
-/// &lt;returns&gt;中央値&lt;/returns&gt;</span>
-<span class="reserved">static</span> T Median&lt;T&gt;(T a, T b, T c)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">オペランドa</param>
+/// <param name="b">オペランドb</param>
+/// <param name="c">オペランドc</param>
+/// <returns>中央値</returns>
+static T Median<T>(T a, T b, T c)
+  where T : IComparable<T>
 {
-  <span class="reserved">if</span> (a.CompareTo(b) &gt; 0) Swap(<span class="reserved">ref</span> a, <span class="reserved">ref</span> b);
-  <span class="reserved">if</span> (a.CompareTo(c) &gt; 0) Swap(<span class="reserved">ref</span> a, <span class="reserved">ref</span> c);
-  <span class="reserved">if</span> (b.CompareTo(c) &gt; 0) Swap(<span class="reserved">ref</span> b, <span class="reserved">ref</span> c);
-  <span class="reserved">return</span> b;
+  if (a.CompareTo(b) > 0) Swap(ref a, ref b);
+  if (a.CompareTo(c) > 0) Swap(ref a, ref c);
+  if (b.CompareTo(c) > 0) Swap(ref b, ref c);
+  return b;
 }
-</code></pre>
+```

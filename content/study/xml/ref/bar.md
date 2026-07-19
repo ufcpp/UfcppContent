@@ -25,31 +25,34 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;bar&gt;上線つきにしたい式&lt;/bar&gt;
-</pre>
+```xml
+<bar>上線つきにしたい式</bar>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>a XOR b = a&lt;bar&gt;b&lt;/bar&gt;+&lt;bar&gt;a&lt;/bar&gt;b
-</pre><div class="math">a XOR b = a<span class="bar">b</span>+<span class="bar">a</span>b
+```xml
+a XOR b = a<bar>b</bar>+<bar>a</bar>b
+```
+<div class="math">a XOR b = a<span class="bar">b</span>+<span class="bar">a</span>b
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:bar"&gt;
-  &lt;span class="bar"&gt;
-    &lt;xsl:apply-templates/&gt;
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:bar">
+  <span class="bar">
+    <xsl:apply-templates/>
+  </span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.bar
+```css
+span.bar
 {
   display:inline-block;
   border-top:1pt solid #000000;
 }
-
-</pre>
+```

@@ -381,7 +381,7 @@ a<span class="normal">×</span><span class="normal">0</span><span class="normal"
 
 ## <a id="sec-generated-title-6"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 結局、「定義の仕方次第」
 
 -a という記号を、「かけて 1 になるような元」（要するに乗法に関する逆元）に使っても、
@@ -397,12 +397,12 @@ a<span class="normal">×</span><span class="normal">0</span><span class="normal"
 a×a＝1, a×△＝△, △×△＝△
 と定義したり。
 （こんな変なのでも矛盾なく加減乗除できるし、分配法則も成り立ってるはず）
+```
 
-
-</pre><pre>
+```text
 あと、
 「証明のできない公理はどこまで減らすことができるだろう？」
 ということも考えていくと面白い。
 その1つの到達点が、現在の公理的集合論
-</pre>
+```
 → 参考： 「[数学](../index.md)」。

@@ -32,10 +32,10 @@ aliases: []
 「[`Unsafe`クラス](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/)使ってnull返せるよ」とかいう。
 以下のようなコードでできます。
 
-<pre class="source" title="null参照戻り値">
-<code>    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="type">T</span> NullRef&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="reserved">ref</span> <span class="type">Unsafe</span>.AsRef&lt;<span class="type">T</span>&gt;((<span class="reserved">void</span>*)0);
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">bool</span> IsNull&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> r) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="type">Unsafe</span>.AsPointer(<span class="reserved">ref</span> r) == (<span class="reserved">void</span>*)0;
-</code></pre>
+```csharp
+    unsafe static ref T NullRef<T>() where T : struct => ref Unsafe.AsRef<T>((void*)0);
+    unsafe static bool IsNull<T>(ref T r) where T : struct => Unsafe.AsPointer(ref r) == (void*)0;
+```
 
 どういうことかというと、[先月18日の小ネタ](../../../2016/12/tipsgeneratedil/index.md)の最後でちょっと話しましたけど、 .NET ランタイムの内部的には参照とポインターの扱いは全く同じです。で、`Unsafe`クラスは、それを利用して(半分、悪用レベル)ポインターと参照の相互変換する機能を提供しています。名前通り結構安全性を損なう機能で、色々悪用もできます。その1つが、今回の「null参照」。0をポインターに渡して、それを参照に変換してやれば、nullな参照の完成という。
 
@@ -51,10 +51,10 @@ C#でも「そのつもり」です。
  
 ところが、先ほどのコード、再掲になりますが以下のようなものが入ったライブラリを作るとします。 
  
-<pre class="source" title="null参照戻り値">
-<code>    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="type">T</span> NullRef&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="reserved">ref</span> <span class="type">Unsafe</span>.AsRef&lt;<span class="type">T</span>&gt;((<span class="reserved">void</span>*)0);
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">bool</span> IsNull&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> r) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="type">Unsafe</span>.AsPointer(<span class="reserved">ref</span> r) == (<span class="reserved">void</span>*)0;
-</code></pre>
+```csharp
+    unsafe static ref T NullRef<T>() where T : struct => ref Unsafe.AsRef<T>((void*)0);
+    unsafe static bool IsNull<T>(ref T r) where T : struct => Unsafe.AsPointer(ref r) == (void*)0;
+```
  
 このコードを実装する際にはポインターが含まれているので/unsafeオプションが必要です。一方、引数や戻り値にはポインターが出てこず、これを使う側には/unsafeオプション不要です。通常の、safeなコンテキストで、危ないものが使えている状態になりました。 
  

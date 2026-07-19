@@ -53,17 +53,17 @@ Nビットまでの整数を受け付ける`BitN`(`N`は1～64)型と、それ�
 
 で、それを、こう書く。
 
-<pre class="source" title="Rgb555構造体定義">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">Rgb555</span>
+```csharp
+struct Rgb555
 {
-    <span class="reserved">enum</span> <span class="type">BitFields</span>
+    enum BitFields
     {
         B = 5,
         G = 5,
         R = 5,
     }
 }
-</code></pre>
+```
 
 コード生成都合で、「構造体の中に`BitFields`という名前のenumを定義、値としてビット数を与える」みたいな規約ベースの型情報を書きます。
 このenumはあくまでメタデータ(型情報)であって、実行時には一切使いません。
@@ -74,36 +74,36 @@ Nビットまでの整数を受け付ける`BitN`(`N`は1～64)型と、それ�
 
 以下のようなコードが生成されます。
 
-<pre class="source" title="Rgb555の生成結果">
-<code><reserved></span><span class="reserved">using</span> BitFields;
+```csharp
+using BitFields;
 
-<span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">Rgb555</span>
+partial struct Rgb555
 {
-    <span class="reserved">public</span> <span class="reserved">ushort</span> Value;
+    public ushort Value;
 
-    <span class="reserved">private</span> <span class="reserved">const</span> <span class="reserved">int</span> BShift = 0;
-    <span class="reserved">private</span> <span class="reserved">const</span> <span class="reserved">ushort</span> BMask = <span class="reserved">unchecked</span>((<span class="reserved">ushort</span>)((1U &lt;&lt; 5) - (1U &lt;&lt; 0)));
-    <span class="reserved">public</span> <span class="type">Bit5</span> B
+    private const int BShift = 0;
+    private const ushort BMask = unchecked((ushort)((1U << 5) - (1U << 0)));
+    public Bit5 B
     {
-        <span class="reserved">get</span> =&gt; (<span class="type">Bit5</span>)((Value &amp; BMask) &gt;&gt; BShift);
-        <span class="reserved">set</span> =&gt; Value = <span class="reserved">unchecked</span>((<span class="reserved">ushort</span>)((Value &amp; ~BMask) | ((((<span class="reserved">ushort</span>)<span class="reserved">value</span>) &lt;&lt; BShift) &amp; BMask)));
+        get => (Bit5)((Value & BMask) >> BShift);
+        set => Value = unchecked((ushort)((Value & ~BMask) | ((((ushort)value) << BShift) & BMask)));
     }
-    <span class="reserved">private</span> <span class="reserved">const</span> <span class="reserved">int</span> GShift = 5;
-    <span class="reserved">private</span> <span class="reserved">const</span> <span class="reserved">ushort</span> GMask = <span class="reserved">unchecked</span>((<span class="reserved">ushort</span>)((1U &lt;&lt; 10) - (1U &lt;&lt; 5)));
-    <span class="reserved">public</span> <span class="type">Bit5</span> G
+    private const int GShift = 5;
+    private const ushort GMask = unchecked((ushort)((1U << 10) - (1U << 5)));
+    public Bit5 G
     {
-        <span class="reserved">get</span> =&gt; (<span class="type">Bit5</span>)((Value &amp; GMask) &gt;&gt; GShift);
-        <span class="reserved">set</span> =&gt; Value = <span class="reserved">unchecked</span>((<span class="reserved">ushort</span>)((Value &amp; ~GMask) | ((((<span class="reserved">ushort</span>)<span class="reserved">value</span>) &lt;&lt; GShift) &amp; GMask)));
+        get => (Bit5)((Value & GMask) >> GShift);
+        set => Value = unchecked((ushort)((Value & ~GMask) | ((((ushort)value) << GShift) & GMask)));
     }
-    <span class="reserved">private</span> <span class="reserved">const</span> <span class="reserved">int</span> RShift = 10;
-    <span class="reserved">private</span> <span class="reserved">const</span> <span class="reserved">ushort</span> RMask = <span class="reserved">unchecked</span>((<span class="reserved">ushort</span>)((1U &lt;&lt; 15) - (1U &lt;&lt; 10)));
-    <span class="reserved">public</span> <span class="type">Bit5</span> R
+    private const int RShift = 10;
+    private const ushort RMask = unchecked((ushort)((1U << 15) - (1U << 10)));
+    public Bit5 R
     {
-        <span class="reserved">get</span> =&gt; (<span class="type">Bit5</span>)((Value &amp; RMask) &gt;&gt; RShift);
-        <span class="reserved">set</span> =&gt; Value = <span class="reserved">unchecked</span>((<span class="reserved">ushort</span>)((Value &amp; ~RMask) | ((((<span class="reserved">ushort</span>)<span class="reserved">value</span>) &lt;&lt; RShift) &amp; RMask)));
+        get => (Bit5)((Value & RMask) >> RShift);
+        set => Value = unchecked((ushort)((Value & ~RMask) | ((((ushort)value) << RShift) & RMask)));
     }
 }
-</code></pre>
+```
 
 現状だと1度は手作業で「クイック アクションの選択」が必要なので、使い勝手はいまいちなんですが。
 そのうち、[正式にコード生成機能がC#に入るはず](https://github.com/dotnet/csharplang/issues/107)で、その暁ににはもう少し利便性がよくなります。

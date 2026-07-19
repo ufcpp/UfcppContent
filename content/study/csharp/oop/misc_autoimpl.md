@@ -48,22 +48,22 @@ C# では、プロパティとイベントの場合、実装を省略して書�
 
 例えば、プロパティの場合、以下のようになります。
 
-<pre class="source" title="抽象プロパティと自動実装プロパティ" lang="">
-<code><span class="reserved">interface</span> <span class="type">ISample</span>
+```csharp
+interface ISample
 {
-    <span class="comment">// 抽象定義: これは宣言のみで実装を持たない（規約のみを定める）</span>
-    <span class="reserved">int</span> A { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 抽象定義: これは宣言のみで実装を持たない（規約のみを定める）
+    int A { get; set; }
 }
 
-<span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Sample</span>
+abstract class Sample
 {
-    <span class="comment">// 抽象定義: これも宣言のみで、実装を持たない</span>
-    <span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">int</span> A { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 抽象定義: これも宣言のみで、実装を持たない
+    public abstract int A { get; set; }
 
-    <span class="comment">// 具象定義: これは自動実装プロパティ（コンパイラー生成の実体を持つ）</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 具象定義: これは自動実装プロパティ（コンパイラー生成の実体を持つ）
+    public int X { get; set; }
 }
-</code></pre>
+```
 
 
 単純に、abstract が付いているか、もしくはインターフェイス内にあれば抽象定義（宣言）です。
@@ -72,53 +72,53 @@ C# では、プロパティとイベントの場合、実装を省略して書�
 ちなみに、X の自動実装の展開（コンパイラーによる自動生成）結果は以下のようになります。
 （A の側は抽象定義なので、このような展開は起こりません。）
 
-<pre class="source" title="自動実装プロパティ X の展開結果" lang="">
-<code>    <span class="reserved">public</span> <span class="reserved">int</span> X
+```csharp
+    public int X
     {
-        <span class="reserved">get</span> { <span class="reserved">return</span> _X; }
-        <span class="reserved">set</span> { _X = <span class="reserved">value</span>; }
+        get { return _X; }
+        set { _X = value; }
     }
 
-    <span class="comment">// 実際には、プログラマーに見えない特殊な名前が与えられます</span>
-    <span class="reserved">private</span> <span class="reserved">int</span> _X;
-</code></pre>
+    // 実際には、プログラマーに見えない特殊な名前が与えられます
+    private int _X;
+```
 
 
 自動的に生成されたフィールド（この例でいう <code>_X</code>）をバック フィールド（backing field）と呼びます。
 通常、C# コードからバック フィールドは見えなくなっていますが、
 「[リフレクション](../dynamic/sp_reflection.md#reflection)」を使うことで覗き見ることができます。
 
-<pre class="source" title="自動実装プロパティのバック フィールド" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reflection;
+```csharp
+using System;
+using System.Reflection;
 
-<span class="reserved">abstract class</span> <span class="type">Sample</span>
+abstract class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">abstract int</span> A { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public abstract int A { get; set; }
+    public int X { get; set; }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> fields = <span class="reserved">typeof</span>(<span class="type">Sample</span>).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var fields = typeof(Sample).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> field <span class="reserved">in</span> fields)
+        foreach (var field in fields)
         {
-            <span class="type">Console</span>.WriteLine(field.Name);
+            Console.WriteLine(field.Name);
         }
     }
 }
-</code></pre>
+```
 
 
 結果として表示されるのは X プロパティのバック フィールドになります。
 （繰り返しますが、A の方は抽象プロパティなので、同様のフィールドは生成されません。）
 
-<pre class="console" title="自動実装プロパティのバック フィールド">
-&lt;X&gt;k__BackingField
-</pre>
+```console
+<X>k__BackingField
+```
 
 
 見ての通り、通常の C# コードからは定義できない名前（&lt; から始まる名前）になっています。
@@ -129,25 +129,25 @@ C# では、プロパティとイベントの場合、実装を省略して書�
 
 プロパティは get; set; を明示的に書くだけまだましで、イベント構文はより一層、混乱を招きます。
 
-<pre class="source" title="抽象イベントと自動実装イベント" lang="">
-<code><span class="reserved">interface</span> <span class="type">ISample</span>
+```csharp
+interface ISample
 {
-    <span class="comment">// 抽象定義: 宣言のみ、実装ない</span>
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; A;
+    // 抽象定義: 宣言のみ、実装ない
+    public event Action<int> A;
 }
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="comment">// 抽象定義: 宣言のみ、実装ない</span>
-    <span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; A;
+    // 抽象定義: 宣言のみ、実装ない
+    public abstract event Action<int> A;
 
-    <span class="comment">// 具象定義: 自動実装イベント</span>
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; X;
+    // 具象定義: 自動実装イベント
+    public event Action<int> X;
 
-    <span class="comment">// ↑パッと見、デリゲート型のフィールドに見えるのがまた（別物です）</span>
-    <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; x;
+    // ↑パッと見、デリゲート型のフィールドに見えるのがまた（別物です）
+    Action<int> x;
 }
-</code></pre>
+```
 
 
 プロパティ同様、abstract が付いているか、インターフェイス中で定義されている場合には抽象定義、それ以外は自動実装イベントです。
@@ -155,81 +155,81 @@ C# では、プロパティとイベントの場合、実装を省略して書�
 デリゲート型のフィールドと似て見える点にも注意が必要ですが、
 実際には以下のようなアクセサーが自動生成されています。
 
-<pre class="source" title="自動実装イベントの展開結果" lang="">
-<code>    <span class="comment">// 簡易版。本当はこれに、スレッド安全性の保証用コードが入る。</span>
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; X
+```csharp
+    // 簡易版。本当はこれに、スレッド安全性の保証用コードが入る。
+    public event Action<int> X
     {
-        <span class="reserved">add</span> { _X = (<span class="type">Action</span>&lt;<span class="reserved">int</span>&gt;)<span class="type">Delegate</span>.Combine(_X, <span class="reserved">value</span>); }
-        <span class="reserved">remove</span> { _X = (<span class="type">Action</span>&lt;<span class="reserved">int</span>&gt;)<span class="type">Delegate</span>.Remove(_X, <span class="reserved">value</span>); }
+        add { _X = (Action<int>)Delegate.Combine(_X, value); }
+        remove { _X = (Action<int>)Delegate.Remove(_X, value); }
     }
 
-    <span class="comment">// バック フィールド</span>
-    <span class="comment">// C# の文法上は認められていないのでここでは _X で代用したものの、</span>
-    <span class="comment">// 実際にはイベントと同名のフィールド（この例の場合 X）が作られる。</span>
-    <span class="comment">// （IL 的には OK。）</span>
-    <span class="reserved">private</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; _X;
-</code></pre>
+    // バック フィールド
+    // C# の文法上は認められていないのでここでは _X で代用したものの、
+    // 実際にはイベントと同名のフィールド（この例の場合 X）が作られる。
+    // （IL 的には OK。）
+    private Action<int> _X;
+```
 
 
 イベントの場合、クラス内から普通のデリゲート型のフィールドのように扱えますが、
 これは実際には、自動実装によって生成されたバック フィールドへのアクセスになります。
 
-<pre class="source" title="クラス内からのイベント利用" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; X;
+    public event Action<int> X;
 
-    <span class="reserved">public</span> <span class="reserved">void</span> RaiseX(<span class="reserved">int</span> value)
+    public void RaiseX(int value)
     {
-        <span class="reserved">var</span> d = X; <span class="comment">// 実はこの X は自動生成されたバック フィールドの X</span>
-        <span class="reserved">if</span> (d != <span class="reserved">null</span>) d(value);
+        var d = X; // 実はこの X は自動生成されたバック フィールドの X
+        if (d != null) d(value);
     }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>();
-        s.X += x =&gt; { }; <span class="comment">// この X はイベントの X</span>
+        var s = new Sample();
+        s.X += x => { }; // この X はイベントの X
     }
 }
-</code></pre>
+```
 
 
 実際、
 「[リフレクション](../dynamic/sp_reflection.md#reflection)」を使うことでバック フィールドを確認できます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reflection;
+```csharp
+using System;
+using System.Reflection;
 
-<span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Sample</span>
+abstract class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; A;
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; X;
+    public abstract event Action<int> A;
+    public event Action<int> X;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> fields = <span class="reserved">typeof</span>(<span class="type">Sample</span>).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var fields = typeof(Sample).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> field <span class="reserved">in</span> fields)
+        foreach (var field in fields)
         {
-            <span class="type">Console</span>.WriteLine(field.Name);
+            Console.WriteLine(field.Name);
         }
     }
 }
-</code></pre>
+```
 
 
 X とだけ表示されます（イベントと同名のフィールドが生成されている）。
 （前述のプロパティの例と同様、A の方は抽象イベントなので、同様のフィールドは生成されません。）
 
-<pre class="console" title="自動実装プロパティのバック フィールド">
+```console
 X
-</pre>
+```

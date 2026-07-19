@@ -16,38 +16,38 @@ aliases: []
 C# 10.0 で、[文字列補間に対するパフォーマンス改善](../../../../study/csharp/cheatsheet/ap_ver10.md#improved-string-interpolation)が入りました。
 例えば、以下のようなコードがあったとして、
 
-<pre class="source" title="文字列補間の例">
-<code><span class="reserved">static</span> <span class="reserved">string</span> <span class="method">A</span>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">y</span>) =&gt; <span class="string">$&quot;</span><span class="string">(</span>{<span class="variable">x</span>}<span class="string">, </span>{<span class="variable">y</span>}<span class="string">)</span><span class="string">&quot;</span>;
-<span class="reserved">static</span> <span class="reserved">string</span> <span class="method">B</span>(<span class="reserved">int</span> <span class="variable">a</span>, <span class="reserved">int</span> <span class="variable">b</span>, <span class="reserved">int</span> <span class="variable">c</span>) =&gt; <span class="string">$&quot;</span>{<span class="variable">a</span>}<span class="string">.</span>{<span class="variable">b</span>}<span class="string">.</span>{<span class="variable">c</span>}<span class="string">&quot;</span>;
-</code></pre>
+```csharp
+static string A(int x, int y) => $"({x}, {y})";
+static string B(int a, int b, int c) => $"{a}.{b}.{c}";
+```
 
 C# 10.0 では `$""` の部分がそれぞれ以下のように展開されます。
 
-<pre class="source" title="文字列補間の C# 10.0 での展開結果">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">static</span> <span class="reserved">string</span> <span class="method">A</span>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">y</span>)
+static string A(int x, int y)
 {
-    <span class="type">DefaultInterpolatedStringHandler</span> <span class="variable">h</span> = <span class="reserved">new</span>(4, 2);
-    <span class="variable">h</span>.<span class="method">AppendLiteral</span>(<span class="string">&quot;(&quot;</span>);
-    <span class="variable">h</span>.<span class="method">AppendFormatted</span>(<span class="variable">x</span>);
-    <span class="variable">h</span>.<span class="method">AppendLiteral</span>(<span class="string">&quot;, &quot;</span>);
-    <span class="variable">h</span>.<span class="method">AppendFormatted</span>(<span class="variable">y</span>);
-    <span class="variable">h</span>.<span class="method">AppendLiteral</span>(<span class="string">&quot;)&quot;</span>);
-    <span class="control">return</span> <span class="variable">h</span>.<span class="method">ToStringAndClear</span>();
+    DefaultInterpolatedStringHandler h = new(4, 2);
+    h.AppendLiteral("(");
+    h.AppendFormatted(x);
+    h.AppendLiteral(", ");
+    h.AppendFormatted(y);
+    h.AppendLiteral(")");
+    return h.ToStringAndClear();
 }
 
-<span class="reserved">static</span> <span class="reserved">string</span> <span class="method">B</span>(<span class="reserved">int</span> <span class="variable">a</span>, <span class="reserved">int</span> <span class="variable">b</span>, <span class="reserved">int</span> <span class="variable">c</span>)
+static string B(int a, int b, int c)
 {
-    <span class="type">DefaultInterpolatedStringHandler</span> <span class="variable">h</span> = <span class="reserved">new</span>(4, 2);
-    <span class="variable">h</span>.<span class="method">AppendFormatted</span>(<span class="variable">a</span>);
-    <span class="variable">h</span>.<span class="method">AppendLiteral</span>(<span class="string">&quot;.&quot;</span>);
-    <span class="variable">h</span>.<span class="method">AppendFormatted</span>(<span class="variable">b</span>);
-    <span class="variable">h</span>.<span class="method">AppendLiteral</span>(<span class="string">&quot;.&quot;</span>);
-    <span class="variable">h</span>.<span class="method">AppendFormatted</span>(<span class="variable">c</span>);
-    <span class="control">return</span> <span class="variable">h</span>.<span class="method">ToStringAndClear</span>();
+    DefaultInterpolatedStringHandler h = new(4, 2);
+    h.AppendFormatted(a);
+    h.AppendLiteral(".");
+    h.AppendFormatted(b);
+    h.AppendLiteral(".");
+    h.AppendFormatted(c);
+    return h.ToStringAndClear();
 }
-</code></pre>
+```
 
 今日の話はこの `AppendLiteral` のところの最適化の話。
 
@@ -84,28 +84,28 @@ C# 的に、文字 (`'.'`) は単なる数値(2バイトの値型)なのに対�
 `AggressiveInlining` を付けています。
 要点だけを抜き出すと以下のようなコード。
 
-<pre class="source" title="AppendLiteral 中の特殊分岐">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-[<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.AggressiveInlining)]
-<span class="reserved">void</span> <span class="method">AppendLiteral</span>(<span class="reserved">string</span> <span class="variable">value</span>)
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+void AppendLiteral(string value)
 {
-    <span class="control">if</span> (<span class="variable">value</span>.Length == 1)
+    if (value.Length == 1)
     {
-        <span class="comment">// value[0] しか参照しないコード</span>
-        <span class="control">return</span>;
+        // value[0] しか参照しないコード
+        return;
     }
 
-    <span class="control">if</span> (<span class="variable">value</span>.Length == 2)
+    if (value.Length == 2)
     {
-        <span class="comment">// value[0], value[1] しか参照しないコード</span>
-        <span class="control">return</span>;
+        // value[0], value[1] しか参照しないコード
+        return;
     }
 
-    <span class="comment">// 汎用ロジック</span>
-    <span class="method">AppendStringDirect</span>(<span class="variable">value</span>);
+    // 汎用ロジック
+    AppendStringDirect(value);
 }
-</code></pre>
+```
 
 `AppendLiteral` には文字通りリテラルしか渡ってこないという前提ありきですが、
 これで1文字の場合と2文字の場合はかなり速くなるとのこと。

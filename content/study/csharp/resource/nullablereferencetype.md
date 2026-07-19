@@ -55,19 +55,19 @@ C# 7.X の頃と 8.0 で何が変わったかというと、
 
 無条件に「参照型でも null を拒否する」としてしまうと、既存の C# コードの挙動を壊します。
 
-<pre class="source" title="opt-in した瞬間に警告">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// NRT を opt-in した時点で警告が出るようになる</span>
-        <span class="reserved">string</span> <span class="variable">s</span> = <span class="warning"><span class="reserved">null</span></span>; <span class="comment">// string (非 null)に null を入れちゃダメ</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable"><span class="warning">s</span></span>.Length); <span class="comment">// null の可能性があるものを null チェックせずに使っちゃダメ</span>
+        // NRT を opt-in した時点で警告が出るようになる
+        string s = null; // string (非 null)に null を入れちゃダメ
+        Console.WriteLine(s.Length); // null の可能性があるものを null チェックせずに使っちゃダメ
     }
 }
-</code></pre>
+```
 
 警告だから追加してもいいということにはなりません。
 警告を残すのは作法的によくないことですし、
@@ -103,43 +103,43 @@ opt-in 方式で `T` の意味が変わるnull許容参照型もだいぶ悩ん�
 
 以下のような書き方をします。
 
-<pre class="source" title="nullable ディレクティブ">
-<code><span class="inactive">#nullable</span> <span class="input">enable|disable|restore</span> <span class="input">[warnings|annotations]</span>
-</code></pre>
+```csharp
+#nullable enable|disable|restore [warnings|annotations]
+```
 
 null 許容参照型を有効にしたければ`#nullable enable`、
 無効にしたければ`#nullable disable`と書きます。
 `#nullable restore`は「1つ前のコンテキストに戻す」という処理になります。
 `warnings`と`annotations`については後述しますが、省略可能で、省略した場合は「両方をオン・オフ」になります。
 
-<pre class="source" title="null 許容コンテキストの切り替え例">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-<span class="inactive">#nullable</span> <span class="inactive">enable</span>
-        <span class="method">E1</span>(<span class="warning"><span class="reserved">null</span></span>); <span class="comment">// 警告が出る</span>
+#nullable enable
+        E1(null); // 警告が出る
  
-<span class="inactive">#nullable</span> <span class="inactive">disable</span>
-        <span class="method">E1</span>(<span class="reserved">null</span>); <span class="comment">// 警告が出ない</span>
+#nullable disable
+        E1(null); // 警告が出ない
     }
  
-<span class="inactive">#nullable</span> <span class="inactive">enable</span>
-    <span class="comment">// 有効化したのでここでは string で非 null、string? で null 許容。</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">E1</span>(<span class="reserved">string</span> <span class="variable">s</span>) =&gt; <span class="variable">s</span>.Length;
-    <span class="reserved">static</span> <span class="reserved">int</span>? <span class="method">E2</span>(<span class="reserved">string</span>? <span class="variable">s</span>) =&gt; <span class="variable">s</span>?.Length;
+#nullable enable
+    // 有効化したのでここでは string で非 null、string? で null 許容。
+    static int E1(string s) => s.Length;
+    static int? E2(string? s) => s?.Length;
  
-<span class="inactive">#nullable</span> <span class="inactive">disable</span>
-    <span class="comment">// 無効化したので string に null が入っている可能性あり。</span>
-    <span class="comment">// string? とは書けない(書くだけで警告になる)。</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">D1</span>(<span class="reserved">string</span> <span class="variable">s</span>) =&gt; <span class="variable">s</span>.Length;
+#nullable disable
+    // 無効化したので string に null が入っている可能性あり。
+    // string? とは書けない(書くだけで警告になる)。
+    static int D1(string s) => s.Length;
  
-<span class="inactive">#nullable</span> <span class="inactive">restore</span>
-    <span class="comment">// 1つ前のコンテキストに戻す。</span>
-    <span class="comment">// この場合、disable から enable に戻る。</span>
-    <span class="reserved">static</span> <span class="reserved">int</span>? <span class="method">R1</span>(<span class="reserved">string</span>? <span class="variable">s</span>) =&gt; <span class="variable">s</span>?.Length;
+#nullable restore
+    // 1つ前のコンテキストに戻す。
+    // この場合、disable から enable に戻る。
+    static int? R1(string? s) => s?.Length;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="nullable-option"></a>Nullable オプション
 
@@ -149,23 +149,23 @@ null 許容参照型を有効にしたければ`#nullable enable`、
 プロジェクト全体で null 許容コンテキストを切り替えるには、コンパイラー オプションを指定します。
 `csc` (C# コンパイラー)コマンドを直接使う場合は `/nullable` オプションで指定します。
 
-<pre class="console" title="csc の /nullable オプション">
-<code>csc <span class="input">source.cs</span> <em>/nullable:enable</em> /langversion:8
-</code></pre>
+```console
+csc source.cs /nullable:enable /langversion:8
+```
 
 csproj (C# プロジェクト)ファイル中でオプション指定する場合、`<Nullable>` タグを使います。
 
-<pre class="xsource" title="csproj の Nullable オプション">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>netcoreapp3.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    <em>&lt;</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">Nullable</span><span class="attvalue">&gt;</span></em>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 指定できる値は `enable`(有効)、`disable` (無効)、`warnings` (警告のみ有効)、`annotations` (アノテーションのみ有効)の4種類です。
 `warnings` と `annotations` については次節で説明します。
@@ -191,60 +191,60 @@ null 許容参照型には以下の2つの側面があります。
 
 例えば、元々以下のようなコードがあったとします。
 
-<pre class="xsource" title="既存コード(null 許容参照型に未対応)">
-<code><span class="inactive"><span class="attvalue">string</span> <span class="method">NotNull</span>() =&gt; <span class="element">&quot;&quot;</span>;
-<span class="attvalue">string</span> <span class="method">MaybeNull</span>() =&gt; <span class="attvalue">null</span>;
+```xml
+string NotNull() => "";
+string MaybeNull() => null;
  
-<span class="attvalue">int</span> <span class="method">M</span>(<span class="attvalue">string</span> <span class="variable">s</span>)
+int M(string s)
 {
-    <span class="attvalue">var</span> <span class="variable">s1</span> = <span class="method">NotNull</span>();
-    <span class="attvalue">var</span> <span class="variable">s2</span> = <span class="method">MaybeNull</span>();
-    <span class="control">return</span> <span class="variable">s</span>.Length + <span class="variable">s1</span>.Length + <span class="variable">s2</span>.Length;
+    var s1 = NotNull();
+    var s2 = MaybeNull();
+    return s.Length + s1.Length + s2.Length;
 }
-</code></pre>
+```
 
 これに対して、単に `#nullable enable` を付けるとアノテーションも警告も有効になります。
 
-<pre class="xsource" title="enable のみ指定(アノテーションも警告も有効化)">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="attvalue">string</span> <span class="method">NotNull</span>() =&gt; <span class="element">&quot;&quot;</span>;
-<span class="attvalue">string</span>? <span class="method">MaybeNull</span>() =&gt; <span class="attvalue">null</span>; <span class="comment">// 戻りに ? を追加</span>
+```xml
+#nullable enable
+string NotNull() => "";
+string? MaybeNull() => null; // 戻りに ? を追加
  
-<span class="attvalue">int</span> <span class="method">M</span>(<span class="attvalue">string</span> <span class="variable">s</span>) <span class="comment">// この s は非 null の意味になる</span>
+int M(string s) // この s は非 null の意味になる
 {
-    <span class="attvalue">var</span> <span class="variable">s1</span> = <span class="method">NotNull</span>();
-    <span class="attvalue">var</span> <span class="variable">s2</span> = <span class="method">MaybeNull</span>();
-    <span class="control">return</span> <span class="variable">s</span>.Length + <span class="variable">s1</span>.Length + <span class="variable">s2</span>.Length; <span class="comment">// s2 のところに警告が出る</span>
+    var s1 = NotNull();
+    var s2 = MaybeNull();
+    return s.Length + s1.Length + s2.Length; // s2 のところに警告が出る
 }
-</code></pre>
+```
 
 `#nullable enable warnings` とすると警告のみ有効化できます。
 この場合、引数の `string` は「C# 7.3 以前と同じ扱い」で、null 許容かどうか「未指定」になります。
 
-<pre class="xsource" title="警告のみ有効化">
-<code><span class="comment">// 警告のみ有効化</span>
-<span class="inactive">#nullable</span> <span class="inactive">enable</span> <span class="inactive">warnings</span>
-<span class="attvalue">int</span> <span class="method">M</span>(<span class="attvalue">string</span> <span class="variable">s</span>) <span class="comment">// この s は null 許容かどうか「未指定」</span>
+```xml
+// 警告のみ有効化
+#nullable enable warnings
+int M(string s) // この s は null 許容かどうか「未指定」
 {
-    <span class="attvalue">var</span> <span class="variable">s1</span> = <span class="method">NotNull</span>();
-    <span class="attvalue">var</span> <span class="variable">s2</span> = <span class="method">MaybeNull</span>();
-    <span class="control">return</span> <span class="variable">s</span>.Length + <span class="variable">s1</span>.Length + <span class="variable">s2</span>.Length; <span class="comment">// s2 のところに警告が出る</span>
+    var s1 = NotNull();
+    var s2 = MaybeNull();
+    return s.Length + s1.Length + s2.Length; // s2 のところに警告が出る
 }
-</code></pre>
+```
 
 一方、`#nullable enable annotations` とするとアノテーションのみが有効化されます。
 null のチェック漏れがあっても警告は出ない状態です。
 
-<pre class="xsource" title="">
-<code><span class="comment">// アノテーションのみ有効化</span>
-<span class="inactive">#nullable</span> <span class="inactive">enable</span> <span class="inactive">annotations</span>
-<span class="attvalue">int</span> <span class="method">M</span>(<span class="attvalue">string</span> <span class="variable">s</span>) <span class="comment">// この s は非 null</span>
+```xml
+// アノテーションのみ有効化
+#nullable enable annotations
+int M(string s) // この s は非 null
 {
-    <span class="attvalue">var</span> <span class="variable">s1</span> = <span class="method">NotNull</span>();
-    <span class="attvalue">var</span> <span class="variable">s2</span> = <span class="method">MaybeNull</span>();
-    <span class="control">return</span> <span class="variable">s</span>.Length + <span class="variable">s1</span>.Length + <span class="variable">s2</span>.Length; <span class="comment">// 警告は出ない</span>
+    var s1 = NotNull();
+    var s2 = MaybeNull();
+    return s.Length + s1.Length + s2.Length; // 警告は出ない
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-6"></a> <a id="flow-analysis"></a>フロー解析
 
@@ -254,202 +254,202 @@ null 許容参照型は、フロー解析(flow analysis)で成り立っていま
 
 例えば以下のように、変数 `s` に何を代入したかによって、それ以降、`s.Length` というようなメンバー アクセス時に警告が出たり出なかったりします。
 
-<pre class="source" title="null 許容参照型はフロー解析で null チェックをしてる">
-<code><span class="comment">// null 許容で宣言されていても、</span>
-<span class="reserved">string</span>? <span class="variable">s</span>;
+```csharp
+// null 許容で宣言されていても、
+string? s;
  
-<span class="comment">// ちゃんと有効な値を代入すれば</span>
-<span class="variable">s</span> = <span class="string">&quot;abc&quot;</span>;
+// ちゃんと有効な値を代入すれば
+s = "abc";
  
-<span class="comment">// 警告は出なくなる。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span>.Length);
+// 警告は出なくなる。
+Console.WriteLine(s.Length);
  
-<span class="comment">// 逆に null を代入すると、</span>
-<span class="variable">s</span> = <span class="reserved">null</span>;
+// 逆に null を代入すると、
+s = null;
  
-<span class="comment">// それ以降警告が出る。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="warning"><span class="variable">s</span></span>.Length);
-</code></pre>
+// それ以降警告が出る。
+Console.WriteLine(s.Length);
+```
 
 分岐などもきっちり調べられます。
 
-<pre class="source" title="フロー解析は分岐もちゃんと調べる">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">flag</span>)
+```csharp
+private static void M(bool flag)
 {
-    <span class="reserved">string</span>? <span class="variable">s</span>;
+    string? s;
  
-    <span class="comment">// 分岐の1つでも null があれば、その後ろでは警告が出る。</span>
-    <span class="control">if</span> (<span class="variable">flag</span>) <span class="variable">s</span> = <span class="string">&quot;abc&quot;</span>;
-    <span class="control">else</span> <span class="variable">s</span> = <span class="reserved">null</span>;
+    // 分岐の1つでも null があれば、その後ろでは警告が出る。
+    if (flag) s = "abc";
+    else s = null;
  
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="warning"><span class="variable">s</span></span>.Length);
+    Console.WriteLine(s.Length);
  
-    <span class="comment">// 分岐の全部で非 null なら、その後ろでは警告が出ない。</span>
-    <span class="control">if</span> (<span class="variable">flag</span>) <span class="variable">s</span> = <span class="string">&quot;abc&quot;</span>;
-    <span class="control">else</span> <span class="variable">s</span> = <span class="string">&quot;123&quot;</span>;
+    // 分岐の全部で非 null なら、その後ろでは警告が出ない。
+    if (flag) s = "abc";
+    else s = "123";
  
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span>.Length);
+    Console.WriteLine(s.Length);
 }
-</code></pre>
+```
 
 非 null (`?` が付いていない)変数・引数には null を渡した時点で警告が出て、
 null 許容(`?` が付いてる)変数・引数の場合はメンバー アクセスの時点で警告が出ます。
 また、null 代入の有無の他、`is null` や `== null` での null チェックをすれば、それ以降の警告は消えます。
 
-<pre class="source" title="警告の出方">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-<span class="inactive">#nullable</span> <span class="inactive">enable</span>
-    <span class="comment">// enable なコンテキストでは、string と書くと非 null、string? と書くと null 許容。</span>
-    <span class="reserved">string</span> <span class="method">NotNull</span>(<span class="reserved">string</span> <span class="variable">s</span>) =&gt; <span class="variable">s</span>;
-    <span class="reserved">string</span>? <span class="method">MaybeNull</span>(<span class="reserved">string</span>? <span class="variable">s</span>) =&gt; <span class="variable">s</span>;
+#nullable enable
+    // enable なコンテキストでは、string と書くと非 null、string? と書くと null 許容。
+    string NotNull(string s) => s;
+    string? MaybeNull(string? s) => s;
  
-    <span class="reserved">void</span> <span class="method">M</span>()
+    void M()
     {
-        <span class="comment">// 非 null。</span>
-        <span class="reserved">var</span> <span class="variable">n</span> = <span class="method">NotNull</span>(<span class="warning"><span class="reserved">null</span></span>); <span class="comment">// 引数に null を渡した時点で警告。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">n</span>.Length);
+        // 非 null。
+        var n = NotNull(null); // 引数に null を渡した時点で警告。
+        Console.WriteLine(n.Length);
  
-        <span class="comment">// null 許容。</span>
-        <span class="reserved">var</span> <span class="variable">m</span> = <span class="method">MaybeNull</span>(<span class="reserved">null</span>);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="warning"><span class="variable">m</span></span>.Length); <span class="comment">// 戻り値の null チェックをしなかった時点で警告。</span>
+        // null 許容。
+        var m = MaybeNull(null);
+        Console.WriteLine(m.Length); // 戻り値の null チェックをしなかった時点で警告。
  
-        <span class="control">if</span> (<span class="variable">m</span> <span class="reserved">is</span> <span class="reserved">null</span>) <span class="control">return</span>;
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">m</span>.Length); <span class="comment">// 前の行で null チェックしたのでもう警告にならない。</span>
+        if (m is null) return;
+        Console.WriteLine(m.Length); // 前の行で null チェックしたのでもう警告にならない。
     }
 }
-</code></pre>
+```
 
 ちなみに、一度何らかのメンバー アクセスをした時点で「null チェックした」扱いを受けます。
 「null 許容型を null チェックなしで使ってる」警告が出るのは最初の1個だけになります。
 
-<pre class="source" title="メンバー アクセスを持って null チェック扱い">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span>? <span class="variable">x</span>)
+```csharp
+#nullable enable
+void M(string? x)
 {
-    <span class="comment">// null チェックせずに使ったので警告。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="warning"><span class="variable">x</span></span>[0]);
+    // null チェックせずに使ったので警告。
+    Console.WriteLine(x[0]);
  
-    <span class="comment">// ただ、2重には警告がでない。警告が出るのは↑の行だけ。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>.Length);
+    // ただ、2重には警告がでない。警告が出るのは↑の行だけ。
+    Console.WriteLine(x.Length);
 }
-</code></pre>
+```
 
 他の変数との比較でも null チェックになることがあります。
 例えば以下のように、非 null な変数 `x` と一致したら null 許容な変数 `y` も null ではないことが確定します。
 これもちゃんとフロー解析の対象になっています。
 
-<pre class="source" title="他の変数との比較で null チェック">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>, <span class="reserved">string</span>? <span class="variable">y</span>)
+```csharp
+void M(string x, string? y)
 {
-    <span class="comment">// 非 null な x との比較で y が null じゃないことがわかる。</span>
-    <span class="control">if</span> (<span class="variable">x</span> == <span class="variable">y</span>)
+    // 非 null な x との比較で y が null じゃないことがわかる。
+    if (x == y)
     {
-        <span class="comment">// こっちは y が非 null なことがわかるので警告が出ない。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">y</span>.Length);
+        // こっちは y が非 null なことがわかるので警告が出ない。
+        Console.WriteLine(y.Length);
     }
-    <span class="control">else</span>
+    else
     {
-        <span class="comment">// こっちは null な可能性が残るので警告が出る。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="warning"><span class="variable">y</span></span>.Length);
+        // こっちは null な可能性が残るので警告が出る。
+        Console.WriteLine(y.Length);
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-7"></a>注意: 別スレッドでの書き換え
 
 フィールドやプロパティに対するフロー解析では、利便性を優先して、シングルスレッド動作を前提としたフロー解析をしています。
 例えば、以下のように、マルチスレッド動作をしていて、他のスレッドで書き換えられてしまうと、本来 null が来るはずがなく警告も出ない場面で null 参照例外が起こることがあります。
 
-<pre class="source" title="別スレッドで null を代入することで不整合が起こる例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
  
-<span class="inactive">#nullable</span> <span class="inactive">enable</span>
+#nullable enable
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">public</span> <span class="reserved">string</span>? S;
+    public string? S;
  
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetNull</span>()
+    public void SetNull()
     {
-        S = <span class="reserved">null</span>;
+        S = null;
     }
  
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetNonNull</span>()
+    public void SetNonNull()
     {
-        <span class="control">if</span> (S <span class="reserved">is</span> <span class="reserved">null</span>) S = <span class="string">&quot;&quot;</span>;
+        if (S is null) S = "";
  
-        <span class="type">Thread</span>.<span class="method">Sleep</span>(200);
+        Thread.Sleep(200);
  
-        <span class="comment">// 警告はでない。 S = &quot;&quot; しているので非 null 扱い。</span>
-        <span class="comment">// 単一スレッド実行の場合はおかしくはない。</span>
-        <span class="comment">// でも、Sleep 中に SetNull を呼ばれると null 参照例外になる。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(S.Length);
+        // 警告はでない。 S = "" しているので非 null 扱い。
+        // 単一スレッド実行の場合はおかしくはない。
+        // でも、Sleep 中に SetNull を呼ばれると null 参照例外になる。
+        Console.WriteLine(S.Length);
     }
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Program</span>();
-        <span class="type">Task</span>.<span class="method">Run</span>(<span class="variable">p</span>.<span class="method">SetNonNull</span>);
-        <span class="type">Thread</span>.<span class="method">Sleep</span>(100);
-        <span class="type">Task</span>.<span class="method">Run</span>(<span class="variable">p</span>.<span class="method">SetNull</span>);
+        var p = new Program();
+        Task.Run(p.SetNonNull);
+        Thread.Sleep(100);
+        Task.Run(p.SetNull);
  
-        <span class="type">Thread</span>.<span class="method">Sleep</span>(300);
+        Thread.Sleep(300);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="initialize-field"></a>フィールドやプロパティの初期化
 
 非 null 型のフィールドやプロパティは、コンストラクター内で必ず初期化しなければなりません。
 例えば以下のコードはフィールド `X`、プロパティ `Y` のところに警告が出ます。
 
-<pre class="source" title="非 null なフィールド・プロパティを初期化しないと警告が出る">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="warning">X</span>;
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="warning">Y</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public string X;
+    public string Y { get; set; }
 }
-</code></pre>
+```
 
 以下のように、コンストラクターを追加すれば警告が消えます。
 
-<pre class="source" title="初期化コードを足すことで警告が消える">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> X;
-    <span class="reserved">public</span> <span class="reserved">string</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="type">A</span>(<span class="reserved">string</span> <span class="variable">x</span>, <span class="reserved">string</span> <span class="variable">y</span>) =&gt; (X, Y) = (<span class="variable">x</span>, <span class="variable">y</span>);
+    public string X;
+    public string Y { get; set; }
+    public A(string x, string y) => (X, Y) = (x, y);
 }
-</code></pre>
+```
 
 ちなみに、コンストラクターは書いたものの初期化を忘れると、
 フィールド・プロパティの方だけではなく、コンストラクターの方にも警告が出ます。
 
-<pre class="source" title="初期か忘れ警告">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="warning">X</span>;
+    public string X;
  
-    <span class="comment">// X を初期化していないのでコンストラクターにも警告が出る</span>
-    <span class="reserved">public</span> <span class="warning"><span class="type">A</span></span>() { }
+    // X を初期化していないのでコンストラクターにも警告が出る
+    public A() { }
 }
-</code></pre>
+```
 
 ちなみに、最終的には非 null になるものの、コンストラクターの時点ではどうしても一時的に null を入れておかないといけない場面というものもあったりします。
 そういうときの回避策として、後述する [`!` 演算子](#null-forgiving)というものもあります。
 
-<pre class="source" title="null をあえて見逃すための ! 演算子">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// 一時的に null になってしまうことを強制的に容認</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> X = <span class="reserved">null</span><em>!</em>;
+    // 一時的に null になってしまうことを強制的に容認
+    public string X = null!;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="oblivious"></a>oblivious
 
@@ -460,30 +460,30 @@ opt-in にしたので、null 許容(nullable)、非 null (non-nullable, not nul
 要するに、C# 7.3 以前で書かれたコードや、`#nullable enable annotations`になっていない場所で書かれたコードの型が oblivious です。
 oblivious な型の変数は一切フロー解析の対象になりません。
 
-<pre class="source" title="oblivious な変数">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-<span class="inactive">#nullable</span> <span class="inactive">disable</span>
-    <span class="comment">// C# 7.3 以前でコンパイルされたものや、disable なコンテキストで定義されると</span>
-    <span class="comment">// アノテーション「未指定」(oblivious)という扱いになる。</span>
-    <span class="reserved">string</span> <span class="method">Oblivious</span>(<span class="reserved">string</span> <span class="variable">s</span>) =&gt; <span class="variable">s</span>;
+#nullable disable
+    // C# 7.3 以前でコンパイルされたものや、disable なコンテキストで定義されると
+    // アノテーション「未指定」(oblivious)という扱いになる。
+    string Oblivious(string s) => s;
  
-<span class="inactive">#nullable</span> <span class="inactive">enable</span>
-    <span class="reserved">void</span> <span class="method">M</span>()
+#nullable enable
+    void M()
     {
-        <span class="comment">// 未指定。</span>
-        <span class="comment">// null チェックの対象にならない(警告出ない)。</span>
-        <span class="reserved">var</span> <span class="variable">o</span> = <span class="method">Oblivious</span>(<span class="reserved">null</span>);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">o</span>.Length);
+        // 未指定。
+        // null チェックの対象にならない(警告出ない)。
+        var o = Oblivious(null);
+        Console.WriteLine(o.Length);
  
-        <span class="comment">// たとえ明示的な型で受けても、もうこの変数は oblivious 扱いでチェック対象にならない(警告出ない)。</span>
-        <span class="reserved">string</span>? <span class="variable">o1</span> = <span class="method">Oblivious</span>(<span class="reserved">null</span>);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">o1</span>.Length);
+        // たとえ明示的な型で受けても、もうこの変数は oblivious 扱いでチェック対象にならない(警告出ない)。
+        string? o1 = Oblivious(null);
+        Console.WriteLine(o1.Length);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="nvt-defference"></a>null 許容値型との違い
 
@@ -496,49 +496,49 @@ null 許容参照型の `?` は単なるアノテーション(フロー解析の
 この実装上の差から、使い勝手にも差が出てきます。
 まず、以下のように、`T` と `T?` でオーバーロードできるのは値型だけです。
 
-<pre class="source" title="オーバーロードの可否">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="comment">// 参照型の場合、アノテーションだけが違うオーバーロードは作れない。</span>
-<span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>) { }
-<span class="reserved">void</span> <span class="error"><span class="method">M</span></span>(<span class="reserved">string</span>? <span class="variable">x</span>) { }
+```csharp
+#nullable enable
+// 参照型の場合、アノテーションだけが違うオーバーロードは作れない。
+void M(string x) { }
+void M(string? x) { }
  
-<span class="comment">// 値型の場合、? が付くと別の型なのでオーバーロードできる。</span>
-<span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">x</span>) { }
-<span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span>? <span class="variable">x</span>) { }
-</code></pre>
+// 値型の場合、? が付くと別の型なのでオーバーロードできる。
+void M(int x) { }
+void M(int? x) { }
+```
 
 また、null チェック後の挙動が違います。
 参照型の場合は null チェックさえ挟めば以後「null ではない」という扱いを受けますが、
 値型の場合は null チェックを挟んでも `Nullable<T>` は `Nullable<T>` のままです。
 
-<pre class="source" title="null チェック後の挙動">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="comment">// 参照型の場合</span>
-<span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span>? <span class="variable">x</span>)
+```csharp
+#nullable enable
+// 参照型の場合
+void M(string? x)
 {
-    <span class="comment">// null チェックさえすれば</span>
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span>) <span class="control">return</span>;
-    <span class="comment">// 警告が消える。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>.Length);
+    // null チェックさえすれば
+    if (x is null) return;
+    // 警告が消える。
+    Console.WriteLine(x.Length);
 }
  
-<span class="comment">// 値型の場合</span>
-<span class="reserved">void</span> <span class="method">M</span>(<span class="type">DateTime</span>? <span class="variable">x</span>)
+// 値型の場合
+void M(DateTime? x)
 {
-    <span class="comment">// null チェックしても</span>
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span>) <span class="control">return</span>;
-    <span class="comment">// こういう書き方はできない(x?.Minute や x.Value.Minute なら大丈夫)。</span>
-    <span class="type">Console</span>.WriteLine(<span class="variable">x</span>.<span class="error">Minute</span>);
+    // null チェックしても
+    if (x is null) return;
+    // こういう書き方はできない(x?.Minute や x.Value.Minute なら大丈夫)。
+    Console.WriteLine(x.Minute);
 }
-</code></pre>
+```
 
 null 許容参照型は `typeof` 演算子に対しても使えません。
 `T` と `T?` が内部的には同じ型なのに、`typeof(T?)` を認めると混乱の元です。
 以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="null 許容参照型に対して typeof を使うとコンパイル エラー">
-<code><span class="reserved">var</span> <span class="variable">t</span> = <span class="error"><span class="reserved">typeof</span>(<span class="reserved">string</span>?)</span>;
-</code></pre>
+```csharp
+var t = typeof(string?);
+```
 
 
 <!-- original-page-break -->
@@ -554,24 +554,24 @@ null 許容参照型のアノテーションのコンパイル結果は、
 例えば以下のようなメソッドを考えます。
 引数が4つあって、非nullとnull許容がそれぞれ2つずつになっています。
 
-<pre class="source" title="非null引数が2つ、null許容引数が2つのメソッド">
-<code><span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span>? <span class="variable">b</span>, <span class="reserved">string</span> <span class="variable">c</span>, <span class="reserved">string</span>? <span class="variable">d</span>) { }
-</code></pre>
+```csharp
+public void M(string a, string? b, string c, string? d) { }
+```
 
 初期の案では `Nullable` 属性だけを使って、以下のようにコンパイルする予定でした。
 
-<pre class="source" title="初期案(Nullable のみ)">
-<code><span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>([<span class="type">Nullable</span>(1)]<span class="reserved">string</span> <span class="variable">a</span>, [<span class="type">Nullable</span>(2)]<span class="reserved">string</span> <span class="variable">b</span>, [<span class="type">Nullable</span>(1)]<span class="reserved">string</span> <span class="variable">c</span>, [<span class="type">Nullable</span>(2)]<span class="reserved">string</span> <span class="variable">d</span>) { }
-</code></pre>
+```csharp
+public void M([Nullable(1)]string a, [Nullable(2)]string b, [Nullable(1)]string c, [Nullable(2)]string d) { }
+```
 
 これだとすべての引数に属性が付くことになります。
 その後、少しでも属性の数を減らすために、`NullableContext` 属性が追加され、
 以下のようにコンパイルされる仕様になりました。
 
-<pre class="source" title="NullableContext の導入">
-<code>[<span class="type">NullableContext</span>(1)]
-<span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">a</span>, [<span class="type">Nullable</span>(2)]<span class="reserved">string</span> <span class="variable">b</span>, <span class="reserved">string</span> <span class="variable">c</span>, [<span class="type">Nullable</span>(2)]<span class="reserved">string</span> <span class="variable">d</span>) { }
-</code></pre>
+```csharp
+[NullableContext(1)]
+public void M(string a, [Nullable(2)]string b, string c, [Nullable(2)]string d) { }
+```
 
 `NullableContext` は、クラス内やメソッド内で、`Nullable` 属性が付いていない引数・戻り値をどう扱うかを示しています。
 (前述の「[null 許容コンテキスト](#nullable-context)」とは微妙に違う意味で context (文脈)という単語を使ってしまっていますが、
@@ -592,91 +592,91 @@ null 許容参照型のアノテーションのコンパイル結果は、
 属性は、総数が極力少なくなるように付きます。
 例えば以下のような2つのメソッドを考えます。
 
-<pre class="source" title="非 null、null 許容の引数の数">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// 非 null が2個、null 許容が1個</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>, <span class="reserved">string</span>? <span class="variable">c</span>) { }
+    // 非 null が2個、null 許容が1個
+    public void M1(string a, string b, string? c) { }
  
-    <span class="comment">// 非 null が1個、null 許容が2個</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M2</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span>? <span class="variable">b</span>, <span class="reserved">string</span>? <span class="variable">c</span>) { }
+    // 非 null が1個、null 許容が2個
+    public void M2(string a, string? b, string? c) { }
 }
-</code></pre>
+```
 
 これは、以下のようなコードにコンパイルされます。
 要するに、多い方が「context」になることで、属性が必要な引数が減ります。
 
-<pre class="source" title="多い方を Context で指定">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// 非 null が多いので NullableContext(1)</span>
-    [<span class="type">NullableContext</span>(1)]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>, [<span class="type">Nullable</span>(2)] <span class="reserved">string</span> <span class="variable">c</span>) { }
+    // 非 null が多いので NullableContext(1)
+    [NullableContext(1)]
+    public void M1(string a, string b, [Nullable(2)] string c) { }
  
-    <span class="comment">// null 許容が多いので NullableContext(2)</span>
-    [<span class="type">NullableContext</span>(2)]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M2</span>([<span class="type">Nullable</span>(1)] <span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>, <span class="reserved">string</span> <span class="variable">c</span>) { }
+    // null 許容が多いので NullableContext(2)
+    [NullableContext(2)]
+    public void M2([Nullable(1)] string a, string b, string c) { }
 }
-</code></pre>
+```
 
 (ちなみに、数が同じ場合は2よりも1を、1よりも0を優先するようです。)
 
 型自体に `NullableContext` が付く例も見てみましょう。
 以下のような2つの型を考えます。
 
-<pre class="source" title="型に NullableContext が付く例">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">string</span> <span class="variable">a</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M2</span>(<span class="reserved">string</span>? <span class="variable">a</span>) { }
+    public void M1(string a) { }
+    public void M2(string? a) { }
  
-    <span class="comment">// 非 null なメソッドが多い</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N1</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N2</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N3</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
+    // 非 null なメソッドが多い
+    public void N1(string a, string b) { }
+    public void N2(string a, string b) { }
+    public void N3(string a, string b) { }
 }
  
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="comment">// M1, M2 は A と同じ</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">string</span> <span class="variable">a</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M2</span>(<span class="reserved">string</span>? <span class="variable">a</span>) { }
+    // M1, M2 は A と同じ
+    public void M1(string a) { }
+    public void M2(string? a) { }
  
-    <span class="comment">// null 許容なメソッドが多い</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N1</span>(<span class="reserved">string</span>? <span class="variable">a</span>, <span class="reserved">string</span>? <span class="variable">b</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N2</span>(<span class="reserved">string</span>? <span class="variable">a</span>, <span class="reserved">string</span>? <span class="variable">b</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N3</span>(<span class="reserved">string</span>? <span class="variable">a</span>, <span class="reserved">string</span>? <span class="variable">b</span>) { }
+    // null 許容なメソッドが多い
+    public void N1(string? a, string? b) { }
+    public void N2(string? a, string? b) { }
+    public void N3(string? a, string? b) { }
 }
-</code></pre>
+```
 
 この場合、メソッドに付く属性が減るように、クラスに `NullableContext` 属性が付きます。
 以下のようなコンパイル結果になります。
 
-<pre class="source" title="型に NullableContext が付いた結果">
-<code>[<span class="type">NullableContext</span>(1)]
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+[NullableContext(1)]
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">string</span> <span class="variable">a</span>) { }
-    [<span class="type">NullableContext</span>(2)]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M2</span>(<span class="reserved">string</span> <span class="variable">a</span>) { }
+    public void M1(string a) { }
+    [NullableContext(2)]
+    public void M2(string a) { }
  
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N1</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N2</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N3</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
+    public void N1(string a, string b) { }
+    public void N2(string a, string b) { }
+    public void N3(string a, string b) { }
 }
  
-[<span class="type">NullableContext</span>(2)]
-<span class="reserved">class</span> <span class="type">B</span>
+[NullableContext(2)]
+class B
 {
-    [<span class="type">NullableContext</span>(1)]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">string</span> <span class="variable">a</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M2</span>(<span class="reserved">string</span> <span class="variable">a</span>) { }
+    [NullableContext(1)]
+    public void M1(string a) { }
+    public void M2(string a) { }
  
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N1</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N2</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">N3</span>(<span class="reserved">string</span> <span class="variable">a</span>, <span class="reserved">string</span> <span class="variable">b</span>) { }
+    public void N1(string a, string b) { }
+    public void N2(string a, string b) { }
+    public void N3(string a, string b) { }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="generic-annotation"></a>型引数に対するアノテーション
 
@@ -685,28 +685,28 @@ null 許容参照型のアノテーションのコンパイル結果は、
 `Nullable`属性の引数が配列になります。
 例えば以下のようなメソッドを考えます。
 
-<pre class="source" title="引数がジェネリックな型の場合">
-<code><span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(
-    <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">string</span>?&gt; <span class="variable">a</span>,
-    <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">string</span>?&gt;? <span class="variable">b</span>,
-    (<span class="reserved">string</span>, <span class="reserved">string</span>, <span class="reserved">string</span>?) <span class="variable">c</span>
+```csharp
+public void M(
+    Dictionary<string, string?> a,
+    Dictionary<string, string?>? b,
+    (string, string, string?) c
     ) { }
-</code></pre>
+```
 
 `Dictionary`型やタプルの型引数1個1個で null 許容性が違います。
 また、「`Dictionary` 自体」と「`Dictionary` の型引数」でも null 許容性が違っています。
 こういう場合には、以下のような属性が付きます。
 
-<pre class="source" title="引数がジェネリックな型の場合の Nullable 属性">
-<code><span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(
-    [<span class="type">Nullable</span>(<span class="reserved">new</span> <span class="reserved">byte</span>[] { 1, 1, 2 })]
-    <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">string</span>?&gt; <span class="variable">a</span>,
-    [<span class="type">Nullable</span>(<span class="reserved">new</span> <span class="reserved">byte</span>[] { 2, 1, 2 })]
-    <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">string</span>?&gt;? <span class="variable">b</span>,
-    [<span class="type">Nullable</span>(<span class="reserved">new</span> <span class="reserved">byte</span>[] { 0, 1, 1, 2 })]
-    (<span class="reserved">string</span>, <span class="reserved">string</span>, <span class="reserved">string</span>?) <span class="variable">c</span>
+```csharp
+public void M(
+    [Nullable(new byte[] { 1, 1, 2 })]
+    Dictionary<string, string?> a,
+    [Nullable(new byte[] { 2, 1, 2 })]
+    Dictionary<string, string?>? b,
+    [Nullable(new byte[] { 0, 1, 1, 2 })]
+    (string, string, string?) c
     ) { }
-</code></pre>
+```
 
 配列の最初の要素が型自体で、2個目以降が型引数の null 許容性を表しています。
 
@@ -728,20 +728,20 @@ null 許容参照型のアノテーションのコンパイル結果は、
 例えば、前述のクラス `A`、`B` のメソッド `M1` の引数を調べたい場合を考えます。
 (`M1` に関連する部分を抜粋して再掲します。)
 
-<pre class="source" title="型に NullableContext が付いた結果(M1 がらみを抜粋)">
-<code>[<span class="type">NullableContext</span>(1)]
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+[NullableContext(1)]
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">string</span> <span class="variable">a</span>) { }
+    public void M1(string a) { }
 }
  
-[<span class="type">NullableContext</span>(2)]
-<span class="reserved">class</span> <span class="type">B</span>
+[NullableContext(2)]
+class B
 {
-    [<span class="type">NullableContext</span>(1)]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">string</span> <span class="variable">a</span>) { }
+    [NullableContext(1)]
+    public void M1(string a) { }
 }
-</code></pre>
+```
 
 ここで、引数 `a` が null 許容かどうか調べようとするとき、
 
@@ -767,44 +767,44 @@ null 許容なものを、`is null` や `== null` などによるチェック抜
 前者のわかりやすい例は循環参照がある場合です。
 お互いにインスタンスを持ち合う必要がある場面では、どちらか片方は絶対にコンストラクターよりも後でないとインスタンスを渡せません。
 
-<pre class="source" title="循環参照があるとき、コンストラクターでは非 null 保証ができない">
-<code><span class="reserved">class</span> <span class="type">PairedNode</span>
+```csharp
+class PairedNode
 {
-    <span class="comment">// このプロパティに対する警告が消せない。</span>
-    <span class="reserved">public</span> <span class="type">PairedNode</span> <span class="warning">Pairing</span> { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
+    // このプロパティに対する警告が消せない。
+    public PairedNode Pairing { get; private set; }
  
-    <span class="reserved">public</span> <span class="reserved">static</span> (<span class="type">PairedNode</span> a, <span class="type">PairedNode</span> b) <span class="method">Create</span>()
+    public static (PairedNode a, PairedNode b) Create()
     {
-        <span class="reserved">var</span> <span class="variable">a</span> = <span class="reserved">new</span> <span class="type">PairedNode</span>();
+        var a = new PairedNode();
  
-        <span class="comment">// 後から作る方は new の時点でインスタンスを受け取れる。</span>
-        <span class="comment">// なのでやろうと思えばコンストラクターにも渡せる。</span>
-        <span class="reserved">var</span> <span class="variable">b</span> = <span class="reserved">new</span> <span class="type">PairedNode</span> { Pairing = <span class="variable">a</span> };
+        // 後から作る方は new の時点でインスタンスを受け取れる。
+        // なのでやろうと思えばコンストラクターにも渡せる。
+        var b = new PairedNode { Pairing = a };
  
-        <span class="comment">// でも、先に作った方にはどうしても後からの指しなおしが必要。</span>
-        <span class="variable">a</span>.Pairing = <span class="variable">b</span>;
+        // でも、先に作った方にはどうしても後からの指しなおしが必要。
+        a.Pairing = b;
  
-        <span class="control">return</span> (<span class="variable">a</span>, <span class="variable">b</span>);
+        return (a, b);
     }
 }
-</code></pre>
+```
 
 後者の例は、例えば `ReferenceEquals` とかです。
 null に関するフロー解析は結構ぎりぎりまで作業をしているようで、
 `ReferenceEquals` に関する解析は Visual Studio 16.3 Preview 1 (2019年7月)時点では未対応、
 Preview 2 (同8月) 時点で初めて対応しました。
 
-<pre class="source" title="ReferenceEquals でも等価チェックになるはずなのに">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>, <span class="reserved">string</span>? <span class="variable">y</span>)
+```csharp
+void M(string x, string? y)
 {
-    <span class="control">if</span> (<span class="method">ReferenceEquals</span>(<span class="variable">x</span>, <span class="variable">y</span>))
+    if (ReferenceEquals(x, y))
     {
-        <span class="comment">// x == y なら警告が消えるのに、ReferenceEquals だと残ってた。</span>
-        <span class="comment">// 16.3 Preview 1 の時点では警告あり、Preview 2 から消える。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="warning"><span class="variable">y</span></span>.Length);
+        // x == y なら警告が消えるのに、ReferenceEquals だと残ってた。
+        // 16.3 Preview 1 の時点では警告あり、Preview 2 から消える。
+        Console.WriteLine(y.Length);
     }
 }
-</code></pre>
+```
 
 この例はまだ需要もあって対処も楽な類なので対応されましたが、
 もっとレアだったり、対処にコストがかかりすぎる場合は対応してもらえない可能性が高いです。
@@ -815,29 +815,29 @@ Preview 2 (同8月) 時点で初めて対応しました。
 そこで用意されているのが後置き `!` 演算子です。
 `a!` というように、式の後ろに `!` を付けると、式 `a` の null 許容性は無視して常に非 null 扱いになります。
 
-<pre class="source" title="! を付けて強制非 null 扱い">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System;
+```csharp
+#nullable enable
+using System;
  
-<span class="reserved">class</span> <span class="type">PairedNode</span>
+class PairedNode
 {
-    <span class="comment">// null を無理やり非 null 扱いにして警告を消す。</span>
-    <span class="comment">// (省略したものの前述の) Create の中で自己責任で非 null を保証してるので大丈夫。</span>
-    <span class="reserved">public</span> <span class="type">PairedNode</span> Pairing { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; } = <em><span class="reserved">null</span>!</em>;
+    // null を無理やり非 null 扱いにして警告を消す。
+    // (省略したものの前述の) Create の中で自己責任で非 null を保証してるので大丈夫。
+    public PairedNode Pairing { get; private set; } = null!;
 }
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>, <span class="reserved">string</span>? <span class="variable">y</span>)
+    void M(string x, string? y)
     {
-        <span class="control">if</span> (<span class="method">ReferenceEquals</span>(<span class="variable">x</span>, <span class="variable">y</span>))
+        if (ReferenceEquals(x, y))
         {
-            <span class="comment">// string? だけども気にせずメンバー アクセスする。</span>
-            <span class="comment">// コンパイラーにはわからないかもしれないけども、人間はこの時点で y が非 null なことを知っている。</span>
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">y</span><em>!</em>.Length);
+            // string? だけども気にせずメンバー アクセスする。
+            // コンパイラーにはわからないかもしれないけども、人間はこの時点で y が非 null なことを知っている。
+            Console.WriteLine(y!.Length);
         }
     }
 }
-</code></pre>
+```
 
 この `!` 演算子は null forgiving (null に寛大)演算子とか、
 null suppression (null 抑止) 演算子などと呼ばれています。
@@ -858,36 +858,36 @@ null suppression (null 抑止) 演算子などと呼ばれています。
 実際に `NullReferenceException` を起こすのはメンバー アクセスした瞬間です。
 問題の真の原因と、例外が発生する場所がずれるので注意が必要です。
 
-<pre class="source" title="! 演算子を誤用するとそれなりに面倒事を起こす例">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System;
+```csharp
+#nullable enable
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// 悪用して、本当に null を渡してはいけないところに null を渡す。</span>
-        <span class="comment">// この時点では例外が出ない。</span>
-        <span class="method">M</span>(<span class="reserved">null</span>!);
+        // 悪用して、本当に null を渡してはいけないところに null を渡す。
+        // この時点では例外が出ない。
+        M(null!);
     }
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>)
+    static void M(string x)
     {
-        <span class="comment">// 実際に NullReferenceException を起こすのは以下の行。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>.Length);
+        // 実際に NullReferenceException を起こすのは以下の行。
+        Console.WriteLine(x.Length);
     }
 }
-</code></pre>
+```
 
 ちなみに、2重に `!` を付けようとするとコンパイル エラーになります。
 例えば以下のコードは`x!!` のところでコンパイル エラーが出ます。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span>? <span class="variable">x</span>)
+```csharp
+static void M(string? x)
 {
-    <span class="reserved">var</span> <span class="variable">y</span> = <span class="error"><span class="variable">x</span></span>!!;
+    var y = x!!;
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-15"></a> <a id="type-constraints"></a>ジェネリクス
 
@@ -901,113 +901,113 @@ null 許容型の `T?` は参照型と値型でだいぶ実装方法が違いま
 以下のコードはコンパイル エラーになります。
 (後述しますが、C# 9.0 でもこの書き方には注意が必要です。)
 
-<pre class="source" title="制約なしの型引数 T に対して T? は使えない">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">class</span> <span class="type">Generic</span>&lt;<span class="type">T</span>&gt;
+```csharp
+#nullable enable
+class Generic<T>
 {
-    <span class="comment">// T? と書くと C# 8.0 ではコンパイル エラー。</span>
-    <span class="reserved">public</span> <span class="error"><span class="type">T</span></span>? <span class="method">M</span>() =&gt; <span class="reserved">default</span>;
+    // T? と書くと C# 8.0 ではコンパイル エラー。
+    public T? M() => default;
 }
-</code></pre>
+```
 
 一方、`struct` 制約や `class` 制約、基底クラス制約を付けると `T?` と書けるようになります。
 `struct` 制約は [null 許容値型](sp2_nullable.md)の仕様によるもので、C# 2.0 の頃から書けます。
 「制約に単に `class` と書くと非 null の意味になる」というのが新仕様になります。
 
-<pre class="source" title="制約を付けて T? を使えるようにできる例">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System;
+```csharp
+#nullable enable
+using System;
  
-<span class="comment">// struct 制約を付けると null 許容&quot;値型&quot;を使えるようになる。</span>
-<span class="reserved">class</span> <span class="type">StructConstraint</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span>
+// struct 制約を付けると null 許容"値型"を使えるようになる。
+class StructConstraint<T> where T : struct
 {
-    <span class="reserved">public</span> <span class="type">T</span>? <span class="method">M</span>() =&gt; <span class="reserved">default</span>;
+    public T? M() => default;
 }
  
-<span class="comment">// class 制約は「非 null 参照型」の意味の制約になる。</span>
-<span class="comment">// なので T? と書いて null 許容&quot;参照&quot;型を作れるようになる。</span>
-<span class="reserved">class</span> <span class="type">ClassConstraint</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
+// class 制約は「非 null 参照型」の意味の制約になる。
+// なので T? と書いて null 許容"参照"型を作れるようになる。
+class ClassConstraint<T> where T : class
 {
-    <span class="reserved">public</span> <span class="type">T</span>? <span class="method">M</span>() =&gt; <span class="reserved">null</span>;
+    public T? M() => null;
 }
  
-<span class="comment">// 基底クラス制約も「非 null」扱い。</span>
-<span class="reserved">class</span> <span class="type">BaseTypeConstarint</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="type">Exception</span>
+// 基底クラス制約も「非 null」扱い。
+class BaseTypeConstarint<T> where T : Exception
 {
-    <span class="reserved">public</span> <span class="type">T</span>? <span class="method">M</span>() =&gt; <span class="reserved">null</span>;
+    public T? M() => null;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// class 制約を満たしてる。</span>
-        <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">ClassConstraint</span>&lt;<span class="reserved">string</span>&gt;();
+        // class 制約を満たしてる。
+        var x = new ClassConstraint<string>();
  
-        <span class="comment">// class 制約は「非 null」扱いなので以下のコードには警告あり。</span>
-        <span class="reserved">var</span> <span class="variable">y</span> = <span class="reserved">new</span> <span class="type">ClassConstraint</span>&lt;<span class="warning"><span class="reserved">string</span>?</span>&gt;();
+        // class 制約は「非 null」扱いなので以下のコードには警告あり。
+        var y = new ClassConstraint<string?>();
     }
 }
-</code></pre>
+```
 
 その代わり、`class`、基底クラス制約に `?` を付けることで null 許容参照型を受け付けることができます。
 
-<pre class="source" title="">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System;
+```csharp
+#nullable enable
+using System;
  
-<span class="comment">// class? 制約で「null 許容参照型」を表す。</span>
-<span class="reserved">class</span> <span class="type">ClassConstraint</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>?
+// class? 制約で「null 許容参照型」を表す。
+class ClassConstraint<T> where T : class?
 {
-    <span class="comment">// class? な型 T をさらに T? にはできず、コンパイル エラーになる。</span>
-    <span class="reserved">public</span> <span class="error"><span class="type">T</span></span>? <span class="method">M</span>() =&gt; <span class="reserved">null</span>;
+    // class? な型 T をさらに T? にはできず、コンパイル エラーになる。
+    public T? M() => null;
 }
  
-<span class="comment">// 基底クラス制約でも ? を使って null 許容にできる。</span>
-<span class="reserved">class</span> <span class="type">BaseTypeConstarint</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="type">Exception</span>?
+// 基底クラス制約でも ? を使って null 許容にできる。
+class BaseTypeConstarint<T> where T : Exception?
 {
-    <span class="comment">// この行がコンパイル エラーになるのは class? 制約と同じ。</span>
-    <span class="reserved">public</span> <span class="error"><span class="type">T</span></span>? <span class="method">M</span>() =&gt; <span class="reserved">null</span>;
+    // この行がコンパイル エラーになるのは class? 制約と同じ。
+    public T? M() => null;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// class? 制約なので特に警告なし。</span>
-        <span class="reserved">var</span> <span class="variable">y</span> = <span class="reserved">new</span> <span class="type">ClassConstraint</span>&lt;<span class="reserved">string</span>?&gt;();
+        // class? 制約なので特に警告なし。
+        var y = new ClassConstraint<string?>();
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-16"></a> <a id="notnull"></a>notnull 制約
 
 また、新たに `notnull` 制約というものが追加されて、
 非 null 参照型もしくは非 null 値型のみを受け付けることができます。
 
-<pre class="source" title="notnull 制約">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
+```csharp
+#nullable enable
  
-<span class="reserved">class</span> <span class="type">NotNullConstraint</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">notnull</span>
+class NotNullConstraint<T>
+    where T : notnull
 {
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// この2行は OK。</span>
-        <span class="reserved">var</span> <span class="variable">ok1</span> = <span class="reserved">new</span> <span class="type">NotNullConstraint</span>&lt;<span class="reserved">int</span>&gt;();
-        <span class="reserved">var</span> <span class="variable">ok2</span> = <span class="reserved">new</span> <span class="type">NotNullConstraint</span>&lt;<span class="reserved">string</span>&gt;();
+        // この2行は OK。
+        var ok1 = new NotNullConstraint<int>();
+        var ok2 = new NotNullConstraint<string>();
  
-        <span class="comment">// この2行には警告が出る。</span>
-        <span class="reserved">var</span> <span class="variable">ng1</span> = <span class="reserved">new</span> <span class="type">NotNullConstraint</span>&lt;<span class="warning"><span class="reserved">int</span>?</span>&gt;();
-        <span class="reserved">var</span> <span class="variable">ng2</span> = <span class="reserved">new</span> <span class="type">NotNullConstraint</span>&lt;<span class="warning"><span class="reserved">string</span>?</span>&gt;();
+        // この2行には警告が出る。
+        var ng1 = new NotNullConstraint<int?>();
+        var ng2 = new NotNullConstraint<string?>();
     }
 }
-</code></pre>
+```
 
 例えば、`Dictionary<TKey, TValue>` (`System.Collections.Generic`名前空間)のキーは元々 null を受け付けていません。`d[null] = 0` みたいな書き方をすると null 参照例外が発生します。
 なので、.NET Core 3.0 の `Dictionary` の `TKey` には `notnull` 制約が付いています。
@@ -1017,42 +1017,42 @@ null 許容型の `T?` は参照型と値型でだいぶ実装方法が違いま
 (参照型と値型での null 許容の仕様の差が大きすぎてちょっと難しいようです。
 もし実現しようと思うなら、C# コンパイラーのレベルでは無理で、.NET ランタイムの型システム レベルでの改修が必要。)
 
-<pre class="source" title="notnull を付けても T? とは書けない">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
+```csharp
+#nullable enable
  
-<span class="reserved">class</span> <span class="type">NotNullConstraint</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">notnull</span>
+class NotNullConstraint<T>
+    where T : notnull
 {
-    <span class="comment">// 以下の2行はコンパイル エラーになる。</span>
-    <span class="error"><span class="type">T</span>?</span> <span class="method">M</span>() =&gt; <span class="error"><span class="reserved">null</span></span>;
-    <span class="reserved">int</span> <span class="method">M</span>(<span class="error"><span class="type">T</span>?</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span> ? 0 : <span class="variable">x</span>.<span class="method">GetHashCode</span>();
+    // 以下の2行はコンパイル エラーになる。
+    T? M() => null;
+    int M(T? x) => x is null ? 0 : x.GetHashCode();
 }
-</code></pre>
+```
 
 一応、[次節](#annotation-attributes)で説明する属性を使ってある程度の問題回避はできます。
 
-<pre class="source" title="アノテーション属性(次節で説明)で問題回避">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+#nullable enable
+using System.Diagnostics.CodeAnalysis;
  
-<span class="reserved">class</span> <span class="type">NotNullConstraint</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">notnull</span>
+class NotNullConstraint<T>
+    where T : notnull
 {
-    <span class="comment">// T? と書けないことに対する代替手段。</span>
-    [<span class="reserved">return</span>: <span class="type">MaybeNull</span>] <span class="reserved">public</span> <span class="type">T</span> <span class="method">M</span>() =&gt; <span class="reserved">default</span>!;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">M</span>([<span class="type">AllowNull</span>] <span class="type">T</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span> ? 0 : <span class="variable">x</span>.<span class="method">GetHashCode</span>();
+    // T? と書けないことに対する代替手段。
+    [return: MaybeNull] public T M() => default!;
+    public int M([AllowNull] T x) => x is null ? 0 : x.GetHashCode();
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">NotNullConstraint</span>&lt;<span class="reserved">string</span>&gt;();
-        <span class="reserved">string</span>? <span class="variable">nullable</span> = <span class="variable">x</span>.<span class="method">M</span>(); <span class="comment">// string M() だけど null が返ってくる。</span>
-        <span class="variable">x</span>.<span class="method">M</span>(<span class="reserved">null</span>); <span class="comment">// M(string) だけど null を渡せる。</span>
+        var x = new NotNullConstraint<string>();
+        string? nullable = x.M(); // string M() だけど null が返ってくる。
+        x.M(null); // M(string) だけど null を渡せる。
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-17"></a> <a id="unconstrained-generics"></a>制約なしジェネリック型引数
 
@@ -1061,14 +1061,14 @@ null 許容型の `T?` は参照型と値型でだいぶ実装方法が違いま
 C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` と書けるようになりました。
 ジェネリクスの話の冒頭で「C# 8.0 ではエラーになる」と説明した以下のコードが C# 9.0 では有効です。
 
-<pre class="source" title="C# 9.0 で有効になったコード">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">class</span> <span class="type">Generic</span>&lt;<span class="type">T</span>&gt;
+```csharp
+#nullable enable
+class Generic<T>
 {
-    <span class="comment">// C# 9.0 では一応 T? と書ける。</span>
-    <span class="reserved">public</span> <span class="type">T</span>? <span class="method">M</span>() =&gt; <span class="reserved">default</span>;
+    // C# 9.0 では一応 T? と書ける。
+    public T? M() => default;
 }
-</code></pre>
+```
 
 「一応」と言っているのは、この `T?` にはちょっと注意が必要だからです。
 前述のとおり、`T?` は内部実装的に、値型(構造体など)と参照型(クラスなど)とで結構差があって、
@@ -1077,23 +1077,23 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 どちらかというと「defaultable ([規定値](rm_struct.md#default)になる可能性がある)」というべきで、
 以下のように、`T?` であっても null にはならない(規定値の 0 になる)ことがあります。
 
-<pre class="source" title="ジェネリックな T? はどちらかというと「defaultable」">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
+```csharp
+#nullable enable
  
-<span class="reserved">using</span> System;
+using System;
  
-<span class="comment">// この2つに関しては default == null なので変なことにはならない。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">M</span>&lt;<span class="reserved">string</span>?&gt;()); <span class="comment">// null</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">M</span>&lt;<span class="reserved">string</span>&gt;()); <span class="comment">// null</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">M</span>&lt;<span class="reserved">int</span>?&gt;()); <span class="comment">// null</span>
+// この2つに関しては default == null なので変なことにはならない。
+Console.WriteLine(M<string?>()); // null
+Console.WriteLine(M<string>()); // null
+Console.WriteLine(M<int?>()); // null
  
-<span class="comment">// 問題が非 null 値型で、この場合 default != null なのでちょっと変。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">M</span>&lt;<span class="reserved">int</span>&gt;()); <span class="comment">// 0</span>
+// 問題が非 null 値型で、この場合 default != null なのでちょっと変。
+Console.WriteLine(M<int>()); // 0
  
-<span class="comment">// ジェネリックな T? は nullable じゃなくて defaultable。</span>
-<span class="comment">// default を渡しても警告にならない。 </span>
-<span class="reserved">static</span> <span class="type">T</span>? <span class="method">M</span>&lt;<span class="type">T</span>&gt;() =&gt; <span class="reserved">default</span>;
-</code></pre>
+// ジェネリックな T? は nullable じゃなくて defaultable。
+// default を渡しても警告にならない。 
+static T? M<T>() => default;
+```
 
 これはちょっと罠になるので、検討当初は `T??` みたいな文法で「nullable」と「defaultable」を区別しようかという案も出ていました。
 ただ、これはこれで、[`??` 演算子](rm_nullusage.md#null-coalesce)との区別が付かなくて困る場面があるということで断念されました。
@@ -1108,46 +1108,46 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 
 `default` 制約が必要になるのは以下のような状況です。
 
-<pre class="source" title="default 制約">
-<code><span class="inactive">#nullable</span> <span class="inactive">disable</span>
+```csharp
+#nullable disable
  
-<span class="comment">// さかのぼること、null 許容参照型導入前にから以下のような書き方ができた。</span>
-<span class="reserved">class</span> <span class="type">Csharp7</span>
+// さかのぼること、null 許容参照型導入前にから以下のような書き方ができた。
+class Csharp7
 {
-    <span class="comment">// これは Nullable&lt;T&gt; の意味に。</span>
-    <span class="reserved">public</span> <span class="type">T</span>? <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span>? <span class="variable">x</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="reserved">null</span>;
+    // これは Nullable<T> の意味に。
+    public T? M<T>(T? x) where T : struct => null;
  
-    <span class="comment">// T と Nullable&lt;T&gt; は別の型扱いなのでオーバーロード可能。</span>
-    <span class="reserved">public</span> <span class="type">T</span> <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">x</span>) =&gt; <span class="reserved">default</span>;
+    // T と Nullable<T> は別の型扱いなのでオーバーロード可能。
+    public T M<T>(T x) => default;
 }
  
-<span class="inactive">#nullable</span> <span class="inactive">enable</span>
+#nullable enable
  
-<span class="comment">// ここで、null 許容参照型を有効化。</span>
-<span class="comment">// 特に、C# 9.0 では制約なし型引数に対して T? と書けるようになったので…</span>
-<span class="reserved">class</span> <span class="type">Base</span>
+// ここで、null 許容参照型を有効化。
+// 特に、C# 9.0 では制約なし型引数に対して T? と書けるようになったので…
+class Base
 {
-    <span class="comment">// これは Nullable&lt;T&gt; の意味に。</span>
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">T</span>? <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span>? <span class="variable">t</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="reserved">null</span>;
+    // これは Nullable<T> の意味に。
+    public virtual T? M<T>(T? t) where T : struct => null;
  
-    <span class="comment">// これは C# 9.0 の制約なし型引数に対する null 許容(正確には default 許容)アノテーション。</span>
-    <span class="comment">// T と Nullable&lt;T&gt; 違いのオーバーロードという扱いになる。</span>
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">T</span>? <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span>? <span class="variable">t</span>) =&gt; <span class="reserved">default</span>;
+    // これは C# 9.0 の制約なし型引数に対する null 許容(正確には default 許容)アノテーション。
+    // T と Nullable<T> 違いのオーバーロードという扱いになる。
+    public virtual T? M<T>(T? t) => default;
 }
  
-<span class="comment">// さらに紛らわしいのが↑を override したときで…</span>
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+// さらに紛らわしいのが↑を override したときで…
+class Derived : Base
 {
-    <span class="comment">// これ、実は Nullable&lt;T&gt; の意味。</span>
-    <span class="comment">// 親クラス側の where T : struct 制約を自動的に引き継いでしまう。</span>
-    <span class="comment">// こうしないと C# 8.0 以前との整合性が取れないとのこと。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="type">T</span>? <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span>? <span class="variable">t</span>) =&gt; <span class="reserved">null</span>;
+    // これ、実は Nullable<T> の意味。
+    // 親クラス側の where T : struct 制約を自動的に引き継いでしまう。
+    // こうしないと C# 8.0 以前との整合性が取れないとのこと。
+    public override T? M<T>(T? t) => null;
  
-    <span class="comment">// ということで、制約なし T? の方を参照するために別の制約が必要になったという経緯があり。</span>
-    <span class="comment">// override 時に限り、where T : struct じゃない方に、逆に where T : default という制約を書く必要がある。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="type">T</span>? <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span>? <span class="variable">t</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">default</span> =&gt; <span class="reserved">default</span>;
+    // ということで、制約なし T? の方を参照するために別の制約が必要になったという経緯があり。
+    // override 時に限り、where T : struct じゃない方に、逆に where T : default という制約を書く必要がある。
+    public override T? M<T>(T? t) where T : default => default;
 }
-</code></pre>
+```
 
 まとめると、
 
@@ -1250,32 +1250,32 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 
 まず、[`Array.Resize`](https://docs.microsoft.com/ja-jp/dotnet/api/system.array.resize) は配列の長さを変更するメソッドですが、参照引数で null を受け付けはするものの、絶対に非 null なインスタンスを作って渡します。そこで、以下のように、`NotNull` 属性が付いています。
 
-<pre class="source" title="ref の入力と出力で null 許容性が違う例">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Array</span>
+```csharp
+public class Array
 {
-    <span class="comment">// null を受け付けるけど、返しはしない。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Resize</span>&lt;<span class="type">T</span>&gt;([<span class="type">NotNull</span>] <span class="reserved">ref</span> <span class="type">T</span>[]? <span class="variable">array</span>, <span class="reserved">int</span> <span class="variable">newSize</span>);
+    // null を受け付けるけど、返しはしない。
+    public static void Resize<T>([NotNull] ref T[]? array, int newSize);
 }
-</code></pre>
+```
 
 その結果、以下のようなコードが書けます。
 
-<pre class="source" title="Array.Resize の AllowNull の効果">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// null を渡せる。</span>
-        <span class="reserved">int</span>[]? <span class="variable">array</span> = <span class="reserved">null</span>;
-        <span class="type">Array</span>.<span class="method">Resize</span>(<span class="reserved">ref</span> <span class="variable">array</span>, 4);
+        // null を渡せる。
+        int[]? array = null;
+        Array.Resize(ref array, 4);
  
-        <span class="comment">// でも、呼び出し後は非 null 保証がある。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">array</span>.Length); <span class="comment">// 警告なし</span>
+        // でも、呼び出し後は非 null 保証がある。
+        Console.WriteLine(array.Length); // 警告なし
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-22"></a>TextWriter.NewLine (AllowNull)
 
@@ -1284,34 +1284,34 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 そこで、以下のように、`AllowNull` が付いています。
 (`AllowNull` は意味としては「入力(引数とか)に `null` を許す」なので、プロパティに付けると `set` の `value` が nullable の意味になるみたいです。)
 
-<pre class="source" title="set と get で null 許容性が違う例">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">TextWriter</span>
+```csharp
+public class TextWriter
 {
-    [<span class="type">AllowNull</span>] <span class="comment">// set だけ null 許容</span>
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">string</span> NewLine
+    [AllowNull] // set だけ null 許容
+    public virtual string NewLine
     {
-        <span class="reserved">get</span> =&gt; ...
-        <span class="reserved">set</span> =&gt; ...
+        get => ...
+        set => ...
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-23"></a>ジェネリック型引数に対するアノテーション (MeybeNull)
 
 ジェネリクス都合で `T?` と書けない問題を `MaybeNull` 属性で回避している例としては
 [`StrongBox<T>.Value`](https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.compilerservices.strongbox-1.value)や[`ThreadLocal<T>.Value`](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.threadlocal-1.value)などがあります。
 
-<pre class="source" title="ジェネリクス都合で MaybeNull">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">StrongBox</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public class StrongBox<T>
 {
-    [<span class="type">MaybeNull</span>] <span class="reserved">public</span> <span class="type">T</span> Value =&gt; ...
+    [MaybeNull] public T Value => ...
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">ThreadLocal</span>&lt;<span class="type">T</span>&gt;
+public class ThreadLocal<T>
 {
-    [<span class="type">MaybeNull</span>] <span class="reserved">public</span> <span class="type">T</span> Value =&gt; ...
+    [MaybeNull] public T Value => ...
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-24"></a>Try メソッド (NotNullWhen)
 
@@ -1321,21 +1321,21 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 また、[`string.IsNullEmpty`](https://docs.microsoft.com/ja-jp/dotnet/api/system.string.isnullorempty) のように、他の処理と兼ねて null チェックしているものがあります。
 こういう場合に `NotNullWhen` などの条件付き事後条件を使います。
 
-<pre class="source" title="条件付き事後条件の例">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Version</span>
+```csharp
+public class Version
 {
-    <span class="comment">// 戻り値が true の時には非 null 値を version 変数に入れて返す。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">TryParse</span>(
-        <span class="reserved">string</span>? <span class="variable">input</span>,
-        [<span class="type">NotNullWhen</span>(<span class="reserved">true</span>)] <span class="reserved">out</span> <span class="type">Version</span>? <span class="variable">version</span>);
+    // 戻り値が true の時には非 null 値を version 変数に入れて返す。
+    public static bool TryParse(
+        string? input,
+        [NotNullWhen(true)] out Version? version);
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">String</span>
+public class String
 {
-    <span class="comment">// 中で null チェックをしているので、true を返すなら value は非 null とわかる。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">IsNullOrEmpty</span>([<span class="type">NotNullWhen</span>(<span class="reserved">false</span>)] <span class="reserved">string</span>? <span class="variable">value</span>);
+    // 中で null チェックをしているので、true を返すなら value は非 null とわかる。
+    public static bool IsNullOrEmpty([NotNullWhen(false)] string? value);
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-25"></a>null 伝搬 (NotNullIfNotNull)
 
@@ -1343,24 +1343,24 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 また、[Volatile.Read](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.volatile.read)/[Write](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.volatile.write)のように、引数の値を戻り値や他の参照引数に伝搬するものがあって、値の伝搬によって null 許容性も伝搬します。
 こういう場合に使うのが `NotNullIfNotNull` 属性です。
 
-<pre class="source" title="null 許容性の伝搬">
-<code><span class="reserved">class</span> <span class="type">Path</span>
+```csharp
+class Path
 {
-    <span class="comment">// 引数が null のとき、戻り値に null を素通しする仕様。</span>
-    [<span class="reserved">return</span>: <span class="type">NotNullIfNotNull</span>(<span class="string">&quot;path&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span>? <span class="method">GetFileName</span>(<span class="reserved">string</span>? <span class="variable">path</span>);
+    // 引数が null のとき、戻り値に null を素通しする仕様。
+    [return: NotNullIfNotNull("path")]
+    public static string? GetFileName(string? path);
 }
  
-<span class="reserved">class</span> <span class="type">Volatile</span>
+class Volatile
 {
-    <span class="comment">// location に value を書き込むメソッドなので、value の null 判定が location に伝搬。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Write</span>&lt;<span class="type">T</span>&gt;([<span class="type">NotNullIfNotNull</span>(<span class="string">&quot;value&quot;</span>)] <span class="reserved">ref</span> <span class="type">T</span> <span class="variable">location</span>, <span class="type">T</span> <span class="variable">value</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>?;
+    // location に value を書き込むメソッドなので、value の null 判定が location に伝搬。
+    public static void Write<T>([NotNullIfNotNull("value")] ref T location, T value) where T : class?;
  
-    <span class="comment">// location に入っている値をそのまま返すメソッドなので、location の null 判定が戻り値に伝搬。</span>
-    [<span class="reserved">return</span>: <span class="type">NotNullIfNotNull</span>(<span class="string">&quot;location&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> <span class="method">Read</span>&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> <span class="variable">location</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>?;
+    // location に入っている値をそのまま返すメソッドなので、location の null 判定が戻り値に伝搬。
+    [return: NotNullIfNotNull("location")]
+    public static T Read<T>(ref T location) where T : class?;
 }
-</code></pre>
+```
 
 (ちなみに、この例の `"path"` や `"location"` は `nameof(path)`、`nameof(location)` と書きたいところですが、[`nameof` 演算子](../start/st_string.md#nameof-operator)の仕様上、メソッドの外から引数を参照することは残念ながらできません。
 この `NotNullIfNotNull` 属性によってそれなりに強い需要が生じてしまったので修正が入る可能性はありますが、破壊的変更になりそうなのであんまり期待はできません。)
@@ -1370,47 +1370,47 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 一部のメソッドは、そのメソッドを呼んだら最後、もう絶対に正常には戻ってこないものがあります。例えば[Environment.FailFast](https://docs.microsoft.com/ja-jp/dotnet/api/system.environment.failfast)はプログラムを即座に止めてしまう(おかしな状態のままプログラムが進むよりは、一思いにクラッシュした方がマシな場面で使う)メソッドなので、このメソッドの呼び出しから後ろが実行されることは絶対にありません。
 こういう場合、フロー解析もそのメソッドまでで止めてしまいたく、そのために使う属性が `DoesNotReturn` です。
 
-<pre class="source" title="呼んだら最後、絶対に戻ってこないメソッド">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Environment</span>
+```csharp
+public static class Environment
 {
-    [<span class="type">DoesNotReturn</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">FailFast</span>(<span class="reserved">string</span> <span class="variable">message</span>);
+    [DoesNotReturn]
+    public static void FailFast(string message);
 }
-</code></pre>
+```
 
 これは以下のような使い方を想定しています。
 
-<pre class="source" title="DoesNotReturn 付きメソッドの利用例">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">string</span>? <span class="variable">s</span>)
+```csharp
+static int M(string? s)
 {
-    <span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">null</span>)
+    if (s is null)
     {
-        <span class="type">Environment</span>.<span class="method">FailFast</span>(<span class="string">&quot;null は許さない。絶対にだ！&quot;</span>);
+        Environment.FailFast("null は許さない。絶対にだ！");
     }
  
-    <span class="comment">// null だったら FailFast 行きで、FailFast は DoesNotReturn なので、</span>
-    <span class="comment">// ここに来た時点で s は非 null な保証がある。</span>
-    <span class="control">return</span> <span class="variable">s</span>.Length;
+    // null だったら FailFast 行きで、FailFast は DoesNotReturn なので、
+    // ここに来た時点で s は非 null な保証がある。
+    return s.Length;
 }
-</code></pre>
+```
 
 プログラムのクラッシュの他、絶対に例外を出すことがわかっているメソッドにも `DoesNotReturn` 属性が使えます。
 
-<pre class="source" title="絶対に例外を出すメソッドにも DoesNotReturn が使える">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">string</span>? <span class="variable">s</span>)
+```csharp
+static int M(string? s)
 {
-    <span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">null</span>)
+    if (s is null)
     {
-        <span class="method">Throw</span>(<span class="reserved">nameof</span>(<span class="variable">s</span>));
+        Throw(nameof(s));
     }
  
-    <span class="control">return</span> <span class="variable">s</span>.Length;
+    return s.Length;
 }
  
-<span class="comment">// throw はインライン展開を阻害するのでここだけメソッドを分離</span>
-[<span class="type">DoesNotReturn</span>]
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Throw</span>(<span class="reserved">string</span> <span class="variable">name</span>) =&gt; <span class="control">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="variable">name</span>);
-</code></pre>
+// throw はインライン展開を阻害するのでここだけメソッドを分離
+[DoesNotReturn]
+static void Throw(string name) => throw new ArgumentNullException(name);
+```
 
 #### <a id="sec-generated-title-27"></a>Assert (DoesNotReturnIf)
 
@@ -1419,12 +1419,12 @@ C# 9.0 で、制約なしのジェネリック型引数 `T` に対して `T?` �
 このメソッドは引数が false の時に限ってプログラムを止めます。
 こういうメソッドに対して使うがの `DoesNotReturnIf` 属性です。
 
-<pre class="source" title="条件次第で戻ってこなくなるメソッドの例">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Debug</span>
+```csharp
+public static class Debug
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Assert</span>([<span class="type">DoesNotReturnIf</span>(<span class="reserved">false</span>)] <span class="reserved">bool</span> <span class="variable">condition</span>);
+    public static void Assert([DoesNotReturnIf(false)] bool condition);
 }
-</code></pre>
+```
 
 ちなみに、「絶対に戻ってこないからフロー解析をしなくていい」という処理は、
 null 許容性の他に[確実な初期化](rm_struct.md#definite-assignment)でも使いたいものです。
@@ -1449,22 +1449,22 @@ C# コンパイラーのフロー解析だけじゃなく .NET ランタイム�
 これらはちゃんと、`==` 演算子と同様、null 許容性を伝搬します。
 例えば以下のように、`EqualityComparer<T>.Default.Euqlas` を使って null チェックができます。
 
-<pre class="source" title="">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">EqualityComaprerEquals</span>(<span class="reserved">string</span> <span class="variable">x</span>, <span class="reserved">string</span>? <span class="variable">y</span>)
+```csharp
+private static void EqualityComaprerEquals(string x, string? y)
 {
-    <span class="comment">// IEqualityComparer.Equals は == と同じ扱いを受ける。</span>
-    <span class="control">if</span> (<span class="type">EqualityComparer</span>&lt;<span class="reserved">string</span>&gt;.Default.<span class="method">Equals</span>(<span class="variable">x</span>, <span class="variable">y</span>))
+    // IEqualityComparer.Equals は == と同じ扱いを受ける。
+    if (EqualityComparer<string>.Default.Equals(x, y))
     {
-        <span class="comment">// こっちは y が非 null なことがわかるので警告が出ない。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">y</span>.Length);
+        // こっちは y が非 null なことがわかるので警告が出ない。
+        Console.WriteLine(y.Length);
     }
-    <span class="control">else</span>
+    else
     {
-        <span class="comment">// こっちは null な可能性が残るので警告が出る。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">y</span>.Length);
+        // こっちは null な可能性が残るので警告が出る。
+        Console.WriteLine(y.Length);
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-29"></a> <a id="gradual"></a>段階的な改善
 
@@ -1490,39 +1490,39 @@ null 許容参照型はそれなりの期間を掛けて徐々に完成してい
 (コンストラクター内で全要素に対して 非 null 初期化しているかどうかまで解析したい。)
 しかし、少なくとも C# 8.0 時点では警告を出せません。
 
-<pre class="source" title="C# 8.0 時点でのフロー解析の不足の例">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System;
+```csharp
+#nullable enable
+using System;
  
-<span class="reserved">class</span> <span class="type">ArrayInit</span>
+class ArrayInit
 {
-    <span class="reserved">string</span>[] _buffer;
+    string[] _buffer;
  
-    <span class="reserved">public</span> <span class="type">ArrayInit</span>()
+    public ArrayInit()
     {
-        <span class="comment">// _buffer 自体には new string[] を代入したけど、その要素には何も代入していない。</span>
-        <span class="comment">// C# の仕様上、_buffer[0] は null になってる(おかしい)。</span>
-        <span class="comment">// string (? を付けていない)なので null になってはいけないはず。</span>
-        _buffer = <span class="reserved">new</span> <span class="reserved">string</span>[1];
+        // _buffer 自体には new string[] を代入したけど、その要素には何も代入していない。
+        // C# の仕様上、_buffer[0] は null になってる(おかしい)。
+        // string (? を付けていない)なので null になってはいけないはず。
+        _buffer = new string[1];
     }
  
-    <span class="comment">// string[] からの要素の取り出しなので、string (非 null)のはず。</span>
-    <span class="comment">// 警告は出ない。</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> Value =&gt; _buffer[0];
+    // string[] からの要素の取り出しなので、string (非 null)のはず。
+    // 警告は出ない。
+    public string Value => _buffer[0];
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">ArrayInit</span>();
-        <span class="reserved">string</span> <span class="variable">s</span> = <span class="variable">x</span>.Value;
+        var x = new ArrayInit();
+        string s = x.Value;
  
-        <span class="comment">// どこにも警告が出ないものの、実行するとここで null 参照例外発生。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span>.Length);
+        // どこにも警告が出ないものの、実行するとここで null 参照例外発生。
+        Console.WriteLine(s.Length);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-31"></a> <a id="patch-version-up"></a>C# バージョン変更なしでのフロー解析の改善
 
@@ -1536,27 +1536,27 @@ C# 8.0 のリリース直後の時点では、
 null 許容性に関する属性はメソッドの外に対してだけ影響を及ぼしていました。
 以下のように、メソッド内ではフロー解析に寄与していませんでした。
 
-<pre class="source" title="アノテーション属性の影響はメソッド内部には及んでなかった(リリース当初)">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+#nullable enable
+using System;
+using System.Diagnostics.CodeAnalysis;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// メソッドを作る側(メソッドの中)には影響していない。</span>
-    [<span class="reserved">return</span>: <span class="type">MaybeNull</span>]
-    <span class="reserved">static</span> <span class="reserved">string</span> <span class="method">M</span>() =&gt; <span class="warning"><span class="reserved">null</span></span>; <span class="comment">// ここで警告が出る。</span>
+    // メソッドを作る側(メソッドの中)には影響していない。
+    [return: MaybeNull]
+    static string M() => null; // ここで警告が出る。
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// メソッドを使う側(メソッドの外)にはちゃんと影響してる。</span>
-        <span class="reserved">var</span> <span class="variable">s</span> = <span class="method">M</span>();
+        // メソッドを使う側(メソッドの外)にはちゃんと影響してる。
+        var s = M();
  
-        <span class="comment">// MaybeNull なのに null チェックしていないのでここで警告。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="warning"><span class="variable">s</span>.Length</span>);
+        // MaybeNull なのに null チェックしていないのでここで警告。
+        Console.WriteLine(s.Length);
     }
 }
-</code></pre>
+```
 
 外から見た都合(メソッドを使う側)の方が大事なので優先的に実装された結果です。
 当初、`null` 戻り値のところに [`!` 演算子](#null-forgiving)を付けて警告を回避するしかありませんでした。
@@ -1575,46 +1575,46 @@ null 許容性に関する属性はメソッドの外に対してだけ影響を
 例えば以下のような状況を考えます
 (実際、標準ライブラリの [`DeflateStream`](https://docs.microsoft.com/ja-jp/dotnet/api/system.io.compression.deflatestream)クラスに似たようなコードが入っています)。
 
-<pre class="source" title="間接的な初期化をしているフィールド">
-<code><span class="reserved">class</span> <span class="type">DeflateStream</span>
+```csharp
+class DeflateStream
 {
-    <span class="reserved">private</span> <span class="type">Stream</span> _stream; <span class="comment">// コンストラクターで初期化していないので警告が出る。</span>
+    private Stream _stream; // コンストラクターで初期化していないので警告が出る。
  
-    <span class="reserved">public</span> <span class="warning"><span class="type">DeflateStream</span></span>(<span class="type">Stream</span> stream)
+    public DeflateStream(Stream stream)
     {
-        <span class="method">Initialize</span>(stream);
+        Initialize(stream);
     }
  
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Initialize</span>(<span class="type">Stream</span> stream)
+    private void Initialize(Stream stream)
     {
         _stream = stream;
     }
 }
-</code></pre>
+```
 
 `Initialize` メソッドを介して間接的には非 null なフィールドをちゃんと初期化しているんですが、
 これまでだとこの状況を正しくフロー解析する手段がありませんでした。
 これに対して、`MemberNotNull` 属性が追加されたことで以下のように書けるようになりました。
 
-<pre class="source" title="MemberNotNull で警告消し">
-<code><span class="reserved">class</span> <span class="type">DeflateStream</span>
+```csharp
+class DeflateStream
 {
-    <span class="reserved">private</span> <span class="type">Stream</span> _stream; <span class="comment">// Initialize 内で初期化される。</span>
+    private Stream _stream; // Initialize 内で初期化される。
  
-    <span class="reserved">public</span> <span class="type">DeflateStream</span>(<span class="type">Stream</span> stream)
+    public DeflateStream(Stream stream)
     {
-        <span class="comment">// Initialize 内で _stream が初期化されることがわかるので警告が消える。</span>
-        <span class="method">Initialize</span>(stream);
+        // Initialize 内で _stream が初期化されることがわかるので警告が消える。
+        Initialize(stream);
     }
  
-    <span class="comment">// この属性によって正しくフロー解析できるようになってる。</span>
-    [<span class="type">MemberNotNull</span>(<span class="reserved">nameof</span>(_stream))]
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Initialize</span>(<span class="type">Stream</span> stream)
+    // この属性によって正しくフロー解析できるようになってる。
+    [MemberNotNull(nameof(_stream))]
+    private void Initialize(Stream stream)
     {
         _stream = stream;
     }
 }
-</code></pre>
+```
 
 
 ### <a id="sec-generated-title-34"></a> <a id="over-a-period"></a>移行期間
@@ -1625,24 +1625,24 @@ null 許容性に関する属性はメソッドの外に対してだけ影響を
 
 実際例えば、LINQ to Object (`Enumerable`クラス(`System.Linq` 名前空間の各種拡張メソッド)には .NET Core 3.0 (C# 8.0 と同世代)時点では[アノテーション属性](#annotation-attributes)が付いていません。
 
-<pre class="source" title=".NET Core 3.0 時点のアノテーション不足の例">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Linq;
+```csharp
+#nullable enable
+using System;
+using System.Linq;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// 以下のコードは null 参照例外を起こすんだから、ToDictionary には DisallowNull 属性が付くべき。</span>
-        _ = <span class="reserved">new</span>[] { <span class="string">&quot;&quot;</span>, <span class="reserved">null</span> }.<span class="method">ToDictionary</span>(<span class="variable">x</span> =&gt; <span class="variable">x</span>);
+        // 以下のコードは null 参照例外を起こすんだから、ToDictionary には DisallowNull 属性が付くべき。
+        _ = new[] { "", null }.ToDictionary(x => x);
  
-        <span class="comment">// 以下のコードは null を返してくるんだから、FirstOrDefault には MaybeNull 属性が付くべき。</span>
-        <span class="reserved">string</span> <span class="variable">s</span> = <span class="reserved">new</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span> }.<span class="method">FirstOrDefault</span>(<span class="variable">x</span> =&gt; <span class="variable">x</span>.Length &gt; 2);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span>.Length);
+        // 以下のコードは null を返してくるんだから、FirstOrDefault には MaybeNull 属性が付くべき。
+        string s = new[] { "a", "b" }.FirstOrDefault(x => x.Length > 2);
+        Console.WriteLine(s.Length);
     }
 }
-</code></pre>
+```
 
 これらについては、後からアノテーションが増える予定です。
 

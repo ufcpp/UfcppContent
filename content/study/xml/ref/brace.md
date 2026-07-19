@@ -26,37 +26,40 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;brace size="括弧の大きさ"&gt;括弧内の式&lt;/brace&gt;
-</pre>
+```xml
+<brace size="括弧の大きさ">括弧内の式</brace>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;brace size="1.2"&gt;&lt;paren&gt;x-ξ&lt;/paren&gt;&lt;sup&gt;2&lt;/sup&gt;+&lt;paren&gt;y-η&lt;/paren&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/brace&gt;&lt;sup&gt;1/2&lt;/sup&gt;
-</pre><div class="math"><span class="paren" style="font-size:1.2em;">{</span><span class="paren" style="font-size:em;">(</span>x-ξ<span class="paren" style="font-size:em;">)</span><sup>2</sup>+<span class="paren" style="font-size:em;">(</span>y-η<span class="paren" style="font-size:em;">)</span><sup>2</sup><span class="paren" style="font-size:1.2em;">}</span><sup>1/2</sup>
+```xml
+<brace size="1.2"><paren>x-ξ</paren><sup>2</sup>+<paren>y-η</paren><sup>2</sup></brace><sup>1/2</sup>
+```
+<div class="math"><span class="paren" style="font-size:1.2em;">{</span><span class="paren" style="font-size:em;">(</span>x-ξ<span class="paren" style="font-size:em;">)</span><sup>2</sup>+<span class="paren" style="font-size:em;">(</span>y-η<span class="paren" style="font-size:em;">)</span><sup>2</sup><span class="paren" style="font-size:1.2em;">}</span><sup>1/2</sup>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:brace"&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+```xml
+<xsl:template match="ufcpp:brace">
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     {
-  &lt;/span&gt;
-  &lt;xsl:apply-templates/&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+  </span>
+  <xsl:apply-templates/>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     }
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+  </span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.paren
+```css
+span.paren
 {
   font-style:normal;
   vertical-align:middle;
 }
-
-</pre>
+```

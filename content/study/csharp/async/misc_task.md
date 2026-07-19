@@ -192,33 +192,32 @@ Task クラスからの結果の受け取り方には2通りの方法があり�
 
 1つは、ContinueWith メソッドを使って、タスク完了時にその先続けて行いたい処理を渡します。
 
-<pre class="source" title="継続呼び出し" lang="">
-<code><span class="reserved">var</span> t = <span class="type">Task</span>.Factory.StartNew(() =&gt;
+```csharp
+var t = Task.Factory.StartNew(() =>
 {
-    <span class="comment">// 何か重たい計算をして、その計算結果を返す。</span>
-    <span class="reserved">return</span> HeavyWork();
+    // 何か重たい計算をして、その計算結果を返す。
+    return HeavyWork();
 });
  
-<span class="comment">// 計算が完了したら、そのあと続けたい処理を呼び出してもらう。</span>
-t.ContinueWith(x =&gt; <span class="type">Console</span>.WriteLine(x.Result));
-</code></pre>
+// 計算が完了したら、そのあと続けたい処理を呼び出してもらう。
+t.ContinueWith(x => Console.WriteLine(x.Result));
+```
 
 
 もう1つは、タスクの完了を同期的に（完了するまで処理を止めて）待ちます。
 Result プロパティを読もうとしたとき、タスクがまだ完了していない場合、
 完了するまで待つことになります。
 
-<pre class="source" title="同期的に完了待ち" lang="">
-<code><span class="reserved">var</span> t = <span class="type">Task</span>.Factory.StartNew(() =&gt;
+```csharp
+var t = Task.Factory.StartNew(() =>
 {
-    <span class="comment">// 何か重たい計算をして、その計算結果を返す。</span>
-    <span class="reserved">return</span> HeavyWork();
+    // 何か重たい計算をして、その計算結果を返す。
+    return HeavyWork();
 });
  
-<span class="comment">// 同期的に完了を待つ。</span>
-<span class="type">Console</span>.WriteLine(t.Result);
-
-</code></pre>
+// 同期的に完了を待つ。
+Console.WriteLine(t.Result);
+```
 
 
 
@@ -227,19 +226,18 @@ Result プロパティを読もうとしたとき、タスクがまだ完了し�
 非同期実行中のタスクを途中でキャンセルするための仕組みとして、
 CancellationToken 構造体というものが標準で用意されています。
 
-<pre class="source" title="タスクのキャンセル" lang="">
-<code><span class="reserved">var</span> cts = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>();
+```csharp
+var cts = new CancellationTokenSource();
  
-<span class="reserved">var</span> t = <span class="type">Task</span>.Factory.StartNew(() =&gt;
+var t = Task.Factory.StartNew(() =>
 {
-    <span class="type">Thread</span>.Sleep(500);
-    <span class="type">Console</span>.WriteLine(<span class="literal">"done"</span>);
+    Thread.Sleep(500);
+    Console.WriteLine("done");
 }, cts.Token);
  
-<span class="comment">// t をキャンセル</span>
+// t をキャンセル
 cts.Cancel();
-
-</code></pre>
+```
 
 
 
@@ -248,50 +246,50 @@ cts.Cancel();
 タスクの中で別の新しいタスクを作りたい場合があります。
 オプションなしの場合、それぞれのタスクは無関係に動くことになります。
 
-<pre class="source" title="入れ子のタスク" lang="">
-<code><span class="reserved">var</span> t = <span class="type">Task</span>.Factory.StartNew(() =&gt;
+```csharp
+var t = Task.Factory.StartNew(() =>
     {
-        <span class="type">Console</span>.WriteLine(<span class="literal">"タスク1開始"</span>);
-        <span class="type">Task</span>.Factory.StartNew(() =&gt;
+        Console.WriteLine("タスク1開始");
+        Task.Factory.StartNew(() =>
         {
-            <span class="type">Console</span>.WriteLine(<span class="literal">"タスク2開始"</span>);
+            Console.WriteLine("タスク2開始");
         });
     });
  
-t.Wait(); <span class="comment">// 今のままだと、タスク2の完了は待たない</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"完了"</span>);
-</code></pre>
+t.Wait(); // 今のままだと、タスク2の完了は待たない
+Console.WriteLine("完了");
+```
 
 
-<pre class="console" title="実行結果">
+```console
 タスク1開始
 完了
-</pre>
+```
 
 
 これに対して、オプションを指定することで、タスクに親子関係を作ることができます。
 Task.Wait による完了待ちは、子タスクの完了まで含めて待ちます。
 
-<pre class="source" title="タスクの親子関係を作る" lang="">
-<code><span class="reserved">var</span> t = <span class="type">Task</span>.Factory.StartNew(() =&gt;
+```csharp
+var t = Task.Factory.StartNew(() =>
     {
-        <span class="type">Console</span>.WriteLine(<span class="literal">"タスク1開始"</span>);
-        <span class="type">Task</span>.Factory.StartNew(() =&gt;
+        Console.WriteLine("タスク1開始");
+        Task.Factory.StartNew(() =>
         {
-            <span class="type">Console</span>.WriteLine(<span class="literal">"タスク2開始"</span>);
-        }, <span class="type">TaskCreationOptions</span>.AttachedToParent); <span class="comment">// 子タスク化</span>
+            Console.WriteLine("タスク2開始");
+        }, TaskCreationOptions.AttachedToParent); // 子タスク化
     });
  
-t.Wait(); <span class="comment">// 子タスクの完了まで待つ</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"完了"</span>);
-</code></pre>
+t.Wait(); // 子タスクの完了まで待つ
+Console.WriteLine("完了");
+```
 
 
-<pre class="console" title="実行結果">
+```console
 タスク1開始
 タスク2開始
 完了
-</pre>
+```
 
 
 
@@ -306,13 +304,12 @@ Task クラスでは、タスク開始時に TaskScheduler を渡すことで、
 その特定スレッドにタスクを投かんするような仕組みが必要です。
 そういう場合に、TaskScheduler を利用します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> t = <span class="reserved">new</span> <span class="type">Task</span>(() =&gt; { <span class="comment">/* 中略 */</span> });
+```csharp
+var t = new Task(() => { /* 中略 */ });
 
-<span class="comment">// タスクの実行場所を制御するために明示的に TaskScheduler を指定</span>
-t.Start(<span class="type">TaskScheduler</span>.FromCurrentSynchronizationContext());
-
-</code></pre>
+// タスクの実行場所を制御するために明示的に TaskScheduler を指定
+t.Start(TaskScheduler.FromCurrentSynchronizationContext());
+```
 
 
 
@@ -336,12 +333,11 @@ Task クラスの上に実装されています。
 ##### <a id="sec-generated-title-18"></a>データ フロー
 
 （書きかけ）
-<pre>
+```text
 並列、非ブロッキング処理と、あともう1つ、データ フロー
 http://blogs.msdn.com/b/pfxteam/archive/2010/10/28/10081950.aspx
 
 Actor とか Agent って言われるもの
 非同期に動き続けてる Agent が何個かいて、データをやり取りしながら各々が自律的にデータ処理
 producer/consumer パターン
-
-</pre>
+```

@@ -52,16 +52,16 @@ C# の文字列は内部的に UTF-16 だし、.NET の標準ライブラリは�
 C# は仕様上、Letter (書き言葉に使われる文字)なら何でも識別子として使えるはずなんですが、
 今、追加面に入っている Letter は使えないという「仕様違反」があります。
 
-<pre class="source" title="現状の C# コンパイラーは追加面文字に未対応">
-<code><span class="comment">// U+FFFF 以下 → 識別子に使える</span>
-<span class="reserved">var</span> ᚠ = 1; <span class="comment">// ルーン文字(U+16A0, OtherLetter)</span>
-<span class="reserved">var</span> ʬ = 2; <span class="comment">// 国際発音記号(U+02AC, LowercaseLetter)</span>
-<span class="reserved">var</span> ℏ = 3; <span class="comment">// 文字様記号、プランク定数(U+210F, LowercaseLetter)</span>
+```csharp
+// U+FFFF 以下 → 識別子に使える
+var ᚠ = 1; // ルーン文字(U+16A0, OtherLetter)
+var ʬ = 2; // 国際発音記号(U+02AC, LowercaseLetter)
+var ℏ = 3; // 文字様記号、プランク定数(U+210F, LowercaseLetter)
 
-<span class="comment">// U+10000 以上 → 識別子に使えない</span>
-<span class="reserved">var</span> 𩸽 = 4; <span class="comment">// 一部のマイナーな漢字、ほっけ(U+29E3D, OtherLetter)</span>
-<span class="reserved">var</span> 𓀀 = 5; <span class="comment">// ヒエログリフ(U+13000, OtherLetter)</span>
-</code></pre>
+// U+10000 以上 → 識別子に使えない
+var 𩸽 = 4; // 一部のマイナーな漢字、ほっけ(U+29E3D, OtherLetter)
+var 𓀀 = 5; // ヒエログリフ(U+13000, OtherLetter)
+```
 
 まさかのルーン文字以下の扱いを受けてる漢字があるとかʬʬ
 草生えるʬʬʬʬʬ
@@ -86,25 +86,25 @@ Unicode カテゴリー判定は以下の2つメソッドがあります。
 
 使い方は以下のような感じ。
 
-<pre class="source" title=".NET の Unicode カテゴリー判定メソッド">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.Console;
-<span class="reserved">using</span> <span class="reserved">static</span> System.Globalization.CharUnicodeInfo;
+```csharp
+using static System.Console;
+using static System.Globalization.CharUnicodeInfo;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// char 用</span>
-        WriteLine(GetUnicodeCategory(<span class="string">'ᚠ'</span>));
-        WriteLine(GetUnicodeCategory(<span class="string">'ʬ'</span>));
-        WriteLine(GetUnicodeCategory(<span class="string">'ℏ'</span>));
+        // char 用
+        WriteLine(GetUnicodeCategory('ᚠ'));
+        WriteLine(GetUnicodeCategory('ʬ'));
+        WriteLine(GetUnicodeCategory('ℏ'));
 
-        <span class="comment">// 追加面(= char で表せないもの)用</span>
-        WriteLine(GetUnicodeCategory(<span class="string">"𩸽"</span>, 0));
-        WriteLine(GetUnicodeCategory(<span class="string">"𓀀"</span>, 0));
+        // 追加面(= char で表せないもの)用
+        WriteLine(GetUnicodeCategory("𩸽", 0));
+        WriteLine(GetUnicodeCategory("𓀀", 0));
     }
 }
-</code></pre>
+```
 
 お分かりいただけるだろうか…
 
@@ -116,33 +116,33 @@ Unicode カテゴリー判定は以下の2つメソッドがあります。
 
 というか、`Utf8String` の完成を待っていられなくて[自作](https://github.com/ufcpp/UfcppSample/tree/master/Demo/2016/Unicode)したり[自作](https://github.com/neuecc/Utf8Json)したりしてると、今でも困っています。
 
-<pre class="source" title="コードポイントから直接カテゴリーを得る手段がない">
-<code><span class="comment">// 𩸽の UTF-8 バイト列</span>
-<span class="comment">// ファイルとかネットとか、今時普通は UTF-8 で保存・送受信するでしょ</span>
-<span class="reserved">var</span> utf8 = <span class="reserved">new</span> <span class="reserved">byte</span>[] { 240, 169, 184, 189 };
+```csharp
+// 𩸽の UTF-8 バイト列
+// ファイルとかネットとか、今時普通は UTF-8 で保存・送受信するでしょ
+var utf8 = new byte[] { 240, 169, 184, 189 };
 
-<span class="comment">// UTF-8 をデコード</span>
-<span class="comment">// 𩸽のコードポイント U+29E3D が得られてるはず</span>
-<span class="reserved">var</span> c = Decode(utf8, 0);
+// UTF-8 をデコード
+// 𩸽のコードポイント U+29E3D が得られてるはず
+var c = Decode(utf8, 0);
 
-WriteLine(c.ToString(<span class="string">"X"</span>)); <span class="comment">// 29E3D</span>
+WriteLine(c.ToString("X")); // 29E3D
 
-<span class="comment">// このコードポイントから直接カテゴリーを得る手段がない</span>
-<span class="reserved">var</span> category = GetUnicodeCategory(c); <span class="comment">// ここでコンパイル エラー</span>
+// このコードポイントから直接カテゴリーを得る手段がない
+var category = GetUnicodeCategory(c); // ここでコンパイル エラー
 WriteLine(category);
-</code></pre>
+```
 
 (`Decode` メソッドの実体は [Gist](https://gist.github.com/ufcpp/0b1d03675739d624c6d53d8db316d0ea#file-utf8-cs-L23) に。)
 
 これ、もし現状の API でカテゴリー判定をしたければ、以下のような無駄なコードが必要になります。
 
-<pre class="source" title="仕方なく、文字列化">
-<code><span class="comment">// 一度 string に変換(= 無駄にヒープ アロケーションが発生)</span>
-<span class="reserved">var</span> s = <span class="reserved">char</span>.ConvertFromUtf32(c);
-<span class="comment">// string 版の GetUnicodeCategory を呼ぶ</span>
-<span class="reserved">var</span> category = GetUnicodeCategory(s, 0);
+```csharp
+// 一度 string に変換(= 無駄にヒープ アロケーションが発生)
+var s = char.ConvertFromUtf32(c);
+// string 版の GetUnicodeCategory を呼ぶ
+var category = GetUnicodeCategory(s, 0);
 WriteLine(category);
-</code></pre>
+```
 
 要するに、以下のようなメソッドをよこせと言いたい。
 

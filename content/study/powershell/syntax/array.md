@@ -39,43 +39,43 @@ PowerShell には , を使う方法と @ を使う方法、
 並べたオブジェクトを要素とする配列ができます。
 また、配列の要素には [] を使ってアクセスします（インデックスは 0 から始まる）。
 
-<pre class="console" title=", 演算子">
-<span class="prompt">&gt; </span> $a = 1,2,3,4
-<span class="prompt">&gt; </span> $a
+```console
+>  $a = 1,2,3,4
+>  $a
 1
 2
 3
 4
-<span class="prompt">&gt; </span> $a[0]
-<span class="comment"># ↓ PowerShell の配列は 0 ベース</span>
+>  $a[0]
+# ↓ PowerShell の配列は 0 ベース
 1
-<span class="prompt">&gt; </span> $a.Length
+>  $a.Length
 4
-</pre>
+```
 
 
 ,1 というように、単項演算子的にも使えます。
 （長さ1の配列になる。）
 
-<pre class="console" title="長さ1の配列">
-<span class="prompt">&gt; </span> $a = ,1
-<span class="prompt">&gt; </span> $a.Length
+```console
+>  $a = ,1
+>  $a.Length
 1
-<span class="prompt">&gt; </span> $a[0]
+>  $a[0]
 1
-</pre>
+```
 
 
 この , 演算子はかなり結合順位が高いので注意。
 
-<pre class="console" title=", の結合順位">
-<span class="prompt">&gt; </span> 1, 1+1, 1
-<span class="comment"># ↓ 要するに (1, 1) + (1, 1)</span>
+```console
+>  1, 1+1, 1
+# ↓ 要するに (1, 1) + (1, 1)
 1
 1
 1
 1
-</pre>
+```
 
 
 
@@ -86,33 +86,33 @@ PowerShell には , を使う方法と @ を使う方法、
 こちらの場合、区切り文字は ; （要するに、コマンドの区切り）も使えます。
 あと、@() で空（長さ0）の配列も作れます。
 
-<pre class="console" title="@()">
-<span class="prompt">&gt; </span> @(1; 2; 3)
+```console
+>  @(1; 2; 3)
 1
 2
 3
-<span class="prompt">&gt; </span> $a = @()
-<span class="prompt">&gt; </span> $a.GetType().Name
+>  $a = @()
+>  $a.GetType().Name
 Object[]
-<span class="prompt">&gt; </span> $a.Length
+>  $a.Length
 0
-</pre>
+```
 
 
 この記法では、複数のコマンドや式の出力・計算結果を繋いで配列にすることもできます。
 （この場合、区切り文字は ; でないと駄目。）
 
-<pre class="console" title="コマンド、式の結果を配列化">
-<span class="prompt">&gt; </span> $a = @(pwd; 1 + 1)
-<span class="prompt">&gt; </span> $a[0]
+```console
+>  $a = @(pwd; 1 + 1)
+>  $a[0]
 
 Path
 ----
 C:\Users\Public
 
-<span class="prompt">&gt; </span> $a[1]
+>  $a[1]
 2
-</pre>
+```
 
 
 
@@ -121,40 +121,40 @@ C:\Users\Public
 あと、整数に限れば、1..3 （1, 2, 3 と同じ意味）というように、
 .. を使って一定範囲の連続した数値列を作ることができます。
 
-<pre class="console" title=".. 演算子">
-<span class="prompt">&gt; </span>1..3
+```console
+> 1..3
 1
 2
 3
-</pre>
+```
 
 
 結合の優先順位が , 演算子より下なようで、
 「1..3, 5」と言うような書き方はエラーになります。
 （@ を使って、@(1..3; 5) という書き方なら OK。）
 
-<pre class="console" title=".. と , の併用">
-<span class="prompt">&gt; </span>1..3,5
+```console
+> 1..3,5
 "System.Object[]" を "System.Int32" に変換できません。
-<span class="prompt">&gt; </span>@(1..3; 5)
+> @(1..3; 5)
 1
 2
 3
 5
-</pre>
+```
 
 
 .. を使った配列と , を使った配列を併用したければ、
 後述する配列結合の + 演算子を使う手もあります。
 
-<pre class="console" title=".. と , の併用は + で">
-<span class="prompt">&gt; </span>1..3 + 5, 7
+```console
+> 1..3 + 5, 7
 1
 2
 3
 5
 7
-</pre>
+```
 
 
 
@@ -165,15 +165,15 @@ C:\Users\Public
         </span> を指定すると、
 配列の末尾から <span class="math">i</span> 番目の要素にアクセスできます。
 
-<pre class="console" title="末尾からのアクセス">
-<span class="prompt">&gt; </span>$a = 1,2,3
-<span class="prompt">&gt; </span>$a[-1]
+```console
+> $a = 1,2,3
+> $a[-1]
 3
-<span class="prompt">&gt; </span>$a[-2]
+> $a[-2]
 2
-<span class="prompt">&gt; </span>$a[-3]
+> $a[-3]
 1
-</pre>
+```
 
 
 
@@ -183,13 +183,13 @@ C:\Users\Public
 読み出しなら null 値を返すだけで、
 書き込みはエラーになります。
 
-<pre class="console" title="範囲外へのアクセス">
-<span class="prompt">&gt; </span> $a = @()
-<span class="prompt">&gt; </span> $a[0]
-<span class="comment"># ↓ null を返すだけ</span>
-<span class="prompt">&gt; </span> $a[0] = 1
+```console
+>  $a = @()
+>  $a[0]
+# ↓ null を返すだけ
+>  $a[0] = 1
 インデックス '0' が範囲外のため、配列の代入が失敗しました。
-</pre>
+```
 
 
 
@@ -197,55 +197,55 @@ C:\Users\Public
 
 配列は + 演算子で連結することができます。
 
-<pre class="console" title="配列の連結">
-<span class="prompt">&gt; </span> $a = 1,2
-<span class="prompt">&gt; </span> $b = 3,4
-<span class="prompt">&gt; </span> $c = $a + $b
-<span class="prompt">&gt; </span> $c.Length
+```console
+>  $a = 1,2
+>  $b = 3,4
+>  $c = $a + $b
+>  $c.Length
 4
-<span class="prompt">&gt; </span> $c
+>  $c
 1
 2
 3
 4
-</pre>
+```
 
 
 + が配列の結合なので、
 += は要素の追加になります。
 
-<pre class="console" title="配列への要素の追加">
-<span class="prompt">&gt; </span>$a = 1,2,3
-<span class="prompt">&gt; </span>$a += 10
-<span class="prompt">&gt; </span>$a
+```console
+> $a = 1,2,3
+> $a += 10
+> $a
 1
 2
 3
 10
-</pre>
+```
 
 
 , 演算子でも連結されたように見えたりしますが、
 実際には多次元配列になります。
 
-<pre class="console" title="配列の連結">
-<span class="prompt">&gt; </span> $a = 1,2
-<span class="prompt">&gt; </span> $b = 3,4
-<span class="prompt">&gt; </span> $c = $a, $b
-<span class="prompt">&gt; </span> $c
+```console
+>  $a = 1,2
+>  $b = 3,4
+>  $c = $a, $b
+>  $c
 1
 2
 3
 4
-<span class="prompt">&gt; </span> $c[0]
+>  $c[0]
 1
 2
-<span class="prompt">&gt; </span> $c[1]
+>  $c[1]
 3
 4
-<span class="prompt">&gt; </span> $c.Length
+>  $c.Length
 2
-</pre>
+```
 
 
 
@@ -254,22 +254,22 @@ C:\Users\Public
 以下のような記法で、
 配列の一部分を抜き出すことができます。
 
-<pre class="console" title="範囲取得">
-<span class="prompt">&gt; </span> $a = 1,2,3,4,5,6
-<span class="prompt">&gt; </span> $a[1,3,5]
+```console
+>  $a = 1,2,3,4,5,6
+>  $a[1,3,5]
 2
 4
 6
-<span class="prompt">&gt; </span> $a[0..2]
+>  $a[0..2]
 1
 2
 3
-<span class="prompt">&gt; </span>$a[0..2 + 4]
+> $a[0..2 + 4]
 1
 2
 3
 5
-</pre>
+```
 
 
 
@@ -277,32 +277,32 @@ C:\Users\Public
 
 -contains 演算子で、配列の中に要素が含まれているかどうかを調べることができます。
 
-<pre class="console" title="-contains">
-<span class="prompt">&gt; </span> $a = 1,3,5
-<span class="prompt">&gt; </span> $a -contains 1
+```console
+>  $a = 1,3,5
+>  $a -contains 1
 True
-<span class="prompt">&gt; </span> $a -contains 2
+>  $a -contains 2
 False
-</pre>
+```
 
 
 また、
 配列に対して、-eq や -lt などの比較演算子を使うことで、
 特定条件を満たす要素だけを抜き出すことができます。
 
-<pre class="console" title="配列に対する比較演算">
-<span class="prompt">&gt; </span> $a = 1,2,3,9,8,7,4,5,6
-<span class="prompt">&gt; </span> $a -lt 5
+```console
+>  $a = 1,2,3,9,8,7,4,5,6
+>  $a -lt 5
 1
 2
 3
 4
-<span class="prompt">&gt; </span> $a -gt 5
+>  $a -gt 5
 9
 8
 7
 6
-</pre>
+```
 
 
 
@@ -314,23 +314,23 @@ $a, $b, $c = 1, 2, 3 というように、
 最後の1変数が配列になったり、
 足りない分が null 値になったりします。
 
-<pre class="console" title="同時代入">
-<span class="prompt">&gt; </span> $a, $b, $c = 1,2,3,4,5
-<span class="prompt">&gt; </span> $a
+```console
+>  $a, $b, $c = 1,2,3,4,5
+>  $a
 1
-<span class="prompt">&gt; </span> $b
+>  $b
 2
-<span class="prompt">&gt; </span> $c
+>  $c
 3
 4
 5
-<span class="prompt">&gt; </span> $a, $b, $c = 1,2
-<span class="prompt">&gt; </span> $a
+>  $a, $b, $c = 1,2
+>  $a
 1
-<span class="prompt">&gt; </span> $b
+>  $b
 2
-<span class="prompt">&gt; </span> $c
-</pre>
+>  $c
+```
 
 
 
@@ -355,57 +355,57 @@ $a = @{x = 1} というように初期化のときに要素を作ることもで
 1つは、配列らしく、$a["x"] と書く記法で、
 もう1つは $a.x というようにあたかもメンバー変数にアクセスするかのような記法です。
 
-<pre class="console" title="連想配列">
-<span class="prompt">&gt; </span> $a = @{}
-<span class="prompt">&gt; </span> $a.x = 1
-<span class="prompt">&gt; </span> $a.x
+```console
+>  $a = @{}
+>  $a.x = 1
+>  $a.x
 1
-</pre>
+```
 
 
-<pre class="console" title="初期化時に要素を設定">
-<span class="prompt">&gt; </span> $a = @{x = 1; y = 2; z = 3}
-<span class="prompt">&gt; </span> $a.x
+```console
+>  $a = @{x = 1; y = 2; z = 3}
+>  $a.x
 1
-<span class="prompt">&gt; </span> $a.y
+>  $a.y
 2
-<span class="prompt">&gt; </span> $a.z
+>  $a.z
 3
-</pre>
+```
 
 
-<pre class="console" title="[] で要素を参照">
-<span class="prompt">&gt; </span> $a["x"] = 1
-<span class="prompt">&gt; </span> $a["x"]
+```console
+>  $a["x"] = 1
+>  $a["x"]
 1
-</pre>
+```
 
 
 ちなみに、連想配列のキーは、別に文字列である必要はありません。
 
-<pre class="console" title="いろんな型の値をキーに（１）">
-<span class="prompt">&gt; </span> $a[1.234] = 1
-<span class="prompt">&gt; </span> $a[ [DateTime]::Now ] = 2
-<span class="prompt">&gt; </span> $a[1024] = 3
-<span class="prompt">&gt; </span> $a[ [int] ] = 4
-</pre>
+```console
+>  $a[1.234] = 1
+>  $a[ [DateTime]::Now ] = 2
+>  $a[1024] = 3
+>  $a[ [int] ] = 4
+```
 
 
 すごく気持ち悪いですけど、
 . を使う方でも任意の型のキーを参照できます。
 
-<pre class="console" title="いろんな型の値をキーに（２）">
-<span class="prompt">&gt; </span> $a[[int]] = 2
-<span class="prompt">&gt; </span> $a.[int]
+```console
+>  $a[[int]] = 2
+>  $a.[int]
 2
-<span class="prompt">&gt; </span> $b = [DateTime]::Now
-<span class="prompt">&gt; </span> $a[$b] = 6
-<span class="prompt">&gt; </span> $a.$b
+>  $b = [DateTime]::Now
+>  $a[$b] = 6
+>  $a.$b
 6
-<span class="prompt">&gt; </span> $a[2] = 3
-<span class="prompt">&gt; </span> $a.(1 + 1)
+>  $a[2] = 3
+>  $a.(1 + 1)
 3
-<span class="prompt">&gt; </span> $a.x = 9
-<span class="prompt">&gt; </span> $a."x"
+>  $a.x = 9
+>  $a."x"
 9
-</pre>
+```

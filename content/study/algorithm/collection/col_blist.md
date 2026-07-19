@@ -73,39 +73,39 @@ C# でも LinkedList という名前になっています。
 「[片方向連結リスト](col_flist.md#flist)」の場合と比べて、
 「前のノード」を指す <code>prev</code> というメンバー変数が増えています。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> Node
+```csharp
+public class Node
 {
   T val;
   Node prev;
   Node next;
 
-  <span class="reserved">internal</span> Node(T val, Node prev, Node next)
+  internal Node(T val, Node prev, Node next)
   {
-    <span class="reserved">this</span>.val = val;
-    <span class="reserved">this</span>.prev = prev;
-    <span class="reserved">this</span>.next = next;
+    this.val = val;
+    this.prev = prev;
+    this.next = next;
   }
 
-  <span class="reserved">public</span> T Value
+  public T Value
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.val; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.val = value; }
+    get { return this.val; }
+    set { this.val = value; }
   }
 
-  <span class="reserved">public</span> Node Next
+  public Node Next
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.next; }
-    <span class="reserved">internal set</span> { <span class="reserved">this</span>.next = value; }
+    get { return this.next; }
+    internal set { this.next = value; }
   }
 
-  <span class="reserved">public</span> Node Previous
+  public Node Previous
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.prev; }
-    <span class="reserved">internal set</span> { <span class="reserved">this</span>.prev = value; }
+    get { return this.prev; }
+    internal set { this.prev = value; }
   }
 }
-</code></pre>
+```
 
 
 片方向連結リストのときと同様に、
@@ -115,41 +115,41 @@ C# でも LinkedList という名前になっています。
 リストの先頭ノードや末尾ノードを持つ代わりに、
 以下のようなダミーの（有効な値を持たない）ノードを持つ実装方法が一般的です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> LinkedList&lt;T&gt; : IEnumerable&lt;T&gt;
+```csharp
+public class LinkedList<T> : IEnumerable<T>
 {
   Node dummy;
 }
-</code></pre>
+```
 
 
 リストの先頭および末尾のノードは、それぞれ <code>dummy.Next</code> および <code>dummy.Previous</code> に格納します。
 ただし、初期状態では、<code>dummy.Next</code> および <code>dummy.Previous</code> には <code>dummy</code> 自身の参照を入れておきます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public</span> LinkedList()
+```csharp
+public LinkedList()
 {
-  <span class="reserved">this</span>.dummy = <span class="reserved">new</span> Node(<span class="reserved">default</span>(T), <span class="reserved">null</span>, <span class="reserved">null</span>);
-  <span class="reserved">this</span>.dummy.Next = <span class="reserved">this</span>.dummy;
-  <span class="reserved">this</span>.dummy.Previous = <span class="reserved">this</span>.dummy;
+  this.dummy = new Node(default(T), null, null);
+  this.dummy.Next = this.dummy;
+  this.dummy.Previous = this.dummy;
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// リストの先頭ノード。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public</span> Node First
+/// </summary>
+public Node First
 {
-  <span class="reserved">get</span> { <span class="reserved">return this</span>.dummy.Next; }
+  get { return this.dummy.Next; }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// リストの末尾ノード。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public</span> Node Last
+/// </summary>
+public Node Last
 {
-  <span class="reserved">get</span> { <span class="reserved">return this</span>.dummy.Previous; }
+  get { return this.dummy.Previous; }
 }
-</code></pre>
+```
 
 
 このように、ダミーノードを使えば、
@@ -158,116 +158,116 @@ C# でも LinkedList という名前になっています。
 （値に意味はないけど）先頭よりも1つ前、末尾よりも1つ後ろに常に位置することになり、
 リストの終端判定に使う事ができます。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// リストの終端（末尾よりも後ろの番兵に当たるノード）。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public</span> Node End
+/// </summary>
+public Node End
 {
-  <span class="reserved">get</span> { <span class="reserved">return this</span>.dummy; }
+  get { return this.dummy; }
 }
-</code></pre>
+```
 
 
 例えば、
 ノードの先頭から順に全ての要素にアクセスするには、以下のようなコードを書きます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">for</span> (Node n = <span class="reserved">this</span>.First; <em>n != <span class="reserved">this</span>.End</em>; n = n.Next)
+```csharp
+for (Node n = this.First; n != this.End; n = n.Next)
   Console.Write(n.Value);
-</code></pre>
+```
 
 
 リストへの要素の追加・削除は以下のように行います。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// ノード n の後ろに新しい要素を追加。
-/// &lt;/summary&gt;
-/// &lt;param name="n"&gt;要素の挿入位置&lt;/param&gt;
-/// &lt;param name="elem"&gt;新しい要素&lt;/param&gt;
-/// &lt;returns&gt;新しく挿入されたノード&lt;/returns&gt;</span>
-<span class="reserved">public</span> Node InsertAfter(Node n, T elem)
+/// </summary>
+/// <param name="n">要素の挿入位置</param>
+/// <param name="elem">新しい要素</param>
+/// <returns>新しく挿入されたノード</returns>
+public Node InsertAfter(Node n, T elem)
 {
-  Node m = <span class="reserved">new</span> Node(elem, n, n.Next);
+  Node m = new Node(elem, n, n.Next);
   n.Next.Previous = m;
   n.Next = m;
-  <span class="reserved">return</span> m;
+  return m;
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// ノード n の前に新しい要素を追加。
-/// &lt;/summary&gt;
-/// &lt;param name="n"&gt;要素の挿入位置&lt;/param&gt;
-/// &lt;param name="elem"&gt;新しい要素&lt;/param&gt;
-/// &lt;returns&gt;新しく挿入されたノード&lt;/returns&gt;</span>
-<span class="reserved">public</span> Node InsertBefore(Node n, T elem)
+/// </summary>
+/// <param name="n">要素の挿入位置</param>
+/// <param name="elem">新しい要素</param>
+/// <returns>新しく挿入されたノード</returns>
+public Node InsertBefore(Node n, T elem)
 {
-  Node m = <span class="reserved">new</span> Node(elem, n.Previous, n);
+  Node m = new Node(elem, n.Previous, n);
   n.Previous.Next = m;
   n.Previous = m;
-  <span class="reserved">return</span> m;
+  return m;
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// ノード n の自身を削除。
-/// &lt;/summary&gt;
-/// &lt;param name="n"&gt;要素の削除位置&lt;/param&gt;
-/// &lt;returns&gt;削除した要素の次のノード&lt;/returns&gt;</span>
-<span class="reserved">public</span> Node Erase(Node n)
+/// </summary>
+/// <param name="n">要素の削除位置</param>
+/// <returns>削除した要素の次のノード</returns>
+public Node Erase(Node n)
 {
-  <span class="reserved">if</span> (n == <span class="reserved">this</span>.dummy)
+  if (n == this.dummy)
   {
-    <span class="reserved">return this</span>.dummy;
+    return this.dummy;
   }
   n.Previous.Next = n.Next;
   n.Next.Previous = n.Previous;
-  <span class="reserved">return</span> n.Next;
+  return n.Next;
 }
-</code></pre>
+```
 
 
 先ほども言いましたが、ダミーノードを使うことによって、
 先頭・末尾への要素の挿入・削除は特別扱いする必要がありません。
 以下のようにして実装できます。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 先頭に新しい要素を追加。
-/// &lt;/summary&gt;
-/// &lt;param name="elem"&gt;新しい要素&lt;/param&gt;
-/// &lt;returns&gt;新しく挿入されたノード&lt;/returns&gt;</span>
-<span class="reserved">public</span> Node InsertFirst(T elem)
+/// </summary>
+/// <param name="elem">新しい要素</param>
+/// <returns>新しく挿入されたノード</returns>
+public Node InsertFirst(T elem)
 {
-  <span class="reserved">return this</span>.InsertAfter(<span class="reserved">this</span>.dummy, elem);
+  return this.InsertAfter(this.dummy, elem);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 末尾に新しい要素を追加。
-/// &lt;/summary&gt;
-/// &lt;param name="elem"&gt;新しい要素&lt;/param&gt;
-/// &lt;returns&gt;新しく挿入されたノード&lt;/returns&gt;</span>
-<span class="reserved">public</span> Node InsertLast(T elem)
+/// </summary>
+/// <param name="elem">新しい要素</param>
+/// <returns>新しく挿入されたノード</returns>
+public Node InsertLast(T elem)
 {
-  <span class="reserved">return this</span>.InsertBefore(<span class="reserved">this</span>.dummy, elem);
+  return this.InsertBefore(this.dummy, elem);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 先頭の要素を削除。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public void</span> EraseFirst()
+/// </summary>
+public void EraseFirst()
 {
-  <span class="reserved">this</span>.Erase(<span class="reserved">this</span>.First);
+  this.Erase(this.First);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 末尾の要素を削除。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public void</span> EraseLast()
+/// </summary>
+public void EraseLast()
 {
-  <span class="reserved">this</span>.Erase(<span class="reserved">this</span>.Last);
+  this.Erase(this.Last);
 }
-</code></pre>
+```
 
 
 これらの操作は常に一定の時間で実行可能です。
@@ -276,21 +276,21 @@ C# でも LinkedList という名前になっています。
 前から順にノードをたどって数えるしかありません。
 （要素数を保持しておく変数を別に用意しておくという手はあります。）
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 要素の個数。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public int</span> Count
+/// </summary>
+public int Count
 {
-  <span class="reserved">get</span>
+  get
   {
-    <span class="reserved">int</span> i = 0;
-    <span class="reserved">for</span> (Node n = <span class="reserved">this</span>.First; n != <span class="reserved">this</span>.End; n = n.Next)
+    int i = 0;
+    for (Node n = this.First; n != this.End; n = n.Next)
       ++i;
-    <span class="reserved">return</span> i;
+    return i;
   }
 }
-</code></pre>
+```
 
 
 

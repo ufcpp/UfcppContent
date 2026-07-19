@@ -47,12 +47,12 @@ Visual Studio 15.9 正式リリースに続いて近々、Visual Studio 16.0 の
 といっても、Ranges の機能は、配列とか `Span<T>` が対応していて初めて役に立つものです。
 (以下のような書き方をするためには、配列側が対応している必要あり。)
 
-<pre class="source" title="">
-<code><span class="reserved">int</span>[] data = { 1, 2, 3, 4, 5, 6 };
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; span = data[1..^1];
-<span class="reserved">foreach</span> (var x <span class="reserved">in</span> span)
-    Console.WriteLine(x); <span class="comment">// 2, 3, 4, 5</span>
-</code></pre>
+```csharp
+int[] data = { 1, 2, 3, 4, 5, 6 };
+Span<int> span = data[1..^1];
+foreach (var x in span)
+    Console.WriteLine(x); // 2, 3, 4, 5
+```
 
 既存の型に `Range` 型対応を混ぜ込むのはちょっと無理なので、
 その意味では .NET Standard 2.1 でないと大して役に立たない機能になります。
@@ -86,16 +86,16 @@ Async Streams の方も似たような感じ。
 
 以下のようなクラスなんですが、この`DefaultImplementationsOfInterfaces`プロパティが存在するランタイムでだけデフォルト実装が使えます。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">RuntimeFeature</span>
+```csharp
+public static partial class RuntimeFeature
 {
-<span class="inactive">#if</span> FEATURE_DEFAULT_INTERFACES
-        <span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">string</span> DefaultImplementationsOfInterfaces = <span class="string">"DefaultImplementationsOfInterfaces"</span>;
-<span class="inactive">#endif</span>
-    <span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">string</span> PortablePdb = <span class="string">"PortablePdb"</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> IsSupported(<span class="reserved">string</span> feature) { <span class="reserved">throw</span> <span class="reserved">null</span>; }
+#if FEATURE_DEFAULT_INTERFACES
+        public const string DefaultImplementationsOfInterfaces = "DefaultImplementationsOfInterfaces";
+#endif
+    public const string PortablePdb = "PortablePdb";
+    public static bool IsSupported(string feature) { throw null; }
 }
-</code></pre>
+```
 
 ## .NET Standard 2.1
 

@@ -479,13 +479,13 @@ C# 8.0 では、[null合体演算子](../resource/sp2_nullable.md#coalescing) (`
 
 例えば以下のような書き方ができます。
 
-<pre class="source" title="null 合体代入">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span> s = <span class="reserved">null</span>)
+```csharp
+static void M(string s = null)
 {
-    s <em>??=</em> <span class="string">"default string"</span>;
-    <span class="type">Console</span>.WriteLine(s);
+    s ??= "default string";
+    Console.WriteLine(s);
 }
-</code></pre>
+```
 
 意味としては、`if (s == null) s = ...;` と同じになります。
 
@@ -532,21 +532,21 @@ C# 8.0 では、[null合体演算子](../resource/sp2_nullable.md#coalescing) (`
 「値が無効な時、デフォルト値を代入しなおしたい」ということが多々あります。
 すなわち、以下のような条件演算を結構よく利用します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">string</span> str = <span class="reserved">null</span>;
+```csharp
+string str = null;
 
-<span class="reserved">string</span> nonNullStr = str != <span class="reserved">null</span> ? str : <span class="literal">"default string"</span>;
-</code></pre>
+string nonNullStr = str != null ? str : "default string";
+```
 
 
 そこで、C# 2.0 では、この条件演算に相当する処理を簡潔に書くために、null 合体演算子（null coalescing operator） ?? というものが導入されました。
 上記の例は、以下の書くことができます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">string</span> str = <span class="reserved">null</span>;
+```csharp
+string str = null;
 
-<span class="reserved">string</span> nonNullStr = str ?? <span class="literal">"default string"</span>;
-</code></pre>
+string nonNullStr = str ?? "default string";
+```
 
 
 
@@ -555,14 +555,14 @@ C# 8.0 では、[null合体演算子](../resource/sp2_nullable.md#coalescing) (`
 sizeof 演算子は、他の演算子と比べると少し特殊で、
 以下のように、型に対して用います。
 
-<pre class="source" title="sizeof 演算子" lang="">
-<code>Console.Write(<span class="literal">"{0}, {1}\n"</span>, <span class="reserved">sizeof</span>(<span class="reserved">int</span>), <span class="reserved">sizeof</span>(<span class="reserved">byte</span>));
-</code></pre>
+```csharp
+Console.Write("{0}, {1}\n", sizeof(int), sizeof(byte));
+```
 
 
-<pre class="console" title="sizeof 演算子">
+```console
 4, 1
-</pre>
+```
 
 
 sizeof 演算子は、その型が何バイトのメモリを占めるかを返します。
@@ -610,64 +610,64 @@ sizeof(int), sizeof(byte) はそれぞれ 4, 1 を返します。
 
 例えば、<code>|</code> 演算子と <code>||</code> 演算子の挙動の差を見てみましょう。
 
-<pre class="source" title="|| 演算子の短絡評価" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">string</span> Echo(<span class="reserved">string</span> message)
+    static string Echo(string message)
     {
-        <span class="type">Console</span>.WriteLine(message);
-        <span class="reserved">return</span> message;
+        Console.WriteLine(message);
+        return message;
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Console</span>.WriteLine(<span class="literal">"短絡評価なし"</span>);
-        <span class="reserved">var</span> x = Echo(<span class="literal">"a"</span>) == <span class="literal">"a"</span> | Echo(<span class="literal">"b"</span>) == <span class="literal">"b"</span>; <span class="comment">// a、b 両方出力。</span>
+        Console.WriteLine("短絡評価なし");
+        var x = Echo("a") == "a" | Echo("b") == "b"; // a、b 両方出力。
 
-        <span class="type">Console</span>.WriteLine(<span class="literal">"短絡評価あり"</span>);
-        <span class="reserved">var</span> y = Echo(<span class="literal">"a"</span>) == <span class="literal">"a"</span> || Echo(<span class="literal">"b"</span>) == <span class="literal">"b"</span>; <span class="comment">// a のみ出力</span>
+        Console.WriteLine("短絡評価あり");
+        var y = Echo("a") == "a" || Echo("b") == "b"; // a のみ出力
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 短絡評価なし
 a
 b
 短絡評価あり
 a
-</pre>
+```
 
 
 また、条件演算子の短絡評価の例を示すと、以下のようになります。
 
-<pre class="source" title="条件演算子の短絡評価" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">string</span> Echo(<span class="reserved">string</span> message)
+    static string Echo(string message)
     {
-        <span class="type">Console</span>.WriteLine(message);
-        <span class="reserved">return</span> message;
+        Console.WriteLine(message);
+        return message;
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = <span class="reserved">true</span> ? Echo(<span class="literal">"第2項"</span>) : Echo(<span class="literal">"第3項"</span>); <span class="comment">// 第2項だけ表示される</span>
-        <span class="reserved">var</span> y = <span class="reserved">false</span> ? Echo(<span class="literal">"第2項"</span>) : Echo(<span class="literal">"第3項"</span>); <span class="comment">// 第3項だけ表示される</span>
+        var x = true ? Echo("第2項") : Echo("第3項"); // 第2項だけ表示される
+        var y = false ? Echo("第2項") : Echo("第3項"); // 第3項だけ表示される
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 第2項
 第3項
-</pre>
+```
 
 
 
@@ -768,25 +768,25 @@ C# の構文上は式（expression）と呼ばれるものの一種です。
 #### 解答例 1
 
 
-<pre class="source" title="整数の四則演算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"input a: "</span>);
-    <span class="reserved">int</span> a = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"input b: "</span>);
-    <span class="reserved">int</span> b = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    Console.Write("input a: ");
+    int a = int.Parse(Console.ReadLine());
+    Console.Write("input b: ");
+    int b = int.Parse(Console.ReadLine());
 
-    Console.Write(<span class="literal">"{0} + {1} = {2}\n"</span>, a, b, a + b);
-    Console.Write(<span class="literal">"{0} - {1} = {2}\n"</span>, a, b, a - b);
-    Console.Write(<span class="literal">"{0} * {1} = {2}\n"</span>, a, b, a * b);
-    Console.Write(<span class="literal">"{0} / {1} = {2}\n"</span>, a, b, a / b);
+    Console.Write("{0} + {1} = {2}\n", a, b, a + b);
+    Console.Write("{0} - {1} = {2}\n", a, b, a - b);
+    Console.Write("{0} * {1} = {2}\n", a, b, a * b);
+    Console.Write("{0} / {1} = {2}\n", a, b, a / b);
   }
 }
-</code></pre>
+```
 
 
 
@@ -801,25 +801,25 @@ C# の構文上は式（expression）と呼ばれるものの一種です。
 
 例として double 版を掲載。
 
-<pre class="source" title="実数の四則演算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"input a: "</span>);
-    <span class="reserved">double</span> a = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"input b: "</span>);
-    <span class="reserved">double</span> b = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("input a: ");
+    double a = double.Parse(Console.ReadLine());
+    Console.Write("input b: ");
+    double b = double.Parse(Console.ReadLine());
 
-    Console.Write(<span class="literal">"{0} + {1} = {2}\n"</span>, a, b, a + b);
-    Console.Write(<span class="literal">"{0} - {1} = {2}\n"</span>, a, b, a - b);
-    Console.Write(<span class="literal">"{0} * {1} = {2}\n"</span>, a, b, a * b);
-    Console.Write(<span class="literal">"{0} / {1} = {2}\n"</span>, a, b, a / b);
+    Console.Write("{0} + {1} = {2}\n", a, b, a + b);
+    Console.Write("{0} - {1} = {2}\n", a, b, a - b);
+    Console.Write("{0} * {1} = {2}\n", a, b, a * b);
+    Console.Write("{0} / {1} = {2}\n", a, b, a / b);
   }
 }
-</code></pre>
+```
 
 
 
@@ -832,26 +832,26 @@ C# の構文上は式（expression）と呼ばれるものの一種です。
 #### 解答例 1
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"実部を入力してください: "</span>);
-    <span class="reserved">double</span> x = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"虚部を入力してください: "</span>);
-    <span class="reserved">double</span> y = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("実部を入力してください: ");
+    double x = double.Parse(Console.ReadLine());
+    Console.Write("虚部を入力してください: ");
+    double y = double.Parse(Console.ReadLine());
 
-    <span class="reserved">double</span> norm = x * x + y * y;
+    double norm = x * x + y * y;
 
-    Console.Write(<span class="literal">"{0} + i({1}) の逆数は {2} + i({3})\n)"</span>,
+    Console.Write("{0} + i({1}) の逆数は {2} + i({3})\n)",
       x, y,
       x / norm, -y / norm);
   }
 }
-</code></pre>
+```
 
 
 
@@ -864,23 +864,23 @@ C# の構文上は式（expression）と呼ばれるものの一種です。
 #### 解答例 1
 
 
-<pre class="source" title="円の面積を求める" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">double</span> r; <span class="comment">// 半径</span>
+    double r; // 半径
 
-    Console.Write(<span class="literal">"半径を入力してください: "</span>);
-    r = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("半径を入力してください: ");
+    r = double.Parse(Console.ReadLine());
 
-    <span class="reserved">double</span> area = r * r * 3.1415926535897932;
-    Console.Write(<span class="literal">"面積 = {0}\n"</span>, area);
+    double area = r * r * 3.1415926535897932;
+    Console.Write("面積 = {0}\n", area);
   }
 }
-</code></pre>
+```
 
 
 
@@ -929,36 +929,36 @@ BMIの値が22のときに病気になる可能性が最も低く、BMIが26を�
 </blockquote>
 以下にプログラムの実行結果の例を示す。
 
-<pre class="console" title="結果の例">
-身長[cm] = <span class="input">175.5</span>
-体重[kg] = <span class="input">52.4</span>
+```console
+身長[cm] = 175.5
+体重[kg] = 52.4
 BMI = 17.0128489216808
-</pre>
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="BMI 値の計算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">double</span> height; <span class="comment">// 身長[cm]</span>
-    <span class="reserved">double</span> weight; <span class="comment">// 体重[kg]</span>
+    double height; // 身長[cm]
+    double weight; // 体重[kg]
 
-    Console.Write(<span class="literal">"身長[cm]: "</span>);
-    height = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    height *= 0.01; <span class="comment">// cm → m</span>
+    Console.Write("身長[cm]: ");
+    height = double.Parse(Console.ReadLine());
+    height *= 0.01; // cm → m
 
-    Console.Write(<span class="literal">"体重[kg]: "</span>);
-    weight = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("体重[kg]: ");
+    weight = double.Parse(Console.ReadLine());
 
-    <span class="reserved">double</span> bmi = weight / (height * height);
-    Console.Write(<span class="literal">"BMI = {0}\n"</span>, bmi);
+    double bmi = weight / (height * height);
+    Console.Write("BMI = {0}\n", bmi);
   }
 }
-</code></pre>
+```

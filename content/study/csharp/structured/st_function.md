@@ -99,21 +99,21 @@ C# の場合、このページで説明するような「関数」的な動作�
 
 C# では、以下のようにして関数(C# 用語としては、正確にはメソッド)を定義します。
 
-<pre class="source" title="関数の書式" lang="">
-<code><span class="input">戻り値の型</span> <span class="input">関数名</span>(<span class="input">引数一覧</span>)
+```csharp
+戻り値の型 関数名(引数一覧)
 {
-    <span class="input">関数本体(具体的な処理)</span>
+    関数本体(具体的な処理)
 }
-</code></pre>
+```
 
 
 <h5 class="version version6">Ver. 6</h5>
 また、C# 6 では、関数本体の部分が1つの式だけからなる場合、以下のような書き方をすることができるようになりました。
 これを、expression-bodied (本体が式の)関数と呼びます(詳細は後述)。
 
-<pre class="source" title="関数の書式" lang="">
-<code><span class="input">戻り値の型</span> <span class="input">関数名</span>(<span class="input">引数一覧</span>) =&gt; <span class="input">関数本体の式</span>
-</code></pre>
+```csharp
+戻り値の型 関数名(引数一覧) => 関数本体の式
+```
 
 
 関数という名前は、数学用語の関数からきています。
@@ -124,24 +124,24 @@ C#の関数も同じように、入力出来る値と、出力される値の型
 例えば、実数(浮動小数点数)を入力して、その値のsinを求めるような関数を作りたい場合、
 以下のようにして関数を作ることが出来ます。
 
-<pre class="source" title="関数の例 sin関数" lang="">
-<code><span class="comment">// sin x を求める関数。
+```csharp
+// sin x を求める関数。
 // テイラー展開を利用。
-// かなり適当に作ってるので、この方法ではそんなに精度はよくない。</span>
-<span class="reserved">double</span> Sin(<span class="reserved">double</span> x)
+// かなり適当に作ってるので、この方法ではそんなに精度はよくない。
+double Sin(double x)
 {
-  <span class="reserved">double</span> xx = -x * x;
-  <span class="reserved">double</span> fact = 1;
-  <span class="reserved">double</span> sin = x;
-  <span class="reserved">for</span>(<span class="reserved">int</span> i=1; i&lt;100;)
+  double xx = -x * x;
+  double fact = 1;
+  double sin = x;
+  for(int i=1; i<100;)
   {
     fact *= i; ++i; fact *= i; ++i;
     x *= xx;
     sin += x / fact;
   }
-  <span class="reserved">return</span> sin;
+  return sin;
 }
-</code></pre>
+```
 
 
 まず、コメントの部分を除いて1番最初の、「<code>
@@ -160,9 +160,9 @@ C#の関数も同じように、入力出来る値と、出力される値の型
 
 作成した関数を呼び出すには、
 
-<pre class="source" title="関数の書式" lang="">
-<code><span class="input">変数</span> = <span class="input">関数名</span>(<span class="input">入力</span>)
-</code></pre>
+```csharp
+変数 = 関数名(入力)
+```
 
 
 というように書きます。
@@ -171,45 +171,45 @@ C#の関数も同じように、入力出来る値と、出力される値の型
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-<pre class="source" title="sin関数を使ったサンプル" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> SinSample
+class SinSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;10; ++i)
+    for(int i=0; i<10; ++i)
     {
-      <span class="reserved">double</span> x = 0.01 * i;
+      double x = 0.01 * i;
 
-<em>      <span class="reserved">double</span> y = Sin(x); <span class="comment">// 関数呼び出し</span></em>
+      double y = Sin(x); // 関数呼び出し
 
-      Console.Write(<span class="literal">"sin({0:f2}) = {1:f6}\n"</span>, x, y);
+      Console.Write("sin({0:f2}) = {1:f6}\n", x, y);
     }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// sin(x) の値を求める。
   /// 実装は割りと適当。
-  /// &lt;/summary&gt;</span>
-<em>  <span class="reserved">static double</span> Sin(<span class="reserved">double</span> x) <span class="comment">// 関数定義</span></em>
+  /// </summary>
+  static double Sin(double x) // 関数定義
   {
-    <span class="reserved">double</span> xx = -x * x;
-    <span class="reserved">double</span> fact = 1;
-    <span class="reserved">double</span> sin = x;
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=1; i&lt;100;)
+    double xx = -x * x;
+    double fact = 1;
+    double sin = x;
+    for(int i=1; i<100;)
     {
       fact *= i; ++i; fact *= i; ++i;
       x *= xx;
       sin += x / fact;
     }
-    <span class="reserved">return</span> sin;
+    return sin;
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 sin(0.00) = 0.000000
 sin(0.01) = 0.010000
 sin(0.02) = 0.019999
@@ -220,7 +220,7 @@ sin(0.06) = 0.059964
 sin(0.07) = 0.069943
 sin(0.08) = 0.079915
 sin(0.09) = 0.089879
-</pre>
+```
 
 
 <code>Sin</code> 関数の定義の部分の前についている <code>
@@ -231,34 +231,34 @@ sin(0.09) = 0.089879
 もう一つ違う例を挙げて見ましょう。
 今まで、実数の入力は以下のようにして行っていました。
 
-<pre class="source" title="値の入力" lang="">
-<code>Console.Write(<span class="literal">"ユーザーに入力を促すメッセージ"</span>);
-x = <span class="reserved">double</span>.Parse(Console.ReadLine());
-</code></pre>
+```csharp
+Console.Write("ユーザーに入力を促すメッセージ");
+x = double.Parse(Console.ReadLine());
+```
 
 
 実数を入力する必要のある場面ごとにこのようなコードを書くのは面倒ですし、
 これを関数化して見ましょう。
 まず、単純に関数化した結果を以下に示します。
 
-<pre class="source" title="値を入力する部分を関数化" lang="">
-<code><span class="reserved">double</span> GetDouble(<span class="reserved">string</span> message)
+```csharp
+double GetDouble(string message)
 {
   Console.Write(message);
-  <span class="reserved">double</span> x = <span class="reserved">double</span>.Parse(Console.ReadLine());
-  <span class="reserved">return</span> x;
+  double x = double.Parse(Console.ReadLine());
+  return x;
 }
-</code></pre>
+```
 
 
 今までずっと無視してきていたのですが、実はこのままでは、実数に出来ない文字列を入力してしまうとエラーが発生して、以下のようなエラーメッセージを表示してプログラムが途中で止まってしまいます。
 
-<pre class="console" title="不正な値が入力されたときのエラーメッセージ">
+```console
 未処理の例外 : System.FormatException: 入力文字列の形式が正しくありません。
   at System.Number.ParseDouble(String s, NumberStyles style, NumberFormatInfo info)
   at System.Double.Parse(String s, NumberStyles style, IFormatProvider provider)
   at StatementSample2.Main()
-</pre>
+```
 
 
 本当は例外処理(後述)というものを行ってこのようなエラーが出たときの対処を行わないといけません。
@@ -266,30 +266,30 @@ x = <span class="reserved">double</span>.Parse(Console.ReadLine());
 (例外処理については「[例外処理](oo_exception.md)」参照。
 <code>try</code>と<code>catch</code>は例外処理を行うための構文です。)
 
-<pre class="source" title="値を入力する関数に例外処理を追加" lang="">
-<code><span class="reserved">double</span> GetDouble(<span class="reserved">string</span> message)
+```csharp
+double GetDouble(string message)
 {
-  <span class="reserved">double</span> x;
-  <span class="reserved">while</span>(<span class="reserved">true</span>)
+  double x;
+  while(true)
   {
-    <span class="reserved">try</span>
+    try
     {
-      <span class="comment">// 入力を促すメッセージを表示して、値を入力してもらう</span>
+      // 入力を促すメッセージを表示して、値を入力してもらう
       Console.Write(message);
-      x = <span class="reserved">double</span>.Parse(Console.ReadLine());
+      x = double.Parse(Console.ReadLine());
     }
-    <span class="reserved">catch</span>(Exception)
+    catch(Exception)
     {
-      <span class="comment">// 不正な入力が行われた場合の処理</span>
+      // 不正な入力が行われた場合の処理
       Console.Write(
-        <span class="literal">"error : 正しい値が入力されませんでした\n入力しなおしてください\n"</span>);
-      <span class="reserved">continue</span>;
+        "error : 正しい値が入力されませんでした\n入力しなおしてください\n");
+      continue;
     }
-    <span class="reserved">break</span>;
+    break;
   }
-  <span class="reserved">return</span> x;
+  return x;
 }
-</code></pre>
+```
 
 
 この修正した関数を用いて「[変数と式](../start/st_variable.md)」の最後で示したサンプルを書き換えてみましょう。
@@ -297,58 +297,58 @@ x = <span class="reserved">double</span>.Parse(Console.ReadLine());
 
 ##### <a id="sec-generated-title-7"></a>サンプル
 
-<pre class="source" title="値の入力部分を関数化したサンプル" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> StatementSample2
+class StatementSample2
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">double</span> x, y, z; <span class="comment">// 変数を宣言。
+    double x, y, z; // 変数を宣言。
 
-    // x, y にユーザーの入力した値を代入。</span>
-    x = GetDouble(<span class="literal">"input x : "</span>);
-    y = GetDouble(<span class="literal">"input y : "</span>);
+    // x, y にユーザーの入力した値を代入。
+    x = GetDouble("input x : ");
+    y = GetDouble("input y : ");
 
-    <span class="comment">// 入力された値を元に計算</span>
-    z = x * x + y * y; <span class="comment">// z に x と y の二乗和を代入</span>
-    x /=  z;           <span class="comment">// x =  x / z; と同じ。</span>
-    y /= -z;           <span class="comment">// y = -y / z; と同じ。
+    // 入力された値を元に計算
+    z = x * x + y * y; // z に x と y の二乗和を代入
+    x /=  z;           // x =  x / z; と同じ。
+    y /= -z;           // y = -y / z; と同じ。
 
-    // 計算結果を出力</span>
-    Console.Write(<span class="literal">"({0}, {1})"</span>, x, y);
+    // 計算結果を出力
+    Console.Write("({0}, {1})", x, y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 入力を促すメッセージを表示して、実数を入力してもらう。
   /// 正しく実数として解釈できる文字が入力されるまで繰り返す。
-  /// &lt;param name="message"&gt; 入力を促すメッセージ &lt;/param&gt;
-  /// &lt;return&gt; 入力された値 &lt;/return&gt;
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static double</span> GetDouble(<span class="reserved">string</span> message)
+  /// <param name="message"> 入力を促すメッセージ </param>
+  /// <return> 入力された値 </return>
+  /// </summary>
+  static double GetDouble(string message)
   {
-    <span class="reserved">double</span> x;
-    <span class="reserved">while</span>(<span class="reserved">true</span>)
+    double x;
+    while(true)
     {
-      <span class="reserved">try</span>
+      try
       {
-        <span class="comment">// 入力を促すメッセージを表示して、値を入力してもらう</span>
+        // 入力を促すメッセージを表示して、値を入力してもらう
         Console.Write(message);
-        x = <span class="reserved">double</span>.Parse(Console.ReadLine());
+        x = double.Parse(Console.ReadLine());
       }
-      <span class="reserved">catch</span>(Exception)
+      catch(Exception)
       {
-        <span class="comment">// 不正な入力が行われた場合の処理</span>
+        // 不正な入力が行われた場合の処理
         Console.Write(
-          <span class="literal">"error : 正しい値が入力されませんでした\n入力しなおしてください\n"</span>);
-        <span class="reserved">continue</span>;
+          "error : 正しい値が入力されませんでした\n入力しなおしてください\n");
+        continue;
       }
-      <span class="reserved">break</span>;
+      break;
     }
-    <span class="reserved">return</span> x;
+    return x;
   }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="return-statement"></a>returnの場所・数
 
@@ -358,25 +358,25 @@ x = <span class="reserved">double</span>.Parse(Console.ReadLine());
 複数個の`return`を書きたくなる1番の例は[条件分岐](st_branch.md)でしょう。
 以下のように、条件を満たすときと満たさない時で別の値を返したい場合などです。
 
-<pre class="source" title="条件ごとに異なる値をreturn">
-<code><span class="reserved">static</span> <span class="reserved">int</span> Max(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+```csharp
+static int Max(int x, int y)
 {
-    <span class="reserved">if</span> (x &gt; y) <span class="reserved">return</span> x;
-    <span class="reserved">else</span> <span class="reserved">return</span> y;
+    if (x > y) return x;
+    else return y;
 }
-</code></pre>
+```
 
 分岐なしで関数の途中に`return`を書くこともできますが、この場合は、`return`よりも後ろは実行されません。
 
-<pre class="source" title="returnの後ろは実行されない">
-<code><span class="reserved">static</span> <span class="reserved">int</span> F(<span class="reserved">int</span> x)
+```csharp
+static int F(int x)
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">"ここは実行される"</span>);
-    <span class="reserved">return</span> x;
+    Console.WriteLine("ここは実行される");
+    return x;
 
-    <span class="type">Console</span>.WriteLine(<span class="string">"<em>ここは実行されない</em>"</span>);
+    Console.WriteLine("ここは実行されない");
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-9"></a> <a id="arity"></a>引数・戻り値の数
 
@@ -389,28 +389,28 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 引数を複数使いたい場合、数学の関数と同じように、関数を定義する際に、以下のように複数の引数を <code>,</code> で区切って並べます。
 このように、引数を <code>,</code> で区切って並べたものを<em>引数リスト</em>といいます。
 
-<pre class="source" title="引数が複数ある関数の例" lang="">
-<code><span class="reserved">double</span> Norm(<span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z)
+```csharp
+double Norm(double x, double y, double z)
 {
-  <span class="comment">// ノルムの計算</span>
-  <span class="reserved">return</span> x*x + y*y + z*z;
+  // ノルムの計算
+  return x*x + y*y + z*z;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-11"></a> <a id="no-param"></a>引数のない関数
 
 数学ではあまり考えられませんが、C#では引数のない関数も定義できます。
 引数のない関数は、以下のように、引数リストを空にして定義します。
 
-<pre class="source" title="引数のない関数の例" lang="">
-<code><span class="reserved">ulong</span> seed = 4275646295673547UL;
-<span class="reserved">ulong</span> Random()
+```csharp
+ulong seed = 4275646295673547UL;
+ulong Random()
 {
-  <span class="comment">// 線形合同法による疑似乱数の生成</span>
-  <span class="reserved">unchecked</span>{seed = seed * 1566083941UL + 1;}
-  <span class="reserved">return</span> seed;
+  // 線形合同法による疑似乱数の生成
+  unchecked{seed = seed * 1566083941UL + 1;}
+  return seed;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="void"></a>戻り値のない関数
 
@@ -419,17 +419,17 @@ C#の関数でもこのように引数が複数ある関数を作れます。
                 <code>void</code>
             </em> (「空の、何もない」という意味)というものにしておきます。
 
-<pre class="source" title="戻り値のない関数の例" lang="">
-<code><span class="reserved">void</span> WriteArray(<span class="reserved">int</span>[] array)
+```csharp
+void WriteArray(int[] array)
 {
-  Console.Write(<span class="literal">"{"</span>);
-  <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;array.Length-1; ++i)
+  Console.Write("{");
+  for(int i=0; i<array.Length-1; ++i)
   {
-    Console.Write(<span class="literal">"{0}, "</span>, array[i]);
+    Console.Write("{0}, ", array[i]);
   }
-  Console.Write(array[array.Length-1] + <span class="literal">"}\n"</span>);
+  Console.Write(array[array.Length-1] + "}\n");
 }
-</code></pre>
+```
 
 戻り値のない物でも「関数」と呼ぶのはC言語やC++言語から受け継いだ習慣です。
 その他の言語では、
@@ -437,14 +437,14 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 
 ちなみに、戻り値がない(`void`)の場合、`return`は書けますが、`return`の後ろには何も値を書かず、関数を途中で抜ける意味だけ持ちます。
 
-<pre class="source" title="voidの時にはreturnの後ろに値を書かない">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">int</span> x)
+```csharp
+static void F(int x)
 {
-    <span class="reserved">if</span> (x &lt;= 0) <span class="reserved">return</span>;
+    if (x <= 0) return;
 
-    <span class="type">Console</span>.WriteLine(<span class="string">"x が正の時だけ実行される"</span>);
+    Console.WriteLine("x が正の時だけ実行される");
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-13"></a> <a id="unit"></a>補足1: void だけ特別扱いは不便
 
@@ -455,51 +455,51 @@ C#の関数でもこのように引数が複数ある関数を作れます。
 例えば、C# では関数を変数に格納して使うことができるんですが、
 戻り値がある場合は`Func`、ない場合は`Action`と、別の型に代入して使うことになります。
 
-<pre class="source" title="FuncとActionを区別">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Action</span> a1 = A1; <span class="comment">// Func&lt;void&gt; とは書けない</span>
-        <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; a2 = A2;
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f1 = F1; <span class="comment">// Action と Func が別</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f2 = F2;
+        Action a1 = A1; // Func<void> とは書けない
+        Action<int> a2 = A2;
+        Func<int> f1 = F1; // Action と Func が別
+        Func<int, int> f2 = F2;
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> A1() { } <span class="comment">// 戻り値がないと、=&gt; 記法も使えない</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> A2(<span class="reserved">int</span> x) { }
-    <span class="reserved">static</span> <span class="reserved">int</span> F1() =&gt; 0;
-    <span class="reserved">static</span> <span class="reserved">int</span> F2(<span class="reserved">int</span> x) =&gt; x;
+    static void A1() { } // 戻り値がないと、=> 記法も使えない
+    static void A2(int x) { }
+    static int F1() => 0;
+    static int F2(int x) => x;
 }
-</code></pre>
+```
 
 そこで、以下のように、空っぽの値を用意して、`void`の代わりに使うことですべて「戻り値あり」で統一する手法を時々使ったりします。
 
-<pre class="source" title="空っぽの値でvoidを代用">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 空っぽの型を1個用意</span>
-<span class="reserved">struct</span> <span class="type">Unit</span> { }
+// 空っぽの型を1個用意
+struct Unit { }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// void の代わりに Unit を使うことで、全部 Func に統一</span>
-        <span class="type">Func</span>&lt;<span class="type">Unit</span>&gt; a1 = A1;
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="type">Unit</span>&gt; a2 = A2;
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f1 = F1;
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f2 = F2;
+        // void の代わりに Unit を使うことで、全部 Func に統一
+        Func<Unit> a1 = A1;
+        Func<int, Unit> a2 = A2;
+        Func<int> f1 = F1;
+        Func<int, int> f2 = F2;
     }
 
-    <span class="reserved">static</span> <span class="type">Unit</span> A1() =&gt; <span class="reserved">default</span>(<span class="type">Unit</span>); <span class="comment">// 空っぽの値を返しておく</span>
-    <span class="reserved">static</span> <span class="type">Unit</span> A2(<span class="reserved">int</span> x) =&gt; <span class="reserved">default</span>(<span class="type">Unit</span>);
-    <span class="reserved">static</span> <span class="reserved">int</span> F1() =&gt; 0;
-    <span class="reserved">static</span> <span class="reserved">int</span> F2(<span class="reserved">int</span> x) =&gt; x;
+    static Unit A1() => default(Unit); // 空っぽの値を返しておく
+    static Unit A2(int x) => default(Unit);
+    static int F1() => 0;
+    static int F2(int x) => x;
 }
-</code></pre>
+```
 
 不格好なので積極的に使うものでもありませんが、統一のためにやむを得ないこともあったりします。
 
@@ -524,25 +524,25 @@ C#では、基本的には戻り値は1つだけ返せます。
 
 複数の値(多値)を返したいこともありますが、その場合、C# 6以前では[複合型](st_struct.md#about)を1つ作って返していました。
 
-<pre class="source" title="多値戻り値のための複合型追加">
-<code><span class="reserved">struct</span> <span class="type">SumCount</span>
+```csharp
+struct SumCount
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> sum;
-    <span class="reserved">public</span> <span class="reserved">int</span> count;
+    public int sum;
+    public int count;
 }
 
-<span class="reserved">static</span> <span class="type">SumCount</span> Tally(<span class="reserved">int</span>[] items)
+static SumCount Tally(int[] items)
 {
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">var</span> count = 0;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> items)
+    var sum = 0;
+    var count = 0;
+    foreach (var x in items)
     {
         sum += x;
         count++;
     }
-    <span class="reserved">return</span> <span class="reserved">new</span> <span class="type">SumCount</span> { sum = sum, count = count };
+    return new SumCount { sum = sum, count = count };
 }
-</code></pre>
+```
 
 <h5 class="version version7">Ver. 7</h5>
 
@@ -551,19 +551,19 @@ C#では、基本的には戻り値は1つだけ返せます。
 
 そこで、C# 7では、以下のように書けるようになりました。
 
-<pre class="source" title="C# 7で導入されたタプルを使って多値戻り値を返す">
-<code><span class="reserved">static</span> (<span class="reserved">int</span> sum, <span class="reserved">int</span> count) Tally(<span class="reserved">int</span>[] items)
+```csharp
+static (int sum, int count) Tally(int[] items)
 {
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">var</span> count = 0;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> items)
+    var sum = 0;
+    var count = 0;
+    foreach (var x in items)
     {
         sum += x;
         count++;
     }
-    <span class="reserved">return</span> (sum, count);
+    return (sum, count);
 }
-</code></pre>
+```
 
 複数の戻り値を返しているような書き心地になります。
 
@@ -572,67 +572,67 @@ C#では、基本的には戻り値は1つだけ返せます。
 
 ##### <a id="sec-generated-title-16"></a>サンプル
 
-<pre class="source" title="さまざまな関数のサンプル" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> FunctionSample
+class FunctionSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[] array = <span class="reserved">new int</span>[3];
+    int[] array = new int[3];
 
-    <span class="comment">// 乱数を使って値を生成</span>
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;array.Length; ++i)
+    // 乱数を使って値を生成
+    for(int i=0; i<array.Length; ++i)
     {
-      array[i] = (<span class="reserved">int</span>)(Random() &gt;&gt; 58); <span class="comment">// [0,63] の整数乱数生成</span>
+      array[i] = (int)(Random() >> 58); // [0,63] の整数乱数生成
     }
 
-    <span class="comment">// ノルムを計算</span>
-    <span class="reserved">double</span> norm = Norm(array[0], array[1], array[2]);
+    // ノルムを計算
+    double norm = Norm(array[0], array[1], array[2]);
 
-    <span class="comment">// 値の出力</span>
+    // 値の出力
     WriteArray(array);
-    Console.Write(<span class="literal">"norm = {0}\n"</span>, norm);
+    Console.Write("norm = {0}\n", norm);
   }
 
-  <span class="reserved">static ulong</span> seed = 4275646293455673547UL;
-  <span class="comment">/// &lt;summary&gt;
+  static ulong seed = 4275646293455673547UL;
+  /// <summary>
   /// 線形合同法による乱数の生成
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static ulong</span> Random()
+  /// </summary>
+  static ulong Random()
   {
-    <span class="reserved">unchecked</span>{seed = seed * 1566083941UL + 1;}
-    <span class="reserved">return</span> seed;
+    unchecked{seed = seed * 1566083941UL + 1;}
+    return seed;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 入力した3つの値のノルムを計算
-  /// &lt;summary&gt;</span>
-  <span class="reserved">static double</span> Norm(<span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z)
+  /// <summary>
+  static double Norm(double x, double y, double z)
   {
-    <span class="reserved">return</span> x*x + y*y + z*z;
+    return x*x + y*y + z*z;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列を , で各要素を区切って、{}で括った形式で出力
-  /// &lt;summary&gt;</span>
-  <span class="reserved">static void</span> WriteArray(<span class="reserved">int</span>[] array)
+  /// <summary>
+  static void WriteArray(int[] array)
   {
-    Console.Write(<span class="literal">"{"</span>);
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;array.Length-1; ++i)
+    Console.Write("{");
+    for(int i=0; i<array.Length-1; ++i)
     {
-      Console.Write(<span class="literal">"{0}, "</span>, array[i]);
+      Console.Write("{0}, ", array[i]);
     }
-    Console.Write(array[array.Length-1] + <span class="literal">"}\n"</span>);
+    Console.Write(array[array.Length-1] + "}\n");
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 {40, 31, 39}
 norm = 4082
-</pre>
+```
 
 
 
@@ -656,27 +656,27 @@ norm = 4082
 
 C# 4 から、引数に規定値(default value)を与えて、呼び出し時に省略できたり(optional)、名前付き(named)で引数を書けるようになりました。
 
-<pre class="source" title="規定値付きのメソッド定義" lang="">
-<code><span class="reserved">class</span> OptionalParameterSample
+```csharp
+class OptionalParameterSample
 {
-    <span class="reserved">public static void</span> Sample()
+    public static void Sample()
     {
-        <span class="comment">// 引数の省略(optional parameter)</span>
-        <span class="reserved">var</span> s1 = Sum();     <span class="comment">// Sum(0, 0, 0); と同じ意味。</span>
-        <span class="reserved">var</span> s2 = Sum(<span class="literal">1</span>);    <span class="comment">// Sum(1, 0, 0); と同じ意味。</span>
-        <span class="reserved">var</span> s3 = Sum(<span class="literal">1</span>, <span class="literal">2</span>); <span class="comment">// Sum(1, 2, 0); と同じ意味。</span>
+        // 引数の省略(optional parameter)
+        var s1 = Sum();     // Sum(0, 0, 0); と同じ意味。
+        var s2 = Sum(1);    // Sum(1, 0, 0); と同じ意味。
+        var s3 = Sum(1, 2); // Sum(1, 2, 0); と同じ意味。
 
-        <span class="comment">// 名前付きで引数を与える(named parameter)</span>
-        <span class="reserved">var</span> s4 = Sum(x: 1, y: 2, z: 3); <span class="comment">// Sum(1, 2, 3); と同じ意味。</span>
-        <span class="reserved">var</span> s5 = Sum(z: 3);             <span class="comment">// Sum(0, 0, 3); と同じ意味。</span>
+        // 名前付きで引数を与える(named parameter)
+        var s4 = Sum(x: 1, y: 2, z: 3); // Sum(1, 2, 3); と同じ意味。
+        var s5 = Sum(z: 3);             // Sum(0, 0, 3); と同じ意味。
     }
 
-    <span class="reserved">static int</span> Sum(<span class="reserved">int</span> x = <span class="literal">0</span>, <span class="reserved">int</span> y = <span class="literal">0</span>, <span class="reserved">int</span> z = <span class="literal">0</span>)
+    static int Sum(int x = 0, int y = 0, int z = 0)
     {
-        <span class="reserved">return</span> x + y + z;
+        return x + y + z;
     }
 }
-</code></pre>
+```
 
 
 詳しくは、「[オプション引数・名前付き引数](sp4_optional.md)」で説明します。
@@ -693,17 +693,17 @@ C# 4 から、引数に規定値(default value)を与えて、呼び出し時に
 例えば、先ほどの例で言うと、以下のように、Norm 関数に渡す 3, 4, 5 などの数値が実引数、
 Norm 関数の定義側にある x, y, z などの変数が仮引数です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">static void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="reserved">var</span> norm = Norm(3, 4, 5); <span class="comment">// 3, 4, 5 が実引数</span>
+    var norm = Norm(3, 4, 5); // 3, 4, 5 が実引数
 }
 
-<span class="reserved">static double</span> Norm(<span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z) <span class="comment">// x, y, z が仮引数</span>
+static double Norm(double x, double y, double z) // x, y, z が仮引数
 {
-    <span class="reserved">return</span> x * x + y * y + z * z;
+    return x * x + y * y + z * z;
 }
-</code></pre>
+```
 
 
 
@@ -734,71 +734,72 @@ C# には、いくつか特殊な引数があります。
 関数を作る際、関数の名前が同じで引数リストだけが異なる関数を複数作ることが出来ます。
 例えば、以下のように同じ名前の関数を作成することが出来ます。
 
-<pre class="source" title="引数リストだけが異なる同じ名前の関数の例" lang="">
-<code><span class="reserved">void</span> WriteTypeAndValue(<span class="reserved">string</span> s)
+```csharp
+void WriteTypeAndValue(string s)
 {
-  Console.Write(<span class="literal">"文字列 : {0}\n"</span>, s);
+  Console.Write("文字列 : {0}\n", s);
 }
 
-<span class="reserved">void</span> WriteTypeAndValue(<span class="reserved">int</span> n)
+void WriteTypeAndValue(int n)
 {
-  Console.Write(<span class="literal">"整数   : {0}\n"</span>, n);
+  Console.Write("整数   : {0}\n", n);
 }
 
-<span class="reserved">void</span> WriteTypeAndValue(<span class="reserved">double</span> x)
+void WriteTypeAndValue(double x)
 {
-  Console.Write(<span class="literal">"実数   : {0}\n"</span>, x);
+  Console.Write("実数   : {0}\n", x);
 }
-</code></pre>
+```
 
 
 このように、引数リストだけが異なる関数を作ることを関数の<strong id="overload" class="keyword">オーバーロード</strong>(overload : 過負荷、上積み)といいます。
 
 ##### <a id="sec-generated-title-24"></a>サンプル
 
-<pre class="source" title="関数のオーバーロードのサンプル" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> OverloadSample
+class OverloadSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    WriteTypeAndValue(<span class="literal">"サンプル"</span>); <span class="comment">// WriteTypeAndValue(string) が呼ばれる</span>
-    WriteTypeAndValue(13);         <span class="comment">// WriteTypeAndValue(int)    が呼ばれる</span>
-    WriteTypeAndValue(3.14159265); <span class="comment">// WriteTypeAndValue(double) が呼ばれる</span>
+    WriteTypeAndValue("サンプル"); // WriteTypeAndValue(string) が呼ばれる
+    WriteTypeAndValue(13);         // WriteTypeAndValue(int)    が呼ばれる
+    WriteTypeAndValue(3.14159265); // WriteTypeAndValue(double) が呼ばれる
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 型名と値を出力する(string 版)。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static void</span> WriteTypeAndValue(<span class="reserved">string</span> s)
+  /// </summary>
+  static void WriteTypeAndValue(string s)
   {
-    Console.Write(<span class="literal">"文字列 : {0}\n"</span>, s);
+    Console.Write("文字列 : {0}\n", s);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 型名と値を出力する(int 版)。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static void</span> WriteTypeAndValue(<span class="reserved">int</span> n)
+  /// </summary>
+  static void WriteTypeAndValue(int n)
   {
-    Console.Write(<span class="literal">"整数   : {0}\n"</span>, n);
+    Console.Write("整数   : {0}\n", n);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 型名と値を出力する(double 版)。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static void</span> WriteTypeAndValue(<span class="reserved">double</span> x)
+  /// </summary>
+  static void WriteTypeAndValue(double x)
   {
-    Console.Write(<span class="literal">"実数   : {0}\n"</span>, x);
+    Console.Write("実数   : {0}\n", x);
   }
-}</code></pre>
+}
+```
 
 
-<pre class="console" title="">
+```console
 文字列 : サンプル
 整数   : 13
 実数   : 3.14159265
-</pre>
+```
 
 ### <a id="sec-generated-title-25"></a> <a id="non-ovarloadable"></a>オーバーロードできない例
 
@@ -806,23 +807,23 @@ C# のメソッドのオーバーロードにはいくつか制限がありま�
 
 引数の型違いのオーバーロードはできますが、引数名だけが違うオーバーロードは作れません。
 
-<pre class="source" title="引数名違いのオーバーロードは無理">
-<code><span class="comment">// F は、引数の型が違うので大丈夫</span>
-<span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">int</span> x) { }
-<span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">string</span> x) { }
+```csharp
+// F は、引数の型が違うので大丈夫
+static void F(int x) { }
+static void F(string x) { }
 
-<span class="comment">// G は、引数の型まで一緒で、名前だけ違う。これはコンパイル エラー</span>
-<span class="reserved">static</span> <span class="reserved">void</span> G(<span class="reserved">int</span> x) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="error">G</span>(<span class="reserved">int</span> y) { }
-</code></pre>
+// G は、引数の型まで一緒で、名前だけ違う。これはコンパイル エラー
+static void G(int x) { }
+static void G(int y) { }
+```
 
 また、戻り値だけ違うオーバーロードも作れません。
 
-<pre class="source" title="戻り値違いのオーバーロードも無理">
-<code><span class="comment">// H は、引数が一致していて、戻り値だけ違う。これもコンパイル エラー</span>
-<span class="reserved">static</span> <span class="reserved">int</span> H() =&gt; 1;
-<span class="reserved">static</span> <span class="reserved">string</span> <span class="error">H</span>() =&gt; <span class="string">""</span>;
-</code></pre>
+```csharp
+// H は、引数が一致していて、戻り値だけ違う。これもコンパイル エラー
+static int H() => 1;
+static string H() => "";
+```
 
 あと、「C# としては区別しているように見えるけども、内部的には同じ扱いになっていて区別できないのでオーバーロードにも使えない」という型がいくつかあります。
 
@@ -831,21 +832,21 @@ C# のメソッドのオーバーロードにはいくつか制限がありま�
 
 例えば以下のようなオーバーロードは作れません。
 
-<pre class="source" title="dynamic の扱い">
-<code><span class="reserved">void</span> D(<span class="reserved">object</span> x) { }
-<span class="reserved">void</span> D(<span class="reserved">dynamic</span> x) { }
-</code></pre>
+```csharp
+void D(object x) { }
+void D(dynamic x) { }
+```
 
-<pre class="source" title="in, ref, out の扱い">
-<code><span class="reserved">void</span> F(<span class="reserved">ref</span> <span class="reserved">int</span> x) { }
-<span class="reserved">void</span> <span class="error">F</span>(<span class="reserved">in</span> <span class="reserved">int</span> x) { }
+```csharp
+void F(ref int x) { }
+void F(in int x) { }
 
-<span class="reserved">void</span> G(<span class="reserved">ref</span> <span class="reserved">int</span> x) { }
-<span class="reserved">void</span> <span class="error">G</span>(<span class="reserved">out</span> <span class="reserved">int</span> x) =&gt; x = 0;
+void G(ref int x) { }
+void G(out int x) => x = 0;
 
-<span class="reserved">void</span> H(<span class="reserved">in</span> <span class="reserved">int</span> x) { }
-<span class="reserved">void</span> <span class="error">H</span>(<span class="reserved">out</span> <span class="reserved">int</span> x) =&gt; x = 0;
-</code></pre>
+void H(in int x) { }
+void H(out int x) => x = 0;
+```
 
 ### <a id="sec-generated-title-26"></a> <a id="signature"></a>シグネチャ
 
@@ -869,26 +870,26 @@ Swiftでは、引数名違いや戻り値の型違いのオーバーロードが
 すなわち、「いくつかあるメソッド`M`のうちのいずれか」という状態です。
 この状態の`M`を<strong id="key-method-group" class="keyword">メソッド グループ</strong>(method group)と呼びます。
 
-<pre class="source" title="メソッド グループの例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// M(int) という「メソッド」</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">int</span> x) { }
+    // M(int) という「メソッド」
+    static void M(int x) { }
 
-    <span class="comment">// M(string) という「メソッド」</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span> x) { }
+    // M(string) という「メソッド」
+    static void M(string x) { }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 右辺だけ見ると M は「M(int) か M(string) のどちらか」という状態</span>
-        <span class="comment">// この状態の M をメソッド グループという</span>
-        <span class="comment">// 左辺の Action&lt;int&gt; を見て初めてどちらなのかが確定する</span>
-        <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; a = M;
+        // 右辺だけ見ると M は「M(int) か M(string) のどちらか」という状態
+        // この状態の M をメソッド グループという
+        // 左辺の Action<int> を見て初めてどちらなのかが確定する
+        Action<int> a = M;
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-28"></a> <a id="sec-expression-bodied"></a>expression-bodied な関数
 
@@ -898,66 +899,66 @@ C# 6 では、関数本体の部分が1つの式だけからなる場合、 `=>`
 
 例えば、先ほど例に出した2つの関数、Random と Norm は以下のように書くこともできます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">static ulong</span> Random() =&gt; <span class="reserved">unchecked</span>(seed = seed * 1566083941UL +  1 );
+```csharp
+static ulong Random() => unchecked(seed = seed * 1566083941UL +  1 );
 
-<span class="reserved">static double</span> Norm(<span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z) =&gt; x * x + y * y + z * z;
-</code></pre>
+static double Norm(double x, double y, double z) => x * x + y * y + z * z;
+```
 
 C# 6時点では、メソッド、演算子、プロパティとインデクサー(get-only)を `=>` 記号で書けます。
 
-<pre class="source" title="C# 6 時点で =&gt; を使って書ける関数メンバー">
-<code><span class="reserved">class</span> <span class="type">Csharp6</span>
+```csharp
+class Csharp6
 {
-    <span class="comment">// メソッド</span>
-    <span class="reserved">int</span> Method(<span class="reserved">int</span> x) =&gt; x * x;
+    // メソッド
+    int Method(int x) => x * x;
 
-    <span class="comment">// 演算子</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Csharp6</span> <span class="reserved">operator</span> +(<span class="type">Csharp6</span> x) =&gt; x;
+    // 演算子
+    public static Csharp6 operator +(Csharp6 x) => x;
 
-    <span class="comment">// プロパティ(get-only)</span>
-    <span class="reserved">int</span> X =&gt; 0;
+    // プロパティ(get-only)
+    int X => 0;
 
-    <span class="comment">// インデクサー(get-only)</span>
-    <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] =&gt; index;
+    // インデクサー(get-only)
+    int this[int index] => index;
 }
-</code></pre>
+```
 
 また、C# 7では、コンストラクター、ファイナライザー、プロパティとインデクサー(get/set それぞれ)、イベント(add/removeそれぞれ)も `=>` 記号で書けるようになりました。
 
-<pre class="source" title="C# 7 で追加された =&gt; を使って書ける関数メンバー">
-<code><span class="reserved">class</span> <span class="type">Csharp7</span>
+```csharp
+class Csharp7
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> x;
+    static int x;
 
-    <span class="comment">// コンストラクター</span>
-    Csharp7() =&gt; x++;
+    // コンストラクター
+    Csharp7() => x++;
 
-    <span class="comment">// ファイナライザー</span>
-    ~Csharp7() =&gt; x--;
+    // ファイナライザー
+    ~Csharp7() => x--;
 
-    <span class="comment">// プロパティ(get/set)</span>
-    <span class="reserved">int</span> X
+    // プロパティ(get/set)
+    int X
     {
-        <span class="reserved">get</span> =&gt; x++;
-        <span class="reserved">set</span> =&gt; x--;
+        get => x++;
+        set => x--;
     }
 
-    <span class="comment">// インデクサー(get/set)</span>
-    <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> index]
+    // インデクサー(get/set)
+    int this[int index]
     {
-        <span class="reserved">get</span> =&gt; x += index;
-        <span class="reserved">set</span> =&gt; x -= index;
+        get => x += index;
+        set => x -= index;
     }
 
-    <span class="comment">// イベント(add/remove)</span>
-    <span class="reserved">event</span> <span class="type">Action</span> E
+    // イベント(add/remove)
+    event Action E
     {
-        <span class="reserved">add</span> =&gt; x++;
-        <span class="reserved">remove</span> =&gt; x--;
+        add => x++;
+        remove => x--;
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-29"></a> <a id="sec-local"></a>ローカル関数
 
@@ -968,20 +969,20 @@ C# 7では、関数の中で別の関数を定義して使うことができま�
 
 例えば以下のように書けます。
 
-<pre class="source" title="ローカル関数の例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// Main 関数の中で、ローカル関数 f を定義</span>
-        <em><span class="reserved">int</span> f(<span class="reserved">int</span> n) =&gt; n &gt;= 1 ? n * f(n - 1) : 1;</em>
+        // Main 関数の中で、ローカル関数 f を定義
+        int f(int n) => n >= 1 ? n * f(n - 1) : 1;
 
-        <span class="type">Console</span>.WriteLine(f(10));
+        Console.WriteLine(f(10));
     }
 }
-</code></pre>
+```
 
 詳細は「[ローカル関数と匿名関数](../functional/fun_localfunctions.md)」で説明しています。
 
@@ -993,26 +994,26 @@ C# 7では、関数の中で別の関数を定義して使うことができま�
 
 以下のような書き方をします。
 
-<pre class="source" title="匿名関数の例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Linq;
+```csharp
+using System;
+using System.Linq;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> input = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-        <span class="reserved">var</span> output = input
-            .Where(<em>n =&gt; n &gt; 3</em>)
-            .Select(<em>n =&gt; n * n</em>);
+        var input = new[] { 1, 2, 3, 4, 5 };
+        var output = input
+            .Where(n => n > 3)
+            .Select(n => n * n);
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> output)
+        foreach (var x in output)
         {
-            <span class="type">Console</span>.WriteLine(x);
+            Console.WriteLine(x);
         }
     }
 }
-</code></pre>
+```
 
 強調表示している部分が匿名関数です。
 通常の関数もローカル関数も名前を持っていますが、匿名関数は、その名前通り、無名です。
@@ -1029,114 +1030,114 @@ C# 7では、関数の中で別の関数を定義して使うことができま�
 
 int 型の配列に格納されている値の最大値、最小値および平均値を求める関数をそれぞれ作成せよ。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 配列中の値の最大値を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;returns&gt;最大値&lt;/returns&gt;</span>
-<span class="reserved">static int</span> Max(<span class="reserved">int</span>[] a)
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <returns>最大値</returns>
+static int Max(int[] a)
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 配列中の値の最小値を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;returns&gt;最小値&lt;/returns&gt;</span>
-<span class="reserved">static int</span> Min(<span class="reserved">int</span>[] a)
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <returns>最小値</returns>
+static int Min(int[] a)
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 配列中の値の平均値を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;returns&gt;平均値&lt;/returns&gt;</span>
-<span class="reserved">static double</span> Average(<span class="reserved">int</span>[] a)
-</code></pre>
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <returns>平均値</returns>
+static double Average(int[] a)
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// 配列長の入力</span>
-    Console.Write(<span class="literal">"配列の長さ: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    // 配列長の入力
+    Console.Write("配列の長さ: ");
+    int n = int.Parse(Console.ReadLine());
 
-    <span class="comment">// 配列の値の入力</span>
-    <span class="reserved">int</span>[] a = <span class="reserved">new int</span>[n];
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; ++i)
+    // 配列の値の入力
+    int[] a = new int[n];
+    for (int i = 0; i < n; ++i)
     {
-      Console.Write(<span class="literal">"{0}: "</span>, i);
-      a[i] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+      Console.Write("{0}: ", i);
+      a[i] = int.Parse(Console.ReadLine());
     }
 
     Console.Write(
-<span class="literal">@"
+@"
 最大値: {0}
 最小値: {1}
 平均値: {2}
-"</span>
+"
     , Max(a), Min(a), Average(a));
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最大値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;最大値&lt;/returns&gt;</span>
-  <span class="reserved">static int</span> Max(<span class="reserved">int</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>最大値</returns>
+  static int Max(int[] a)
   {
-    <span class="reserved">int</span> max = <span class="reserved">int</span>.MinValue;
+    int max = int.MinValue;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">if</span> (max &lt; a[i]) max = a[i];
+      if (max < a[i]) max = a[i];
     }
 
-    <span class="reserved">return</span> max;
+    return max;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最小値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;最小値&lt;/returns&gt;</span>
-  <span class="reserved">static int</span> Min(<span class="reserved">int</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>最小値</returns>
+  static int Min(int[] a)
   {
-    <span class="reserved">int</span> min = <span class="reserved">int</span>.MaxValue;
+    int min = int.MaxValue;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">if</span> (min &gt; a[i]) min = a[i];
+      if (min > a[i]) min = a[i];
     }
 
-    <span class="reserved">return</span> min;
+    return min;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最大値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;平均値&lt;/returns&gt;</span>
-  <span class="reserved">static double</span> Average(<span class="reserved">int</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>平均値</returns>
+  static double Average(int[] a)
   {
-    <span class="reserved">double</span> average = 0;
+    double average = 0;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    for (int i = 0; i < a.Length; ++i)
     {
       average += a[i];
     }
 
-    <span class="reserved">return</span> average / a.Length;
+    return average / a.Length;
   }
 }
-</code></pre>
+```
 
 
 
@@ -1145,66 +1146,66 @@ int 型の配列に格納されている値の最大値、最小値および平�
 
 double 型の値 x の整数冪を求める関数 Power を作成せよ。
 
-<pre class="source" title="Power の仕様" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// x の整数冪を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="x"&gt;仮数 x&lt;/param&gt;
-/// &lt;param name="n"&gt;指数 n&lt;/param&gt;
-/// &lt;returns&gt;x の n 乗&lt;/returns&gt;</span>
-<span class="reserved">static double</span> Power(
-  <span class="reserved">double</span> x,
-  <span class="reserved">int</span> n)
-</code></pre>
+/// </summary>
+/// <param name="x">仮数 x</param>
+/// <param name="n">指数 n</param>
+/// <returns>x の n 乗</returns>
+static double Power(
+  double x,
+  int n)
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Power の実装とテスト" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">const double</span> x = 3;
-    Console.Write(<span class="literal">"{0}\n"</span>, Power(x, 4));
-    Console.Write(<span class="literal">"{0}\n"</span>, Power(x, -1));
-    Console.Write(<span class="literal">"{0}\n"</span>, Power(x, -2));
-    Console.Write(<span class="literal">"{0}\n"</span>, Power(x, 0));
+    const double x = 3;
+    Console.Write("{0}\n", Power(x, 4));
+    Console.Write("{0}\n", Power(x, -1));
+    Console.Write("{0}\n", Power(x, -2));
+    Console.Write("{0}\n", Power(x, 0));
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x の整数冪を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;仮数 x&lt;/param&gt;
-  /// &lt;param name="n"&gt;指数 n&lt;/param&gt;
-  /// &lt;returns&gt;x の n 乗&lt;/returns&gt;</span>
-  <span class="reserved">static double</span> Power(
-    <span class="reserved">double</span> x,
-    <span class="reserved">int</span> n)
+  /// </summary>
+  /// <param name="x">仮数 x</param>
+  /// <param name="n">指数 n</param>
+  /// <returns>x の n 乗</returns>
+  static double Power(
+    double x,
+    int n)
   {
-    <span class="reserved">if</span> (n == 0)
-      <span class="reserved">return</span> 1;
+    if (n == 0)
+      return 1;
 
-    <span class="reserved">if</span> (n &lt; 0)
+    if (n < 0)
     {
       x = 1.0 / x;
       n = -n;
     }
 
-    <span class="reserved">double</span> y = x;
-    <span class="reserved">while</span> (--n &gt; 0)
+    double y = x;
+    while (--n > 0)
     {
       y *= x;
     }
 
-    <span class="reserved">return</span> y;
+    return y;
   }
 }
-</code></pre>
+```
 
 
 
@@ -1219,50 +1220,50 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 #### 解答例 1
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[]    ai = <span class="reserved">new int</span>[]    { 1, 3, 9, 2, 5, 6, 4 };
-    <span class="reserved">double</span>[] ad = <span class="reserved">new double</span>[] { 1, 3, 9, 2, 5, 6, 4 };
+    int[]    ai = new int[]    { 1, 3, 9, 2, 5, 6, 4 };
+    double[] ad = new double[] { 1, 3, 9, 2, 5, 6, 4 };
 
-    Console.Write(<span class="literal">"{0}, {1}\n"</span>, Max(ai), Max(ad));
+    Console.Write("{0}, {1}\n", Max(ai), Max(ad));
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最大値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;最大値&lt;/returns&gt;</span>
-  <span class="reserved">static int</span> Max(<span class="reserved">int</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>最大値</returns>
+  static int Max(int[] a)
   {
-    <span class="reserved">int</span> max = <span class="reserved">int</span>.MinValue;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    int max = int.MinValue;
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">if</span> (max &lt; a[i]) max = a[i];
+      if (max < a[i]) max = a[i];
     }
-    <span class="reserved">return</span> max;
+    return max;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最大値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;最大値&lt;/returns&gt;</span>
-  <span class="reserved">static double</span> Max(<span class="reserved">double</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>最大値</returns>
+  static double Max(double[] a)
   {
-    <span class="reserved">double</span> max = <span class="reserved">int</span>.MinValue;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    double max = int.MinValue;
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">if</span> (max &lt; a[i]) max = a[i];
+      if (max < a[i]) max = a[i];
     }
-    <span class="reserved">return</span> max;
+    return max;
   }
 }
-</code></pre>
+```
 
 
 見ての通り、型が変わっただけで、処理自体は全く同じものになっています。

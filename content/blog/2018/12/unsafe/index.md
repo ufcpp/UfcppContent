@@ -40,40 +40,40 @@ C# の文法を拡張するよりは、こういう IL 実装なクラスを提�
 
 とはいえ、この`Unsafe`クラスをフル活用すると、こんなコードになります。
 
-<pre class="source" title="Unsafe クラス">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> UnsafeClass(<span class="reserved">int</span>[] array)
+    static int UnsafeClass(int[] array)
     {
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">ref</span> <span class="reserved">var</span> begin = <span class="reserved">ref</span> array[0];
-        <span class="reserved">ref</span> <span class="reserved">var</span> p = <span class="reserved">ref</span> <span class="type">Unsafe</span>.As&lt;<span class="reserved">int</span>, <span class="reserved">byte</span>&gt;(<span class="reserved">ref</span> begin);
-        <span class="reserved">var</span> length = array.Length * 4;
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; length; i++, p = <span class="reserved">ref</span> <span class="type">Unsafe</span>.Add(<span class="reserved">ref</span> p, 1))
+        var sum = 0;
+        ref var begin = ref array[0];
+        ref var p = ref Unsafe.As<int, byte>(ref begin);
+        var length = array.Length * 4;
+        for (int i = 0; i < length; i++, p = ref Unsafe.Add(ref p, 1))
             sum += p;
-        <span class="reserved">return</span> sum;
+        return sum;
     }
 }
-</code></pre>
+```
 
 ちなみに、普通に C# で unsafe コードを使って同じものを書くと以下のようになります。
 
-<pre class="source" title="unsafe コードで同じもの">
-<code><span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">int</span> UnsafeContext(<span class="reserved">int</span>[] array)
+```csharp
+unsafe static int UnsafeContext(int[] array)
 {
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">fixed</span> (<span class="reserved">int</span>* begin = &amp;array[0])
+    var sum = 0;
+    fixed (int* begin = &array[0])
     {
-        <span class="reserved">var</span> p = (<span class="reserved">byte</span>*)begin;
-        <span class="reserved">var</span> length = array.Length * 4;
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; length; i++, p++)
+        var p = (byte*)begin;
+        var length = array.Length * 4;
+        for (int i = 0; i < length; i++, p++)
             sum += *p;
     }
-    <span class="reserved">return</span> sum;
+    return sum;
 }
-</code></pre>
+```
 
 見た目に関しては、ポインターを使った後者の方がまだマシなんじゃないでしょうか。
 
@@ -90,24 +90,24 @@ C# の文法を拡張するよりは、こういう IL 実装なクラスを提�
 ですが、
 1つ決定的に違うのが、`ref`なら[ガベコレ](../../../../study/csharp/resource/rm_gc.md#garbage-collection)が追えるという点があります。
 
-<pre class="source" title="ref とガベコレ">
-<code><span class="comment">// ref 戻り値ならこんなコードを書いても平気。</span>
-<span class="comment">// 戻り値が「参照」されている限り、配列自体の参照がガベコレにトラッキングされる。</span>
-<span class="reserved">ref</span> <span class="reserved">int</span> X()
+```csharp
+// ref 戻り値ならこんなコードを書いても平気。
+// 戻り値が「参照」されている限り、配列自体の参照がガベコレにトラッキングされる。
+ref int X()
 {
-    <span class="reserved">var</span> array = <span class="reserved">new</span> <span class="reserved">int</span>[1];
-    <span class="reserved">return</span> <span class="reserved">ref</span> array[0];
+    var array = new int[1];
+    return ref array[0];
 }
  
-<span class="comment">// 一方、これはダメ。</span>
-<span class="comment">// ガベコレが走ったら、もはやポインターが有効な場所を指さなくなる。</span>
-<span class="reserved">unsafe</span> <span class="reserved">int</span>* Y()
+// 一方、これはダメ。
+// ガベコレが走ったら、もはやポインターが有効な場所を指さなくなる。
+unsafe int* Y()
 {
-    <span class="reserved">var</span> array = <span class="reserved">new</span> <span class="reserved">int</span>[1];
-    <span class="reserved">fixed</span> (<span class="reserved">int</span>* p = array)
-        <span class="reserved">return</span> p;
+    var array = new int[1];
+    fixed (int* p = array)
+        return p;
 }
-</code></pre>
+```
 
 ということで、`ref`を使って unsafe なことをしたいときに使うのが
 `Unsafe` クラスです。
@@ -117,46 +117,45 @@ C# の文法を拡張するよりは、こういう IL 実装なクラスを提�
 
 `Span<T>`は、以下のように、配列でもポインターでも統一的に扱える型です。
 
-<pre class="source" title="Span&lt;T&gt;">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System;
+using System.Runtime.InteropServices;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 配列</span>
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; array = <span class="reserved">new</span> <span class="reserved">int</span>[8].AsSpan().Slice(2, 3);
+        // 配列
+        Span<int> array = new int[8].AsSpan().Slice(2, 3);
  
-        <span class="comment">// 文字列</span>
-        <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; str = <span class="string">&quot;abcdefgh&quot;</span>.AsSpan().Slice(2, 3);
+        // 文字列
+        ReadOnlySpan<char> str = "abcdefgh".AsSpan().Slice(2, 3);
  
-        <span class="comment">// スタック領域</span>
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; stack = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[8];
+        // スタック領域
+        Span<int> stack = stackalloc int[8];
  
-        <span class="reserved">unsafe</span>
+        unsafe
         {
-            <span class="comment">// ガベコレ管理外メモリ</span>
-            <span class="reserved">var</span> p = <span class="type">Marshal</span>.AllocHGlobal(<span class="reserved">sizeof</span>(<span class="reserved">int</span>) * 8);
-            <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; unmanaged = <span class="reserved">new</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;((<span class="reserved">int</span>*)p, 8);
+            // ガベコレ管理外メモリ
+            var p = Marshal.AllocHGlobal(sizeof(int) * 8);
+            Span<int> unmanaged = new Span<int>((int*)p, 8);
  
-            <span class="comment">// 他の言語との相互運用</span>
-            <span class="reserved">var</span> q = malloc((<span class="type">IntPtr</span>)(<span class="reserved">sizeof</span>(<span class="reserved">int</span>) * 8));
-            <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; interop = <span class="reserved">new</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;((<span class="reserved">int</span>*)q, 8);
+            // 他の言語との相互運用
+            var q = malloc((IntPtr)(sizeof(int) * 8));
+            Span<int> interop = new Span<int>((int*)q, 8);
  
-            <span class="type">Marshal</span>.FreeHGlobal(p);
+            Marshal.FreeHGlobal(p);
             free(q);
         }
     }
  
-    [<span class="type">DllImport</span>(<span class="string">&quot;msvcrt.dll&quot;</span>, CallingConvention = <span class="type">CallingConvention</span>.Cdecl)]
-    <span class="reserved">static</span> <span class="reserved">extern</span> <span class="type">IntPtr</span> malloc(<span class="type">IntPtr</span> size);
+    [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+    static extern IntPtr malloc(IntPtr size);
  
-    [<span class="type">DllImport</span>(<span class="string">&quot;msvcrt.dll&quot;</span>, CallingConvention = <span class="type">CallingConvention</span>.Cdecl)]
-    <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> free(<span class="type">IntPtr</span> ptr);
+    [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+    static extern void free(IntPtr ptr);
 }
-
-</code></pre>
+```
 
 こういう型を作ろうと思うと、通常なら unsafe コードだらけ・ポインターだらけになるんですが、
 `Span<T>`構造体はその代わりに [`Unsafe` クラスだらけ・`ref`だらけ](https://source.dot.net/#System.Private.CoreLib/shared/System/Span.Fast.cs,d2517139cac388e8)です。
@@ -166,29 +165,29 @@ C# の文法を拡張するよりは、こういう IL 実装なクラスを提�
 C# の unsafe コードの仕様では、ジェネリックな型はポインター化できません。
 とはいえ、この制限は実はちょっと厳しすぎです。
 
-<pre class="source" title="ジェネリック構造体とポインター">
-<code><span class="comment">// 値型しか含まない構造体はポインター化 (A*) できる。</span>
-<span class="reserved">struct</span> <span class="type">A</span>
+```csharp
+// 値型しか含まない構造体はポインター化 (A*) できる。
+struct A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
+    public int X;
 }
  
-<span class="comment">// 1つでも参照型を含んでいる場合、ポインター化されるとガベコレが追えなくなって困る。</span>
-<span class="comment">// なので、ポインター化できない仕様もやむなし。</span>
-<span class="reserved">struct</span> <span class="type">B</span>
+// 1つでも参照型を含んでいる場合、ポインター化されるとガベコレが追えなくなって困る。
+// なので、ポインター化できない仕様もやむなし。
+struct B
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> X;
+    public string X;
 }
  
-<span class="comment">// ならこのジェネリックな場合はどうか。</span>
-<span class="comment">// T に値型を渡したとき、値型しか含まない構造体になり得る。</span>
-<span class="comment">// T 次第でポインター化できるかどうか変えてもよかったのではないか。</span>
-<span class="comment">// (現状は無条件にポインター化 (C&lt;int&gt;* とかも) 不可)</span>
-<span class="reserved">struct</span> <span class="type">C</span>&lt;<span class="type">T</span>&gt;
+// ならこのジェネリックな場合はどうか。
+// T に値型を渡したとき、値型しか含まない構造体になり得る。
+// T 次第でポインター化できるかどうか変えてもよかったのではないか。
+// (現状は無条件にポインター化 (C<int>* とかも) 不可)
+struct C<T>
 {
-    <span class="type">T</span> X;
+    T X;
 }
-</code></pre>
+```
 
 C# 7.3 で [unmanaged 制約](../../../../study/csharp/interop/sp_unsafe.md#unmanaged-types)が入って、
 多少は制限が緩和したんですが、いまだこの例の `C<T>` のような型はポインター化できません。
@@ -196,26 +195,26 @@ C# 7.3 で [unmanaged 制約](../../../../study/csharp/interop/sp_unsafe.md#unma
 
 が、`Unsafe`クラスを使えば(今でも)そんな制限をガン無視できます。
 
-<pre class="source" title="ジェネリック構造体からポインターを取得">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
  
-<span class="reserved">struct</span> <span class="type">C</span>&lt;<span class="type">T</span>&gt;
+struct C<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> X;
+    public T X;
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    unsafe static void Main()
     {
-        <span class="reserved">var</span> c = <span class="reserved">new</span> <span class="type">C</span>&lt;<span class="reserved">int</span>&gt;();
-        <span class="reserved">int</span>* p = (<span class="reserved">int</span>*)<span class="type">Unsafe</span>.AsPointer(<span class="reserved">ref</span> c);
+        var c = new C<int>();
+        int* p = (int*)Unsafe.AsPointer(ref c);
         *p = 1;
-        <span class="type">Console</span>.WriteLine(c.X); <span class="comment">// 1</span>
+        Console.WriteLine(c.X); // 1
     }
 }
-</code></pre>
+```
 
 ## Unsafe クラスを safe なところから呼べる
 

@@ -21,23 +21,23 @@ aliases: []
 `Type`型に`IsPrimitive`というプロパティがあって、こいつが`true`を返すものがプリミティブ型なんですが。
 以下のコードを見ての通り、どういう基準なのかがパッと見でわからず。
 
-<pre class="source" title="IsPrimitiveの結果">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        WriteLine(<span class="reserved">typeof</span>(<span class="reserved">int</span>).IsPrimitive);     <span class="comment">// true</span>
-        WriteLine(<span class="reserved">typeof</span>(<span class="reserved">bool</span>).IsPrimitive);    <span class="comment">// true</span>
-        WriteLine(<span class="reserved">typeof</span>(<span class="reserved">double</span>).IsPrimitive);  <span class="comment">// true</span>
-        WriteLine(<span class="reserved">typeof</span>(<span class="reserved">object</span>).IsPrimitive);  <span class="comment">// false!</span>
-        WriteLine(<span class="reserved">typeof</span>(<span class="reserved">string</span>).IsPrimitive);  <span class="comment">// false!</span>
-        WriteLine(<span class="reserved">typeof</span>(<span class="reserved">decimal</span>).IsPrimitive); <span class="comment">// false!</span>
-        WriteLine(<span class="reserved">typeof</span>(System.<span class="type">IntPtr</span>).IsPrimitive); <span class="comment">// true!</span>
+        WriteLine(typeof(int).IsPrimitive);     // true
+        WriteLine(typeof(bool).IsPrimitive);    // true
+        WriteLine(typeof(double).IsPrimitive);  // true
+        WriteLine(typeof(object).IsPrimitive);  // false!
+        WriteLine(typeof(string).IsPrimitive);  // false!
+        WriteLine(typeof(decimal).IsPrimitive); // false!
+        WriteLine(typeof(System.IntPtr).IsPrimitive); // true!
     }
 }
-</code></pre>
+```
 
 ## primitive
 
@@ -91,41 +91,41 @@ C#というか.NETでよくわからなくなる理由は、
 せっかくなので、IL 的な扱いも見てみますか。
 以下のようなコードをコンパイルしてみます。
 
-<pre class="source" title="2つの引数の + 演算子呼び出しするだけの例">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
         M(1, 2);
-        M(<span class="string">"a"</span>, <span class="string">"b"</span>);
+        M("a", "b");
         M(1.23m, 2.71m);
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span> M(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x + y;
-    <span class="reserved">static</span> <span class="reserved">decimal</span> M(<span class="reserved">decimal</span> x, <span class="reserved">decimal</span> y) =&gt; x + y;
-    <span class="reserved">static</span> <span class="reserved">string</span> M(<span class="reserved">string</span> x, <span class="reserved">string</span> y) =&gt; x + y;
+    static int M(int x, int y) => x + y;
+    static decimal M(decimal x, decimal y) => x + y;
+    static string M(string x, string y) => x + y;
 }
-</code></pre>
+```
 
 ### int
 
 まずは`int`の場合。
 メソッド`M(int, int)`の中身が
 
-<pre class="source" title="int の +">
-<code>  IL_0000:  ldarg.0
+```cil
+  IL_0000:  ldarg.0
   IL_0001:  ldarg.1
   IL_0002:  add
-</code></pre>
+```
 
 `M(int, int)`を呼び出す側が
 
-<pre class="source" title="M(int, int) の呼び出し">
-<code>  IL_0000:  ldc.i4.1
+```cil
+  IL_0000:  ldc.i4.1
   IL_0001:  ldc.i4.2
-  IL_0002:  call       <span class="reserved">int32</span> Program::M(<span class="reserved">int32</span>,
-                                        <span class="reserved">int32</span>)
-</code></pre>
+  IL_0002:  call       int32 Program::M(int32,
+                                        int32)
+```
 
 という感じです。
 足し算用に`add`という専用命令があったり、
@@ -136,21 +136,21 @@ C#というか.NETでよくわからなくなる理由は、
 続いて`string`
 メソッド`M(string, string)`の中身が
 
-<pre class="source" title="string の +">
-<code>  IL_0000:  ldarg.0
+```cil
+  IL_0000:  ldarg.0
   IL_0001:  ldarg.1
-  IL_0002:  call       <span class="reserved">string</span> [mscorlib]System.String::Concat(<span class="reserved">string</span>,
-                                                              <span class="reserved">string</span>)
-</code></pre>
+  IL_0002:  call       string [mscorlib]System.String::Concat(string,
+                                                              string)
+```
 
 `M(string, string)`を呼び出す側が
 
-<pre class="source" title="M(string, string) の呼び出し">
-<code>  IL_0008:  ldstr      <span class="string">"a"</span>
-  IL_000d:  ldstr      <span class="string">"b"</span>
-  IL_0012:  call       <span class="reserved">string</span> Program::M(<span class="reserved">string</span>,
-                                         <span class="reserved">string</span>)
-</code></pre>
+```cil
+  IL_0008:  ldstr      "a"
+  IL_000d:  ldstr      "b"
+  IL_0012:  call       string Program::M(string,
+                                         string)
+```
 
 です。
 連結のためには特に命令を持っているわけではなく、`+`演算子は`Concat`メソッド呼び出しに置き換わります。
@@ -165,39 +165,39 @@ IL的にはプリミティブ型ではない、という割には`ldstr`命令�
 最後に`decimal`。
 メソッド`M(decimal, decimal)`の中身が
 
-<pre class="source" title="decimal の +">
-<code>  IL_0000:  ldarg.0
+```cil
+  IL_0000:  ldarg.0
   IL_0001:  ldarg.1
-  IL_0002:  call       <span class="reserved">valuetype</span> [mscorlib]System.Decimal [mscorlib]System.Decimal::op_Addition(<span class="reserved">valuetype</span> [mscorlib]System.Decimal,
-                                                                                                <span class="reserved">valuetype</span> [mscorlib]System.Decimal)
-</code></pre>
+  IL_0002:  call       valuetype [mscorlib]System.Decimal [mscorlib]System.Decimal::op_Addition(valuetype [mscorlib]System.Decimal,
+                                                                                                valuetype [mscorlib]System.Decimal)
+```
 
 `M(decimal, decimal)`を呼び出す側が
 
-<pre class="source" title="M(decimal, decimal)の呼び出し">
-<code>  IL_0018:  ldc.i4.s   123
+```cil
+  IL_0018:  ldc.i4.s   123
   IL_001a:  ldc.i4.0
   IL_001b:  ldc.i4.0
   IL_001c:  ldc.i4.0
   IL_001d:  ldc.i4.2
-  IL_001e:  newobj     <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Decimal::<span class="reserved">.ctor</span>(<span class="reserved">int32</span>,
-                                                                     <span class="reserved">int32</span>,
-                                                                     <span class="reserved">int32</span>,
-                                                                     <span class="reserved">bool</span>,
+  IL_001e:  newobj     instance void [mscorlib]System.Decimal::.ctor(int32,
+                                                                     int32,
+                                                                     int32,
+                                                                     bool,
                                                                      uint8)
   IL_0023:  ldc.i4     0x10f
   IL_0028:  ldc.i4.0
   IL_0029:  ldc.i4.0
   IL_002a:  ldc.i4.0
   IL_002b:  ldc.i4.2
-  IL_002c:  newobj     <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Decimal::<span class="reserved">.ctor</span>(<span class="reserved">int32</span>,
-                                                                     <span class="reserved">int32</span>,
-                                                                     <span class="reserved">int32</span>,
-                                                                     <span class="reserved">bool</span>,
+  IL_002c:  newobj     instance void [mscorlib]System.Decimal::.ctor(int32,
+                                                                     int32,
+                                                                     int32,
+                                                                     bool,
                                                                      uint8)
-  IL_0031:  call       <span class="reserved">valuetype</span> [mscorlib]System.Decimal Program::M(<span class="reserved">valuetype</span> [mscorlib]System.Decimal,
-                                                                     <span class="reserved">valuetype</span> [mscorlib]System.Decimal)
-</code></pre>
+  IL_0031:  call       valuetype [mscorlib]System.Decimal Program::M(valuetype [mscorlib]System.Decimal,
+                                                                     valuetype [mscorlib]System.Decimal)
+```
 
 です。
 どこにも専用命令がないどころか、リテラルの`1.23m`や`2.71m`すらも、

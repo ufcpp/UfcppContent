@@ -300,33 +300,33 @@ DSL 間の連携に関しては、2つの方法が考えられます。
 
 
 
-<pre class="source" title="データ定義用の DSL の例" lang="">
-<code><span class="reserved">module</span> TypeDefinition.Models
+```text
+module TypeDefinition.Models
 {
-    <span class="comment">// 特性データ</span>
-    <span class="reserved">type</span> Characteristics
-        <span class="reserved">requres</span> Norm &gt;= 1
+    // 特性データ
+    type Characteristics
+        requres Norm >= 1
     {
-        <span class="comment">// 特性 X</span>
-        X : <span class="reserved">double</span>
-        <span class="reserved">requres</span> 0 &lt;= X &amp;&amp; X &lt;= 1;
+        // 特性 X
+        X : double
+        requres 0 <= X && X <= 1;
 
-        <span class="comment">// 特性 Y</span>
-        Y : <span class="reserved">double</span>
-        <span class="reserved">requres</span> 0 &lt;= Y &amp;&amp; Y &lt;= 1;
+        // 特性 Y
+        Y : double
+        requres 0 <= Y && Y <= 1;
 
-        <span class="comment">// 特性 Z</span>
-        Z : <span class="reserved">double</span>
-        <span class="reserved">requres</span> 0 &lt;= Z &amp;&amp; Z &lt;= 1;
+        // 特性 Z
+        Z : double
+        requres 0 <= Z && Z <= 1;
 
-        <span class="comment">// 一次ノルム</span>
+        // 一次ノルム
         Norm = X + Y + Z;
 
-        <span class="comment">// 変更の適用操作</span>
-        <span class="reserved">command</span> Submit <span class="reserved">excuted on</span> <span class="reserved">this</span>.Valid;
+        // 変更の適用操作
+        command Submit excuted on this.Valid;
     }
 }
-</code></pre>
+```
 
 
 ちょっと恣意的な型なのでわかりにくいですが、以下のようなもの：

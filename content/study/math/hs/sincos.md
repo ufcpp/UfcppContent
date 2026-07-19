@@ -27,7 +27,7 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 　　　　／|
 　１　／　|
 　　／　　| sin
@@ -90,4 +90,4 @@ log α ＝ log|α| ＋ i argα
    ＝ |α| exp (i argα)
    ＝ exp log|α| × exp (i argα)
    ＝ exp(log|α| ＋ i argα)
-</pre>
+```

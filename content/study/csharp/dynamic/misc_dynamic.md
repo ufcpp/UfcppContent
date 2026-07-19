@@ -50,21 +50,21 @@ aliases:
 
 以下のような操作をベースに。
 
-<pre class="source" title="元となる操作" lang="">
-<code><span class="reserved">public class</span> <span class="type">Static</span>
+```csharp
+public class Static
 {
-    <span class="reserved">public static int</span> Sum(<span class="type">Point</span> p)
+    public static int Sum(Point p)
     {
-        <span class="reserved">return</span> p.X + p.Y;
+        return p.X + p.Y;
     }
 }
 
-<span class="reserved">public class</span> <span class="type">Point</span>
+public class Point
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 }
-</code></pre>
+```
 
 
 これを動的実行できるように変更していきます。
@@ -75,20 +75,20 @@ aliases:
 
 リフレクションを使って、毎度 type.GetProperty するやり方。
 
-<pre class="source" title="リフレクション" lang="">
-<code><span class="reserved">public class</span> <span class="type">Refrection</span>
+```csharp
+public class Refrection
 {
-    <span class="reserved">public static int</span> Sum(<span class="reserved">object</span> p)
+    public static int Sum(object p)
     {
-        <span class="reserved">var</span> t = p.GetType();
-        <span class="reserved">var</span> propX = t.GetProperty(<span class="literal">"X"</span>);
-        <span class="reserved">var</span> propY = t.GetProperty(<span class="literal">"Y"</span>);
-        <span class="reserved">var</span> x = propX.GetValue(p, <span class="reserved">null</span>);
-        <span class="reserved">var</span> y = propY.GetValue(p, <span class="reserved">null</span>);
-        <span class="reserved">return</span> (<span class="reserved">int</span>)x + (<span class="reserved">int</span>)y;
+        var t = p.GetType();
+        var propX = t.GetProperty("X");
+        var propY = t.GetProperty("Y");
+        var x = propX.GetValue(p, null);
+        var y = propY.GetValue(p, null);
+        return (int)x + (int)y;
     }
 }
-</code></pre>
+```
 
 
 
@@ -121,61 +121,61 @@ aliases:
 さすがに、動的コード生成自体はそれなりに重たい処理なので、
 キャッシュしなければあまりいいパフォーマンスはでません。
 
-<pre class="source" title="IL Generator" lang="">
-<code><span class="reserved">public class</span> <span class="type">GenerateIL</span>
+```csharp
+public class GenerateIL
 {
-    <span class="reserved">private static</span> <span class="type">Dictionary</span>&lt;<span class="type">Type</span>, Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt;&gt; cache = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="type">Type</span>,Func&lt;<span class="reserved">object</span>,<span class="reserved">int</span>&gt;&gt;();
+    private static Dictionary<Type, Func<object, int>> cache = new Dictionary<Type,Func<object,int>>();
 
-    <span class="reserved">public static int</span> Sum(<span class="reserved">object</span> p)
+    public static int Sum(object p)
     {
-        <span class="reserved">var</span> t = p.GetType();
-        Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt; d;
+        var t = p.GetType();
+        Func<object, int> d;
 
-        <span class="reserved">if</span> (!cache.TryGetValue(t, <span class="reserved">out</span> d))
+        if (!cache.TryGetValue(t, out d))
         {
             d = CreateMethod(t);
             cache[t] = d;
         }
 
-        <span class="reserved">return</span> d(p);
+        return d(p);
     }
 
-    <span class="reserved">private static</span> Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt; CreateMethod(<span class="type">Type</span> t)
+    private static Func<object, int> CreateMethod(Type t)
     {
-        <span class="type">DynamicMethod</span> dm = <span class="reserved">new</span> <span class="type">DynamicMethod</span>(<span class="literal">"Sum"</span>, <span class="reserved">typeof</span>(<span class="reserved">int</span>), <span class="reserved">new</span>[] { <span class="reserved">typeof</span>(<span class="reserved">object</span>) });
-        <span class="type">ILGenerator</span> il = dm.GetILGenerator();
+        DynamicMethod dm = new DynamicMethod("Sum", typeof(int), new[] { typeof(object) });
+        ILGenerator il = dm.GetILGenerator();
 
-        <span class="type">LocalBuilder</span> x = il.DeclareLocal(t);
+        LocalBuilder x = il.DeclareLocal(t);
 
-        <span class="comment">// var x = (Point)p;</span>
-        il.Emit(<span class="type">OpCodes</span>.Ldarg_0);
-        il.Emit(<span class="type">OpCodes</span>.Castclass, t);
-        il.Emit(<span class="type">OpCodes</span>.Stloc, x);
+        // var x = (Point)p;
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Castclass, t);
+        il.Emit(OpCodes.Stloc, x);
 
-        <span class="comment">// p.X</span>
-        il.Emit(<span class="type">OpCodes</span>.Ldloc, x);
-        il.EmitCall(<span class="type">OpCodes</span>.Callvirt, t.GetProperty(<span class="literal">"X"</span>).GetGetMethod(), <span class="reserved">null</span>);
+        // p.X
+        il.Emit(OpCodes.Ldloc, x);
+        il.EmitCall(OpCodes.Callvirt, t.GetProperty("X").GetGetMethod(), null);
 
-        <span class="comment">// p.Y</span>
-        il.Emit(<span class="type">OpCodes</span>.Ldloc, x);
-        il.EmitCall(<span class="type">OpCodes</span>.Callvirt, t.GetProperty(<span class="literal">"Y"</span>).GetGetMethod(), <span class="reserved">null</span>);
+        // p.Y
+        il.Emit(OpCodes.Ldloc, x);
+        il.EmitCall(OpCodes.Callvirt, t.GetProperty("Y").GetGetMethod(), null);
 
-        <span class="comment">// +
+        // +
         // ちなみに、今回の場合は「p.X は必ず int」という前提なのでコード生成は楽だけど、
         // もしこれがユーザー定義型で、 + もユーザー定義の operator+ だったら、OpCodes.Add じゃなくて Call に変えなきゃいけない。
-        // かなり面倒。</span>
-        il.Emit(<span class="type">OpCodes</span>.Add);
+        // かなり面倒。
+        il.Emit(OpCodes.Add);
 
-        il.Emit(<span class="type">OpCodes</span>.Ret);
+        il.Emit(OpCodes.Ret);
 
-        <span class="reserved">var</span> f = <span class="reserved">typeof</span>(Func&lt;,&gt;);
-        <span class="reserved">var</span> gf = f.MakeGenericType(<span class="reserved">typeof</span>(<span class="reserved">object</span>), <span class="reserved">typeof</span>(<span class="reserved">int</span>));
-        <span class="reserved">var</span> d = (Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt;)dm.CreateDelegate(gf);
+        var f = typeof(Func<,>);
+        var gf = f.MakeGenericType(typeof(object), typeof(int));
+        var d = (Func<object, int>)dm.CreateDelegate(gf);
 
-        <span class="reserved">return</span> d;
+        return d;
     }
 }
-</code></pre>
+```
 
 
 
@@ -215,56 +215,56 @@ aliases:
 IL レベルではなく、構文木レベルでコードを生成できるので、IL Generator と比べればだいぶマシな動的コード生成ができます。
 ただ、キャッシュの仕組みが必要なのは IL Generator と同様です。
 
-<pre class="source" title="式木" lang="">
-<code><span class="reserved">public class</span> <span class="type">ExpressionTree</span>
+```csharp
+public class ExpressionTree
 {
-    <span class="reserved">private static</span> <span class="type">Dictionary</span>&lt;<span class="type">Type</span>, Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt;&gt; cache = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="type">Type</span>, Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt;&gt;();
+    private static Dictionary<Type, Func<object, int>> cache = new Dictionary<Type, Func<object, int>>();
 
-    <span class="reserved">public static int</span> Sum(<span class="reserved">object</span> p)
+    public static int Sum(object p)
     {
-        <span class="reserved">var</span> t = p.GetType();
-        Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt; d;
+        var t = p.GetType();
+        Func<object, int> d;
 
-        <span class="reserved">if</span> (!cache.TryGetValue(t, <span class="reserved">out</span> d))
+        if (!cache.TryGetValue(t, out d))
         {
             d = CreateMethod(t);
             cache[t] = d;
         }
 
-        <span class="reserved">return</span> d(p);
+        return d(p);
     }
 
-    <span class="reserved">private static</span> Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt; CreateMethod(<span class="type">Type</span> t)
+    private static Func<object, int> CreateMethod(Type t)
     {
-        <span class="reserved">var</span> x = <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">object</span>));
-        <span class="reserved">var</span> p = <span class="type">Expression</span>.Parameter(t);
+        var x = Expression.Parameter(typeof(object));
+        var p = Expression.Parameter(t);
 
-        <span class="comment">/*
+        /*
           * {
           *     T p;
           *     p = (T)x;
           *     return p.X + p.Y;
           * }
-          */</span>
-        <span class="reserved">var</span> exp = <span class="type">Expression</span>.Lambda(
-            <span class="comment">// { T p;</span>
-            <span class="type">Expression</span>.Block(
-                <span class="reserved">new</span>[] { p },
-                <span class="comment">// p = (T)x;</span>
-                <span class="type">Expression</span>.Assign(p, <span class="type">Expression</span>.Convert(x, t)),
-                <span class="comment">// p.X + p.Y
-                // IL 生成と違って、ユーザー定義の operator+ でも正しくコード生成してくれる。</span>
-                <span class="type">Expression</span>.Add(
-                    <span class="type">Expression</span>.Property(p, <span class="literal">"X"</span>),
-                    <span class="type">Expression</span>.Property(p, <span class="literal">"Y"</span>))),
+          */
+        var exp = Expression.Lambda(
+            // { T p;
+            Expression.Block(
+                new[] { p },
+                // p = (T)x;
+                Expression.Assign(p, Expression.Convert(x, t)),
+                // p.X + p.Y
+                // IL 生成と違って、ユーザー定義の operator+ でも正しくコード生成してくれる。
+                Expression.Add(
+                    Expression.Property(p, "X"),
+                    Expression.Property(p, "Y"))),
             x
             );
 
-        <span class="reserved">var</span> d = (Func&lt;<span class="reserved">object</span>, <span class="reserved">int</span>&gt;)exp.Compile();
-        <span class="reserved">return</span> d;
+        var d = (Func<object, int>)exp.Compile();
+        return d;
     }
 }
-</code></pre>
+```
 
 
 
@@ -303,18 +303,18 @@ dynamic は、内部的には「式木による動的コード生成」＋「生
 適用される型が多くなってくると、ひょっとすると自前でキャッシュ機構を持つよりも、
 dynamic 任せの方が高速な場合も出て来ると思います。
 
-<pre class="source" title="dynamic" lang="">
-<code><span class="reserved">public class</span> <span class="type">Dynamic</span>
+```csharp
+public class Dynamic
 {
-    <span class="reserved">public static int</span> Sum(<span class="reserved">dynamic</span> p)
+    public static int Sum(dynamic p)
     {
-        <span class="comment">// GenerateIL とか ExpressionTree 版が、「p.X の戻り値は int」みたいな前提でコード書いちゃったので、
+        // GenerateIL とか ExpressionTree 版が、「p.X の戻り値は int」みたいな前提でコード書いちゃったので、
         // 以下のように書かないと比較がフェアじゃないかなと。
-        // （厳密には、これでもまだこちらの方が不利）</span>
-        <span class="reserved">return</span> (<span class="reserved">int</span>)p.X + (<span class="reserved">int</span>)p.Y;
+        // （厳密には、これでもまだこちらの方が不利）
+        return (int)p.X + (int)p.Y;
     }
 }
-</code></pre>
+```
 
 
 
@@ -352,28 +352,28 @@ C# 4.0 の dynamic の内部挙動的には、CallSite というクラスを使�
 （if を1つにまとめたり、キャスト用の CallSite を1つにまとめたり。）
 式木版と遜色ないというか、むしろ式木版よりもちょっと速いくらいになりました。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">DynamicInside</span>
+```csharp
+public class DynamicInside
 {
-    <span class="reserved">static</span> <span class="type">CallSite</span>&lt;Func&lt;<span class="type">CallSite</span>, <span class="reserved">object</span>, <span class="reserved">int</span>&gt;&gt; siteCast;
-    <span class="reserved">static</span> <span class="type">CallSite</span>&lt;Func&lt;<span class="type">CallSite</span>, <span class="reserved">object</span>, <span class="reserved">object</span>&gt;&gt; siteGetX, siteGetY;
+    static CallSite<Func<CallSite, object, int>> siteCast;
+    static CallSite<Func<CallSite, object, object>> siteGetX, siteGetY;
 
-    <span class="reserved">public static int</span> Sum(<span class="reserved">object</span> p)
+    public static int Sum(object p)
     {
-        <span class="reserved">if</span> (siteCast == <span class="reserved">null</span>)
+        if (siteCast == null)
         {
-            <span class="reserved">const</span> <span class="type">CSharpBinderFlags</span> convert = <span class="type">CSharpBinderFlags</span>.ConvertExplicit;
-            <span class="reserved">const</span> <span class="type">CSharpBinderFlags</span> none = <span class="type">CSharpBinderFlags</span>.None;
-            <span class="reserved">var</span> argInfo = <span class="reserved">new</span> <span class="type">CSharpArgumentInfo</span>[] { <span class="type">CSharpArgumentInfo</span>.Create(<span class="type">CSharpArgumentInfoFlags</span>.None, <span class="reserved">null</span>) };
+            const CSharpBinderFlags convert = CSharpBinderFlags.ConvertExplicit;
+            const CSharpBinderFlags none = CSharpBinderFlags.None;
+            var argInfo = new CSharpArgumentInfo[] { CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null) };
 
-            siteGetX = <span class="type">CallSite</span>&lt;Func&lt;<span class="type">CallSite</span>, <span class="reserved">object</span>, <span class="reserved">object</span>&gt;&gt;.Create(<span class="type">Binder</span>.GetMember(none, <span class="literal">"X"</span>, <span class="reserved">null</span>, argInfo));
-            siteGetY = <span class="type">CallSite</span>&lt;Func&lt;<span class="type">CallSite</span>, <span class="reserved">object</span>, <span class="reserved">object</span>&gt;&gt;.Create(<span class="type">Binder</span>.GetMember(none, <span class="literal">"Y"</span>, <span class="reserved">null</span>, argInfo));
-            siteCast = <span class="type">CallSite</span>&lt;Func&lt;<span class="type">CallSite</span>, <span class="reserved">object</span>, <span class="reserved">int</span>&gt;&gt;.Create(<span class="type">Binder</span>.Convert(convert, <span class="reserved">typeof</span>(<span class="reserved">int</span>), <span class="reserved">null</span>));
+            siteGetX = CallSite<Func<CallSite, object, object>>.Create(Binder.GetMember(none, "X", null, argInfo));
+            siteGetY = CallSite<Func<CallSite, object, object>>.Create(Binder.GetMember(none, "Y", null, argInfo));
+            siteCast = CallSite<Func<CallSite, object, int>>.Create(Binder.Convert(convert, typeof(int), null));
         }
-        <span class="reserved">return</span> (siteCast.Target(siteCast, siteGetX.Target(siteGetX, p)) + siteCast.Target(siteCast, siteGetY.Target(siteGetY, p)));
+        return (siteCast.Target(siteCast, siteGetX.Target(siteGetX, p)) + siteCast.Target(siteCast, siteGetY.Target(siteGetY, p)));
     }
 }
-</code></pre>
+```
 
 
 
@@ -411,15 +411,15 @@ C# 4.0 の dynamic の内部挙動的には、CallSite というクラスを使�
 
 さすがに毎回リフレクション呼ぶよりは1桁以上速いですが。
 
-<pre class="source" title="CLR オブジェクト？何それ？辞書じゃダメ？" lang="">
-<code><span class="reserved">public class</span> <span class="type">PropertyDictionary</span>
+```csharp
+public class PropertyDictionary
 {
-    <span class="reserved">public static int</span> Sum(<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; p)
+    public static int Sum(Dictionary<string, int> p)
     {
-        <span class="reserved">return</span> p[<span class="literal">"X"</span>] + p[<span class="literal">"Y"</span>];
+        return p["X"] + p["Y"];
     }
 }
-</code></pre>
+```
 
 
 

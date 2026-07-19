@@ -77,29 +77,29 @@ C# 5.0 で導入された非同期メソッド（「[非同期処理](sp5_async.
 非同期処理のこれらの利点は非常にありがたいものですが、問題はコードの書きにくくなることです。
 たとえば、同期処理で書くなら以下のようなコードがあったとします。
 
-<pre class="source" title="同期処理の例" lang="">
-<code>前処理();
-<span class="reserved">var</span> result = obj.GetValue(x);
+```csharp
+前処理();
+var result = obj.GetValue(x);
 後処理(result);
-</code></pre>
+```
 
 
 これを非同期化しようとしたとき、以前（.NET Framework 4/C# 4.0まで）なら、以下のような書き方になっていました。
 
-<pre class="source" title="C# 4.0 までの非同期処理の例" lang="">
-<code><span class="reserved">var</span> sync = System.Threading.<span class="type">SynchronizationContext</span>.Current;
+```csharp
+var sync = System.Threading.SynchronizationContext.Current;
 
-obj.BeginGetValue(x, a =&gt;
+obj.BeginGetValue(x, a =>
 {
-    <span class="reserved">var</span> result = obj.EndGetValue(a);
+    var result = obj.EndGetValue(a);
 
-    sync.Post(arg =&gt;
+    sync.Post(arg =>
     {
-        後処理((<span class="reserved">int</span>)arg);
+        後処理((int)arg);
     },
     result);
 });
-</code></pre>
+```
 
 
 図1のところで説明したように、制御フロー的には同期の場合とまったく同じなわけですが、実装上の都合でこんなコードになっています。
@@ -113,11 +113,11 @@ obj.BeginGetValue(x, a =&gt;
 それを叶えるのが、C# 5.0 で導入される非同期メソッドです。
 非同期メソッドの中では、以下のように、await 演算子を使うことで、同期処理っぽい書き方で非同期処理が書けます。
 
-<pre class="source" title="同期処理の例" lang="">
-<code>前処理();
-<span class="reserved">var</span> result = <span class="reserved">await</span> obj.GetValueAsync(x);
+```csharp
+前処理();
+var result = await obj.GetValueAsync(x);
 後処理(result);
-</code></pre>
+```
 
 
 同期処理の場合と、改めて対比してみましょう。
@@ -171,32 +171,31 @@ await 演算子の引数として渡せます。
 それぞれfor、foreachステートメントの並列版に相当する <code>For</code>、<code>ForEach</code> メソッドが定義されています。
 たとえば、for ステートメントと <code>For</code> メソッドを比較すると以下のようになります。
 
-<pre class="source" title="for ステートメントと Parallel.For メソッド" lang="">
-<code><span class="comment">// 単一スレッド実行</span>
-<span class="reserved">for</span> (<span class="reserved">var</span> i = 0; i &lt; source.Length; i++)
+```csharp
+// 単一スレッド実行
+for (var i = 0; i < source.Length; i++)
 {
     result[i] = selector(source[i]);
 }
 
-<span class="comment">// 並列実行</span>
-<span class="type">Parallel</span>.For(0, source.Length, i =&gt;
+// 並列実行
+Parallel.For(0, source.Length, i =>
 {
     result[i] = selector(source[i]);
 });
-</code></pre>
+```
 
 
 一方、並列LINQは、LINQ（Language Integrated Query）によるデータ処理を並列化するものです。
 以下のように、<code>AsParallel</code> 拡張メソッドを1つ追加するだけで、データ処理が並列に行われるようになります。
 
-<pre class="source" title="LINQ とその並列版" lang="">
-<code><span class="comment">// 単一スレッド実行</span>
-<span class="reserved">var</span> result = source.Select(selector);
+```csharp
+// 単一スレッド実行
+var result = source.Select(selector);
 
-<span class="comment">// 並列実行（AsParallel 拡張メソッドは ParallelQuery クラスを返す）</span>
-<span class="reserved">var</span> result = source.AsParallel().Select(selector);
-
-</code></pre>
+// 並列実行（AsParallel 拡張メソッドは ParallelQuery クラスを返す）
+var result = source.AsParallel().Select(selector);
+```
 
 
 いずれも、プログラミング言語構文的には、匿名関数（「[匿名関数](../functional/sp_delegate.md#anonymous)」参照））を持つ言語ならば簡単に書けるものです。

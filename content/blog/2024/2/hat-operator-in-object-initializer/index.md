@@ -21,46 +21,46 @@ aliases: []
 
 以下のコードで示すような修正内容です。
 
-<pre class="source" title="オブジェクト初期化子中の ^ 演算子">
-<span class="comment">// これがコンパイル エラーを起こす。</span>
-<span class="comment">// (Visual Studio 17.9 Preview 3 以降を使うとコンパイルできるようになった。)</span>
-<span class="reserved">var</span> <span class="variable">c</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">C</span> { [<span class="operator">^</span><span class="number">1</span>] <span class="operator">=</span> <span class="number">1</span> };
+```csharp
+// これがコンパイル エラーを起こす。
+// (Visual Studio 17.9 Preview 3 以降を使うとコンパイルできるようになった。)
+var c = new C { [^1] = 1 };
 
-<span class="comment">// これなら昔からコンパイル通る。</span>
-<span class="comment">// (オブジェクト初期化子はこれと同じコードに展開されるはずなのに。)</span>
-<span class="variable">c</span>[<span class="operator">^</span><span class="number">1</span>] <span class="operator">=</span> <span class="number">1</span>;
+// これなら昔からコンパイル通る。
+// (オブジェクト初期化子はこれと同じコードに展開されるはずなのに。)
+c[^1] = 1;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="comment">// インデクサーと Length さえ持っていれば c[^i] と書けるようになる。</span>
-    <span class="comment">// c[c.Length - i] 扱い。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Length</span> <span class="operator">=&gt;</span> <span class="number">1</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">i</span>] { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="variable local">i</span>; <span class="reserved">set</span> { } }
+    // インデクサーと Length さえ持っていれば c[^i] と書けるようになる。
+    // c[c.Length - i] 扱い。
+    public int Length => 1;
+    public int this[int i] { get => i; set { } }
 }
-</pre>
+```
 
 まあ、`^` を導入した時にオブジェクト初期化子は考慮漏れしてたんですかね。
 
 こんなのでも一応悩むポイントはありまして。
 1つは、例えば入れ子で `new C() { [^1] = { [2] = 42, [3] = 43 } }` とか書いたとき、
 
-<pre class="source" title="2度 Length を評価">
-<span class="comment">// 2行に分かれる = Length - 1 の計算が2度走る。</span>
-<span class="reserved">var</span> <span class="variable">c</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">C</span>();
-<span class="variable">c</span>[<span class="operator">^</span><span class="number">1</span>][<span class="number">2</span>] <span class="operator">=</span> <span class="number">42</span>;
-<span class="variable">c</span>[<span class="operator">^</span><span class="number">1</span>][<span class="number">3</span>] <span class="operator">=</span> <span class="number">43</span>;
-</pre>
+```csharp
+// 2行に分かれる = Length - 1 の計算が2度走る。
+var c = new C();
+c[^1][2] = 42;
+c[^1][3] = 43;
+```
 
 
 か
 
-<pre class="source" title="^i をキャッシュして Length は1回限り評価">
-<span class="comment">// ^ の結果をキャッシュする。</span>
-<span class="reserved">var</span> <span class="variable">c</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">C</span>();
-<span class="reserved">var</span> <span class="variable">cachedIndexArgument</span> <span class="operator">=</span> <span class="operator">^</span><span class="number">1</span>;
-<span class="variable">c</span>[<span class="variable">cachedIndexArgument</span>][<span class="number">2</span>] <span class="operator">=</span> <span class="number">42</span>;
-<span class="variable">c</span>[<span class="variable">cachedIndexArgument</span>][<span class="number">3</span>] <span class="operator">=</span> <span class="number">43</span>;
-</pre>
+```csharp
+// ^ の結果をキャッシュする。
+var c = new C();
+var cachedIndexArgument = ^1;
+c[cachedIndexArgument][2] = 42;
+c[cachedIndexArgument][3] = 43;
+```
 
 
 か、どちらがいいかという問題。

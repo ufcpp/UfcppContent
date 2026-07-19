@@ -38,23 +38,23 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 それが[`IAsyncEnumerable<T>`](https://docs.microsoft.com/ja-jp/dotnet/api/system.collections.generic.iasyncenumerable-1)インターフェイス(`System.Collections.Generic`名前空間)です。
 以下のような構造になっています。
 
-<pre class="source" title="IAsyncEnumerable の構造">
-<code><span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt;
+```csharp
+public interface IAsyncEnumerable<out T>
 {
-    <span class="type">IAsyncEnumerator</span>&lt;<span class="type">T</span>&gt; <span class="method">GetAsyncEnumerator</span>(<span class="type">CancellationToken</span> <span class="variable">cancellationToken</span> = <span class="reserved">default</span>);
+    IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default);
 }
  
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncEnumerator</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt; : <span class="type">IAsyncDisposable</span>
+public interface IAsyncEnumerator<out T> : IAsyncDisposable
 {
-    <span class="type">T</span> Current { <span class="reserved">get</span>; }
-    <span class="type">ValueTask</span>&lt;<span class="reserved">bool</span>&gt; <span class="method">MoveNextAsync</span>();
+    T Current { get; }
+    ValueTask<bool> MoveNextAsync();
 }
  
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncDisposable</span>
+public interface IAsyncDisposable
 {
-    <span class="type">ValueTask</span> <span class="method">DisposeAsync</span>();
+    ValueTask DisposeAsync();
 }
-</code></pre>
+```
 
 インターフェイス名とメソッド名に`Async`が付いたのと、一部のメソッドの戻り値が[`ValueTask<T>`](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.tasks.valuetask-1)になっているくらいで、ほとんど同期版と同じ構造です。
 
@@ -73,42 +73,42 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 以下のように、`await foreach` と書くことで、
 `IAsyncEnumerable<T>` (と同じパターンを持つ型)の列挙ができます。
 
-<pre class="source" title="非同期 foreach">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">AsyncForeach</span>(<span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">items</span>)
+```csharp
+static async Task AsyncForeach(IAsyncEnumerable<int> items)
 {
-    <em><span class="reserved">await</span> <span class="control">foreach</span></em> (<span class="reserved">var</span> <span class="variable">item</span> <span class="control">in</span> <span class="variable">items</span>)
+    await foreach (var item in items)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">item</span>);
+        Console.WriteLine(item);
     }
 }
-</code></pre>
+```
 
 [`await`](sp5_async.md#async)演算子と同じく、
 非同期メソッド(`async` 修飾が付いたメソッド)内でだけ使えます。
 
 このコードは、同期版の`foreach`と似たような感じで、以下のように展開されます。 同期版と比べて、`MoveNext`と`Dispose`が非同期になっただけです。
 
-<pre class="source" title="非同期foreachの展開結果">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">AsyncForeach</span>(<span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">items</span>)
+```csharp
+static async Task AsyncForeach(IAsyncEnumerable<int> items)
 {
-    <span class="reserved">var</span> <span class="variable">e</span> = <span class="variable">items</span>.<span class="method">GetAsyncEnumerator</span>();
-    <span class="control">try</span>
+    var e = items.GetAsyncEnumerator();
+    try
     {
-        <span class="control">while</span> (<span class="reserved">await</span> <span class="variable">e</span>.<span class="method">MoveNextAsync</span>())
+        while (await e.MoveNextAsync())
         {
-            <span class="reserved">int</span> <span class="variable">item</span> = <span class="variable">e</span>.Current;
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">item</span>);
+            int item = e.Current;
+            Console.WriteLine(item);
         }
     }
-    <span class="control">finally</span>
+    finally
     {
-        <span class="control">if</span> (<span class="variable">e</span> != <span class="reserved">null</span>)
+        if (e != null)
         {
-            <span class="reserved">await</span> <span class="variable">e</span>.<span class="method">DisposeAsync</span>();
+            await e.DisposeAsync();
         }
     }
 }
-</code></pre>
+```
 
 同期版と同じく、`finally`内の処理にはいくつかバリエーションがあります。
 
@@ -121,42 +121,42 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 所定のメソッドさえ持っていれば非同期`foreach`で使えます。
 以下はその一例です。
 
-<pre class="source" title="パターン ベースで非同期foreachに対応する型の例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
  
-<span class="reserved">struct</span> <span class="type">A</span>
+struct A
 {
-    <span class="comment">// このメソッドが「Enumerable」の必須要件。</span>
-    <span class="comment">// この例では自分自身を返している(それでもOK)ものの、通常は別の型を作って返す。</span>
-    <span class="reserved">public</span> <span class="type">A</span> <span class="method">GetAsyncEnumerator</span>() =&gt; <span class="reserved">this</span>;
+    // このメソッドが「Enumerable」の必須要件。
+    // この例では自分自身を返している(それでもOK)ものの、通常は別の型を作って返す。
+    public A GetAsyncEnumerator() => this;
  
-    <span class="comment">// 以下の2つが「Enumerator」の必須要件。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Current =&gt; 0;
-    <span class="reserved">public</span> <span class="type">ValueTask</span>&lt;<span class="reserved">bool</span>&gt; <span class="method">MoveNextAsync</span>()
+    // 以下の2つが「Enumerator」の必須要件。
+    public int Current => 0;
+    public ValueTask<bool> MoveNextAsync()
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;MoveNextAsync&quot;</span>);
-        <span class="control">return</span> <span class="reserved">new</span> <span class="type">ValueTask</span>&lt;<span class="reserved">bool</span>&gt;(<span class="reserved">false</span>);
+        Console.WriteLine("MoveNextAsync");
+        return new ValueTask<bool>(false);
     }
  
-    <span class="comment">// DisposeAsync はなくてもいい。なければ呼ばれないだけ。</span>
-    <span class="reserved">public</span> <span class="type">ValueTask</span> <span class="method">DisposeAsync</span>()
+    // DisposeAsync はなくてもいい。なければ呼ばれないだけ。
+    public ValueTask DisposeAsync()
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;DisposeAsync&quot;</span>);
-        <span class="control">return</span> <span class="reserved">default</span>;
+        Console.WriteLine("DisposeAsync");
+        return default;
     }
  
-    <span class="comment">// 同期の Dispose は定義してあっても呼ばれないので注意。</span>
+    // 同期の Dispose は定義してあっても呼ばれないので注意。
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    public static async Task Main()
     {
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="reserved">new</span> <span class="type">A</span>()) ;
+        await foreach (var x in new A()) ;
     }
 }
-</code></pre>
+```
 
 この例では`ValueTask`型を使っていますが、これすらもパターン ベースで大丈夫です。
 要は、`await`可能であれば型は問いません。
@@ -164,29 +164,29 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 
 また、後から追加された構文だけあって、同期版の`foreach`よりもパターンの条件が緩いです。以下のように、オプション引数や可変長引数が付いていても平気です(同期版はダメ)。
 
-<pre class="source" title="非同期foreachは求められるパターンが緩い">
-<code><span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System.Threading;
+using System.Threading.Tasks;
  
-<span class="reserved">struct</span> <span class="type">A</span>
+struct A
 {
-    <span class="comment">// 可変長引数があってもいい</span>
-    <span class="reserved">public</span> <span class="type">A</span> <span class="method">GetAsyncEnumerator</span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable">dummy</span>) =&gt; <span class="reserved">this</span>;
+    // 可変長引数があってもいい
+    public A GetAsyncEnumerator(params int[] dummy) => this;
  
-    <span class="reserved">public</span> <span class="reserved">int</span> Current =&gt; 0;
+    public int Current => 0;
  
-    <span class="comment">// オプション引数があってもいい。</span>
-    <span class="reserved">public</span> <span class="type">ValueTask</span>&lt;<span class="reserved">bool</span>&gt; <span class="method">MoveNextAsync</span>(<span class="type">CancellationToken</span> <span class="variable">token</span> = <span class="reserved">default</span>) =&gt; <span class="reserved">default</span>;
+    // オプション引数があってもいい。
+    public ValueTask<bool> MoveNextAsync(CancellationToken token = default) => default;
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    public static async Task Main()
     {
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="reserved">new</span> <span class="type">A</span>()) ;
+        await foreach (var x in new A()) ;
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="await-using"></a>非同期using
 
@@ -204,34 +204,34 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 
 非同期`foreach`と同様`await using`という書き方をします。
 
-<pre class="source" title="非同期using">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">AsyncUsing</span>(<span class="type">IAsyncDisposable</span> <span class="variable">d</span>)
+```csharp
+static async Task AsyncUsing(IAsyncDisposable d)
 {
-    <em><span class="reserved">await</span> <span class="reserved">using</span></em> (<span class="variable">d</span>)
+    await using (d)
     {
-        <span class="comment">// d を破棄する前にやっておきたい処理</span>
+        // d を破棄する前にやっておきたい処理
     }
 }
-</code></pre>
+```
 
 これも非同期`foreach`と同様に、非同期メソッド(async 修飾が付いたメソッド)内でだけ使えます。
 
 展開結果は、同期版で`Dispose()`呼び出しだった部分が`await DisposeAsync()`に変わっているだけです。
 上記のコードは以下のように展開されます。
 
-<pre class="source" title="非同期usingの展開結果">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">AsyncUsing</span>(<span class="type">IAsyncDisposable</span> <span class="variable">d</span>)
+```csharp
+static async Task AsyncUsing(IAsyncDisposable d)
 {
-    <span class="control">try</span>
+    try
     {
-        <span class="comment">// d を破棄する前にやっておきたい処理</span>
+        // d を破棄する前にやっておきたい処理
     }
-    <span class="control">finally</span>
+    finally
     {
-        <span class="reserved">await</span> <span class="variable">d</span>.<span class="method">DisposeAsync</span>();
+        await d.DisposeAsync();
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="pattern-based-await-using"></a>パターン ベース
 
@@ -241,63 +241,63 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 以下のように、`IAsyncDisposable`インターフェイスを実装せず、
 単に`DisposeAsync`メソッドを持っていれば`await using`で使えます。
 
-<pre class="source" title="パターン ベースな非同期using">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
  
-<span class="comment">// 非同期 using は別に IAsyncDisposable インターフェイスの実装を求めない。</span>
-<span class="reserved">class</span> <span class="type">AsyncDisposable</span>
+// 非同期 using は別に IAsyncDisposable インターフェイスの実装を求めない。
+class AsyncDisposable
 {
-    <span class="comment">// ちゃんと await using のブロックの最後で呼ばれる。</span>
-    <span class="comment">// 戻り値の型が Task や ValueTask である必要もない。</span>
-    <span class="reserved">public</span> <span class="type">MyAwaitable</span> <span class="method">DisposeAsync</span>()
+    // ちゃんと await using のブロックの最後で呼ばれる。
+    // 戻り値の型が Task や ValueTask である必要もない。
+    public MyAwaitable DisposeAsync()
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;disposed async&quot;</span>);
-        <span class="control">return</span> <span class="reserved">default</span>;
+        Console.WriteLine("disposed async");
+        return default;
     }
 }
  
-<span class="reserved">struct</span> <span class="type">MyAwaitable</span> { <span class="reserved">public</span> <span class="type">ValueTaskAwaiter</span> <span class="method">GetAwaiter</span>() =&gt; <span class="reserved">default</span>; }
+struct MyAwaitable { public ValueTaskAwaiter GetAwaiter() => default; }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    static async Task Main()
     {
-        <span class="reserved">await</span> <span class="reserved">using</span> (<span class="reserved">new</span> <span class="type">AsyncDisposable</span>())
+        await using (new AsyncDisposable())
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;inside using&quot;</span>);
+            Console.WriteLine("inside using");
         }
     }
 }
-</code></pre>
+```
 
 見ての通り、`DisposeAsync`の戻り値は`await`可能でさえあれば何でも構いません。
 
 また、オプション引数や可変長引数があっても構いません。
 
-<pre class="source" title="オプション引数などがあってもawait using可能">
-<code><span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System.Threading.Tasks;
  
-<span class="reserved">struct</span> <span class="type">A</span>
+struct A
 {
-    <span class="reserved">public</span> <span class="type">ValueTask</span> <span class="method">DisposeAsync</span>(<span class="reserved">int</span> <span class="variable">dummy</span> = 0) =&gt; <span class="reserved">default</span>;
+    public ValueTask DisposeAsync(int dummy = 0) => default;
 }
  
-<span class="reserved">struct</span> <span class="type">B</span>
+struct B
 {
-    <span class="reserved">public</span> <span class="type">ValueTask</span> <span class="method">DisposeAsync</span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable">dummy</span>) =&gt; <span class="reserved">default</span>;
+    public ValueTask DisposeAsync(params int[] dummy) => default;
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    public static async Task Main()
     {
-        <span class="reserved">await</span> <span class="reserved">using</span> (<span class="reserved">new</span> <span class="type">A</span>()) { }
-        <span class="reserved">await</span> <span class="reserved">using</span> (<span class="reserved">new</span> <span class="type">B</span>()) { }
+        await using (new A()) { }
+        await using (new B()) { }
     }
 }
-</code></pre>
+```
 
 制限と言えば、インスタンス メソッドしか受け付けない(拡張メソッドは使えない)くらいです。
 
@@ -305,69 +305,68 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 以下のように、直接的には`IAsyncDisposable`インターフェイスを実装していなくて、
 パターンも満たさない型に対して`await using`を使うとコンパイル エラーになります。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
  
-<span class="reserved">class</span> <span class="type">A</span> { }
+class A { }
  
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>, <span class="type">IAsyncDisposable</span>
+class B : A, IAsyncDisposable
 {
-    <span class="reserved">public</span> <span class="type">ValueTask</span> <span class="method">DisposeAsync</span>() =&gt; <span class="reserved">default</span>;
+    public ValueTask DisposeAsync() => default;
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    public static async Task Main()
     {
-        <span class="comment">// A は IAsyncDisposable じゃないけど、</span>
-        <span class="comment">// 派生クラスの B は IAsyncDisposable を実装。</span>
-        <span class="reserved">await</span> <span class="method">AsyncUsing</span>(<span class="reserved">new</span> <span class="type">B</span>());
+        // A は IAsyncDisposable じゃないけど、
+        // 派生クラスの B は IAsyncDisposable を実装。
+        await AsyncUsing(new B());
     }
  
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">AsyncUsing</span>(<span class="type">A</span> <span class="variable">a</span>)
+    static async Task AsyncUsing(A a)
     {
-        <span class="comment">// これはコンパイル エラーになる。</span>
-        <span class="comment">// A が直接 IAsyncDisposable を実装しているか、パターンを満たしている必要がある。</span>
-        <span class="reserved">await</span> <span class="reserved">using</span> (<span class="error"><span class="variable">a</span></span>) { }
+        // これはコンパイル エラーになる。
+        // A が直接 IAsyncDisposable を実装しているか、パターンを満たしている必要がある。
+        await using (a) { }
     }
 }
-</code></pre>
+```
 
 ジェネリック型引数に対して使う場合にも、`IAsyncDisposable`制約が必要になります。
 
-<pre class="source" title="IAsyncDisposable 制約が必須">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">x</span>)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IAsyncDisposable</span> <span class="comment">// この制約がないと await using の行でコンパイル エラーに。</span>
+```csharp
+static async Task M<T>(T x)
+    where T : IAsyncDisposable // この制約がないと await using の行でコンパイル エラーに。
 {
-    <span class="reserved">await</span> <span class="reserved">using</span> (<span class="variable">x</span>) { }
+    await using (x) { }
 }
-
-</code></pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="await-using-declaration"></a>using変数宣言との併用
 
 [`using`変数宣言](../resource/oo_dispose.md#using-declaration)との併用も可能です。
 以下のような書き方ができます。
 
-<pre class="source" title="非同期using変数宣言の例">
-<code><span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System.Threading.Tasks;
  
-<span class="reserved">struct</span> <span class="type">AsyncDisposable</span>
+struct AsyncDisposable
 {
-    <span class="reserved">public</span> <span class="type">ValueTask</span> <span class="method">DisposeAsync</span>() =&gt; <span class="reserved">default</span>;
+    public ValueTask DisposeAsync() => default;
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    public static async Task Main()
     {
-        <span class="reserved">await</span> <span class="reserved">using</span> <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">AsyncDisposable</span>();
+        await using var x = new AsyncDisposable();
  
-        <span class="comment">// このメソッドを抜けるタイミングで DisposeAsync が呼ばれる</span>
+        // このメソッドを抜けるタイミングで DisposeAsync が呼ばれる
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="sync-and-async"></a>DisposeとDisposeAsyncの混在
 
@@ -377,34 +376,34 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 以下の例では、`using`の行では`Dispose`だけが呼ばれますし、
 `await using`の行では`DisposeAsync`だけが呼ばれます。
 
-<pre class="source" title="usingとawait usingは独立">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
  
-<span class="reserved">struct</span> <span class="type">Disposable</span> : <span class="type">IDisposable</span>, <span class="type">IAsyncDisposable</span>
+struct Disposable : IDisposable, IAsyncDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;同期 Dispose&quot;</span>);
-    <span class="reserved">public</span> <span class="type">ValueTask</span> <span class="method">DisposeAsync</span>()
+    public void Dispose() => Console.WriteLine("同期 Dispose");
+    public ValueTask DisposeAsync()
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;非同期 Dispose&quot;</span>);
-        <span class="control">return</span> <span class="reserved">default</span>;
+        Console.WriteLine("非同期 Dispose");
+        return default;
     }
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    public static async Task Main()
     {
-        <span class="reserved">var</span> <span class="variable">d</span> = <span class="reserved">new</span> <span class="type">Disposable</span>();
+        var d = new Disposable();
  
-        <span class="comment">// Dispose だけが呼ばれる</span>
-        <span class="reserved">using</span> (<span class="variable">d</span>) { }
+        // Dispose だけが呼ばれる
+        using (d) { }
  
-        <span class="comment">// DisposeAsync だけが呼ばれる</span>
-        <span class="reserved">await</span> <span class="reserved">using</span> (<span class="variable">d</span>) { }
+        // DisposeAsync だけが呼ばれる
+        await using (d) { }
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-9"></a> <a id="async-iterator"></a>非同期イテレーター
 
@@ -413,16 +412,16 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 
 例えば以下のような書き方で、1秒に1回、整数値を生成するイテレーターになります。
 
-<pre class="source" title="非同期イテレーターの例">
-<code><span class="reserved">static</span> <em><span class="reserved">async</span></em> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">GenerateAsync</span>()
+```csharp
+static async IAsyncEnumerable<int> GenerateAsync()
 {
-    <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; ; <span class="variable">i</span>++)
+    for (int i = 0; ; i++)
     {
-        <em><span class="control">yield</span> <span class="control">return</span></em> <span class="variable">i</span>;
-        <em><span class="reserved">await</span></em> <span class="type">Task</span>.<span class="method">Delay</span>(<span class="type">TimeSpan</span>.<span class="method">FromSeconds</span>(1));
+        yield return i;
+        await Task.Delay(TimeSpan.FromSeconds(1));
     }
 }
-</code></pre>
+```
 
 同期版のイテレーター(`yield`)は以下のような条件を満たすものでした。
 
@@ -458,13 +457,13 @@ C# 8.0 ではこれらの非同期版が入るわけですが、
 原理だけ簡単に説明すると、非同期イテレーター中に`yield return x`と書くと、
 概ね以下のようなコードが生成されます。
 
-<pre class="source" title="yield return の置き換え">
-<code>_state = State1;             <span class="comment">// 次に復帰するときのための状態の記録</span>
-Current = x;                 <span class="comment">// 戻り値を Current に保持</span>
-_taskSource.<span class="method">SetResult</span>(<span class="reserved">true</span>); <span class="comment">// MoveNextAsync の戻り値で返した Task を完了させる</span>
-<span class="control">return</span>;                      <span class="comment">// 一旦処理終了</span>
-<span class="reserved">case</span>: State1:                <span class="comment">// 時宜に呼ばれたときに続きから処理するためのラベル</span>
-</code></pre>
+```csharp
+_state = State1;             // 次に復帰するときのための状態の記録
+Current = x;                 // 戻り値を Current に保持
+_taskSource.SetResult(true); // MoveNextAsync の戻り値で返した Task を完了させる
+return;                      // 一旦処理終了
+case: State1:                // 時宜に呼ばれたときに続きから処理するためのラベル
+```
 
 ([同期版での説明](../data/sp2_iterator.md#complied)と同様、疑似コードです。実際の C# では case に変数は使えないので、 「これに相当する goto が生成される」くらいのものだと思って読んでください。)
 
@@ -480,14 +479,14 @@ _taskSource.<span class="method">SetResult</span>(<span class="reserved">true</s
 例えば、以下のようなコードでは`yield`や`await`がキーワード扱いされず、
 普通に変数として使えています。
 
-<pre class="source" title="yield変数とawait変数">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>()
+```csharp
+static void M()
 {
-    <span class="reserved">var</span> <span class="variable">yield</span> = 2;
-    <span class="reserved">var</span> <span class="variable">await</span> = 3;
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">yield</span> * <span class="variable">await</span>);
+    var yield = 2;
+    var await = 3;
+    Console.WriteLine(yield * await);
 }
-</code></pre>
+```
 
 ただ、この2つは文脈の作り方が異なります。
 
@@ -508,87 +507,87 @@ _taskSource.<span class="method">SetResult</span>(<span class="reserved">true</s
 
 非同期イテレーターでは、以下のように、引数に`EnumeratorCancellation`属性(`System.Runtime.CompilerServices`名前空間)を付けることでこの`CancellationToken`を受け取れるようになります。
 
-<pre class="source" title="非同期イテレーターへのCancellationTokenの渡し方">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    static async Task Main()
     {
-        <span class="reserved">var</span> <span class="variable">cts</span> = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>();
+        var cts = new CancellationTokenSource();
  
-        <span class="reserved">var</span> <span class="variable">enumerable</span> = <span class="method">GenerateAsync</span>();
+        var enumerable = GenerateAsync();
  
-        <span class="comment">// ここで引数に渡したトークンが、GenerateAsync の ct 引数にわたる。</span>
-        <span class="reserved">var</span> <span class="variable">enumerator</span> = <span class="variable">enumerable</span>.<span class="method">GetAsyncEnumerator</span>(<em><span class="variable">cts</span>.Token</em>);
+        // ここで引数に渡したトークンが、GenerateAsync の ct 引数にわたる。
+        var enumerator = enumerable.GetAsyncEnumerator(cts.Token);
  
-        <span class="comment">// キャンセル前なので値が取れるはず。</span>
-        <span class="reserved">await</span> <span class="variable">enumerator</span>.<span class="method">MoveNextAsync</span>();
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">enumerator</span>.Current);
+        // キャンセル前なので値が取れるはず。
+        await enumerator.MoveNextAsync();
+        Console.WriteLine(enumerator.Current);
  
-        <span class="variable">cts</span>.<span class="method">Cancel</span>();
+        cts.Cancel();
  
-        <span class="comment">// キャンセルしたので止まるはず。</span>
-        <span class="control">if</span> (!<span class="reserved">await</span> <span class="variable">enumerator</span>.<span class="method">MoveNextAsync</span>())
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;終了&quot;</span>);
+        // キャンセルしたので止まるはず。
+        if (!await enumerator.MoveNextAsync())
+            Console.WriteLine("終了");
     }
  
-    <span class="comment">// キャンセルが掛かるまでずっと、1秒に1個値を生成。</span>
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">GenerateAsync</span>([<span class="type">EnumeratorCancellation</span>] <span class="type">CancellationToken</span> <span class="variable">ct</span> = <span class="reserved">default</span>)
+    // キャンセルが掛かるまでずっと、1秒に1個値を生成。
+    static async IAsyncEnumerable<int> GenerateAsync([EnumeratorCancellation] CancellationToken ct = default)
     {
-        <span class="reserved">var</span> <span class="variable">i</span> = 0;
-        <span class="control">while</span> (!<span class="variable">ct</span>.IsCancellationRequested)
+        var i = 0;
+        while (!ct.IsCancellationRequested)
         {
-            <span class="control">yield</span> <span class="control">return</span> <span class="variable">i</span>;
-            <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Delay</span>(<span class="type">TimeSpan</span>.<span class="method">FromSeconds</span>(1));
-            ++<span class="variable">i</span>;
+            yield return i;
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            ++i;
         }
     }
 }
-</code></pre>
+```
 
 ちなみに、非同期`foreach`で使いたい場合、`WithCancellation`拡張メソッドが使えます。
 `WithCancellation` の引数で渡した`CancellationToken`が`GetAsyncEnumerator`に伝搬し、
 最終的に`GenerateAsync`の`ct`引数に渡ります。
 
-<pre class="source" title="WithCancellation での CancellationToken 伝搬">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    static async Task Main()
     {
-        <span class="comment">// 5秒後にキャンセルが掛かる。</span>
-        <span class="reserved">var</span> <span class="variable">cts</span> = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>(<span class="type">TimeSpan</span>.<span class="method">FromSeconds</span>(5));
+        // 5秒後にキャンセルが掛かる。
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
  
-        <span class="comment">// WithCancellation に渡したトークンが GenerateAsync まで伝搬する。</span>
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">i</span> <span class="control">in</span> <span class="method">GenerateAsync</span>().<span class="method">WithCancellation</span>(<span class="variable">cts</span>.Token))
+        // WithCancellation に渡したトークンが GenerateAsync まで伝搬する。
+        await foreach (var i in GenerateAsync().WithCancellation(cts.Token))
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">i</span>);
+            Console.WriteLine(i);
         }
     }
  
-    <span class="comment">// キャンセルが掛かるまでずっと、1秒に1個値を生成。</span>
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">GenerateAsync</span>([<span class="type">EnumeratorCancellation</span>] <span class="type">CancellationToken</span> <span class="variable">ct</span> = <span class="reserved">default</span>)
+    // キャンセルが掛かるまでずっと、1秒に1個値を生成。
+    static async IAsyncEnumerable<int> GenerateAsync([EnumeratorCancellation] CancellationToken ct = default)
     {
-        <span class="reserved">var</span> <span class="variable">i</span> = 0;
-        <span class="control">while</span> (!<span class="variable">ct</span>.IsCancellationRequested)
+        var i = 0;
+        while (!ct.IsCancellationRequested)
         {
-            <span class="control">yield</span> <span class="control">return</span> <span class="variable">i</span>;
-            <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Delay</span>(<span class="type">TimeSpan</span>.<span class="method">FromSeconds</span>(1));
-            ++<span class="variable">i</span>;
+            yield return i;
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            ++i;
         }
     }
 }
-</code></pre>
+```
 
 引数越しに受け取る仕様なので、
 以下のように、呼び出し側で引数に直接渡すのと、`WithCancellation`越しに渡すので、
@@ -596,19 +595,19 @@ _taskSource.<span class="method">SetResult</span>(<span class="reserved">true</s
 この場合、2個のうちどちらか片方でも`Cancel`が掛かった時点でキャンセル扱いになります。
 (正確に言うと、[CreateLinkedTokenSource ](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.cancellationtokensource.createlinkedtokensource)を使って新たに作った`CancellationToken`が渡ります。)
 
-<pre class="source" title="CancellationToken が2個渡る例">
-<code><span class="comment">// CancellationToken を2個用意。</span>
-<span class="reserved">var</span> <span class="variable">ct1</span> = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>(<span class="type">TimeSpan</span>.<span class="method">FromSeconds</span>(3)).Token;
-<span class="reserved">var</span> <span class="variable">ct2</span> = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>(<span class="type">TimeSpan</span>.<span class="method">FromSeconds</span>(5)).Token;
+```csharp
+// CancellationToken を2個用意。
+var ct1 = new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token;
+var ct2 = new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token;
  
-<span class="comment">// 引数に直接渡せるし、WithCancellation でも渡せる。</span>
-<span class="comment">// この場合、どちらか片方でも Cancel された時点でキャンセル扱い。</span>
-<span class="comment">// (GenerateAsync には CreateLinkedTokenSource(ct1, ct2) した新しいトークンが渡る。)</span>
-<span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">i</span> <span class="control">in</span> <span class="method">GenerateAsync</span>(<span class="variable">ct1</span>).<span class="method">WithCancellation</span>(<span class="variable">ct2</span>))
+// 引数に直接渡せるし、WithCancellation でも渡せる。
+// この場合、どちらか片方でも Cancel された時点でキャンセル扱い。
+// (GenerateAsync には CreateLinkedTokenSource(ct1, ct2) した新しいトークンが渡る。)
+await foreach (var i in GenerateAsync(ct1).WithCancellation(ct2))
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">i</span>);
+    Console.WriteLine(i);
 }
-</code></pre>
+```
 
 <!-- original-page-break -->
 
@@ -621,67 +620,66 @@ _taskSource.<span class="method">SetResult</span>(<span class="reserved">true</s
 [producer/consumer 的なの](https://github.com/dotnet/try/blob/master/Samples/csharp8/ExploreCsharpEight/AsyncStreams.cs)
 
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">GenerateAsync</span>()
+    static async IAsyncEnumerable<int> GenerateAsync()
     {
-        <span class="reserved">var</span> <span class="variable">r</span> = <span class="reserved">new</span> <span class="type">Random</span>();
+        var r = new Random();
  
-        <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; ; <span class="variable">i</span>++)
+        for (int i = 0; ; i++)
         {
-            <span class="control">yield</span> <span class="control">return</span> <span class="variable">i</span>;
-            <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Delay</span>(<span class="type">TimeSpan</span>.<span class="method">FromSeconds</span>(<span class="variable">r</span>.<span class="method">NextDouble</span>()));
+            yield return i;
+            await Task.Delay(TimeSpan.FromSeconds(r.NextDouble()));
         }
     }
  
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">ConsumeAsync</span>(<span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">source</span>)
+    static async Task ConsumeAsync(IAsyncEnumerable<int> source)
     {
-        <span class="reserved">var</span> <span class="variable">r</span> = <span class="reserved">new</span> <span class="type">Random</span>();
+        var r = new Random();
  
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">source</span>)
+        await foreach (var x in source)
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
-            <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Delay</span>(<span class="type">TimeSpan</span>.<span class="method">FromSeconds</span>(<span class="variable">r</span>.<span class="method">NextDouble</span>()));
+            Console.WriteLine(x);
+            await Task.Delay(TimeSpan.FromSeconds(r.NextDouble()));
         }
     }
 }
-
-</code></pre>
+```
 
 LINQ to Object 非同期版
 (LINQ は今の実装だとパフォーマンス チューニングの結果イテレーター使わなくなったけど。
 少なくとも初期実装はイテレーターだったし、
 今でも「パフォーマンスよりもコードのきれいさ重視」だったらイテレーターを使うべき。)
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="type">TResult</span>&gt; <span class="method">GenerateAsync</span>&lt;<span class="type">TSource</span>, <span class="type">TResult</span>&gt;(<span class="type">IAsyncEnumerable</span>&lt;<span class="type">TSource</span>&gt; <span class="variable">source</span>, <span class="type">Func</span>&lt;<span class="type">TSource</span>, <span class="type">TResult</span>&gt; <span class="variable">selector</span>)
+```csharp
+static async IAsyncEnumerable<TResult> GenerateAsync<TSource, TResult>(IAsyncEnumerable<TSource> source, Func<TSource, TResult> selector)
 {
-    <span class="comment">// (お作法的には引数の null チェックすべき)</span>
-    <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">source</span>)
+    // (お作法的には引数の null チェックすべき)
+    await foreach (var x in source)
     {
-        <span class="control">yield</span> <span class="control">return</span> <span class="variable">selector</span>(<span class="variable">x</span>);
+        yield return selector(x);
     }
 }
-</code></pre>
+```
 
 非同期にまとまった単位のデータを読んで、データを1つ1つ列挙
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">string</span>&gt; <span class="method">ReadLinesAsync</span>(<span class="reserved">string</span> <span class="variable">directoryPath</span>)
+```csharp
+static async IAsyncEnumerable<string> ReadLinesAsync(string directoryPath)
 {
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">filePath</span> <span class="control">in</span> <span class="type">Directory</span>.<span class="method">GetFiles</span>(<span class="variable">directoryPath</span>, <span class="string">&quot;*.txt&quot;</span>))
+    foreach (var filePath in Directory.GetFiles(directoryPath, "*.txt"))
     {
-        <span class="reserved">var</span> <span class="variable">lines</span> = <span class="reserved">await</span> <span class="type">File</span>.<span class="method">ReadAllLinesAsync</span>(<span class="variable">filePath</span>);
+        var lines = await File.ReadAllLinesAsync(filePath);
  
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">line</span> <span class="control">in</span> <span class="variable">lines</span>)
+        foreach (var line in lines)
         {
-            <span class="control">yield</span> <span class="control">return</span> <span class="variable">line</span>;
+            yield return line;
         }
     }
 }
-</code></pre>
+```

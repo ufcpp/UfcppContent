@@ -24,38 +24,38 @@ TryRoslyn、今は[SharpLab](https://github.com/ashmind/SharpLab)っていう名
 
 例えばこんな感じのコードを書いて、
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Math</span>;
+```csharp
+using static System.Math;
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+public class C
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> M(<span class="reserved">double</span> x, <span class="reserved">double</span> y) =&gt; Exp(x) * Sin(y);
+    public double M(double x, double y) => Exp(x) * Sin(y);
 }
-</code></pre>
+```
 
 [SharpLabに貼り付けて](https://sharplab.io/#f:>asmr/K4Zwlgdg5gBCAuBDeYDGMDKBPBBTAtgHQCyyAFgNwCwAULQA7ABGANmjKi4iCDAMK0A3rRiiYjVuwAmAe2YtcMYgApZ8xQA8ANDDWtFWAJQwAvAD4YAUQ31lG4wCpMkZUeo0AvrSA===)、
 ページ内の「Decompiled」のコンボボックスで「JIT Asm」を選ぶと、以下のような結果が出ます
 (現時点での結果)。
 
-<pre class="source" title="">
-<code><span class="comment">; This is an experimental implementation.
+```csharp
+; This is an experimental implementation.
 ; Please report any bugs to https://github.com/ashmind/TryRoslyn/issues.
 
-; Desktop CLR v4.6.1590.00 (clr.dll) on x86.</span>
+; Desktop CLR v4.6.1590.00 (clr.dll) on x86.
 
 C..ctor()
-    L0000: <span class="reserved">ret</span>
+    L0000: ret
 
 C.M(Double, Double)
-    L0000: <span class="reserved">fld</span> qword [esp+0xc]
-    L0004: <span class="reserved">sub</span> esp, 0x8
-    L0007: <span class="reserved">fstp</span> qword [esp]
-    L000a: <span class="reserved">call</span> System.Math.Exp(Double)
-    L000f: <span class="reserved">fld</span> qword [esp+0x4]
-    L0013: <span class="reserved">fsin</span>
-    L0015: <span class="reserved">fmulp</span> st1, st0
-    L0017: <span class="reserved">ret</span> 0x10
-</code></pre>
+    L0000: fld qword [esp+0xc]
+    L0004: sub esp, 0x8
+    L0007: fstp qword [esp]
+    L000a: call System.Math.Exp(Double)
+    L000f: fld qword [esp+0x4]
+    L0013: fsin
+    L0015: fmulp st1, st0
+    L0017: ret 0x10
+```
 
 C#は、C# → IL にコンパイルする時点ではそこまで大きな最適化はしていなくて、
 インライン展開とかの処理はIL → ネイティブコードに JIT コンパイルするタイミングで行っていたりします。

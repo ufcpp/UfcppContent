@@ -62,9 +62,9 @@ aliases:
 配列の先頭と末尾を環のように繋ぐというのをどうやって実装するかと言うと、
 答えは簡単で、
 
-<pre class="source" title="" lang="">
-<code>data[i % data.Length]
-</code></pre>
+```csharp
+data[i % data.Length]
+```
 
 
 というように、
@@ -74,27 +74,27 @@ aliases:
 要素が入っている先頭位置を表すメンバー変数 <code>top</code> と、
 末尾位置を表す <code>bottom</code> を用意します。
 
-<pre class="source" title="" lang="">
-<code>T[] data;
-<span class="reserved">int</span> top, bottom;
-</code></pre>
+```csharp
+T[] data;
+int top, bottom;
+```
 
 
 先頭から i 番目の要素へのアクセスは以下のようにして行います。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public</span> T <span class="reserved">this</span>[<span class="reserved">int</span> i]
+```csharp
+public T this[int i]
 {
-  <span class="reserved">get</span>
+  get
   {
-    <span class="reserved">return this</span>.data[(i + <span class="reserved">this</span>.top) % <span class="reserved">this</span>.data.Length];
+    return this.data[(i + this.top) % this.data.Length];
   }
-  <span class="reserved">set</span>
+  set
   {
-    <span class="reserved">this</span>.data[(i + <span class="reserved">this</span>.top) % <span class="reserved">this</span>.data.Length] = value;
+    this.data[(i + this.top) % this.data.Length] = value;
   }
 }
-</code></pre>
+```
 
 
 ただ、一般に、剰余演算は遅い演算（四則演算の中ではダントツで遅い）なので、
@@ -105,87 +105,87 @@ aliases:
 剰余演算を論理 AND 演算に置き換えることができるので、
 配列長を2の冪に限定してこの方法を使って循環バッファを実装するのが一般的です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public</span> CircularBuffer(<span class="reserved">int</span> capacity)
+```csharp
+public CircularBuffer(int capacity)
 {
-  capacity = Pow2((<span class="reserved">uint</span>)capacity);
-  <span class="reserved">this</span>.data = <span class="reserved">new</span> T[capacity];
-  <span class="reserved">this</span>.top = <span class="reserved">this</span>.bottom = 0;
-  <span class="reserved">this</span>.mask = capacity - 1;
+  capacity = Pow2((uint)capacity);
+  this.data = new T[capacity];
+  this.top = this.bottom = 0;
+  this.mask = capacity - 1;
 }
 
-<span class="reserved">static int</span> Pow2(<span class="reserved">uint</span> n)
+static int Pow2(uint n)
 {
   --n;
-  <span class="reserved">int</span> p = 0;
-  <span class="reserved">for</span> (; n != 0; n &gt;&gt;= 1) p = (p &lt;&lt; 1) + 1;
-  <span class="reserved">return</span> p + 1;
+  int p = 0;
+  for (; n != 0; n >>= 1) p = (p << 1) + 1;
+  return p + 1;
 }
 
-<span class="reserved">public</span> T <span class="reserved">this</span>[<span class="reserved">int</span> i]
+public T this[int i]
 {
-  <span class="reserved">get</span>
+  get
   {
-    <span class="reserved">return this</span>.data[(i + <span class="reserved">this</span>.top) &amp; <span class="reserved">this</span>.mask];
+    return this.data[(i + this.top) & this.mask];
   }
-  <span class="reserved">set</span>
+  set
   {
-    <span class="reserved">this</span>.data[(i + <span class="reserved">this</span>.top) &amp; <span class="reserved">this</span>.mask] = value;
+    this.data[(i + this.top) & this.mask] = value;
   }
 }
-</code></pre>
+```
 
 
 先頭への要素の挿入・削除は以下のように行います。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 先頭に新しい要素を追加。
-/// &lt;/summary&gt;
-/// &lt;param name="elem"&gt;追加する要素&lt;/param&gt;</span>
-<span class="reserved">public void</span> InsertFirst(T elem)
+/// </summary>
+/// <param name="elem">追加する要素</param>
+public void InsertFirst(T elem)
 {
-  <span class="reserved">if</span> (<span class="reserved">this</span>.Count &gt;= <span class="reserved">this</span>.data.Length - 1)
-    <span class="reserved">this</span>.Extend();
+  if (this.Count >= this.data.Length - 1)
+    this.Extend();
 
-  <span class="reserved">this</span>.top = (<span class="reserved">this</span>.top - 1) &amp; <span class="reserved">this</span>.mask;
-  <span class="reserved">this</span>.data[<span class="reserved">this</span>.top] = elem;
+  this.top = (this.top - 1) & this.mask;
+  this.data[this.top] = elem;
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 先頭の要素を削除。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public void</span> EraseFirst()
+/// </summary>
+public void EraseFirst()
 {
-  <span class="reserved">this</span>.top = (<span class="reserved">this</span>.top + 1) &amp; <span class="reserved">this</span>.mask;
+  this.top = (this.top + 1) & this.mask;
 }
-</code></pre>
+```
 
 
 末尾に関しては以下の通りです。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 末尾に新しい要素を追加。
-/// &lt;/summary&gt;
-/// &lt;param name="elem"&gt;追加する要素&lt;/param&gt;</span>
-<span class="reserved">public void</span> InsertLast(T elem)
+/// </summary>
+/// <param name="elem">追加する要素</param>
+public void InsertLast(T elem)
 {
-  <span class="reserved">if</span> (<span class="reserved">this</span>.Count &gt;= <span class="reserved">this</span>.data.Length - 1)
-    <span class="reserved">this</span>.Extend();
+  if (this.Count >= this.data.Length - 1)
+    this.Extend();
 
-  <span class="reserved">this</span>.data[<span class="reserved">this</span>.bottom] = elem;
-  <span class="reserved">this</span>.bottom = (<span class="reserved">this</span>.bottom + 1) &amp; <span class="reserved">this</span>.mask;
+  this.data[this.bottom] = elem;
+  this.bottom = (this.bottom + 1) & this.mask;
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 末尾の要素を削除。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public void</span> EraseLast()
+/// </summary>
+public void EraseLast()
 {
-  <span class="reserved">this</span>.bottom = (<span class="reserved">this</span>.bottom - 1) &amp; <span class="reserved">this</span>.mask;
+  this.bottom = (this.bottom - 1) & this.mask;
 }
-</code></pre>
+```
 
 
 見ての通り、いずれも要素数に関係なく、一定時間で挿入・削除が可能です。

@@ -100,19 +100,19 @@ csharplang には、Design Meeting でこの話題が出た12日時点で1500件
 
 C# 9.0 で追加する新しい partial method ですが、以下のようなコードを書くとコンパイル エラーを起こします。
 
-<pre class="source" title="AllowMultiple = false な属性">
-<code><span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">C</span>
+```csharp
+partial class C
 {
-    [<span class="reserved">return</span>: <span class="type">MaybeNull</span>]
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">string</span> <span class="method">M</span>();
+    [return: MaybeNull]
+    public partial string M();
 }
  
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">C</span>
+partial class C
 {
-    [<span class="reserved">return</span>: <span class="type">MaybeNull</span>]
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">string</span> <span class="method">M</span>() =&gt; <span class="string">&quot;&quot;</span>;
+    [return: MaybeNull]
+    public partial string M() => "";
 }
-</code></pre>
+```
 
 `AttributeUsage` で重複不可(`AllowMultiple = false`) になっている属性が partial の宣言側と実装側の両方についている場合、「重複」判定を受けてしまっているという状態。
 この例のように null 許容関連の属性は宣言側と実装側の両方に付けたいことが結構あって、これをエラーにされると結構困りそうです。
@@ -148,24 +148,24 @@ C# に UTF-8 関連の特殊対応文法を入れるよりもまず 「`Utf8Stri
 
 今までの、
 
-<pre class="source" title="名前空間">
-<code><span class="reserved">namespace</span> N
+```csharp
+namespace N
 {
-    <span class="reserved">class</span> <span class="type">C</span>
+    class C
     {
     }
 }
-</code></pre>
+```
 
 これを、
 
-<pre class="source" title="1ライン名前空間">
-<code><span class="reserved">namespace</span> N;
+```csharp
+namespace N;
  
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
 }
-</code></pre>
+```
 
 こうじゃ。
 (1ライン名前空間の導入。)
@@ -180,14 +180,14 @@ C# に UTF-8 関連の特殊対応文法を入れるよりもまず 「`Utf8Stri
 その発想でいうと「インデント1段の差は些細な差」ではあります。
 例えばまあ、別に、1ライン名前空間がなくても、以下のように書けばほぼ同じ見た目になります。
 
-<pre class="source" title="名前空間">
-<code><span class="reserved">namespace</span> N
+```csharp
+namespace N
 {
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
 }
 }
-</code></pre>
+```
 
 ただ、最近は
 
@@ -227,30 +227,30 @@ class, record に対しても readonly 修飾(フィールド全部が readonly 
 
 以下のような話。
 
-<pre class="source" title="() なし名前指定ターゲット型推論">
-<code><span class="comment">// C# 9.0 で、ターゲットからの型推論で new() と書けるように</span>
-<span class="type">Point</span> <span class="variable">a</span> = <span class="reserved">new</span>(1, 2);
+```csharp
+// C# 9.0 で、ターゲットからの型推論で new() と書けるように
+Point a = new(1, 2);
  
-<span class="comment">// 逆に(3.0 からある)ソース型推論だとこうなる</span>
-<span class="reserved">var</span> <span class="variable">b</span> = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
-<span class="reserved">var</span> <span class="variable">c</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
+// 逆に(3.0 からある)ソース型推論だとこうなる
+var b = new Point(1, 2);
+var c = new Point { X = 1, Y = 2 };
  
-<span class="comment">// ターゲット型推論で nominal (プロパティ名指定)な初期化をするならこうなる。</span>
-<span class="type">Point</span> <span class="variable">d</span> = <span class="reserved">new</span>() { X = 1, Y = 2 };
+// ターゲット型推論で nominal (プロパティ名指定)な初期化をするならこうなる。
+Point d = new() { X = 1, Y = 2 };
  
-<span class="comment">// ↑ この () は邪魔じゃない？</span>
-<span class="comment">// とはいえ…</span>
-<span class="comment">// これは「匿名型」になる。</span>
-<span class="reserved">var</span> <span class="variable">e</span> = <span class="reserved">new</span> { X = 1, Y = 2 };
+// ↑ この () は邪魔じゃない？
+// とはいえ…
+// これは「匿名型」になる。
+var e = new { X = 1, Y = 2 };
  
-<span class="comment">// ターゲット型があるときはターゲット型推論扱い</span>
-<span class="comment">// (ターゲットが object とか dynamic、var の時だけ匿名型扱いするような分岐)</span>
-<span class="comment">// も可能なんじゃないか？</span>
-<span class="comment">// (C# 9.0 時点ではエラー。たぶん、破壊的変更にはならず上記挙動が可能)</span>
-<span class="type">Point</span> <span class="variable">f</span> = <span class="reserved">new</span> { X = 1, Y = 2 };
+// ターゲット型があるときはターゲット型推論扱い
+// (ターゲットが object とか dynamic、var の時だけ匿名型扱いするような分岐)
+// も可能なんじゃないか？
+// (C# 9.0 時点ではエラー。たぶん、破壊的変更にはならず上記挙動が可能)
+Point f = new { X = 1, Y = 2 };
  
-<span class="reserved">record</span> Point(<span class="reserved">int</span> <span class="variable">X</span> = 0, <span class="reserved">int</span> <span class="variable">Y</span> = 0);
-</code></pre>
+record Point(int X = 0, int Y = 0);
+```
 
 `new() {}` の `()` が邪魔というか、ソース型推論の場合との整合性があんまりよくなくていまいちなのは確かだったり。
 
@@ -261,23 +261,23 @@ Backlog 入り。
 
 以下のように、初期化子でローカル関数を呼びたいという話が出ていまして。
 
-<pre class="source" title="初期化子でローカル関数を呼びたい">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="type">Base</span>(<span class="reserved">int</span> <span class="variable">x</span>) { }
+    public Base(int x) { }
 }
  
-<span class="reserved">class</span> <span class="type">Derive</span> : <span class="type">Base</span>
+class Derive : Base
 {
-    <span class="reserved">public</span> <span class="type">C</span>() : <span class="reserved">base</span>(init())
+    public C() : base(init())
     {
-        <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">init</span>()
+        static int init()
         {
-            <span class="comment">// 何かそれなりの処理</span>
+            // 何かそれなりの処理
         }
     }
 }
-</code></pre>
+```
 
 まあ割と「わからなくはない」という感じで Working set 入りしてるんですが。
 ただ、C# チーム的にはもうちょっと汎用的に、「スコープの拡張」みたいなのを考えているみたいです。

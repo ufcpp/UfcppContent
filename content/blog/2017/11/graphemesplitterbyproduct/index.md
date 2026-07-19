@@ -49,35 +49,35 @@ aliases: []
 
 で、以下のような最適化を掛けてほしいというの、[とりあえず issue 立てとくことに](https://github.com/dotnet/roslyn/issues/22997)。
 
-<pre class="source" title="">
-<code><span class="comment">// 1コード1 case に展開 (最適化が掛かって結構速いけど、クソコード。コンパイル時間もやたらと遅い)</span>
-<span class="reserved">switch</span> (codePoint)
+```csharp
+// 1コード1 case に展開 (最適化が掛かって結構速いけど、クソコード。コンパイル時間もやたらと遅い)
+switch (codePoint)
 {
-    <span class="reserved">case</span> 1536:
-    <span class="reserved">case</span> 1537:
-    <span class="reserved">case</span> 1538:
-    <span class="reserved">case</span> 1539:
-    <span class="reserved">case</span> 1540:
-    <span class="reserved">case</span> 1541:
-        <span class="comment">// ...</span>
+    case 1536:
+    case 1537:
+    case 1538:
+    case 1539:
+    case 1540:
+    case 1541:
+        // ...
 }
 
-<span class="comment">// when 句を使って範囲を表現 (コードは綺麗になったけど、条件判定が線形探索になっちゃって O(n)。遅い)</span>
-<span class="comment">// 二分探索するような最適化をしてほしい</span>
-<span class="reserved">switch</span> (codePoint)
+// when 句を使って範囲を表現 (コードは綺麗になったけど、条件判定が線形探索になっちゃって O(n)。遅い)
+// 二分探索するような最適化をしてほしい
+switch (codePoint)
 {
-    <span class="reserved">case</span> <span class="reserved">uint</span> i0 <span class="reserved">when</span> 1536 &lt;= i0 &amp;&amp; i0 &lt;= 1541:
-        <span class="comment">// ...</span>
+    case uint i0 when 1536 <= i0 && i0 <= 1541:
+        // ...
 }
 
-<span class="comment">// こういう文法ほしい(C# 8とか9とかくらいでは入るかなぁ、きっと)</span>
-<span class="comment">// これなら、コードが綺麗、かつ、最適化しやすいのではないか</span>
-<span class="reserved">switch</span> (codePoint)
+// こういう文法ほしい(C# 8とか9とかくらいでは入るかなぁ、きっと)
+// これなら、コードが綺麗、かつ、最適化しやすいのではないか
+switch (codePoint)
 {
-    <span class="reserved">case</span> 1536..1541:
-        <span class="comment">// ...</span>
+    case 1536..1541:
+        // ...
 }
-</code></pre>
+```
 
 まあさすがに、実用途の説明と、ベンチマークを添えとくと反応よさげ。`case 1536..1541` みたいな書き方であれば範囲の重複チェック(同じ値の
  `case` が複数あったらエラーにする)のとか、二分探索化する最適化もしやすそうということで、興味を持ってもらえたっぽい。

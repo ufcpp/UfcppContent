@@ -54,9 +54,9 @@ C# 7.2 の頃に [`Span<T>` 構造体](../../../../study/csharp/resource/span.md
 わかりやすい原因は、参照型に対して `stackalloc` を使えない点。
 以下のようなコードはコンパイル エラーになります。
 
-<pre class="source" title="参照型の stackalloc は禁止">
-<code><span class="type">Span</span>&lt;<span class="reserved"><span class="error">string</span></span>&gt; <span class="variable">span</span> = <span class="reserved">stackalloc</span> <span class="reserved">string</span>[4];
-</code></pre>
+```csharp
+Span<string> span = stackalloc string[4];
+```
 
 これは元々ある .NET ランタイムの制限です。
 
@@ -74,17 +74,17 @@ pull request がそっ閉じされてるんで、
 他に、`params Span<T>` に使いたいのであれば固定長配列の類でもいいわけでして。
 例えば以下のようなコードで「長さ4固定の配列もどき」を作ることはできます。
 
-<pre class="source" title="長さ固定の配列もどき">
-<code><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="type">ValueArray4</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">buffer</span> = <span class="reserved">default</span>;
-<span class="type">Span</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">span</span> = <span class="type">MemoryMarshal</span>.<span class="method">CreateSpan</span>(<span class="reserved">ref</span> <span class="variable">buffer</span>.X0, 4);
+ValueArray4<string> buffer = default;
+Span<string> span = MemoryMarshal.CreateSpan(ref buffer.X0, 4);
 
-<span class="reserved">struct</span> <span class="type">ValueArray4</span>&lt;<span class="type">T</span>&gt;
+struct ValueArray4<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> X0, X1, X2, X3;
+    public T X0, X1, X2, X3;
 }
-</code></pre>
+```
 
 とはいえ、こんなコードを都度手書きはしたくないわけでして。
 あと、できれば `ValueArray<string, 4>` みたいな感じで何らかの手段で「長さ」の情報はジェネリクス的に渡したかったりはします。
@@ -98,12 +98,12 @@ pull request がそっ閉じされてるんで、
 1 の代わりに `object[]`、2 の代わりに `object[,]`、3 の代わりに `object[,,]`、… みたいな、`object` 配列の次元を整数代わりに使うというすごい実装。
 本来であれば `ValueArray<string, 4>` と書きたいところを `ValueArray<string, object[,,,]>` と書くことになります…
 
-<pre class="source" title="object[,,,] でジェネリック整数引数を代用…">
-<code><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="type">ValueArray</span>&lt;<span class="reserved">string</span>, <span class="reserved">object</span>[,,,]&gt; <span class="variable">buffer</span> = <span class="reserved">default</span>;
-<span class="type">Span</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">span</span> = <span class="variable">buffer</span>.<span class="method">AsSpan</span>();
-</code></pre>
+ValueArray<string, object[,,,]> buffer = default;
+Span<string> span = buffer.AsSpan();
+```
 
 これはさすがにあまりにもきもいので没気味。
 代替案として、「いったん属性を付けて特殊処理しようか」みたいな話になっています。
@@ -112,20 +112,20 @@ pull request がそっ閉じされてるんで、
 
 こちらだと、いちいち構造体の定義が要るみたいです。
 
-<pre class="source" title="InlineArray 属性">
-<code><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="type">ValueArray4</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">buffer</span> = <span class="reserved">default</span>;
-<span class="type">Span</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">span</span> = <span class="variable">buffer</span>.<span class="method">AsSpan</span>();
+ValueArray4<string> buffer = default;
+Span<string> span = buffer.AsSpan();
 
-<span class="comment">// この属性を付けた構造体は T 4つ分のメモリを確保する。</span>
-[<span class="type">InlineArray</span>(Length = 4)]
-<span class="reserved">struct</span> <span class="type">ValueArray4</span>&lt;<span class="type">T</span>&gt;
+// この属性を付けた構造体は T 4つ分のメモリを確保する。
+[InlineArray(Length = 4)]
+struct ValueArray4<T>
 {
-    <span class="reserved">private</span> <span class="type">T</span> _element0;
-    <span class="reserved">public</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt; <span class="method">AsSpan</span>() =&gt; <span class="type">MemoryMarshal</span>.<span class="method">CreateSpan</span>(<span class="reserved">ref</span> _element0, 4);
+    private T _element0;
+    public Span<T> AsSpan() => MemoryMarshal.CreateSpan(ref _element0, 4);
 }
-</code></pre>
+```
 
 やっぱ、根本的にはジェネリクスに整数を渡せるようにしてほしいところですけどね…
 それは結構型システムに手を入れないといけないみたいでちょっと大変みたいです。

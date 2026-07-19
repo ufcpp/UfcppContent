@@ -81,10 +81,10 @@ dynamic 型を使うことで、
 使い方としては var （C# 3.0 で追加された型推論）と似ています。
 しかしながら、あくまで型推論である var と違って、dynamic で宣言した変数の型は「動的型」になります。
 
-<pre class="source" title="object 型には X というプロパティはありません" lang="">
-<code><span class="reserved">var</span> sx = <span class="literal">1</span>;     <span class="comment">// sx の型は int 型</span>
-<span class="reserved">dynamic</span> dx = <span class="literal">1</span>; <span class="comment">// dx の型は dynamic 型</span>
-</code></pre>
+```csharp
+var sx = 1;     // sx の型は int 型
+dynamic dx = 1; // dx の型は dynamic 型
+```
 
 
 通常、C# （3.0 以前）のような静的型付け言語では、
@@ -93,24 +93,24 @@ dynamic 型を使うことで、
 例えば、以下のようなコードを書くと、
 「'object' に 'X' の定義が含まれていません」というようなエラーが生じます。
 
-<pre class="source" title="object 型には X というプロパティはありません" lang="">
-<code><span class="reserved">static object</span> GetX(<span class="reserved">object</span> obj)
+```csharp
+static object GetX(object obj)
 {
-  <span class="reserved">return</span> obj.X;
+  return obj.X;
 }
-</code></pre>
+```
 
 
 object 型が X という名前のプロパティを持っていないので、静的言語の世界ではエラーが出て当たり前。
 
 一方、C# 4.0 では、dynamic 型を使うことで、以下のようなコードが書けるようになりました。
 
-<pre class="source" title="dynamic 型なら、" lang="">
-<code><span class="reserved">static dynamic</span> GetX(<span class="reserved">dynamic</span> obj)
+```csharp
+static dynamic GetX(dynamic obj)
 {
-  <span class="reserved">return</span> obj.X;
+  return obj.X;
 }
-</code></pre>
+```
 
 
 obj が本当に X という名前のプロパティを持っているかどうかは、
@@ -125,22 +125,22 @@ C# 4.0 で、C++ や VB にあるような、オプション引数と名前付�
 
 まず、以下のように規定値(default value)を持ったメソッドを定義します。
 
-<pre class="source" title="規定値付きのメソッド定義" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x = <span class="literal">0</span>, <span class="reserved">int</span> y = <span class="literal">0</span>, <span class="reserved">int</span> z = <span class="literal">0</span>)
+```csharp
+static int Sum(int x = 0, int y = 0, int z = 0)
 {
-  <span class="reserved">return</span> x + y + z;
+  return x + y + z;
 }
-</code></pre>
+```
 
 
 すると、以下のように、引数の一部もしくは全てを省略可能になります。
 省略可能ということで、オプション引数（optional parameter）と呼びます。
 
-<pre class="source" title="オプション引数" lang="">
-<code><span class="reserved">int</span> s1 = Sum();     <span class="comment">// Sum(0, 0, 0); と同じ意味。</span>
-<span class="reserved">int</span> s2 = Sum(<span class="literal">1</span>);    <span class="comment">// Sum(1, 0, 0); と同じ意味。</span>
-<span class="reserved">int</span> s3 = Sum(<span class="literal">1</span>, <span class="literal">2</span>); <span class="comment">// Sum(1, 2, 0); と同じ意味。</span>
-</code></pre>
+```csharp
+int s1 = Sum();     // Sum(0, 0, 0); と同じ意味。
+int s2 = Sum(1);    // Sum(1, 0, 0); と同じ意味。
+int s3 = Sum(1, 2); // Sum(1, 2, 0); と同じ意味。
+```
 
 
 この記法で省略可能になるのは、後ろの引数のみです。
@@ -151,11 +151,11 @@ C# 4.0 で、C++ や VB にあるような、オプション引数と名前付�
 
 先ほど定義した規定値を持つメソッドを、以下のような構文で呼び出せます。
 
-<pre class="source" title="名前付きオプション引数" lang="">
-<code><span class="reserved">int</span> s1 = Sum(x: <span class="literal">1</span>, y: <span class="literal">2</span>, z: <span class="literal">3</span>); <span class="comment">// Sum(1, 2, 3); と同じ意味。</span>
-<span class="reserved">int</span> s2 = Sum(y: <span class="literal">1</span>, z: <span class="literal">2</span>, x: <span class="literal">3</span>); <span class="comment">// Sum(3, 1, 2); と同じ意味。</span>
-<span class="reserved">int</span> s3 = Sum(y: <span class="literal">1</span>);             <span class="comment">// Sum(0, 1, 0); と同じ意味。</span>
-</code></pre>
+```csharp
+int s1 = Sum(x: 1, y: 2, z: 3); // Sum(1, 2, 3); と同じ意味。
+int s2 = Sum(y: 1, z: 2, x: 3); // Sum(3, 1, 2); と同じ意味。
+int s3 = Sum(y: 1);             // Sum(0, 1, 0); と同じ意味。
+```
 
 
 名前付き引数の場合、引数の順序は自由に書けます。
@@ -173,32 +173,32 @@ C# 4.0 で、ジェネリクスの型引数に共変性・反変性を持たせ�
 
 出力（戻り値、get）でしか使わない型には out という修飾子を付けることで、共変性が認められます。
 
-<pre class="source" title="IEnumerable に out が付きました" lang="">
-<code><span class="reserved">public interface</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">out</span> T&gt; { ... }
-</code></pre>
+```csharp
+public interface IEnumerable<out T> { ... }
+```
 
 
-<pre class="source" title="string の列挙子を object の列挙子に代入" lang="">
-<code><span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>&gt; strings = <span class="reserved">new</span>[] {<span class="literal">"aa"</span>, <span class="literal">"bb"</span>, <span class="literal">"cc"</span>};
-<span class="type">IEnumerable</span>&lt;<span class="reserved">object</span>&gt; objs = strings;
-<span class="comment">// foreach (object x in strings) ってやっても問題ないんだから、
-// objs に strings を代入しても OK。</span>
-</code></pre>
+```csharp
+IEnumerable<string> strings = new[] {"aa", "bb", "cc"};
+IEnumerable<object> objs = strings;
+// foreach (object x in strings) ってやっても問題ないんだから、
+// objs に strings を代入しても OK。
+```
 
 
 一方、入力（引数、set）でしか使わない型には in という修飾子を付けることで、反変性が認められます。
 
-<pre class="source" title="Action に in が付きました" lang="">
-<code><span class="reserved">public delegate void</span> <span class="type">Action</span>&lt;<span class="reserved">in</span> T&gt; (T arg);
-</code></pre>
+```csharp
+public delegate void Action<in T> (T arg);
+```
 
 
-<pre class="source" title="object 引数の Action を string 引数の Action に代入。" lang="">
-<code><span class="type">Action</span>&lt;<span class="reserved">object</span>&gt; objAction = x =&gt; { <span class="type">Console</span>.Write(x); };
-<span class="type">Action</span>&lt;<span class="reserved">string</span>&gt; strAction = objAction;
-<span class="comment">// objAction("string"); ってやっても問題ないんだから、
-// strAction に objAction を代入しても OK。</span>
-</code></pre>
+```csharp
+Action<object> objAction = x => { Console.Write(x); };
+Action<string> strAction = objAction;
+// objAction("string"); ってやっても問題ないんだから、
+// strAction に objAction を代入しても OK。
+```
 
 
 詳細は「[ジェネリクスの共変性・反変性](../oop/sp4_variance.md)」で説明します。

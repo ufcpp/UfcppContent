@@ -71,24 +71,24 @@ C# （.NET Framework）では System.Collections.ArrayList や System.Collection
 単純に配列をラッピングするだけなので、実装が非常に簡単です。
 まず、配列と、（確保した長さとは別に）実際に入っている要素の数を保持する変数を用意します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> ArrayList&lt;T&gt; : IEnumerable&lt;T&gt;
+```csharp
+class ArrayList<T> : IEnumerable<T>
 {
   T[] data;
-  <span class="reserved">int</span> count;
+  int count;
 }
-</code></pre>
+```
 
 
 配列は、図1に示すように、実際に格納されている要素数（Count）よりも大きめに確保しておきます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public</span> ArrayList(<span class="reserved">int</span> capacity)
+```csharp
+public ArrayList(int capacity)
 {
-  <span class="reserved">this</span>.data = <span class="reserved">new</span> T[capacity];
-  <span class="reserved">this</span>.count = 0;
+  this.data = new T[capacity];
+  this.count = 0;
 }
-</code></pre>
+```
 
 
 <figure>
@@ -102,20 +102,20 @@ C# （.NET Framework）では System.Collections.ArrayList や System.Collection
 新たに確保しなおす配列の長さをどうするかは自由に決めれますが、
 2倍ずつ長くする場合が多いです。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 配列を確保しなおす。
-/// &lt;/summary&gt;
-/// &lt;remarks&gt;
+/// </summary>
+/// <remarks>
 /// 配列長は2倍ずつ拡張していきます。
-/// &lt;/remarks&gt;</span>
-<span class="reserved">void</span> Extend()
+/// </remarks>
+void Extend()
 {
-  T[] data = <span class="reserved">new</span> T[<span class="reserved">this</span>.data.Length * 2];
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; <span class="reserved">this</span>.data.Length; ++i) data[i] = <span class="reserved">this</span>.data[i];
-  <span class="reserved">this</span>.data = data;
+  T[] data = new T[this.data.Length * 2];
+  for (int i = 0; i < this.data.Length; ++i) data[i] = this.data[i];
+  this.data = data;
 }
-</code></pre>
+```
 
 
 中身は単なる配列なので、
@@ -123,38 +123,38 @@ C# （.NET Framework）では System.Collections.ArrayList や System.Collection
 要素を1つずつずらして隙間を空ける/埋める作業が必要になります。
 したがって、末尾以外への要素の挿入・削除は非常に低速です。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// i 番目の位置に新しい要素を追加。
-/// &lt;/summary&gt;
-/// &lt;param name="i"&gt;追加位置&lt;/param&gt;
-/// &lt;param name="elem"&gt;追加する要素&lt;/param&gt;</span>
-<span class="reserved">public void</span> Insert(<span class="reserved">int</span> i, T elem)
+/// </summary>
+/// <param name="i">追加位置</param>
+/// <param name="elem">追加する要素</param>
+public void Insert(int i, T elem)
 {
-  <span class="reserved">if</span> (<span class="reserved">this</span>.count &gt;= <span class="reserved">this</span>.data.Length)
-    <span class="reserved">this</span>.Extend();
+  if (this.count >= this.data.Length)
+    this.Extend();
 
-  <span class="reserved">for</span> (<span class="reserved">int</span> n = <span class="reserved">this</span>.count; n &gt; i; --n)
+  for (int n = this.count; n > i; --n)
   {
-    <span class="reserved">this</span>.data[n] = <span class="reserved">this</span>.data[n - 1];
+    this.data[n] = this.data[n - 1];
   }
-  <span class="reserved">this</span>.data[i] = elem;
-  ++<span class="reserved">this</span>.count;
+  this.data[i] = elem;
+  ++this.count;
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// i 番目の要素を削除。
-/// &lt;/summary&gt;
-/// &lt;param name="i"&gt;削除位置&lt;/param&gt;</span>
-<span class="reserved">public void</span> Erase(<span class="reserved">int</span> i)
+/// </summary>
+/// <param name="i">削除位置</param>
+public void Erase(int i)
 {
-  <span class="reserved">for</span> (<span class="reserved">int</span> n = i; n &lt; <span class="reserved">this</span>.count - 1; ++n)
+  for (int n = i; n < this.count - 1; ++n)
   {
-    <span class="reserved">this</span>.data[n] = <span class="reserved">this</span>.data[n + 1];
+    this.data[n] = this.data[n + 1];
   }
-  --<span class="reserved">this</span>.count;
+  --this.count;
 }
-</code></pre>
+```
 
 
 

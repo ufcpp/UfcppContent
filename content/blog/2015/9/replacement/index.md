@@ -58,24 +58,24 @@ g<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="f
 
 例えば、以下のようなMathMLを書けば、
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;</span>math <span class="attribute">xmlns</span><span class="attvalue">="http://www.w3.org/1998/Math/MathML"&gt;</span>
-    <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;</span>
-            <span class="attvalue">&lt;</span>munder<span class="attvalue">&gt;</span>
-                <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;&lt;</span>mi <span class="attribute">mathvariant</span><span class="attvalue">="normal"&gt;</span>lim<span class="attvalue">&lt;/</span>mi<span class="attvalue">&gt;&lt;/</span>mrow<span class="attvalue">&gt;</span>
-                <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;&lt;</span>mi<span class="attvalue">&gt;</span>x<span class="attvalue">&lt;/</span>mi<span class="attvalue">&gt;&lt;</span>mo<span class="attvalue">&gt;</span>→<span class="attvalue">&lt;/</span>mo<span class="attvalue">&gt;&lt;</span>mn<span class="attvalue">&gt;</span>0<span class="attvalue">&lt;/</span>mn<span class="attvalue">&gt;&lt;/</span>mrow<span class="attvalue">&gt;</span>
-            <span class="attvalue">&lt;/</span>munder<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;/</span>mrow<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;</span>mo<span class="attvalue">&gt;</span>⁡<span class="attvalue">&lt;/</span>mo<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;</span>
-            <span class="attvalue">&lt;</span>mi<span class="attvalue">&gt;</span>g<span class="attvalue">&lt;/</span>mi<span class="attvalue">&gt;&lt;</span>mfenced <span class="attribute">separators</span><span class="attvalue">="|"&gt;&lt;</span>mrow<span class="attvalue">&gt;&lt;</span>mi<span class="attvalue">&gt;</span>x<span class="attvalue">&lt;/</span>mi<span class="attvalue">&gt;&lt;/</span>mrow<span class="attvalue">&gt;&lt;/</span>mfenced<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;/</span>mrow<span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;/</span>mrow<span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;</span>mo<span class="attvalue">&gt;</span>=<span class="attvalue">&lt;/</span>mo<span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;</span>mn<span class="attvalue">&gt;</span>0<span class="attvalue">&lt;/</span>mn<span class="attvalue">&gt;</span>
-<span class="attvalue">&lt;/</span>math<span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mrow>
+            <munder>
+                <mrow><mi mathvariant="normal">lim</mi></mrow>
+                <mrow><mi>x</mi><mo>→</mo><mn>0</mn></mrow>
+            </munder>
+        </mrow>
+        <mo>⁡</mo>
+        <mrow>
+            <mi>g</mi><mfenced separators="|"><mrow><mi>x</mi></mrow></mfenced>
+        </mrow>
+    </mrow>
+    <mo>=</mo>
+    <mn>0</mn>
+</math>
+```
 
 以下のような数式が一応表示される。
 

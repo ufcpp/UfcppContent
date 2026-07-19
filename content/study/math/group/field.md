@@ -1323,7 +1323,8 @@ mod N は N で割ったあまりを表します。
 
 ## <a id="sec-generated-title-20"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
       有限体関係の説明は別ページに移動。
       リンクを張る。
-    </pre>
+    
+```

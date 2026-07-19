@@ -126,22 +126,22 @@ positional な Records (プライマリ コンストラクター)の優先度は
 プライマリ コンストラクターに対してコンストラクター本体を持ちたい場合、
 以下のような構文になるみたいです。
 
-<pre class="source" title="プライマリ コンストラクター本体とバリデーター">
-<code><span class="reserved">class</span> <span class="type">TypeName</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y) <span class="comment">// プライマリ コンストラクター</span>
+```csharp
+class TypeName(int X, int Y) // プライマリ コンストラクター
 {
-    <span class="comment">// 引数リストなしの型名 = プライマリ コンストラクターの本体</span>
-    <span class="reserved">public</span> <span class="type">TypeName</span>
+    // 引数リストなしの型名 = プライマリ コンストラクターの本体
+    public TypeName
     {
-        <span class="comment">// new TypeName(x, y) の時点で呼ばれる処理</span>
+        // new TypeName(x, y) の時点で呼ばれる処理
     }
  
-    <span class="comment">// init キーワード = バリデーター</span>
+    // init キーワード = バリデーター
     init
     {
-        <span class="comment">// new TypeName { X = x, Y = y } みたいな、初期化子での初期化の後に呼ばれる</span>
+        // new TypeName { X = x, Y = y } みたいな、初期化子での初期化の後に呼ばれる
     }
 }
-</code></pre>
+```
 
 元々はこの2つを区別していなかったものの、結局は両方必要そうで、両方を認めそう。
 
@@ -149,31 +149,31 @@ positional な Records (プライマリ コンストラクター)の優先度は
 
 2種類の書き方ができるけども、どちらも認めてしまえとのこと。
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">TypeName</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y) : <span class="type">BaseType</span>(X, Y);
+```csharp
+class TypeName(int X, int Y) : BaseType(X, Y);
  
-<span class="reserved">class</span> <span class="type">TypeName</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y) : BaseType
+class TypeName(int X, int Y) : BaseType
 {
-    <span class="reserved">public</span> <span class="type">TypeName</span> : <span class="reserved">base</span>(X, Y) { }
+    public TypeName : base(X, Y) { }
 }
-</code></pre>
+```
 
 ## 共変戻り値
 
 要は以下のようなやつ。
 
-<pre class="source" title="共変戻り値">
-<code><span class="reserved">class</span> <span class="type">Compilation</span> ...
+```csharp
+class Compilation ...
 {
-    <span class="reserved">virtual</span> <span class="type">Compilation</span> <span class="method">WithOptions</span>(Options <span class="variable">options</span>)...
+    virtual Compilation WithOptions(Options options)...
 }
-<span class="reserved">class</span> <span class="type">CSharpCompilation</span> : <span class="type">Compilation</span>
+class CSharpCompilation : Compilation
 {
-    <span class="comment">// 戻り値の型が Compilation.WithOptions と違う</span>
-    <span class="comment">// けど、派生型で共変なので問題ないはず。</span>
-    <span class="reserved">override</span> <span class="type">CSharpCompilation</span> <span class="method">WithOptions</span>(Options <span class="variable">options</span>)...
+    // 戻り値の型が Compilation.WithOptions と違う
+    // けど、派生型で共変なので問題ないはず。
+    override CSharpCompilation WithOptions(Options options)...
 }
-</code></pre>
+```
 
 これも需要は非常に高いものの、
 「.NET ランタイム側の修正が必要なので C# だけでできなくて重たい」みたいに言われ続けてたやつ。
@@ -191,15 +191,15 @@ positional な Records (プライマリ コンストラクター)の優先度は
 
 似たようなものとして、クラスの静的コンストラクターがあるんですが…
 
-<pre class="source" title="静的コンストラクター">
-<code><span class="reserved">class</span> <span class="type">Initializer</span>
+```csharp
+class Initializer
 {
-    <span class="reserved">static</span> <span class="type">Initializer</span>()
+    static Initializer()
     {
-        <span class="comment">// 初めてこのクラスの何らかのメンバーを使おうとしたタイミングで呼ばれる</span>
+        // 初めてこのクラスの何らかのメンバーを使おうとしたタイミングで呼ばれる
     }
 }
-</code></pre>
+```
 
 こいつだと、このクラスに一切触れなかった場合には全く呼ばれませんし、
 「初めて触ったとき」という読めないタイミングでの呼び出しになります。
@@ -208,16 +208,16 @@ positional な Records (プライマリ コンストラクター)の優先度は
 
 今のところ、属性 + 静的コンストラクターで実装したいみたいです。
 
-<pre class="source" title="モジュール初期化子">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
  
-[<span class="reserved">module</span>: <span class="type">ModuleInitializer</span>(<span class="reserved">typeof</span>(<span class="type">MyModuleInitializer</span>))]
+[module: ModuleInitializer(typeof(MyModuleInitializer))]
  
-<span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">MyModuleInitializer</span>
+internal static class MyModuleInitializer
 {
-    <span class="reserved">static</span> <span class="type">MyModuleInitializer</span>()
+    static MyModuleInitializer()
     {
-        <span class="comment">// モジュール読み込み時に実行される</span>
+        // モジュール読み込み時に実行される
     }
 }
-</code></pre>
+```

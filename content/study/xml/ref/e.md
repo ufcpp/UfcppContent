@@ -25,29 +25,32 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;e/&gt;
-</pre>
+```xml
+<e/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;e/&gt;&lt;sup&gt;iθ&lt;/sup&gt; = &lt;cos/&gt;θ ＋ i&lt;sin/&gt;θ
-</pre><div class="math"><span class="normal">e</span><sup>iθ</sup> = <span class="normal">cos</span>θ ＋ i<span class="normal">sin</span>θ
+```xml
+<e/><sup>iθ</sup> = <cos/>θ ＋ i<sin/>θ
+```
+<div class="math"><span class="normal">e</span><sup>iθ</sup> = <span class="normal">cos</span>θ ＋ i<span class="normal">sin</span>θ
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:e"&gt;
-  &lt;span class="normal"&gt;e&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:e">
+  <span class="normal">e</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.normal
+```css
+span.normal
 {
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

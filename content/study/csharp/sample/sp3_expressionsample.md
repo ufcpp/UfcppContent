@@ -28,29 +28,29 @@ C# 3.0 の Expression Tree の一番すごいところは、匿名デリゲー�
 式木をいろいろいじった後に動的にコンパイルして実行できるところ。
 シンボリックに計算した結果を、動的に実行形式に変換して効率よく実行できるってのはすごい。
 
-<pre class="source" title="x * x を微分して実行" lang="">
-<code>Expression&lt;Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>&gt;&gt; <em>f = x =&gt; x * x</em>;
-<span class="reserved">var</span> df = f.Derive();
+```csharp
+Expression<Func<double, double>> f = x => x * x;
+var df = f.Derive();
 
-Console.Write(<span class="literal">"f  = {0}\n"</span>, f);
-Console.Write(<span class="literal">"df = {0}\n"</span>, df);
+Console.Write("f  = {0}\n", f);
+Console.Write("df = {0}\n", df);
 
-<em><span class="reserved">var</span> df_ = df.Compile();</em>
+var df_ = df.Compile();
 
-<span class="reserved">for</span> (<span class="reserved">int</span> i = -2; i &lt;= 2; ++i)
-  Console.Write(<span class="literal">"df({0}) = {1}\n"</span>, i, df_(i));
-</code></pre>
+for (int i = -2; i <= 2; ++i)
+  Console.Write("df({0}) = {1}\n", i, df_(i));
+```
 
 
-<pre class="console" title="実行結果">
-f  = x =&gt; (x * x)
-df = x =&gt; (2 * x)
+```console
+f  = x => (x * x)
+df = x => (2 * x)
 df(-2) = -4
 df(-1) = -2
 df(0) = 0
 df(1) = 2
 df(2) = 4
-</pre>
+```
 
 
 ちなみに、この例で示した Derive（微分メソッド）の話は次節で。
@@ -69,12 +69,12 @@ df(2) = 4
 
 ちなみに、関数 f(x) が与えられたときに、
 
-<pre class="source" title="数値計算で微分" lang="">
-<code><span class="reserved">double</span> Derive(Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>&gt; f, x)
+```csharp
+double Derive(Func<double, double> f, x)
 {
-  <span class="reserved">return</span> (f(x + DX / 2) - f(x - DX / 2)) / 2;
+  return (f(x + DX / 2) - f(x - DX / 2)) / 2;
 }
-</code></pre>
+```
 
 
 みたいな感じで近似的に微分係数値を求めるのが数値計算（numerical computation）。
@@ -103,53 +103,53 @@ df(2) = 4
 
 あと、偏微分にも対応しています。
 
-<pre class="source" title="偏微分" lang="">
-<code>Expression&lt;Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>, <span class="reserved">double</span>&gt;&gt; f =
-  (x, y) =&gt; x * x * y + 2 * x * y;
+```csharp
+Expression<Func<double, double, double>> f =
+  (x, y) => x * x * y + 2 * x * y;
 
-Console.Write(<span class="literal">"f     = {0}\n"</span>, f);      
-Console.Write(<span class="literal">"df/dx = {0}\n"</span>, f.Derive(<span class="literal">"x"</span>));
-Console.Write(<span class="literal">"df/dy = {0}\n"</span>, f.Derive(<span class="literal">"y"</span>));
-</code></pre>
+Console.Write("f     = {0}\n", f);      
+Console.Write("df/dx = {0}\n", f.Derive("x"));
+Console.Write("df/dy = {0}\n", f.Derive("y"));
+```
 
 
-<pre class="console" title="偏微分の結果">
-f     = (x, y) =&gt; (((x * x) * y) + ((2 * x) * y))
-df/dx = (x, y) =&gt; ((2 * (x * y)) + (2 * y))
-df/dy = (x, y) =&gt; ((x * x) + (2 * x))
-</pre>
+```console
+f     = (x, y) => (((x * x) * y) + ((2 * x) * y))
+df/dx = (x, y) => ((2 * (x * y)) + (2 * y))
+df/dy = (x, y) => ((x * x) + (2 * x))
+```
 
 
 それから、微分演算子もクラス化しています。
 
-<pre class="source" title="微分演算子" lang="">
-<code>Expression&lt;Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>, <span class="reserved">double</span>&gt;&gt; f =
-  (x, y) =&gt; x * x * y + 2 * x * y;
-<span class="reserved">var</span> dx = <span class="reserved">new</span> DifferentialOperator(<span class="literal">"x"</span>);
-<span class="reserved">var</span> dy = <span class="reserved">new</span> DifferentialOperator(<span class="literal">"y"</span>);
-<span class="reserved">var</span> laplacian = dx * dx + dy * dy;
+```csharp
+Expression<Func<double, double, double>> f =
+  (x, y) => x * x * y + 2 * x * y;
+var dx = new DifferentialOperator("x");
+var dy = new DifferentialOperator("y");
+var laplacian = dx * dx + dy * dy;
 
-Console.Write(<span class="literal">"f     = {0}\n"</span>, f);      
-Console.Write(<span class="literal">"df/dx = {0}\n"</span>, dx.Apply(f));
-Console.Write(<span class="literal">"Δf   = {0}\n"</span>, laplacian.Apply(f));
-</code></pre>
+Console.Write("f     = {0}\n", f);      
+Console.Write("df/dx = {0}\n", dx.Apply(f));
+Console.Write("Δf   = {0}\n", laplacian.Apply(f));
+```
 
 
-<pre class="console" title="微分演算子の実行結果">
-f     = (x, y) =&gt; (((x * x) * y) + ((2 * x) * y))
-df/dx = (x, y) =&gt; ((2 * (x * y)) + (2 * y))
-Δf   = (x, y) =&gt; (2 * y)
-</pre>
+```console
+f     = (x, y) => (((x * x) * y) + ((2 * x) * y))
+df/dx = (x, y) => ((2 * (x * y)) + (2 * y))
+Δf   = (x, y) => (2 * y)
+```
 
 
 ちなみに、以下のようなマネも可能。
 
-<pre class="source" title="ラムダ式から微分演算子を作る" lang="">
-<code><span class="reserved">var</span> laplacian = <span class="reserved">new</span> DifferentialOperator(
-  (x, y) =&gt; x * x + y * y
+```csharp
+var laplacian = new DifferentialOperator(
+  (x, y) => x * x + y * y
   );
-Console.Write(<span class="literal">"Δf = {0}\n"</span>, laplacian.Apply(f));
-</code></pre>
+Console.Write("Δf = {0}\n", laplacian.Apply(f));
+```
 
 
 要するに、ラムダ式で特性多項式を与えて初期化します。
@@ -198,11 +198,11 @@ CodeDom に関しては右記のページを参考にしました →
 
 以下のように使います。
 
-<pre class="source" title="文字列から動的に式木を生成" lang="">
-<code><span class="reserved">var</span> f = (Expression&lt;Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>&gt;&gt;)CodeDom.GetExpressionFrom(
-  <span class="literal">"x =&gt; x * x"</span>
+```csharp
+var f = (Expression<Func<double, double>>)CodeDom.GetExpressionFrom(
+  "x => x * x"
   );
-</code></pre>
+```
 
 
 これと記号的微分ライブラリと併せて、
@@ -212,20 +212,20 @@ CodeDom に関しては右記のページを参考にしました →
 の中の ConsoleCodeDom プロジェクト。
 実行例は以下の通り。
 
-<pre class="console" title="実行例">
-<span class="input">x =&gt; x * x + 2 * x + 1</span>
-function  : x =&gt; (((x * x) + (2 * x)) + 1)
-derivative: x =&gt; ((2 * x) + 2)
-<span class="input">x =&gt; x * Math.Log(x) - x</span>
-function  : x =&gt; ((x * Log(x)) - x)
-derivative: x =&gt; Log(x)
-<span class="input">x =&gt; Math.Sin(x) * Math.Sin(x) + Math.Cos(x) * Math.Cos(x)</span>
-function  : x =&gt; ((Sin(x) * Sin(x)) + (Cos(x) * Cos(x)))
-derivative: x =&gt; 0
-<span class="input">x =&gt; Math.Log(Math.Cos(x))</span>
-function  : x =&gt; Log(Cos(x))
-derivative: x =&gt; (-1 * (Sin(x) / Cos(x)))
-</pre>
+```console
+x => x * x + 2 * x + 1
+function  : x => (((x * x) + (2 * x)) + 1)
+derivative: x => ((2 * x) + 2)
+x => x * Math.Log(x) - x
+function  : x => ((x * Log(x)) - x)
+derivative: x => Log(x)
+x => Math.Sin(x) * Math.Sin(x) + Math.Cos(x) * Math.Cos(x)
+function  : x => ((Sin(x) * Sin(x)) + (Cos(x) * Cos(x)))
+derivative: x => 0
+x => Math.Log(Math.Cos(x))
+function  : x => Log(Cos(x))
+derivative: x => (-1 * (Sin(x) / Cos(x)))
+```
 
 
 

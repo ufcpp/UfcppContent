@@ -31,29 +31,29 @@ aliases:
 
 例えば、以下のようなデリゲートがあったとします。
 
-<pre class="source" title="例として使うデリゲート">
-<code><span class="reserved">delegate</span> <span class="reserved">int</span> <span class="type">F</span>(<span class="reserved">int</span> x);
-</code></pre>
+```csharp
+delegate int F(int x);
+```
 
 これは内部的には以下のような扱いになっています。
 概ね、インスタンスと関数ポインターのペアです。
 
-<pre class="source" title="デリゲートの内部的な扱い">
-<code><span class="reserved">class</span> <span class="type">F</span> : System.<span class="type">Delegate</span>
+```csharp
+class F : System.Delegate
 {
-    <span class="reserved">object</span> Target;
+    object Target;
     IntPtr FunctionPointer;
-    <span class="comment">// 実際には Delegate クラスのメンバー</span>
-    <span class="comment">// あと、object がもう1個と、IntPtr がもう1個ある</span>
+    // 実際には Delegate クラスのメンバー
+    // あと、object がもう1個と、IntPtr がもう1個ある
 
-    <span class="reserved">public</span> F(<span class="reserved">object</span> target, <span class="type">IntPtr</span> fp) =&gt; (Target, FunctionPointer) = (target, fp);
+    public F(object target, IntPtr fp) => (Target, FunctionPointer) = (target, fp);
 
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">int</span> Invoke(<span class="reserved">int</span> x)
+    public virtual int Invoke(int x)
     {
-        <span class="comment">// return FunctionPointer(Target, x); 的な処理</span>
+        // return FunctionPointer(Target, x); 的な処理
     }
 }
-</code></pre>
+```
 
 実際にはこの他に2つのフィールドがあると書いていますが、
 1つは[マルチキャスト](sp_delegate.md#malticast)用、
@@ -63,25 +63,25 @@ aliases:
 
 C# では(C# 2.0 以降)、以下のように、デリゲート型の変数に対してメソッドを直接渡すような形でデリゲートを作ります。
 
-<pre class="source" title="デリゲートの作り方(C# 2.0 以降)">
-<code><span class="comment">// インスタンス メソッドから生成</span>
-<span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Sample</span>();
-<span class="type">F</span> i = x.Instance;
+```csharp
+// インスタンス メソッドから生成
+var x = new Sample();
+F i = x.Instance;
 
-<span class="comment">// 静的メソッドから生成</span>
-<span class="type">F</span> s = <span class="type">Sample</span>.Static;
-</code></pre>
+// 静的メソッドから生成
+F s = Sample.Static;
+```
 
 これは省略形で、省略せずに書くなら以下のように、デリゲート型のインスタンスを`new`します
 (C# 1.0 時代はこの書き方しかできない)。
-<pre class="source" title="">
-<code><span class="comment">// インスタンス メソッドから生成</span>
-<span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Sample</span>();
-<span class="type">F</span> i = <span class="reserved">new</span> <span class="type">F</span>(x.Instance);
+```csharp
+// インスタンス メソッドから生成
+var x = new Sample();
+F i = new F(x.Instance);
 
-<span class="comment">// 静的メソッドから生成</span>
-<span class="type">F</span> s = <span class="reserved">new</span> <span class="type">F</span>(<span class="type">Sample</span>.Static);
-</code></pre>
+// 静的メソッドから生成
+F s = new F(Sample.Static);
+```
 
 ここで、先ほど説明した通り、デリゲート`F`のコンストラクターは内部的には`F(object, IntPtr)`という形になっています。
 そして、上記のコードは、実際にはこのコンストラクターを呼ぶように展開されます。
@@ -108,17 +108,17 @@ C# では(C# 2.0 以降)、以下のように、デリゲート型の変数に�
 
 デリゲートの呼び出しは以下のように書きます。
 
-<pre class="source" title="デリゲートの呼び出し">
-<code>i(10);
+```csharp
+i(10);
 s(20);
-</code></pre>
+```
 
 これも省略形みたいもので、省略せずに書くと`Invoke`メソッドの呼び出しになっています。
 
-<pre class="source" title="デリゲートの呼び出し(Invoke を明示的に呼ぶ)">
-<code>i.Invoke(10);
+```csharp
+i.Invoke(10);
 s.Invoke(20);
-</code></pre>
+```
 
 ただし、JIT 時の最適化で`Invoke`メソッド呼び出しの部分が書き換えられて、
 最終的には以下のような処理が残ります。
@@ -132,29 +132,29 @@ s.Invoke(20);
 インスタンス メソッドと静的メソッドは、内部的には実のところだいぶ異なる引数の受け取り方をしています。
 インスタンス メソッドは、以下のように、静的メソッドよりも暗黙的に1引数多く受け取っています。
 
-<pre class="source" title="インスタンス メソッドと静的メソッドの引数の受け取り方">
-<code><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> StaticMethod(<span class="reserved">int</span> x)
+    static void StaticMethod(int x)
     {
-        <span class="comment">// 静的メソッドの場合は正真正銘、引数は x の1つだけ</span>
+        // 静的メソッドの場合は正真正銘、引数は x の1つだけ
     }
 
-    <span class="reserved">void</span> InstanceMethod(<span class="reserved">int</span> x)
+    void InstanceMethod(int x)
     {
-        <span class="comment">// 引数が1つだけに見えて…</span>
+        // 引数が1つだけに見えて…
 
-        <span class="comment">// 実は暗黙的に this を受け取っている</span>
-        Console.WriteLine(<span class="reserved">this</span>);
+        // 実は暗黙的に this を受け取っている
+        Console.WriteLine(this);
     }
 
-    <span class="comment">// ということで ↑の InstanceMethod は、以下のような静的メソッドと同じ引数の受け取り方をしてる</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> InstanceLikeMethod(Sample @this, <span class="reserved">int</span> x)
+    // ということで ↑の InstanceMethod は、以下のような静的メソッドと同じ引数の受け取り方をしてる
+    static void InstanceLikeMethod(Sample @this, int x)
     {
         Console.WriteLine(@this);
     }
 }
-</code></pre>
+```
 
 このことを踏まえた上で、
 前節の最後で説明したデリゲート呼び出しの手順を改めてみてみます。
@@ -191,40 +191,40 @@ C# ではインスタンス メソッドの方が圧倒的に利用頻度が高�
 拡張メソッドは、実体としては以下のように、第1引数でインスタンスを受け取る構造になっていて、
 これがインスタンス メソッドの暗黙的な `this` 引数と同じ受け取り方になります。
 
-<pre class="source" title="インスタンス メソッドと拡張メソッドの引数の受け取り方">
-<code><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">public void</span> InstanceMethod(<span class="reserved">int</span> x)
+    public void InstanceMethod(int x)
     {
-        <span class="comment">// 引数が1つだけに見えて、実は暗黙的に this を受け取っている</span>
+        // 引数が1つだけに見えて、実は暗黙的に this を受け取っている
     }
 
-    <span class="comment">// ということで ↑の InstanceMethod は、以下のような静的メソッドと同じ引数の受け取り方をしてる</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> InstanceLikeMethod(<span class="type">Sample</span> @this, <span class="reserved">int</span> x)
+    // ということで ↑の InstanceMethod は、以下のような静的メソッドと同じ引数の受け取り方をしてる
+    static void InstanceLikeMethod(Sample @this, int x)
     {
     }
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">SampleExtensions</span>
+static class SampleExtensions
 {
-    <span class="comment">// であれば、こういう拡張メソッドも InstanceMethod と同じ引数の受け取り方になる</span>
-    <span class="reserved">public static</span> <span class="reserved">void</span> ExtensionMethod(<span class="reserved">this</span> <span class="type">Sample</span> @this, <span class="reserved">int</span> x)
+    // であれば、こういう拡張メソッドも InstanceMethod と同じ引数の受け取り方になる
+    public static void ExtensionMethod(this Sample @this, int x)
     {
     }
 }
-</code></pre>
+```
 
 そこで、C# では、以下のように拡張メソッドに対して、インスタンス メソッドと同じようなデリゲートの作り方を認めています
 (`x.E` のような書き方を、カリー化デリゲートと呼びます)。
 
-<pre class="source" title="拡張メソッドからデリゲートを作る">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Sample</span>();
+```csharp
+var x = new Sample();
 
-<span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; i = x.InstanceMethod;
+Action<int> i = x.InstanceMethod;
 
-<span class="comment">// 拡張メソッドに対して、インスタンス メソッドと同じようなデリゲートの作り方を認めてる</span>
-<span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; e = x.ExtensionMethod;
-</code></pre>
+// 拡張メソッドに対して、インスタンス メソッドと同じようなデリゲートの作り方を認めてる
+Action<int> e = x.ExtensionMethod;
+```
 
 `i`の方も`e`の方のどちらも、以下のように扱われます。
 
@@ -242,31 +242,31 @@ C# ではインスタンス メソッドの方が圧倒的に利用頻度が高�
 ちなみに、こういう内部挙動の結果、
 以下のように、静的メソッドに対してダミー引数を1つ増やしてわざわざ拡張メソッド化する高速化手法が使えたりします。
 
-<pre class="source" title="カリー化デリゲートにすることで静的メソッドのデリゲートを高速化する例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Program</span>
+static class Program
 {
-    <span class="comment">// 普通の静的メソッド</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> F(<span class="reserved">int</span> x) =&gt; 2 * x;
+    // 普通の静的メソッド
+    static int F(int x) => 2 * x;
 
-    <span class="comment">// わざわざ使いもしない第1引数を増やして、拡張メソッドに変更</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> F(<span class="reserved">this</span> <span class="reserved">object</span> dummy, <span class="reserved">int</span> x) =&gt; 2 * x;
+    // わざわざ使いもしない第1引数を増やして、拡張メソッドに変更
+    static int F(this object dummy, int x) => 2 * x;
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 静的メソッドからデリゲート作成</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; s = F;
+        // 静的メソッドからデリゲート作成
+        Func<int, int> s = F;
 
-        <span class="comment">// わざわざ null を使ってカリー化デリゲートにする</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; e = <span class="reserved">default</span>(<span class="reserved">object</span>).F;
+        // わざわざ null を使ってカリー化デリゲートにする
+        Func<int, int> e = default(object).F;
 
-        <span class="comment">// 以下の2つの呼び出しでは、e (カリー化デリゲート)の方が圧倒的に高速</span>
+        // 以下の2つの呼び出しでは、e (カリー化デリゲート)の方が圧倒的に高速
         s(10);
         e(10);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="optimization-static"></a>(最適化手法2) 匿名関数を拡張メソッドに置き換え
 
@@ -276,37 +276,37 @@ C# ではインスタンス メソッドの方が圧倒的に利用頻度が高�
 拡張メソッドに置き換えることで高速化してみましょう。
 以下のように書けます。
 
-<pre class="source" title="拡張メソッドを介することでちょっと高速化する例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// Func 越しに何かのインスタンスを取りたい</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(Func&lt;<span class="reserved">string</span>&gt; factory)
+    // Func 越しに何かのインスタンスを取りたい
+    static void M(Func<string> factory)
     {
         Console.WriteLine(factory());
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// でも、呼ぶ側としては単に何かインスタンスを1個渡したいだけ</span>
-        <span class="reserved">string</span> s = Console.ReadLine();
+        // でも、呼ぶ側としては単に何かインスタンスを1個渡したいだけ
+        string s = Console.ReadLine();
 
-        <span class="comment">// そこで、ラムダ式で1段覆って、string から Func&lt;string&gt; を作る</span>
-        <span class="comment">// これだと、匿名関数の仕様から、匿名のクラスが作られて、その new のコストが余計にかかる</span>
-        M(() =&gt; s);
+        // そこで、ラムダ式で1段覆って、string から Func<string> を作る
+        // これだと、匿名関数の仕様から、匿名のクラスが作られて、その new のコストが余計にかかる
+        M(() => s);
 
-        <span class="comment">// 一方で、以下のように、拡張メソッドを介することで、カリー化デリゲート(速い)になる</span>
+        // 一方で、以下のように、拡張メソッドを介することで、カリー化デリゲート(速い)になる
         M(s.Identity);
     }
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">TrickyExtension</span>
+static class TrickyExtension
 {
-    <span class="comment">// 素通しするだけの拡張メソッドを用意</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> T Identity&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> T x) =&gt; x;
+    // 素通しするだけの拡張メソッドを用意
+    public static T Identity<T>(this T x) => x;
 }
-</code></pre>
+```
 
 この例の「素通し」よりもう少し複雑な場合でも同様です。
 いくつか例を挙げると、以下のような場合にも同様の手法が使えます。

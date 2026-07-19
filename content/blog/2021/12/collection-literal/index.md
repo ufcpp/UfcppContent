@@ -27,42 +27,42 @@ aliases: []
 
 そして現在の C# には `new[] { 1, 2, 3 }` みたいな書き方はあるにはあるものの、いろんなコレクション型があって、それぞれ書き方に統一感がない状態。
 
-<pre class="source" title="C# のコレクションあれこれ">
-<code><span class="comment">// 型を明示、かつ、配列の時に限り {} だけで OK。</span>
-<span class="reserved">int</span>[] <span class="variable">array1</span> = { 1, 2, 3 };
+```csharp
+// 型を明示、かつ、配列の時に限り {} だけで OK。
+int[] array1 = { 1, 2, 3 };
 
-<span class="comment">// 型推論を使いたければ new[] {}。</span>
-<span class="reserved">var</span> <span class="variable">array2</span> = <span class="reserved">new</span>[] { 1, 2, 3 };
+// 型推論を使いたければ new[] {}。
+var array2 = new[] { 1, 2, 3 };
 
-<span class="comment">// Target-typed new + コレクション初期化子。 () は省略不可。</span>
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">list1</span> = <span class="reserved">new</span>() { 1, 2, 3 };
+// Target-typed new + コレクション初期化子。 () は省略不可。
+List<int> list1 = new() { 1, 2, 3 };
 
-<span class="comment">// 通常の new + コレクション初期化子。こっちの場合は () 省略 OK。</span>
-<span class="reserved">var</span> <span class="variable">list2</span> = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; { 1, 2, 3 };
+// 通常の new + コレクション初期化子。こっちの場合は () 省略 OK。
+var list2 = new List<int> { 1, 2, 3 };
 
-<span class="comment">// Span にはまあ、new で配列を割り当ててもいいものの、</span>
-<span class="comment">// パフォーマンス的には stackalloc を使った方が大体の場合有利。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[] { 1, 2 };
+// Span にはまあ、new で配列を割り当ててもいいものの、
+// パフォーマンス的には stackalloc を使った方が大体の場合有利。
+Span<int> span = stackalloc int[] { 1, 2 };
 
-<span class="comment">// ReadOnlySpan も同様。</span>
-<span class="comment">// あと、stackalloc の後ろは型推論で省略可能。</span>
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">ros</span> = <span class="reserved">stackalloc</span>[] { 1, 2, 3 };
+// ReadOnlySpan も同様。
+// あと、stackalloc の後ろは型推論で省略可能。
+ReadOnlySpan<int> ros = stackalloc[] { 1, 2, 3 };
 
-<span class="comment">// new() もコレクション初期化子も使えないかわいそうな型あり。</span>
-<span class="reserved">var</span> <span class="variable">immutable</span> = System.Collections.Immutable.<span class="type">ImmutableArray</span>.<span class="method">Create</span>(1, 2, 3);
-</code></pre>
+// new() もコレクション初期化子も使えないかわいそうな型あり。
+var immutable = System.Collections.Immutable.ImmutableArray.Create(1, 2, 3);
+```
 
 C# でももう少し統一感あるコレクション リテラルがあった方がいいし、
 だったら他の言語に倣って `[]` を使った新文法を導入でいいのではないかという話になります。
 
-<pre class="source" title="[] をもっていろんなコレクションを初期化したい">
-<code><span class="comment">// ぜんぶ [] にしたい。</span>
-<span class="reserved">int</span>[] <span class="variable">array1</span> = [ 1, 2, 3 ];
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">list1</span> = [ 1, 2, 3 ];
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> = [ 1, 2, 3 ];
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">ros</span> = [ 1, 2 ];
-System.Collections.Immutable.<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">immutable</span> = [ 1, 2, 3 ];
-</code></pre>
+```csharp
+// ぜんぶ [] にしたい。
+int[] array1 = [ 1, 2, 3 ];
+List<int> list1 = [ 1, 2, 3 ];
+Span<int> span = [ 1, 2, 3 ];
+ReadOnlySpan<int> ros = [ 1, 2 ];
+System.Collections.Immutable.ImmutableArray<int> immutable = [ 1, 2, 3 ];
+```
 
 そしてこっち(リテラル側)でも `[]` を使うのであれば、
 [パターンの方](../list-pattern/index.md)で `{}` (プロパティ パターンと区別が付かない)とか `[]{}` (`new[]{}` との対称性はいいかもしれないもののキモい)とか考えず、そっちも素直に `[]` を使えばいいということに。
@@ -71,32 +71,32 @@ System.Collections.Immutable.<span class="type">ImmutableArray</span>&lt;<span c
 
 [パターンの方](../list-pattern/index.md)で「`[1, ..[2, 3, 4], 5]` と `[1, 2, 3, 4, 5]` が同じ意味になる」と書きましたが、コレクション リテラル中でも同じく「入れ子のコレクションを展開」みたいな仕様があります。
 
-<pre class="source" title=".. で入れ子のコレクションを展開">
-<code><span class="reserved">int</span>[] <span class="variable">array</span> = [ 1, 2, 3 ];
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">list</span> = [ 0, ..<span class="variable">array</span>, 4 ]; <span class="comment">// 0, 1, 2, 3, 4</span>
-</code></pre>
+```csharp
+int[] array = [ 1, 2, 3 ];
+List<int> list = [ 0, ..array, 4 ]; // 0, 1, 2, 3, 4
+```
 
 他の言語で unpacking とか splat (* 記号が一部の人にそう呼ばれていて、この機能に * を使ってる言語ではこう呼ぶ)とか spread (拡散)演算子とか呼ばれているやつです。
 
 C# ではまあ、LINQ の `Concat`, `Append`, `Prepend` とかを使って同様のものは書けていましたが、煩雑、かつ、パフォーマンスはいまいちでした。
 
-<pre class="source" title="Concat, Append, Prepend">
-<code><span class="reserved">int</span>[] <span class="variable">array1</span> = { 1, 2, 3 };
-<span class="reserved">int</span>[] <span class="variable">array2</span> = { 4, 5, 6 };
+```csharp
+int[] array1 = { 1, 2, 3 };
+int[] array2 = { 4, 5, 6 };
 
-<span class="comment">// enumerator のインスタンスが余計に new されたりで遅い。</span>
-<span class="reserved">var</span> <span class="variable">linq</span> = <span class="variable">array1</span>.<span class="method">Concat</span>(<span class="variable">array2</span>).<span class="method">Prepend</span>(0).<span class="method">Append</span>(7);
+// enumerator のインスタンスが余計に new されたりで遅い。
+var linq = array1.Concat(array2).Prepend(0).Append(7);
 
-<span class="comment">// 列挙も結構遅い。</span>
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">linq</span>)
+// 列挙も結構遅い。
+foreach (var x in linq)
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+    Console.WriteLine(x);
 }
 
-<span class="comment">// LINQ のよりも速い実装になる予定(後述)。</span>
-<span class="comment">// かつ、Preapend よりはだいぶわかりやすい。</span>
-<span class="reserved">var</span> <span class="variable">spread</span> = [ 0, .. <span class="variable">array1</span>, .. <span class="variable">array2</span>, 7 ];
-</code></pre>
+// LINQ のよりも速い実装になる予定(後述)。
+// かつ、Preapend よりはだいぶわかりやすい。
+var spread = [ 0, .. array1, .. array2, 7 ];
+```
 
 ## <a id="brace">おまけ: {} 案</a>
 
@@ -110,21 +110,21 @@ C# ではまあ、LINQ の `Concat`, `Append`, `Prepend` とかを使って同�
 展開結果、基本的には「前から順に詰める」です。
 配列の場合だと割かしシンプルで、例えば以下のような感じ。
 
-<pre class="source" title="配列に対するコレクション リテラルの展開結果">
-<code><span class="reserved">int</span>[] <span class="variable">array1</span> = { 1, 2, 3 };
-<span class="reserved">int</span>[] <span class="variable">array2</span> = { 4, 5, 6 };
+```csharp
+int[] array1 = { 1, 2, 3 };
+int[] array2 = { 4, 5, 6 };
 
-<span class="comment">// var spread = [ 0, .. array1, .. array2, 7 ];</span>
+// var spread = [ 0, .. array1, .. array2, 7 ];
 
-<span class="reserved">var</span> <span class="variable">len</span> = 1 + <span class="variable">array1</span>.Length + <span class="variable">array2</span>.Length + 1;
-<span class="reserved">var</span> <span class="variable">spread</span> = <span class="reserved">new</span> <span class="reserved">int</span>[<span class="variable">len</span>];
+var len = 1 + array1.Length + array2.Length + 1;
+var spread = new int[len];
 
-<span class="reserved">var</span> <span class="variable">i</span> = 0;
-<span class="variable">spread</span>[<span class="variable">i</span>++] = 0;
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">j</span> = 0; <span class="variable">j</span> &lt; <span class="variable">array1</span>.Length; <span class="variable">j</span>++, <span class="variable">i</span>++) <span class="variable">spread</span>[<span class="variable">i</span>] = <span class="variable">array1</span>[<span class="variable">j</span>];
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">j</span> = 0; <span class="variable">j</span> &lt; <span class="variable">array2</span>.Length; <span class="variable">j</span>++, <span class="variable">i</span>++) <span class="variable">spread</span>[<span class="variable">i</span>] = <span class="variable">array2</span>[<span class="variable">j</span>];
-<span class="variable">spread</span>[<span class="variable">i</span>] = 7;
-</code></pre>
+var i = 0;
+spread[i++] = 0;
+for (int j = 0; j < array1.Length; j++, i++) spread[i] = array1[j];
+for (int j = 0; j < array2.Length; j++, i++) spread[i] = array2[j];
+spread[i] = 7;
+```
 
 `Span<T>` の場合には `new T[]` のところを `stackalloc T[]` に変更。
 `ReadOnlySpan<T>` の場合はいったん `Span<T>` と同じ処理でデータを書き込んでから、最後に `ReadOnlySpan<T>` に変換。
@@ -136,32 +136,32 @@ C# ではまあ、LINQ の `Concat`, `Append`, `Prepend` とかを使って同�
 
 例えば `Init(int[])` だけ持っている型だと以下のような感じ。
 
-<pre class="source" title="一時 new int[] が作られるパターン">
-<code><span class="comment">// A a = [ 1, 2, 3 ];</span>
-<span class="reserved">int</span>[] <span class="variable">tempA</span> = { 1, 2, 3 };
-<span class="type">A</span> <span class="variable">a</span> = <span class="reserved">new</span>();
-<span class="variable">a</span>.<span class="method">Init</span>(<span class="variable">tempA</span>);
+```csharp
+// A a = [ 1, 2, 3 ];
+int[] tempA = { 1, 2, 3 };
+A a = new();
+a.Init(tempA);
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Init</span>(<span class="reserved">int</span>[] <span class="variable">items</span>) { }
+    public void Init(int[] items) { }
 }
-</code></pre>
+```
 
 `capacity` コンストラクターと `Init(ReadOnlySpan<int>)` を持つ型だと以下のような感じ。
 
-<pre class="source" title="一時 stackalloc int[] が作られるパターン">
-<code><span class="comment">// A a = [ 1, 2, 3 ];</span>
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">tempA</span> = <span class="reserved">stackalloc</span>[] { 1, 2, 3 };
-<span class="type">A</span> <span class="variable">a</span> = <span class="reserved">new</span>(3);
-<span class="variable">a</span>.<span class="method">Init</span>(<span class="variable">tempA</span>);
+```csharp
+// A a = [ 1, 2, 3 ];
+ReadOnlySpan<int> tempA = stackalloc[] { 1, 2, 3 };
+A a = new(3);
+a.Init(tempA);
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable">capacity</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Init</span>(<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">items</span>) { }
+    public A(int capacity) { }
+    public void Init(ReadOnlySpan<int> items) { }
 }
-</code></pre>
+```
 
 ## immutable コレクション初期化
 
@@ -170,14 +170,14 @@ C# ではまあ、LINQ の `Concat`, `Append`, `Prepend` とかを使って同�
 
 とりあえず、`ImmutableArray` についても前節と同じルールで初期化を掛けることを考えます。
 
-<pre class="source" title="ImmutableArray.Init">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="comment">// ImmutableArray&lt;int&gt; a = [ 1, 2, 3 ];</span>
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">tempA</span> = <span class="reserved">stackalloc</span>[] { 1, 2, 3 };
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span> = <span class="reserved">new</span>();
-<span class="variable">a</span>.Init(<span class="variable">tempA</span>); <span class="comment">// こういうメソッドを足したいという話。今はない。</span>
-</code></pre>
+// ImmutableArray<int> a = [ 1, 2, 3 ];
+ReadOnlySpan<int> tempA = stackalloc[] { 1, 2, 3 };
+ImmutableArray<int> a = new();
+a.Init(tempA); // こういうメソッドを足したいという話。今はない。
+```
 
 こういう `Init` メソッドを足せればいいわけですが、
 immutable を名乗る以上、`new()` とは別に呼ばれるとまずいという話になります。
@@ -186,18 +186,18 @@ immutable を名乗る以上、`new()` とは別に呼ばれるとまずいと�
 
 任意のメソッドに対して、`new()` 中、もしくは、直後にしか呼ばない・呼ばれない保証をコンパイラーがするような仕様(メソッドに対する `init` 修飾)があればいいわけで、そういう仕様も模索中とのこと。
 
-<pre class="source" title="init 修飾子">
-<code><span class="reserved">struct</span> <span class="type">ImmutableArray</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct ImmutableArray<T>
 {
-    <span class="reserved">readonly</span> <span class="type">T</span>[] _items;
+    readonly T[] _items;
 
-    <span class="comment">// init 修飾を付けたメソッドは new() 内、もしくは、直後でしか呼べないように、</span>
-    <span class="comment">// コンパイラーが呼び出し箇所をチェックする。</span>
-    <span class="reserved">public</span> <span class="reserved">init</span> <span class="reserved">void</span> <span class="method">Init</span>(<span class="type">ReadOnlySpan</span>&lt;<span class="type">T</span>&gt; <span class="variable">items</span>)
+    // init 修飾を付けたメソッドは new() 内、もしくは、直後でしか呼べないように、
+    // コンパイラーが呼び出し箇所をチェックする。
+    public init void Init(ReadOnlySpan<T> items)
     {
-        <span class="comment">// 本来、コンストラクター内でしか書き換えてはいけないはずのフィールドを、</span>
-        <span class="comment">// init 修飾子が付いたメソッド内に限り書き換え可能にする。</span>
-        _items = <span class="variable">items</span>.<span class="method">ToArray</span>();
+        // 本来、コンストラクター内でしか書き換えてはいけないはずのフィールドを、
+        // init 修飾子が付いたメソッド内に限り書き換え可能にする。
+        _items = items.ToArray();
     }
 }
-</code></pre>
+```

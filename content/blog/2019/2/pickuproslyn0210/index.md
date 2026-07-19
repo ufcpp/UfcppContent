@@ -23,17 +23,17 @@ aliases: []
 
 外側の `x` を隠すので shadowing と呼ばれます。
 
-<pre class="source" title="shadowing">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>()
+```csharp
+static int M()
 {
-    <span class="reserved">int</span> <span class="variable">x</span> = 1;
+    int x = 1;
  
-    <span class="comment">// C# 8.0 で、1段外側の変数の x と同名の引数が使えるように</span>
-    <span class="reserved">int</span> <span class="method">m</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> * <span class="variable">x</span>;
+    // C# 8.0 で、1段外側の変数の x と同名の引数が使えるように
+    int m(int x) => x * x;
  
-    <span class="control">return</span> <span class="method">m</span>(<span class="variable">x</span>);
+    return m(x);
 }
-</code></pre>
+```
 
 きっかけとしては、静的ローカル関数が入ったからみたいです。
 要するに、
@@ -66,26 +66,26 @@ C# 8.0 で導入される予定の[null 許容参照型](../../../2018/12/cs8nrt
 
 これまで、C# では結構以下のようなコードを書いたと思います。
 
-<pre class="source" title="引数の null チェック">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>)
+```csharp
+static int M(string x)
 {
-    <span class="control">if</span> (<span class="variable">x</span> == <span class="reserved">null</span>)
+    if (x == null)
     {
-        <span class="control">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(<span class="variable">x</span>));
+        throw new ArgumentNullException(nameof(x));
     }
  
-    <span class="control">return</span> <span class="variable">x</span>.Length;
+    return x.Length;
 }
-</code></pre>
+```
 
 これを、以下のように書くだけで同様の実行時 null チェックを挿入するようにしたいというものです。
 
-<pre class="source" title="実行時 null チェック構文">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>!)
+```csharp
+static int M(string x!)
 {
-    <span class="control">return</span> <span class="variable">x</span>.Length;
+    return x.Length;
 }
-</code></pre>
+```
 
 ただ、null-forgiving (コンパイル時チェックも実行時チェックもなくす)の `x!` と、この実行時 null チェックの `x!` で同じ書き方なのが結構気持ち悪く…
 その辺りはまだちょっと悩んでいるみたいです。
@@ -117,35 +117,35 @@ C# 8.0 で導入される予定の[null 許容参照型](../../../2018/12/cs8nrt
 みたいな感じ。
 これに対して、以下のように `int` 引数なメソッドに属性を付けて、
 
-<pre class="source" title="属性ベースの Index/Range 受付">
-<code><span class="reserved">interface</span> <span class="type">ISomeCollection</span>&lt;<span class="type">T</span>&gt;
+```csharp
+interface ISomeCollection<T>
 {
-    [<span class="type">IndexMethod</span>]
-    <span class="type">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable">index</span>] { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    [IndexMethod]
+    T this[int index] { get; set; }
  
-    [<span class="type">RangeMethod</span>]
-    <span class="type">ISomeCollection</span>&lt;<span class="type">T</span>&gt; <span class="method">Slice</span>(<span class="reserved">int</span> <span class="variable">start</span>, <span class="reserved">int</span> <span class="variable">length</span>);
+    [RangeMethod]
+    ISomeCollection<T> Slice(int start, int length);
 
-    <span class="reserved">int</span> Length { <span class="reserved">get</span>; }
+    int Length { get; }
 }
-</code></pre>
+```
 
 以下のようなコードを、
 
-<pre class="source" title="">
-<code><span class="type">ISomeCollection</span>&lt;<span class="type">T</span>&gt; <span class="variable">x</span>;
-<span class="reserved">var</span> <span class="variable">y</span> = <span class="variable">x</span>[^1];
-<span class="reserved">var</span> <span class="variable">z</span> = <span class="variable">x</span>.Slice(1..^1);
-</code></pre>
+```csharp
+ISomeCollection<T> x;
+var y = x[^1];
+var z = x.Slice(1..^1);
+```
 
 コンパイラーが以下のように置き換える実装を提案しています。
 (ただし、`Length` や `Count` をどうやって取るかが課題。)
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">y</span> = <span class="variable">x</span>[^1.GetOffset(<span class="variable">x</span>.Length)];
-<span class="reserved">var</span> (<span class="variable">offset</span>, <span class="variable">length</span>) = 1..^1.GetOffsetLength(<span class="variable">x</span>.Length);
-<span class="reserved">var</span> <span class="variable">z</span> = <span class="variable">x</span>.Slice(<span class="variable">offset</span>, <span class="variable">length</span>);
-</code></pre>
+```csharp
+var y = x[^1.GetOffset(x.Length)];
+var (offset, length) = 1..^1.GetOffsetLength(x.Length);
+var z = x.Slice(offset, length);
+```
 
 ## LangVersion default の変更
 

@@ -121,11 +121,11 @@ HTML と組み合わせてリッチでインタラクティブなウェブペー
 具体的な説明のために、
 以下のような C# コードを考えてみます。
 
-<pre class="source" title="連想配列の例（C#）" lang="">
-<code>Dictionary&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; dic = <span class="reserved">new</span> Dictionary&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;();
-dic.Add(<span class="literal">"test"</span>, 1);
-Console.Write(dic[<span class="literal">"test"</span>]);
-</code></pre>
+```csharp
+Dictionary<string, int> dic = new Dictionary<string, int>();
+dic.Add("test", 1);
+Console.Write(dic["test"]);
+```
 
 
 まあ、多分、C# というプログラミング言語をしらなくても、
@@ -136,11 +136,11 @@ dictionary（辞書）という単語を知っている人なら大体このコ�
 
 で、これと似たようなことを PowerShell のスクリプトを使って書いてみると、以下のようになります。
 
-<pre class="source" title="連想配列の例（PowerShell）" lang="">
-<code>$dic = @{}
+```powershell
+$dic = @{}
 $dic.test = 1
 $dic.test
-</code></pre>
+```
 
 
 これだけです。ほんとに。

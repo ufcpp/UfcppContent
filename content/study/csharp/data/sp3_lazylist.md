@@ -29,20 +29,20 @@ C# 3.0 の「[LINQ](../cheatsheet/ap_ver3.md#linq)」を使うと、lazy list �
 
 例えば、以下のようなコードを見てみましょう。
 
-<pre class="source" title="LINQ の例" lang="">
-<code><span class="reserved">int</span>[] x = {-<span class="literal">15</span>, -<span class="literal">10</span>, -<span class="literal">5</span>, <span class="literal">0</span>, <span class="literal">5</span>, <span class="literal">10</span>, <span class="literal">15</span>};
-<span class="reserved">int</span> min = -<span class="literal">10</span>;
-<span class="reserved">int</span> max = <span class="literal">10</span>;
-<span class="reserved">var</span> y =
-  <span class="reserved">from</span> p <span class="reserved">in</span> x
-  <span class="reserved">where</span> min &lt;= p &amp;&amp; p &lt;= max
-  <span class="reserved">select</span> p * p;
+```csharp
+int[] x = {-15, -10, -5, 0, 5, 10, 15};
+int min = -10;
+int max = 10;
+var y =
+  from p in x
+  where min <= p && p <= max
+  select p * p;
 
-<span class="reserved">foreach</span>(<span class="reserved">var</span> p <span class="reserved">in</span> y)
+foreach(var p in y)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, p);
+  Console.Write("{0}\n", p);
 }
-</code></pre>
+```
 
 
 int の配列 x から、
@@ -53,23 +53,23 @@ int の配列 x から、
       </span> の範囲に入っている物だけを取り出し、
 さらに、値の2乗を返しています。
 
-<pre class="console" title="LINQ の例、実行結果">
+```console
 100
 25
 0
 25
 100
-</pre>
+```
 
 
 非常に抽象度の高いコードですが、
 これが具体的にどういうことをしているのかを考えてみましょう。
 実は、このコードの from, where, select の部分は以下のように展開されます。
 
-<pre class="source" title="from, where, selet の展開結果" lang="">
-<code>  <span class="reserved">var</span> y = x.Where(p =&gt; min &lt;= p &amp;&amp; p &lt;= max)
-    .Select(q =&gt; q * q);
-</code></pre>
+```csharp
+  var y = x.Where(p => min <= p && p <= max)
+    .Select(q => q * q);
+```
 
 
 これなら、多少は C# 2.0 の頃に見慣れたコードに近づきました。
@@ -101,31 +101,31 @@ Where や Select は IEnumerable → IEnumerable を得るメソッドなんで�
 以下のような感じになります。
 （第1引数の前に this とか付いてるのが「[拡張メソッド](../functional/sp3_extension.md#exmethod)」です。）
 
-<pre class="source" title="Where, Select の実装（IList 版）" lang="">
-<code><span class="reserved">public static class</span> <span class="type">Extensions</span>
+```csharp
+public static class Extensions
 {
-  <span class="reserved">public static</span> <span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; Where(
-    <span class="reserved">this</span> <span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; x,
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; f)
+  public static IList<int> Where(
+    this IList<int> x,
+    Func<int, bool> f)
   {
-    <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; y = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-    <span class="reserved">for</span> (<span class="reserved">int</span> i=<span class="literal">0</span>; i&lt;x.Count; ++i)
-      <span class="reserved">if</span> (f(x[i]))
+    List<int> y = new List<int>();
+    for (int i=0; i<x.Count; ++i)
+      if (f(x[i]))
         y.Add(x[i]);
-    <span class="reserved">return</span> y;
+    return y;
   }
 
-  <span class="reserved">public static</span> <span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; Select(
-    <span class="reserved">this</span> <span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; x,
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f)
+  public static IList<int> Select(
+    this IList<int> x,
+    Func<int, int> f)
   {
-    <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; y = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-    <span class="reserved">for</span> (<span class="reserved">int</span> i=<span class="literal">0</span>; i&lt;x.Count; ++i)
+    List<int> y = new List<int>();
+    for (int i=0; i<x.Count; ++i)
       y.Add(f(x[i]));
-    <span class="reserved">return</span> y;
+    return y;
   }
 }
-</code></pre>
+```
 
 
 で、これの動作を見るために、
@@ -134,69 +134,69 @@ Where や Select は IEnumerable → IEnumerable を得るメソッドなんで�
 select の所に“重たい処理”を挟んだ上で、
 実行時間を計測しています。
 
-<pre class="source" title="Where, Select（IList 版）のテスト" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Query;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Query;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-  <span class="reserved">static int</span> HeavyFunction(<span class="reserved">int</span> p)
+  static int HeavyFunction(int p)
   {
-    <span class="comment">// 非常に重たい処理を装うために、スリープを挟んでみる</span>
-    System.Threading.<span class="type">Thread</span>.Sleep(<span class="literal">100</span>);
-    <span class="reserved">return</span> p * p;
+    // 非常に重たい処理を装うために、スリープを挟んでみる
+    System.Threading.Thread.Sleep(100);
+    return p * p;
   }
 
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="reserved">int</span>[] x = {-<span class="literal">15</span>, -<span class="literal">10</span>, -<span class="literal">5</span>, <span class="literal">0</span>, <span class="literal">5</span>, <span class="literal">10</span>, <span class="literal">15</span>};
-    <span class="reserved">int</span> min = -<span class="literal">10</span>;
-    <span class="reserved">int</span> max = <span class="literal">10</span>;
-    <span class="type">DateTime</span> t = <span class="type">DateTime</span>.Now;
+    int[] x = {-15, -10, -5, 0, 5, 10, 15};
+    int min = -10;
+    int max = 10;
+    DateTime t = DateTime.Now;
 
-    <span class="reserved">var</span> y =
-      <span class="reserved">from</span> p <span class="reserved">in</span> x
-      <span class="reserved">where</span> min &lt;= p &amp;&amp; p &lt;= max
-      <span class="reserved">select</span> HeavyFunction(p);
+    var y =
+      from p in x
+      where min <= p && p <= max
+      select HeavyFunction(p);
 
-    <span class="type">TimeSpan</span> ts = <span class="type">DateTime</span>.Now - t;
-    <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, ts.Ticks);
-    t = <span class="type">DateTime</span>.Now;
+    TimeSpan ts = DateTime.Now - t;
+    Console.Write("{0}\n", ts.Ticks);
+    t = DateTime.Now;
 
-    <span class="reserved">foreach</span>(<span class="reserved">var</span> p <span class="reserved">in</span> y)
+    foreach(var p in y)
     {
-      ts = <span class="type">DateTime</span>.Now - t;
-      <span class="type">Console</span>.Write(<span class="literal">"{0}: {1}\n"</span>, ts.Ticks, p);
-      t = <span class="type">DateTime</span>.Now;
+      ts = DateTime.Now - t;
+      Console.Write("{0}: {1}\n", ts.Ticks, p);
+      t = DateTime.Now;
     }
   }
 }
 
-<span class="reserved">public static class</span> <span class="type">Extensions</span>
+public static class Extensions
 {
-  <span class="reserved">public static</span> <span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; Where(
-    <span class="reserved">this</span> <span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; x,
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; f)
+  public static IList<int> Where(
+    this IList<int> x,
+    Func<int, bool> f)
   {
-    <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; y = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-    <span class="reserved">for</span> (<span class="reserved">int</span> i=<span class="literal">0</span>; i&lt;x.Count; ++i)
-      <span class="reserved">if</span> (f(x[i]))
+    List<int> y = new List<int>();
+    for (int i=0; i<x.Count; ++i)
+      if (f(x[i]))
         y.Add(x[i]);
-    <span class="reserved">return</span> y;
+    return y;
   }
 
-  <span class="reserved">public static</span> <span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; Select(
-    <span class="reserved">this</span> <span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; x,
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f)
+  public static IList<int> Select(
+    this IList<int> x,
+    Func<int, int> f)
   {
-    <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; y = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-    <span class="reserved">for</span> (<span class="reserved">int</span> i=<span class="literal">0</span>; i&lt;x.Count; ++i)
+    List<int> y = new List<int>();
+    for (int i=0; i<x.Count; ++i)
       y.Add(f(x[i]));
-    <span class="reserved">return</span> y;
+    return y;
   }
 }
-</code></pre>
+```
 
 
 Extensions クラスで Where や Select を自前で定義したので、
@@ -205,14 +205,14 @@ Extensions の方の Where, Select が呼び出されます。
 
 実行結果は以下の通りです。
 
-<pre class="console" title="Where, Select（IList 版）のテストの実行結果">
+```console
 5468750
 0: 100
 0: 25
 0: 0
 0: 25
 0: 100
-</pre>
+```
 
 
 リスト処理なんで当たり前なんですが、
@@ -231,13 +231,13 @@ Extensions の方の Where, Select が呼び出されます。
 C# 2.0 の「[イテレーター](sp2_iterator.md#iterator)」機能を用いて、
 例えば以下のようにして実現できる物です。
 
-<pre class="source" title="無限シーケンス" lang="">
-<code><span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; CountUp()
+```csharp
+public static IEnumerable<int> CountUp()
 {
-  <span class="reserved">for</span>(<span class="reserved">long</span> i = <span class="literal">0</span>; ; ++i)
-    <span class="reserved">yield return</span> i;
+  for(long i = 0; ; ++i)
+    yield return i;
 }
-</code></pre>
+```
 
 
 これで、<code>foreach(var i in CountUp())</code> とかやった日には、
@@ -254,27 +254,27 @@ IEnumerable を用いた実装が必要となります。
 この IEnumerable 版実装ですが、以下のようになります。
 （ちなみに、System.Query.Sequence クラス内の実装もこんな感じのはず。）
 
-<pre class="source" title="Where, Select の実装（IEnumerable 版）" lang="">
-<code><span class="reserved">public static class</span> <span class="type">Extensions</span>
+```csharp
+public static class Extensions
 {
-  <span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Where(
-    <span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; x,
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; f)
+  public static IEnumerable<int> Where(
+    this IEnumerable<int> x,
+    Func<int, bool> f)
   {
-    <span class="reserved">foreach</span> (<span class="reserved">int</span> p <span class="reserved">in</span> x)
-      <span class="reserved">if</span> (f(p))
-        <span class="reserved">yield return</span> p;
+    foreach (int p in x)
+      if (f(p))
+        yield return p;
   }
 
-  <span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Select(
-    <span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; x,
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f)
+  public static IEnumerable<int> Select(
+    this IEnumerable<int> x,
+    Func<int, int> f)
   {
-    <span class="reserved">foreach</span> (<span class="reserved">int</span> p <span class="reserved">in</span> x)
-      <span class="reserved">yield return</span> f(p);
+    foreach (int p in x)
+      yield return f(p);
   }
 }
-</code></pre>
+```
 
 
 先ほどの IList 版とほとんど変わりませんね。
@@ -286,14 +286,14 @@ IEnumerable を用いた実装が必要となります。
 コード全体の再掲は割愛します。
 実行結果は以下の通り。
 
-<pre class="console" title="Where, Select（IList 版）のテストの実行結果">
+```console
 0
 1093750: 100
 1093750: 25
 1093750: 0
 1093750: 25
 1093750: 100
-</pre>
+```
 
 
 この通り、見事に負荷が分散してますね。
@@ -329,28 +329,28 @@ lazy list 風の操作がより簡便に行えるようになりました。
 特に、クエリ式中で副作用のあるコードを書く場合にはちょっと注意が必要です。
 例えば、以下のようなコードを書いたとします。
 
-<pre class="source" title="2度 foreach すると2度同じ処理が行われる" lang="">
-<code><span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+```csharp
+static void Main(string[] args)
 {
-  <span class="reserved">var</span> a =
-    <span class="reserved">from</span> n <span class="reserved">in</span> <span class="type">Enumerable</span>.Range(<span class="literal">0</span>, <span class="literal">3</span>)
-    <span class="reserved">select</span> SideEffect(n);
+  var a =
+    from n in Enumerable.Range(0, 3)
+    select SideEffect(n);
 
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> a) ;
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> a) ;
+  foreach (var n in a) ;
+  foreach (var n in a) ;
 }
 
-<span class="reserved">static int</span> SideEffect(<span class="reserved">int</span> n)
+static int SideEffect(int n)
 {
-  <span class="type">Console</span>.Write(n);
-  <span class="reserved">return</span> n;
+  Console.Write(n);
+  return n;
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 012012
-</pre>
+```
 
 
 foreach 1回につき 012 が1回表示されます。
@@ -360,29 +360,29 @@ foreach 1回につき 012 が1回表示されます。
 ToList() が呼ばれた時点で処理が実行され、
 「必要になるまで計算を実行しない」というのはできなくなります。
 
-<pre class="source" title="ToList()" lang="">
-<code><span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+```csharp
+static void Main(string[] args)
 {
-  <span class="reserved">var</span> a =
-    <span class="reserved">from</span> n <span class="reserved">in</span> <span class="type">Enumerable</span>.Range(<span class="literal">0</span>, <span class="literal">3</span>)
-    <span class="reserved">select</span> SideEffect(n);
-  <span class="reserved">var</span> b = a.ToList();
+  var a =
+    from n in Enumerable.Range(0, 3)
+    select SideEffect(n);
+  var b = a.ToList();
 
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> b) ;
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> b) ;
+  foreach (var n in b) ;
+  foreach (var n in b) ;
 }
 
-<span class="reserved">static int</span> SideEffect(<span class="reserved">int</span> n)
+static int SideEffect(int n)
 {
-  <span class="type">Console</span>.Write(n);
-  <span class="reserved">return</span> n;
+  Console.Write(n);
+  return n;
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 012
-</pre>
+```
 
 
 C# で、キャッシュ機構まで持つ遅延評価がしたければ、

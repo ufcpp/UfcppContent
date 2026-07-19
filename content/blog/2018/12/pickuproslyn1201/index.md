@@ -49,12 +49,12 @@ aliases: []
 - `#nullable` の影響する範囲はどこまでか
   - 例えば以下のようなコードを書いた場合、disable になるのは第2型引数の`string`と、`Dictionary` 自体(`Dictionary`のシグネチャの一部分である`>`を範囲に含んでいるので)
 
-<pre class="source">
-<code><span class="type">Dictionary</span>&lt;<span class="reserved">string</span>,
-<span class="inactive">#nullable</span> disable
-    <span class="reserved">string</span>&gt;
-<span class="inactive">#</span> <span class="inactive">nullable</span> enable
-</code></pre>
+```csharp
+Dictionary<string,
+#nullable disable
+    string>
+# nullable enable
+```
 
 - null 許容参照型
   - `using`ディレクティブ中では認めない？ → そのつもり
@@ -104,11 +104,11 @@ C# では、`base.Member` みたいな書き方で、基底クラスのメンバ
 
 まず、インターフェイス。`GetAsyncEnumerator`の引数に`CancellationToken`を足すみたいです。
 
-<pre class="source" title="">
-<code><span class="reserved">interface</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="type">T</span>&gt;
+```csharp
+interface IAsyncEnumerable<T>
 {
-    <span class="type">IAsyncEnumerator</span>&lt;<span class="type">T</span>&gt; GetAsyncEnumerator(<span class="type">CancellationToken</span> token = <span class="reserved">default</span>);
-</code></pre>
+    IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken token = default);
+```
 
 あと、拡張メソッドで `IAsyncEnumerable<T> WithCancellationToken<T>(this IAsyncEnumerable<T> e, CancellationToken token)` も用意。
 

@@ -45,27 +45,27 @@ XAML ベースの GUI アプリケーション開発という点に関しては 
 以下のように Click イベントを設定します。
 
 
-<pre class="xsource" title="イベント処理">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="XamlWindowsApplication1.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Title</span><span class="attvalue">="XAML テストプログラム"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Width</span><span class="attvalue">="140"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Window x:Class="XamlWindowsApplication1.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="XAML テストプログラム" Height="100" Width="140"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">x:Code</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>![CDATA[
+  <x:Code>
+    <![CDATA[
     private void ButtonClicked(object sender, RoutedEventArgs e)
     {
       MessageBox.Show("ボタンが押されました");
       e.Handled = true;
     }
-    ]]<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">x:Code</span><span class="bracket">&gt;</span>
+    ]]>
+  </x:Code>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <em><span class="attribute">Click</span><span class="attvalue">="ButtonClicked"</span></em><span class="bracket">&gt;</span>ここを押して<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
+  <Button Click="ButtonClicked">ここを押して</Button>
 
-<span class="bracket">&lt;</span>/<span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
+</Window>
+```
 この例にあるとおり、
 プログラムコードは XAML 中の x:Code タグ中に直接埋め込むことも可能です。
 （ただし、これは非推奨。次節で説明するコードビハインドを使いましょう。）
@@ -87,36 +87,36 @@ XAML とは別ファイルにすることが可能です。
 例えば、先ほどの例をコードビハインドを使って書き直すと以下のような2つのファイルに分かれます。
 
 
-<pre class="xsource" title="Window1.xaml">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="XamlWindowsApplication1.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Title</span><span class="attvalue">="XAML テストプログラム"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Width</span><span class="attvalue">="140"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Window x:Class="XamlWindowsApplication1.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="XAML テストプログラム" Height="100" Width="140"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Click</span><span class="attvalue">="ButtonClicked"</span><span class="bracket">&gt;</span>ここを押して<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
+  <Button Click="ButtonClicked">ここを押して</Button>
 
-<span class="bracket">&lt;</span>/<span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
-<pre class="source" title="Windows1.xaml.cs" lang="">
-<code><span class="reserved">namespace</span> XamlWindowsApplication1
+</Window>
+```
+```xml
+namespace XamlWindowsApplication1
 {
-  <span class="reserved">public partial class</span> Window1 : System.Windows.Window
+  public partial class Window1 : System.Windows.Window
   {
-    <span class="reserved">public</span> Window1()
+    public Window1()
     {
       InitializeComponent();
     }
 
-    <span class="reserved">private void</span> ButtonClicked(
-      <span class="reserved">object</span> sender, System.Windows.RoutedEventArgs e)
+    private void ButtonClicked(
+      object sender, System.Windows.RoutedEventArgs e)
     {
-      System.Windows.MessageBox.Show(<span class="literal">"ボタンが押されました"</span>);
-      e.Handled = <span class="reserved">true</span>;
+      System.Windows.MessageBox.Show("ボタンが押されました");
+      e.Handled = true;
     }
   }
 }
-</code></pre>
+```
 
 
 XAML では、ルートの Windows 要素の x:Class 属性で、クラスの名前を記述します。
@@ -136,46 +136,46 @@ GUI 要素を参照するための名前を指定するには Name 属性を使�
 まず、XAML 側では、以下のように、TextBlock 要素に Name 属性をつけます。
 
 
-<pre class="xsource" title="Name 属性">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="XamlWindowsApplication1.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Title</span><span class="attvalue">="XAML テストプログラム"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Window x:Class="XamlWindowsApplication1.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="XAML テストプログラム" Height="100" Width="200"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">StackPanel</span> <span class="attribute">Orientation</span><span class="attvalue">="Vertical"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Click</span><span class="attvalue">="ButtonClicked"</span><span class="bracket">&gt;</span>ここを押して<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBlock</span> <em><span class="attribute">Name</span><span class="attvalue">="textBlock"</span></em><span class="bracket">&gt;</span><span class="bracket">&lt;</span>/<span class="element">TextBlock</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
+  <StackPanel Orientation="Vertical">
+    <Button Click="ButtonClicked">ここを押して</Button>
+    <TextBlock Name="textBlock"></TextBlock>
+  </StackPanel>
 
-<span class="bracket">&lt;</span>/<span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
+</Window>
+```
 これで、このテキストブロックに textBlock という名前が付きました。
 C# コード側では、この名前をそのまま変数名として使えます。
 
-<pre class="source" title="GUI 要素の参照" lang="">
-<code><span class="reserved">namespace</span> XamlWindowsApplication1
+```csharp
+namespace XamlWindowsApplication1
 {
-  <span class="reserved">public partial class</span> Window1 : System.Windows.Window
+  public partial class Window1 : System.Windows.Window
   {
-    <span class="reserved">public</span> Window1()
+    public Window1()
     {
       InitializeComponent();
     }
 
-    <span class="reserved">int</span> count = 0;
+    int count = 0;
 
-    <span class="reserved">private void</span> ButtonClicked(
-      <span class="reserved">object</span> sender, System.Windows.RoutedEventArgs e)
+    private void ButtonClicked(
+      object sender, System.Windows.RoutedEventArgs e)
     {
-      ++<span class="reserved">this</span>.count;
-      <em><span class="reserved">this</span>.textBlock.Text</em> =
-        <span class="reserved">string</span>.Format(<span class="literal">"ボタンが{0}回押されました"</span>, <span class="reserved">this</span>.count);
-      e.Handled = <span class="reserved">true</span>;
+      ++this.count;
+      this.textBlock.Text =
+        string.Format("ボタンが{0}回押されました", this.count);
+      e.Handled = true;
     }
   }
 }
-</code></pre>
+```
 
 
 ちなみに、Button や TextBlock などは、Name プロパティを持っていて、
@@ -203,23 +203,23 @@ StackPanel の下に連なる Button の Click イベントを、
 全部 StackPanel で受けて処理することができます。
 
 
-<pre class="xsource" title="子要素で生じたのイベントを処理">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="XamlWindowsApplication1.MainWindow"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Title</span><span class="attvalue">="XAML テストプログラム"</span> <span class="attribute">Height</span><span class="attvalue">="100"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Window x:Class="XamlWindowsApplication1.MainWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="XAML テストプログラム" Height="100" Width="200"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">StackPanel</span> <span class="attribute">Orientation</span><span class="attvalue">="Vertical"</span> <em><span class="attribute">Button.Click</span><span class="attvalue">="ButtonClicked"</span></em><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button</span><span class="bracket">&gt;</span>ボタン１<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button</span><span class="bracket">&gt;</span>ボタン２<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button</span><span class="bracket">&gt;</span>ボタン３<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button</span><span class="bracket">&gt;</span>ボタン４<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button</span><span class="bracket">&gt;</span>ボタン５<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
+  <StackPanel Orientation="Vertical" Button.Click="ButtonClicked">
+    <Button>ボタン１</Button>
+    <Button>ボタン２</Button>
+    <Button>ボタン３</Button>
+    <Button>ボタン４</Button>
+    <Button>ボタン５</Button>
+  </StackPanel>
 
-<span class="bracket">&lt;</span>/<span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
+</Window>
+```
 このような仕組みは、
 XML ツリーを上にたどってイベントが送られていく（route: 送る）ことから、
 <strong id="routed_event" class="keyword">ルーティングイベント</strong>（routed event）と呼ばれています。
@@ -230,27 +230,28 @@ XML ツリーを上にたどってイベントが送られていく（route: 送
 例えば、以下のようにすると、
 どのボタンが押されたのかをメッセージボックスで表示するようなプログラムになります。
 
-<pre class="source" title="イベントの発生元" lang="">
-<code><span class="reserved">using</span> System.Windows;
-<span class="reserved">using</span> System.Windows.Controls;
+```csharp
+using System.Windows;
+using System.Windows.Controls;
 
-<span class="reserved">namespace</span> XamlWindowsApplication1
+namespace XamlWindowsApplication1
 {
-  <span class="reserved">public partial class</span> MainWindow : System.Windows.Window
+  public partial class MainWindow : System.Windows.Window
   {
-    <span class="reserved">public</span> MainWindow()
+    public MainWindow()
     {
       InitializeComponent();
     }
 
-    <span class="reserved">private void</span> ButtonClicked(<span class="reserved">object</span> sender, RoutedEventArgs e)
+    private void ButtonClicked(object sender, RoutedEventArgs e)
     {
-      Button b = (Button)<em>e.Source</em>;
-      MessageBox.Show(<span class="literal">"「"</span> + b.Content.ToString() + <span class="literal">"」が押されました"</span>);
-      e.Handled = <span class="reserved">true</span>;
+      Button b = (Button)e.Source;
+      MessageBox.Show("「" + b.Content.ToString() + "」が押されました");
+      e.Handled = true;
     }
   }
-}</code></pre>
+}
+```
 
 
 

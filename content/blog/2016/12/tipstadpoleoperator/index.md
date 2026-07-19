@@ -23,11 +23,11 @@ C#には隠しキーワードとして[`__makeref`などの見慣れないキー
 副作用を起こさない(非変)インクリメント、デクリメント(non-modified increment/decrement)です。
 実際、以下のようなコードを実行することができます。
 
-<pre class="source" title="非変インクリメント・デクリメント">
-<code><span class="reserved">var</span> a = 10;
-<span class="type">Console</span>.WriteLine(-~a); <span class="comment">// 11</span>
-<span class="type">Console</span>.WriteLine(~-a); <span class="comment">// 9</span>
-</code></pre>
+```csharp
+var a = 10;
+Console.WriteLine(-~a); // 11
+Console.WriteLine(~-a); // 9
+```
 
 [ideone](http://ideone.com/SSnP7U)とかでも実行できます。
 ideoneは確かMonoで動いているはずで、MonoのC#コンパイラーもひそかに対応しているということですね。
@@ -113,22 +113,22 @@ ideoneは確かMonoで動いているはずで、MonoのC#コンパイラーも�
 
 例えば、以下のようなコードを書くと、`throw`の行は通らずプログラムが正常終了します。
 
-<pre class="source" title="~x + 1 == -x の確認">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">for</span> (<span class="reserved">int</span> x = 0; x &lt; 256; x++)
+        for (int x = 0; x < 256; x++)
         {
-            <span class="reserved">if</span> (~x + 1 == -x) <span class="reserved">continue</span>;
+            if (~x + 1 == -x) continue;
 
-            <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
+            throw new InvalidOperationException();
         }
     }
 }
-</code></pre>
+```
 
 これは、以下の図のように考えれば説明が付きます。
 
@@ -182,26 +182,26 @@ C#でも、`~-`みたいに書かれると、一瞬それを期待しちゃう�
 - `a+ ++b`
 - `a+ + +b`
 
-<pre class="source" title="a+++b">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">int</span> a, b;
+        int a, b;
 
         a = 1; b = 1;
-        WriteLine(<span class="string">$"</span>{a++ +b}<span class="string">, </span>{a}<span class="string">, </span>{b}<span class="string">"</span>); <span class="comment">// 2, 2, 1: (a++) + b</span>
+        WriteLine($"{a++ +b}, {a}, {b}"); // 2, 2, 1: (a++) + b
         a = 1; b = 1;
-        WriteLine(<span class="string">$"</span>{a+ ++b}<span class="string">, </span>{a}<span class="string">, </span>{b}<span class="string">"</span>); <span class="comment">// 3, 1, 2: a + (++b)</span>
+        WriteLine($"{a+ ++b}, {a}, {b}"); // 3, 1, 2: a + (++b)
         a = 1; b = 1;
-        WriteLine(<span class="string">$"</span>{a+ + +b}<span class="string">, </span>{a}<span class="string">, </span>{b}<span class="string">"</span>); <span class="comment">// 2, 1, 1: a + (+(+b))</span>
+        WriteLine($"{a+ + +b}, {a}, {b}"); // 2, 1, 1: a + (+(+b))
         a = 1; b = 1;
-        WriteLine(<span class="string">$"</span>{a+++b}<span class="string">, </span>{a}<span class="string">, </span>{b}<span class="string">"</span>); <span class="comment">// 2, 2, 1: つまり、a+++b は a++ +b 扱い</span>
+        WriteLine($"{a+++b}, {a}, {b}"); // 2, 2, 1: つまり、a+++b は a++ +b 扱い
     }
 }
-</code></pre>
+```
 
 Swiftなんかだと、単項演算子を隣接させるのを禁止してるみたいですね。
 `-~x`はエラーになります。

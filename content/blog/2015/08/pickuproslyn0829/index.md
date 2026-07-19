@@ -39,20 +39,20 @@ aliases: []
 
 という場面がある。例えばタプルの分解で、いちいち
 
-<pre><code>
+```csharp
 var tuple = (12, "foo")
 tuple is (int x, string y) ? (x, y を使った式) : (来ないはず);
-</code></pre>
+```
 
 とか書くのも何かおかしい。
 
 ということで、コンパイル時チェック付きの別構文、例えば、
 
-<pre><code>
+```csharp
 var tuple = (12, "foo")
 (int x, string y) := tuple;
 // 以後、x, y を使える
-</code></pre>
+```
 
 とかいうのを導入するのはどうだろうか、というディスカッションの場。
 
@@ -68,10 +68,10 @@ var tuple = (12, "foo")
 
 というか最近何個か、
 
-<pre><code>
+```csharp
 var t = XAsync();
 if (t != null) await t;
-</code></pre>
+```
 
 とかいう嫌なコード書いたところ…
 

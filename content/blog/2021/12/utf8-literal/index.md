@@ -26,22 +26,22 @@ aliases: []
 そうこうしているうちに、「生 byte 列で UTF-8 を扱う」と言うのが .NET エコシステム内でデファクトスタンダード化してしまいました(今ここ)。
 例えば `System.Text.Unicode` 名前空間中のメソッドは以下のような感じになっています。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System.Buffers;
+```csharp
+using System.Buffers;
 
-<span class="reserved">namespace</span> System.Text.Unicode;
+namespace System.Text.Unicode;
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Utf8</span>
+public static class Utf8
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">OperationStatus</span> <span class="method">FromUtf16</span>(
-        <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; <span class="variable">source</span>, <em><span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">destination</span></em>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">charsRead</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">bytesWritten</span>,
-        <span class="reserved">bool</span> <span class="variable">replaceInvalidSequences</span> = <span class="reserved">true</span>, <span class="reserved">bool</span> <span class="variable">isFinalBlock</span> = <span class="reserved">true</span>);
+    public static OperationStatus FromUtf16(
+        ReadOnlySpan<char> source, Span<byte> destination, out int charsRead, out int bytesWritten,
+        bool replaceInvalidSequences = true, bool isFinalBlock = true);
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">OperationStatus</span> <span class="method">ToUtf16</span>(
-        <em><span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">source</span></em>, <span class="type">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable">destination</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">bytesRead</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">charsWritten</span>,
-        <span class="reserved">bool</span> <span class="variable">replaceInvalidSequences</span> = <span class="reserved">true</span>, <span class="reserved">bool</span> <span class="variable">isFinalBlock</span> = <span class="reserved">true</span>);
+    public static OperationStatus ToUtf16(
+        ReadOnlySpan<byte> source, Span<char> destination, out int bytesRead, out int charsWritten,
+        bool replaceInvalidSequences = true, bool isFinalBlock = true);
 }
-</code></pre>
+```
 
 `Span<byte>` と `ReadOnlySpan<byte>` で UTF-8 文字列を扱っています。
 
@@ -55,11 +55,11 @@ aliases: []
 UTF-8 扱いで `Span<byte>` とかを使うにあたって困るのが文字列リテラル。
 今だと以下のように `byte` 定数的に `new byte[]` するしか方法がありません。
 
-<pre class="source" title="UTF-8 代わりの byte 定数">
-<code><span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">_true</span> = <span class="reserved">new</span> <span class="reserved">byte</span>[] { (<span class="reserved">byte</span>)<span class="string">'t'</span>, (<span class="reserved">byte</span>)<span class="string">'r'</span>, (<span class="reserved">byte</span>)<span class="string">'u'</span>, (<span class="reserved">byte</span>)<span class="string">'e'</span> };
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">_false</span> = <span class="reserved">new</span> <span class="reserved">byte</span>[] { (<span class="reserved">byte</span>)<span class="string">'f'</span>, (<span class="reserved">byte</span>)<span class="string">'a'</span>, (<span class="reserved">byte</span>)<span class="string">'l'</span>, (<span class="reserved">byte</span>)<span class="string">'s'</span>, (<span class="reserved">byte</span>)<span class="string">'e'</span> };
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">_null</span> = <span class="reserved">new</span> <span class="reserved">byte</span>[] { (<span class="reserved">byte</span>)<span class="string">'n'</span>, (<span class="reserved">byte</span>)<span class="string">'u'</span>, (<span class="reserved">byte</span>)<span class="string">'l'</span>, (<span class="reserved">byte</span>)<span class="string">'l'</span> };
-</code></pre>
+```csharp
+ReadOnlySpan<byte> _true = new byte[] { (byte)'t', (byte)'r', (byte)'u', (byte)'e' };
+ReadOnlySpan<byte> _false = new byte[] { (byte)'f', (byte)'a', (byte)'l', (byte)'s', (byte)'e' };
+ReadOnlySpan<byte> _null = new byte[] { (byte)'n', (byte)'u', (byte)'l', (byte)'l' };
+```
 
 一応、これ、最適化はされて `new byte[]` のヒープ アロケーションは発生せず、
 直接 DLL 中のデータ領域からデータが読まれます。
@@ -84,36 +84,36 @@ UTF-8 扱いで `Span<byte>` とかを使うにあたって困るのが文字列
 
 暗黙的変換:
 
-<pre class="source" title="byte[] とかへの文字列リテラル代入は UTF-8 byte 列扱い">
-<code><span class="reserved">byte</span>[] <span class="variable">array</span> = <span class="string">&quot;hello&quot;</span>;             <span class="comment">// new byte[] { 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20 }</span>
-<span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">span</span> = <span class="string">&quot;dog&quot;</span>;            <span class="comment">// new byte[] { 0x64, 0x6f, 0x67 }</span>
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">span</span> = <span class="string">&quot;cat&quot;</span>;    <span class="comment">// new byte[] { 0x63, 0x61, 0x74 }</span>
-</code></pre>
+```csharp
+byte[] array = "hello";             // new byte[] { 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20 }
+Span<byte> span = "dog";            // new byte[] { 0x64, 0x6f, 0x67 }
+ReadOnlySpan<byte> span = "cat";    // new byte[] { 0x63, 0x61, 0x74 }
+```
 
 `u8` 接尾辞:
 
-<pre class="source" title="u8 を付けると UTF-8 リテラルに">
-<code><span class="reserved">string</span> <span class="variable">s1</span> = <span class="string">&quot;hello&quot;</span>u8;      <span class="comment">// エラー。型が合ってない。</span>
-<span class="reserved">var</span> <span class="variable">s2</span> = <span class="string">&quot;hello&quot;</span>u8;         <span class="comment">// Ok。型は ReadOnlySpan&lt;byte&gt;。</span>
-<span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">s3</span> = <span class="string">&quot;hello&quot;</span>u8;  <span class="comment">// Ok。</span>
-<span class="reserved">byte</span>[] <span class="variable">s4</span> = <span class="string">&quot;hello&quot;</span>u8;      <span class="comment">// Ok。</span>
-</code></pre>
+```csharp
+string s1 = "hello"u8;      // エラー。型が合ってない。
+var s2 = "hello"u8;         // Ok。型は ReadOnlySpan<byte>。
+Span<byte> s3 = "hello"u8;  // Ok。
+byte[] s4 = "hello"u8;      // Ok。
+```
 
 UTF-8 として不正になる文字列リテラルはコンパイル エラーにするそうです。
 .NET の文字列は UTF-16 というか実際には「古き良き Unicode」(2バイト固定長で行けると思ってた頃の Unicode)なので、「[サロゲート ペア](https://codezine.jp/article/detail/1592)の片割れ」みたいな今となってはダメなやつを受け付けてしまうので。
 
-<pre class="source" title="不正な UTF-16 はコンパイル エラーに">
-<code><span class="reserved">byte</span>[] <span class="variable">array</span> = <span class="string">&quot;\uD801&quot;</span>; <span class="comment">// ハイ サロゲートのみ。コンパイル エラーにする。</span>
-</code></pre>
+```csharp
+byte[] array = "\uD801"; // ハイ サロゲートのみ。コンパイル エラーにする。
+```
 
 ちなみに、`const string` から UTF-8 リテラルも作れるし、
 「不正な UTF-16 を `+` でつないで、その結果が有効な UTF-8 になるなら OK」だそうです。
 
-<pre class="source" title="不正 UTF-16 な const string 2つ → 有効な UTF-8 リテラル">
-<code><span class="reserved">const</span> <span class="reserved">string</span> first = <span class="string">&quot;\uD83D&quot;</span>;  <span class="comment">// ハイ サロゲート。</span>
-<span class="reserved">const</span> <span class="reserved">string</span> second = <span class="string">&quot;\uDE00&quot;</span>; <span class="comment">// ロー サロゲート。</span>
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">span</span> = first + second; <span class="comment">// これは OK</span>
-</code></pre>
+```csharp
+const string first = "\uD83D";  // ハイ サロゲート。
+const string second = "\uDE00"; // ロー サロゲート。
+ReadOnlySpan<byte> span = first + second; // これは OK
+```
 
 ## Utf8String 型の可能性
 

@@ -29,15 +29,15 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
 
-<pre class="xsource" title="">
-<code><span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">keyword</span> <span class="attribute">id</span><span class="attvalue">="tag"</span><span class="bracket">&gt;</span>keyword タグ<span class="bracket">&lt;/</span><span class="element">keyword</span><span class="bracket">&gt;</span> でキーワードの強調表示が出来ます。
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+```html
+<p>
+  <keyword id="tag">keyword タグ</keyword> でキーワードの強調表示が出来ます。
+</p>
+<p>
   refkey タグを使うと、keyword タグで囲ったキーワードを参照出来ます。
-  例 → <span class="bracket">&lt;</span><span class="element">refkey</span> <span class="attribute">doc</span><span class="attvalue">="keyword"</span> <span class="attribute">id</span><span class="attvalue">="tag"</span> <span class="bracket">/&gt;</span>。
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-</code></pre>
+  例 → <refkey doc="keyword" id="tag" />。
+</p>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
 

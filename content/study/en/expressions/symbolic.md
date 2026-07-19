@@ -28,29 +28,29 @@ This library calculates symbolically derivative of Expression Tree in C# 3.0.
 Expression Tree is a powerful functionality in C# 3.0, which can be written in the same syntax as anonymous delegates, but treated as data, and dynamically compiled into the MSIL on runtime.
 In the library, Expression Tree is differentiated symbolically and its derivative is executable as a delegate after compilation, for example, as follow:
 
-<pre class="source" title="differentiation of x * x" lang="">
-<code>Expression&lt;Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>&gt;&gt; <em>f = x =&gt; x * x</em>;
-<span class="reserved">var</span> df = f.Derive();
+```csharp
+Expression<Func<double, double>> f = x => x * x;
+var df = f.Derive();
 
-Console.Write(<span class="literal">"f  = {0}\n"</span>, f);
-Console.Write(<span class="literal">"df = {0}\n"</span>, df);
+Console.Write("f  = {0}\n", f);
+Console.Write("df = {0}\n", df);
 
-<em><span class="reserved">var</span> df_ = df.Compile();</em>
+var df_ = df.Compile();
 
-<span class="reserved">for</span> (<span class="reserved">int</span> i = -2; i &lt;= 2; ++i)
-  Console.Write(<span class="literal">"df({0}) = {1}\n"</span>, i, df_(i));
-</code></pre>
+for (int i = -2; i <= 2; ++i)
+  Console.Write("df({0}) = {1}\n", i, df_(i));
+```
 
 
-<pre class="console" title="execution results">
-f  = x =&gt; (x * x)
-df = x =&gt; (2 * x)
+```console
+f  = x => (x * x)
+df = x => (2 * x)
 df(-2) = -4
 df(-1) = -2
 df(0) = 0
 df(1) = 2
 df(2) = 4
-</pre>
+```
 
 
 
@@ -71,24 +71,24 @@ With some optimization, it achieves good results such as follows:
 
 Additionally, differential operator class is implemented.
 
-<pre class="source" title="differential operator" lang="">
-<code>Expression&lt;Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>, <span class="reserved">double</span>&gt;&gt; f =
-  (x, y) =&gt; x * x * y + 2 * x * y;
-<span class="reserved">var</span> dx = <span class="reserved">new</span> DifferentialOperator(<span class="literal">"x"</span>);
-<span class="reserved">var</span> dy = <span class="reserved">new</span> DifferentialOperator(<span class="literal">"y"</span>);
-<span class="reserved">var</span> laplacian = dx * dx + dy * dy;
+```csharp
+Expression<Func<double, double, double>> f =
+  (x, y) => x * x * y + 2 * x * y;
+var dx = new DifferentialOperator("x");
+var dy = new DifferentialOperator("y");
+var laplacian = dx * dx + dy * dy;
 
-Console.Write(<span class="literal">"f     = {0}\n"</span>, f);      
-Console.Write(<span class="literal">"df/dx = {0}\n"</span>, dx.Apply(f));
-Console.Write(<span class="literal">"Δf   = {0}\n"</span>, laplacian.Apply(f));
-</code></pre>
+Console.Write("f     = {0}\n", f);      
+Console.Write("df/dx = {0}\n", dx.Apply(f));
+Console.Write("Δf   = {0}\n", laplacian.Apply(f));
+```
 
 
-<pre class="console" title="execution results">
-f     = (x, y) =&gt; (((x * x) * y) + ((2 * x) * y))
-df/dx = (x, y) =&gt; ((2 * (x * y)) + (2 * y))
-Δf   = (x, y) =&gt; (2 * y)
-</pre>
+```console
+f     = (x, y) => (((x * x) * y) + ((2 * x) * y))
+df/dx = (x, y) => ((2 * (x * y)) + (2 * y))
+Δf   = (x, y) => (2 * y)
+```
 
 
 
@@ -96,12 +96,12 @@ df/dx = (x, y) =&gt; ((2 * (x * y)) + (2 * y))
 
 The differential operator can be initialized with a characteristic polynomial written in Lambda.
 
-<pre class="source" title="initialization with lambda" lang="">
-<code>Expression&lt;Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>, <span class="reserved">double</span>&gt;&gt; characteristic =
-  (x, y) =&gt; x * x + y * y;
-<span class="reserved">var</span> laplacian = <span class="reserved">new</span> DifferentialOperator(characteristic);
-Console.Write(<span class="literal">"Δf = {0}\n"</span>, laplacian.Apply(f));
-</code></pre>
+```csharp
+Expression<Func<double, double, double>> characteristic =
+  (x, y) => x * x + y * y;
+var laplacian = new DifferentialOperator(characteristic);
+Console.Write("Δf = {0}\n", laplacian.Apply(f));
+```
 
 
 In this example, 
@@ -115,28 +115,28 @@ The library has a class which create Expression dynamically from a string.
 Instead that I implement an original parser, the class uses standard library classes in System.CodeDom and Microsoft.CSharp namespace.
 The usage is as follow:
 
-<pre class="source" title="dynamic creation of Expression" lang="">
-<code><span class="reserved">var</span> f = (Expression&lt;Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>&gt;&gt;)CodeDom.GetExpressionFrom(
-  <span class="literal">"x =&gt; x * x"</span>
+```csharp
+var f = (Expression<Func<double, double>>)CodeDom.GetExpressionFrom(
+  "x => x * x"
   );
-</code></pre>
+```
 
 
 The solution (
 [source files](../../../../assets/media/ufcpp2000/en/source/Differential.zip)
 ) has a demo project of a command-line program which reads a lambda expression as string, dynamically creates an Expression, and then shows the created result and its derivative, like as follow:
 
-<pre class="console" title="execution sample of the command-line demo">
-<span class="input">x =&gt; x * x + 2 * x + 1</span>
-function  : x =&gt; (((x * x) + (2 * x)) + 1)
-derivative: x =&gt; ((2 * x) + 2)
-<span class="input">x =&gt; x * Math.Log(x) - x</span>
-function  : x =&gt; ((x * Log(x)) - x)
-derivative: x =&gt; Log(x)
-<span class="input">x =&gt; Math.Sin(x) * Math.Sin(x) + Math.Cos(x) * Math.Cos(x)</span>
-function  : x =&gt; ((Sin(x) * Sin(x)) + (Cos(x) * Cos(x)))
-derivative: x =&gt; 0
-<span class="input">x =&gt; Math.Log(Math.Cos(x))</span>
-function  : x =&gt; Log(Cos(x))
-derivative: x =&gt; (-1 * (Sin(x) / Cos(x)))
-</pre>
+```console
+x => x * x + 2 * x + 1
+function  : x => (((x * x) + (2 * x)) + 1)
+derivative: x => ((2 * x) + 2)
+x => x * Math.Log(x) - x
+function  : x => ((x * Log(x)) - x)
+derivative: x => Log(x)
+x => Math.Sin(x) * Math.Sin(x) + Math.Cos(x) * Math.Cos(x)
+function  : x => ((Sin(x) * Sin(x)) + (Cos(x) * Cos(x)))
+derivative: x => 0
+x => Math.Log(Math.Cos(x))
+function  : x => Log(Cos(x))
+derivative: x => (-1 * (Sin(x) / Cos(x)))
+```

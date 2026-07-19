@@ -21,20 +21,20 @@ aliases: []
 
 例えば、以下のようなコードを考えます。
 
-<pre class="source" title="静的な byte データ">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> data = <span class="reserved">new</span> <span class="reserved">byte</span>[] { 65, 66, 67, 68, 69, 70, 71, 72 };
+        var data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72 };
  
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
-            <span class="type">Console</span>.WriteLine(x);
+        foreach (var x in data)
+            Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 `data` の中身は全て定数です。
 なので、コンパイルすると、定数として DLL 中に埋め込まれます。
@@ -49,12 +49,12 @@ aliases: []
 にもかかわらず、このコードは配列のインスタンスが作られます(ヒープを使っちゃう)。
 `data` を初期化する行は、概ね以下のような命令列になります。
 
-<pre class="source">
-<code><span style="color:purple">IL_0000:</span> <span style="color:blue">ldc.i4.8</span>
-<span style="color:purple">IL_0001:</span> <span style="color:blue">newarr</span> [mscorlib]System.Byte
-<span style="color:purple">IL_0007:</span> <span style="color:blue">ldtoken</span> field int64 フィールド名割愛
-<span style="color:purple">IL_000c:</span> <span style="color:blue">call</span> void 中略::InitializeArray(略)
-</code></pre>
+```cil
+IL_0000: ldc.i4.8
+IL_0001: newarr [mscorlib]System.Byte
+IL_0007: ldtoken field int64 フィールド名割愛
+IL_000c: call void 中略::InitializeArray(略)
+```
 
 上から順に、
 
@@ -72,31 +72,31 @@ aliases: []
 これに対して、割と最近(Visual Studio 15.7、C# 7.3 世代で)実装された最適化があります。
 先ほどのコードを、以下のように書き換えてみましょう。
 
-<pre class="source" title="ReadOnlySpanに変える">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">ReadOnlySpan</span> data = <span class="reserved">new</span> <span class="reserved">byte</span>[] { 65, 66, 67, 68, 69, 70, 71, 72 };
+        ReadOnlySpan data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72 };
  
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
-            <span class="type">Console</span>.WriteLine(x);
+        foreach (var x in data)
+            Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 `data`の型を`ReadOnlySpan<byte>`に変えただけです。
 しかしこれで、`data`の中身を書き換えないという保証ができたので、
 最適化が掛かります。
 C# 7.3 以降でコンパイルすると、結果は以下のようになります。
 
-<pre class="source">
-<code><span style="color:purple">IL_0000:</span> <span style="color:blue">ldsflda</span> int64 フィールド名割愛
-<span style="color:purple">IL_0005:</span> <span style="color:blue">ldc.i4.8</span>
-<span style="color:purple">IL_0006:</span> <span style="color:blue">newobj</span> instance void valuetype 中略.ReadOnlySpan`1<uint8>::.ctor(void*, int32)
-</code></pre>
+```cil
+IL_0000: ldsflda int64 フィールド名割愛
+IL_0005: ldc.i4.8
+IL_0006: newobj instance void valuetype 中略.ReadOnlySpan`1<uint8>::.ctor(void*, int32)
+```
 
 上から順に、
 

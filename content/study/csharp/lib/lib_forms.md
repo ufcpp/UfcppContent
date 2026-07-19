@@ -71,19 +71,19 @@ Form や Menu、Button といった名前の「[クラス](../oop/oo_class.md#cl
 ボタンも何もないただのフォームが1枚現れるだけなのであまり意味はありませんが、
 最小の GUI アプリケーションは以下のようなものになります。
 
-<pre class="source" title="最小の GUI アプリケーション" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Drawing;
-<span class="reserved">using</span> System.Windows.Forms;
+```csharp
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Application.Run(<span class="reserved">new</span> Form());
+    Application.Run(new Form());
   }
 }
-</code></pre>
+```
 
 
 これを実行すると、
@@ -101,9 +101,9 @@ Form や Menu、Button といった名前の「[クラス](../oop/oo_class.md#cl
 /target:winexe というオプションを付けてください。
 （そうしないと、プログラムを実行するたびにコマンドプロンプトが表示されてしまいます。）
 
-<pre class="console" title="target:winexe">
-csc <em>/target:winexe</em> Program.cs
-</pre>
+```console
+csc /target:winexe Program.cs
+```
 
 
 それでは、次に、フォームのサイズを変えたり、
@@ -115,23 +115,23 @@ Text がタイトル文字になります。
 これらを設定し、以下のようなプログラム作成・コンパイルし、実行すると、
 図2のようなフォームが表示されるはずです。
 
-<pre class="source" title="幅・高さとタイトル文字を設定" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Drawing;
-<span class="reserved">using</span> System.Windows.Forms;
+```csharp
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Form f = <span class="reserved">new</span> Form();
+    Form f = new Form();
     f.Width = 200;
     f.Height = 200;
-    f.Text = <span class="literal">"サンプルプログラム"</span>;
+    f.Text = "サンプルプログラム";
     Application.Run(f);
   }
 }
-</code></pre>
+```
 
 
 <figure>
@@ -145,29 +145,29 @@ Text がタイトル文字になります。
 以下のコードに示すように、
 フォームごとに Form クラスを「[継承](../oop/oo_inherit.md#derive)」した「[派生クラス](../oop/oo_inherit.md#subclass)」を作るスタイルが一般的です。
 
-<pre class="source" title="Form をサブクラス化" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Drawing;
-<span class="reserved">using</span> System.Windows.Forms;
+```csharp
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Application.Run(<span class="reserved">new</span> Form1());
+    Application.Run(new Form1());
   }
 }
 
-<span class="reserved">class</span> Form1 : Form
+class Form1 : Form
 {
-  <span class="reserved">public</span> Form1()
+  public Form1()
   {
-    <span class="reserved">this</span>.Width = 200;
-    <span class="reserved">this</span>.Height = 200;
-    <span class="reserved">this</span>.Text = <span class="literal">"サンプルプログラム"</span>;
+    this.Width = 200;
+    this.Height = 200;
+    this.Text = "サンプルプログラム";
   }
 }
-</code></pre>
+```
 
 
 
@@ -188,13 +188,13 @@ Text がタイトル文字になります。
 あるいは、Size プロパティを使えば、幅と高さを同時に指定できます。
 また、ボタンを置く位置は Location プロパティを使って指定します。
 
-<pre class="source" title="Button" lang="">
-<code>Button button1;
-button1 = <span class="reserved">new</span> Button();
-button1.Location = <span class="reserved">new</span> Point(10, 10);
-button1.Size = <span class="reserved">new</span> Size(170, 30);
-button1.Text = <span class="literal">"ここを押して"</span>;
-</code></pre>
+```csharp
+Button button1;
+button1 = new Button();
+button1.Location = new Point(10, 10);
+button1.Size = new Size(170, 30);
+button1.Text = "ここを押して";
+```
 
 
 
@@ -208,38 +208,38 @@ Form クラスはこのコントロールの一覧である Controls という�
 そして、Controls に対して、Add メソッドを呼び出すことで、
 コントロール（ここでの例の場合、ボタン）を追加することができます。
 
-<pre class="source" title="Form に Button を追加" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Drawing;
-<span class="reserved">using</span> System.Windows.Forms;
+```csharp
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Application.Run(<span class="reserved">new</span> Form1());
+    Application.Run(new Form1());
   }
 }
 
-<span class="reserved">class</span> Form1 : Form
+class Form1 : Form
 {
   Button button1;
 
-  <span class="reserved">public</span> Form1()
+  public Form1()
   {
-    <span class="reserved">this</span>.Width = 200;
-    <span class="reserved">this</span>.Height = 80;
-    <span class="reserved">this</span>.Text = <span class="literal">"サンプルプログラム"</span>;
+    this.Width = 200;
+    this.Height = 80;
+    this.Text = "サンプルプログラム";
 
-    <span class="reserved">this</span>.button1 = <span class="reserved">new</span> Button();
-    <span class="reserved">this</span>.button1.Location = <span class="reserved">new</span> Point(10, 10);
-    <span class="reserved">this</span>.button1.Size = <span class="reserved">new</span> Size(170, 30);
-    <span class="reserved">this</span>.button1.Text = <span class="literal">"ここを押して"</span>;
+    this.button1 = new Button();
+    this.button1.Location = new Point(10, 10);
+    this.button1.Size = new Size(170, 30);
+    this.button1.Text = "ここを押して";
 
-    <em><span class="reserved">this</span>.Controls.Add(<span class="reserved">this</span>.button1);</em>
+    this.Controls.Add(this.button1);
   }
 }
-</code></pre>
+```
 
 
 これをコンパイル・実行すると図3のようなフォームが表示されるはずです。
@@ -267,47 +267,47 @@ Form クラスはこのコントロールの一覧である Controls という�
 以下にソースを示します。
 先ほどから追加したのは、背景色を変えて強調してある部分だけです。
 
-<pre class="source" title="Click イベントハンドラを追加" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Drawing;
-<span class="reserved">using</span> System.Windows.Forms;
+```csharp
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Application.Run(<span class="reserved">new</span> Form1());
+    Application.Run(new Form1());
   }
 }
 
-<span class="reserved">class</span> Form1 : Form
+class Form1 : Form
 {
   Button button1;
-  <span class="reserved">int</span> count = 0;
+  int count = 0;
 
-  <span class="reserved">public</span> Form1()
+  public Form1()
   {
-    <span class="reserved">this</span>.Width = 200;
-    <span class="reserved">this</span>.Height = 80;
-    <span class="reserved">this</span>.Text = <span class="literal">"サンプルプログラム"</span>;
+    this.Width = 200;
+    this.Height = 80;
+    this.Text = "サンプルプログラム";
 
-    <span class="reserved">this</span>.button1 = <span class="reserved">new</span> Button();
-    <span class="reserved">this</span>.button1.Location = <span class="reserved">new</span> Point(10, 10);
-    <span class="reserved">this</span>.button1.Size = <span class="reserved">new</span> Size(170, 30);
-    <span class="reserved">this</span>.button1.Text = <span class="literal">"ここを押して"</span>;
+    this.button1 = new Button();
+    this.button1.Location = new Point(10, 10);
+    this.button1.Size = new Size(170, 30);
+    this.button1.Text = "ここを押して";
 
-    <em><span class="reserved">this</span>.button1.Click += <span class="reserved">new</span> EventHandler(<span class="reserved">this</span>.Button1_Click);</em>
+    this.button1.Click += new EventHandler(this.Button1_Click);
 
-    <span class="reserved">this</span>.Controls.Add(<span class="reserved">this</span>.button1);
+    this.Controls.Add(this.button1);
   }
 
-<em>  <span class="reserved">void</span> Button1_Click(<span class="reserved">object</span> sender, EventArgs e)
+  void Button1_Click(object sender, EventArgs e)
   {
-    <span class="reserved">this</span>.count++;
-    <span class="reserved">this</span>.button1.Text = <span class="reserved">this</span>.count.ToString();
-  }</em>
+    this.count++;
+    this.button1.Text = this.count.ToString();
+  }
 }
-</code></pre>
+```
 
 
 これでようやく、（ぎりぎりなんとか）胸を張って GUI アプリケーションといえる物が完成しました。

@@ -24,13 +24,13 @@ aliases: []
 
 例えば、以下のようなコードを考えます。
 
-<pre class="source" title="if (true) は else 側が消える">
-<code><span class="reserved">static</span> <span class="reserved">int</span> X()
+```csharp
+static int X()
 {
-    <span class="reserved">if</span> (<span class="reserved">true</span>) <span class="reserved">return</span> 1;
-    <span class="reserved">else</span> <span class="reserved">return</span> 0;
+    if (true) return 1;
+    else return 0;
 }
-</code></pre>
+```
 
 `if` の条件式が定数なので、これは C# のコンパイル時に最適化が掛かって、 `return 1`だけが残ります。`if`相当のコードは出力されません。
 このように、コンパイル時に確定している値や条件分岐などは、きれいさっぱり消えることがあります。
@@ -44,48 +44,48 @@ JIT のタイミングでは定数と判明して、最適化が掛かるもの�
 例えば以下のようなコードは C# コンパイラーは条件分岐を生成しますが、
  JIT 時の最適化が掛かって、条件式が一致している行だけを残して消えてくれます。
 
-<pre class="source" title="静的に解決できる typeof は JIT 時に消える">
-<code><span class="reserved">static</span> <span class="reserved">long</span> MaxValue&lt;<span class="type">T</span>&gt;()
+```csharp
+static long MaxValue<T>()
 {
-    <span class="reserved">if</span> (<span class="reserved">typeof</span>(<span class="type">T</span>) == <span class="reserved">typeof</span>(<span class="reserved">byte</span>)) <span class="reserved">return</span> <span class="reserved">byte</span>.MaxValue;
-    <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">typeof</span>(<span class="type">T</span>) == <span class="reserved">typeof</span>(<span class="reserved">short</span>)) <span class="reserved">return</span> <span class="reserved">short</span>.MaxValue;
-    <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">typeof</span>(<span class="type">T</span>) == <span class="reserved">typeof</span>(<span class="reserved">int</span>)) <span class="reserved">return</span> <span class="reserved">int</span>.MaxValue;
-    <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">typeof</span>(<span class="type">T</span>) == <span class="reserved">typeof</span>(<span class="reserved">long</span>)) <span class="reserved">return</span> <span class="reserved">long</span>.MaxValue;
-    <span class="comment">// お好みで、sbyte, ushort, uint, ulong もどうぞ</span>
-    <span class="reserved">else</span> <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
+    if (typeof(T) == typeof(byte)) return byte.MaxValue;
+    else if (typeof(T) == typeof(short)) return short.MaxValue;
+    else if (typeof(T) == typeof(int)) return int.MaxValue;
+    else if (typeof(T) == typeof(long)) return long.MaxValue;
+    // お好みで、sbyte, ushort, uint, ulong もどうぞ
+    else throw new InvalidOperationException();
 }
-</code></pre>
+```
 
 ## Enum.HasFlag の代わり
 
 ということで、この手の分岐を書いて、ジェネリックな `HasFlag` を書いてみましょう。
 
-<pre class="source" title="sizeof が JIT 時定数なのを利用した HasFlag 最適化">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
  
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">EnumExtensions</span>
+public static class EnumExtensions
 {
-    [<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.AggressiveInlining)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> UnsafeHasFlag&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="type">T</span> y)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">unmanaged</span>, <span class="type">Enum</span>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool UnsafeHasFlag<T>(T x, T y)
+        where T : unmanaged, Enum
     {
-        <span class="reserved">if</span> (<span class="type">Unsafe</span>.SizeOf&lt;<span class="type">T</span>&gt;() == 1) <span class="reserved">return</span> (<span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">byte</span>&gt;(<span class="reserved">ref</span> x) &amp; <span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">byte</span>&gt;(<span class="reserved">ref</span> y)) != 0;
-        <span class="reserved">else</span> <span class="reserved">if</span> (<span class="type">Unsafe</span>.SizeOf&lt;<span class="type">T</span>&gt;() == 2) <span class="reserved">return</span> (<span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">ushort</span>&gt;(<span class="reserved">ref</span> x) &amp; <span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">ushort</span>&gt;(<span class="reserved">ref</span> y)) != 0;
-        <span class="reserved">else</span> <span class="reserved">if</span> (<span class="type">Unsafe</span>.SizeOf&lt;<span class="type">T</span>&gt;() == 4) <span class="reserved">return</span> (<span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">uint</span>&gt;(<span class="reserved">ref</span> x) &amp; <span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">uint</span>&gt;(<span class="reserved">ref</span> y)) != 0;
-        <span class="reserved">else</span> <span class="reserved">if</span> (<span class="type">Unsafe</span>.SizeOf&lt;<span class="type">T</span>&gt;() == 8) <span class="reserved">return</span> (<span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">ulong</span>&gt;(<span class="reserved">ref</span> x) &amp; <span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">ulong</span>&gt;(<span class="reserved">ref</span> y)) != 0;
-        <span class="reserved">else</span> { Throw(); <span class="reserved">return</span> <span class="reserved">default</span>; }
+        if (Unsafe.SizeOf<T>() == 1) return (Unsafe.As<T, byte>(ref x) & Unsafe.As<T, byte>(ref y)) != 0;
+        else if (Unsafe.SizeOf<T>() == 2) return (Unsafe.As<T, ushort>(ref x) & Unsafe.As<T, ushort>(ref y)) != 0;
+        else if (Unsafe.SizeOf<T>() == 4) return (Unsafe.As<T, uint>(ref x) & Unsafe.As<T, uint>(ref y)) != 0;
+        else if (Unsafe.SizeOf<T>() == 8) return (Unsafe.As<T, ulong>(ref x) & Unsafe.As<T, ulong>(ref y)) != 0;
+        else { Throw(); return default; }
     }
  
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> Throw() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
+    private static void Throw() => throw new InvalidOperationException();
 }
-</code></pre>
+```
 
 このコードで、非ジェネリックな場合の、
 
-<pre class="source" title="参考: 非ジェネリック実装">
-<code><span class="reserved">static</span> <span class="reserved">bool</span> HasFlag(A x, A y) =&gt; (((<span class="reserved">int</span>)x) &amp; ((<span class="reserved">int</span>)y)) != 0;
-</code></pre>
+```csharp
+static bool HasFlag(A x, A y) => (((int)x) & ((int)y)) != 0;
+```
 
 みたいなコードとそこまで差がない性能が出ます。
 さすがに最適化をちょっと阻害されるみたいで全く同じとは行きませんが、

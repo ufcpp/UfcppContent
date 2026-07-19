@@ -44,65 +44,65 @@ C# 13 では、この制限を緩和するため、
 わかりやすい例でいうと、`Span<T>` は `IEnumerable<T>` であってほしいというものです。
 C# 12 時点だと、以下のような2重実装を余儀なくされています。
 
-<pre class="source" title="C# 12 時点では IEnumerable と Span の2重実装が必須">
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">list</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+```csharp
+List<int> list = [1, 2, 3, 4, 5];
+ReadOnlySpan<int> span = [1, 2, 3, 4, 5];
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="static"><span class="type">MyMath</span></span><span class="operator">.</span><span class="static"><span class="method">Sum</span></span>(<span class="variable">list</span>));
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="type"><span class="static">MyMath</span></span><span class="operator">.</span><span class="static"><span class="method">Sum</span></span>(<span class="variable">span</span>));
+Console.WriteLine(MyMath.Sum(list));
+Console.WriteLine(MyMath.Sum(span));
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">MyMath</span></span>
+static class MyMath
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">Sum</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">numbers</span>)
+    public static int Sum(IEnumerable<int> numbers)
     {
-        <span class="reserved">var</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">numbers</span>) <span class="variable">sum</span><span class="operator">+=</span> <span class="variable">x</span>;
-        <span class="control">return</span> <span class="variable">sum</span>;
+        var sum = 0;
+        foreach (var x in numbers) sum+= x;
+        return sum;
     }
 
-    <span class="comment">// メソッドの中身全く同じ。</span>
-    <span class="comment">// Span/ReadOnlySpan が IEnumerable じゃないので別メソッドでの実装が必須。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">Sum</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">numbers</span>)
+    // メソッドの中身全く同じ。
+    // Span/ReadOnlySpan が IEnumerable じゃないので別メソッドでの実装が必須。
+    public static int Sum(ReadOnlySpan<int> numbers)
     {
-        <span class="comment">// 実装的に、numbers をボックス化したり、ref フィールドを外に漏らしたりもしてない。</span>
-        <span class="comment">// IEnumerable に対する実装をそのまま使って何も問題ない。</span>
-        <span class="reserved">var</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">numbers</span>) <span class="variable">sum</span> <span class="operator">+=</span> <span class="variable">x</span>;
-        <span class="control">return</span> <span class="variable">sum</span>;
+        // 実装的に、numbers をボックス化したり、ref フィールドを外に漏らしたりもしてない。
+        // IEnumerable に対する実装をそのまま使って何も問題ない。
+        var sum = 0;
+        foreach (var x in numbers) sum += x;
+        return sum;
     }
 }
-</pre>
+```
 
 ref 構造体にインターフェイス実装を持たせること自体はそこまで問題ではありません。
 問題は、以下のように、「インターフェイス型の変数に直接代入してしまうとボックス化を起こしてまずい」という点です。
 
-<pre class="source" title="Span をインターフェイス型変数に代入しちゃダメ">
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+```csharp
+Span<int> span = [1, 2, 3, 4, 5];
 
-<span class="comment">// たとえ、Span が IEnumerable&lt;T&gt; を実装していたとしても、</span>
-<span class="comment">// 以下のようなコードを書くとこの時点でボックス化が起きる。</span>
-<span class="comment">// span がヒープに漏れてしまうのでまずい。</span>
-<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">e</span> <span class="operator">=</span> <span class="variable"><span class="error" title="CS0029">span</span></span>;
-</pre>
+// たとえ、Span が IEnumerable<T> を実装していたとしても、
+// 以下のようなコードを書くとこの時点でボックス化が起きる。
+// span がヒープに漏れてしまうのでまずい。
+IEnumerable<int> e = span;
+```
 
 じゃあどうすべきかというと、ジェネリクスを介します。
 
-<pre class="source" title="ジェネリクスを介すればいい">
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+```csharp
+Span<int> span = [1, 2, 3, 4, 5];
 
-<span class="comment">// ジェネリクスを介すれば、ボックス化を起こさずにインターフェイスのメンバーを呼べる。</span>
-<span class="comment">// (前述の問題はクリア。)</span>
-<span class="reserved">static</span> <span class="type param">T</span> <span class="method"><span class="static">Sum</span></span>&lt;<span class="type param">T</span>, <span class="type param">TEnumerable</span>&gt;(<span class="type param">TEnumerable</span> <span class="variable local">list</span>)
-    <span class="reserved">where</span> <span class="type param">TEnumerable</span> : <span class="type">IEnumerable</span>&lt;<span class="type param">T</span>&gt;
+// ジェネリクスを介すれば、ボックス化を起こさずにインターフェイスのメンバーを呼べる。
+// (前述の問題はクリア。)
+static T Sum<T, TEnumerable>(TEnumerable list)
+    where TEnumerable : IEnumerable<T>
 {
-    <span class="comment">// 省略</span>
-    <span class="control">return</span> <span class="reserved">default</span><span class="operator">!</span>; <span class="comment">// 仮</span>
+    // 省略
+    return default!; // 仮
 }
 
-<span class="comment">// なので残る問題はこっち。</span>
-<span class="comment">// ref 構造体を型引数に渡したい。</span>
-<span class="error" title="CS0306"><span class="static"><span class="method">Sum</span></span>&lt;<span class="reserved">int</span>, <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;&gt;</span>(<span class="variable">span</span>);
-</pre>
+// なので残る問題はこっち。
+// ref 構造体を型引数に渡したい。
+Sum<int, Span<int>>(span);
+```
 
 ということで次節で説明する「アンチ制約」が必要になります。
 
@@ -115,27 +115,27 @@ ref 構造体にインターフェイス実装を持たせること自体はそ�
 
 というものになります。
 
-<pre class="source" title="型制約">
-<span class="comment">// 制限なし。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M1</span></span>&lt;<span class="type param">T</span>&gt;() { }
+```csharp
+// 制限なし。
+static void M1<T>() { }
 
-<span class="comment">// 何の型でも渡せる。</span>
-<span class="static"><span class="method">M1</span></span>&lt;<span class="reserved">int</span>&gt;();
-<span class="static"><span class="method">M1</span></span>&lt;<span class="reserved">string</span>&gt;();
-<span class="static"><span class="method">M1</span></span>&lt;<span class="reserved">object</span>&gt;();
+// 何の型でも渡せる。
+M1<int>();
+M1<string>();
+M1<object>();
 
-<span class="comment">// 制限あり。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M2</span></span>&lt;<span class="type param">T</span>&gt;() <span class="reserved">where</span> <span class="type param">T</span>:<span class="type">ISpanParsable</span>&lt;<span class="type param">T</span>&gt;
+// 制限あり。
+static void M2<T>() where T:ISpanParsable<T>
 {
-    <span class="comment">// 呼べるメソッドが増える。</span>
-    <span class="type param">T</span> <span class="variable">value</span> <span class="operator">=</span> <span class="type param">T</span><span class="operator">.</span><span class="method"><span class="static">Parse</span></span>(<span class="string">&quot;123&quot;</span>, <span class="reserved">null</span>);
+    // 呼べるメソッドが増える。
+    T value = T.Parse("123", null);
 }
 
-<span class="comment">// 渡せる型が減る。</span>
-<span class="static"><span class="method">M2</span></span>&lt;<span class="reserved">int</span>&gt;();
-<span class="method"><span class="static">M2</span></span>&lt;<span class="reserved">string</span>&gt;();
-<span class="error" title="CS0311"><span class="method"><span class="static">M2</span></span>&lt;<span class="reserved">object</span>&gt;</span>(); <span class="comment">// コンパイルエラー。</span>
-</pre>
+// 渡せる型が減る。
+M2<int>();
+M2<string>();
+M2<object>(); // コンパイルエラー。
+```
 
 ところが今回、「ref 構造体を渡せるようにしたい」という逆の要件なので、「制約」ではなく「アンチ制約(制約の撤回)」が必要になります。
 
@@ -144,20 +144,20 @@ ref 構造体にインターフェイス実装を持たせること自体はそ�
 当初案だと `allow T : ref struct` とかも検討されていたんですが、
 結局は `where T : allows ref struct` (where はそのまま。制約の前に allows)になりそうです。
 
-<pre class="source" title="">
-<span class="comment">// allows で制限を緩める。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M3</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type param">T</span> <span class="variable local">x</span>)
-    <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">allows</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="comment">// アンチ制約。</span>
+```csharp
+// allows で制限を緩める。
+static void M3<T>(T x)
+    where T : allows ref struct // アンチ制約。
 {
-    <span class="comment">// メソッド内でできることが減る。</span>
-    <span class="reserved">object</span> <span class="variable">obj</span> <span class="operator">=</span> <span class="variable local">x</span>; <span class="comment">// box 化ダメ。エラーにする予定。</span>
+    // メソッド内でできることが減る。
+    object obj = x; // box 化ダメ。エラーにする予定。
 }
 
-<span class="comment">// 渡せる型が増える。</span>
-<span class="static"><span class="method">M3</span></span>&lt;<span class="reserved">int</span>&gt;();
-<span class="static"><span class="method">M3</span></span>&lt;<span class="reserved">string</span>&gt;();
-<span class="static"><span class="method">M3</span></span>&lt;<span class="reserved">object</span>&gt;();
-<span class="static"><span class="method">M3</span></span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;&gt;(); <span class="comment">// allows ref struct がないと呼べない。</span>
-</pre>
+// 渡せる型が増える。
+M3<int>();
+M3<string>();
+M3<object>();
+M3<Span<int>>(); // allows ref struct がないと呼べない。
+```
 
 ちなみに、`where T : IDisposable, allows ref struct` みたいに、制約とアンチ制約は並べて書けます。

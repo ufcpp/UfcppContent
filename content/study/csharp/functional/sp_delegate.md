@@ -52,9 +52,9 @@ delegate（委譲）という言葉のニュアンスとしては、
 デリゲートを使用するためにはまず、デリゲート型を定義します。
 デリゲート型の定義は以下のように、<code>delegate</code> キーワードを用いて行います。
 
-<pre class="source" title="デリゲート型の作成" lang="">
-<code><span class="reserved">delegate</span> <span class="input">戻り値の型</span> <span class="input">デリゲート型名</span>(<span class="input">引数リスト</span>);
-</code></pre>
+```csharp
+delegate 戻り値の型 デリゲート型名(引数リスト);
+```
 
 
 このようにして定義したデリゲート型は、ユーザ定義のクラスや構造体と同じ1つの“型”として扱われます。
@@ -67,34 +67,34 @@ delegate（委譲）という言葉のニュアンスとしては、
 そして、デリゲートに格納されたメソッドは、デリゲートを介して呼び出すことが出来ます。
 以下にデリゲートの使用例を示します。
 
-<pre class="source" title="デリゲートの例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// SomeDelegate という名前のデリゲート型を定義</span>
-<em><span class="reserved">delegate void</span> SomeDelegate(<span class="reserved">int</span> a);</em>
+// SomeDelegate という名前のデリゲート型を定義
+delegate void SomeDelegate(int a);
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// SomeDelegate型の変数にメソッドを代入。</span>
-    <em>SomeDelegate a = <span class="reserved">new</span> SomeDelegate(A);</em>
+    // SomeDelegate型の変数にメソッドを代入。
+    SomeDelegate a = new SomeDelegate(A);
 
-    <em>a(256);</em> <span class="comment">// デリゲートを介してメソッドを呼び出す。
-            // この例では A(256) が呼ばれる。</span>
+    a(256); // デリゲートを介してメソッドを呼び出す。
+            // この例では A(256) が呼ばれる。
   }
 
-  <span class="reserved">static void</span> A(<span class="reserved">int</span> n)
+  static void A(int n)
   {
-    Console.Write(<span class="literal">"A({0}) が呼ばれました。\n"</span>, n);
+    Console.Write("A({0}) が呼ばれました。\n", n);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 A(256) が呼ばれました。
-</pre>
+```
 
 
 <h5 class="version version2">Ver. 2.0</h5>
@@ -108,26 +108,26 @@ C# 2.0 からは、
 <code>SomeDelegate a = A;</code>
 と言うように、メソッドからデリゲートへの暗黙の変換が出来るようになりました。
 
-<pre class="source" title="デリゲートの例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// SomeDelegate という名前のデリゲート型を定義</span>
-<span class="reserved">delegate void</span> SomeDelegate(<span class="reserved">int</span> a);
+// SomeDelegate という名前のデリゲート型を定義
+delegate void SomeDelegate(int a);
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <em>SomeDelegate a = A;</em> <span class="comment">// 暗黙にSomeDelegate型に変換。</span>
+    SomeDelegate a = A; // 暗黙にSomeDelegate型に変換。
     a(256);
   }
 
-  <span class="reserved">static void</span> A(<span class="reserved">int</span> n)
+  static void A(int n)
   {
-    Console.Write(<span class="literal">"A({0}) が呼ばれました。\n"</span>, n);
+    Console.Write("A({0}) が呼ばれました。\n", n);
   }
 }
-</code></pre>
+```
 
 
 
@@ -143,39 +143,39 @@ C# のデリゲートにはさらに高度な機能があります。
 
 デリゲートにはクラス(static)メソッドとインスタンス(非static)メソッドのどちらでも代入する事が出来ます。
 
-<pre class="source" title="インスタンスメソッドの代入" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// メッセージを表示するだけのデリゲート
-/// &lt;/summary&gt;</span>
-<span class="reserved">delegate void</span> ShowMessage();
+/// </summary>
+delegate void ShowMessage();
 
-<span class="reserved">class</span> Person
+class Person
 {
-  <span class="reserved">string</span> name;
-  <span class="reserved">public</span> Person(<span class="reserved">string</span> name){<span class="reserved">this</span>.name = name;}
-  <span class="reserved">public void</span> ShowName(){Console.Write(<span class="literal">"名前: {0}\n"</span>, <span class="reserved">this</span>.name);}
+  string name;
+  public Person(string name){this.name = name;}
+  public void ShowName(){Console.Write("名前: {0}\n", this.name);}
 };
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Person p = <span class="reserved">new</span> Person(<span class="literal">"鬼丸美輝"</span>);
+    Person p = new Person("鬼丸美輝");
 
-    <span class="comment">// インスタンスメソッドを代入。</span>
-    ShowMessage show = <span class="reserved">new</span> ShowMessage(p.ShowName);
+    // インスタンスメソッドを代入。
+    ShowMessage show = new ShowMessage(p.ShowName);
 
     show();
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 名前: 鬼丸美輝
-</pre>
+```
 
 
 
@@ -185,85 +185,85 @@ C# のデリゲートにはさらに高度な機能があります。
 複数のメソッドを代入した状態で、デリゲート呼び出しを行うと、代入した全てのメソッドが呼び出されます。
 このように、複数のメソッドを格納した状態のデリゲートのことを<strong id="malticast" class="keyword">マルチキャストデリゲート</strong>と呼びます。
 
-<pre class="source" title="複数のメソッドの代入" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// メッセージを表示するだけのデリゲート
-/// &lt;/summary&gt;</span>
-<span class="reserved">delegate void</span> ShowMessage();
+/// </summary>
+delegate void ShowMessage();
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    ShowMessage a = <span class="reserved">new</span> ShowMessage(A);
-    a <em>+=</em> <span class="reserved">new</span> ShowMessage(B);
-    a <em>+=</em> <span class="reserved">new</span> ShowMessage(C);
+    ShowMessage a = new ShowMessage(A);
+    a += new ShowMessage(B);
+    a += new ShowMessage(C);
 
     a();
   }
 
-  <span class="reserved">static void</span> A(){Console.Write(<span class="literal">"A が呼ばれました。\n"</span>);}
-  <span class="reserved">static void</span> B(){Console.Write(<span class="literal">"B が呼ばれました。\n"</span>);}
-  <span class="reserved">static void</span> C(){Console.Write(<span class="literal">"C が呼ばれました。\n"</span>);}
+  static void A(){Console.Write("A が呼ばれました。\n");}
+  static void B(){Console.Write("B が呼ばれました。\n");}
+  static void C(){Console.Write("C が呼ばれました。\n");}
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 A が呼ばれました。
 B が呼ばれました。
 C が呼ばれました。
-</pre>
+```
 
 
 もちろん、クラスメソッドとインスタンスメソッドを混ぜて、複数のメソッドを代入することも出来ます。
 
-<pre class="source" title="インスタンスメソッド、クラスメソッド混在" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// メッセージを表示するだけのデリゲート
-/// &lt;/summary&gt;</span>
-<span class="reserved">delegate void</span> ShowMessage();
+/// </summary>
+delegate void ShowMessage();
 
-<span class="reserved">class</span> Person
+class Person
 {
-  <span class="reserved">string</span> name;
+  string name;
   
-  <span class="reserved">public</span> Person(<span class="reserved">string</span> name){<span class="reserved">this</span>.name = name;}
+  public Person(string name){this.name = name;}
 
-  <span class="reserved">public void</span> ShowName(){Console.Write(<span class="literal">"名前: {0}\n"</span>, <span class="reserved">this</span>.name);}
+  public void ShowName(){Console.Write("名前: {0}\n", this.name);}
 };
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Person p1 = <span class="reserved">new</span> Person(<span class="literal">"鬼丸美輝"</span>);
-    Person p2 = <span class="reserved">new</span> Person(<span class="literal">"神無月めぐみ"</span>);
+    Person p1 = new Person("鬼丸美輝");
+    Person p2 = new Person("神無月めぐみ");
 
-    ShowMessage show = <span class="reserved">new</span> ShowMessage(p1.ShowName);
-    show += <span class="reserved">new</span> ShowMessage(p2.ShowName);
-    show += <span class="reserved">new</span> ShowMessage(A);
-    show += <span class="reserved">new</span> ShowMessage(B);
+    ShowMessage show = new ShowMessage(p1.ShowName);
+    show += new ShowMessage(p2.ShowName);
+    show += new ShowMessage(A);
+    show += new ShowMessage(B);
 
     show();
   }
 
-  <span class="reserved">static void</span> A(){Console.Write(<span class="literal">"A が呼ばれました。\n"</span>);}
-  <span class="reserved">static void</span> B(){Console.Write(<span class="literal">"B が呼ばれました。\n"</span>);}
+  static void A(){Console.Write("A が呼ばれました。\n");}
+  static void B(){Console.Write("B が呼ばれました。\n");}
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 名前: 鬼丸美輝
 名前: 神無月めぐみ
 A が呼ばれました。
 B が呼ばれました。
-</pre>
+```
 
 
 ちなみに、マルチキャストデリゲートの呼び出しは、<code>+=</code> で代入した順に<em>逐次実行されます（並列実行はされません）</em>。
@@ -296,63 +296,63 @@ C# コンパイラによって自動的に <code>BeginInvoke</code> と <code>En
 <code>EndInvoke</code> はデリゲート型の定義時に <code>ref</code> または <code>out</code> キーワードを付けた引数および <code>System.IAsyncResult </code> インターフェース型の引数を持ち、デリゲートの戻り値と同じ型の戻り値を持ちます。
 例えば、<code>delegate int ShowMessage(int n, ref int p, out int q);</code> というデリゲート型を定義した場合、以下のようなメソッド定義になります。
 
-<pre class="source" title="BeginInvoke, EndInvoke" lang="">
-<code>IAsyncResult BeginInvoke(
-  <span class="reserved">int</span> n, <span class="reserved">ref int</span> p, <span class="reserved">out int</span> q, AsyncCallback callback, <span class="reserved">object</span> state);
-<span class="reserved">int</span> EndInvoke(<span class="reserved">ref int</span> p, <span class="reserved">out int</span> q, IAsyncResult ar);
-</code></pre>
+```csharp
+IAsyncResult BeginInvoke(
+  int n, ref int p, out int q, AsyncCallback callback, object state);
+int EndInvoke(ref int p, out int q, IAsyncResult ar);
+```
 
 
 以下に非同期デリゲート呼び出しの例を挙げます。
 
-<pre class="source" title="非同期デリゲート呼び出し" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Threading;
 
-<span class="reserved">namespace</span> A
+namespace A
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// メッセージを表示するだけのデリゲート
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public delegate void</span> ShowMessage(<span class="reserved">int</span> n);
+  /// </summary>
+  public delegate void ShowMessage(int n);
 
-  <span class="reserved">public class</span> DelegateTest
+  public class DelegateTest
   {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-      <span class="reserved">const int</span> N = 6;
-      ShowMessage asyncCall = <span class="reserved">new</span> ShowMessage(AsynchronousMethod);
+      const int N = 6;
+      ShowMessage asyncCall = new ShowMessage(AsynchronousMethod);
 
-      <span class="comment">// asyncCall を非同期で呼び出す。</span>
-      IAsyncResult ar = asyncCall.<em>BeginInvoke</em>(N, <span class="reserved">null</span>, <span class="reserved">null</span>);
+      // asyncCall を非同期で呼び出す。
+      IAsyncResult ar = asyncCall.BeginInvoke(N, null, null);
 
-      <span class="comment">// ↓この部分は asyncCall によって呼び出されるメソッドと同時に実行されます。</span>
-      <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;N; ++i)
+      // ↓この部分は asyncCall によって呼び出されるメソッドと同時に実行されます。
+      for(int i=0; i<N; ++i)
       {
         Thread.Sleep(600);
-        Console.Write(<span class="literal">"Main ({0})\n"</span>, i);
+        Console.Write("Main ({0})\n", i);
       }
 
-      <span class="comment">// asyncCall の処理が終わるのを待つ。</span>
-      asyncCall.<em>EndInvoke</em>(ar);
+      // asyncCall の処理が終わるのを待つ。
+      asyncCall.EndInvoke(ar);
 
-      Console.Write(<span class="literal">" 処理完了\n"</span>);
+      Console.Write(" 処理完了\n");
     }
 
-    <span class="reserved">static void</span> AsynchronousMethod(<span class="reserved">int</span> n)
+    static void AsynchronousMethod(int n)
     {
-      <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;n; ++i)
+      for(int i=0; i<n; ++i)
       {
         Thread.Sleep(1000);
-        Console.Write(<span class="literal">"AsynchronousMethod ({0})\n"</span>, i);
+        Console.Write("AsynchronousMethod ({0})\n", i);
       }
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 Main (0)
 AsynchronousMethod (0)
 Main (1)
@@ -366,7 +366,7 @@ AsynchronousMethod (3)
 AsynchronousMethod (4)
 AsynchronousMethod (5)
 処理完了
-</pre>
+```
 
 
 ちなみに、BeginInvoke によるデリゲートの非同期呼び出しは、
@@ -402,124 +402,124 @@ AsynchronousMethod (5)
 例えば、整数の配列の中から値が10より大きいものだけを取り出す場合、
 以下のようなコードで実現できます。
 
-<pre class="source" title="x&gt;0 を満たすものだけを取り出す" lang="">
-<code><span class="reserved">static int</span>[] Select(<span class="reserved">int</span>[] x)
+```csharp
+static int[] Select(int[] x)
 {
-  <span class="reserved">int</span> n=0;
-  <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> x) <span class="reserved">if</span>(i &gt; 10) ++n;
+  int n=0;
+  foreach(int i in x) if(i > 10) ++n;
 
-  <span class="reserved">int</span>[] y = <span class="reserved">new int</span>[n];
+  int[] y = new int[n];
   n=0;
-  <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> x)
-    <span class="reserved">if</span>(i &gt; 10)
+  foreach(int i in x)
+    if(i > 10)
     {
       y[n] = i;
       ++n;
     }
 
-  <span class="reserved">return</span> y;
+  return y;
 }
-</code></pre>
+```
 
 
 それでは、このコードを任意の条件に対して適用できるようにするため、
 述語を使って拡張してみましょう。
 まず、述語用のデリゲート型を定義します。
 
-<pre class="source" title="述語用のデリゲート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 整数 n がある条件を満たすときだけ true を返すデリゲート。
-/// &lt;/summary&gt;</span>
-<span class="reserved">delegate bool</span> Predicate(<span class="reserved">int</span> n);
-</code></pre>
+/// </summary>
+delegate bool Predicate(int n);
+```
 
 
 そして、先ほどのコードを以下のように書き換えます。
 
-<pre class="source" title="ある条件を満たすものだけを取り出す" lang="">
-<code><span class="reserved">static int</span>[] Select(<span class="reserved">int</span>[] x, <em>Predicate pred</em>)
+```csharp
+static int[] Select(int[] x, Predicate pred)
 {
-  <span class="reserved">int</span> n=0;
-  <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> x)
-    <span class="reserved">if</span>(<em>pred(i)</em>) ++n;
+  int n=0;
+  foreach(int i in x)
+    if(pred(i)) ++n;
 
-  <span class="reserved">int</span>[] y = <span class="reserved">new int</span>[n];
+  int[] y = new int[n];
 
   n=0;
-  <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> x)
-    <span class="reserved">if</span>(<em>pred(i)</em>)
+  foreach(int i in x)
+    if(pred(i))
     {
       y[n] = i;
       ++n;
     }
 
-  <span class="reserved">return</span> y;
+  return y;
 }
-</code></pre>
+```
 
 
 このメソッドを利用する際には、
 述語用のメソッドを作り、デリゲート化して <code>Select</code> メソッドに渡します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">delegate bool</span> Predicate(<span class="reserved">int</span> n);
+delegate bool Predicate(int n);
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[] x = <span class="reserved">new int</span>[]{1, 8, 4, 11, 8, 15, 12, 19};
+    int[] x = new int[]{1, 8, 4, 11, 8, 15, 12, 19};
 
-    <span class="comment">// x の中から値が 10 以上のもだけ取り出す</span>
-    <span class="reserved">int</span>[] y = Select(x, <span class="reserved">new</span> Predicate(IsOver10));
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> y)
-      Console.Write(<span class="literal">"{0}  "</span>, i);
-    Console.Write(<span class="literal">"\n"</span>);
+    // x の中から値が 10 以上のもだけ取り出す
+    int[] y = Select(x, new Predicate(IsOver10));
+    foreach(int i in y)
+      Console.Write("{0}  ", i);
+    Console.Write("\n");
 
-    <span class="comment">// x の中から値が (5, 15) の範囲にあるものだけ取り出す</span>
-    <span class="reserved">int</span>[] z = Select(x, <span class="reserved">new</span> Predicate(Is5to15));
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> z)
-      Console.Write(<span class="literal">"{0}  "</span>, i);
-    Console.Write(<span class="literal">"\n"</span>);
+    // x の中から値が (5, 15) の範囲にあるものだけ取り出す
+    int[] z = Select(x, new Predicate(Is5to15));
+    foreach(int i in z)
+      Console.Write("{0}  ", i);
+    Console.Write("\n");
   }
 
-  <span class="reserved">static bool</span> IsOver10(<span class="reserved">int</span> n){<span class="reserved">return</span> n &gt; 10;}
-  <span class="reserved">static bool</span> Is5to15(<span class="reserved">int</span> n){<span class="reserved">return</span> (n &gt; 5) &amp;&amp; (n &lt; 15);}
+  static bool IsOver10(int n){return n > 10;}
+  static bool Is5to15(int n){return (n > 5) && (n < 15);}
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x の中から条件 pred を満たすものだけを取り出す。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;対象となる配列&lt;/param&gt;
-  /// &lt;param name="pred"&gt;述語&lt;/param&gt;
-  /// &lt;returns&gt;条件を満たすものだけを取り出した配列&lt;/returns&gt;</span>
-  <span class="reserved">static int</span>[] Select(<span class="reserved">int</span>[] x, Predicate pred)
+  /// </summary>
+  /// <param name="x">対象となる配列</param>
+  /// <param name="pred">述語</param>
+  /// <returns>条件を満たすものだけを取り出した配列</returns>
+  static int[] Select(int[] x, Predicate pred)
   {
-    <span class="reserved">int</span> n=0;
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> x)
-      <span class="reserved">if</span>(pred(i)) ++n;
+    int n=0;
+    foreach(int i in x)
+      if(pred(i)) ++n;
 
-    <span class="reserved">int</span>[] y = <span class="reserved">new int</span>[n];
+    int[] y = new int[n];
 
     n=0;
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> x)
-      <span class="reserved">if</span>(pred(i))
+    foreach(int i in x)
+      if(pred(i))
       {
         y[n] = i;
         ++n;
       }
 
-    <span class="reserved">return</span> y;
+    return y;
   }
 }
-</code></pre>
+```
 
 
-<pre class="source" title="" lang="">
-<code>11  15  12  19
+```csharp
+11  15  12  19
 8  11  8  12
-</code></pre>
+```
 
 
 イメージ的には下図のような感じです。
@@ -581,37 +581,37 @@ Select メソッドに渡すための述語メソッドとして、
 IsOver10, Is5To15 という２つのメソッドを定義して使っていました。
 この2つのメソッドを、匿名メソッド機能を用いて書き直すと、以下のようになります。
 
-<pre class="source" title="匿名メソッドの例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">delegate bool</span> Predicate(<span class="reserved">int</span> n);
+delegate bool Predicate(int n);
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[] x = <span class="reserved">new int</span>[]{1, 8, 4, 11, 8, 15, 12, 19};
+    int[] x = new int[]{1, 8, 4, 11, 8, 15, 12, 19};
 
-    <span class="comment">// x の中から値が 10 以上のもだけ取り出す</span>
-    <span class="reserved">int</span>[] y = Select(x,
-      <em><span class="reserved">delegate</span>(<span class="reserved">int</span> n){ <span class="reserved">return</span> n &gt; 10; }</em>
+    // x の中から値が 10 以上のもだけ取り出す
+    int[] y = Select(x,
+      delegate(int n){ return n > 10; }
     );
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> y)
-      Console.Write(<span class="literal">"{0}  "</span>, i);
-    Console.Write(<span class="literal">"\n"</span>);
+    foreach(int i in y)
+      Console.Write("{0}  ", i);
+    Console.Write("\n");
 
-    <span class="comment">// x の中から値が (5, 15) の範囲にあるものだけ取り出す</span>
-    <span class="reserved">int</span>[] z = Select(x,
-      <em><span class="reserved">delegate</span>(<span class="reserved">int</span> n){ <span class="reserved">return</span> (n &gt; 5) &amp;&amp; (n &lt; 15); }</em>
+    // x の中から値が (5, 15) の範囲にあるものだけ取り出す
+    int[] z = Select(x,
+      delegate(int n){ return (n > 5) && (n < 15); }
     );
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> z)
-      Console.Write(<span class="literal">"{0}  "</span>, i);
-    Console.Write(<span class="literal">"\n"</span>);
+    foreach(int i in z)
+      Console.Write("{0}  ", i);
+    Console.Write("\n");
   }
 
-  <span class="comment">// Select メソッドの実装は先ほどと同じなので省略</span>
+  // Select メソッドの実装は先ほどと同じなので省略
 }
-</code></pre>
+```
 
 
 先ほどの例では
@@ -625,9 +625,9 @@ IsOver10, Is5To15 という２つのメソッドを定義して使っていま�
 と、IsOver10 の中身そのものが書かれています。
 匿名メソッドとは、このような、delegate キーワードから始めて、メソッドの中身を任意の箇所に埋め込んだ部分のことを指します。
 
-<pre class="source" title="匿名メソッドの書式" lang="">
-<code><span class="reserved">delegate</span> (<span class="input">引数リスト</span>){ <span class="input">メソッド定義</span> }
-</code></pre>
+```csharp
+delegate (引数リスト){ メソッド定義 }
+```
 
 
 
@@ -639,31 +639,31 @@ C# 3.0 では、匿名関数をさらに簡便な記法で書けるようにな�
 
 C# 2.0 の記法では、以下のように書いていたものを、
 
-<pre class="source" title="匿名メソッド式の例" lang="">
-<code><span class="reserved">delegate</span>(<span class="reserved">int</span> n){ <span class="reserved">return</span> n &gt; 10; }
-</code></pre>
+```csharp
+delegate(int n){ return n > 10; }
+```
 
 
 3.0 では以下のように書けるようになりました。
 
-<pre class="source" title="ラムダ式の例" lang="">
-<code>(<span class="reserved">int</span> n) =&gt; { <span class="reserved">return</span> n &gt; 10; }
-</code></pre>
+```csharp
+(int n) => { return n > 10; }
+```
 
 
 変数の型が左辺値や関数の引数から推論できる場合にはさらに簡素化できて、以下のように書けます。
 
-<pre class="source" title="ラムダ式（型推論あり）" lang="">
-<code>Func&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; f = n =&gt; { <span class="reserved">return</span> n &gt; 10; };
-</code></pre>
+```csharp
+Func<int, bool> f = n => { return n > 10; };
+```
 
 
 また、ラムダ式の中身が return 文1つだけの場合には、{} や return も省略できて、
 以下のように書けます。
 
-<pre class="source" title="ラムダ式（型推論あり）" lang="">
-<code>Func&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; f = n =&gt; n &gt; 10;
-</code></pre>
+```csharp
+Func<int, bool> f = n => n > 10;
+```
 
 
 このような記法を<strong id="lambda" class="keyword">ラムダ式</strong>（lambda expression）と呼びます。
@@ -681,9 +681,9 @@ C# 2.0 式の匿名メソッド式の記法は導入されなかったと思い�
 
 C# 10.0 では以下のような書き方のラムダ式も書けるようになりました。
 
-<pre class="source">
-<code><span class="reserved">var</span> <span class="variable">f</span> = [<span class="type">A</span>] <span class="reserved">static</span> <span class="reserved">int</span>? ([<span class="type">A</span>] <span class="reserved">string</span>? <span class="variable">s</span>) =&gt; <span class="variable">s</span>?.Length;
-</code></pre>
+```csharp
+var f = [A] static int? ([A] string? s) => s?.Length;
+```
 
 要点としては以下のような修正がありました。
 
@@ -714,30 +714,30 @@ Derived 型の変数を Base 型に代入することは常に合法に行うこ
 Base 型の引数に対して Derived 型の変数を渡したり、
 Derived 型を帰すメソッドの戻り値を Base 型の変数で受けることが合法ということになります。
 
-<pre class="source" title="ダウンキャストは合法" lang="">
-<code><span class="reserved">class</span> Base {}
-<span class="reserved">class</span> Derived : Base {}
+```csharp
+class Base {}
+class Derived : Base {}
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
     Base xb;
-    xb = BaseReturn();      <span class="comment">// 型が完全一致。</span>
-    <em>xb = DerivedReturn();   <span class="comment">// 基底クラスへのキャストは合法。</span></em>
+    xb = BaseReturn();      // 型が完全一致。
+    xb = DerivedReturn();   // 基底クラスへのキャストは合法。
 
-    Derived xd = <span class="reserved">new</span> Derived();
-    DerivedParameter(xd);   <span class="comment">// 型が完全一致。</span>
-    <em>BaseParameter(xd);      <span class="comment">// 基底クラスへのキャストは合法。</span></em>
+    Derived xd = new Derived();
+    DerivedParameter(xd);   // 型が完全一致。
+    BaseParameter(xd);      // 基底クラスへのキャストは合法。
   }
 
-  <span class="reserved">static</span> Base    BaseReturn()    { <span class="reserved">return new</span> Base(); }
-  <span class="reserved">static</span> Derived DerivedReturn() {<span class="reserved">return new</span> Derived(); }
+  static Base    BaseReturn()    { return new Base(); }
+  static Derived DerivedReturn() {return new Derived(); }
 
-  <span class="reserved">static void</span> BaseParameter(Base x) {}
-  <span class="reserved">static void</span> DerivedParameter(Derived x) {}
+  static void BaseParameter(Base x) {}
+  static void DerivedParameter(Derived x) {}
 }
-</code></pre>
+```
 
 
 デリゲートの戻り値・引数の型と、
@@ -757,30 +757,30 @@ covariance と contravariance です。
 プログラミング用語としてはそのままコーバリアンスと呼ぶことが多いみたい。
 → 徐々に「共変性」という訳で定着してきたようです。）
 
-<pre class="source" title="covariance" lang="">
-<code><span class="reserved">class</span> Base {}
-<span class="reserved">class</span> Derived : Base {}
+```csharp
+class Base {}
+class Derived : Base {}
 
-<span class="reserved">delegate</span> Base DelegateBaseReturn();
+delegate Base DelegateBaseReturn();
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
     Base xb;
-    xb = BaseReturn();      <span class="comment">// 型が完全一致。</span>
-    xb = DerivedReturn();   <span class="comment">// 基底クラスへのキャストは合法。</span>
+    xb = BaseReturn();      // 型が完全一致。
+    xb = DerivedReturn();   // 基底クラスへのキャストは合法。
 
     DelegateBaseReturn db;
-    db  = BaseReturn;       <span class="comment">// 型が完全一致。</span>
-    <em>db += DerivedReturn;    <span class="comment">// 戻り値の型が違うけど、これも OK。</span></em>
+    db  = BaseReturn;       // 型が完全一致。
+    db += DerivedReturn;    // 戻り値の型が違うけど、これも OK。
     xb = db();
   }
 
-  <span class="reserved">static</span> Base    BaseReturn()    { <span class="reserved">return new</span> Base(); }
-  <span class="reserved">static</span> Derived DerivedReturn() {<span class="reserved">return new</span> Derived(); }
+  static Base    BaseReturn()    { return new Base(); }
+  static Derived DerivedReturn() {return new Derived(); }
 }
-</code></pre>
+```
 
 
 
@@ -793,32 +793,32 @@ covariance と contravariance です。
 プログラミング用語としてはそのままコントラバリアンスと呼ぶことが多いみたい。
 → 徐々に「反変性」という訳で定着してきたようです。）
 
-<pre class="source" title="contravariance" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Base {}
-<span class="reserved">class</span> Derived : Base {}
+class Base {}
+class Derived : Base {}
 
-<span class="reserved">delegate void</span> DelegateDerivedParameter(Derived x);
+delegate void DelegateDerivedParameter(Derived x);
 
-<span class="reserved">class</span> DelegateTest
+class DelegateTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Derived xd = <span class="reserved">new</span> Derived();
-    DerivedParameter(xd);   <span class="comment">// 型が完全一致。</span>
-    BaseParameter(xd);      <span class="comment">// 基底クラスへのキャストは合法。</span>
+    Derived xd = new Derived();
+    DerivedParameter(xd);   // 型が完全一致。
+    BaseParameter(xd);      // 基底クラスへのキャストは合法。
 
     DelegateDerivedParameter dd;
-    dd  = DerivedParameter; <span class="comment">// 型が完全一致。</span>
-    <em>dd += BaseParameter;    <span class="comment">// 引数の型が違うけど、これも OK。</span></em>
+    dd  = DerivedParameter; // 型が完全一致。
+    dd += BaseParameter;    // 引数の型が違うけど、これも OK。
     dd(xd);
   }
 
-  <span class="reserved">static void</span> BaseParameter(Base x) {}
-  <span class="reserved">static void</span> DerivedParameter(Derived x) {}
+  static void BaseParameter(Base x) {}
+  static void DerivedParameter(Derived x) {}
 }
-</code></pre>
+```
 
 
 ## <a id="sec-generated-title-17"></a> <a id="natural-type"></a>デリゲートの自然な型
@@ -829,38 +829,38 @@ covariance と contravariance です。
 例えば以下のように、左辺の変数の型を見て `C.M` の型を決定していました。
 (同時に[オーバーロード解決](../structured/miscoverloadresolution.md)もしています。)
 
-<pre class="source" title="デリゲートのターゲットからの型決定">
-<code><span class="comment">// Func&lt;int, int&gt; 相手なので int M(int x)</span>
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">f1</span> = <span class="type">C</span>.<span class="method">M</span>;
+```csharp
+// Func<int, int> 相手なので int M(int x)
+Func<int, int> f1 = C.M;
 
-<span class="comment">// Func&lt;string, object&gt; 相手なので object M(string x)</span>
-<span class="type">Func</span>&lt;<span class="reserved">string</span>, <span class="reserved">object</span>&gt; <span class="variable">f2</span> = <span class="type">C</span>.<span class="method">M</span>;
+// Func<string, object> 相手なので object M(string x)
+Func<string, object> f2 = C.M;
 
-<span class="comment">// Action 相手なので void M()</span>
-<span class="type">Action</span> <span class="variable">f3</span> = <span class="type">C</span>.<span class="method">M</span>;
+// Action 相手なので void M()
+Action f3 = C.M;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="comment">// オーバーロードをいくつか用意。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">object</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>() { }
+    // オーバーロードをいくつか用意。
+    public static int M(int x) => x;
+    public static object M(string x) => x;
+    public static void M() { }
 }
-</code></pre>
+```
 
 ラムダ式と同世代の C# 3.0 で [`var` 変数宣言](../start/sp3_inference.md#type-inference)が書けるようになったわけですが、デリゲートも `var` を使って書きたいという要望はずっとありました。
 
 また `var` (要するに型推論)だけではなく、`Delegate` 型(`System` 名前空間)など(要は親クラス)にラムダ式を渡したい場面があります。
 例えば、Web リクエストを受け付けるプログラムを以下のように書きたいという要望がありました。
 
-<pre class="source" title="Web アプリの .NET 6 新テンプレート">
-<code><span class="reserved">var</span> <span class="variable">builder</span> = <span class="type">WebApplication</span>.<span class="method">CreateBuilder</span>(<span class="variable">args</span>);
-<span class="reserved">var</span> <span class="variable">app</span> = <span class="variable">builder</span>.<span class="method">Build</span>();
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
 
-<span class="variable">app</span>.<span class="method">MapGet</span>(<span class="string">&quot;/&quot;</span>, () =&gt; <span class="string">&quot;Hello World!&quot;</span>);
+app.MapGet("/", () => "Hello World!");
 
-<span class="variable">app</span>.<span class="method">Run</span>();
-</code></pre>
+app.Run();
+```
 
 実際このコードは .NET 6.0 (C# 10.0 と同世代)の Web アプリ テンプレートで作られるコードです。
 `MapGet` の引数は `Delegate` 型で、C# 9.0 までは `() => "Hellow World!"` の部分の型決定ができませんでした。
@@ -877,24 +877,24 @@ covariance と contravariance です。
 
 つまり、C# 10.0 では以下のコードがコンパイルできるようになりました。
 
-<pre class="source" title="デリゲートの自然な型決定">
-<code><span class="comment">// C# 9.0 までは</span>
-<span class="comment">// Func&lt;string, int&gt; f = m;</span>
-<span class="comment">// みたいに書かないとダメだった(ターゲット型推論)。</span>
-<span class="reserved">var</span> <span class="variable">f</span> = <span class="method">m</span>;
-<span class="type">Delegate</span> <span class="variable">d</span> = m;
-<span class="type">MulticastDelegate</span> <span class="variable">md</span> = m;
+```csharp
+// C# 9.0 までは
+// Func<string, int> f = m;
+// みたいに書かないとダメだった(ターゲット型推論)。
+var f = m;
+Delegate d = m;
+MulticastDelegate md = m;
 
-<span class="comment">// Delegate は ICloneable を実装しているので一応これも OK。</span>
-<span class="comment">// (ただし、ICloneable インターフェイス自体今どき使わない。)</span>
-<span class="type">ICloneable</span> <span class="variable">c</span> = m;
+// Delegate は ICloneable を実装しているので一応これも OK。
+// (ただし、ICloneable インターフェイス自体今どき使わない。)
+ICloneable c = m;
 
-<span class="comment">// これも一応できるけど、そんなに使い道がないというかたまにミスの原因になるので警告。</span>
-<span class="comment">// object obj = m(); の () 付け忘れをたまにやるので…</span>
-<span class="reserved">object</span> <span class="variable">obj</span> = m;
+// これも一応できるけど、そんなに使い道がないというかたまにミスの原因になるので警告。
+// object obj = m(); の () 付け忘れをたまにやるので…
+object obj = m;
 
-<span class="reserved">int</span> <span class="method">m</span>(<span class="reserved">string</span> <span class="variable">s</span>) =&gt; <span class="variable">s</span>.Length;
-</code></pre>
+int m(string s) => s.Length;
+```
 
 この場合、デリゲートの型は以下のように決定されています(これがデリゲートの「自然な型」)。
 
@@ -910,34 +910,34 @@ covariance と contravariance です。
 
 ということで、以下のような感じで型が決まります。
 
-<pre class="source" title="Action 等になるか、匿名型が作られるか">
-<code><span class="comment">// System.Action とかになるやつ:</span>
-<span class="reserved">var</span> <span class="variable">a1</span> = (<span class="reserved">int</span> <span class="variable">a</span>) =&gt; { };
-<span class="reserved">var</span> <span class="variable">a4</span> = (<span class="reserved">int</span> <span class="variable">a</span>, <span class="reserved">int</span> <span class="variable">b</span>, <span class="reserved">int</span> <span class="variable">c</span>, <span class="reserved">int</span> <span class="variable">d</span>) =&gt; { };
-<span class="reserved">var</span> <span class="variable">a16</span> = (<span class="reserved">int</span> <span class="variable">a</span>, <span class="reserved">int</span> <span class="variable">b</span>, <span class="reserved">int</span> <span class="variable">c</span>, <span class="reserved">int</span> <span class="variable">d</span>, <span class="reserved">int</span> <span class="variable">e</span>, <span class="reserved">int</span> <span class="variable">f</span>, <span class="reserved">int</span> <span class="variable">g</span>, <span class="reserved">int</span> <span class="variable">h</span>, <span class="reserved">int</span> <span class="variable">i</span>, <span class="reserved">int</span> <span class="variable">j</span>, <span class="reserved">int</span> <span class="variable">k</span>, <span class="reserved">int</span> <span class="variable">l</span>, <span class="reserved">int</span> <span class="variable">m</span>, <span class="reserved">int</span> <span class="variable">n</span>, <span class="reserved">int</span> <span class="variable">o</span>, <span class="reserved">int</span> <span class="variable">p</span>) =&gt; { };
-<span class="reserved">var</span> <span class="variable">f1</span> = (<span class="reserved">int</span> <span class="variable">a</span>) =&gt; <span class="variable">a</span>.<span class="method">ToString</span>();
-<span class="reserved">var</span> <span class="variable">f4</span> = (<span class="reserved">int</span> <span class="variable">a</span>, <span class="reserved">int</span> <span class="variable">b</span>, <span class="reserved">int</span> <span class="variable">c</span>, <span class="reserved">int</span> <span class="variable">d</span>) =&gt; <span class="string">$&quot;</span>{<span class="variable">a</span>}<span class="string">.</span>{<span class="variable">b</span>}<span class="string">.</span>{<span class="variable">c</span>}<span class="string">.</span>{<span class="variable">d</span>}<span class="string">&quot;</span>;
+```csharp
+// System.Action とかになるやつ:
+var a1 = (int a) => { };
+var a4 = (int a, int b, int c, int d) => { };
+var a16 = (int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n, int o, int p) => { };
+var f1 = (int a) => a.ToString();
+var f4 = (int a, int b, int c, int d) => $"{a}.{b}.{c}.{d}";
 
-<span class="comment">// コンパイラー生成の独自デリゲートになるやつ:</span>
-<span class="comment">// ref 系</span>
-<span class="reserved">var</span> <span class="variable">i1</span> = (<span class="reserved">in</span> <span class="reserved">int</span> <span class="variable">a</span>) =&gt; { };
-<span class="reserved">var</span> <span class="variable">r1</span> = (<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">a</span>) =&gt; { };
-<span class="reserved">var</span> <span class="variable">o1</span> = (<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">a</span>) =&gt; <span class="variable">a</span> = 0;
-<span class="comment">// 引数の数オーバー</span>
-<span class="reserved">var</span> <span class="variable">a17</span> = (<span class="reserved">int</span> <span class="variable">a</span>, <span class="reserved">int</span> <span class="variable">b</span>, <span class="reserved">int</span> <span class="variable">c</span>, <span class="reserved">int</span> <span class="variable">d</span>, <span class="reserved">int</span> <span class="variable">e</span>, <span class="reserved">int</span> <span class="variable">f</span>, <span class="reserved">int</span> <span class="variable">g</span>, <span class="reserved">int</span> <span class="variable">h</span>, <span class="reserved">int</span> <span class="variable">i</span>, <span class="reserved">int</span> <span class="variable">j</span>, <span class="reserved">int</span> <span class="variable">k</span>, <span class="reserved">int</span> <span class="variable">l</span>, <span class="reserved">int</span> <span class="variable">m</span>, <span class="reserved">int</span> <span class="variable">n</span>, <span class="reserved">int</span> <span class="variable">o</span>, <span class="reserved">int</span> <span class="variable">p</span>, <span class="reserved">int</span> <span class="variable">q</span>) =&gt; { };
-</code></pre>
+// コンパイラー生成の独自デリゲートになるやつ:
+// ref 系
+var i1 = (in int a) => { };
+var r1 = (ref int a) => { };
+var o1 = (out int a) => a = 0;
+// 引数の数オーバー
+var a17 = (int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n, int o, int p, int q) => { };
+```
 
 ちなみに、`var` 変数宣言している時点で型が確定しているので、後から別のデリゲート型に代入することはできません。
 
-<pre class="source" title="var に代入した時点で Action/Func に型が確定してる例">
-<code><span class="comment">// Func&lt;int, bool&gt; になる。</span>
-<span class="reserved">var</span> <span class="variable">a</span> = (<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="reserved">true</span>;
+```csharp
+// Func<int, bool> になる。
+var a = (int x) => true;
 
-<span class="comment">// 左辺に型を明示してあると Action/Func 以外の型になる。</span>
-<span class="type">Predicate</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">p</span> = (<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="reserved">true</span>;
+// 左辺に型を明示してあると Action/Func 以外の型になる。
+Predicate<int> p = (int x) => true;
 
-<span class="comment">// p に直接 (int x) =&gt; true を代入するのは行けるのに、</span>
-<span class="comment">// var 変数宣言を挟むとダメ。</span>
-<span class="comment">// (Func&lt;int, bool&gt; から Predicate&lt;int&gt; への変換が許されていない。)</span>
-<span class="variable">p</span> = <span class="error"><span class="variable">a</span></span>;
-</code></pre>
+// p に直接 (int x) => true を代入するのは行けるのに、
+// var 変数宣言を挟むとダメ。
+// (Func<int, bool> から Predicate<int> への変換が許されていない。)
+p = a;
+```

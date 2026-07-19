@@ -64,20 +64,20 @@ C# 7/VB 15には状況が「Finishing(最終作業中)」のものばっかり�
 
 ちなみにもう1つの問題として、今、↓みたいな書き方してるコードが結構たくさんあるはずで、これの互換性を崩しかねないからって話もあります。
 
-<pre class="source" title="MainからMainAsyncを呼ぶコード">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
         MainAsync().Wait();
     }
 
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> MainAsync()
+    static async Task MainAsync()
     {
         ...
     }
 }
-</code></pre>
+```
 
 こちらはまあ、`void Main`の方を優先する、みたいなルールで回避はできるはず。
 
@@ -129,13 +129,13 @@ VS "15" Previewのリリース ノートでも、「VS "15"で新たに入る機
 
 現状、とりあえず相当厳しい方に倒して実装しています。すなわち、「`x`は、その式を含むステートメント内でだけ使える」というものです。要するに、以下のコードはコンパイル エラーに。
 
-<pre class="source" title="2016/8/5時点での実装">
-<code><span class="reserved">static</span> <span class="reserved">void</span> X(<span class="reserved">string</span> s)
+```csharp
+static void X(string s)
 {
-    <span class="reserved">var</span> value = <span class="reserved">int</span>.TryParse(s, <span class="reserved">out var</span> x) ? x : 0; <span class="comment">// x はこのステートメント内でしか使えない</span>
-    <span class="type">Console</span>.WriteLine(x); <span class="comment">// もうスコープを外れてる。使えない。コンパイル エラーに</span>
+    var value = int.TryParse(s, out var x) ? x : 0; // x はこのステートメント内でしか使えない
+    Console.WriteLine(x); // もうスコープを外れてる。使えない。コンパイル エラーに
 }
-</code></pre>
+```
 
 いろいろ検討した結果、これはさすがに実際にありそうな用途をカバーしきれないという結論で、制限緩和を考えてるみたいです。
 
@@ -143,28 +143,28 @@ VS "15" Previewのリリース ノートでも、「VS "15"で新たに入る機
 
 例1: if の条件式内で宣言した変数は、else側には伸びてほしくない
 
-<pre class="source" title="">
-<code><span class="reserved">if</span> (o <span class="reserved">is</span> <span class="reserved">bool</span> b) ...b...; <span class="comment">// b はスコープ内</span>
-<span class="reserved">else</span> <span class="reserved">if</span> (o <span class="reserved">is</span> <span class="reserved">byte</span> b) ...b...; <span class="comment">// bool の方の b はもうスコープ外。新しいbを作れる</span>
-...; <span class="comment">// どちらのbもスコープ外</span>
-</code></pre>
+```csharp
+if (o is bool b) ...b...; // b はスコープ内
+else if (o is byte b) ...b...; // bool の方の b はもうスコープ外。新しいbを作れる
+...; // どちらのbもスコープ外
+```
 
 例2: 「含んでいるブロック内」で区切ると、forとかで変になる
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">for</span> (<span class="reserved">int</span> i = foo(<span class="reserved">out</span> <span class="reserved">int</span> j); ;) ;
-<span class="comment">// iはスコープ外だけど、jはスコープ内になってしまうのはいい？</span>
-</code></pre>
+```csharp
+for (int i = foo(out int j); ;) ;
+// iはスコープ外だけど、jはスコープ内になってしまうのはいい？
+```
 
 例3: ブロックがないifとかどうするの
 
-<pre class="source" title="">
-<code><span class="reserved">if</span> (...)
-    <span class="reserved">if</span> (...)
-        <span class="reserved">if</span> (o <span class="reserved">is</span> <span class="reserved">int</span> i) ...i...
-...; <span class="comment">// ブロックを区切りにすると、i はここもスコープになる</span>
-     <span class="comment">// その手前のifのせいで、iが初期化されている保証できないけどいい？</span>
-</code></pre>
+```csharp
+if (...)
+    if (...)
+        if (o is int i) ...i...
+...; // ブロックを区切りにすると、i はここもスコープになる
+     // その手前のifのせいで、iが初期化されている保証できないけどいい？
+```
 
 ってことで、ifとかforとかの場合は「embedded statements内にスコープを限定する」っていうルールにしたいそうです。
 embedded statementsって、要するに、ifとかforとかの直後に書けるステートメントのこと。ifとかforとかの後ろには、ブロック、もしくは、何か1つステートメントを書けるわけですが、その部分のことを指すそうです。
@@ -173,7 +173,7 @@ embedded statementsって、要するに、ifとかforとかの直後に書け�
 
 この話を見て、embedded statementsって何だっけ？って思って久々にC#の仕様書を眺めてみたんですが…
 
-<pre>
+```text
 statement:
     labeled-statement
     declaration-statement
@@ -192,7 +192,7 @@ embedded-statement:
     lock-statement
     using-statement 
     yield-statement
-</pre>
+```
 
 つまり、embedded statement = ステートメントのうち、変数宣言とラベル付きステートメント以外。
 

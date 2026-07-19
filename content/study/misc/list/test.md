@@ -28,24 +28,24 @@ test
 
 ## <a id="sec-generated-title-1"></a>MathJax MathML
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;</span>math <span class="attribute">xmlns</span><span class="attvalue">="http://www.w3.org/1998/Math/MathML"&gt;</span>
-    <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;</span>
-            <span class="attvalue">&lt;</span>munder<span class="attvalue">&gt;</span>
-                <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;&lt;</span>mi <span class="attribute">mathvariant</span><span class="attvalue">="normal"&gt;</span>lim<span class="attvalue">&lt;/</span>mi<span class="attvalue">&gt;&lt;/</span>mrow<span class="attvalue">&gt;</span>
-                <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;&lt;</span>mi<span class="attvalue">&gt;</span>x<span class="attvalue">&lt;/</span>mi<span class="attvalue">&gt;&lt;</span>mo<span class="attvalue">&gt;</span>→<span class="attvalue">&lt;/</span>mo<span class="attvalue">&gt;&lt;</span>mn<span class="attvalue">&gt;</span>0<span class="attvalue">&lt;/</span>mn<span class="attvalue">&gt;&lt;/</span>mrow<span class="attvalue">&gt;</span>
-            <span class="attvalue">&lt;/</span>munder<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;/</span>mrow<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;</span>mo<span class="attvalue">&gt;</span>⁡<span class="attvalue">&lt;/</span>mo<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;</span>mrow<span class="attvalue">&gt;</span>
-            <span class="attvalue">&lt;</span>mi<span class="attvalue">&gt;</span>g<span class="attvalue">&lt;/</span>mi<span class="attvalue">&gt;&lt;</span>mfenced <span class="attribute">separators</span><span class="attvalue">="|"&gt;&lt;</span>mrow<span class="attvalue">&gt;&lt;</span>mi<span class="attvalue">&gt;</span>x<span class="attvalue">&lt;/</span>mi<span class="attvalue">&gt;&lt;/</span>mrow<span class="attvalue">&gt;&lt;/</span>mfenced<span class="attvalue">&gt;</span>
-        <span class="attvalue">&lt;/</span>mrow<span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;/</span>mrow<span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;</span>mo<span class="attvalue">&gt;</span>=<span class="attvalue">&lt;/</span>mo<span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;</span>mn<span class="attvalue">&gt;</span>0<span class="attvalue">&lt;/</span>mn<span class="attvalue">&gt;</span>
-<span class="attvalue">&lt;/</span>math<span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mrow>
+            <munder>
+                <mrow><mi mathvariant="normal">lim</mi></mrow>
+                <mrow><mi>x</mi><mo>→</mo><mn>0</mn></mrow>
+            </munder>
+        </mrow>
+        <mo>⁡</mo>
+        <mrow>
+            <mi>g</mi><mfenced separators="|"><mrow><mi>x</mi></mrow></mfenced>
+        </mrow>
+    </mrow>
+    <mo>=</mo>
+    <mn>0</mn>
+</math>
+```
 
 ↓
 
@@ -148,125 +148,125 @@ div に変えようかな。
 
 ### <a id="sec-generated-title-7"></a>source code
 
-<pre class="source" title="">
-<span class="reserved">var</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">"abcあいう😊😀😁"u8</span>;
+```csharp
+var s = "abcあいう😊😀😁"u8;
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">s</span>[..<span class="number">8</span>])
+foreach (var x in s[..8])
 {
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$"</span>{(<span class="reserved">int</span>)<span class="variable">x</span>:<span class="string">X</span>}<span class="string">"</span>);
+    Console.WriteLine($"{(int)x:X}");
 }
 
-<span class="reserved">readonly</span> <span class="reserved">record</span> <span class="reserved">struct</span> <span class="type struct">S</span>
+readonly record struct S
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="operator">+</span>(<span class="type struct">S</span> <span class="variable local">x</span>) <span class="operator">=></span> <span class="reserved">true</span>;
+    public static bool operator +(S x) => true;
 }
 
-<span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">C</span>
+sealed class C
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_x</span> <span class="operator">=</span> <span class="number">0</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> <span class="operator">=></span> <span class="field">_x</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>() { }
+    private int _x = 0;
+    public int X => _x;
+    public void M() { }
 }
 
-<span class="comment">///</span><span class="comment"> </span><span class="comment"><</span><span class="comment">summary</span><span class="comment">></span>
-<span class="comment">///</span><span class="comment"> abc</span>
-<span class="comment">///</span><span class="comment"> </span><span class="comment"></</span><span class="comment">summary</span><span class="comment">></span>
-<span class="reserved">class</span> <span class="type"><span class="warning" title="CS8981">abc</span></span><span class="error" title="CS1514"><span class="error" title="CS1513"><span class="error" title="CS8803">(<span class="error" title="CS1525"></span></span>)</span>;</span>
+/// <summary>
+/// abc
+/// </summary>
+class abc();
 
-<span class="preprocess">#</span><span class="preprocess">if</span> <span class="reserved">false</span>
-<span class="excluded">record R();
-<span class="preprocess"></span>#</span><span class="preprocess">endif</span>
-</pre>
+#if false
+record R();
+#endif
+```
 
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">int</span> <span class="warning">xxxxxxxxx</span>;
+        int xxxxxxxxx;
 
-        <span class="reserved">int</span> <span class="error">xxxxxxxxx</span>;
+        int xxxxxxxxx;
     }
 
-    <span class="reserved">int</span> <span class="method">X</span> { <span class="reserved">get</span>; <span class="suggestion"><span class="reserved">set</span>;</span> }
+    int X { get; set; }
 }
-</code></pre>
+```
 
-<pre class="source" title="test code">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System<span class="operator">.</span>Text;
-<span class="reserved">using</span> <span class="reserved">static</span> System<span class="operator">.</span>Text<span class="operator">.</span>Unicode<span class="operator">.</span><span class="type">Utf8</span>;
+```csharp
+using System;
+using System.Text;
+using static System.Text.Unicode.Utf8;
 
-<span class="reserved">const</span> <span class="reserved">double</span> <span class="constant">A</span> <span class="operator">=</span> <span class="number">1.2</span>;
+const double A = 1.2;
 
-<span class="control">if</span> (<span class="reserved">args</span><span class="operator">.</span><span class="property">Length</span> <span class="operator">&gt;</span> <span class="number">0</span>)
+if (args.Length > 0)
 {
-    <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="constant">A</span>);
+    Console.WriteLine(A);
 
-    <span class="reserved">var</span> <span class="variable">buffer</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="number">256</span>]);
+    var buffer = (stackalloc byte[256]);
 
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="reserved">args</span>)
+    foreach (var x in args)
     {
-        <span class="method">FromUtf16</span>(<span class="variable">x</span>, <span class="variable">buffer</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">read</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">writtern</span>);
+        FromUtf16(x, buffer, out var read, out var writtern);
     }
 }
 
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">$&quot;&quot;&quot;
-</span><span class="string">    abc
-    </span>{<span class="number">123</span>}<span class="string">
-    &quot;&quot;&quot;</span>);
+Console.WriteLine($"""
+    abc
+    {123}
+    """);
 
-<span class="reserved">internal</span> <span class="reserved">record</span> <span class="reserved">class</span> <span class="type">A</span>();
-<span class="reserved">internal</span> <span class="reserved">record</span> <span class="reserved">struct</span> <span class="type struct">B</span>();
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">C</span>
+internal record class A();
+internal record struct B();
+internal class C
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">PublicField</span>;
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_privateField</span>;
+    public int PublicField;
+    private int _privateField;
 
-    <span class="reserved">public</span> <span class="type struct">DateOnly</span> <span class="property">Property1</span> { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type struct">TimeSpan</span> <span class="property">Property2</span> { <span class="reserved">get</span>; }
+    public DateOnly Property1 { get; }
+    public TimeSpan Property2 { get; }
 
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">ComputedProperty</span> <span class="operator">=&gt;</span> <span class="property">Property1</span> <span class="operator">+</span> <span class="string">$&quot;</span>{<span class="property">Property2</span>}<span class="string">&quot;</span>;
+    public string ComputedProperty => Property1 + $"{Property2}";
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">Method</span>(<span class="reserved">int</span> <span class="variable local">p1</span>, <span class="reserved">int</span> <span class="variable local">p2</span>, <span class="reserved">int</span> <span class="variable local">p3</span>)
+    public int Method(int p1, int p2, int p3)
     {
-        <span class="reserved">var</span> <span class="variable">local</span> <span class="operator">=</span> <span class="variable local">p1</span> <span class="operator">+</span> <span class="variable local">p2</span> <span class="operator">+</span> <span class="variable local">p3</span>;
-        <span class="control">return</span> <span class="variable">local</span> <span class="operator">+</span> <span class="field">_privateField</span>;
+        var local = p1 + p2 + p3;
+        return local + _privateField;
     }
 }
-<span class="reserved">internal</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">D</span> { }
-</code></pre>
+internal readonly ref struct D { }
+```
 
 ### <a id="sec-generated-title-8"></a>source code (抜粋)
 
 Program.cs へのコピペで動くソースコードと、「一部分抜粋」でそれだけだと動かないやつ、css 変えようかな。
 
-<pre class="source partial" title="WinForms アプリで、Visual Studio が生成するコード">
-<span class="reserved">namespace</span> WinFormsApp1;
+```csharp
+namespace WinFormsApp1;
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Form1</span>
+partial class Form1
 {
-    <span class="comment">// 前略</span>
-    <span class="comment">// この部分は手書きで書き換える想定。</span>
+    // 前略
+    // この部分は手書きで書き換える想定。
 
-    <span class="preprocess">#</span><span class="preprocess">region</span> Windows Form Designer generated code
+    #region Windows Form Designer generated code
 
-    <span class="comment">///</span><span class="comment"> </span><span class="comment">&lt;</span><span class="comment">summary</span><span class="comment">&gt;</span>
-    <span class="comment">///</span><span class="comment">  Required method for Designer support - do not modify</span>
-    <span class="comment">///</span><span class="comment">  the contents of this method with the code editor.</span>
-    <span class="comment">///</span><span class="comment"> </span><span class="comment">&lt;/</span><span class="comment">summary</span><span class="comment">&gt;</span>
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">InitializeComponent</span>()
+    /// <summary>
+    ///  Required method for Designer support - do not modify
+    ///  the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
     {
-        <span class="reserved">this</span><span class="operator">.</span><span class="field">components</span> <span class="operator">=</span> <span class="reserved">new</span> System<span class="operator">.</span>ComponentModel<span class="operator">.</span><span class="type">Container</span>();
-        <span class="reserved">this</span><span class="operator">.</span>AutoScaleMode <span class="operator">=</span> System<span class="operator">.</span>Windows<span class="operator">.</span>Forms<span class="operator">.</span>AutoScaleMode<span class="operator">.</span>Font;
-        <span class="reserved">this</span><span class="operator">.</span>ClientSize <span class="operator">=</span> <span class="reserved">new</span> System<span class="operator">.</span>Drawing<span class="operator">.</span><span class="type struct">Size</span>(<span class="number">800</span>, <span class="number">450</span>);
-        <span class="reserved">this</span><span class="operator">.</span>Text <span class="operator">=</span> <span class="string">&quot;Form1&quot;</span>;
+        this.components = new System.ComponentModel.Container();
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.ClientSize = new System.Drawing.Size(800, 450);
+        this.Text = "Form1";
     }
 
-    <span class="preprocess">#</span><span class="preprocess">endregion</span>
+    #endregion
 }
-</pre>
+```
 
 
 ## <a id="sec-generated-title-9"></a>Blazor (外部)

@@ -27,9 +27,9 @@ aliases: []
 まず、基本方針として、record は class/struct に対する修飾子ではなくて、enum とか delegate とかと同じく1種の型みたいな扱いにしたみたいです。
 なので、以下のような書き方に。
 
-<pre class="source" title="record 型">
-<code><span class="reserved">record</span> <span class="type">Point</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
-</code></pre>
+```csharp
+record Point(int X, int Y);
+```
 
 とりあえず初期実装としては結構やることを絞るみたいで、
 
@@ -61,28 +61,28 @@ record のものと近いコード生成をすることになったとします
 という点になります。
 で、この2つ、struct の場合は標準で作られます。
 
-<pre class="source" title="struct には自動的に Equals が作られてる">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">struct</span> <span class="type">Point</span>
+struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">int</span> Y;
+    public int X;
+    public int Y;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> p1 = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-        <span class="reserved">var</span> p2 = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(p1.<span class="method">Equals</span>(p2)); <span class="comment">// true</span>
+        var p1 = new Point { X = 1, Y = 2 };
+        var p2 = new Point { X = 1, Y = 2 };
+        Console.WriteLine(p1.Equals(p2)); // true
  
         p2.X = 3;
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(p1.<span class="method">Equals</span>(p2)); <span class="comment">// false</span>
+        Console.WriteLine(p1.Equals(p2)); // false
     }
 }
-</code></pre>
+```
 
 ということで、コンセプト上は、「record は struct のような振る舞いを持つ参照型」みたいに考えることもできます。
 なので、今の struct の挙動とあまりに違うものにはしたくないし、
@@ -98,32 +98,32 @@ record のものと近いコード生成をすることになったとします
 nominal record のために、data 修飾子も用意する流れのようです。
 以下のような書き方ができます。一見、data 修飾子を付けたフィールドっぽい書き方ですが、`get; init;` な public プロパティが生成されます。
 
-<pre class="source" title="data 修飾子による「nominal record」">
-<code><span class="reserved">record</span> <span class="type">Point</span>
+```csharp
+record Point
 {
-    <span class="reserved">data</span> <span class="reserved">int</span> X;
-    <span class="reserved">data</span> <span class="reserved">int</span> Y;
+    data int X;
+    data int Y;
 }
-</code></pre>
+```
 
 ## base 呼び出しとか、プライマリ コンストラクター引数のスコープとか
 
 あとは細かい話。
 record 型は派生もできるんですが、その場合、以下のような書き方ができます。
 
-<pre class="source" title="record の派生">
-<code><span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> FirstName, <span class="reserved">string</span> LastName)
+```csharp
+record Person(string FirstName, string LastName)
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Fullname =&gt; <span class="string">$&quot;</span>{FirstName}<span class="string"> </span>{LastName}<span class="string">&quot;</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() =&gt; <span class="string">$&quot;</span>{FirstName}<span class="string"> </span>{LastName}<span class="string">&quot;</span>;
+    public string Fullname => $"{FirstName} {LastName}";
+    public override string ToString() => $"{FirstName} {LastName}";
 }
  
-<span class="reserved">record</span> <span class="type">Student</span>(<span class="reserved">string</span> FirstName, <span class="reserved">string</span> LastName, <span class="reserved">int</span> Id)
-    : <span class="type">Person</span>(FirstName, LastName)
+record Student(string FirstName, string LastName, int Id)
+    : Person(FirstName, LastName)
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() =&gt; <span class="string">$&quot;</span>{FirstName}<span class="string"> </span>{LastName}<span class="string"> (</span>{ID}<span class="string">)&quot;</span>;
+    public override string ToString() => $"{FirstName} {LastName} ({ID})";
 }
-</code></pre>
+```
 
 このとき、以下のような点が検討に上がっています。
 

@@ -33,40 +33,40 @@ C# でのファイル操作の楽さには目を見張るものがあります�
 System.IO.Directory と System.IO.File には、
 ディレクトリやファイルを読み書きするための static メソッドがあります。
 
-<pre class="source" title="Directory, File" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.IO;
+```csharp
+using System;
+using System.IO;
 
-<span class="reserved">class</span> TestIO
+class TestIO
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">if</span>(!Directory.Exists(<span class="literal">"test"</span>))
-      Directory.CreateDirectory(<span class="literal">"test"</span>);
+    if(!Directory.Exists("test"))
+      Directory.CreateDirectory("test");
     
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;5; ++i)
+    for(int i=0; i<5; ++i)
     {
-      <span class="reserved">string</span> fileName = <span class="reserved">string</span>.Format(<span class="literal">@"test\{0}.txt"</span>, i);
-      <span class="reserved">string</span> contents = <span class="reserved">string</span>.Format(<span class="literal">"Test file No. {0}"</span>, i);
+      string fileName = string.Format(@"test\{0}.txt", i);
+      string contents = string.Format("Test file No. {0}", i);
       File.WriteAllText(fileName, contents);
     }
   }
 }
-</code></pre>
+```
 
 
 プログラムを実行した後のディレクトリ内の様子です。
 
-<pre class="console" title="Directory, File">
-<span class="prompt">&gt; </span><span class="input">ls</span>
+```console
+> ls
 ConsoleApplication2.exe  ConsoleApplication2.vshost.exe
 ConsoleApplication2.pdb  test
-<span class="prompt">&gt; </span><span class="input">cd test</span>
-<span class="prompt">&gt; </span><span class="input">ls</span>
+> cd test
+> ls
 0.txt  1.txt  2.txt  3.txt  4.txt
-<span class="prompt">&gt; </span><span class="input">cat 1.txt</span>
+> cat 1.txt
 Test file No. 1
-</pre>
+```
 
 
 
@@ -75,31 +75,31 @@ Test file No. 1
 System.IO.DirectoryInfo と System.IO.FileInfo は、
 ディレクトリやファイルの情報を取り出すためのクラスです。
 
-<pre class="source" title="DirectoryInfo, FileInfo" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.IO;
+```csharp
+using System;
+using System.IO;
 
-<span class="reserved">class</span> TestRexex
+class TestRexex
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    DirectoryInfo dir = <span class="reserved">new</span> DirectoryInfo(<span class="literal">"test"</span>);
+    DirectoryInfo dir = new DirectoryInfo("test");
 
-    <span class="reserved">foreach</span>(FileInfo f <span class="reserved">in</span> dir.GetFiles())
+    foreach(FileInfo f in dir.GetFiles())
     {
-      <span class="reserved">string</span> name = f.Name;
-      <span class="reserved">string</span> ext  = f.Extension;
+      string name = f.Name;
+      string ext  = f.Extension;
       DateTime t = f.CreationTime;
-      Console.Write(<span class="literal">"{0}\next: {1}, time: {2}\n"</span>,
-        name, ext, t.ToString(<span class="literal">"hh:mm:ss"</span>));
+      Console.Write("{0}\next: {1}, time: {2}\n",
+        name, ext, t.ToString("hh:mm:ss"));
     }
   }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="DirectoryInfo, FileInfo">
+```console
 0.txt
 ext: .txt, time: 02:34:36
 1.txt
@@ -109,7 +109,8 @@ ext: .txt, time: 02:34:36
 3.txt
 ext: .txt, time: 02:34:36
 4.txt
-ext: .txt, time: 02:34:36</pre>
+ext: .txt, time: 02:34:36
+```
 
 
 
@@ -118,43 +119,43 @@ ext: .txt, time: 02:34:36</pre>
 System.IO.StreamReader, System.IO.StreamWriter を用いることで、
 テキストファイルの読み書きができます。
 
-<pre class="source" title="StreamReader, StreamWriter" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.IO;
+```csharp
+using System;
+using System.IO;
 
-<span class="reserved">class</span> TestRexex
+class TestRexex
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// ファイルにテキストを書き出し。</span>
-    <span class="reserved">using</span>(StreamWriter w = <span class="reserved">new</span> StreamWriter(<span class="literal">@"test\test.txt"</span>))
+    // ファイルにテキストを書き出し。
+    using(StreamWriter w = new StreamWriter(@"test\test.txt"))
     {
-      w.WriteLine(<span class="literal">"基本的に、Console クラスの文字列出力メソッドと同じ。"</span>);
-      w.WriteLine(<span class="literal">"WriteLine では末尾に改行文字が加えられます。"</span>);
-      <span class="reserved">int</span> n = 5;
-      <span class="reserved">double</span> x = 3.14;
-      w.Write(<span class="literal">"書式指定出力もできます → n = {0}, x = {1}"</span>, n, x);
+      w.WriteLine("基本的に、Console クラスの文字列出力メソッドと同じ。");
+      w.WriteLine("WriteLine では末尾に改行文字が加えられます。");
+      int n = 5;
+      double x = 3.14;
+      w.Write("書式指定出力もできます → n = {0}, x = {1}", n, x);
     }
 
-    <span class="comment">// ファイルからテキストを読み出し。</span>
-    <span class="reserved">using</span>(StreamReader r = <span class="reserved">new</span> StreamReader(<span class="literal">@"test\test.txt"</span>))
+    // ファイルからテキストを読み出し。
+    using(StreamReader r = new StreamReader(@"test\test.txt"))
     {
-      <span class="reserved">string</span> line;
-      <span class="reserved">while</span>( (line = r.ReadLine()) != <span class="reserved">null</span>) <span class="comment">// 1行ずつ読み出し。</span>
+      string line;
+      while( (line = r.ReadLine()) != null) // 1行ずつ読み出し。
       {
         Console.WriteLine(line);
       }
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="StreamReader, StreamWriter">
+```console
 基本的に、Console クラスの文字列出力メソッドと同じ。
 WriteLine では末尾に改行文字が加えられます。
 書式指定出力もできます → n = 5, x = 3.14
-</pre>
+```
 
 
 
@@ -163,54 +164,54 @@ WriteLine では末尾に改行文字が加えられます。
 バイナリ形式での読み書きには、
 System.IO.BinaryReader, System.IO.BinaryWriter クラスを用います。
 
-<pre class="source" title="BinaryReader, BinaryWriter" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.IO;
+```csharp
+using System;
+using System.IO;
 
-<span class="reserved">class</span> TestRexex
+class TestRexex
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// バイナリ形式でファイルに書き出し。</span>
-    <span class="reserved">using</span>(BinaryWriter w = <span class="reserved">new</span> BinaryWriter(File.OpenWrite(<span class="literal">@"test\binary"</span>)))
+    // バイナリ形式でファイルに書き出し。
+    using(BinaryWriter w = new BinaryWriter(File.OpenWrite(@"test\binary")))
     {
-      w.Write(<span class="reserved">new byte</span>[]{(<span class="reserved">byte</span>)0x01, (<span class="reserved">byte</span>)0x23, (<span class="reserved">byte</span>)0x45, (<span class="reserved">byte</span>)0x67, });
-      w.Write((<span class="reserved">int</span>)123456789);
-      w.Write((<span class="reserved">float</span>)3.14159);
+      w.Write(new byte[]{(byte)0x01, (byte)0x23, (byte)0x45, (byte)0x67, });
+      w.Write((int)123456789);
+      w.Write((float)3.14159);
     }
 
-    <span class="comment">// 1バイトずつ読み出し。</span>
-    <span class="reserved">using</span>(BinaryReader w = <span class="reserved">new</span> BinaryReader(File.OpenRead(<span class="literal">@"test\binary"</span>)))
+    // 1バイトずつ読み出し。
+    using(BinaryReader w = new BinaryReader(File.OpenRead(@"test\binary")))
     {
-      <span class="reserved">try</span>
+      try
       {
-        <span class="reserved">for</span>(;;)
-          Console.Write(<span class="literal">"{0:x2}"</span>, w.ReadByte());
+        for(;;)
+          Console.Write("{0:x2}", w.ReadByte());
       }
-      <span class="reserved">catch</span>(EndOfStreamException)
+      catch(EndOfStreamException)
       {
-        Console.Write(<span class="literal">"\n"</span>);
+        Console.Write("\n");
       }
     }
 
-    <span class="comment">// 書き出したときと同じ手順で読み出し。</span>
-    <span class="reserved">using</span>(BinaryReader w = <span class="reserved">new</span> BinaryReader(File.OpenRead(<span class="literal">@"test\binary"</span>)))
+    // 書き出したときと同じ手順で読み出し。
+    using(BinaryReader w = new BinaryReader(File.OpenRead(@"test\binary")))
     {
-      Console.Write(<span class="literal">"{0:x2}, "</span>, w.ReadByte());
-      Console.Write(<span class="literal">"{0:x2}, "</span>, w.ReadByte());
-      Console.Write(<span class="literal">"{0:x2}, "</span>, w.ReadByte());
-      Console.Write(<span class="literal">"{0:x2}\n"</span>, w.ReadByte());
-      Console.Write(<span class="literal">"{0:d}\n"</span>, w.ReadInt32());
-      Console.Write(<span class="literal">"{0:g}\n"</span>, w.ReadSingle());
+      Console.Write("{0:x2}, ", w.ReadByte());
+      Console.Write("{0:x2}, ", w.ReadByte());
+      Console.Write("{0:x2}, ", w.ReadByte());
+      Console.Write("{0:x2}\n", w.ReadByte());
+      Console.Write("{0:d}\n", w.ReadInt32());
+      Console.Write("{0:g}\n", w.ReadSingle());
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="BinaryReader, BinaryWriter">
+```console
 0123456715cd5b07d00f4940
 01, 23, 45, 67
 123456789
 3.14159
-</pre>
+```

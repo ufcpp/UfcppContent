@@ -28,7 +28,7 @@ C# は、企画段階では “Safe C” (安全な C 言語)と呼ばれてい�
 
 ## <a id="sec-generated-title-2"></a> <a id="plan"></a>予定
 
-<pre>
+```text
 http://www.slideshare.net/Coverity/the-psychology-of-c-analysis-24025354
 
 switch fall through
@@ -62,4 +62,4 @@ x + 1; みたいな、何も起こさない式だけを認めない
 if (x = 0) エラー
 
 return してないパスを認めない
-</pre>
+```

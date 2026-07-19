@@ -6,6 +6,221 @@ namespace Ufcpp.ContentConverter.Tests;
 public sealed class MigrationTests
 {
     [Fact]
+    public void LegacyCodeBlocksBecomeLanguageTaggedMarkdownFences()
+    {
+        var input = """
+            <pre class="source" title="generic.cs" lang="">
+            <code><span class="reserved">public</span> <span class="reserved">class</span> C&lt;T&gt;
+            {
+                <span class="reserved">public</span> T Value { <span class="reserved">get</span>; }
+            }
+            </code></pre>
+
+            <pre class="xsource" title="app.csproj">
+            <code><span class="element">&lt;Project&gt;</span>
+              <span class="element">&lt;PropertyGroup /&gt;</span>
+            <span class="element">&lt;/Project&gt;</span>
+            </code></pre>
+
+            <pre class="source" title="test.ps1" lang="">
+            <code>$values = 1, 2, 3
+            </code></pre>
+
+            <pre class="source" title="" lang="F#">
+            <code>let square x = x * x
+            </code></pre>
+
+            <pre class="console" title="output">
+            42
+            </pre>
+
+            <pre><code>dotnet build
+            </code></pre>
+
+            <pre>
+            Preformatted prose remains preformatted.
+            </pre>
+
+            <table><tr><td><pre class="source"><code><span class="reserved">var</span> cell = "&lt;tag&gt;";</code></pre></td></tr></table>
+            """;
+        var expected = """
+            ```csharp
+            public class C<T>
+            {
+                public T Value { get; }
+            }
+            ```
+
+            ```xml
+            <Project>
+              <PropertyGroup />
+            </Project>
+            ```
+
+            ```powershell
+            $values = 1, 2, 3
+            ```
+
+            ```fsharp
+            let square x = x * x
+            ```
+
+            ```console
+            42
+            ```
+
+            ```shell
+            dotnet build
+            ```
+
+            ```text
+            Preformatted prose remains preformatted.
+            ```
+
+            <table><tr><td><pre class="source"><code class="language-csharp">var cell = &quot;&lt;tag&gt;&quot;;</code></pre></td></tr></table>
+            """;
+
+        var actual = CodeBlockNormalizer.Normalize(input, "/study/csharp/example/");
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected, CodeBlockNormalizer.Normalize(actual, "/study/csharp/example/"));
+    }
+
+    [Fact]
+    public void MissingFenceLanguagesAreInferredWithoutClosingOnNestedFences()
+    {
+        var input = """
+            <pre class="source" title="Markdown example">
+            <code>```cs
+            var value = 1;
+            ```
+            </code></pre>
+
+            ```
+            string? value = null;
+            ```
+
+            ```
+            vmovupd xmm1,xmmword ptr [rdi+r8+10h]
+            ```
+
+            ```
+            -langversion:6
+            ```
+
+            ```json
+            { "existing": true }
+            ```
+            """;
+        var expected = """
+            ````csharp
+            ```cs
+            var value = 1;
+            ```
+            ````
+
+            ```csharp
+            string? value = null;
+            ```
+
+            ```asm
+            vmovupd xmm1,xmmword ptr [rdi+r8+10h]
+            ```
+
+            ```text
+            -langversion:6
+            ```
+
+            ```json
+            { "existing": true }
+            ```
+            """;
+
+        Assert.Equal(
+            expected,
+            CodeBlockNormalizer.Normalize(input, "/blog/example/"));
+    }
+
+    [Theory]
+    [InlineData("C#", "using System;", "csharp")]
+    [InlineData("VB", "Module Program\nEnd Module", "vbnet")]
+    [InlineData("F#", "let value = 1", "fsharp")]
+    [InlineData("C++", "#include <iostream>", "cpp")]
+    public void ExplicitLegacyLanguagesAreMappedToLinguistNames(
+        string language,
+        string code,
+        string expectedLanguage)
+    {
+        var input = $"<pre class=\"source\" lang=\"{language}\"><code>{code}</code></pre>";
+
+        var actual = CodeBlockNormalizer.Normalize(input, "/study/example/");
+
+        Assert.StartsWith($"```{expectedLanguage}\n", actual, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("<widget enabled=\"true\">value</widget>", "xml")]
+    [InlineData("span.normal\n{\n    color: black;\n}", "css")]
+    [InlineData("class Path\n{\n}", "csharp")]
+    [InlineData("Unhandled exception. System.InvalidOperationException", "console")]
+    [InlineData("Draft outline\n- first item", "text")]
+    [InlineData("Draft notes\nclass Path\n{\n}", "text")]
+    public void BarePreformattedBlocksUseDetectedLanguageOrText(
+        string code,
+        string expectedLanguage)
+    {
+        var input = $"<pre>{code}</pre>";
+
+        var actual = CodeBlockNormalizer.Normalize(input, "/study/csharp/example/");
+
+        Assert.StartsWith($"```{expectedLanguage}\n", actual, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void PageContextDoesNotTreatBarePreformattedProseAsSourceCode()
+    {
+        const string context = "/study/powershell/example/";
+
+        var prose = CodeBlockNormalizer.Normalize("<pre>Profile notes</pre>", context);
+        var source = CodeBlockNormalizer.Normalize(
+            "<pre class=\"source\">Invoke-CustomCommand</pre>",
+            context);
+
+        Assert.StartsWith("```text\n", prose, StringComparison.Ordinal);
+        Assert.StartsWith("```powershell\n", source, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void XmlPageContextRecognizesMarkupAfterLeadingText()
+    {
+        var actual = CodeBlockNormalizer.Normalize(
+            "<pre>x = <widget>value</widget></pre>",
+            "/study/xml/ref/widget/");
+
+        Assert.StartsWith("```xml\n", actual, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void LegacyCodeBlockClosingWhitespaceDoesNotCreateWhitespaceOnlyLines()
+    {
+        var input = "<pre class=\"source\"><code>var value = 1;</code></pre> \nAfter";
+
+        var actual = CodeBlockNormalizer.Normalize(input, "/study/csharp/example/");
+
+        Assert.Equal("```csharp\nvar value = 1;\n```\nAfter", actual);
+    }
+
+    [Fact]
+    public void AdjacentHtmlMovesAfterTheFenceWithoutTrailingWhitespace()
+    {
+        var input = "<pre>&lt;value/&gt;</pre><div>rendered value, \nnext";
+
+        var actual = CodeBlockNormalizer.Normalize(input, "/study/xml/example/");
+
+        Assert.Equal("```xml\n<value/>\n```\n<div>rendered value,\nnext", actual);
+    }
+
+    [Fact]
     public void MarkdownHeadingSpacingIsNormalizedOutsideProtectedBlocks()
     {
         var input = """

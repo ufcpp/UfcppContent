@@ -30,20 +30,20 @@ C# 9.0 からはトップ レベル ステートメントという書き方で�
 C# 関連のチュートリアルでのサンプル コードや、
 テンプレート通りに C# プログラムを新規作成すると以下のような内容になっていることが多いと思います。
 
-<pre class="source" title="よくあるチュートリアル・テンプレート通りの C# コード">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">namespace</span> ConsoleApp1
+namespace ConsoleApp1
 {
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>(<span class="reserved">string</span>[] args)
+        static void Main(string[] args)
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+            Console.WriteLine("Hello World!");
         }
     }
 }
-</code></pre>
+```
 
 C# の仕様上、実行可能プログラムを C# で書きたい場合、どこかに1つ、`Main` という名前のメソッドが必要です。
 (後述しますが、C# 9.0 からは別の方法も追加されました。)
@@ -51,17 +51,17 @@ C# の仕様上、実行可能プログラムを C# で書きたい場合、ど�
 名前空間は必須ではありません。クラス名も何でも構いません。
 例えば以下のようなコードでも、`Main` メソッドがエントリー ポイントになります。
 
-<pre class="source" title="名前空間はなくてもいい。クラス名も任意">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+        Console.WriteLine("Hello World!");
     }
 }
-</code></pre>
+```
 
 通常、エントリー ポイントとして使うためには、`Main` メソッドに以下のような制限があります。
 
@@ -72,23 +72,23 @@ C# の仕様上、実行可能プログラムを C# で書きたい場合、ど�
 
 つまり、C# 7.0 以前だと以下の4つのうちのいずれかが、
 
-<pre class="source" title="エントリー ポイントとして許される Main メソッドの書き方">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>(<span class="reserved">string</span>[] args)
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">Main</span>()
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">Main</span>(<span class="reserved">string</span>[] args)
-</code></pre>
+```csharp
+static void Main()
+static void Main(string[] args)
+static int Main()
+static int Main(string[] args)
+```
 
 加えて、C# 7.1 以降だと以下の4つのうちのいずれかが認められます。
 
-<pre class="source" title="エントリー ポイントとして許される Main メソッドの書き方 (C# 7.1 以降)">
-<code><span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System.Threading.Tasks;
  
-<span class="reserved">static</span> <span class="type">Task</span> <span class="method">Main</span>()
-<span class="reserved">static</span> <span class="type">Task</span> <span class="method">Main</span>(<span class="reserved">string</span>[] args)
-<span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; <span class="method">Main</span>()
-<span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; <span class="method">Main</span>(<span class="reserved">string</span>[] args)
-</code></pre>
+static Task Main()
+static Task Main(string[] args)
+static Task<int> Main()
+static Task<int> Main(string[] args)
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="entry-point-in-dotnet"></a>.NET のエントリー ポイント
 
@@ -98,13 +98,13 @@ C# の仕様上、実行可能プログラムを C# で書きたい場合、ど�
 
 例えば、以下のような .NET IL アセンブラー コードを書けば、`A` というクラス内の `B` というメソッドをエントリー ポイントにできます。
 
-<pre class="source" title="">
-<code>.class public auto ansi beforefieldinit A
+```cil
+.class public auto ansi beforefieldinit A
        extends [mscorlib]System.Object
 {
   .method public hidebysig static void B(string[] args) cil managed
   {
-    <em>.entrypoint</em>
+    .entrypoint
     .maxstack  8
     IL_0000:  ldstr      "Hello World!"
     IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
@@ -112,29 +112,29 @@ C# の仕様上、実行可能プログラムを C# で書きたい場合、ど�
     IL_000b:  ret
   }
 }
-</code></pre>
+```
 
 逆に .NET ランタイム的には `Task` 戻り値のエントリー ポイントを認めていなくて、
 [C# 7.1 の非同期 `Main`](../cheatsheet/ap_ver7_1.md#async-Main) は、C# コンパイラーが以下のようなコードに相当する IL を生成しています。
 
-<pre class="source" title="非同期メインから生成される実際のエントリー ポイント">
-<code><span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System.Threading.Tasks;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// C# 7.1 以降書ける「非同期 Main」。</span>
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    // C# 7.1 以降書ける「非同期 Main」。
+    static async Task Main()
     {
     }
  
-    <span class="comment">// 非同期 Main から C# コンパイラーが自動生成するメソッド。</span>
-    <span class="comment">// これに .entrypoint ディレクティブが付く。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">&lt;Main&gt;</span>()
+    // 非同期 Main から C# コンパイラーが自動生成するメソッド。
+    // これに .entrypoint ディレクティブが付く。
+    static void <Main>()
     {
-        <span class="type">Main</span>().<span class="type">GetAwaiter</span>().<span class="type">GetResult</span>();
+        Main().GetAwaiter().GetResult();
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="startup-option"></a>複数の Main メソッドからエントリー ポイントを選択
 
@@ -142,42 +142,42 @@ C# で複数のクラスに `Main` メソッドを書くこともできますが
 素の状態ではコンパイル エラーになります。
 (エラー内容は「複数のエントリー ポイントが定義されています」。)
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="error"><span class="method">Main</span></span>()
+    static void Main()
     {
     }
 }
  
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
     }
 }
-</code></pre>
+```
 
 ただ、オプションによってこのうちのどれをエントリー ポイントにするかを指定する方法があります。
 csc (C# コンパイラー)を直接呼び出す場合は `-main` オプションを、
 
-<pre class="source" title="よくあるチュートリアル・テンプレート通りの C# コード">
-<code>csc <em>-main:A</em>
-</code></pre>
+```shell
+csc -main:A
+```
 
 csproj (プロジェクト)に設定を書く場合は `StartupObject` タグでクラス名を指定します。
 
-<pre class="xsource" title="">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net5.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<em><span class="attvalue">    &lt;</span><span class="element">StartupObject</span><span class="attvalue">&gt;</span>A<span class="attvalue">&lt;/</span><span class="element">StartupObject</span><span class="attvalue">&gt;</span></em>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <StartupObject>A</StartupObject>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 この例の場合は、この書き方で、`A.Main` の方がエントリー ポイントになります。
 
@@ -189,27 +189,27 @@ C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも�
 
 例えば前述の「Hello World」であれば、単に以下のように書けるようになります。
 
-<pre class="source" title="トップ レベルに直接「Hello World」">
-<code><span class="reserved">using</span> System;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
-</code></pre>
+```csharp
+using System;
+Console.WriteLine("Hello World!");
+```
 
 この機能を<strong id="key-top-level-statements" class="keyword">トップ レベル ステートメント</strong>(top-level statements)と言います。
 
 挙動としては、`Main`に相当するメソッドの自動生成になります。
 上記の例の場合、以下のようなコードが生成された上で、`$Main` メソッドに `.entrypoint` が付きます。
 
-<pre class="source" title="トップ レベル ステートメントから生成されるエントリー ポイント">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">&lt;Program&gt;$</span>
+class <Program>$
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">$Main</span>(<span class="reserved">string</span>[] args)
+    static void $Main(string[] args)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+        Console.WriteLine("Hello World!");
     }
 }
-</code></pre>
+```
 
 クラス名もメソッド名も、通常の C# コードでは定義できない・呼び出しできない名前で生成されます<sup>※</sup>。
 名前も決まった名前にはなっていません(今現在の実装が `$Main` という名前で生成しているからといって、将来ずっとこの名前とは限らない)。
@@ -230,20 +230,20 @@ C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも�
 
 例えば以下のようなコードはコンパイル エラーになります。
 
-<pre class="source" title="クラスよりも下にステートメントを書くことは認められていない">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// ここにステートメントを書くのは OK。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;above class&quot;</span>);
+// ここにステートメントを書くのは OK。
+Console.WriteLine("above class");
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">void</span> <span class="method">M</span>() { }
+    void M() { }
 }
  
-<span class="comment">// ここにステートメントを書くのはダメ。</span>
-<span class="error"><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;below class&quot;</span>);</span>
-</code></pre>
+// ここにステートメントを書くのはダメ。
+Console.WriteLine("below class");
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="top-level-method"></a>トップ レベルにメソッド記述
 
@@ -252,48 +252,48 @@ C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも�
 
 例えば以下のようなコードを書いた場合、
 
-<pre class="source" title="トップ レベルでメソッドを定義">
-<code><span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> s) =&gt; System.<span class="type">Console</span>.<span class="method">WriteLine</span>(s);
+```csharp
+void m(string s) => System.Console.WriteLine(s);
  
-<span class="method">m</span>(<span class="string">&quot;abc&quot;</span>);
-<span class="method">m</span>(<span class="string">&quot;123&quot;</span>);
-</code></pre>
+m("abc");
+m("123");
+```
 
 コンパイラーが生成するコードは以下のような感じになります。
 
-<pre class="source" title="トップ レベルのメソッドは、生成される Main メソッドのローカル関数扱い">
-<code><span class="reserved">class</span> <span class="type">&lt;Program&gt;$</span>
+```csharp
+class <Program>$
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">$Main</span>(<span class="reserved">string</span>[] args)
+    static void $Main(string[] args)
     {
-        <span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> s) =&gt; System.<span class="type">Console</span>.<span class="method">WriteLine</span>(s);
+        void m(string s) => System.Console.WriteLine(s);
  
-        <span class="method">m</span>(<span class="string">&quot;abc&quot;</span>);
-        <span class="method">m</span>(<span class="string">&quot;123&quot;</span>);
+        m("abc");
+        m("123");
     }
 }
-</code></pre>
+```
 
 ただ、定義したメソッドの名前はプロジェクト全域に影響を及ぼします。
 以下のように、「メソッドがあることは全域で見えているけども、使ってはいけない」という扱いを受けます。
 
-<pre class="source" title="トップ レベルのメソッドの扱い(名前は全域から見えてるけど、使っちゃダメ)">
-<code><span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> s) =&gt; System.<span class="type">Console</span>.<span class="method">WriteLine</span>(s);
+```csharp
+void m(string s) => System.Console.WriteLine(s);
  
-<span class="method">m</span>(<span class="string">&quot;abc&quot;</span>);
-<span class="method">m</span>(<span class="string">&quot;123&quot;</span>);
+m("abc");
+m("123");
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>()
+    static void M()
     {
-        <span class="comment">// ここはエラーになるものの、エラー内容は</span>
-        <span class="comment">// 「m が見つからない」ではなく、</span>
-        <span class="comment">// 「トップ レベルで定義した m をここから使うことはできない」になる。</span>
-        <span class="method">m</span>(<span class="string">&quot;Program.M&quot;</span>);
+        // ここはエラーになるものの、エラー内容は
+        // 「m が見つからない」ではなく、
+        // 「トップ レベルで定義した m をここから使うことはできない」になる。
+        m("Program.M");
     }
 }
-</code></pre>
+```
 
 (将来的に、トップ レベルで定義したメソッドを、ローカル関数扱いからグローバル関数(どこからでも参照できる静的メソッド)扱いに変更する可能性もなくはなく、その場合、C# 9.0 時点ではこの例のようなエラーにしておく方が将来の憂いがないみたいです。)
 
@@ -308,33 +308,33 @@ C# 9.0 から、トップ レベル(top-leve: クラスや名前空間よりも�
 
 例えば、以下のコードはスクリプト実行では有効ですが、トップ レベル ステートメントとしてはコンパイル エラーになります。
 
-<pre class="source" title="スクリプト実行でだけ有効な C# コード">
-<code><span class="reserved">struct</span> <span class="type">Point</span>
+```csharp
+struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">int</span> Y;
+    public int X;
+    public int Y;
 }
  
-<span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
+var p = new Point { X = 1, Y = 2 };
  
 p.X
 p.Y
-</code></pre>
+```
 
 一方で、スクリプト実行では名前空間を書けないので、例えば以下のコードはトップ レベル ステートメントでだけコンパイルできます。
 
-<pre class="source" title="トップ レベル ステートメントでだけ有効な C# コード">
-<code><span class="reserved">var</span> p = <span class="reserved">new</span> App1.<span class="type">Point</span> { X = 1, Y = 2 };
+```csharp
+var p = new App1.Point { X = 1, Y = 2 };
  
-<span class="reserved">namespace</span> App1
+namespace App1
 {
-    <span class="reserved">struct</span> <span class="type">Point</span>
+    struct Point
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> X;
-        <span class="reserved">public</span> <span class="reserved">int</span> Y;
+        public int X;
+        public int Y;
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="args-returns"></a>コマンドライン引数と戻り値
 
@@ -345,39 +345,39 @@ p.Y
 
 例えば以下のようなトップ レベル ステートメントを書けます。
 
-<pre class="source" title="トップ レベル ステートメントにおけるコマンドライン引数と終了コード">
-<code><span class="reserved">if</span> (args.Length == 0)
+```csharp
+if (args.Length == 0)
 {
-    System.<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;コマンドライン引数が必要です&quot;</span>);
-    <span class="reserved">return</span> 1;
+    System.Console.WriteLine("コマンドライン引数が必要です");
+    return 1;
 }
-<span class="reserved">else</span>
+else
 {
-    System.<span class="type">Console</span>.<span class="method">WriteLine</span>(args[0]);
-    <span class="reserved">return</span> 0;
+    System.Console.WriteLine(args[0]);
+    return 0;
 }
-</code></pre>
+```
 
 このコードは以下のような意味で解釈されます。
 
-<pre class="source" title="トップ レベル ステートメントから生成される Main メソッド">
-<code><span class="reserved">class</span> <span class="type">&lt;Program&gt;$</span>
+```csharp
+class <Program>$
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">$Main</span>(<span class="reserved">string</span>[] args)
+    static int $Main(string[] args)
     {
-        <span class="reserved">if</span> (args.Length == 0)
+        if (args.Length == 0)
         {
-            System.<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;コマンドライン引数が必要です&quot;</span>);
-            <span class="reserved">return</span> 1;
+            System.Console.WriteLine("コマンドライン引数が必要です");
+            return 1;
         }
-        <span class="reserved">else</span>
+        else
         {
-            System.<span class="type">Console</span>.<span class="method">WriteLine</span>(args[0]);
-            <span class="reserved">return</span> 0;
+            System.Console.WriteLine(args[0]);
+            return 0;
         }
     }
 }
-</code></pre>
+```
 
 `return` がない時には `void Main(string[] args)` で、あるときには `int Main(string[] args)` 相当のコードが生成されます。
 

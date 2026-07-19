@@ -39,28 +39,28 @@ aliases:
 スタイルというものを使います。
 
 
-<pre class="xsource" title="スタイルの適用">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#cccccc"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#cccccc">
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="80"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="80"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="80"/>
+      <Setter Property="Height" Value="80"/>
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="Fill" Value="#8080ff"/>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> /<span class="bracket">&gt;</span>
+  <Rectangle />
+  <Rectangle />
+  <Rectangle />
+  <Rectangle />
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="Brush"></a>Brush
 
@@ -85,59 +85,59 @@ SolidColorBrush, LinearGradientBrush, RadialGradientBrush を使って説明す�
 この3つに関して例を挙げておきます。
 
 
-<pre class="xsource" title="Brush いろいろ">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#cccccc"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#cccccc">
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="90"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="90"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="90"/>
+      <Setter Property="Height" Value="90"/>
+      <Setter Property="Margin" Value="5"/>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="comment">&lt;!-- 単色塗りつぶし --&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Fill</span><span class="attvalue">="MistyRose"</span>/<span class="bracket">&gt;</span>
+  <!-- 単色塗りつぶし -->
+  <Rectangle Fill="MistyRose"/>
 
-  <span class="comment">&lt;!-- ↑を Property Element Syntax で書いたもの --&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">SolidColorBrush</span> <span class="attribute">Color</span><span class="attvalue">="MistyRose"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <!-- ↑を Property Element Syntax で書いたもの -->
+  <Rectangle>
+    <Rectangle.Fill>
+      <SolidColorBrush Color="MistyRose"/>
+    </Rectangle.Fill>
+  </Rectangle>
 
-  <span class="comment">&lt;!-- 放射状グラデーション（白黒） --&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">RadialGradientBrush</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#ffffff"</span> <span class="attribute">Offset</span><span class="attvalue">="0"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#000000"</span> <span class="attribute">Offset</span><span class="attvalue">="1"</span> /<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">RadialGradientBrush</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <!-- 放射状グラデーション（白黒） -->
+  <Rectangle>
+    <Rectangle.Fill>
+      <RadialGradientBrush>
+        <GradientStop Color="#ffffff" Offset="0" />
+        <GradientStop Color="#000000" Offset="1" />
+      </RadialGradientBrush>
+    </Rectangle.Fill>
+  </Rectangle>
 
-  <span class="comment">&lt;!-- 線形グラデーション（虹色） --&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">LinearGradientBrush</span> <span class="attribute">StartPoint</span><span class="attvalue">="0,0"</span> <span class="attribute">EndPoint</span><span class="attvalue">="1,0"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#ff8080"</span> <span class="attribute">Offset</span><span class="attvalue">="0"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#ffc080"</span> <span class="attribute">Offset</span><span class="attvalue">="0.125"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#ffff80"</span> <span class="attribute">Offset</span><span class="attvalue">="0.25"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#c0ff80"</span> <span class="attribute">Offset</span><span class="attvalue">="0.375"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#80ff80"</span> <span class="attribute">Offset</span><span class="attvalue">="0.5"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#80ffc0"</span> <span class="attribute">Offset</span><span class="attvalue">="0.625"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#80ffff"</span> <span class="attribute">Offset</span><span class="attvalue">="0.75"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#80c0ff"</span> <span class="attribute">Offset</span><span class="attvalue">="0.875"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#8080ff"</span> <span class="attribute">Offset</span><span class="attvalue">="1"</span> /<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">LinearGradientBrush</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <!-- 線形グラデーション（虹色） -->
+  <Rectangle>
+    <Rectangle.Fill>
+      <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#ff8080" Offset="0" />
+        <GradientStop Color="#ffc080" Offset="0.125" />
+        <GradientStop Color="#ffff80" Offset="0.25" />
+        <GradientStop Color="#c0ff80" Offset="0.375" />
+        <GradientStop Color="#80ff80" Offset="0.5" />
+        <GradientStop Color="#80ffc0" Offset="0.625" />
+        <GradientStop Color="#80ffff" Offset="0.75" />
+        <GradientStop Color="#80c0ff" Offset="0.875" />
+        <GradientStop Color="#8080ff" Offset="1" />
+      </LinearGradientBrush>
+    </Rectangle.Fill>
+  </Rectangle>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 
 ### <a id="sec-generated-title-5"></a> <a id="Transform"></a>Transform
 
@@ -157,48 +157,48 @@ x 軸, y 軸方向の拡大を表す ScaleTransform、
 さらに、TransformGroup を使って複数の変形を一度にかけることもできます。
 
 
-<pre class="xsource" title="変形いろいろ">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#cccccc"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#cccccc">
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="80"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="80"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="80"/>
+      <Setter Property="Height" Value="80"/>
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="Fill" Value="#8080ff"/>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="comment">&lt;!-- 縦横拡大 --&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.RenderTransform</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ScaleTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="50"</span> <span class="attribute">CenterY</span><span class="attvalue">="50"</span> <span class="attribute">ScaleX</span><span class="attvalue">="0.5"</span> <span class="attribute">ScaleY</span><span class="attvalue">="0.5"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.RenderTransform</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <!-- 縦横拡大 -->
+  <Rectangle>
+    <Rectangle.RenderTransform>
+      <ScaleTransform CenterX="50" CenterY="50" ScaleX="0.5" ScaleY="0.5"/>
+    </Rectangle.RenderTransform>
+  </Rectangle>
 
-  <span class="comment">&lt;!-- 回転 --&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.RenderTransform</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="50"</span> <span class="attribute">CenterY</span><span class="attvalue">="50"</span> <span class="attribute">Angle</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.RenderTransform</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <!-- 回転 -->
+  <Rectangle>
+    <Rectangle.RenderTransform>
+      <RotateTransform CenterX="50" CenterY="50" Angle="10"/>
+    </Rectangle.RenderTransform>
+  </Rectangle>
 
-  <span class="comment">&lt;!-- 拡大＋傾斜＋回転 --&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.RenderTransform</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">TransformGroup</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ScaleTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="0"</span> <span class="attribute">CenterY</span><span class="attvalue">="50"</span> <span class="attribute">ScaleX</span><span class="attvalue">="1.5"</span> <span class="attribute">ScaleY</span><span class="attvalue">="0.5"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">SkewTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="100"</span> <span class="attribute">CenterY</span><span class="attvalue">="100"</span> <span class="attribute">AngleX</span><span class="attvalue">="-20"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="50"</span> <span class="attribute">CenterY</span><span class="attvalue">="50"</span> <span class="attribute">Angle</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">TransformGroup</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.RenderTransform</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <!-- 拡大＋傾斜＋回転 -->
+  <Rectangle>
+    <Rectangle.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform CenterX="0" CenterY="50" ScaleX="1.5" ScaleY="0.5"/>
+        <SkewTransform CenterX="100" CenterY="100" AngleX="-20"/>
+        <RotateTransform CenterX="50" CenterY="50" Angle="10"/>
+      </TransformGroup>
+    </Rectangle.RenderTransform>
+  </Rectangle>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 
 ## <a id="sec-generated-title-6"></a> <a id="animation"></a>アニメーション
 
@@ -249,41 +249,41 @@ EventTrigger です。
 以下のようにします。
 
 
-<pre class="xsource" title="EventTrigger">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#cccccc"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#cccccc">
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="25"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="50"/>
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="Margin" Value="25"/>
+      <Setter Property="Fill" Value="#8080ff"/>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Triggers</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">EventTrigger</span>  <span class="attribute">RoutedEvent</span><span class="attvalue">="Rectangle.Loaded"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Storyboard</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="Opacity"</span>
-              <span class="attribute">From</span><span class="attvalue">="1"</span> <span class="attribute">To</span><span class="attvalue">="0.2"</span>
-              <span class="attribute">RepeatBehavior</span><span class="attvalue">="Forever"</span>
-              <span class="attribute">AutoReverse</span><span class="attvalue">="true"</span>
-              <span class="attribute">Duration</span><span class="attvalue">="0:0:1"</span>
-              /<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">Storyboard</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Triggers</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <Rectangle>
+    <Rectangle.Triggers>
+      <EventTrigger  RoutedEvent="Rectangle.Loaded">
+        <BeginStoryboard>
+          <Storyboard>
+            <DoubleAnimation
+              Storyboard.TargetProperty="Opacity"
+              From="1" To="0.2"
+              RepeatBehavior="Forever"
+              AutoReverse="true"
+              Duration="0:0:1"
+              />
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger>
+    </Rectangle.Triggers>
+  </Rectangle>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 EventTrigger の子要素 BeginStoryboard に関しては後ほど説明します。
 （この例では、表示された瞬間からずっと、
 四角形の透明度が薄くなったり濃くなったり点滅し続けます。）
@@ -301,41 +301,41 @@ Binding で設定した値をトリガにする DataTrigger や、
 全ての四角形が同じように点滅し始めます。
 
 
-<pre class="xsource" title="スタイル中のイベントトリガ">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#cccccc"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#cccccc">
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="25"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="50"/>
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="Margin" Value="25"/>
+      <Setter Property="Fill" Value="#8080ff"/>
 
-      <span class="bracket">&lt;</span><span class="element">Style.Triggers</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">EventTrigger</span>  <span class="attribute">RoutedEvent</span><span class="attvalue">="Rectangle.Loaded"</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">Storyboard</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-                <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="Opacity"</span>
-                <span class="attribute">From</span><span class="attvalue">="1"</span> <span class="attribute">To</span><span class="attvalue">="0.2"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:1"</span>
-                <span class="attribute">RepeatBehavior</span><span class="attvalue">="Forever"</span> <span class="attribute">AutoReverse</span><span class="attvalue">="true"</span> /<span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span>/<span class="element">Storyboard</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">Style.Triggers</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+      <Style.Triggers>
+        <EventTrigger  RoutedEvent="Rectangle.Loaded">
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                From="1" To="0.2" Duration="0:0:1"
+                RepeatBehavior="Forever" AutoReverse="true" />
+            </Storyboard>
+          </BeginStoryboard>
+        </EventTrigger>
+      </Style.Triggers>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span>/<span class="bracket">&gt;</span>
+  <Rectangle/>
+  <Rectangle/>
+  <Rectangle/>
+  <Rectangle/>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 
 ## <a id="sec-generated-title-9"></a> <a id="action"></a>トリガアクション
 
@@ -361,48 +361,48 @@ XAML では、ストーリーボードというものを使ってアニメーシ
 マウスが離れた瞬間に点滅を再開できます。
 
 
-<pre class="xsource" title="ストーリーボードの開始、一時停止、再開">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#cccccc"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#cccccc">
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="25"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="50"/>
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="Margin" Value="25"/>
+      <Setter Property="Fill" Value="#8080ff"/>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Triggers</span><span class="bracket">&gt;</span>
+  <Rectangle>
+    <Rectangle.Triggers>
 
-      <span class="bracket">&lt;</span><span class="element">EventTrigger</span> <span class="attribute">RoutedEvent</span><span class="attvalue">="Rectangle.Loaded"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">BeginStoryboard</span> <span class="attribute">Name</span><span class="attvalue">="BlinkBegin"</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Storyboard</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="Opacity"</span>
-              <span class="attribute">From</span><span class="attvalue">="1"</span> <span class="attribute">To</span><span class="attvalue">="0.2"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:1"</span>
-              <span class="attribute">RepeatBehavior</span><span class="attvalue">="Forever"</span> <span class="attribute">AutoReverse</span><span class="attvalue">="true"</span> /<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">Storyboard</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
+      <EventTrigger RoutedEvent="Rectangle.Loaded">
+        <BeginStoryboard Name="BlinkBegin">
+          <Storyboard>
+            <DoubleAnimation
+              Storyboard.TargetProperty="Opacity"
+              From="1" To="0.2" Duration="0:0:1"
+              RepeatBehavior="Forever" AutoReverse="true" />
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger>
 
-      <span class="bracket">&lt;</span><span class="element">EventTrigger</span> <span class="attribute">RoutedEvent</span><span class="attvalue">="Mouse.MouseEnter"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">PauseStoryboard</span> <span class="attribute">BeginStoryboardName</span><span class="attvalue">="BlinkBegin"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
+      <EventTrigger RoutedEvent="Mouse.MouseEnter">
+        <PauseStoryboard BeginStoryboardName="BlinkBegin"/>
+      </EventTrigger>
 
-      <span class="bracket">&lt;</span><span class="element">EventTrigger</span> <span class="attribute">RoutedEvent</span><span class="attvalue">="Mouse.MouseLeave"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ResumeStoryboard</span> <span class="attribute">BeginStoryboardName</span><span class="attvalue">="BlinkBegin"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
+      <EventTrigger RoutedEvent="Mouse.MouseLeave">
+        <ResumeStoryboard BeginStoryboardName="BlinkBegin"/>
+      </EventTrigger>
 
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Triggers</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+    </Rectangle.Triggers>
+  </Rectangle>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 
 ## <a id="sec-generated-title-10"></a> <a id="storyboard"></a>ストーリーボード
 
@@ -419,14 +419,14 @@ DoubleAnimation や ColorAnimation という子要素を複数並べて、
 先ほどまでにたびたび例示してきた「透明・不透明の点滅」のストーリーボードの部分を抜き出してきてみましょう。
 
 
-<pre class="xsource" title="Storyboard">
-<code><span class="bracket">&lt;</span><span class="element">Storyboard</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-    <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="Opacity"</span>
-    <span class="attribute">From</span><span class="attvalue">="1"</span> <span class="attribute">To</span><span class="attvalue">="0.2"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:1"</span>
-    <span class="attribute">RepeatBehavior</span><span class="attvalue">="Forever"</span> <span class="attribute">AutoReverse</span><span class="attvalue">="true"</span> /<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Storyboard</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<Storyboard>
+  <DoubleAnimation
+    Storyboard.TargetProperty="Opacity"
+    From="1" To="0.2" Duration="0:0:1"
+    RepeatBehavior="Forever" AutoReverse="true" />
+</Storyboard>
+```
 DoubleAnimation というのは、名前どおり、
 double 型の値を変化させるものです。
 DoubleAnimation の他にも、「型名 ＋ Animation」という名前のクラスがいくつかあって、
@@ -465,39 +465,39 @@ Rectangle のプロパティの値を変更していますが、
 これには、以下のように、Storyboard.TargetName 属性を使います。
 
 
-<pre class="xsource" title="Storyboard.TargetName">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#cccccc"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#cccccc">
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="25"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="50"/>
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="Margin" Value="25"/>
+      <Setter Property="Fill" Value="#8080ff"/>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Name</span><span class="attvalue">="rect"</span>/<span class="bracket">&gt;</span>
+  <Rectangle Name="rect"/>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Content</span><span class="attvalue">="Click Me"</span> <span class="attribute">Width</span><span class="attvalue">="80"</span> <span class="attribute">Height</span><span class="attvalue">="30"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button.Triggers</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">EventTrigger</span> <span class="attribute">RoutedEvent</span><span class="attvalue">="Button.Click"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Storyboard</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">ColorAnimation</span>
-              <em><span class="attribute">Storyboard.TargetName</span><span class="attvalue">="rect"</span></em>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="Fill.Color"</span>
-              <span class="attribute">To</span><span class="attvalue">="#ff8080"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:0"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">Storyboard</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Button.Triggers</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+  <Button Content="Click Me" Width="80" Height="30">
+    <Button.Triggers>
+      <EventTrigger RoutedEvent="Button.Click">
+        <BeginStoryboard>
+          <Storyboard>
+            <ColorAnimation
+              Storyboard.TargetName="rect"
+              Storyboard.TargetProperty="Fill.Color"
+              To="#ff8080" Duration="0:0:0"/>
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger>
+    </Button.Triggers>
+  </Button>
+</WrapPanel>
+```
 サンプル→
 
 [ButtonClick.xaml](../../../../assets/media/ufcpp2000/dotnet/sample/ButtonClick.xaml)
@@ -535,57 +535,57 @@ Shape.Fill に 「[Attribute Syntax](wpf_xamlbasic.md#attribute)」 で色を設
 Rectangle の色が変わって回転し始めます（3秒間）。
 
 
-<pre class="xsource" title="色の変化と回転を同時にアニメーション">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200">
   
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="25"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="RenderTransform"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Setter.Value</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="25"</span> <span class="attribute">CenterY</span><span class="attvalue">="25"</span> <span class="attribute">Angle</span><span class="attvalue">="0"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">Setter.Value</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">Setter</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="50"/>
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="Margin" Value="25"/>
+      <Setter Property="Fill" Value="#8080ff"/>
+      <Setter Property="RenderTransform">
+        <Setter.Value>
+          <RotateTransform CenterX="25" CenterY="25" Angle="0"/>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Triggers</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">EventTrigger</span> <span class="attribute">RoutedEvent</span><span class="attvalue">="Mouse.MouseEnter"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Storyboard</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">ColorAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="Fill.Color"</span>
-              <span class="attribute">To</span><span class="attvalue">="#ff8080"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:0"</span>/<span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="RenderTransform.Angle"</span>
-              <span class="attribute">To</span><span class="attvalue">="0"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:0"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">Storyboard</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">EventTrigger</span> <span class="attribute">RoutedEvent</span><span class="attvalue">="Mouse.MouseLeave"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Storyboard</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">ColorAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="Fill.Color"</span>
-              <span class="attribute">To</span><span class="attvalue">="#8080ff"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:3"</span>/<span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="RenderTransform.Angle"</span>
-              <span class="attribute">To</span><span class="attvalue">="360"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:3"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">Storyboard</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Triggers</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <Rectangle>
+    <Rectangle.Triggers>
+      <EventTrigger RoutedEvent="Mouse.MouseEnter">
+        <BeginStoryboard>
+          <Storyboard>
+            <ColorAnimation
+              Storyboard.TargetProperty="Fill.Color"
+              To="#ff8080" Duration="0:0:0"/>
+            <DoubleAnimation
+              Storyboard.TargetProperty="RenderTransform.Angle"
+              To="0" Duration="0:0:0"/>
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger>
+      <EventTrigger RoutedEvent="Mouse.MouseLeave">
+        <BeginStoryboard>
+          <Storyboard>
+            <ColorAnimation
+              Storyboard.TargetProperty="Fill.Color"
+              To="#8080ff" Duration="0:0:3"/>
+            <DoubleAnimation
+              Storyboard.TargetProperty="RenderTransform.Angle"
+              To="360" Duration="0:0:3"/>
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger>
+    </Rectangle.Triggers>
+  </Rectangle>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 サンプル→
 
 [MouseEnter.xaml](../../../../assets/media/ufcpp2000/dotnet/sample/MouseEnter.xaml)
@@ -601,54 +601,54 @@ TransformGroup 内に ScaleTransform や RotateTransform などを複数並べ�
 こういう場合、以下のように、配列的に [0] とか [1] とかを使って TergetProperty を設定することができます。
 
 
-<pre class="xsource" title="TergetProperty に配列的にアクセス">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#cccccc"</span><span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#cccccc">
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="{x:Type Rectangle}"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Margin"</span> <span class="attribute">Value</span><span class="attvalue">="25"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="RenderTransform"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Setter.Value</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">TransformGroup</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="25"</span> <span class="attribute">CenterY</span><span class="attvalue">="25"</span> <span class="attribute">Angle</span><span class="attvalue">="0"</span>/<span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">TranslateTransform</span> <span class="attribute">X</span><span class="attvalue">="0"</span> <span class="attribute">Y</span><span class="attvalue">="0"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">TransformGroup</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">Setter.Value</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">Setter</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Resources</span><span class="bracket">&gt;</span>
+  <WrapPanel.Resources>
+    <Style TargetType="{x:Type Rectangle}">
+      <Setter Property="Width" Value="50"/>
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="Margin" Value="25"/>
+      <Setter Property="Fill" Value="#8080ff"/>
+      <Setter Property="RenderTransform">
+        <Setter.Value>
+          <TransformGroup>
+            <RotateTransform CenterX="25" CenterY="25" Angle="0"/>
+            <TranslateTransform X="0" Y="0"/>
+          </TransformGroup>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </WrapPanel.Resources>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Triggers</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">EventTrigger</span> <span class="attribute">RoutedEvent</span><span class="attvalue">="Rectangle.Loaded"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">BeginStoryboard</span> <span class="attribute">Name</span><span class="attvalue">="BlinkBegin"</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">Storyboard</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="RenderTransform.Children[0].Angle"</span>
-              <span class="attribute">From</span><span class="attvalue">="0"</span> <span class="attribute">To</span><span class="attvalue">="360"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:3"</span>
-              <span class="attribute">RepeatBehavior</span><span class="attvalue">="Forever"</span>/<span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="RenderTransform.Children[1].X"</span>
-              <span class="attribute">From</span><span class="attvalue">="0"</span> <span class="attribute">To</span><span class="attvalue">="20"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:0.1212"</span>
-              <span class="attribute">RepeatBehavior</span><span class="attvalue">="Forever"</span> <span class="attribute">AutoReverse</span><span class="attvalue">="true"</span>/<span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">DoubleAnimation</span>
-              <span class="attribute">Storyboard.TargetProperty</span><span class="attvalue">="RenderTransform.Children[1].Y"</span>
-              <span class="attribute">From</span><span class="attvalue">="0"</span> <span class="attribute">To</span><span class="attvalue">="20"</span> <span class="attribute">Duration</span><span class="attvalue">="0:0:0.1413"</span>
-              <span class="attribute">RepeatBehavior</span><span class="attvalue">="Forever"</span> <span class="attribute">AutoReverse</span><span class="attvalue">="true"</span>/<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">Storyboard</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">BeginStoryboard</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">EventTrigger</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Triggers</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <Rectangle>
+    <Rectangle.Triggers>
+      <EventTrigger RoutedEvent="Rectangle.Loaded">
+        <BeginStoryboard Name="BlinkBegin">
+          <Storyboard>
+            <DoubleAnimation
+              Storyboard.TargetProperty="RenderTransform.Children[0].Angle"
+              From="0" To="360" Duration="0:0:3"
+              RepeatBehavior="Forever"/>
+            <DoubleAnimation
+              Storyboard.TargetProperty="RenderTransform.Children[1].X"
+              From="0" To="20" Duration="0:0:0.1212"
+              RepeatBehavior="Forever" AutoReverse="true"/>
+            <DoubleAnimation
+              Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+              From="0" To="20" Duration="0:0:0.1413"
+              RepeatBehavior="Forever" AutoReverse="true"/>
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger>
+    </Rectangle.Triggers>
+  </Rectangle>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 サンプル→
 
 [Gradation.xaml](../../../../assets/media/ufcpp2000/dotnet/sample/Gradation.xaml)
@@ -691,39 +691,39 @@ Contorol や Shape などは Animatable のサブクラス。）
 （XAML ＋ コードビハインドの C# ファイル）。
 
 
-<pre class="xsource" title="Windows1.xaml">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="WPFApplication1.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">xmlns:c</span><span class="attvalue">="clr-namespace:WPFApplication1"</span>
-  <span class="attribute">Title</span><span class="attvalue">="Window1"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Window x:Class="WPFApplication1.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:c="clr-namespace:WPFApplication1"
+  Title="Window1" Height="200" Width="200"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Name</span><span class="attvalue">="rect1"</span> <span class="attribute">Width</span><span class="attvalue">="50"</span> <span class="attribute">Height</span><span class="attvalue">="50"</span> <span class="attribute">Fill</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
-<pre class="source" title="Windows1.xaml.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Windows;
-<span class="reserved">using</span> System.Windows.Media.Animation;
+  <Rectangle Name="rect1" Width="50" Height="50" Fill="#8080ff"/>
+</Window>
+```
+```xml
+using System;
+using System.Windows;
+using System.Windows.Media.Animation;
 
-<span class="reserved">namespace</span> WPFApplication1
+namespace WPFApplication1
 {
-  <span class="reserved">public partial class</span> Window1 : System.Windows.Window
+  public partial class Window1 : System.Windows.Window
   {
-    <span class="reserved">public</span> Window1()
+    public Window1()
     {
       InitializeComponent();
 
-<em>      DoubleAnimation ani = <span class="reserved">new</span> DoubleAnimation(
-        1, 0.2, <span class="reserved">new</span> TimeSpan(0, 0, 1));
+      DoubleAnimation ani = new DoubleAnimation(
+        1, 0.2, new TimeSpan(0, 0, 1));
       ani.RepeatBehavior = RepeatBehavior.Forever;
-      ani.AutoReverse = <span class="reserved">true</span>;
-      <span class="reserved">this</span>.rect1.BeginAnimation(UIElement.OpacityProperty, ani);</em>
+      ani.AutoReverse = true;
+      this.rect1.BeginAnimation(UIElement.OpacityProperty, ani);
     }
   }
 }
-</code></pre>
+```
 
 
 
@@ -772,77 +772,77 @@ Contorol や Shape などは Animatable のサブクラス。）
 例として、距離に反比例する引力が働く3つの物体の運動のシミュレーションを示します。
 
 
-<pre class="xsource" title="Windows1.xaml">
-<code><span class="bracket">&lt;</span><span class="element">Window</span> <span class="attribute">x:Class</span><span class="attvalue">="WPFApplication1.Window1"</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">xmlns:c</span><span class="attvalue">="clr-namespace:WPFApplication1"</span>
-  <span class="attribute">Title</span><span class="attvalue">="Window1"</span> <span class="attribute">Height</span><span class="attvalue">="300"</span> <span class="attribute">Width</span><span class="attvalue">="300"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Window x:Class="WPFApplication1.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:c="clr-namespace:WPFApplication1"
+  Title="Window1" Height="300" Width="300"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">Canvas</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Width</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Canvas.Resources</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">Style</span> <span class="attribute">TargetType</span><span class="attvalue">="Ellipse"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Width"</span> <span class="attribute">Value</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Height"</span> <span class="attribute">Value</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Setter</span> <span class="attribute">Property</span><span class="attvalue">="Fill"</span> <span class="attribute">Value</span><span class="attvalue">="#8080ff"</span>/<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">Style</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Canvas.Resources</span><span class="bracket">&gt;</span>
+  <Canvas Height="200" Width="200">
+    <Canvas.Resources>
+      <Style TargetType="Ellipse">
+        <Setter Property="Width" Value="10"/>
+        <Setter Property="Height" Value="10"/>
+        <Setter Property="Fill" Value="#8080ff"/>
+      </Style>
+    </Canvas.Resources>
     
-    <span class="bracket">&lt;</span><span class="element">Ellipse</span> <span class="attribute">Name</span><span class="attvalue">="obj1"</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="30"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="30"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Ellipse</span> <span class="attribute">Name</span><span class="attvalue">="obj2"</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="140"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="50"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Ellipse</span> <span class="attribute">Name</span><span class="attvalue">="obj3"</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="50"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="140"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Canvas</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Window</span><span class="bracket">&gt;</span>
-</code></pre>
-<pre class="source" title="Windows1.xaml.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Windows;
-<span class="reserved">using</span> System.Windows.Controls;
-<span class="reserved">using</span> System.Windows.Shapes;
-<span class="reserved">using</span> System.Windows.Media;
+    <Ellipse Name="obj1" Canvas.Left="30" Canvas.Top="30"/>
+    <Ellipse Name="obj2" Canvas.Left="140" Canvas.Top="50"/>
+    <Ellipse Name="obj3" Canvas.Left="50" Canvas.Top="140"/>
+  </Canvas>
+</Window>
+```
+```xml
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Shapes;
+using System.Windows.Media;
 
-<span class="reserved">namespace</span> WPFApplication1
+namespace WPFApplication1
 {
-  <span class="reserved">public partial class</span> Window1 : System.Windows.Window
+  public partial class Window1 : System.Windows.Window
   {
-    Point[] x = <span class="reserved">new</span> Point[3];
-    Vector[] v = <span class="reserved">new</span> Vector[3];
-    Shape[] obj = <span class="reserved">new</span> Shape[3];
+    Point[] x = new Point[3];
+    Vector[] v = new Vector[3];
+    Shape[] obj = new Shape[3];
 
-    <span class="reserved">public</span> Window1()
+    public Window1()
     {
       InitializeComponent();
 
-      <span class="reserved">this</span>.obj[0] = <span class="reserved">this</span>.obj1;
-      <span class="reserved">this</span>.obj[1] = <span class="reserved">this</span>.obj2;
-      <span class="reserved">this</span>.obj[2] = <span class="reserved">this</span>.obj3;
+      this.obj[0] = this.obj1;
+      this.obj[1] = this.obj2;
+      this.obj[2] = this.obj3;
 
-      <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; <span class="reserved">this</span>.obj.Length; ++i)
+      for (int i = 0; i < this.obj.Length; ++i)
       {
-        x[i] = <span class="reserved">new</span> Point();
-        x[i].X = (<span class="reserved">double</span>)<span class="reserved">this</span>.obj[i].GetValue(Canvas.LeftProperty);
-        x[i].Y = (<span class="reserved">double</span>)<span class="reserved">this</span>.obj[i].GetValue(Canvas.TopProperty);
-        v[i] = <span class="reserved">new</span> Vector();
+        x[i] = new Point();
+        x[i].X = (double)this.obj[i].GetValue(Canvas.LeftProperty);
+        x[i].Y = (double)this.obj[i].GetValue(Canvas.TopProperty);
+        v[i] = new Vector();
       }
 
-      <em>CompositionTarget.Rendering +=
-        <span class="reserved">new</span> EventHandler(CompositionTarget_Rendering);</em>
+      CompositionTarget.Rendering +=
+        new EventHandler(CompositionTarget_Rendering);
     }
 
-    <span class="reserved">void</span> CompositionTarget_Rendering(<span class="reserved">object</span> sender, EventArgs e)
+    void CompositionTarget_Rendering(object sender, EventArgs e)
     {
       Vector a01 = x[0] - x[1];
       Vector a12 = x[1] - x[2];
       Vector a20 = x[2] - x[0];
 
-      <span class="reserved">double</span> abs01 = a01.Length;
-      <span class="reserved">double</span> abs12 = a12.Length;
-      <span class="reserved">double</span> abs20 = a20.Length;
+      double abs01 = a01.Length;
+      double abs12 = a12.Length;
+      double abs20 = a20.Length;
 
-      <span class="reserved">if</span> (abs01 &lt; 10) abs01 = 10;
-      <span class="reserved">if</span> (abs12 &lt; 10) abs12 = 10;
-      <span class="reserved">if</span> (abs20 &lt; 10) abs20 = 10;
+      if (abs01 < 10) abs01 = 10;
+      if (abs12 < 10) abs12 = 10;
+      if (abs20 < 10) abs20 = 10;
 
       a01 /= abs01 * abs01;
       a12 /= abs12 * abs12;
@@ -852,13 +852,13 @@ Contorol や Shape などは Animatable のサブクラス。）
       v[1] += a01 - a12;
       v[2] += a12 - a20;
 
-      <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; <span class="reserved">this</span>.obj.Length; ++i)
+      for (int i = 0; i < this.obj.Length; ++i)
       {
         x[i] += v[i];
-        <span class="reserved">this</span>.obj[i].SetValue(Canvas.LeftProperty, x[i].X);
-        <span class="reserved">this</span>.obj[i].SetValue(Canvas.TopProperty, x[i].Y);
+        this.obj[i].SetValue(Canvas.LeftProperty, x[i].X);
+        this.obj[i].SetValue(Canvas.TopProperty, x[i].Y);
       }
     }
   }
 }
-</code></pre>
+```

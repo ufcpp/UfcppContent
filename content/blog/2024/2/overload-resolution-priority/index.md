@@ -21,34 +21,34 @@ aliases: []
 
 元々、配列引数で作っていたとして、
 
-<pre class="source" title="元コード">
-<span class="reserved">int</span>[] <span class="variable">x</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] x = [1, 2, 3];
 
-<span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">x</span>);
+C.M(x);
 
-<span class="comment">// 元コード。</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+// 元コード。
+public class C
 {
-    <span class="comment">// これの引数を変えたい。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+    // これの引数を変えたい。
+    public static void M(int[] x) { }
 }
-</pre>
+```
 
 暗黙的型変換があるものであれば、多少型を変えても「再コンパイルすれば大丈夫」という状態になることはあります。
 
-<pre class="source" title="再コンパイルすれば大丈夫なこともある">
-<span class="reserved">int</span>[] <span class="variable">x</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] x = [1, 2, 3];
 
-<span class="comment">// int[] → ReadOnlySpan&lt;int&gt; の変更は、再コンパイルするならエラーにならず移行可能。</span>
-<span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">x</span>);
+// int[] → ReadOnlySpan<int> の変更は、再コンパイルするならエラーにならず移行可能。
+C.M(x);
 
-<span class="comment">// 変更後コード。</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+// 変更後コード。
+public class C
 {
-    <span class="comment">// 引数、変えちゃった。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+    // 引数、変えちゃった。
+    public static void M(ReadOnlySpan<int> x) { }
 }
-</pre>
+```
 
 ただ、「再コンパイル必須」というのは、
 末端のアプリならともかく、ライブラリとかプラグインとかにとってはきついです。
@@ -58,44 +58,44 @@ aliases: []
 なので、現実的には「メソッドは追加する一方」になりがちなんですが、
 非推奨にしたい古いメソッドによって利便性が損なわれることが多々あります。
 
-<pre class="source" title="メソッドは追加する一方になりがち">
-<span class="reserved">int</span>[] <span class="variable">x</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] x = [1, 2, 3];
 
-<span class="comment">// 普通に書くと int[] の方に行っちゃう。</span>
-<span class="comment">// パフォーマンスを理由に ReadOnlySpan&lt;int&gt; オーバーロードを足したのに無意味。</span>
-<span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">x</span>);
+// 普通に書くと int[] の方に行っちゃう。
+// パフォーマンスを理由に ReadOnlySpan<int> オーバーロードを足したのに無意味。
+C.M(x);
 
-<span class="comment">// 変更後コード。</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+// 変更後コード。
+public class C
 {
-    <span class="comment">// 元のメソッドは残しつつ、</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">int</span>[] <span class="variable local">x</span>) { }
-    <span class="comment">// オーバーロードを追加。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+    // 元のメソッドは残しつつ、
+    public static void M(int[] x) { }
+    // オーバーロードを追加。
+    public static void M(ReadOnlySpan<int> x) { }
 }
-</pre>
+```
 
 非推奨にしたいものには `Obsolete` 属性を付けるという手段はありますが、
 `Obsolete` 属性を付けたところでオーバーロード解決候補には残ってしまうのがかなり邪魔です。
 
-<pre class="source" title="Obsolete でもオーバーロード解決候補になっちゃう">
-<span class="reserved">int</span>[] <span class="variable">x</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] x = [1, 2, 3];
 
-<span class="comment">// C# コンパイラーは Obsolete 属性が付いたメソッドも普通にオーバーロード解決候補にしちゃう。</span>
-<span class="comment">// ReadOnlySpan&lt;int&gt; の方を呼んでほしくてやってるのに、</span>
-<span class="comment">// 実際は int[] が選ばれたうえで警告が出るだけになる。</span>
-<span class="warning" title="CS0618"><span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">x</span>)</span>;
+// C# コンパイラーは Obsolete 属性が付いたメソッドも普通にオーバーロード解決候補にしちゃう。
+// ReadOnlySpan<int> の方を呼んでほしくてやってるのに、
+// 実際は int[] が選ばれたうえで警告が出るだけになる。
+C.M(x);
 
-<span class="comment">// 変更後コード。</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+// 変更後コード。
+public class C
 {
-    <span class="comment">// 古い方には Obsolete 属性を付ける。</span>
-    [<span class="type">Obsolete</span>(<span class="string">&quot;Use M(ReadOnlySpan&lt;int&gt; x) instead.&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+    // 古い方には Obsolete 属性を付ける。
+    [Obsolete("Use M(ReadOnlySpan<int> x) instead.")]
+    public static void M(int[] x) { }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+    public static void M(ReadOnlySpan<int> x) { }
 }
-</pre>
+```
 
 ということで、「バイナリ互換性のために残すけども、コンパイル時のオーバーロード解決候補には残さない」
 (過去にコンパイルした DLL からは見えてるけども、ソースコードの再コンパイル時には見えない)
@@ -104,16 +104,16 @@ aliases: []
 
 最初に思いつく案としては、`Obsolete` 属性に手を入れる方法。
 
-<pre class="source" title="Obsolete 属性修正案">
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+```csharp
+public class C
 {
-    <span class="comment">// 最初に思いつく案として、Obsolete 属性を修正。</span>
-    [<span class="type">Obsolete</span>(<span class="string">&quot;Use M(ReadOnlySpan&lt;int&gt; x) instead.&quot;</span>, <span class="type">ObsoleteLevel</span><span class="operator">.</span>BinaryCompatOnly)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+    // 最初に思いつく案として、Obsolete 属性を修正。
+    [Obsolete("Use M(ReadOnlySpan<int> x) instead.", ObsoleteLevel.BinaryCompatOnly)]
+    public static void M(int[] x) { }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+    public static void M(ReadOnlySpan<int> x) { }
 }
-</pre>
+```
 
 ただ、既存の `Obsolete` 属性に手を入れる案だと、例えば netstarndard2.0 向けライブラリとか、
 ターゲットフレームワーク古いライブラリに対して使えなくなります。
@@ -123,51 +123,51 @@ aliases: []
 
 * [Add proposal for BinaryCompatOnlyAttribute](https://github.com/dotnet/csharplang/pull/7707)
 
-<pre class="source" title="BinaryCompatOnly 案">
-<span class="reserved">int</span>[] <span class="variable">x</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] x = [1, 2, 3];
 
-<span class="comment">// ReadOnlySpan&lt;int&gt; の方が選ばれるようになる予定。</span>
-<span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">x</span>);
+// ReadOnlySpan<int> の方が選ばれるようになる予定。
+C.M(x);
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+public class C
 {
-    <span class="comment">// 新属性で「オーバーロード解決候補から外す」指定。</span>
-    [<span class="type">BinaryCompatOnly</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+    // 新属性で「オーバーロード解決候補から外す」指定。
+    [BinaryCompatOnly]
+    public static void M(int[] x) { }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+    public static void M(ReadOnlySpan<int> x) { }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">BinaryCompatOnlyAttribute</span> : <span class="type">Attribute</span>;
-</pre>
+public class BinaryCompatOnlyAttribute : Attribute;
+```
 
 ところが、じゃあ、「完全に候補から外す」だけでいいのかというと、そうでもなくて困ったみたいです。
 例えば、インターフェイスの実装とかはどうするの？ということになりました。
 
-<pre class="source" title="「完全に候補から外す」だけでいいのかどうか問題">
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">I</span>
+```csharp
+public interface I
 {
-    <span class="comment">// 新属性で「オーバーロード解決候補から外す」指定。</span>
-    [<span class="type">BinaryCompatOnly</span>]
-    <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span>[] <span class="variable local">x</span>);
+    // 新属性で「オーバーロード解決候補から外す」指定。
+    [BinaryCompatOnly]
+    void M(int[] x);
 
-    <span class="comment">// 新規追加メソッド。</span>
-    <span class="reserved">void</span> <span class="method">M</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>);
+    // 新規追加メソッド。
+    void M(ReadOnlySpan<int> x);
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span> : <span class="type">I</span>
+public class C : I
 {
-    <span class="comment">// BinaryCompatOnly = コンパイル時には見えない</span>
-    <span class="comment">// なわけで、 I.M(int[]) も「見えない」 = 実装できないのが正しい？</span>
-    <span class="comment">//</span>
-    <span class="comment">// こっちの M(int[]) にも BinaryCompatOnly 属性を付けることを義務付ける？</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+    // BinaryCompatOnly = コンパイル時には見えない
+    // なわけで、 I.M(int[]) も「見えない」 = 実装できないのが正しい？
+    //
+    // こっちの M(int[]) にも BinaryCompatOnly 属性を付けることを義務付ける？
+    public void M(int[] x) { }
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+    public void M(ReadOnlySpan<int> x) { }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">BinaryCompatOnlyAttribute</span> : <span class="type">Attribute</span>;
-</pre>
+public class BinaryCompatOnlyAttribute : Attribute;
+```
 
 そこで最終的に、
 
@@ -180,28 +180,28 @@ aliases: []
 
 * [Add proposal for overload resolution priority](https://github.com/dotnet/csharplang/pull/7906)
 
-<pre class="source" title="オーバーロード解決の優先度指定">
-<span class="reserved">int</span>[] <span class="variable">x</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] x = [1, 2, 3];
 
-<span class="comment">// ReadOnlySpan&lt;int&gt; の方が選ばれるようになる予定。</span>
-<span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">x</span>);
+// ReadOnlySpan<int> の方が選ばれるようになる予定。
+C.M(x);
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+public class C
 {
-    <span class="comment">// 優先度を上げたければ priority の数字を増やす。</span>
-    [<span class="type">OverloadResolutionPriority</span>(<span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+    // 優先度を上げたければ priority の数字を増やす。
+    [OverloadResolutionPriority(1)]
+    public static void M(ReadOnlySpan<int> x) { }
 
-    <span class="comment">// 逆にこっちに priority = -1 とかを与えて優先度を下げるとかでも OK。</span>
-    [<span class="type">OverloadResolutionPriority</span>(<span class="number">-1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+    // 逆にこっちに priority = -1 とかを与えて優先度を下げるとかでも OK。
+    [OverloadResolutionPriority(-1)]
+    public static void M(int[] x) { }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">OverloadResolutionPriorityAttribute</span>(<span class="reserved">int</span> <span class="variable local">priority</span>) : <span class="type">Attribute</span>
+public class OverloadResolutionPriorityAttribute(int priority) : Attribute
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Priority</span> { <span class="reserved">get</span>; } <span class="operator">=</span> <span class="variable local">priority</span>;
+    public int Priority { get; } = priority;
 }
-</pre>
+```
 
 これなら先ほどのインターフェイスの例みたいな「見なくなりすぎる」問題は回避。
 「高優先度のものが見つからなければ単に古い方を見に行く」みたいな挙動になります

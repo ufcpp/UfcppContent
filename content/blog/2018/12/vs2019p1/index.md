@@ -71,122 +71,122 @@ Visual Studio 2019も preview 1 がダウンロードできるようになりま
 
 #### Nullable reference type
 
-<pre class="source" title="">
-<code><span class="comment">// 有効にするには #nullable ディレクティブが必要。</span>
+```csharp
+// 有効にするには #nullable ディレクティブが必要。
 #nullable enable
 
-<span class="reserved">using</span> System;
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        Console.WriteLine(LengthSum(<span class="string">"abc"</span>, <span class="string">"xyz"</span>));
-        Console.WriteLine(LengthSum(<span class="string">"abc"</span>, <span class="reserved">null</span>));
+        Console.WriteLine(LengthSum("abc", "xyz"));
+        Console.WriteLine(LengthSum("abc", null));
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span> LengthSum(<span class="reserved">string</span> a, <span class="reserved">string</span>? b)
+    static int LengthSum(string a, string? b)
     {
-        <span class="comment">// こう書いてしまうと b のところで警告。</span>
-        <span class="reserved">var</span> len0 = a.Length + <span class="warning">b</span>.Length;
+        // こう書いてしまうと b のところで警告。
+        var len0 = a.Length + b.Length;
 
-        <span class="comment">// これなら OK。b?. なので、b の null チェック済み。</span>
-        <span class="reserved">var</span> len1 = a.Length + b?.Length ?? 0;
+        // これなら OK。b?. なので、b の null チェック済み。
+        var len1 = a.Length + b?.Length ?? 0;
 
-        <span class="comment">// こんな感じで if で null チェックしても OK。</span>
-        <span class="comment">// チェック済みな個所では b. で大丈夫。</span>
-        <span class="reserved">var</span> len = a.Length;
-        <span class="reserved">if</span>(b != <span class="reserved">null</span>) len += b.Length;
+        // こんな感じで if で null チェックしても OK。
+        // チェック済みな個所では b. で大丈夫。
+        var len = a.Length;
+        if(b != null) len += b.Length;
 
-        <span class="reserved">return</span> len;
+        return len;
     }
 }
-</code></pre>
+```
 
 #### Ranges
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> data = <span class="reserved">new</span>[] { 0, 1, 2, 3, 4, 5 };
+        var data = new[] { 0, 1, 2, 3, 4, 5 };
 
-        <span class="comment">// 1～2要素目。2 は exclusive。なので、表示されるのは 1 だけ。</span>
+        // 1～2要素目。2 は exclusive。なので、表示されるのは 1 だけ。
         Write(Slice(data, 1..2));
 
-        <span class="comment">// 先頭から1～末尾から1。表示されるのは 1, 2, 3, 4</span>
+        // 先頭から1～末尾から1。表示されるのは 1, 2, 3, 4
         Write(Slice(data, 1..^1));
 
-        <span class="comment">// 先頭～末尾から1。表示されるのは 0, 1, 2, 3, 4</span>
+        // 先頭～末尾から1。表示されるのは 0, 1, 2, 3, 4
         Write(Slice(data, ..^1));
 
-        <span class="comment">// 先頭から1～末尾。表示されるのは 1, 2, 3, 4, 5</span>
+        // 先頭から1～末尾。表示されるのは 1, 2, 3, 4, 5
         Write(Slice(data, 1..));
     }
 
-    <span class="comment">// 最終的に、.NET Core 3.0 には Span&lt;int&gt; に Range 型を受け取るインデクサーが入るはず。</span>
-    <span class="comment">// 今はその実装がないので自前で同じ機能を作る。</span>
-    <span class="reserved">static</span> Span&lt;<span class="reserved">int</span>&gt; Slice(Span&lt;<span class="reserved">int</span>&gt; data, Range range)
+    // 最終的に、.NET Core 3.0 には Span<int> に Range 型を受け取るインデクサーが入るはず。
+    // 今はその実装がないので自前で同じ機能を作る。
+    static Span<int> Slice(Span<int> data, Range range)
     {
-        <span class="reserved">int</span> getIndex(<span class="reserved">int</span> length, Index i) =&gt; i.FromEnd ? length - i.Value : i.Value;
-        <span class="reserved">var</span> s = getIndex(data.Length, range.Start);
-        <span class="reserved">var</span> e = getIndex(data.Length, range.End);
-        <span class="reserved">return</span> data.Slice(s, e - s);
+        int getIndex(int length, Index i) => i.FromEnd ? length - i.Value : i.Value;
+        var s = getIndex(data.Length, range.Start);
+        var e = getIndex(data.Length, range.End);
+        return data.Slice(s, e - s);
     }
 
-    <span class="comment">// 表示確認用。Span の中身を , 区切り表示。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> Write&lt;<span class="type">T</span>&gt;(Span&lt;T&gt; items)
+    // 表示確認用。Span の中身を , 区切り表示。
+    static void Write<T>(Span<T> items)
     {
-        <span class="reserved">var</span> first = <span class="reserved">true</span>;
-        <span class="reserved">foreach</span> (var x <span class="reserved">in</span> items)
+        var first = true;
+        foreach (var x in items)
         {
-            <span class="reserved">if</span> (first) first = <span class="reserved">false</span>;
-            <span class="reserved">else</span> Console.Write(<span class="string">", "</span>);
+            if (first) first = false;
+            else Console.Write(", ");
             Console.Write(x);
         }
         Console.WriteLine();
     }
 }
-</code></pre>
+```
 
 #### Null-coalescing Assignment
 
 `x ??= y` で、`if (x == null) x = y;` の意味に。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        NullCoalescingAssignment(<span class="string">"abc"</span>); <span class="comment">// "abc" が表示される</span>
-        NullCoalescingAssignment(<span class="reserved">null</span>);  <span class="comment">// "default string" が表示される</span>
+        NullCoalescingAssignment("abc"); // "abc" が表示される
+        NullCoalescingAssignment(null);  // "default string" が表示される
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> NullCoalescingAssignment(<span class="reserved">string</span> s)
+    static void NullCoalescingAssignment(string s)
     {
-        s ??= <span class="string">"default string"</span>;
+        s ??= "default string";
         Console.WriteLine(s);
     }
 }
-</code></pre>
+```
 
 #### Alternative interpolated verbatim strings
 
 `$@` の順序しか受け付けなかったやつが、`@$` も認めるという話。
 
-<pre class="source" title="">
-<code><span class="comment">// こっちは C# 6.0 からあるやつ。</span>
-<span class="reserved">var</span> s1 = $@"\\\ {x}";
+```csharp
+// こっちは C# 6.0 からあるやつ。
+var s1 = $@"\\\ {x}";
 
-<span class="comment">// これまでは $ と @ の順番逆にできなかった。</span>
-<span class="comment">// C# 8.0 から @$ でも OK。</span>
-<span class="reserved">var</span> s2 = @$"\\\ {x}";
-</code></pre>
+// これまでは $ と @ の順番逆にできなかった。
+// C# 8.0 から @$ でも OK。
+var s2 = @$"\\\ {x}";
+```
 
 ### サポートに関して
 

@@ -30,7 +30,7 @@ aliases:
 ## <a id="sec-generated-title-2"></a> <a id="analog"></a>アナログ→アナログ
 
 執筆予定
-<pre>
+```text
 ・アナログ
 
 カットオフ周波数 1 のローパスから、
@@ -104,15 +104,13 @@ D ＝ a<sup>2</sup> － b<sup>2</sup> － ω<sup>2</sup> と置くと、
 
 c ＝ √(√(D<sup>2</sup> ＋ 4) ＋ D)
 d ＝ √(√(D<sup>2</sup> ＋ 4) － D)
-
-
-</pre>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sz"></a>アナログ→ディジタル
 
 執筆予定
-<pre>
+```text
 インパルス不変法
 双一次変換
 双一次変換は別ページで詳しく（双1次変換 bilineartrans.xml ）。
-</pre>
+```

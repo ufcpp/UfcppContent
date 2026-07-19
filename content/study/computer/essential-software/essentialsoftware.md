@@ -91,9 +91,9 @@ CPUの機械語とほぼ直接に対応関係のあるアセンブリ言語は�
 今主流となっている高級言語の多くが英語ベースの文法になっているので、
 あくまで一例ですが、dataという変数にデータ列が格納されているものとして、以下のような記述になります。
 
-<pre class="source" title="what: 和を求めよ" lang="">
-<code><span class="reserved">var</span> sum = data.Sum();
-</code></pre>
+```csharp
+var sum = data.Sum();
+```
 
 
 このhowとwhatの違いを図1に並べてみましょう。

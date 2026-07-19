@@ -59,74 +59,74 @@ Request.QueryString["days"] とすることで、"3" という文字列が得ら
 で、Request.QueryString から値を取り出すために、
 以下のようなクラスを用意しておきます。
 
-<pre class="source" title="Util.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Specialized;
-<span class="reserved">using</span> System.Text.RegularExpressions;
+```csharp
+using System;
+using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 
-<span class="reserved">namespace</span> WebsiteSample
+namespace WebsiteSample
 {
-  <span class="reserved">public class</span> Util
+  public class Util
   {
-    <span class="reserved">internal static</span> Regex yyyyMMdd =
-      <span class="reserved">new</span> Regex(<span class="literal">@"(\d{4})(\d{2})(\d{2})\.xml"</span>);
+    internal static Regex yyyyMMdd =
+      new Regex(@"(\d{4})(\d{2})(\d{2})\.xml");
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// NameValueCollection から値を取り出す。
     /// 「キーに year がなければ y も試す」というように、
     /// 複数のキーのうちの最初に1つ合致したキーに対応する値を取得。
     /// 1つも合致しなければ defaultValue を返す。
-    /// &lt;/summary&gt;</span>
-    <span class="reserved">public static int</span> GetIntFrom(
+    /// </summary>
+    public static int GetIntFrom(
       NameValueCollection collection,
-      <span class="reserved">int</span> defultValue,
-      <span class="reserved">params string</span>[] keys)
+      int defultValue,
+      params string[] keys)
     {
-      <span class="reserved">foreach</span> (<span class="reserved">string</span> key <span class="reserved">in</span> keys)
+      foreach (string key in keys)
       {
-        <span class="reserved">int</span> val;
-        <span class="reserved">string</span> str = collection[key];
-        <span class="reserved">if</span> (!<span class="reserved">string</span>.IsNullOrEmpty(str))
+        int val;
+        string str = collection[key];
+        if (!string.IsNullOrEmpty(str))
         {
-          <span class="reserved">int</span>.TryParse(str, <span class="reserved">out</span> val);
-          <span class="reserved">return</span> val;
+          int.TryParse(str, out val);
+          return val;
         }
       }
-      <span class="reserved">return</span> defultValue;
+      return defultValue;
     }
   }
 }
-</code></pre>
+```
 
 
 この GetIntFrom メソッドを使って、
 BlogLatest の Page_Load イベントハンドラを以下のように書き換えます。
 
-<pre class="source" title="BlogLatest.aspx.cs を書き換え" lang="">
-<code><span class="reserved">protected void</span> Page_Load(<span class="reserved">object</span> sender, EventArgs e)
+```html
+protected void Page_Load(object sender, EventArgs e)
 {
-  <em><span class="reserved">int</span> days = Util.GetIntFrom(Request.QueryString, 0, <span class="literal">"days"</span>, <span class="literal">"d"</span>);</em>
+  int days = Util.GetIntFrom(Request.QueryString, 0, "days", "d");
 
-  <span class="reserved">string</span> basePath = Context.Server.MapPath(<span class="literal">"~/App_Data"</span>);
-  <span class="reserved">string</span>[] files = Directory.GetFiles(basePath, <span class="literal">"*.xml"</span>);
+  string basePath = Context.Server.MapPath("~/App_Data");
+  string[] files = Directory.GetFiles(basePath, "*.xml");
   Array.Sort(files);
 
-  <em><span class="reserved">string</span> xmlFile = files[files.Length - 1 - days];</em>
-  <span class="reserved">string</span> xslFile = basePath + <span class="literal">@"\main.xsl"</span>;
+  string xmlFile = files[files.Length - 1 - days];
+  string xslFile = basePath + @"\main.xsl";
 
-  <span class="reserved">this</span>.xmlContent.XmlFileName = xmlFile;
-  <span class="reserved">this</span>.xmlContent.XslFileName = xslFile;
+  this.xmlContent.XmlFileName = xmlFile;
+  this.xmlContent.XslFileName = xslFile;
 
   Match match = Util.yyyyMMdd.Match(xmlFile);
-  <span class="reserved">if</span> (match.Success)
+  if (match.Success)
   {
-    <span class="reserved">this</span>.head.Text = <span class="reserved">string</span>.Format(<span class="literal">"{0}年{1}月{2}日"</span>,
+    this.head.Text = string.Format("{0}年{1}月{2}日",
       match.Groups[1],
-      match.Groups[2].ToString().TrimStart(<span class="literal">'0'</span>),
-      match.Groups[3].ToString().TrimStart(<span class="literal">'0'</span>));
+      match.Groups[2].ToString().TrimStart('0'),
+      match.Groups[3].ToString().TrimStart('0'));
   }
 }
-</code></pre>
+```
 
 
 これで、BlogLatest.aspx?days=2 という呼び出し方をすることで、
@@ -142,39 +142,39 @@ Page_Load イベントハンドラ内の処理が違うだけで、
 他はほとんど BlogLatest の方と同じなので、
 コードビハインドのみを示します。
 
-<pre class="source" title="BlogDate.aspx.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Web;
-<span class="reserved">using</span> System.IO;
+```html
+using System;
+using System.Web;
+using System.IO;
 
-<span class="reserved">namespace</span> WebsiteSample
+namespace WebsiteSample
 {
-  <span class="reserved">public partial class</span> BlogDate : System.Web.UI.Page
+  public partial class BlogDate : System.Web.UI.Page
   {
-    <span class="reserved">protected void</span> Page_Load(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Page_Load(object sender, EventArgs e)
     {
-      <span class="reserved">int</span> day = Util.GetIntFrom(Request.QueryString, 0, <span class="literal">"day"</span>, <span class="literal">"d"</span>);
-      <span class="reserved">int</span> month = Util.GetIntFrom(Request.QueryString, 0, <span class="literal">"month"</span>, <span class="literal">"m"</span>);
-      <span class="reserved">int</span> year = Util.GetIntFrom(Request.QueryString, 0, <span class="literal">"year"</span>, <span class="literal">"y"</span>);
+      int day = Util.GetIntFrom(Request.QueryString, 0, "day", "d");
+      int month = Util.GetIntFrom(Request.QueryString, 0, "month", "m");
+      int year = Util.GetIntFrom(Request.QueryString, 0, "year", "y");
 
-      <span class="reserved">string</span> basePath = Context.Server.MapPath(<span class="literal">"~/App_Data"</span>);
+      string basePath = Context.Server.MapPath("~/App_Data");
 
-      <span class="reserved">string</span> xmlFile = basePath +
-        <span class="reserved">string</span>.Format(<span class="literal">@"\{0}{1:00}{2:00}.xml"</span>, year, month, day);
+      string xmlFile = basePath +
+        string.Format(@"\{0}{1:00}{2:00}.xml", year, month, day);
 
-      <span class="reserved">if</span> (!File.Exists(xmlFile)) <span class="reserved">return</span>;
+      if (!File.Exists(xmlFile)) return;
 
-      <span class="reserved">string</span> xslFile = basePath + <span class="literal">@"\main.xsl"</span>;
+      string xslFile = basePath + @"\main.xsl";
 
-      <span class="reserved">this</span>.xmlContent.XmlFileName = xmlFile;
-      <span class="reserved">this</span>.xmlContent.XslFileName = xslFile;
+      this.xmlContent.XmlFileName = xmlFile;
+      this.xmlContent.XslFileName = xslFile;
 
-      <span class="reserved">this</span>.head.Text = <span class="reserved">string</span>.Format(<span class="literal">"{0}年{1}月{2}日"</span>,
+      this.head.Text = string.Format("{0}年{1}月{2}日",
         year, month, day);
     }
   }
 }
-</code></pre>
+```
 
 
 これで例えば、BlogDate.aspx?year=1998&amp;month=5&amp;day=21 というような書き方で、
@@ -192,56 +192,56 @@ Page_Load イベントハンドラ内の処理が違うだけで、
 カレンダーコントロールを aspx 中に記述します。
 
 
-<pre class="xsource" title="BlogSelect.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span>
-  <span class="attribute">MasterPageFile</span><span class="attvalue">="~/Site.Master"</span> <span class="attribute">AutoEventWireup</span><span class="attvalue">="true"</span>
-  <span class="attribute">CodeBehind</span><span class="attvalue">="BlogSelect.aspx.cs"</span> <span class="attribute">Inherits</span><span class="attvalue">="WebsiteSample.BlogSelect"</span>
-  <span class="attribute">Title</span><span class="attvalue">="日記"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page Language="C#"
+  MasterPageFile="~/Site.Master" AutoEventWireup="true"
+  CodeBehind="BlogSelect.aspx.cs" Inherits="WebsiteSample.BlogSelect"
+  Title="日記" %>
 
-<span class="bracket">&lt;%@ </span><span class="element">Register</span> <span class="attribute">TagPrefix</span><span class="attvalue">="local"</span> <span class="attribute">TagName</span><span class="attvalue">="ShowXml"</span> <span class="attribute">Src</span><span class="attvalue">="~/ShowXml.ascx"</span> <span class="bracket">%&gt;</span>
+<%@ Register TagPrefix="local" TagName="ShowXml" Src="~/ShowXml.ascx" %>
 
-<span class="bracket">&lt;</span><span class="element">asp:Content</span> <span class="attribute">ID</span><span class="attvalue">="Content1"</span>
-  <span class="attribute">ContentPlaceHolderID</span><span class="attvalue">="ContentPlaceHolder1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<asp:Content ID="Content1"
+  ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-<span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="blogHead"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">asp:DropDownList</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="listYear"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">asp:DropDownList</span><span class="bracket">&gt;</span>
+<div class="blogHead">
+<asp:DropDownList runat="server" ID="listYear">
+</asp:DropDownList>
 年
 
-<span class="bracket">&lt;</span><span class="element">asp:DropDownList</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="listMonth"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="1"</span> <span class="attribute">Value</span><span class="attvalue">="1"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="2"</span> <span class="attribute">Value</span><span class="attvalue">="2"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="3"</span> <span class="attribute">Value</span><span class="attvalue">="3"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="4"</span> <span class="attribute">Value</span><span class="attvalue">="4"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="5"</span> <span class="attribute">Value</span><span class="attvalue">="5"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="6"</span> <span class="attribute">Value</span><span class="attvalue">="6"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="7"</span> <span class="attribute">Value</span><span class="attvalue">="7"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="8"</span> <span class="attribute">Value</span><span class="attvalue">="8"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="9"</span> <span class="attribute">Value</span><span class="attvalue">="9"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="10"</span> <span class="attribute">Value</span><span class="attvalue">="10"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="11"</span> <span class="attribute">Value</span><span class="attvalue">="11"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:ListItem</span> <span class="attribute">Text</span><span class="attvalue">="12"</span> <span class="attribute">Value</span><span class="attvalue">="12"</span> <span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">asp:DropDownList</span><span class="bracket">&gt;</span>
+<asp:DropDownList runat="server" ID="listMonth">
+  <asp:ListItem Text="1" Value="1" />
+  <asp:ListItem Text="2" Value="2" />
+  <asp:ListItem Text="3" Value="3" />
+  <asp:ListItem Text="4" Value="4" />
+  <asp:ListItem Text="5" Value="5" />
+  <asp:ListItem Text="6" Value="6" />
+  <asp:ListItem Text="7" Value="7" />
+  <asp:ListItem Text="8" Value="8" />
+  <asp:ListItem Text="9" Value="9" />
+  <asp:ListItem Text="10" Value="10" />
+  <asp:ListItem Text="11" Value="11" />
+  <asp:ListItem Text="12" Value="12" />
+</asp:DropDownList>
 月
 
-<span class="bracket">&lt;</span><span class="element">asp:TextBox</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="textDay"</span> <span class="attribute">Width</span><span class="attvalue">="20"</span> <span class="bracket">/&gt;</span>
+<asp:TextBox runat="server" ID="textDay" Width="20" />
 日の記事を
-<span class="bracket">&lt;</span><span class="element">asp:Button</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="buttonShow"</span> <span class="attribute">Text</span><span class="attvalue">="表示"</span>
-  <span class="attribute">OnClick</span><span class="attvalue">="buttonShow_Click"</span> <span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+<asp:Button runat="server" ID="buttonShow" Text="表示"
+  OnClick="buttonShow_Click" />
+</div>
 
-<span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="blogHead"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">asp:Calendar</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="calendar"</span>
-  <span class="attribute">OnSelectionChanged</span><span class="attvalue">="calendar_SelectionChanged"</span> <span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+<div class="blogHead">
+<asp:Calendar runat="server" ID="calendar"
+  OnSelectionChanged="calendar_SelectionChanged" />
+</div>
 
-<span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="blogHead"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">asp:Label</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="head"</span> <span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">local:ShowXml</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="xmlContent"</span> <span class="bracket">/&gt;</span>
+<div class="blogHead">
+<asp:Label runat="server" ID="head" />
+</div>
+<local:ShowXml runat="server" ID="xmlContent" />
 
-<span class="bracket">&lt;/</span><span class="element">asp:Content</span><span class="bracket">&gt;</span>
-</code></pre>
+</asp:Content>
+```
 で、コードビハインド側では以下のような処理を行います。
 
 * 初期化： ブログを付け始めた年から今年までをドロップダウンリストの項目として追加
@@ -253,78 +253,78 @@ Page_Load イベントハンドラ内の処理が違うだけで、
 
 ソースコードは以下のようになります。
 
-<pre class="source" title="BlogSelect.aspx.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Web;
-<span class="reserved">using</span> System.Web.UI;
-<span class="reserved">using</span> System.Web.UI.WebControls;
-<span class="reserved">using</span> System.IO;
+```html
+using System;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.IO;
 
-<span class="reserved">namespace</span> WebsiteSample
+namespace WebsiteSample
 {
-  <span class="reserved">public partial class</span> BlogSelect : System.Web.UI.Page
+  public partial class BlogSelect : System.Web.UI.Page
   {
-    <span class="reserved">protected override void</span> OnInit(EventArgs e)
+    protected override void OnInit(EventArgs e)
     {
-      <span class="reserved">base</span>.OnInit(e);
+      base.OnInit(e);
 
-      <span class="reserved">const int</span> startedYear = 1998;
+      const int startedYear = 1998;
       DateTime today = DateTime.Today;
-      <span class="reserved">int</span> year = today.Year;
-      <span class="reserved">int</span> month = today.Month;
-      <span class="reserved">int</span> day = today.Day;
+      int year = today.Year;
+      int month = today.Month;
+      int day = today.Day;
 
       ListItem li;
-      <span class="reserved">for</span> (<span class="reserved">int</span> y = startedYear; y &lt;= year; ++y)
+      for (int y = startedYear; y <= year; ++y)
       {
-        li = <span class="reserved">new</span> ListItem();
+        li = new ListItem();
         li.Text = y.ToString();
         li.Value = y.ToString();
-        <span class="reserved">this</span>.listYear.Items.Add(li);
+        this.listYear.Items.Add(li);
       }
-      <span class="reserved">this</span>.listYear.SelectedIndex = year - startedYear;
+      this.listYear.SelectedIndex = year - startedYear;
 
-      <span class="reserved">this</span>.listMonth.SelectedIndex = month - 1;
+      this.listMonth.SelectedIndex = month - 1;
 
-      <span class="reserved">this</span>.textDay.Text = day.ToString();
+      this.textDay.Text = day.ToString();
     }
 
-    <span class="reserved">protected void</span> buttonShow_Click(<span class="reserved">object</span> sender, EventArgs e)
+    protected void buttonShow_Click(object sender, EventArgs e)
     {
-      <span class="reserved">int</span> y = <span class="reserved">int</span>.Parse(<span class="reserved">this</span>.listYear.SelectedItem.Value);
-      <span class="reserved">int</span> m = <span class="reserved">int</span>.Parse(<span class="reserved">this</span>.listMonth.SelectedItem.Value);
-      <span class="reserved">int</span> d = <span class="reserved">int</span>.Parse(<span class="reserved">this</span>.textDay.Text);
+      int y = int.Parse(this.listYear.SelectedItem.Value);
+      int m = int.Parse(this.listMonth.SelectedItem.Value);
+      int d = int.Parse(this.textDay.Text);
 
-      <span class="reserved">this</span>.Show(y, m, d);
+      this.Show(y, m, d);
     }
 
-    <span class="reserved">protected void</span> calendar_SelectionChanged(<span class="reserved">object</span> sender, EventArgs e)
+    protected void calendar_SelectionChanged(object sender, EventArgs e)
     {
-      DateTime selected = <span class="reserved">this</span>.calendar.SelectedDate;
+      DateTime selected = this.calendar.SelectedDate;
 
-      <span class="reserved">this</span>.Show(selected.Year, selected.Month, selected.Day);
+      this.Show(selected.Year, selected.Month, selected.Day);
     }
 
-    <span class="reserved">void</span> Show(<span class="reserved">int</span> year, <span class="reserved">int</span> month, <span class="reserved">int</span> day)
+    void Show(int year, int month, int day)
     {
-      <span class="reserved">string</span> basePath = Context.Server.MapPath(<span class="literal">"~/App_Data"</span>);
+      string basePath = Context.Server.MapPath("~/App_Data");
 
-      <span class="reserved">string</span> xmlFile = basePath +
-        <span class="reserved">string</span>.Format(<span class="literal">@"\{0}{1:00}{2:00}.xml"</span>, year, month, day);
+      string xmlFile = basePath +
+        string.Format(@"\{0}{1:00}{2:00}.xml", year, month, day);
 
-      <span class="reserved">if</span> (!File.Exists(xmlFile)) <span class="reserved">return</span>;
+      if (!File.Exists(xmlFile)) return;
 
-      <span class="reserved">string</span> xslFile = basePath + <span class="literal">@"\main.xsl"</span>;
+      string xslFile = basePath + @"\main.xsl";
 
-      <span class="reserved">this</span>.xmlContent.XmlFileName = xmlFile;
-      <span class="reserved">this</span>.xmlContent.XslFileName = xslFile;
+      this.xmlContent.XmlFileName = xmlFile;
+      this.xmlContent.XslFileName = xslFile;
 
-      <span class="reserved">this</span>.head.Text = <span class="reserved">string</span>.Format(<span class="literal">"{0}年{1}月{2}日"</span>,
+      this.head.Text = string.Format("{0}年{1}月{2}日",
         year, month, day);
     }
   }
 }
-</code></pre>
+```
 
 
 以下のような感じで、選択した日付の記事が表示されるはずです。

@@ -17,7 +17,7 @@ aliases: []
 
 以下のコマンドでインストール可能な状態になっています。
 
-```
+```shell
 dotnet instal tool -g cszip
 dotnet instal tool -g csunzip
 ```

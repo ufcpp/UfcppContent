@@ -31,17 +31,17 @@ aliases: []
 corefx/coreclr のプルリクエストで、ここ1年くらいの間、頻出する最適化がありまして。
 配列操作で以下のようなコードはよく書くと思います。
 
-<pre class="source" title="配列の範囲チェック(書き換え前)">
-<code><span class="reserved">if</span> (index &lt; 0 || index &gt;= length)
-    <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">IndexOutOfRangeException</span>();
-</code></pre>
+```csharp
+if (index < 0 || index >= length)
+    throw new IndexOutOfRangeException();
+```
 
 これを、以下のように書き換えるだけ。
 
-<pre class="source" title="配列の範囲チェック(書き換え後)">
-<code><span class="reserved">if</span> ((<span class="reserved">uint</span>)index &gt;= (<span class="reserved">uint</span>)length)
-    <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">IndexOutOfRangeException</span>();
-</code></pre>
+```csharp
+if ((uint)index >= (uint)length)
+    throw new IndexOutOfRangeException();
+```
 
 比較と OR が1回ずつ減っているので速くなるという理屈。
 [corefx 内で「uint length」で検索](https://github.com/dotnet/coreclr/search?q=uint+length&unscoped_q=uint+length)してもらえばわかりますけど、割かし大量に出てきます。
@@ -55,29 +55,29 @@ corefx/coreclr のプルリクエストで、ここ1年くらいの間、頻出�
 
 ところで、以下のコードはどう思います。
 
-<pre class="source" title="Array.CreateInstance なら、lower bound 指定可能">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> array = <span class="type">Array</span>.CreateInstance(<span class="reserved">typeof</span>(<span class="reserved">string</span>),
-            lengths: <span class="reserved">new</span>[] { 4 },
-            lowerBounds: <span class="reserved">new</span>[] { -4 });
+        var array = Array.CreateInstance(typeof(string),
+            lengths: new[] { 4 },
+            lowerBounds: new[] { -4 });
  
-        array.SetValue(<span class="string">&quot;a&quot;</span>, -4);
-        array.SetValue(<span class="string">&quot;b&quot;</span>, -3);
-        array.SetValue(<span class="string">&quot;c&quot;</span>, -2);
-        array.SetValue(<span class="string">&quot;d&quot;</span>, -1);
+        array.SetValue("a", -4);
+        array.SetValue("b", -3);
+        array.SetValue("c", -2);
+        array.SetValue("d", -1);
  
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> array)
+        foreach (var x in array)
         {
-            <span class="type">Console</span>.WriteLine(x);
+            Console.WriteLine(x);
         }
     }
 }
-</code></pre>
+```
 
 ちゃんと動きます。
 VB 6 時代の名残っぽいんですけども、
@@ -87,20 +87,20 @@ VB 6 時代の名残っぽいんですけども、
 ということで、先ほどの「配列長は0以上」を前提にしたコードがいいのかどうか、という話になったりもするんですが。
 どうも、`T[]` 型にキャストすることができなくなるから大丈夫みたいです。
 
-<pre class="source" title="0開始じゃない配列は T[] じゃない">
-<code><span class="comment">// 開始インデックス 0 を明示して CreateInstance</span>
-<span class="comment">// それを string[] にキャスト。</span>
-<span class="comment">// これは問題なく動きます。</span>
-<span class="reserved">var</span> a1 = (<span class="reserved">string</span>[])<span class="type">Array</span>.CreateInstance(<span class="reserved">typeof</span>(<span class="reserved">string</span>),
-    lengths: <span class="reserved">new</span>[] { 4 },
-    lowerBounds: <span class="reserved">new</span>[] { 0 });
+```csharp
+// 開始インデックス 0 を明示して CreateInstance
+// それを string[] にキャスト。
+// これは問題なく動きます。
+var a1 = (string[])Array.CreateInstance(typeof(string),
+    lengths: new[] { 4 },
+    lowerBounds: new[] { 0 });
  
-<span class="comment">// 0 以外を指定した上で、全く同じく string[] にキャスト。</span>
-<span class="comment">// InvalidCastException が発生。</span>
-<span class="reserved">var</span> a2 = (<span class="reserved">string</span>[])<span class="type">Array</span>.CreateInstance(<span class="reserved">typeof</span>(<span class="reserved">string</span>),
-    lengths: <span class="reserved">new</span>[] { 4 },
-    lowerBounds: <span class="reserved">new</span>[] { -4 });
-</code></pre>
+// 0 以外を指定した上で、全く同じく string[] にキャスト。
+// InvalidCastException が発生。
+var a2 = (string[])Array.CreateInstance(typeof(string),
+    lengths: new[] { 4 },
+    lowerBounds: new[] { -4 });
+```
 
 ちなみに、例外メッセージは以下のような感じ。
 
@@ -126,14 +126,14 @@ C++ の template みたいに、C# のジェネリクスでも型引数に整数
 例えば、[`Memory<T>`構造体](https://source.dot.net/#q=System.Private.CoreLib%20System.Memory%3CT%3E)がそうなんですが、これの中身は以下のような感じ。
 (`_object`には配列、もしくは、`MemoryManager<T>`型が入ります。)
 
-<pre class="source" title="Memory構造体">
-<code><span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Memory</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public readonly struct Memory<T>
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">object</span> _object;
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> _index;
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> _length;
+    private readonly object _object;
+    private readonly int _index;
+    private readonly int _length;
 }
-</code></pre>
+```
 
 ここで、`_index`と`_length`、つまり、配列のインデックスと長さは絶対に負にならない保証があります。
 負にならないということは、`int`の内部構造的には、最上位ビットが常に0です。
@@ -147,34 +147,34 @@ C++ の template みたいに、C# のジェネリクスでも型引数に整数
 C# 8.0 では、以下のような構文で、
 配列の一部分を`Span<T>`として切り出すことができるようになります。
 
-<pre class="source" title="C# 8.0 の range 構文">
-<code><span class="reserved">int</span>[] array = { 1, 2, 3, 4, 5 };
-<span class="reserved">var</span> sub = array[1..^1]; <span class="comment">// 先頭から1 ～ 末尾から1 の範囲</span>
+```csharp
+int[] array = { 1, 2, 3, 4, 5 };
+var sub = array[1..^1]; // 先頭から1 ～ 末尾から1 の範囲
  
-<span class="comment">// 2, 3, 4</span>
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> sub)
+// 2, 3, 4
+foreach (var x in sub)
 {
-    <span class="type">Console</span>.WriteLine(x);
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 この、インデックスの値が先頭からなのか末尾からなのかを表すために、
 以下のような [`Index` 構造体](https://github.com/dotnet/coreclr/blob/3464b60b85c8e10d69d8da86d2eb3f9e7aaa7c4b/src/System.Private.CoreLib/shared/System/Index.cs)が追加されています(主要部分のみ抜き出し)。
 
-<pre class="source" title="Index 構造体">
-<code><span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Index</span>
+```csharp
+public readonly struct Index
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> _value;
+    private readonly int _value;
  
-    <span class="reserved">public</span> Index(<span class="reserved">int</span> value, <span class="reserved">bool</span> fromEnd)
+    public Index(int value, bool fromEnd)
     {
         _value = fromEnd ? ~value : value;
     }
  
-    <span class="reserved">public</span> <span class="reserved">int</span> Value =&gt; _value &lt; 0 ? ~_value : _value;
-    <span class="reserved">public</span> <span class="reserved">bool</span> FromEnd =&gt; _value &lt; 0;
+    public int Value => _value < 0 ? ~_value : _value;
+    public bool FromEnd => _value < 0;
 }
-</code></pre>
+```
 
 これも、配列のインデックスは0以上という前提で、
 「末尾から」の方を負の数で表すことで、追加の bool フラグを持たないようにしています。

@@ -50,22 +50,22 @@ nullの取り扱いと関連して、以下の2つを提案する。
 
 例として以下のような構造体を考える。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Wrapper</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
+```csharp
+struct Wrapper<T> where T : class
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> Wrapper(<span class="type">T</span> value)
+    public T Value { get; }
+    public Wrapper(T value)
     {
-        Value = value ?? <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(value));
+        Value = value ?? throw new ArgumentNullException(nameof(value));
     }
 }
-</code></pre>
+```
 
 [レコード型](https://github.com/dotnet/roslyn/blob/master/docs/features/records.md)や[非null保証](https://github.com/dotnet/roslyn/issues/5032)が入れば、単に以下のように書けるだろう。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Wrapper</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> Value) <span class="reserved">where</span><span class="type">T</span> : <span class="reserved">class</span>
-</code></pre>
+```csharp
+struct Wrapper<T>(T Value) whereT : class
+```
 
 単に`T`と書けば非nullとなり、nullを受け付けたければ`T?`と書くようになる。
 問題は、この構造体を`default(Wrapper<T>)`で作ると、`T Value` (本来は非nullであるはず)がnullになってしまうことである。
@@ -74,23 +74,23 @@ nullの取り扱いと関連して、以下の2つを提案する。
 
 以下のような、値に制約の入った構造体を考える。この例は、正の数しか受け取れない数値型である。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">PositiveInt</span>
+```csharp
+struct PositiveInt
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> PositiveInt(<span class="reserved">int</span> value)
+    public int Value { get; }
+    public PositiveInt(int value)
     {
-        <span class="reserved">if</span> (value &lt;= 0) <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentOutOfRangeException</span>(<span class="reserved">nameof</span>(value));
+        if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
         Value = value;
     }
 }
-</code></pre>
+```
 
 C#に[レコード型](https://github.com/dotnet/roslyn/blob/master/docs/features/records.md)や[Method Contracts](https://github.com/dotnet/roslyn/issues/119)が入ると、この構造体はおそらく以下のように書ける。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">PositiveInt</span>(<span class="reserved">int</span> Value) <span class="reserved">requires</span> Value &gt; 0;
-</code></pre>
+```csharp
+struct PositiveInt(int Value) requires Value > 0;
+```
 
 これで`Value`プロパティが常に0より大きいことが保証できているように見えるが、`default(PositiveInt)`のせいで、`Value`に0が入ることがあり得る。この値は無効なはずである。
 
@@ -102,22 +102,22 @@ C#に[レコード型](https://github.com/dotnet/roslyn/blob/master/docs/feature
 そこで、non-nullable reference typesに対して、non-defaultable value typesを提案したい。
 何らかのアノテーション、例えば`[NonDefault]`属性を付けた構造体は既定値を取ってはいけないとするのはどうだろうか。
 
-<pre class="source" title="">
-<code>[<span class="type">NonDefault</span>]
-<span class="reserved">struct</span> <span class="type">Wrapper</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> Value) <span class="reserved">where</span><span class="type">T</span> : <span class="reserved">class</span>
+```csharp
+[NonDefault]
+struct Wrapper<T>(T Value) whereT : class
 
-[<span class="type">NonDefault</span>]
-<span class="reserved">struct</span> <span class="type">PositiveInt</span>(<span class="reserved">int</span> Value) <span class="reserved">requires</span> Value &gt; 0;
-</code></pre>
+[NonDefault]
+struct PositiveInt(int Value) requires Value > 0;
+```
 
 このとき、non-nullable reference typesに倣って、以下のように警告を出す。
 
-<pre class="source" title="">
-<code><span class="type">PositiveInt</span> x = <span class="reserved">default</span>(<span class="type">PositiveInt</span>); <span class="comment">// warning</span>
-<span class="type">PositiveInt</span>? y = <span class="reserved">default</span>(<span class="type">PositiveInt</span>); <span class="comment">// OK</span>
-<span class="type">PositiveInt</span> z = y; <span class="comment">// warning</span>
-<span class="type">PositiveInt</span> w = y ?? <span class="reserved">new</span> <span class="type">PositiveInt</span>(1); <span class="comment">// OK</span>
-</code></pre>
+```csharp
+PositiveInt x = default(PositiveInt); // warning
+PositiveInt? y = default(PositiveInt); // OK
+PositiveInt z = y; // warning
+PositiveInt w = y ?? new PositiveInt(1); // OK
+```
 
 non-defaultable value typesに対する`T?`は`Nullable<T>`を必要としない。
 何故なら、`default(T)`は無効であり、`x.HasValue`を確かめなくても、`x == default(T)`で値を持っていないことが確認できるからである。
@@ -144,17 +144,17 @@ non-nullable reference typesを持てるのは、参照型か、non-defaultable 
 しかし、参照型に対する`?.`や`??`では、オーバーロードした`==`は呼ばれない(`brtrue`命令によるnullチェックに展開される)。
 そのため、以下のように、`?.`を使ったコードが正しく動かない。
 
-<pre class="source" title="">
-<code><span class="reserved">int</span>? X(UnityEngine.<span class="type">Object</span> obj)
+```csharp
+int? X(UnityEngine.Object obj)
 {
-    <span class="comment">// OK</span>
-    <span class="reserved">if</span> (obj == <span class="reserved">null</span>) <span class="reserved">return</span> <span class="reserved">null</span>;
-    <span class="reserved">return</span> obj.GetInstanceID();
+    // OK
+    if (obj == null) return null;
+    return obj.GetInstanceID();
 }
 
-<span class="comment">// runtime exception</span>
-<span class="reserved">int</span>? Y(UnityEngine.<span class="type">Object</span> obj) =&gt; obj?.GetInstanceID();
-</code></pre>
+// runtime exception
+int? Y(UnityEngine.Object obj) => obj?.GetInstanceID();
+```
 
 これまではUnityがC# 3.0にしか対応していなかったので問題にならなかったが、
 Unity 5.5でC# 6.0に対応しようとしている。
@@ -166,21 +166,21 @@ Unity 5.5でC# 6.0に対応しようとしている。
 そのため、`Nullable<T>`の代わりに、`T`と例外のunion型にあたる`Expected<T>`のような型を作って使おうとする人がいる。
 例えば、[C++でそういう動きがみられる](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4015.pdf)。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Expected</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Expected<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Exception</span> Exception { <span class="reserved">get</span>; }
+    public T Value { get; }
+    public Exception Exception { get; }
 }
-</code></pre>
+```
 
 もしC#でもそういう型を作るのであれば、`?.`を使った例外の伝搬や、`??`を使った例外からの復帰があってもいいのではないだろうか。
 
-<pre class="source" title="">
-<code><span class="type">Expected</span>&lt;<span class="reserved">string</span>&gt; x = <span class="reserved">new</span> <span class="type">Expected</span>&lt;<span class="reserved">string</span>&gt;(<span class="reserved">new</span> <span class="type">Exception</span>());
-<span class="type">Expected</span>&lt;<span class="reserved">int</span>&gt; y = x?.Length;
-<span class="reserved">string</span> z = x ?? <span class="string">""</span>;
-</code></pre>
+```csharp
+Expected<string> x = new Expected<string>(new Exception());
+Expected<int> y = x?.Length;
+string z = x ?? "";
+```
 
 ### 提案: ユーザー定義のnullable-like型
 
@@ -189,47 +189,47 @@ Unity 5.5でC# 6.0に対応しようとしている。
 
 例えば、以下のようなパターンはどうだろうか。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">NullableLike</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct NullableLike<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">bool</span> HasValue { <span class="reserved">get</span>; }
-    <span class="comment">// propagate a valid value</span>
-    <span class="reserved">public</span> <span class="type">NullableLike</span>&lt;<span class="type">U</span>&gt; Propagate&lt;<span class="type">U</span>&gt;(<span class="type">U</span> value);
-    <span class="comment">// propagate an invalid value</span>
-    <span class="reserved">public</span> <span class="type">NullableLike</span>&lt;<span class="type">T</span>&gt; Propagate();
+    public T Value { get; }
+    public bool HasValue { get; }
+    // propagate a valid value
+    public NullableLike<U> Propagate<U>(U value);
+    // propagate an invalid value
+    public NullableLike<T> Propagate();
 }
-</code></pre>
+```
 
 これで、先ほどの`Expected<T>`の例であれば、以下のように展開する。
 
-<pre class="source" title="">
-<code><span class="type">Expected</span>&lt;<span class="reserved">string</span>&gt; x = <span class="reserved">new</span> <span class="type">Expected</span>&lt;<span class="reserved">string</span>&gt;(<span class="reserved">new</span> <span class="type">Exception</span>());
-<span class="type">Expected</span>&lt;<span class="reserved">int</span>&gt; y = x.HasValue ? x.Propagate(x.Value.Length) : x.Propagate&lt;<span class="reserved">int</span>&gt;();
-<span class="reserved">string</span> z = x.HasValue ? x.Value : <span class="string">""</span>;
-</code></pre>
+```csharp
+Expected<string> x = new Expected<string>(new Exception());
+Expected<int> y = x.HasValue ? x.Propagate(x.Value.Length) : x.Propagate<int>();
+string z = x.HasValue ? x.Value : "";
+```
 
 ちなみに、このパターンに沿った`Expected<T>`の実装は以下のようになる。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Expected</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Expected<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Exception</span> Exception { <span class="reserved">get</span>; }
+    public T Value { get; }
+    public Exception Exception { get; }
 
-    <span class="reserved">public</span> Expected(<span class="type">T</span> value)
+    public Expected(T value)
     {
         Value = value;
-        Exception = <span class="reserved">null</span>;
+        Exception = null;
     }
-    <span class="reserved">public</span> Expected(<span class="type">Exception</span> exception)
+    public Expected(Exception exception)
     {
-        Value = <span class="reserved">default</span>(<span class="type">T</span>);
+        Value = default(T);
         Exception = exception;
     }
 
-    <span class="reserved">public</span> <span class="reserved">bool</span> HasValue =&gt; Exception == <span class="reserved">null</span>;
-    <span class="reserved">public</span> <span class="type">Expected</span>&lt;<span class="type">U</span>&gt; Propagate&lt;<span class="type">U</span>&gt;() =&gt; <span class="reserved">new</span> <span class="type">Expected</span>&lt;<span class="type">U</span>&gt;(Exception);
-    <span class="reserved">public</span> <span class="type">Expected</span>&lt;<span class="type">U</span>&gt; Propagate&lt;<span class="type">U</span>&gt;(<span class="type">U</span> value) =&gt; <span class="reserved">new</span> <span class="type">Expected</span>&lt;<span class="type">U</span>&gt;(value);
+    public bool HasValue => Exception == null;
+    public Expected<U> Propagate<U>() => new Expected<U>(Exception);
+    public Expected<U> Propagate<U>(U value) => new Expected<U>(value);
 }
-</code></pre>
+```

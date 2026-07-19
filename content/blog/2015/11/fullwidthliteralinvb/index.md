@@ -19,16 +19,16 @@ Visual Basicでは、BASIC時代からずっとですが、アルファベット
 
 で、実は、大文字小文字だけじゃなくて、半角全角も区別しないという。以下のコード、コンパイルして実行することもできるし、Visual Studio上ではちゃんと、`Ｍｏｄｕｌｅ`とかの部分が青色(キーワードの色)で表示されます。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">Ｍｏｄｕｌｅ</span> <span class="type">Module1</span>
+```csharp
+Ｍｏｄｕｌｅ Module1
 
-    <span class="reserved">Ｓｕｂ</span> Main()
-        <span class="reserved">Ｄｉｍ</span> x = 10
-        <span class="type">Console</span>.WriteLine(x)
-    <span class="reserved">Ｅｎｄ</span> <span class="reserved">Ｓｕｂ</span>
+    Ｓｕｂ Main()
+        Ｄｉｍ x = 10
+        Console.WriteLine(x)
+    Ｅｎｄ Ｓｕｂ
 
-<span class="reserved">Ｅｎｄ</span> <span class="reserved">Ｍｏｄｕｌｅ</span>
-</code></pre>
+Ｅｎｄ Ｍｏｄｕｌｅ
+```
 
 ![VBでは全角文字でキーワードを打てる][1]
 
@@ -46,18 +46,18 @@ Visual Basicでは、BASIC時代からずっとですが、アルファベット
 
 - [src/Compilers/VisualBasic/Portable/Scanner/CharacterInfo.vb](https://github.com/dotnet/roslyn/blob/master/src/Compilers/VisualBasic/Portable/Scanner/CharacterInfo.vb#L71)
 
-<pre class="source" title="">
-<code>    <span class="reserved">Private</span> <span class="reserved">Const</span> s_fullwidth = <span class="reserved">CInt</span>(&amp;HFF00L - &amp;H0020L)
+```csharp
+    Private Const s_fullwidth = CInt(&HFF00L - &H0020L)
 
-    <span class="comment">REM 中略</span>
+    REM 中略
 
-    <span class="reserved">Friend</span> <span class="reserved">Const</span> FULLWIDTH_APOSTROPHE <span class="reserved">As</span> <span class="reserved">Char</span> = ChrW(s_fullwidth + AscW(<span class="string">"'"c</span>))             <span class="comment">REM ＇</span>
-    <span class="reserved">Friend</span> <span class="reserved">Const</span> FULLWIDTH_QUOTATION_MARK <span class="reserved">As</span> <span class="reserved">Char</span> = ChrW(s_fullwidth + AscW(<span class="string">""""c</span>))        <span class="comment">REM ＂</span>
+    Friend Const FULLWIDTH_APOSTROPHE As Char = ChrW(s_fullwidth + AscW("'"c))             REM ＇
+    Friend Const FULLWIDTH_QUOTATION_MARK As Char = ChrW(s_fullwidth + AscW(""""c))        REM ＂
 
-    <span class="reserved">Friend</span> <span class="reserved">Const</span> FULLWIDTH_DIGIT_ZERO <span class="reserved">As</span> <span class="reserved">Char</span> = ChrW(s_fullwidth + AscW(<span class="string">"0"c</span>))             <span class="comment">REM ０</span>
-    <span class="reserved">Friend</span> <span class="reserved">Const</span> FULLWIDTH_DIGIT_SEVEN <span class="reserved">As</span> <span class="reserved">Char</span> = ChrW(s_fullwidth + AscW(<span class="string">"7"c</span>))            <span class="comment">REM ７</span>
-    <span class="reserved">Friend</span> <span class="reserved">Const</span> FULLWIDTH_DIGIT_NINE <span class="reserved">As</span> <span class="reserved">Char</span> = ChrW(s_fullwidth + AscW(<span class="string">"9"c</span>))             <span class="comment">REM ９</span>
-</code></pre>
+    Friend Const FULLWIDTH_DIGIT_ZERO As Char = ChrW(s_fullwidth + AscW("0"c))             REM ０
+    Friend Const FULLWIDTH_DIGIT_SEVEN As Char = ChrW(s_fullwidth + AscW("7"c))            REM ７
+    Friend Const FULLWIDTH_DIGIT_NINE As Char = ChrW(s_fullwidth + AscW("9"c))             REM ９
+```
 
 Unicodeが普及した今なら普通にIMEで変換した全角文字で`"０"c`って書けばいいだけの話なのに… IMEを持っていない国に配慮しても、Unicode エスケープシーケンスで`\uFF10`とか書ける。それを、わざわざ`&HFF00L - &H0020L` (全角文字の開始番号 - 半角スペース)を足して作ってるという。
 

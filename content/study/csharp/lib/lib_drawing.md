@@ -36,19 +36,19 @@ png, jpg, gif 等、さまざまな画像形式ファイルを読み書きでき
 ここでは、例として、画像を読み出して、jpeg 形式で保存しなおしてみましょう。
 といっても、非常に簡単で、以下のような数行ほどのプログラムでできます。
 
-<pre class="source" title="画像を読み出して、jpeg 形式で保存。" lang="">
-<code><span class="reserved">class</span> Program
+```csharp
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="comment">//↓ 画像ファイルのパスは適当に書き換えて。</span>
-    <span class="reserved">string</span> filename = <span class="literal">@"..\..\..\..\webpage\study\csharp\fig\graphics01.png"</span>;
+    //↓ 画像ファイルのパスは適当に書き換えて。
+    string filename = @"..\..\..\..\webpage\study\csharp\fig\graphics01.png";
     Image img = Image.FromFile(filename);
-    img.Save(<span class="literal">"out.jpg"</span>, System.Drawing.Imaging.ImageFormat.Jpeg);
+    img.Save("out.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
     img.Dispose();
   }
 }
-</code></pre>
+```
 
 
 Image.FromFile メソッドを使用して、
@@ -102,17 +102,17 @@ Windows アプリケーション開発用のプロジェクトを作ると、
 
 このフォームの Paint イベントに対して、以下のような「[イベント ハンドラー](../functional/sp_event.md#eventhandler)」を追加します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">private void</span> Form1_Paint(<span class="reserved">object</span> sender, PaintEventArgs e)
+```csharp
+private void Form1_Paint(object sender, PaintEventArgs e)
 {
   Graphics g = e.Graphics;
-  g.DrawArc(<span class="reserved">new</span> Pen(Color.Blue  ),  10, 10, 50, 50, 0, 360);
-  g.DrawArc(<span class="reserved">new</span> Pen(Color.Black ),  65, 10, 50, 50, 0, 360);
-  g.DrawArc(<span class="reserved">new</span> Pen(Color.Red   ), 120, 10, 50, 50, 0, 360);
-  g.DrawArc(<span class="reserved">new</span> Pen(Color.Yellow),  38, 40, 50, 50, 0, 360);
-  g.DrawArc(<span class="reserved">new</span> Pen(Color.Green ),  93, 40, 50, 50, 0, 360);
+  g.DrawArc(new Pen(Color.Blue  ),  10, 10, 50, 50, 0, 360);
+  g.DrawArc(new Pen(Color.Black ),  65, 10, 50, 50, 0, 360);
+  g.DrawArc(new Pen(Color.Red   ), 120, 10, 50, 50, 0, 360);
+  g.DrawArc(new Pen(Color.Yellow),  38, 40, 50, 50, 0, 360);
+  g.DrawArc(new Pen(Color.Green ),  93, 40, 50, 50, 0, 360);
 }
-</code></pre>
+```
 
 
 ちなみに、Visual Studio を使えば、イベントハンドラの追加は非常に簡単で、

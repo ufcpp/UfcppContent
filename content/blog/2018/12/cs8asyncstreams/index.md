@@ -31,44 +31,43 @@ aliases: []
 文法の候補は `async foreach`、`foreach async`、`foreach await`など他にもあったんですが、
 現状は以下のような`await foreach`が採用されました。
 
-<pre class="source" title="">
-<code><span class="comment">// 非同期 foreach … IAsyncEnumerable からの列挙</span>
-<span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> AsyncForeach(<span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; items)
+```csharp
+// 非同期 foreach … IAsyncEnumerable からの列挙
+static async Task AsyncForeach(IAsyncEnumerable<int> items)
 {
-    <span class="reserved">await</span> <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> items)
+    await foreach (var item in items)
     {
-        <span class="type">Console</span>.WriteLine(item);
+        Console.WriteLine(item);
     }
 }
-</code></pre>
+```
 
 これまでの`await`同様、これが書けるのは非同期メソッド(`async`修飾付きのメソッド)内だけです。
 
 こいつは、同期版の`foreach`と似たような感じで、以下のように展開されます。
 同期版と比べて、`MoveNext`と`Dispose`が非同期になっただけです。
 
-<pre class="source" title="">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> AsyncForeach(<span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; items)
+```csharp
+private static async Task AsyncForeach(IAsyncEnumerable<int> items)
 {
-    <span class="type">IAsyncEnumerator</span>&lt;<span class="reserved">int</span>&gt; e = items.GetAsyncEnumerator();
-    <span class="reserved">try</span>
+    IAsyncEnumerator<int> e = items.GetAsyncEnumerator();
+    try
     {
-        <span class="reserved">while</span> (<span class="reserved">await</span> e.MoveNextAsync())
+        while (await e.MoveNextAsync())
         {
-            <span class="reserved">int</span> item = e.Current;
-            <span class="type">Console</span>.WriteLine(item);
+            int item = e.Current;
+            Console.WriteLine(item);
         }
     }
-    <span class="reserved">finally</span>
+    finally
     {
-        <span class="reserved">if</span> (e != <span class="reserved">null</span>)
+        if (e != null)
         {
-            <span class="reserved">await</span> e.DisposeAsync();
+            await e.DisposeAsync();
         }
     }
 }
-
-</code></pre>
+```
 
 ## 非同期イテレーター
 
@@ -78,16 +77,16 @@ aliases: []
 非同期メソッドと同様に `async`修飾が必須で、
 戻り値は`IAsyncEnumerable<T>`である必要があります。
 
-<pre class="source" title="">
-<code><span class="comment">// 非同期イテレーター … await/yield混在</span>
-<span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; AsyncIterator()
+```csharp
+// 非同期イテレーター … await/yield混在
+static async IAsyncEnumerable<int> AsyncIterator()
 {
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(1);
-    <span class="reserved">yield</span> <span class="reserved">return</span> 1;
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(1);
-    <span class="reserved">yield</span> <span class="reserved">return</span> 2;
+    await Task.Delay(1);
+    yield return 1;
+    await Task.Delay(1);
+    yield return 2;
 }
-</code></pre>
+```
 
 非同期イテレーターから生成されるコードは、
 やっぱり[同期版のイテレーター](../../../../study/csharp/data/sp2_iterator.md#complied)と[非同期メソッド](../../../../study/csharp/async/sp5_awaitable.md)を組み合わせたようなコードになります。
@@ -103,34 +102,34 @@ aliases: []
 以下のようなインターフェイスになる予定です。
 (割かし最近変更があって、Preview 1 の時点では `CancellationToken` を受け取る引数がまだないです。)
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System.Threading;
+using System.Threading.Tasks;
  
-<span class="reserved">namespace</span> System.Collections.Generic
+namespace System.Collections.Generic
 {
-    <span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt;
+    public interface IAsyncEnumerable<out T>
     {
-        <span class="type">IAsyncEnumerator</span>&lt;<span class="type">T</span>&gt; GetAsyncEnumerator(<span class="type">CancellationToken</span> cancellationToken = <span class="reserved">default</span>);
+        IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default);
     }
-    <span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncEnumerator</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt; : <span class="type">IAsyncDisposable</span>
+    public interface IAsyncEnumerator<out T> : IAsyncDisposable
     {
-        <span class="type">T</span> Current { <span class="reserved">get</span>; }
-        <span class="type">ValueTask</span>&lt;<span class="reserved">bool</span>&gt; MoveNextAsync();
+        T Current { get; }
+        ValueTask<bool> MoveNextAsync();
     }
 }
-</code></pre>
+```
 
 [前にちょっと書きましたが](../../10/pickuproslyn1014/index.md)、
 以下のような構造もちょっと検討されました。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncEnumerator</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt; : <span class="type">IAsyncDisposable</span>
+```csharp
+public interface IAsyncEnumerator<out T> : IAsyncDisposable
 {
-    <span class="type">ValueTask</span>&lt;<span class="reserved">bool</span>&gt; WaitForNextAsync();
-    <span class="type">T</span> TryGetNext(<span class="reserved">out</span> <span class="reserved">bool</span> success);
+    ValueTask<bool> WaitForNextAsync();
+    T TryGetNext(out bool success);
 }
-</code></pre>
+```
 
 こちらの没案の方が、うまく使えばパフォーマンスがよくなります。
 ただ、ちょっと使いにくい構造なので、ちょっと複雑なことをしようと思うと、パフォーマンスの良いコードを書くのが結構大変になったりします。

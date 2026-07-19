@@ -19,20 +19,20 @@ aliases: []
 
 要点を抜き出すと以下のような感じ。
 
-<pre class="source" title="なぜかフィールドの初期化が不要になってしまう例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">DateTimeWrapper</span>
+struct DateTimeWrapper
 {
-    <span class="type">DateTimeOffset</span> t;
+    DateTimeOffset t;
 
-    <span class="reserved">public</span> DateTimeWrapper(<span class="reserved">int</span> i)
+    public DateTimeWrapper(int i)
     {
-        <span class="comment">// t を初期化しないとコンパイル エラーになるはず</span>
-        <span class="comment">// でも、なぜか PCL プロジェクトではエラーにならない</span>
+        // t を初期化しないとコンパイル エラーになるはず
+        // でも、なぜか PCL プロジェクトではエラーにならない
     }
 }
-</code></pre>
+```
 
 本来ダメなはずのコードが、PCL プロジェクトでだけコンパイルできてしまうという問題。
 「ちゃんと初期化しないと怒られるはず」というのが常識のC#でこれをやられると、ほんと見つけられないバグになったりします。
@@ -114,23 +114,23 @@ C#では、構造体のフィールドは、コンストラクター内で必ず
 
 でも、空っぽの構造体は初期化しなくてもいいらしい。
 
-<pre class="source" title="空っぽの構造体の初期化は不要">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">EmptyStruct</span> { }
-<span class="reserved">struct</span> <span class="type">Integer</span> { <span class="reserved">private</span> <span class="reserved">int</span> _x; }
+```csharp
+struct EmptyStruct { }
+struct Integer { private int _x; }
 
-<span class="reserved">struct</span> <span class="type">DefiniteAssignement</span>
+struct DefiniteAssignement
 {
-    <span class="type">EmptyStruct</span> _e;
-    <span class="type">Integer</span> _i;
+    EmptyStruct _e;
+    Integer _i;
 
-    DefiniteAssignement(<span class="reserved">int</span> i)
+    DefiniteAssignement(int i)
     {
-        <span class="comment">// 中身があるものは初期化必須</span>
-        _i = <span class="reserved">new</span> <span class="type">Integer</span>();
-        <span class="comment">// 一方で、EmptyStruct みたいに空っぽのものは初期化不要</span>
+        // 中身があるものは初期化必須
+        _i = new Integer();
+        // 一方で、EmptyStruct みたいに空っぽのものは初期化不要
     }
 }
-</code></pre>
+```
 
 中身の有無によって挙動が変わります。
 
@@ -148,33 +148,33 @@ C#では、構造体のフィールドは、コンストラクター内で必ず
 そうすると、以下のような問題のあるコードが書けてしまいます。
 (そうならないように、赤線の部分をコンパイル エラーにしている。)
 
-<pre class="source" title="managedな型のポインターが作れた場合の問題">
-<code><reserved></span><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="comment">// 参照型を含む構造体</span>
-<span class="reserved">struct</span> <span class="type">Wrapper</span> { <span class="reserved">object</span> _obj; }
+// 参照型を含む構造体
+struct Wrapper { object _obj; }
 
-<span class="reserved">class</span> <span class="type">ManagedPointer</span>
+class ManagedPointer
 {
-    <span class="reserved">public</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> X()
+    public unsafe void X()
     {
-        <span class="comment">// Wrapper みたいに内部的に参照型のフィールドを持っている型は、本来はポインター化できない</span>
-        <span class="comment">// sizeof 取得も本来はできない</span>
+        // Wrapper みたいに内部的に参照型のフィールドを持っている型は、本来はポインター化できない
+        // sizeof 取得も本来はできない
 
-        <span class="comment">// unmanaged なメモリを確保</span>
-        <span class="comment">// AllocHGlobal で取得したメモリ領域は初期化されている保証がない</span>
-        <span class="comment">// 実行するたびに違う値が入ってる</span>
-        <span class="reserved">var</span> p = <span class="type">Marshal</span>.AllocHGlobal(<span class="error"><span class="reserved">sizeof</span>(<span class="type">Wrapper</span>)</span>);
-        <span class="type">Wrapper</span> a = *(<span class="error"><span class="type">Wrapper</span>*</span>)p;
+        // unmanaged なメモリを確保
+        // AllocHGlobal で取得したメモリ領域は初期化されている保証がない
+        // 実行するたびに違う値が入ってる
+        var p = Marshal.AllocHGlobal(sizeof(Wrapper));
+        Wrapper a = *(Wrapper*)p;
 
-        <span class="comment">// ここで GC が発生したとすると、</span>
-        <span class="comment">// GC が TaskAwaiter 中の Task のフィールド(未初期化)を参照する</span>
-        <span class="comment">// 未初期化(= 意味のないランダムな値)な参照先を見に行こうとして死ぬ</span>
+        // ここで GC が発生したとすると、
+        // GC が TaskAwaiter 中の Task のフィールド(未初期化)を参照する
+        // 未初期化(= 意味のないランダムな値)な参照先を見に行こうとして死ぬ
 
-        <span class="type">Marshal</span>.FreeHGlobal(p);
+        Marshal.FreeHGlobal(p);
     }
 }
-</code></pre>
+```
 
 こちらも、メンバーに参照型を含んでいるかどうかを追うのに、構造体の中身を追う必要があります。
 
@@ -183,18 +183,18 @@ C#では、構造体のフィールドは、コンストラクター内で必ず
 構造体の中にそれ自身の型のフィールドを持とうとすると、当然ですが無限再帰を起こします。
 無限に再帰する構造体のレイアウトなんて決定できない(オーバーフローする)ので、当然禁止事項です。
 
-<pre class="source" title="無限に再帰する構造体レイアウト">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">Container</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Container<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Item;
+    public T Item;
 }
 
-<span class="reserved">struct</span> <span class="type">RecursiveLayout</span>
+struct RecursiveLayout
 {
-    <span class="comment">// 無限再帰するので、この構造体はレイアウトが確定できない</span>
-    <span class="type">Container</span>&lt;<span class="type">RecursiveLayout</span>&gt; <span class="error">_x</span>;
+    // 無限再帰するので、この構造体はレイアウトが確定できない
+    Container<RecursiveLayout> _x;
 }
-</code></pre>
+```
 
 再帰していないかどうかを調べるために、構造体の中身の情報が必要です。
 
@@ -211,53 +211,53 @@ PCLプロジェクトから参照しているいくつかの参照アセンブ�
 
 1つ目。確実な初期化に漏れるケース。
 
-<pre class="source" title="本来は未初期化エラーになるはず">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">DefiniteAssignment</span>
+struct DefiniteAssignment
 {
-    <span class="comment">// DateTimeOffset には中身があるはずなのに…</span>
-    <span class="type">DateTimeOffset</span> _x;
+    // DateTimeOffset には中身があるはずなのに…
+    DateTimeOffset _x;
 
-    <span class="reserved">public</span> <span class="error">DefiniteAssignment</span>(<span class="reserved">int</span> n) { } <span class="comment">// PCL ではエラーにならない</span>
+    public DefiniteAssignment(int n) { } // PCL ではエラーにならない
 }
-</code></pre>
+```
 
 2つ目。ポインター化できるかどうかの判定をミスるケース。
 
-<pre class="source" title="本来はポインター化できない型をポインター化">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-<span class="reserved">class</span> <span class="type">ManagedPointer</span>
+class ManagedPointer
 {
-    <span class="reserved">public</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> X()
+    public unsafe void X()
     {
-        <span class="comment">// TaskAwaiter は内部的に Task クラスのフィールドを1個だけ持っている</span>
-        <span class="comment">// 本来はポインター化できない</span>
-        <span class="reserved">var</span> p = <span class="type">Marshal</span>.AllocHGlobal(<span class="error"><span class="reserved">sizeof</span>(<span class="type">TaskAwaiter</span>)</span>);
+        // TaskAwaiter は内部的に Task クラスのフィールドを1個だけ持っている
+        // 本来はポインター化できない
+        var p = Marshal.AllocHGlobal(sizeof(TaskAwaiter));
 
-        <span class="comment">// PCL ではエラーにならない</span>
-        <span class="type">TaskAwaiter</span> a = *(<span class="error"><span class="type">TaskAwaiter</span>*</span>)p;
+        // PCL ではエラーにならない
+        TaskAwaiter a = *(TaskAwaiter*)p;
 
-        <span class="comment">// ここで GC が発生したとするとまずい</span>
+        // ここで GC が発生したとするとまずい
 
-        <span class="type">Marshal</span>.FreeHGlobal(p);
+        Marshal.FreeHGlobal(p);
     }
 }
-</code></pre>
+```
 
 3つ目。無限再帰なレイアウトを作れてしまうケース。
 
-<pre class="source" title="無限再帰レイアウト">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">struct</span> <span class="type">RecursiveLayout</span>
+struct RecursiveLayout
 {
-    <span class="comment">// 無限再帰するので、この構造体はレイアウトが確定できない</span>
-    <span class="type">KeyValuePair</span>&lt;<span class="type">RecursiveLayout</span>, <span class="type">RecursiveLayout</span>&gt; <span class="error">_x</span>; <span class="comment">// PCL ではエラーにならない</span>
+    // 無限再帰するので、この構造体はレイアウトが確定できない
+    KeyValuePair<RecursiveLayout, RecursiveLayout> _x; // PCL ではエラーにならない
 }
-</code></pre>
+```
 
 どれも結構まずいんですが、今のところ、これがPCLではコンパイルできてしまっています。
 `DateTimeOffset`、`KeyValuePair`、`TaskAwaiter`などの構造体で、PCLが参照している参照アセンブリでは中身がごっそり削られているのが原因。

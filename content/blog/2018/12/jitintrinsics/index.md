@@ -53,10 +53,9 @@ JIT 時特殊対応をしているクラスやメソッドには [`Intrinsic` �
 `HasFlag`相当の処理は、具体的な列挙型がわかっていれば以下のような書き方ができます。
 ただの `&` と0比較なので、かなり高速です。
 
-<pre class="source">
-<code><span class="reserved">static</span> <span class="reserved">bool</span> HasFlag(<span class="type">A</span> x, <span class="type">A</span> y) =&gt; (((<span class="reserved">int</span>)x) &amp; ((<span class="reserved">int</span>)y)) != 0;
-
-</code></pre>
+```csharp
+static bool HasFlag(A x, A y) => (((int)x) & ((int)y)) != 0;
+```
 
 ところが、任意の列挙型に対して使えるようにしようとすると途端に面倒になります。
 `Enum`クラス(`System`名前空間)の`HasFlag`メソッドで機能としては提供されているんですが、

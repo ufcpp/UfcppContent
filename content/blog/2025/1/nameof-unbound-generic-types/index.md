@@ -33,11 +33,11 @@ unbound (未束縛)というのは、`List<>` みたいに、型実引数を渡�
 
 例えば以下のような感じ。
 
-<pre class="source" title="nameof の中に unbound な型を書けるように">
-<span class="reserved">var</span> <span class="variable">name</span> <span class="operator">=</span> <span class="reserved">nameof</span>(<span class="type">List</span>&lt;&gt;<span class="operator">.</span><span class="type struct">Count</span>);
+```csharp
+var name = nameof(List<>.Count);
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">name</span>); <span class="comment">// Count</span>
-</pre>
+Console.WriteLine(name); // Count
+```
 
 元々、`nameof(T<int>)` とか書いても、結果の文字列は `T` だけで、型引数は何にも影響しません。
 メンバー参照でも、`nameof(T.X)` でも `nameof(T<int>.X)` でも `nameof(T<string>.X)` でも、得られる文字列は `X` です。
@@ -55,42 +55,42 @@ unbound (未束縛)というのは、`List<>` みたいに、型実引数を渡�
 `typeof(T<>)` の方では `typeof(T<>.X)` とメンバー参照することはないので、
 `nameof` では「似て非なるものの再実装」が必要とのことです。
 
-<pre class="source" title="似て非なる nameof と typeof">
-<span class="comment">// unbound でメンバー参照(特にインスタンス メンバーの参照)をするのは nameof だけ。</span>
-<span class="reserved">var</span> <span class="variable"><span class="warning" title="CS0219">name</span></span> <span class="operator">=</span> <span class="reserved">nameof</span>(<span class="type">List</span>&lt;&gt;<span class="operator">.</span><span class="property">Count</span>);
+```csharp
+// unbound でメンバー参照(特にインスタンス メンバーの参照)をするのは nameof だけ。
+var name = nameof(List<>.Count);
 
-<span class="comment">// 入れ子の型なら参照することはあるけども、</span>
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt;<span class="operator">.</span><span class="type struct">Enumerator</span> <span class="variable"><span class="warning" title="CS0219">e1</span></span> <span class="operator">=</span> <span class="reserved">default</span>;
+// 入れ子の型なら参照することはあるけども、
+List<int>.Enumerator e1 = default;
 
-<span class="comment">// unbound はあり得ない。</span>
-<span class="error" title="CS7003"><span class="type">List</span>&lt;&gt;</span><span class="operator">.</span><span class="type struct">Enumerator</span> <span class="variable"><span class="warning" title="CS0219">e2</span></span> <span class="operator">=</span> <span class="reserved">default</span>;
+// unbound はあり得ない。
+List<>.Enumerator e2 = default;
 
-<span class="comment">// まして、インスタンス メンバー参照はあり得ない。</span>
-<span class="reserved">_</span> <span class="operator">=</span> <span class="error" title="CS0120"><span class="error" title="CS0305"><span class="type">List</span>&lt;&gt;</span><span class="operator">.</span><span class="property">Count</span></span>;
+// まして、インスタンス メンバー参照はあり得ない。
+_ = List<>.Count;
 
-<span class="comment">// 入れ子の型は unboud な typeof ができるけど、</span>
-<span class="reserved">var</span> <span class="variable">t1</span> <span class="operator">=</span> <span class="reserved">typeof</span>(<span class="type">List</span>&lt;&gt;<span class="operator">.</span><span class="type struct">Enumerator</span>);
+// 入れ子の型は unboud な typeof ができるけど、
+var t1 = typeof(List<>.Enumerator);
 
-<span class="comment">// メンバー参照はあり得ない。</span>
-<span class="reserved">var</span> <span class="variable">m1</span> <span class="operator">=</span> <span class="reserved">typeof</span>(<span class="type">List</span>&lt;&gt;<span class="operator">.</span><span class="error" title="CS0426"><span class="property">Count</span></span>);
-</pre>
+// メンバー参照はあり得ない。
+var m1 = typeof(List<>.Count);
+```
 
 一応、「理由なく掛かっていた制限を取り払った」以上の意味もありまして、
 これまでは「型制約の関係でどうやっても `nameof` を使いにくい」という場面がありえました。
 一例として、以下のような場面があり得ます。
 
-<pre class="source" title="型制約のせいで nameof が使いにくくなる例">
-<span class="reserved">var</span> <span class="variable"><span class="warning" title="CS0219">name1</span></span> <span class="operator">=</span> <span class="reserved">nameof</span>(<span class="type">A</span>&lt;<span class="type">_</span>&gt;); <span class="comment">// これは書けるけど、</span>
-<span class="reserved">var</span> <span class="variable"><span class="warning" title="CS0219">name2</span></span> <span class="operator">=</span> <span class="reserved">nameof</span>(<span class="type">B</span>&lt;<span class="error" title="CS0453"><span class="type">_</span></span>&gt;); <span class="comment">// これは書けない。</span>
+```csharp
+var name1 = nameof(A<_>); // これは書けるけど、
+var name2 = nameof(B<_>); // これは書けない。
 
 
-<span class="comment">// 「無意味な nameof 型引数のためのダミーはこの型を使う」みたいな規約でやってたとして…</span>
-<span class="comment">// 型制約によっては規約を守れない。</span>
-<span class="reserved">class</span> <span class="type">_</span>;
+// 「無意味な nameof 型引数のためのダミーはこの型を使う」みたいな規約でやってたとして…
+// 型制約によっては規約を守れない。
+class _;
 
-<span class="reserved">class</span> <span class="type">A</span>&lt;<span class="type param">T</span>&gt; <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">class</span>;
-<span class="reserved">class</span> <span class="type">B</span>&lt;<span class="type param">T</span>&gt; <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">struct</span>;
-</pre>
+class A<T> where T : class;
+class B<T> where T : struct;
+```
 
 この例はまだ「規約が守れない」程度の話ですが、
 型制約が複雑になるにつれ、「そもそも `nameof` が使えない」みたいなことも起こりえるそうです。

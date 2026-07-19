@@ -25,34 +25,38 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;Pi&gt;&lt;sub&gt;Πの下にくる式&lt;/sub&gt;&lt;sup&gt;Πの上にくる式&lt;/sup&gt;&lt;/Pi&gt;
-</pre>
+```xml
+<Pi><sub>Πの下にくる式</sub><sup>Πの上にくる式</sup></Pi>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>n&lt;factorial/&gt; = &lt;Pi&gt;&lt;sub&gt;k=0&lt;/sub&gt;&lt;sup&gt;n&lt;/sup&gt;&lt;/Pi&gt;k
-</pre><div class="math">n<span class="normal">!</span> = <table class="sigma" summary="product"><tr><td class="sigmasub">n</td></tr><tr><td class="sigma">∏</td></tr><tr><td class="sigmasub">k=0</td></tr></table>k
+```xml
+n<factorial/> = <Pi><sub>k=0</sub><sup>n</sup></Pi>k
+```
+<div class="math">n<span class="normal">!</span> = <table class="sigma" summary="product"><tr><td class="sigmasub">n</td></tr><tr><td class="sigma">∏</td></tr><tr><td class="sigmasub">k=0</td></tr></table>k
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:Pi"&gt;
-  &lt;table class="sigma" summary="product"&gt;
-    &lt;tr&gt;&lt;td class="sigmasub"&gt;&lt;xsl:apply-templates select="ufcpp:sup"/&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td class="sigma"&gt;&amp;#8719;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td class="sigmasub"&gt;&lt;xsl:apply-templates select="ufcpp:sub"/&gt;&lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:Pi">
+  <table class="sigma" summary="product">
+    <tr><td class="sigmasub"><xsl:apply-templates select="ufcpp:sup"/></td></tr>
+    <tr><td class="sigma">&#8719;</td></tr>
+    <tr><td class="sigmasub"><xsl:apply-templates select="ufcpp:sub"/></td></tr>
+  </table>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:Sigma/ufcpp:sup|ufcpp:Pi/ufcpp:sup|ufcpp:Sigma/ufcpp:sub|ufcpp:Pi/ufcpp:sub"&gt;
-  &lt;xsl:apply-templates/&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:Sigma/ufcpp:sup|ufcpp:Pi/ufcpp:sup|ufcpp:Sigma/ufcpp:sub|ufcpp:Pi/ufcpp:sub">
+  <xsl:apply-templates/>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>table.sigma
+```css
+table.sigma
 {
   display:inline;
   text-align:center;
@@ -70,5 +74,4 @@ td.sigmasub
 {
   font-size:70%;
 }
-
-</pre>
+```

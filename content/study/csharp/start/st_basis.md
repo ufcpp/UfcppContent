@@ -42,60 +42,60 @@ aliases:
 </ul>
 <div>
 
-<pre class="source" title="最も簡単なC#プログラム" lang="C#">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-<em>    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="comment">// 初めてC#を学ぶ方々にご挨拶</span>
-        <span class="type">Console</span>.WriteLine(<span class="literal">"皆様、はじめまして"</span>);
-    }</em>
+        // 初めてC#を学ぶ方々にご挨拶
+        Console.WriteLine("皆様、はじめまして");
+    }
 }
-</code></pre>
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Module</span> <span class="type">Program</span>
+```vbnet
+Module Program
  
-    <span class="reserved">Sub</span> Main()
-        <span class="comment">' 初めてVisual Basicを学ぶ方々にご挨拶</span>
-        <span class="type">Console</span>.WriteLine((<span class="literal">"皆様、はじめまして"</span>)
-    <span class="reserved">End</span> <span class="reserved">Sub</span>
+    Sub Main()
+        ' 初めてVisual Basicを学ぶ方々にご挨拶
+        Console.WriteLine(("皆様、はじめまして")
+    End Sub
  
-<span class="reserved">End</span> <span class="reserved">Module</span>
-</code></pre>
+End Module
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="F#">
-<code><span class="comment">// 初めてF#を学ぶ方々にご挨拶</span>
-<span class="reserved">open</span> System
-Console.Write <span class="literal">"皆様、はじめまして"</span>
-</code></pre>
+```fsharp
+// 初めてF#を学ぶ方々にご挨拶
+open System
+Console.Write "皆様、はじめまして"
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="C++">
-<code><span class="reserved">#include</span> <span class="literal">"stdafx.h"</span>
+```cpp
+#include "stdafx.h"
  
-<span class="reserved">using</span> <span class="reserved">namespace</span> System;
+using namespace System;
  
-<span class="reserved">int</span> main(<span class="reserved">array</span>&lt;System::String ^&gt; ^args)
+int main(array<System::String ^> ^args)
 {
-  <span class="comment">// 初めてC++/CLIを学ぶ方々にご挨拶</span>
-    Console::WriteLine(L<span class="literal">"皆様、はじめまして"</span>);
-    <span class="reserved">return</span> 0;
+  // 初めてC++/CLIを学ぶ方々にご挨拶
+    Console::WriteLine(L"皆様、はじめまして");
+    return 0;
 }
-</code></pre>
+```
 
 
 </div>
@@ -129,11 +129,11 @@ Console.Write <span class="literal">"皆様、はじめまして"</span>
 
 C# 9.0 からは、上記のコードを以下のように書くことができます。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="comment">// 初めてC#を学ぶ方々にご挨拶</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;皆様、はじめまして&quot;</span>);
-</code></pre>
+```csharp
+using System;
+// 初めてC#を学ぶ方々にご挨拶
+Console.WriteLine("皆様、はじめまして");
+```
 
 `namespace` とか `class` とかを飛ばして、書きたい処理を直接ファイル直下に書くことができるようになりました。
 詳しくは「[トップ レベル ステートメント](../misc/miscentrypoint.md#top-level-statements)」で説明します。
@@ -144,10 +144,10 @@ C# 9.0 からは、上記のコードを以下のように書くことができ�
 
 C# 10.0 からは、さらに、以下のように縮めて書くことができます。
 
-<pre class="source" title="">
-<code><span class="comment">// 初めてC#を学ぶ方々にご挨拶</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;皆様、はじめまして&quot;</span>);
-</code></pre>
+```csharp
+// 初めてC#を学ぶ方々にご挨拶
+Console.WriteLine("皆様、はじめまして");
+```
 
 `using` も消えました。
 詳しくは「[global using](../structured/sp_namespace.md#global-using)」で説明します。
@@ -171,82 +171,82 @@ GUI プログラムは文字ベース(CUI: Character User Interfaceという)の
 </ul>
 <div>
 
-<pre class="source" title="GUI プログラム例（WPF）" lang="C#">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Windows;
-<span class="reserved">using</span> System.Windows.Controls;
+```csharp
+using System;
+using System.Windows;
+using System.Windows.Controls;
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    [<span class="type">STAThread</span>]
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    [STAThread]
+    static void Main()
     {
-        <span class="reserved">var</span> button = <span class="reserved">new</span> <span class="type">Button</span> { Content = <span class="literal">"ここを押せ"</span> };
-        button.Click += (sender, e) =&gt; <span class="type">MessageBox</span>.Show(<span class="literal">"ようこそ"</span>);
+        var button = new Button { Content = "ここを押せ" };
+        button.Click += (sender, e) => MessageBox.Show("ようこそ");
 
-        <span class="reserved">var</span> win = <span class="reserved">new</span> <span class="type">Window</span>
+        var win = new Window
         {
-            Title = <span class="literal">"サンプルプログラム"</span>,
+            Title = "サンプルプログラム",
             Width = 300,
             Height = 200,
             Content = button,
         };
 
-        <span class="reserved">var</span> app = <span class="reserved">new</span> <span class="type">Application</span>();
+        var app = new Application();
         app.Run(win);
     }
 }
-</code></pre>
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Module</span> <span class="type">VBSample</span>
+```vbnet
+Module VBSample
 
-    <span class="reserved">Sub</span> Main()
-        <span class="reserved">Dim</span> button = <span class="reserved">New</span> <span class="type">Button</span> <span class="reserved">With</span> {.Content = <span class="literal">"ここを押せ"</span>}
-        <span class="reserved">AddHandler</span> <span class="type">button</span>.Click, <span class="reserved">Function</span>(sender, args) {<span class="type">MessageBox</span>.Show(<span class="literal">"ようこそ"</span>)}
+    Sub Main()
+        Dim button = New Button With {.Content = "ここを押せ"}
+        AddHandler button.Click, Function(sender, args) {MessageBox.Show("ようこそ")}
 
-        <span class="reserved">Dim</span> win = <span class="reserved">New</span> <span class="type">Window</span> <span class="reserved">With</span>
+        Dim win = New Window With
                   {
-                      .Title = <span class="literal">"サンプルプログラム"</span>,
+                      .Title = "サンプルプログラム",
                       .Width = 300,
                       .Height = 200,
                       .Content = button
                   }
 
-        <span class="reserved">Dim</span> app = <span class="reserved">New</span> <span class="type">Application</span>()
-        <span class="type">app</span>.Run(win)
-    <span class="reserved">End</span> <span class="reserved">Sub</span>
+        Dim app = New Application()
+        app.Run(win)
+    End Sub
 
-<span class="reserved">End</span> <span class="reserved">Module</span>
-</code></pre>
+End Module
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="F#">
-<code><span class="reserved">open</span> System
-<span class="reserved">open</span> System.Windows
-<span class="reserved">open</span> System.Windows.Controls
+```fsharp
+open System
+open System.Windows
+open System.Windows.Controls
  
-<span class="reserved">let</span> button = <span class="reserved">new</span> Button(Content = <span class="literal">"ここを押せ"</span>)
-button.Click.Add(<span class="reserved">fun</span> x <span class="reserved">-&gt;</span> MessageBox.Show(<span class="literal">"ようこそ"</span>) |&gt; ignore)
+let button = new Button(Content = "ここを押せ")
+button.Click.Add(fun x -> MessageBox.Show("ようこそ") |> ignore)
 
-<span class="reserved">let</span> win = <span class="reserved">new</span> Window(
-                     Title = <span class="literal">"サンプルプログラム"</span>,
+let win = new Window(
+                     Title = "サンプルプログラム",
                      Width = 300.0,
                      Height = 200.0,
                      Content = button)
 
-[&lt;STAThread&gt;]
-<span class="reserved">do</span>
-    <span class="reserved">let</span> app = <span class="reserved">new</span> Application()
-    app.Run(win) |&gt; ignore
-</code></pre>
+[<STAThread>]
+do
+    let app = new Application()
+    app.Run(win) |> ignore
+```
 
 
 </div>
@@ -266,48 +266,48 @@ button.Click.Add(<span class="reserved">fun</span> x <span class="reserved">-&gt
 詳しくは、「[GUI アプリケーション](../lib/lib_forms.md)」で説明します。
 
       
-<pre class="source" title="C#によるGUIプログラムの例" lang="">
-<code><span class="reserved">namespace</span> CsharpSample
+```csharp
+namespace CsharpSample
 {
-  <span class="reserved">using</span> System;
-  <span class="reserved">using</span> System.Windows.Forms;
-  <span class="reserved">using</span> System.Drawing;
+  using System;
+  using System.Windows.Forms;
+  using System.Drawing;
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ボタンが1つ付いたウィンドウを作成し、
   /// ボタンを押したときに「ようこそ。」と書かれたメッセージボックスを表示
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">class</span> WelcomeForm : Form
+  /// </summary>
+  class WelcomeForm : Form
   {
     Button button;
 
     WelcomeForm()
     {
-      <span class="comment">// ウィンドウ内にボタンをひとつ作成</span>
-      <span class="reserved">this</span>.Text       = <span class="literal">"サンプルプログラム"</span>;
-      <span class="reserved">this</span>.ClientSize = <span class="reserved">new</span> Size(256, 64);
+      // ウィンドウ内にボタンをひとつ作成
+      this.Text       = "サンプルプログラム";
+      this.ClientSize = new Size(256, 64);
 
-      <span class="reserved">this</span>.button = <span class="reserved">new</span> Button();
-      <span class="reserved">this</span>.button.Location = <span class="reserved">new</span> Point(80, 16);
-      <span class="reserved">this</span>.button.Size     = <span class="reserved">new</span> Size(96, 32);
-      <span class="reserved">this</span>.button.Text     = <span class="literal">"ここを押せ"</span>;
-      <span class="reserved">this</span>.button.Click   += <span class="reserved">new</span> EventHandler(button_Click);
-      <span class="reserved">this</span>.Controls.Add(<span class="reserved">this</span>.button);
+      this.button = new Button();
+      this.button.Location = new Point(80, 16);
+      this.button.Size     = new Size(96, 32);
+      this.button.Text     = "ここを押せ";
+      this.button.Click   += new EventHandler(button_Click);
+      this.Controls.Add(this.button);
     }
 
-    <span class="comment">// ボタンが押されたときの処理</span>
-    <span class="reserved">private void</span> button_Click(object sender, System.EventArgs e)
+    // ボタンが押されたときの処理
+    private void button_Click(object sender, System.EventArgs e)
     {
-      MessageBox.Show(<span class="literal">"ようこそ。"</span>);
+      MessageBox.Show("ようこそ。");
     }
 
-    <span class="reserved">static void</span> Main() 
+    static void Main() 
     {
-      Application.Run(<span class="reserved">new</span> WelcomeForm());
+      Application.Run(new WelcomeForm());
     }
   }
 }
-</code></pre>
+```
 
 
       
@@ -329,9 +329,9 @@ Visual Studio でこのソースをコンパイルする場合、
 （ソースファイルの名前を WelcomeForm.cs とすると）以下のようなコマンドでコンパイルします。
 
       
-<pre class="console" title="コマンドラインで csc を使ってコンパイルする場合">
+```console
 csc /r:system.windows.forms.dll /r:system.drawing.dll /t:winexe WelcomeForm.cs
-</pre>
+```
    
 </div>
 
@@ -341,18 +341,18 @@ csc /r:system.windows.forms.dll /r:system.drawing.dll /t:winexe WelcomeForm.cs
 
 C# 10.0/ .NET 6 世代では、Webアプリ開発を以下のような十数行のコードから始められるようになりました。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> builder = <span class="type">WebApplication</span>.<span class="method">CreateBuilder</span>(<span class="variable">args</span>);
-<span class="reserved">var</span> app = builder.<span class="method">Build</span>();
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
 
-<span class="control">if</span> (app.Environment.<span class="method">IsDevelopment</span>())
+if (app.Environment.IsDevelopment())
 {
-    app.<span class="method">UseDeveloperExceptionPage</span>();
+    app.UseDeveloperExceptionPage();
 }
 
-app.<span class="method">MapGet</span>(<span class="string">"/"</span>, () =&gt; <span class="string">"Hello World!"</span>);
+app.MapGet("/", () => "Hello World!");
 
-app.<span class="method">Run</span>();
-</code></pre>
+app.Run();
+```
 
 ![.NET 6 からの「最小限の Web アプリ」テンプレートの実行結果の例](../../../../assets/media/1190/dotnet6webapp.png)

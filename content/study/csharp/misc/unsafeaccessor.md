@@ -22,27 +22,27 @@ aliases:
 「全くできないと困るので口だけは用意した」系の機能になります。
 例えば、フィールド1個にアクセスするだけでも以下のような書き方になります。
 
-<pre class="source" title="UnsafeAccessor の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span>();
+A a = new();
 
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="static"><span class="method">RefValue</span></span>(<span class="variable">a</span>) <span class="operator">=</span> <span class="number">1</span>; <span class="comment">// private であることを無視して a._value = 1; 相当の処理を実行。</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(1)</span>
+X.RefValue(a) = 1; // private であることを無視して a._value = 1; 相当の処理を実行。
+Console.WriteLine(a); // A(1)
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="comment">// A._value にアクセスするためのメソッド。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;_value&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="static"><span class="method">RefValue</span></span>(<span class="type">A</span> <span class="variable local">@this</span>);
+    // A._value にアクセスするためのメソッド。
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_value")]
+    public static extern ref int RefValue(A @this);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="field">_value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int _value;
+    public override string ToString() => $"A({_value})";
 }
-</pre>
+```
 
 `UnsafeAccessor` 属性(`System.Runtime.CompilerServices`)を付けた extern メソッドを書くと、.NET Runtime が静的に(JIT 時に) `_value` フィールド直参照と同等のコードを生成します。
 
@@ -52,27 +52,27 @@ aliases:
 たとえ型情報が静的に既知であってもリフレクションを使っていました。
 例えば冒頭の例同様に `a._value = 1;` するためだけに、以下のようなコードが必要になっていました。
 
-<pre class="source" title="リフレクションで private フィールドにアクセスする例">
-<span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span>();
+```csharp
+A a = new();
 
-<span class="comment">// a._value = 1; 相当のコードをリフレクションでやるとこうなる。</span>
-<span class="reserved">typeof</span>(<span class="type">A</span>)
-    <span class="operator">.</span><span class="method">GetField</span>(<span class="string">&quot;_value&quot;</span>, System<span class="operator">.</span>Reflection<span class="operator">.</span><span class="type">BindingFlags</span><span class="operator">.</span>NonPublic <span class="operator">|</span> System<span class="operator">.</span>Reflection<span class="operator">.</span><span class="type">BindingFlags</span><span class="operator">.</span>Instance)<span class="operator">!</span>
-    <span class="operator">.</span><span class="method">SetValue</span>(<span class="variable">a</span>, <span class="number">1</span>);
+// a._value = 1; 相当のコードをリフレクションでやるとこうなる。
+typeof(A)
+    .GetField("_value", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+    .SetValue(a, 1);
 
-<span class="comment">// Type 型インスタンスが作られて、</span>
-<span class="comment">// FieldInfo 型インスタンスが作られて、</span>
-<span class="comment">// 動的な処理で a._value = 1; 相当のコードを実行。</span>
-<span class="comment">// しかも、int 型の 1 は object にボックス化されるコストもかかる。</span>
+// Type 型インスタンスが作られて、
+// FieldInfo 型インスタンスが作られて、
+// 動的な処理で a._value = 1; 相当のコードを実行。
+// しかも、int 型の 1 は object にボックス化されるコストもかかる。
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(1)</span>
+Console.WriteLine(a); // A(1)
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="field">_value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int _value;
+    public override string ToString() => $"A({_value})";
 }
-</pre>
+```
 
 コード中のコメントに書きましたが、この処理には様々なオーバーヘッドがかかります。
 本当に動的な処理がしたい(本当に実行時まで型に関する情報を知らない)なら必要なコストですが、
@@ -135,44 +135,44 @@ Source Generator は使う側にはなる一方で、作る側になることは
 例えば以下のようなライブラリ コードがあったとして、
 「`Dispose` 後は中身が null になっていてほしい」というテストを書くみたいな用途が考えられます。
 
-<pre class="source" title="">
-<span class="reserved">namespace</span> Lib;
+```csharp
+namespace Lib;
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Class1</span>(<span class="reserved">object</span><span class="operator">?</span> <span class="variable local">resource</span>) : <span class="type">IDisposable</span>
+public class Class1(object? resource) : IDisposable
 {
-    <span class="reserved">private</span> <span class="reserved">object</span><span class="operator">?</span> <span class="field">_someResource</span> <span class="operator">=</span> <span class="variable local">resource</span>;
+    private object? _someResource = resource;
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>()
+    public void Dispose()
     {
-        <span class="field">_someResource</span> <span class="operator">=</span> <span class="reserved">null</span>;
+        _someResource = null;
     }
 }
-</pre>
+```
 
-<pre class="source" title="">
-<span class="reserved">using</span> Lib;
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using Lib;
+using System.Runtime.CompilerServices;
 
-<span class="reserved">namespace</span> TestProject1;
+namespace TestProject1;
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">UnitTest1</span>
+public class UnitTest1
 {
-    [<span class="type">Fact</span>]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose後は中身がnull</span>()
+    [Fact]
+    public void Dispose後は中身がnull()
     {
-        <span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">Class1</span>(<span class="string">&quot;&quot;</span>);
+        var x = new Class1("");
 
-        <span class="reserved">using</span> (<span class="variable">x</span>)
+        using (x)
         {
         }
 
-        <span class="type">Assert</span><span class="operator">.</span>Null(<span class="static"><span class="method">GetSomeResourceRef</span></span>(<span class="variable">x</span>));
+        Assert.Null(GetSomeResourceRef(x));
     }
 
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;_someResource&quot;</span>)]
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">object</span><span class="operator">?</span> <span class="static"><span class="method">GetSomeResourceRef</span></span>(<span class="type">Class1</span> <span class="variable local">class1</span>);
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_someResource")]
+    private static extern ref object? GetSomeResourceRef(Class1 class1);
 }
-</pre>
+```
 
 こういう単体テストがいいのかどうかという話はありますが…
 (仕様に応じて「`Dispose` 後に何らかの操作をしても何も起きない」とか「`ObjectDisposedException` が出る」とか、別の形でのテストが望ましい可能性あり。)
@@ -205,32 +205,32 @@ Source Generator は使う側にはなる一方で、作る側になることは
 
 コンストラクターへのアクセスは以下のように書きます。
 
-<pre class="source" title="コンストラクターに対する UnsafeAccessor の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="static"><span class="method">CreateA</span></span>());
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="static"><span class="method">CreateA</span></span>(<span class="number">1</span>));
+Console.WriteLine(X.CreateA());
+Console.WriteLine(X.CreateA(1));
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="comment">// new A() 相当。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Constructor)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="type">A</span> <span class="static"><span class="method">CreateA</span></span>();
+    // new A() 相当。
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    public static extern A CreateA();
 
-    <span class="comment">// new A(value) 相当。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Constructor)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="type">A</span> <span class="method"><span class="static">CreateA</span></span>(<span class="reserved">int</span> <span class="variable local">value</span>);
+    // new A(value) 相当。
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    public static extern A CreateA(int value);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">private</span> <span class="type">A</span>() { }
-    <span class="reserved">private</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="property">Value</span> <span class="operator">=</span> <span class="variable local">value</span>;
+    private A() { }
+    private A(int value) => Value = value;
 
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="property">Value</span> { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="property">Value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int Value { get; }
+    public override string ToString() => $"A({Value})";
 }
-</pre>
+```
 
 「何の型のコンストラクターを呼ぶか」は戻り値の型を見ます。
 メソッドの引数の型はアクセス先のコンストラクターの引数と一致させます。
@@ -238,65 +238,65 @@ Source Generator は使う側にはなる一方で、作る側になることは
 
 この機能は構造体に対しても使えます。
 
-<pre class="source" title="構造体に対しても利用可能">
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">X</span></span>
+```csharp
+static class X
 {
-    <span class="comment">// 構造体に対しても使えて、書き方はクラスの場合と同じ。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Constructor)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="type struct">A</span> <span class="static"><span class="method">CreateA</span></span>(<span class="reserved">int</span> <span class="variable local">value</span>);
+    // 構造体に対しても使えて、書き方はクラスの場合と同じ。
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    public static extern A CreateA(int value);
 }
 
-<span class="reserved">struct</span> <span class="type struct">A</span>
+struct A
 {
-    <span class="reserved">private</span> <span class="type struct">A</span>(<span class="reserved">int</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="property">Value</span> <span class="operator">=</span> <span class="variable local">value</span>;
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="property">Value</span> { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="property">Value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private A(int value) => Value = value;
+    private int Value { get; }
+    public override string ToString() => $"A({Value})";
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="method">インスタンス メソッド</a>
 
 インスタンス メソッドへのアクセスは以下のように、
 「先頭に1つ引数を足す」書き方をします。
 
-<pre class="source" title="インスタンス メソッドに対する UnsafeAccessor の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
-<span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="method"><span class="static">Add</span></span>(<span class="variable">a</span>, <span class="number">1</span>);
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(1)</span>
+var a = new A();
+X.Add(a, 1);
+Console.WriteLine(a); // A(1)
 
-<span class="reserved">var</span> <span class="variable">b</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">B</span>();
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="method"><span class="static">Add</span></span>(<span class="reserved">ref</span> <span class="variable">b</span>, <span class="number">1</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">b</span>); <span class="comment">// B(1)</span>
+var b = new B();
+X.Add(ref b, 1);
+Console.WriteLine(b); // B(1)
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="comment">// 第1引数をアクセス先の型にする。</span>
-    <span class="comment">// (拡張メソッドと同じ感覚。)</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="method"><span class="static">Add</span></span>(<span class="type">A</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">value</span>);
+    // 第1引数をアクセス先の型にする。
+    // (拡張メソッドと同じ感覚。)
+    [UnsafeAccessor(UnsafeAccessorKind.Method)]
+    public static extern void Add(A a, int value);
 
-    <span class="comment">// 構造体のインスタンス メソッドを呼びたい場合は ref 引数にする。</span>
-    <span class="comment">// このメソッドの名前とアクセス先のメソッドの名前が違う場合は、Name で明示的に指定する。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;PrivateAdd&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="method"><span class="static">Add</span></span>(<span class="reserved">ref</span> <span class="type struct">B</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">value</span>);
+    // 構造体のインスタンス メソッドを呼びたい場合は ref 引数にする。
+    // このメソッドの名前とアクセス先のメソッドの名前が違う場合は、Name で明示的に指定する。
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "PrivateAdd")]
+    public static extern void Add(ref B a, int value);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span>;
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="field">_value</span> <span class="operator">+=</span> <span class="variable local">value</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="field">_value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int _value;
+    private void Add(int value) => _value += value;
+    public override string ToString() => $"A({_value})";
 }
 
-<span class="reserved">struct</span> <span class="type struct">B</span>
+struct B
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span>;
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">PrivateAdd</span>(<span class="reserved">int</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="field">_value</span> <span class="operator">+=</span> <span class="variable local">value</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">readonly</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">B(</span>{<span class="field">_value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int _value;
+    private void PrivateAdd(int value) => _value += value;
+    public override readonly string ToString() => $"B({_value})";
 }
-</pre>
+```
 
 2つ目以降の引数の型はアクセス先のメソッドの引数と一致させます。
 (コンストラクター同様、型のみの一致で OK。)
@@ -312,67 +312,67 @@ Source Generator は使う側にはなる一方で、作る側になることは
 インスタンス フィールドへのアクセスは以下のように、
 「`ref` 戻り値、引数なしのメソッド」で書きます。
 
-<pre class="source" title="">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
-<span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="static"><span class="method">Value</span></span>(<span class="variable">a</span>) <span class="operator">=</span> <span class="number">1</span>;
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(1)</span>
+var a = new A();
+X.Value(a) = 1;
+Console.WriteLine(a); // A(1)
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">X</span></span>
+static class X
 {
-    <span class="comment">// 引数なし、ref 戻り値なメソッドでアクセス。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;_value&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method"><span class="static">Value</span></span>(<span class="type">A</span> <span class="variable local">a</span>);
+    // 引数なし、ref 戻り値なメソッドでアクセス。
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_value")]
+    public static extern ref int Value(A a);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="field">_value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int _value;
+    public override string ToString() => $"A({_value})";
 }
-</pre>
+```
 
 フィールドとメソッドでは命名規約が違う(`_value` と `Value` になる)ので、
 自然な書き方をしようとすると `Name` の明示が必要になるかと思いますが、
 メソッド名が変でもいいなら以下のように `Name` の省略もできます。
 
-<pre class="source" title="メソッド名をフィールドに一致させると Name 省略可能">
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">X</span></span>
+```csharp
+static class X
 {
-    <span class="comment">// あまりメソッドに _ 始まりの名前を付けないものの、気にしないのであればこれでも OK。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method"><span class="static">_value</span></span>(<span class="type">A</span> <span class="variable local">a</span>);
+    // あまりメソッドに _ 始まりの名前を付けないものの、気にしないのであればこれでも OK。
+    [UnsafeAccessor(UnsafeAccessorKind.Field)]
+    public static extern ref int _value(A a);
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="static">静的メソッド、静的フィールド</a>
 
 静的メソッド、静的フィールドへのアクセスには `UnsafeAccessorKind` の `StaticMethod` と `StaticField` を使います。
 インスタンス メソッド、インスタン フィールドの時と同様、引数の先頭にアクセス先の型を足します(静的メンバーなのでこの第1引数は使われず、ダミー引数になります)。
 
-<pre class="source" title="静的メンバーに対する UnsafeAccessor の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="static"><span class="method">Value</span></span>(<span class="reserved">null</span>) <span class="operator">=</span> <span class="number">2</span>;
+X.Value(null) = 2;
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="reserved">null</span>, <span class="number">3</span>));
+Console.WriteLine(X.M(null, 3));
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>StaticField, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;_value&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="static"><span class="method">Value</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">_</span>);
+    [UnsafeAccessor(UnsafeAccessorKind.StaticField, Name = "_value")]
+    public static extern ref int Value(A? _);
 
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>StaticMethod)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">int</span> <span class="static"><span class="method">M</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">_</span>, <span class="reserved">int</span> <span class="variable local">x</span>);
+    [UnsafeAccessor(UnsafeAccessorKind.StaticMethod)]
+    public static extern int M(A? _, int x);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="field">_value</span></span>;
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="static"><span class="field">_value</span></span>;
+    private static int _value;
+    private static int M(int x) => x * _value;
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="property">プロパティ</a>
 
@@ -385,32 +385,32 @@ C# のプロパティは内部的にはメソッドになっているので、
 `T get_P()`、 `void set_P(T value)` というメソッドが対応します。
 (元のプロパティ名 + `get_`/`set_` 接頭辞。)
 
-<pre class="source" title="プロパティへの UnsafeAccessor は get_ / set_ メソッドで代用">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="static"><span class="method">SetValue</span></span>(<span class="variable">a</span>, <span class="number">1</span>);
+var a = new A();
+X.SetValue(a, 1);
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(1)</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="method"><span class="static">GetValue</span></span>(<span class="variable">a</span>)); <span class="comment">// 1</span>
+Console.WriteLine(a); // A(1)
+Console.WriteLine(X.GetValue(a)); // 1
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="comment">// Value プロパティの get アクセサーは get_Value。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;get_Value&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">int</span> <span class="static"><span class="method">GetValue</span></span>(<span class="type">A</span> <span class="variable local">a</span>);
+    // Value プロパティの get アクセサーは get_Value。
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "get_Value")]
+    public static extern int GetValue(A a);
 
-    <span class="comment">// Value プロパティの set アクセサーは set_Value。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;set_Value&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="method"><span class="static">SetValue</span></span>(<span class="type">A</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">value</span>);
+    // Value プロパティの set アクセサーは set_Value。
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "set_Value")]
+    public static extern void SetValue(A a, int value);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="property">Value</span>{ <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="property">Value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int Value{ get; set; }
+    public override string ToString() => $"A({Value})";
 }
-</pre>
+```
 
 ちなみにこの[「プロパティ名 + `get_`/`set_` 接頭辞」ルールは C# の言語仕様で決まっています](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153102-member-names-reserved-for-properties)。
 少なくとも C# コンパイラーで作ったプロパティの場合は必ずこのルールに基づくメソッド名になっています。
@@ -421,35 +421,35 @@ C# のプロパティは内部的にはメソッドになっているので、
 [プロパティ](#property)同様です。
 [C# の仕様](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153104-member-names-reserved-for-indexers)上、インデクサーからは `get_Item` / `set_Item` というメソッドが作られているはずなので、これを経由してアクセスします。
 
-<pre class="source" title="インデクサーへの UnsafeAccessor は get_Item / set_Item メソッドで代用">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>(<span class="number">2</span>);
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="method"><span class="static">SetValue</span></span>(<span class="variable">a</span>, <span class="number">0</span>, <span class="number">1</span>);
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="method"><span class="static">SetValue</span></span>(<span class="variable">a</span>, <span class="number">1</span>, <span class="operator">-</span><span class="number">1</span>);
+var a = new A(2);
+X.SetValue(a, 0, 1);
+X.SetValue(a, 1, -1);
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A([1, -1])</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="method"><span class="static">GetValue</span></span>(<span class="variable">a</span>, <span class="number">0</span>)); <span class="comment">// 1</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="method"><span class="static">GetValue</span></span>(<span class="variable">a</span>, <span class="number">1</span>)); <span class="comment">// -1</span>
+Console.WriteLine(a); // A([1, -1])
+Console.WriteLine(X.GetValue(a, 0)); // 1
+Console.WriteLine(X.GetValue(a, 1)); // -1
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">X</span></span>
+static class X
 {
-    <span class="comment">// インデクサーの get アクセサーは get_Item。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;get_Item&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">int</span> <span class="static"><span class="method">GetValue</span></span>(<span class="type">A</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">i</span>);
+    // インデクサーの get アクセサーは get_Item。
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "get_Item")]
+    public static extern int GetValue(A a, int i);
 
-    <span class="comment">// インデクサーの set アクセサーは set_Item。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;set_Item&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="method"><span class="static">SetValue</span></span>(<span class="type">A</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">i</span>, <span class="reserved">int</span> <span class="variable local">value</span>);
+    // インデクサーの set アクセサーは set_Item。
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "set_Item")]
+    public static extern void SetValue(A a, int i, int value);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">length</span>)
+class A(int length)
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span>[] <span class="field">_items</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="reserved">int</span>[<span class="variable local">length</span>];
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">i</span>]{ <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_items</span>[<span class="variable local">i</span>]; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">_items</span>[<span class="variable local">i</span>] <span class="operator">=</span> <span class="reserved">value</span>; }
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A([</span>{<span class="reserved">string</span><span class="operator">.</span><span class="method"><span class="static">Join</span></span>(<span class="string">&quot;, &quot;</span>, <span class="field">_items</span>)}<span class="string">])</span><span class="string">&quot;</span>;
+    private readonly int[] _items = new int[length];
+    private int this[int i]{ get => _items[i]; set => _items[i] = value; }
+    public override string ToString() => $"A([{string.Join(", ", _items)}])";
 }
-</pre>
+```
 
 (ちなみにこの `Item` の部分は `IndexerName` 属性を使って変更できたりします。
 実際、`string` 型のインデクサーは `Chars` という名前です。
@@ -465,42 +465,42 @@ C# のユーザー定義の演算子は public でないといけない仕様な
 `+` 演算子の場合は `op_Addition` など、演算子ごとに名前が決まっています。
 (参考: [演算子とメソッド名の対応関係](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#153106-method-names-reserved-for-operators))
 
-<pre class="source" title="演算子に対するアクセスは op_ から始まるメソッドで代用">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>(<span class="number">1</span>);
+var a = new A(1);
 
-<span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="method"><span class="static">Add</span></span>(<span class="variable">a</span>, <span class="number">1</span>); <span class="comment">// a += 1;</span>
+X.Add(a, 1); // a += 1;
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(2)</span>
+Console.WriteLine(a); // A(2)
 
-<span class="variable">a</span> <span class="operator">=</span> <span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="static"><span class="method">Add</span></span>(<span class="reserved">null</span>, <span class="variable">a</span>, <span class="number">1</span>); <span class="comment">// a = a + 1;</span>
+a = X.Add(null, a, 1); // a = a + 1;
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(3)</span>
+Console.WriteLine(a); // A(3)
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">X</span></span>
+static class X
 {
-    <span class="comment">// + は op_Addition。</span>
-    <span class="comment">// 静的メソッドなのでダミーの第1引数が必要。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>StaticMethod, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;op_Addition&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="type">A</span> <span class="static"><span class="method">Add</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">_</span>, <span class="type">A</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">x</span>);
+    // + は op_Addition。
+    // 静的メソッドなのでダミーの第1引数が必要。
+    [UnsafeAccessor(UnsafeAccessorKind.StaticMethod, Name = "op_Addition")]
+    public static extern A Add(A? _, A a, int x);
 
-    <span class="comment">// += は op_AdditionAssignment。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;op_AdditionAssignment&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="static"><span class="method">Add</span></span>(<span class="type">A</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">x</span>);
+    // += は op_AdditionAssignment。
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "op_AdditionAssignment")]
+    public static extern void Add(A a, int x);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">value</span>)
+class A(int value)
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span> <span class="operator">=</span> <span class="variable local">value</span>;
+    private int _value = value;
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">A</span> <span class="reserved">operator</span> <span class="operator">+</span>(<span class="type">A</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="reserved">new</span>(<span class="variable local">a</span><span class="operator">.</span><span class="field">_value</span> <span class="operator">+</span> <span class="variable local">x</span>);
+    public static A operator +(A a, int x) => new(a._value + x);
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="reserved">operator</span> <span class="operator">+=</span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="field">_value</span> <span class="operator">+=</span> <span class="variable local">x</span>;
+    public void operator +=(int x) => _value += x;
 
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="field">_value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    public override string ToString() => $"A({_value})";
 }
-</pre>
+```
 
 
 ### <a id="sec-generated-title-13"></a> <a id="extension">拡張メンバーを UnsafeAccessor にする</a>
@@ -508,110 +508,110 @@ C# のユーザー定義の演算子は public でないといけない仕様な
 UnsafeAccessor の「静的メソッドにして第1引数を足す」という仕様が拡張メソッドと相性がよく、
 拡張メソッドをそのまま UnsafeAccessor にすることができます。
 
-<pre class="source" title="拡張メソッドに UnsafeAccessor 属性をつけるだけ">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>(<span class="number">1</span>);
+var a = new A(1);
 
-<span class="comment">// 拡張メソッド X.Add(A, int) を通して private な A.Add(int) を呼ぶ。</span>
-<span class="variable">a</span><span class="operator">.</span><span class="method">Add</span>(<span class="number">1</span>);
+// 拡張メソッド X.Add(A, int) を通して private な A.Add(int) を呼ぶ。
+a.Add(1);
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(2)</span>
+Console.WriteLine(a); // A(2)
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="static"><span class="method">Add</span></span>(<span class="reserved">this</span> <span class="type">A</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">x</span>);
+    [UnsafeAccessor(UnsafeAccessorKind.Method)]
+    public static extern void Add(this A a, int x);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">value</span>)
+class A(int value)
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="property">Value</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; } <span class="operator">=</span> <span class="variable local">value</span>;
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="property">Value</span> <span class="operator">+=</span> <span class="variable local">x</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="property">Value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int Value { get; set; } = value;
+    private void Add(int x) => Value += x;
+    public override string ToString() => $"A({Value})";
 }
-</pre>
+```
 
 これは C# 14 で入る `extension` ブロック形式の拡張メンバーでもできて、
 以下のような書き方で UnsafeAccessor を書けたりします。
 
-<pre class="source" title="extension ブロックで UnsafeAccessor を作る例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>(<span class="number">1</span>);
+var a = new A(1);
 
-<span class="comment">// 拡張メソッド X.Add を経由して、private な A.Add を呼ぶ。</span>
-<span class="variable">a</span><span class="operator">.</span><span class="method">Add</span>(<span class="number">1</span>);
+// 拡張メソッド X.Add を経由して、private な A.Add を呼ぶ。
+a.Add(1);
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(2)</span>
+Console.WriteLine(a); // A(2)
 
-<span class="comment">// 拡張プロパティ X.Value を経由して、private な A.Value を取得・設定する。</span>
-<span class="variable">a</span><span class="operator">.</span><span class="property">Value</span> <span class="operator">=</span> <span class="number">3</span>;
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span><span class="operator">.</span><span class="property">Value</span>); <span class="comment">// 3</span>
+// 拡張プロパティ X.Value を経由して、private な A.Value を取得・設定する。
+a.Value = 3;
+Console.WriteLine(a.Value); // 3
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">X</span></span>
+static class X
 {
-    <span class="reserved">extension</span>(<span class="type">A</span> <span class="variable local">a</span>)
+    extension(A a)
     {
-        <span class="comment">// コンパイル結果は void Add(this A, int x) と一緒。</span>
-        <span class="comment">// そのまま UnsafeAccessor にできる。</span>
-        [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method)]
-        <span class="reserved">public</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">x</span>);
+        // コンパイル結果は void Add(this A, int x) と一緒。
+        // そのまま UnsafeAccessor にできる。
+        [UnsafeAccessor(UnsafeAccessorKind.Method)]
+        public extern void Add(int x);
 
-        <span class="comment">// 拡張プロパティも通常のプロパティと同じ get_ / set_ という名前でメソッドを作る仕様で、</span>
-        <span class="comment">// int get_Value(A) / void set_Value(A, int) というメソッドができてる。</span>
-        <span class="comment">// 属性も伝搬されてて、 A.Value の UnsafeAccessor にできる。</span>
-        <span class="reserved">public</span> <span class="reserved">extern</span> <span class="reserved">int</span> <span class="property">Value</span>
+        // 拡張プロパティも通常のプロパティと同じ get_ / set_ という名前でメソッドを作る仕様で、
+        // int get_Value(A) / void set_Value(A, int) というメソッドができてる。
+        // 属性も伝搬されてて、 A.Value の UnsafeAccessor にできる。
+        public extern int Value
         {
-            [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method)]
-            <span class="reserved">get</span>;
+            [UnsafeAccessor(UnsafeAccessorKind.Method)]
+            get;
 
-            [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method)]
-            <span class="reserved">set</span>;
+            [UnsafeAccessor(UnsafeAccessorKind.Method)]
+            set;
         }
     }
 }
 
-<span class="reserved">class</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">value</span>)
+class A(int value)
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="property">Value</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; } <span class="operator">=</span> <span class="variable local">value</span>;
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="property">Value</span> <span class="operator">+=</span> <span class="variable local">x</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="property">Value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int Value { get; set; } = value;
+    private void Add(int x) => Value += x;
+    public override string ToString() => $"A({Value})";
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-14"></a> <a id="generics">ジェネリックな型やメンバーへのアクセス</a>
 
 .NET 9 からはジェネリックな型に対して UnsafeAccessor を書けるようになりました。
 型引数は以下のように「型は型に、メソッドはメソッドに」というルールで書けば大丈夫です。
 
-<pre class="source" title="ジェネリックな UnsafeAccessor の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>&lt;<span class="reserved">int</span>&gt;(<span class="number">1</span>);
+var a = new A<int>(1);
 
-<span class="static"><span class="type">X</span></span>&lt;<span class="reserved">int</span>&gt;<span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="variable">a</span>); <span class="comment">// 1</span>
-<span class="type"><span class="static">X</span></span>&lt;<span class="reserved">int</span>&gt;<span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="variable">a</span>, <span class="string">&quot;abc&quot;</span>); <span class="comment">// 1 abc</span>
+X<int>.M(a); // 1
+X<int>.M(a, "abc"); // 1 abc
 
-<span class="comment">// 型の型引数は型に。</span>
-<span class="comment">// A&lt;T&gt; の T はここに書く。</span>
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">X</span></span>&lt;<span class="type param">T</span>&gt;
+// 型の型引数は型に。
+// A<T> の T はここに書く。
+static class X<T>
 {
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">A</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">a</span>);
+    [UnsafeAccessor(UnsafeAccessorKind.Method)]
+    public static extern void M(A<T> a);
 
-    <span class="comment">// メソッドの型引数はメソッドに。</span>
-    <span class="comment">// A&lt;T&gt;.M&lt;U&gt; の U はここに書く。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Method)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">U</span>&gt;(<span class="type">A</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">a</span>, <span class="type param">U</span> <span class="variable local">x</span>);
+    // メソッドの型引数はメソッドに。
+    // A<T>.M<U> の U はここに書く。
+    [UnsafeAccessor(UnsafeAccessorKind.Method)]
+    public static extern void M<U>(A<T> a, U x);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>&lt;<span class="type param">T</span>&gt;(<span class="type param">T</span> <span class="variable local">value</span>)
+class A<T>(T value)
 {
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">M</span>() <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">value</span>);
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">M</span>&lt;<span class="type param">U</span>&gt;(<span class="type param">U</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">$&quot;</span>{<span class="variable local">value</span>}<span class="string"> </span>{<span class="variable local">x</span>}<span class="string">&quot;</span>);
+    private void M() => Console.WriteLine(value);
+    private void M<U>(U x) => Console.WriteLine($"{value} {x}");
 }
-</pre>
+```
 
 型引数の付け方は制限がかかっていて、
 上記の例とは違う書き方、
@@ -627,37 +627,37 @@ UnsafeAccessor の「静的メソッドにして第1引数を足す」という�
 
 例えばまず、`ClassLibrary1` という名前のプロジェクトに以下のようなクラスを用意したとします。
 
-<pre class="source" title="ClassLibrary1 プロジェクト内に internal なクラスを用意">
-<span class="reserved">namespace</span> Lib;
+```csharp
+namespace Lib;
 
-<span class="comment">// ClassLibrary1 というプロジェクト内にあるものとする。</span>
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">A</span>
+// ClassLibrary1 というプロジェクト内にあるものとする。
+internal class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="field">_value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private int _value;
+    public override string ToString() => $"A({_value})";
 }
-</pre>
+```
 
 この型を別プロジェクトから参照するには以下のように書きます。
 
-<pre class="source" title="ClassLibaray1 内の Lib.A クラスにアクセスするための UnsafeAccessor の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="static"><span class="method">CreateA</span></span>(); <span class="comment">// var a = new A();</span>
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="static"><span class="method">_value</span></span>(<span class="variable">a</span>) <span class="operator">=</span> <span class="number">1</span>;   <span class="comment">// a._value = 1;</span>
+var a = X.CreateA(); // var a = new A();
+X._value(a) = 1;   // a._value = 1;
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>);
+Console.WriteLine(a);
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">X</span></span>
+static class X
 {
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Constructor)]
-    [<span class="reserved">return</span>: <span class="type">UnsafeAccessorType</span>(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">object</span> <span class="static"><span class="method">CreateA</span></span>();
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    [return: UnsafeAccessorType("Lib.A, ClassLibrary1")]
+    public static extern object CreateA();
 
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="static"><span class="method">_value</span></span>([<span class="type">UnsafeAccessorType</span>(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)] <span class="reserved">object</span> <span class="variable local">@this</span>);
+    [UnsafeAccessor(UnsafeAccessorKind.Field)]
+    public static extern ref int _value([UnsafeAccessorType("Lib.A, ClassLibrary1")] object @this);
 }
-</pre>
+```
 
 型名はフルネーム(`Lib.A`)で書き、
 `,` でつなげて アセンブリ名(通常、プロジェクト名がそのままアセンブリ名になります。今回は `ClassLibrary1`)を書きます。
@@ -665,77 +665,77 @@ UnsafeAccessor の「静的メソッドにして第1引数を足す」という�
 `UnsafeAccessorType` 属性は拡張メンバーでも使えます。
 (`object` 型インスタンスに対する拡張になってしまって誤用が怖いという問題はあり。)
 
-<pre class="source" title="">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="method"><span class="static">CreateA</span></span>(); <span class="comment">// var a = new A();</span>
+var a = X.CreateA(); // var a = new A();
 
-<span class="comment">// 拡張メソッド呼び。</span>
-<span class="variable">a</span><span class="operator">.</span><span class="method">_value</span>() <span class="operator">=</span> <span class="number">1</span>;   <span class="comment">// a._value = 1;</span>
+// 拡張メソッド呼び。
+a._value() = 1;   // a._value = 1;
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span>);
+Console.WriteLine(a);
 
-<span class="comment">// 拡張プロパティ呼び。</span>
-<span class="variable">a</span><span class="operator">.</span><span class="property">Value</span> <span class="operator">=</span> <span class="number">2</span>;   <span class="comment">// a._value = 2;</span>
+// 拡張プロパティ呼び。
+a.Value = 2;   // a._value = 2;
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span>);
+Console.WriteLine(a);
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Constructor)]
-    [<span class="reserved">return</span>: <span class="type">UnsafeAccessorType</span>(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">object</span> <span class="static"><span class="method">CreateA</span></span>();
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    [return: UnsafeAccessorType("Lib.A, ClassLibrary1")]
+    public static extern object CreateA();
 
-    <span class="comment">// 拡張メソッドでも使える。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method"><span class="static">_value</span></span>([<span class="type">UnsafeAccessorType</span>(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)] <span class="reserved">this</span> <span class="reserved">object</span> <span class="variable local">@this</span>);
+    // 拡張メソッドでも使える。
+    [UnsafeAccessor(UnsafeAccessorKind.Field)]
+    public static extern ref int _value([UnsafeAccessorType("Lib.A, ClassLibrary1")] this object @this);
 
-    <span class="comment">// extension ブロックでも使える。</span>
-    <span class="reserved">extension</span>([<span class="type">UnsafeAccessorType</span>(<span class="string">&quot;Lib.A, ClassLibrary1&quot;</span>)] <span class="reserved">object</span> <span class="variable local">@this</span>)
+    // extension ブロックでも使える。
+    extension([UnsafeAccessorType("Lib.A, ClassLibrary1")] object @this)
     {
-        <span class="reserved">public</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="property">Value</span>
+        public extern ref int Value
         {
-            [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;_value&quot;</span>)]
-            <span class="reserved">get</span>;
+            [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_value")]
+            get;
         }
     }
 }
-</pre>
+```
 
 [ジェネリックな型](#generics)の場合は `` `1 `` みたいな語尾をつける必要があります。
 例として `ClassLibrary1` 側のクラス `A` を以下のようにジェネリック クラスにしてみます。
 
-<pre class="source" title="internal なジェネリック クラスを用意">
-<span class="reserved">namespace</span> Lib;
+```csharp
+namespace Lib;
 
-<span class="comment">// ClassLibrary1 というプロジェクト内にあるものとする。</span>
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">A</span>&lt;<span class="type param">T</span>&gt;
+// ClassLibrary1 というプロジェクト内にあるものとする。
+internal class A<T>
 {
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field">_value</span>;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="field">_value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    private T _value;
+    public override string ToString() => $"A({_value})";
 }
-</pre>
+```
 
 これを参照するためには以下のような書き方になります。
 
-<pre class="source" title="ClassLibaray1 内の Lib.A&lt;T&gt; クラスにアクセスするための UnsafeAccessor の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="type"><span class="static">X</span></span>&lt;<span class="reserved">int</span>&gt;<span class="operator">.</span><span class="static"><span class="method">CreateA</span></span>(); <span class="comment">// var a = new A();</span>
-<span class="type"><span class="static">X</span></span>&lt;<span class="reserved">int</span>&gt;<span class="operator">.</span><span class="static"><span class="method">_value</span></span>(<span class="variable">a</span>) <span class="operator">=</span> <span class="number">1</span>;   <span class="comment">// a._value = 1;</span>
+var a = X<int>.CreateA(); // var a = new A();
+X<int>._value(a) = 1;   // a._value = 1;
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span>);
+Console.WriteLine(a);
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>&lt;<span class="type param">T</span>&gt;
+static class X<T>
 {
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Constructor)]
-    [<span class="reserved">return</span>: <span class="type">UnsafeAccessorType</span>(<span class="string">&quot;Lib.A`1, ClassLibrary1&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">object</span> <span class="static"><span class="method">CreateA</span></span>();
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    [return: UnsafeAccessorType("Lib.A`1, ClassLibrary1")]
+    public static extern object CreateA();
 
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="type param">T</span> <span class="method"><span class="static">_value</span></span>([<span class="type">UnsafeAccessorType</span>(<span class="string">&quot;Lib.A`1, ClassLibrary1&quot;</span>)] <span class="reserved">object</span> <span class="variable local">@this</span>);
+    [UnsafeAccessor(UnsafeAccessorKind.Field)]
+    public static extern ref T _value([UnsafeAccessorType("Lib.A`1, ClassLibrary1")] object @this);
 }
-</pre>
+```
 
 UnsafeAccessor 定義側のクラス(この例だと `X<T>`)の書き方は[前節](#generics)と同じです。
 一方、 `UnsafeAccessorType` 属性に渡す型名は、
@@ -758,47 +758,47 @@ UnsafeAccessor 定義側のクラス(この例だと `X<T>`)の書き方は[前�
 現在の Roslyn の場合、このフィールドの命名ルールは「プロパティ `P` に対して `<P>k__BackingField`」みたいになります。
 この挙動を使えばプロパティのバッキング フィールドを読み書きすることができます。
 
-<pre class="source" title="バッキング フィールドを UnsafeAccessor を使って読み書き">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="static"><span class="method">RefValue</span></span>(<span class="variable">a</span>) <span class="operator">=</span> <span class="number">1</span>;
+var a = new A();
+X.RefValue(a) = 1;
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(1)</span>
+Console.WriteLine(a); // A(1)
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="comment">// これで Value プロパティのバッキング フィールドを参照できる。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;&lt;Value&gt;k__BackingField&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method"><span class="static">RefValue</span></span>(<span class="type">A</span> <span class="variable local">a</span>);
+    // これで Value プロパティのバッキング フィールドを参照できる。
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<Value>k__BackingField")]
+    public static extern ref int RefValue(A a);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Value</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="property">Value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    public int Value { get; set; }
+    public override string ToString() => $"A({Value})";
 }
-</pre>
+```
 
 また、[プライマリ コンストラクター引数のキャプチャ](../oop/oo_construct.md#capture)で作られるフィールドは、引数 `x` に対して `<x>P` という名前になります。
 
-<pre class="source" title="">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>(<span class="number">0</span>);
-<span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="method"><span class="static">RefValue</span></span>(<span class="variable">a</span>) <span class="operator">=</span> <span class="number">1</span>; <span class="comment">// 書き換え。</span>
+var a = new A(0);
+X.RefValue(a) = 1; // 書き換え。
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>); <span class="comment">// A(1)</span>
+Console.WriteLine(a); // A(1)
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="comment">// プライマリ コンストラクター引数から作られるフィールドは &lt;&gt;P。</span>
-    [<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>Field, <span class="property">Name</span> <span class="operator">=</span> <span class="string">&quot;&lt;value&gt;P&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method"><span class="static">RefValue</span></span>(<span class="type">A</span> <span class="variable local">a</span>);
+    // プライマリ コンストラクター引数から作られるフィールドは <>P。
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<value>P")]
+    public static extern ref int RefValue(A a);
 }
 
-<span class="reserved">class</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">value</span>)
+class A(int value)
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">A(</span>{<span class="variable local">value</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    public override string ToString() => $"A({value})";
 }
-</pre>
+```

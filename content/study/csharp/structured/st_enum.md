@@ -43,70 +43,70 @@ C# で、このような特定の値しか取らない型を表現するため�
 
 列挙型は以下のようにして定義します。
 
-<pre class="source" title="列挙型の定義" lang="">
-<code><span class="reserved">enum</span> <span class="input">列挙型名</span>
+```csharp
+enum 列挙型名
 {
-  <span class="input">メンバー1</span>, <span class="input">メンバー2</span>, …, <span class="input">メンバーn</span>
+  メンバー1, メンバー2, …, メンバーn
 }
-</code></pre>
+```
 
 
 列挙型を利用する側では以下のようにします。
 
-<pre class="source" title="列挙型の利用" lang="">
-<code><span class="input">列挙型名</span>.<span class="input">メンバー名</span>
-</code></pre>
+```csharp
+列挙型名.メンバー名
+```
 
 
 また、列挙型の値を <code>Console.Write</code> などに渡して表示すると、
 メンバー名がそのまま表示されます。
 例えば、和暦の年号を列挙型として定義すると以下のようになります。
 
-<pre class="source" title="列挙型の例(年号)" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">enum</span> 年号
+enum 年号
 {
   明治, 大正, 昭和, 平成
 }
 
-<span class="reserved">class</span> EnumSample
+class EnumSample
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 和暦を西暦に変換する
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static void</span> Main()
+  /// </summary>
+  static void Main()
   {
-    年号[] era = <span class="reserved">new</span> 年号[5]{年号.昭和, 年号.大正, 年号.明治, 年号.平成, 年号.昭和};
-    <span class="reserved">int</span>[] j_year = <span class="reserved">new int</span>[5]{33, 12, 20, 10, 54};
-    <span class="reserved">int</span>[] year = <span class="reserved">new int</span>[5];
+    年号[] era = new 年号[5]{年号.昭和, 年号.大正, 年号.明治, 年号.平成, 年号.昭和};
+    int[] j_year = new int[5]{33, 12, 20, 10, 54};
+    int[] year = new int[5];
 
-    Console.Write(<span class="literal">"和暦      西暦\n"</span>);
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;5; ++i)
+    Console.Write("和暦      西暦\n");
+    for(int i=0; i<5; ++i)
     {
-      <span class="reserved">switch</span>(era[i])
+      switch(era[i])
       {
-      <span class="reserved">case</span> 年号.明治: year[i] = j_year[i] + 1863; <span class="reserved">break</span>;
-      <span class="reserved">case</span> 年号.大正: year[i] = j_year[i] + 1911; <span class="reserved">break</span>;
-      <span class="reserved">case</span> 年号.昭和: year[i] = j_year[i] + 1925; <span class="reserved">break</span>;
-      <span class="reserved">case</span> 年号.平成: year[i] = j_year[i] + 1988; <span class="reserved">break</span>;
+      case 年号.明治: year[i] = j_year[i] + 1863; break;
+      case 年号.大正: year[i] = j_year[i] + 1911; break;
+      case 年号.昭和: year[i] = j_year[i] + 1925; break;
+      case 年号.平成: year[i] = j_year[i] + 1988; break;
       }
 
-      Console.Write(<span class="literal">"{0}{1:d2}年  {2:d4}年\n"</span>, era[i], j_year[i], year[i]);
+      Console.Write("{0}{1:d2}年  {2:d4}年\n", era[i], j_year[i], year[i]);
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 和暦      西暦
 昭和33年  1958年
 大正12年  1923年
 明治20年  1883年
 平成10年  1998年
 昭和54年  1979年
-</pre>
+```
 
 
 
@@ -121,51 +121,51 @@ C# で、このような特定の値しか取らない型を表現するため�
 <code>Mon, Tue, Wed, Thu, Fri, Sat, Sun</code>
 の値はそれぞれ 0, 1, 2, 3, 4, 5, 6 になります。
 
-<pre class="source" title="曜日をあらわす列挙型" lang="">
-<code><span class="reserved">enum</span> DayOfWeek
+```csharp
+enum DayOfWeek
 {
   Mon, Tue, Wed, Thu, Fri, Sat, Sun
 }
-</code></pre>
+```
 
 
 列挙型の型や値は以下のようにすることで明示的に指定することも出来ます。
 
-<pre class="source" title="列挙型の型と値の指定" lang="">
-<code><span class="reserved">enum</span> <span class="input">列挙型名</span> : <span class="input">内部的な型</span>
+```csharp
+enum 列挙型名 : 内部的な型
 {
-  <span class="input">メンバー1</span> = <span class="input">メンバー1の値</span>,
-  <span class="input">メンバー2</span> = <span class="input">メンバー2の値</span>,
+  メンバー1 = メンバー1の値,
+  メンバー2 = メンバー2の値,
    …,
-  <span class="input">メンバーn</span> = <span class="input">メンバーnの値</span>
+  メンバーn = メンバーnの値
 }
-</code></pre>
+```
 
 
 また、1つ目のメンバーだけに値を指定すると、残りのメンバーの値は1つ目のメンバーの値から1ずつ増加した値になります。
 
 例えば、<code>byte</code> 型で、値が1から始まる列挙型を定義したければ以下のようにします。
 
-<pre class="source" title="列挙型の型と値を指定する例" lang="">
-<code><span class="reserved">enum</span> Month<em> : byte</em>
+```csharp
+enum Month : byte
 {
-  January<em> = 1</em>, February, March, April,
+  January = 1, February, March, April,
   May, June, July, August,
   September, October, November, December
 }
 
-<span class="reserved">class</span> EnumSample
+class EnumSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=1; i&lt;12; ++i)
-      Console.Write(<span class="literal">"{0}月  {1}\n"</span>, i, (Month)i);
+    for(int i=1; i<12; ++i)
+      Console.Write("{0}月  {1}\n", i, (Month)i);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 1月  January
 2月  February
 3月  March
@@ -177,7 +177,7 @@ C# で、このような特定の値しか取らない型を表現するため�
 9月  September
 10月  October
 11月  November
-</pre>
+```
 
 
 ちなみに、この例から分かるように、
@@ -195,22 +195,22 @@ C# で、このような特定の値しか取らない型を表現するため�
 
 こういう場合、列挙型を以下のように使って実現したりします。
 
-<pre class="source" title="フラグとしての列挙体" lang="">
-<code><span class="reserved">enum</span> Xyz
+```csharp
+enum Xyz
 {
-  X = 1, <span class="comment">// 001</span>
-  Y = 2, <span class="comment">// 010</span>
-  Z = 4, <span class="comment">// 100</span>
+  X = 1, // 001
+  Y = 2, // 010
+  Z = 4, // 100
 }
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    Xyz xy = Xyz.X | Xyz.Y; <span class="comment">// 011</span>
-    <span class="input">...</span>
+    Xyz xy = Xyz.X | Xyz.Y; // 011
+    ...
   }
-</code></pre>
+```
 
 
 列挙型の値を2の累乗にして、OR 演算をとります。
@@ -219,75 +219,75 @@ C# で、このような特定の値しか取らない型を表現するため�
 以下の例の場合、X | Y は 3 になるわけですが、値が3のメンバーは Xyz 列挙型には定義されていないので、
 表示結果は数値の3がそのまま表示されます。
 
-<pre class="source" title="X | Y" lang="">
-<code><span class="reserved">enum</span> Xyz
+```csharp
+enum Xyz
 {
-  X = 1, <span class="comment">// 001</span>
-  Y = 2, <span class="comment">// 010</span>
-  Z = 4, <span class="comment">// 100</span>
+  X = 1, // 001
+  Y = 2, // 010
+  Z = 4, // 100
 }
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    Console.Write(<span class="literal">"{0}\n"</span>, Xyz.X);
-    Console.Write(<span class="literal">"{0}\n"</span>, Xyz.Y);
-    Console.Write(<span class="literal">"{0}\n"</span>, Xyz.Z);
+    Console.Write("{0}\n", Xyz.X);
+    Console.Write("{0}\n", Xyz.Y);
+    Console.Write("{0}\n", Xyz.Z);
 
     Xyz xy = Xyz.X | Xyz.Y;
-    Console.Write(<span class="literal">"{0}\n"</span>, xy);
+    Console.Write("{0}\n", xy);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="結果">
+```console
 X
 Y
 Z
 3
-</pre>
+```
 
 
 これに対して、列挙型に Flags 属性を付けると、以下のような表示結果が得られるようになります。
 （属性に関しては「[属性](../dynamic/sp_attribute.md)」を参照。）
 
-<pre class="source" title="Flags 属性を付ける" lang="">
-<code>[Flags]
-<span class="reserved">enum</span> Xyz
+```csharp
+[Flags]
+enum Xyz
 {
-  X = 1, <span class="comment">// 001</span>
-  Y = 2, <span class="comment">// 010</span>
-  Z = 4, <span class="comment">// 100</span>
+  X = 1, // 001
+  Y = 2, // 010
+  Z = 4, // 100
 }
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
     Xyz xy = Xyz.X | Xyz.Y;
-    Console.Write(<span class="literal">"{0}\n"</span>, xy);
+    Console.Write("{0}\n", xy);
 
     Xyz yz = Xyz.Y | Xyz.Z;
-    Console.Write(<span class="literal">"{0}\n"</span>, yz);
+    Console.Write("{0}\n", yz);
 
     Xyz zx = Xyz.Z | Xyz.X;
-    Console.Write(<span class="literal">"{0}\n"</span>, zx);
+    Console.Write("{0}\n", zx);
 
     Xyz xyz = Xyz.X | Xyz.Y | Xyz.Z;
-    Console.Write(<span class="literal">"{0}\n"</span>, xyz);
+    Console.Write("{0}\n", xyz);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="結果">
+```console
 X, Y
 Y, Z
 X, Z
 X, Y, Z
-</pre>
+```
 
 
 

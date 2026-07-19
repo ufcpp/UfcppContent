@@ -127,128 +127,128 @@ XSD も書くことでタグを覚える面倒さは軽減されます。
 具体的に例をあげると、 以下のような XML を書いて、
 
 
-<pre class="xsource" title="勉強用ページ内の XML の例">
-<code><span class="bracket">&lt;?</span><span class="element">xml</span> <span class="attribute">version</span><span class="attvalue">="1.0"</span> <span class="attribute">encoding</span><span class="attvalue">="utf-8"</span><span class="bracket">?&gt;</span>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
 
-<span class="bracket">&lt;</span><span class="element">document</span> <span class="attribute">title</span><span class="attvalue">="概要"</span> <span class="attribute">xmlns</span><span class="attvalue">="http://ufcpp.net/study/document"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="XML の利用"</span> <span class="attribute">id</span><span class="attvalue">="xml"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+<document title="概要" xmlns="http://ufcpp.net/study/document">
+  <section title="XML の利用" id="xml">
+    <p>
       このサイトではそこら中でXMLを使っています。
       勉強ページは全域、XML で書いて XSLT をかけてからアップロードしています。
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">section</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">document</span><span class="bracket">&gt;</span>
-</code></pre>
+    </p>
+  </section>
+</document>
+```
 以下のような HTML に変換しています。
 
 
-<pre class="xsource" title="XML の変換結果">
-<code><span class="bracket">&lt;</span><span class="element">html</span> <span class="attribute">lang</span><span class="attvalue">="ja-JP"</span> <span class="attribute">xmlns:ufcpp</span><span class="attvalue">="http://ufcpp.net/study/document"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">head</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">head</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">meta</span> <span class="attribute">http-equiv</span><span class="attvalue">="Content-Type"</span> <span class="attribute">content</span><span class="attvalue">="text/html; charset=utf-8"</span> <span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">meta</span> <span class="attribute">http-equiv</span><span class="attvalue">="Content-Language"</span> <span class="attribute">content</span><span class="attvalue">="ja-JP"</span> <span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">meta</span> <span class="attribute">http-equiv</span><span class="attvalue">="Content-Style-Type"</span> <span class="attribute">content</span><span class="attvalue">="text/css"</span> <span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">meta</span> <span class="attribute">http-equiv</span><span class="attvalue">="Content-Script-Type"</span> <span class="attribute">content</span><span class="attvalue">="text/javascript"</span> <span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">meta</span> <span class="attribute">name</span><span class="attvalue">="Author"</span> <span class="attribute">content</span><span class="attvalue">="IWANAGA Nobuyuki"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">href</span><span class="attvalue">="../main.css"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">href</span><span class="attvalue">="../document.css"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">href</span><span class="attvalue">="../mathstyle.css"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">href</span><span class="attvalue">="../figure.css"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">href</span><span class="attvalue">="../source.css"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">href</span><span class="attvalue">="../link.css"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">href</span><span class="attvalue">="../qanda.css"</span><span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">meta</span> <span class="attribute">name</span><span class="attvalue">="keywords"</span> <span class="attribute">content</span>=""<span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">title</span><span class="bracket">&gt;</span>
+```html
+<html lang="ja-JP" xmlns:ufcpp="http://ufcpp.net/study/document">
+  <head>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="ja-JP" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+    <meta name="Author" content="IWANAGA Nobuyuki"/>
+    <link rel="stylesheet" href="../main.css"/>
+    <link rel="stylesheet" href="../document.css"/>
+    <link rel="stylesheet" href="../mathstyle.css"/>
+    <link rel="stylesheet" href="../figure.css"/>
+    <link rel="stylesheet" href="../source.css"/>
+    <link rel="stylesheet" href="../link.css"/>
+    <link rel="stylesheet" href="../qanda.css"/>
+    <meta name="keywords" content=""/>
+    <title>
       概要(このページの XSL)
-    <span class="bracket">&lt;/</span><span class="element">title</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">head</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">body</span> <span class="attribute">class</span><span class="attvalue">="Menu"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="Main"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="CommonHeader"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">p</span> <span class="attribute">class</span><span class="attvalue">="head"</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../../index.html"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">img</span> <span class="attribute">src</span><span class="attvalue">="../common/sitelogo.jpg"</span> <span class="attribute">width</span><span class="attvalue">="450"</span> <span class="attribute">height</span><span class="attvalue">="65"</span>
-                 <span class="attribute">alt</span><span class="attvalue">="++C++; // 未確認飛行 C"</span> <span class="bracket">/&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+    </title>
+  </head>
+  <body class="Menu">
+    <div class="Main">
+      <div class="CommonHeader">
+        <p class="head">
+          <a href="../../index.html">
+            <img src="../common/sitelogo.jpg" width="450" height="65"
+                 alt="++C++; // 未確認飛行 C" />
+          </a>
+        </p>
+      </div>
 
-      <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="Header"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">h1</span> <span class="attribute">id</span><span class="attvalue">="pagetitle"</span><span class="bracket">&gt;</span>概要<span class="bracket">&lt;/</span><span class="element">h1</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">h4</span><span class="bracket">&gt;</span>目次<span class="bracket">&lt;/</span><span class="element">h4</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ul</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">li</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="#xml"</span><span class="bracket">&gt;</span>XML の利用<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">ul</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">h4</span><span class="bracket">&gt;</span>キーワード<span class="bracket">&lt;/</span><span class="element">h4</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ul</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">ul</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+      <div class="Header">
+        <h1 id="pagetitle">概要</h1>
+        <h4>目次</h4>
+        <ul>
+          <li>
+            <a href="#xml">XML の利用</a>
+          </li>
+        </ul>
+        <h4>キーワード</h4>
+        <ul></ul>
+      </div>
 
-      <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="Middle"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="Body"</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">h2</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">id</span><span class="attvalue">="xml"</span><span class="bracket">&gt;</span>XML の利用<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">h2</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+      <div class="Middle">
+        <div class="Body">
+          <h2>
+            <a id="xml">XML の利用</a>
+          </h2>
+          <p>
             このサイトではそこら中でXMLを使っています。
             勉強ページは全域、XML で書いて XSLT をかけてからアップロードしています。
-          <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+          </p>
+        </div>
+      </div>
 
-      <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="Footer"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="#pagetitle"</span><span class="bracket">&gt;</span>このページの先頭に戻る<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="index.html"</span> <span class="attribute">accesskey</span><span class="attvalue">="i"</span><span class="bracket">&gt;</span>
-            インデックスページに戻る(<span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="accesskey"</span><span class="bracket">&gt;</span>i<span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>)
-          <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="document.html"</span> <span class="attribute">accesskey</span><span class="attvalue">="n"</span><span class="bracket">&gt;</span>
-            ＞＞ 次(<span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="accesskey"</span><span class="bracket">&gt;</span>n<span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>) 「ドキュメント」
-          <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+      <div class="Footer">
+        <p></p>
+        <p>
+          <a href="#pagetitle">このページの先頭に戻る</a>
+        </p>
+        <p>
+          <a href="index.html" accesskey="i">
+            インデックスページに戻る(<span class="accesskey">i</span>)
+          </a>
+        </p>
+        <p>
+          <a href="document.html" accesskey="n">
+            ＞＞ 次(<span class="accesskey">n</span>) 「ドキュメント」
+          </a>
+        </p>
+      </div>
+    </div>
 
-    <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="MenuList"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="GeneralIndex"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ul</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">li</span><span class="bracket">&gt;</span>
-            ≫ <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../../index.html"</span><span class="bracket">&gt;</span>Top<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">li</span><span class="bracket">&gt;</span>
-            ≫ <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../index.html"</span><span class="bracket">&gt;</span>総合インデックス<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">li</span><span class="bracket">&gt;</span>
-            ≫ <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="index.html"</span><span class="bracket">&gt;</span>このページの XSL<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">ul</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="CommonMenu"</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="MenuIndex"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">ul</span> <span class="attribute">class</span><span class="attvalue">="documentIndex"</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">li</span> <span class="attribute">class</span><span class="attvalue">="indexDoc"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../testxsl/about.html"</span><span class="bracket">&gt;</span>概要<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">li</span> <span class="attribute">class</span><span class="attvalue">="indexSection"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">h2</span> <span class="attribute">class</span><span class="attvalue">="indexSection"</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">id</span><span class="attvalue">="summary"</span><span class="bracket">&gt;</span>スタイルシートの説明<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;/</span><span class="element">h2</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">ul</span> <span class="attribute">class</span><span class="attvalue">="index"</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span><span class="element">li</span> <span class="attribute">class</span><span class="attvalue">="indexDoc"</span><span class="bracket">&gt;</span>
-                <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../testxsl/document.html"</span><span class="bracket">&gt;</span>ドキュメント<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;/</span><span class="element">ul</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">ul</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+    <div class="MenuList">
+      <div class="GeneralIndex">
+        <ul>
+          <li>
+            ≫ <a href="../../index.html">Top</a>
+          </li>
+          <li>
+            ≫ <a href="../index.html">総合インデックス</a>
+          </li>
+          <li>
+            ≫ <a href="index.html">このページの XSL</a>
+          </li>
+        </ul>
+      </div>
+      <div class="CommonMenu"></div>
+      <div class="MenuIndex">
+        <ul class="documentIndex">
+          <li class="indexDoc">
+            <a href="../testxsl/about.html">概要</a>
+          </li>
+          <li class="indexSection">
+            <h2 class="indexSection">
+              <a id="summary">スタイルシートの説明</a>
+            </h2>
+            <ul class="index">
+              <li class="indexDoc">
+                <a href="../testxsl/document.html">ドキュメント</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
+```

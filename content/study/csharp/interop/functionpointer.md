@@ -34,25 +34,25 @@ aliases:
 ただ、関数ポインターを使ったメソッド呼び出しの側は、C# には関連機能が一切なく、
 一度デリゲート化するひと手間が必要でした。
 
-<pre class="source" title="GetFunctionPointer で関数ポインター取得">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="reserved">var</span> <span class="variable">m</span> <span class="operator">=</span> <span class="reserved">typeof</span>(<span class="type">A</span>)<span class="operator">.</span><span class="method">GetMethod</span>(<span class="string">&quot;M&quot;</span>)<span class="operator">!</span>;
+var m = typeof(A).GetMethod("M")!;
 
-<span class="comment">// GetFunctionPointer で、メソッド M の関数ポインターが取れる。</span>
-<span class="reserved">nint</span> <span class="variable">ptr</span> <span class="operator">=</span> <span class="variable">m</span><span class="operator">.</span><span class="property">MethodHandle</span><span class="operator">.</span><span class="method">GetFunctionPointer</span>();
+// GetFunctionPointer で、メソッド M の関数ポインターが取れる。
+nint ptr = m.MethodHandle.GetFunctionPointer();
 
-<span class="comment">// かつてはこれを直接呼ぶ手段はなくて、デリゲート化のひと手間が必要だった。</span>
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="type"><span class="static">Marshal</span></span><span class="operator">.</span><span class="method"><span class="static">GetDelegateForFunctionPointer</span></span>&lt;<span class="type">Action</span>&gt;(<span class="variable">ptr</span>);
+// かつてはこれを直接呼ぶ手段はなくて、デリゲート化のひと手間が必要だった。
+var a = Marshal.GetDelegateForFunctionPointer<Action>(ptr);
 
-<span class="comment">// これで A.M を間接的に呼べる。</span>
-<span class="variable">a</span>();
+// これで A.M を間接的に呼べる。
+a();
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>() <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;A.M&quot;</span>);
+    public static void M() => Console.WriteLine("A.M");
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="pinvoke">ネイティブ コード呼び出し</a>
 
@@ -61,39 +61,39 @@ C# で書いたメソッドを C# のデリゲートで受け取るんなら、
 直接代入するだけでデリゲート化できます。
 前節の例も、単に以下のように書けます。
 
-<pre class="source" title="C# で完結している分には関数ポインターの出番なし">
-<span class="comment">// C# で書いたメソッドを C# のデリゲートで受け取るんなら、単に代入でできるわけで、</span>
-<span class="comment">// 関数ポインターを介する意味は全くなく。</span>
-<span class="type">Action</span> <span class="variable">a</span> <span class="operator">=</span> <span class="type">A</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>;
+```csharp
+// C# で書いたメソッドを C# のデリゲートで受け取るんなら、単に代入でできるわけで、
+// 関数ポインターを介する意味は全くなく。
+Action a = A.M;
 
-<span class="comment">// これで A.M を間接的に呼べる。</span>
-<span class="variable">a</span>();
+// これで A.M を間接的に呼べる。
+a();
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>() <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;A.M&quot;</span>);
+    public static void M() => Console.WriteLine("A.M");
 }
-</pre>
+```
 
 実際に関数ポインターを使う場面があるのは[ネイティブ コード呼び出し](sp_pinvoke.md)になります。
 
 ネイティブ コード呼び出しも、`DllImport` 属性(.NET 7 以降であれば `LibraryImport` 属性)を使えば普通の、安全な C# コードだけで呼び出し可能ではあります。
 例えば、`LibraryImport` 属性を使って kernel32.dll 中の `Beep` メソッドを呼ぶコードは以下のように書けます。
 
-<pre class="source" title="LibraryImport 属性を使ったネイティブ コード呼び出しの例(ビープ音を鳴らす)">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="comment">// 呼び出し側。</span>
-<span class="type">Native</span><span class="operator">.</span><span class="static"><span class="method">Beep</span></span>(<span class="number">440</span>, <span class="number">1000</span>);
+// 呼び出し側。
+Native.Beep(440, 1000);
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Native</span>
+partial class Native
 {
-    <span class="comment">// こんな感じで属性を付けておけば、 .NET ランタイム内でなんかよろしくやってくれてネイティブ コードを呼べる。</span>
-    [<span class="type">LibraryImport</span>(<span class="string">&quot;kernel32.dll&quot;</span>)]
-    [<span class="reserved">return</span>: <span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span><span class="operator">.</span>Bool)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">bool</span> <span class="method"><span class="static">Beep</span></span>(<span class="reserved">uint</span> <span class="variable local">frequency</span>, <span class="reserved">uint</span> <span class="variable local">duration</span>);
+    // こんな感じで属性を付けておけば、 .NET ランタイム内でなんかよろしくやってくれてネイティブ コードを呼べる。
+    [LibraryImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool Beep(uint frequency, uint duration);
 }
-</pre>
+```
 
 というか、かつてはネイティブ コードの関数ポインターを取る手段がありませんでした。
 (上記の `Native.Beep` に対して `GetFunctionPointer` すると、
@@ -108,26 +108,26 @@ C# に関数ポインターは必要ありませんでした。
 ところが、 .NET Core 3.0 (C# 8.0 と同世代)で、[`NativeLibary`](https://learn.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.nativelibrary) (`System.Runtime.InteropServices` 名前空間)というクラスが入って、
 ネイティブ コードの関数ポインターを取得する手段が提供されるようになりました。
 
-<pre class="source" title="NativeLibrary を使ったネイティブ コード呼び出しの例(ビープ音を鳴らす)">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="comment">// DLL のロード。</span>
-<span class="reserved">nint</span> <span class="variable">kernel32</span> <span class="operator">=</span> <span class="static"><span class="type">NativeLibrary</span></span><span class="operator">.</span><span class="static"><span class="method">Load</span></span>(<span class="string">&quot;kernel32.dll&quot;</span>);
+// DLL のロード。
+nint kernel32 = NativeLibrary.Load("kernel32.dll");
 
-<span class="comment">// 所望の関数の関数ポインターを取得。</span>
-<span class="reserved">nint</span> <span class="variable">p</span> <span class="operator">=</span> <span class="type"><span class="static">NativeLibrary</span></span><span class="operator">.</span><span class="static"><span class="method">GetExport</span></span>(<span class="variable">kernel32</span>, <span class="string">&quot;Beep&quot;</span>);
+// 所望の関数の関数ポインターを取得。
+nint p = NativeLibrary.GetExport(kernel32, "Beep");
 
-<span class="comment">// ただ、C# 8.0 時点だと呼び出しには一度デリゲート化する必要あり。</span>
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="type"><span class="static">Marshal</span></span><span class="operator">.</span><span class="static"><span class="method">GetDelegateForFunctionPointer</span></span>&lt;<span class="type">BeepDelegate</span>&gt;(<span class="variable">p</span>);
-<span class="variable">a</span>(<span class="number">440</span>, <span class="number">1000</span>);
+// ただ、C# 8.0 時点だと呼び出しには一度デリゲート化する必要あり。
+var a = Marshal.GetDelegateForFunctionPointer<BeepDelegate>(p);
+a(440, 1000);
 
-<span class="comment">// ちなみに、 NativeLibrary の利点として、DLL のアンロードが可能。</span>
-<span class="static"><span class="type">NativeLibrary</span></span><span class="operator">.</span><span class="static"><span class="method">Free</span></span>(<span class="variable">kernel32</span>);
+// ちなみに、 NativeLibrary の利点として、DLL のアンロードが可能。
+NativeLibrary.Free(kernel32);
 
-<span class="comment">// GetDelegateForFunctionPointer にはジェネリックな型は渡せないらしく、</span>
-<span class="comment">// Func&lt;uint, uint, int&gt; が使えないので同じ引数・戻り値のデリゲートを定義。</span>
-<span class="reserved">delegate</span> <span class="reserved">int</span> <span class="type">BeepDelegate</span>(<span class="reserved">uint</span> <span class="variable local">frequencey</span>, <span class="reserved">uint</span> <span class="variable local">duration</span>);
-</pre>
+// GetDelegateForFunctionPointer にはジェネリックな型は渡せないらしく、
+// Func<uint, uint, int> が使えないので同じ引数・戻り値のデリゲートを定義。
+delegate int BeepDelegate(uint frequencey, uint duration);
+```
 
 `NativeLibary` は、
 `DllImport` や `LibararyImoprt` と比べると煩雑ではありますが、
@@ -149,22 +149,22 @@ C# に関数ポインターは必要ありませんでした。
 記法としては `delegate*` を使います。
 先ほどの `NativeLibrary` を使った `Beep` 呼び出しの例を関数ポインターで書き換えると以下のようになります。
 
-<pre class="source" title="関数ポインター構文の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="comment">// 関数ポインターを nint で取得。</span>
-<span class="reserved">nint</span> <span class="variable">kernel32</span> <span class="operator">=</span> <span class="type"><span class="static">NativeLibrary</span></span><span class="operator">.</span><span class="static"><span class="method">Load</span></span>(<span class="string">&quot;kernel32.dll&quot;</span>);
-<span class="reserved">nint</span> <span class="variable">p</span> <span class="operator">=</span> <span class="type"><span class="static">NativeLibrary</span></span><span class="operator">.</span><span class="static"><span class="method">GetExport</span></span>(<span class="variable">kernel32</span>, <span class="string">&quot;Beep&quot;</span>);
+// 関数ポインターを nint で取得。
+nint kernel32 = NativeLibrary.Load("kernel32.dll");
+nint p = NativeLibrary.GetExport(kernel32, "Beep");
 
-<span class="reserved">unsafe</span>
+unsafe
 {
-    <span class="comment">// 「関数ポインター型」にキャストして使う。</span>
-    <span class="comment">// 構文的には delegate* から初めて、 &lt;&gt; の中に引数を戻り値の型を並べる。</span>
-    <span class="comment">// (戻り値の型が最後。Func&lt;&gt; 風。)</span>
-    <span class="reserved">var</span> <span class="variable">fp</span> <span class="operator">=</span> (<span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">uint</span>, <span class="reserved">uint</span>, <span class="reserved">int</span>&gt;)<span class="variable">p</span>;
-    <span class="variable">fp</span>(<span class="number">440</span>, <span class="number">1000</span>);
+    // 「関数ポインター型」にキャストして使う。
+    // 構文的には delegate* から初めて、 <> の中に引数を戻り値の型を並べる。
+    // (戻り値の型が最後。Func<> 風。)
+    var fp = (delegate*<uint, uint, int>)p;
+    fp(440, 1000);
 }
-</pre>
+```
 
 `delegate*` から書き始めて、`<>` の中に引数と戻り値の型を並べます。
 
@@ -172,25 +172,25 @@ C# に関数ポインターは必要ありませんでした。
 `Func<>` と `Action<>` のように、戻り値の有無で型を分ける必要はなく、
 「戻り値がない場合は最後の1個を `void` にする」という仕様です。
 
-<pre class="source" title="戻り値がないときは void を書く">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="comment">// 引数 int, 戻り値 int</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">pf</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="method"><span class="static">f</span></span>;
+    // 引数 int, 戻り値 int
+    delegate*<int, int> pf = &f;
 
-    <span class="comment">// 引数 int, 戻り値なし(void)</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">int</span>, <span class="reserved">void</span>&gt; <span class="variable">pa</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="static"><span class="method">a</span></span>;
+    // 引数 int, 戻り値なし(void)
+    delegate*<int, void> pa = &a;
 }
 
-<span class="comment">// 同じようなコードでも、デリゲートだと Func/Action の分岐が必要。</span>
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">df</span> <span class="operator">=</span> <span class="static"><span class="method">f</span></span>;
-<span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">da</span> <span class="operator">=</span> <span class="static"><span class="method">a</span></span>;
+// 同じようなコードでも、デリゲートだと Func/Action の分岐が必要。
+Func<int, int> df = f;
+Action<int> da = a;
 
-<span class="comment">// (こっちも普通に delegate&lt;int, void&gt; とか書きたい気持ちあるものの、現状、そういう仕様はない。)</span>
+// (こっちも普通に delegate<int, void> とか書きたい気持ちあるものの、現状、そういう仕様はない。)
 
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">f</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="variable local">x</span>;
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">a</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
-</pre>
+static int f(int x) => x * x;
+static void a(int x) { }
+```
 
 ちなみに、[IL](../../il/index.md) には .NET Framework 1.0 の頃から関数ポインターの仕様がちゃんとあって、「引数が `uint` 2つ、戻り値が `int`」みたいなのを指定して関数ポインターが指す先を呼び出す命令([`calli`](https://learn.microsoft.com/ja-jp/dotnet/api/system.reflection.emit.opcodes.calli))がありました。
 あくまで C# 8 以前には `calli` を出力する能力がなかっただけです。
@@ -201,67 +201,67 @@ C# に関数ポインターは必要ありませんでした。
 C# で書いたメソッドに対して `&` 演算子を使えます。
 `&` 演算子で、`GetFunctionPointer` などのリフレクション介さずにメソッドから直接関数ポインターを得ることができます。
 
-<pre class="source" title="&amp; 演算子">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="comment">// &amp; で A.M の関数ポインターを取得。</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">void</span>&gt; <span class="variable">p</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="type">A</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>;
+    // & で A.M の関数ポインターを取得。
+    delegate*<void> p = &A.M;
 
-    <span class="comment">// ちゃんと呼べる。</span>
-    <span class="variable">p</span>();
+    // ちゃんと呼べる。
+    p();
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>() <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;A.M&quot;</span>);
+    public static void M() => Console.WriteLine("A.M");
 }
-</pre>
+```
 
 ただし、`&` 演算子で関数ポインターを取れるのは静的メソッドだけです。
 
-<pre class="source" title="&amp; で関数ポインターを取れるのは静的メソッドのみ">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="comment">// 静的メソッドは OK。</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">void</span>&gt; <span class="variable">p1</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="type">A</span><span class="operator">.</span><span class="method"><span class="static">Static</span></span>;
+    // 静的メソッドは OK。
+    delegate*<void> p1 = &A.Static;
 
-    <span class="comment">// インスタンス メソッドは A.Instance みたいな参照の仕方はできないし、</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">void</span>&gt; <span class="variable">p2</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="error" title="CS8759"><span class="type">A</span><span class="operator">.</span><span class="method">Instance</span></span>;
+    // インスタンス メソッドは A.Instance みたいな参照の仕方はできないし、
+    delegate*<void> p2 = &A.Instance;
 
-    <span class="comment">// デリゲートみたいに「インスタンス.メソッド」での参照も不可。</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">void</span>&gt; <span class="variable">p3</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="error" title="CS8759"><span class="reserved">new</span> <span class="type">A</span>()<span class="operator">.</span><span class="method">Instance</span></span>;
+    // デリゲートみたいに「インスタンス.メソッド」での参照も不可。
+    delegate*<void> p3 = &new A().Instance;
 
-    <span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">void</span>&gt; <span class="variable">p4</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="error" title="CS8759"><span class="variable">a</span><span class="operator">.</span><span class="method">Instance</span></span>;
+    var a = new A();
+    delegate*<void> p4 = &a.Instance;
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Static</span></span>() { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Instance</span>() { }
+    public static void Static() { }
+    public void Instance() { }
 }
-</pre>
+```
 
 ちなみに、取れる値(関数ポインターが指すアドレス)自体は、`GetFunctionPointer` と同じになります。
 ただし、`Type` 型や `MethodInfo` 型を介さなくていい分、`&` 演算子を使う方がパフォーマンスはいいそうです。
 
-<pre class="source" title="GetFunctionPointer と同じ値">
-<span class="reserved">var</span> <span class="variable">p1</span> <span class="operator">=</span> <span class="reserved">typeof</span>(<span class="type">A</span>)<span class="operator">.</span><span class="method">GetMethod</span>(<span class="string">&quot;M&quot;</span>)<span class="operator">!</span><span class="operator">.</span><span class="property">MethodHandle</span><span class="operator">.</span><span class="method">GetFunctionPointer</span>();
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">p1</span>);
+```csharp
+var p1 = typeof(A).GetMethod("M")!.MethodHandle.GetFunctionPointer();
+Console.WriteLine(p1);
 
-<span class="reserved">unsafe</span>
+unsafe
 {
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">void</span>&gt; <span class="variable">p2</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="type">A</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>;
+    delegate*<void> p2 = &A.M;
 
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>((<span class="reserved">nint</span>)<span class="variable">p2</span>); <span class="comment">// p1 と同じ値が取れる。</span>
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">p1</span> <span class="operator">==</span> (<span class="reserved">nint</span>)<span class="variable">p2</span>); <span class="comment">// true。</span>
+    Console.WriteLine((nint)p2); // p1 と同じ値が取れる。
+    Console.WriteLine(p1 == (nint)p2); // true。
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>() { }
+    public static void M() { }
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="arguments">引数・戻り値の型</a>
 
@@ -273,32 +273,32 @@ C# で書いたメソッドに対して `&` 演算子を使えます。
 * `ref struct` な型
 * `void`
 
-<pre class="source" title="ジェネリック型引数よりもだいぶ緩い制約">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="comment">// in, out, ref が書ける</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">in</span> <span class="reserved">int</span>, <span class="reserved">out</span> <span class="reserved">int</span>, <span class="reserved">ref</span> <span class="reserved">string</span>&gt; <span class="variable">p1</span> <span class="operator">=</span> <span class="reserved">null</span>;
+    // in, out, ref が書ける
+    delegate*<in int, out int, ref string> p1 = null;
 
-    <span class="comment">// ポインターが書ける</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">ref</span> <span class="reserved">int</span>, <span class="reserved">int</span><span class="operator">*</span>&gt; <span class="variable">p2</span> <span class="operator">=</span> <span class="reserved">null</span>;
+    // ポインターが書ける
+    delegate*<ref int, int*> p2 = null;
 
-    <span class="comment">// ref struct も書けるし、それのさらに ref も書ける</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;, <span class="reserved">ref</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;&gt; <span class="variable">p3</span> <span class="operator">=</span> <span class="reserved">null</span>;
+    // ref struct も書けるし、それのさらに ref も書ける
+    delegate*<Span<int>, ref Span<int>> p3 = null;
 
-    <span class="comment">// 前述のとおり、戻り値がないときは void</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">void</span>&gt; <span class="variable">p4</span> <span class="operator">=</span> <span class="reserved">null</span>;
+    // 前述のとおり、戻り値がないときは void
+    delegate*<void> p4 = null;
 }
-</pre>
+```
 
 関数ポインターの入れ子も可能です。
 
-<pre class="source" title="">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="comment">// 入れ子</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">int</span>, <span class="reserved">void</span>&gt;, <span class="reserved">int</span>, <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">void</span>&gt;&gt; <span class="variable">p1</span> <span class="operator">=</span> <span class="reserved">null</span>;
+    // 入れ子
+    delegate*<delegate*<int, void>, int, delegate*<void>> p1 = null;
 }
-</pre>
+```
 
 ちなみに、書ける型の制限が緩いので、Unsafe クラスですらできないことが関数ポインター使えば書けたり。
 
@@ -315,60 +315,60 @@ C# で書いたメソッドに対して `&` 演算子を使えます。
 `DllImport` では `CallingConvention` プロパティで、
 `LibraryImport` では `UnmanagedCallConv` 属性で指定します。
 
-<pre class="source" title="DllImport, LibraryImport での呼び出し規約の指定">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-<span class="type">LibraryImports</span><span class="operator">.</span><span class="method"><span class="static">Beep</span></span>(<span class="number">440</span>, <span class="number">1000</span>);
-<span class="type">DllImports</span><span class="operator">.</span><span class="method"><span class="static">Beep</span></span>(<span class="number">440</span>, <span class="number">1000</span>);
+LibraryImports.Beep(440, 1000);
+DllImports.Beep(440, 1000);
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">LibraryImports</span>
+partial class LibraryImports
 {
-    <span class="comment">// LibraryImport では UnmanagedCallConv 属性を付ける。</span>
-    [<span class="type">LibraryImport</span>(<span class="string">&quot;kernel32.dll&quot;</span>)]
-    [<span class="type">UnmanagedCallConv</span>(<span class="field">CallConvs</span>  <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="reserved">typeof</span>(<span class="type">CallConvCdecl</span>) })]
-    [<span class="reserved">return</span>: <span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span><span class="operator">.</span>Bool)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">bool</span> <span class="method"><span class="static">Beep</span></span>(<span class="reserved">uint</span> <span class="variable local">frequency</span>, <span class="reserved">uint</span> <span class="variable local">duration</span>);
+    // LibraryImport では UnmanagedCallConv 属性を付ける。
+    [LibraryImport("kernel32.dll")]
+    [UnmanagedCallConv(CallConvs  = new[] { typeof(CallConvCdecl) })]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool Beep(uint frequency, uint duration);
 }
 
-<span class="reserved">class</span> <span class="type">DllImports</span>
+class DllImports
 {
-    <span class="comment">// DllImport では CallingConvention プロパティを指定する。</span>
-    [<span class="type">DllImport</span>(<span class="string">&quot;kernel32.dll&quot;</span>, <span class="field">CallingConvention</span> <span class="operator">=</span> <span class="type">CallingConvention</span><span class="operator">.</span>Cdecl)]
-    [<span class="reserved">return</span>: <span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span><span class="operator">.</span>Bool)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">bool</span> <span class="method"><span class="static">Beep</span></span>(<span class="reserved">uint</span> <span class="variable local">frequency</span>, <span class="reserved">uint</span> <span class="variable local">duration</span>);
+    // DllImport では CallingConvention プロパティを指定する。
+    [DllImport("kernel32.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool Beep(uint frequency, uint duration);
 }
-</pre>
+```
 
 関数ポインターでは、`delegate*` と `<>` の間に、
 `managed` もしくは `unmanaged[]` という修飾を付けます。
 
-<pre class="source" title="">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="reserved">nint</span> <span class="variable">kernel32</span> <span class="operator">=</span> <span class="static"><span class="type">NativeLibrary</span></span><span class="operator">.</span><span class="static"><span class="method">Load</span></span>(<span class="string">&quot;kernel32.dll&quot;</span>);
-<span class="reserved">nint</span> <span class="variable">p</span> <span class="operator">=</span> <span class="static"><span class="type">NativeLibrary</span></span><span class="operator">.</span><span class="method"><span class="static">GetExport</span></span>(<span class="variable">kernel32</span>, <span class="string">&quot;Beep&quot;</span>);
+nint kernel32 = NativeLibrary.Load("kernel32.dll");
+nint p = NativeLibrary.GetExport(kernel32, "Beep");
 
-<span class="reserved">unsafe</span>
+unsafe
 {
-    <span class="comment">// 規約を省略。省略時のデフォルトは managed。</span>
-    <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">p1</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="type">A</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>;
+    // 規約を省略。省略時のデフォルトは managed。
+    delegate*<int, int, int> p1 = &A.M;
 
-    <span class="comment">// managed 規約。C# で書いた普通のメソッドを呼ぶときに使う。</span>
-    <span class="comment">// 要は「.NET ランタイム任せ」。</span>
-    <span class="reserved">delegate</span><span class="operator">*</span> <span class="reserved">managed</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">p2</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="type">A</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>;
+    // managed 規約。C# で書いた普通のメソッドを呼ぶときに使う。
+    // 要は「.NET ランタイム任せ」。
+    delegate* managed<int, int, int> p2 = &A.M;
 
-    <span class="comment">// unmanaged のみ指定。</span>
-    <span class="comment">// 呼び出し規約はプラットフォーム依存で、</span>
-    <span class="comment">// Windows では stdcall、他のプラットフォームでは cdecl になるっぽい。</span>
-    <span class="reserved">var</span> <span class="variable">p3</span> <span class="operator">=</span> (<span class="reserved">delegate</span><span class="operator">*</span> <span class="reserved">unmanaged</span>&lt;<span class="reserved">uint</span>, <span class="reserved">uint</span>, <span class="reserved">int</span>&gt;)<span class="variable">p</span>;
+    // unmanaged のみ指定。
+    // 呼び出し規約はプラットフォーム依存で、
+    // Windows では stdcall、他のプラットフォームでは cdecl になるっぽい。
+    var p3 = (delegate* unmanaged<uint, uint, int>)p;
 
-    <span class="comment">// unmanaged[] で呼び出し規約を明示。</span>
-    <span class="reserved">var</span> <span class="variable">p4</span> <span class="operator">=</span> (<span class="reserved">delegate</span><span class="operator">*</span> <span class="reserved">unmanaged</span>[Stdcall]&lt;<span class="reserved">uint</span>, <span class="reserved">uint</span>, <span class="reserved">int</span>&gt;)<span class="variable">p</span>;
+    // unmanaged[] で呼び出し規約を明示。
+    var p4 = (delegate* unmanaged[Stdcall]<uint, uint, int>)p;
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="variable local">y</span>;
+    public static int M(int x, int y) => x * y;
 }
-</pre>
+```

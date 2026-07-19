@@ -76,17 +76,17 @@ var を使って見づらいと感じる場合、それは var 自体の問題�
 
 var、すなわち、型推論の導入というのは、結局のところ、コードの冗長性の排除なわけですね。
 
-<pre class="source" title="" lang="">
-<code><span class="type">SomeClass</span> x = <span class="reserved">new</span> <span class="type">SomeClass</span>();
-</code></pre>
+```csharp
+SomeClass x = new SomeClass();
+```
 
 
 みたいなコード、なんで2度も SomeClass って書かなきゃいけないのよと。以下のように、型名が長い場合には特にうんざりします。
 
-<pre class="source" title="" lang="">
-<code><span class="type">System.Collections.Generic.List</span>&lt;<span class="reserved">int</span>&gt; list =
-  <span class="reserved">new</span> System.Collections.Generic.<span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-</code></pre>
+```csharp
+System.Collections.Generic.List<int> list =
+  new System.Collections.Generic.List<int>();
+```
 
 
 プログラミングの格言の1つに、Don't Repeat Yourself、通称“DRY 原則”というのがあって、重複・冗長性は排除しろといわれます。重複があると、何か変更する際に複数の場所を書き換えないと動かない。手間はかかるし、バグの原因になるからやめろと。
@@ -96,20 +96,20 @@ var、すなわち、型推論の導入というのは、結局のところ、�
 冗長性によるエラー耐性
 例えば以下のコードを考えてみます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span> n1 = <span class="literal">10</span>; <span class="comment">// (1)</span>
-<span class="reserved">var</span> n2 = <span class="literal">10</span>; <span class="comment">// (2)</span>
-</code></pre>
+```csharp
+int n1 = 10; // (1)
+var n2 = 10; // (2)
+```
 
 
 (1) の場合、左辺値だけで型は明らかに int だと分かります。一方、(2) の場合は、「サフィックスなしの数値リテラルは int だよな」と一瞬考えて初めて int 型だと分かります。もちろん、C# になれた人からするとこのくらいは常識ではあるんですが、チーム開発とかやると、自分が常識だと思っていることで、チームメイトとの意思疎通に失敗することもあるので危険だと。結局、冗長なままにしておいた方が読みやすくていいだろうって話に。
 
 あと、以下のようなコードも考えてみましょう。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> x = <span class="literal">1</span>;
-<span class="reserved">var</span> y = <span class="literal">.1</span>;
-</code></pre>
+```csharp
+var x = 1;
+var y = .1;
+```
 
 
 たった1つの . の有無で変数の型が変わります。まあ、等幅フォントを使っていて . が見えないってことはないし、ちゃんと 0.1 と書けよという話ではあるんですが。でも、冗長性を極力排除するというのは、こういう「コード上ほんの少しの変更が、コンパイル結果に大きな変化をもたらす」という状況を生みます。これは、時に、重大なエラーを引き起こす可能性を秘めています。
@@ -119,17 +119,17 @@ var、すなわち、型推論の導入というのは、結局のところ、�
 
 ところで、最初のコード、開発の途中で「整数にするよりも浮動小数点にする方がよさそうだぞ」と思ってしまった場合にはどうなるでしょう。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">// (1)
+```csharp
+// (1)
 // int n1 = 10;
-// ↓</span>
-<span class="reserved">double</span> n1 = <span class="literal">3.14</span>;
+// ↓
+double n1 = 3.14;
 
-<span class="comment">// (2)
+// (2)
 // var n2 = 10;
-// ↓</span>
-<span class="reserved">var</span> n2 = <span class="literal">3.14</span>;
-</code></pre>
+// ↓
+var n2 = 3.14;
+```
 
 
 (1) の側は左右両辺書き換えが必要になりますね。ここだけではなく、n1 を利用する箇所全部で修正が必要になるかもしれません。ところが、(2) の側はその必要がない。これが、最初に言った DRY 原則って奴です。冗長なコードを書くと、仕様変更時に修正が複数個所に及び、手間がかかると。
@@ -141,10 +141,10 @@ var、すなわち、型推論の導入というのは、結局のところ、�
 
 「変数の型が右辺値を見て明らかな場合にのみ var を使う」と決めた場合、以下のようなコードはどう考えるべきでしょう。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> x = GetPoint();
+```csharp
+var x = GetPoint();
 SetPoint(x);
-</code></pre>
+```
 
 
 メソッドの名前からして Point 型だろうとは想像付きますが、それは System.Drawing.Point 型？それとも、自作の Point 構造体？
@@ -155,13 +155,13 @@ SetPoint(x);
 
 で、じゃあ、今度は以下のようなコードを考えてみましょう。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> x = GetPoint();
+```csharp
+var x = GetPoint();
 
-<span class="comment">// 長い処理</span>
+// 長い処理
 
 SetPoint(x);
-</code></pre>
+```
 
 
 最初のコードには賛成派な人も、こうなると一気に否定的印象を持つんじゃないでしょうか。最初のコードは、変数 x のスコープが短いんで、「ぱっと見で型が判別しづらい」という var の欠点があまり問題にならないんですが、間に長い処理が挟まることで、その欠点が問題になりそうだと、警戒感が生まれます。
@@ -172,13 +172,13 @@ SetPoint(x);
 
 同じようなものでも、以下のようなコードならどうでしょうか。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> point = GetPoint();
+```csharp
+var point = GetPoint();
 
-<span class="comment">// 長いっていってもせいぜい1画面に収まる程度の処理</span>
+// 長いっていってもせいぜい1画面に収まる程度の処理
 
 SetPoint(point);
-</code></pre>
+```
 
 
 ずいぶんと印象が変わると思います。
@@ -192,10 +192,10 @@ var を使うと変数の型が分かりにくくなるというのも、var の
 
 まあ、例えば、以下のコードを Visual Studio で打つことを考えます。
 
-<pre class="source" title="" lang="">
-<code><span class="type">DateTime</span> d1 = <span class="reserved">new</span> <span class="type">DateTime</span>(); <span class="comment">// (1)</span>
-<span class="reserved">var</span> d2 = <span class="reserved">new</span> <span class="type">DateTime</span>();      <span class="comment">// (2)</span>
-</code></pre>
+```csharp
+DateTime d1 = new DateTime(); // (1)
+var d2 = new DateTime();      // (2)
+```
 
 
 まず、タイピング数に関しては、(1) の方は「DateTime d = new 」まで打てばインテリセンスで DateTime が出てくる（図1）のに対して、(2) の方は new の後ろをちゃんと打たないといけません。結局、インテリセンスに頼る限り、タイピング数に大差は生まれません。
@@ -223,19 +223,19 @@ var を使うと変数の型が分かりにくくなるというのも、var の
 
 例えば、以下のコードはコンパイルができますが、
 
-<pre class="source" title="" lang="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f1 = x =&gt; x * x;
-<span class="reserved">var</span> f2 = (<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;)(x =&gt; x * x);
-</code></pre>
+```csharp
+Func<int, int> f1 = x => x * x;
+var f2 = (Func<int, int>)(x => x * x);
+```
 
 
 以下のコードはコンパイルできません。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> g1 = x =&gt; x * x;
-<span class="reserved">var</span> g2 = (<span class="reserved">int</span> x) =&gt; (<span class="reserved">int</span>)(x * x);
-<span class="reserved">var</span> g3 = (<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;)x =&gt; x * x;
-</code></pre>
+```csharp
+var g1 = x => x * x;
+var g2 = (int x) => (int)(x * x);
+var g3 = (Func<int, int>)x => x * x;
+```
 
 (追記: C# 10.0 からは `g2` についてはコンパイルできるようになっています。
 詳しくは「[デリゲートの自然な型](../functional/sp_delegate.md#natural-type)」で説明します。)
@@ -248,28 +248,28 @@ g3 は単純ミスですね。ラムダ式を作るための =&gt; 演算子よ�
 
 ラムダ式に対して無理やりにでも var を使いたければ、例えば、以下のような補助メソッドを書いて、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">static</span> <span class="type">Func</span>&lt;T, T&gt; F&lt;T&gt;(<span class="type">Func</span>&lt;T, T&gt; func)
+```csharp
+static Func<T, T> F<T>(Func<T, T> func)
 {
-  <span class="reserved">return</span> func;
+  return func;
 }
-</code></pre>
+```
 
 
 以下のようにします。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> f3 = F&lt;<span class="reserved">int</span>&gt;(x =&gt; x * x);
-<span class="reserved">var</span> f4 = F((<span class="reserved">int</span> x) =&gt; x * x);
-</code></pre>
+```csharp
+var f3 = F<int>(x => x * x);
+var f4 = F((int x) => x * x);
+```
 
 
 この場合でも、以下のようなコードはコンパイルできません。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> g4 = F(x =&gt; (<span class="reserved">int</span>)x * x);
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; g5 = F(x =&gt; x * x);
-</code></pre>
+```csharp
+var g4 = F(x => (int)x * x);
+Func<int, int> g5 = F(x => x * x);
+```
 
 
 Generics も型推論に頼っているので、変にサボろうとするとうまく型推論が働かなくなります。
@@ -287,43 +287,43 @@ C#の型推論はローカル変数に対してしか使えず、型が見えに
 C#以外の言語だと、こういう、より多くの場面で型推論を認めているプログラミング言語もあります。
 要するに、以下のような書き方を許してほしいという話です。
 
-<pre class="source" title="フィールドやメソッド戻り値の型推論(案)">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = Add(M, N); <span class="comment">// (int, int) に推論される</span>
+        var x = Add(M, N); // (int, int) に推論される
     }
 
-    <span class="reserved">static</span> <span class="reserved">var</span> M = 50;  <span class="comment">// int に推論される</span>
-    <span class="reserved">static</span> <span class="reserved">var</span> N = 100; <span class="comment">// 同上</span>
-    <span class="reserved">static var</span> Add&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="type">T</span> y) =&gt; (x, y);
+    static var M = 50;  // int に推論される
+    static var N = 100; // 同上
+    static var Add<T>(T x, T y) => (x, y);
 }
-</code></pre>
+```
 
 これに関しては、<em>C#で認められることは今後もない</em>でしょう。
 推論が多段になることが原因です。
 ローカル変数の`var`と違って、以下のように、書いた人も書かれた場所も違うコードを多段に追いかける必要があります。
 
-<pre class="source" title="戻り値型推論では、多段にコードを追う必要がある">
-<code><span class="comment">// 開発者 X がソースコード A.cs に書いたコード</span>
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+// 開発者 X がソースコード A.cs に書いたコード
+class A
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> a = 1;
+    public static var a = 1;
 }
 
-<span class="comment">// 開発者 Y がソースコード B.cs に書いたコード</span>
-<span class="reserved">class</span> <span class="type">B</span>
+// 開発者 Y がソースコード B.cs に書いたコード
+class B
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> b = <span class="type">A</span>.a + 1;
+    public static var b = A.a + 1;
 }
 
-<span class="comment">// 開発者 Z がソースコード C.cs に書いたコード</span>
-<span class="reserved">class</span> <span class="type">C</span>
+// 開発者 Z がソースコード C.cs に書いたコード
+class C
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> c = <span class="type">B</span>.b * <span class="type">B</span>.b;
+    public static var c = B.b * B.b;
 }
-</code></pre>
+```
 
 多段になることで、いくつかの観点での問題を起こします。
 
@@ -339,17 +339,17 @@ C#以外の言語だと、こういう、より多くの場面で型推論を認
 さらに問題になるのは、書いた行数に対して指数的な時間がかかる場合すらあることです。
 以下のようなコードでも、4行に対して、下手な実装だと2の4乗で16倍の時間がかかりかねません。
 
-<pre class="source" title="組み合わせによって、指数的に推論時間が伸びる例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> a = 1;
-    <span class="reserved">public static</span> <span class="reserved">var</span> b = <span class="type">Tuple</span>.Create(a, a);
-    <span class="reserved">public static</span> <span class="reserved">var</span> c = <span class="type">Tuple</span>.Create(b, b);
-    <span class="reserved">public static</span> <span class="reserved">var</span> d = <span class="type">Tuple</span>.Create(c, c);
+    public static var a = 1;
+    public static var b = Tuple.Create(a, a);
+    public static var c = Tuple.Create(b, b);
+    public static var d = Tuple.Create(c, c);
 }
-</code></pre>
+```
 
 もっと複雑なコードであれば、ちゃんとした実装であっても指数時間を避けれない場合があり得ます。
 
@@ -365,36 +365,32 @@ C#はコンパイル時間にもかなり気を使っているプログラミン
 <table>
 <tr>
 <td>
-<pre class="source" title="c は int">
-<code><span class="reserved">class</span> <span class="type">A</span>
+<pre class="source" title="c は int"><code class="language-csharp">class A
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> a = 1;
+    public static var a = 1;
 }
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> b = <span class="type">A</span>.a + 1;
+    public static var b = A.a + 1;
 }
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> c = <span class="type">B</span>.b * <span class="type">B</span>.b;
-}
-</code></pre>
+    public static var c = B.b * B.b;
+}</code></pre>
 </td>
 <td>
-<pre class="source" title="c は double">
-<code><span class="reserved">class</span> <span class="type">A</span>
+<pre class="source" title="c は double"><code class="language-csharp">class A
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> a = <em>1.0</em>;
+    public static var a = 1.0;
 }
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> b = <span class="type">A</span>.a + 1;
+    public static var b = A.a + 1;
 }
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public static</span> <span class="reserved">var</span> c = <span class="type">B</span>.b * <span class="type">B</span>.b;
-}
-</code></pre>
+    public static var c = B.b * B.b;
+}</code></pre>
 </td>
 </tr>
 </table>
@@ -420,53 +416,49 @@ C#はコンパイル時間にもかなり気を使っているプログラミン
 <table>
 <tr>
 <td>
-<pre class="source" title="変更前">
-<code><span class="reserved">using</span> System;
+<pre class="source" title="変更前"><code class="language-csharp">using System;
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> var F(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
-        =&gt; <span class="reserved">new</span> { x, y };
+    public static var F(int x, int y)
+        =&gt; new { x, y };
 }
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> var G(<span class="reserved">int</span> x) = <span class="type">A</span>.F(x, x);
+    public static var G(int x) = A.F(x, x);
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="type">B</span>.G(1);
-        <span class="type">Console</span>.WriteLine(p.x);
+        var p = B.G(1);
+        Console.WriteLine(p.x);
     }
-}
-</code></pre>
+}</code></pre>
 </td>
 <td>
-<pre class="source" title="変更後">
-<code><span class="reserved">using</span> System;
+<pre class="source" title="変更後"><code class="language-csharp">using System;
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> var F(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
-        =&gt; <span class="reserved">new</span> { <em>X</em> = x + y, <em>Y</em> = x - y };
-    <span class="comment">// ↑ new { x, y } だったのが new { X, Y } に変わった</span>
+    public static var F(int x, int y)
+        =&gt; new { X = x + y, Y = x - y };
+    // ↑ new { x, y } だったのが new { X, Y } に変わった
 }
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> var G(<span class="reserved">int</span> x) =&gt; <span class="type">A</span>.F(x, x);
+    public static var G(int x) =&gt; A.F(x, x);
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="type">B</span>.G(1);
-        <span class="type">Console</span>.WriteLine(<em>p.x</em>); <span class="comment">// ここでエラー</span>
+        var p = B.G(1);
+        Console.WriteLine(p.x); // ここでエラー
     }
-}
-</code></pre>
+}</code></pre>
 </td>
 </tr>
 </table>
@@ -485,21 +477,21 @@ C#のように、大規模プロジェクトでも使われるプログラミン
 代わりと言ってはなんですが、「逆向きの型推論」が入る可能性はあります。
 すなわち、以下のような書き方です。
 
-<pre class="source" title="newの際の型推論">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> A() { }
-    <span class="reserved">public</span> A(<span class="reserved">int</span> n) { }
+    public A() { }
+    public A(int n) { }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="type">A</span> n = <span class="reserved">default</span>; <span class="comment">// defautl(A)</span>
-    <span class="type">A</span> x = <span class="reserved">new</span>();   <span class="comment">// new A()</span>
-    <span class="type">A</span> y = <span class="reserved">new</span>(1);  <span class="comment">// new A(1)</span>
-    <span class="type">A</span> F(<span class="reserved">int</span> n) =&gt; <span class="reserved">new</span>(n); <span class="comment">// new A(n)</span>
+    A n = default; // defautl(A)
+    A x = new();   // new A()
+    A y = new(1);  // new A(1)
+    A F(int n) => new(n); // new A(n)
 }
-</code></pre>
+```
 
 `new`演算子の後ろや、`default`演算子の`()`を省略可能で、型は、フィールドの型や戻り値の型から推論されます。
 

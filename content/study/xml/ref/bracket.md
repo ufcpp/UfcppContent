@@ -28,81 +28,84 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;bracket size="括弧の大きさ" type="type"&gt;括弧内の式&lt;/bracket&gt;
-</pre>
+```xml
+<bracket size="括弧の大きさ" type="type">括弧内の式</bracket>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;bracket&gt;x&lt;/bracket&gt; = &lt;inv&gt;N&lt;/inv&gt;&lt;Sigma&gt;&lt;sub&gt;i&lt;/sub&gt;&lt;sup&gt;N&lt;/sup&gt;&lt;/Sigma&gt;x&lt;sub&gt;i&lt;/sub&gt;
-</pre><div class="math"><span class="paren" style="font-size:em;">〈</span>x<span class="paren" style="font-size:em;">〉</span> = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>N</td></tr></table><table class="sigma" summary="sum"><tr><td class="sigmasub">N</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i</td></tr></table>x<sub>i</sub>
+```xml
+<bracket>x</bracket> = <inv>N</inv><Sigma><sub>i</sub><sup>N</sup></Sigma>x<sub>i</sub>
+```
+<div class="math"><span class="paren" style="font-size:em;">〈</span>x<span class="paren" style="font-size:em;">〉</span> = <table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>N</td></tr></table><table class="sigma" summary="sum"><tr><td class="sigmasub">N</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">i</td></tr></table>x<sub>i</sub>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:math//ufcpp:bracket|ufcpp:math//ufcpp:bra|ufcpp:Math//ufcpp:bracket|ufcpp:Math//ufcpp:bra"&gt;
-&lt;xsl:variable name="t"&gt;&lt;xsl:choose&gt;&lt;xsl:when test="@type != ''"&gt;&lt;xsl:value-of select="@type"/&gt;&lt;/xsl:when&gt;&lt;xsl:otherwise&gt;&lt;xsl:value-of select="@t"/&gt;&lt;/xsl:otherwise&gt;&lt;/xsl:choose&gt;&lt;/xsl:variable&gt;
+```xml
+<xsl:template match="ufcpp:math//ufcpp:bracket|ufcpp:math//ufcpp:bra|ufcpp:Math//ufcpp:bracket|ufcpp:Math//ufcpp:bra">
+<xsl:variable name="t"><xsl:choose><xsl:when test="@type != ''"><xsl:value-of select="@type"/></xsl:when><xsl:otherwise><xsl:value-of select="@t"/></xsl:otherwise></xsl:choose></xsl:variable>
 
-&lt;xsl:variable name="l"&gt;
- &lt;xsl:choose&gt;
-  &lt;xsl:when test="$t = 'p'"&gt;(&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'paren'"&gt;(&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'r'"&gt;(&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'round'"&gt;(&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'c'"&gt;{&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'curl'"&gt;{&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'b'"&gt;{&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'brace'"&gt;{&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'angle'"&gt;&amp;#9001;&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'square'"&gt;[&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'sq'"&gt;[&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'abs'"&gt;|&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'norm'"&gt;||&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'ceil'"&gt;&amp;#8968;&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'floor'"&gt;&amp;#8970;&lt;/xsl:when&gt;
-  &lt;xsl:otherwise&gt;&amp;#9001;&lt;/xsl:otherwise&gt;
- &lt;/xsl:choose&gt;
-&lt;/xsl:variable&gt;
+<xsl:variable name="l">
+ <xsl:choose>
+  <xsl:when test="$t = 'p'">(</xsl:when>
+  <xsl:when test="$t = 'paren'">(</xsl:when>
+  <xsl:when test="$t = 'r'">(</xsl:when>
+  <xsl:when test="$t = 'round'">(</xsl:when>
+  <xsl:when test="$t = 'c'">{</xsl:when>
+  <xsl:when test="$t = 'curl'">{</xsl:when>
+  <xsl:when test="$t = 'b'">{</xsl:when>
+  <xsl:when test="$t = 'brace'">{</xsl:when>
+  <xsl:when test="$t = 'angle'">&#9001;</xsl:when>
+  <xsl:when test="$t = 'square'">[</xsl:when>
+  <xsl:when test="$t = 'sq'">[</xsl:when>
+  <xsl:when test="$t = 'abs'">|</xsl:when>
+  <xsl:when test="$t = 'norm'">||</xsl:when>
+  <xsl:when test="$t = 'ceil'">&#8968;</xsl:when>
+  <xsl:when test="$t = 'floor'">&#8970;</xsl:when>
+  <xsl:otherwise>&#9001;</xsl:otherwise>
+ </xsl:choose>
+</xsl:variable>
 
-&lt;xsl:variable name="r"&gt;
- &lt;xsl:choose&gt;
-  &lt;xsl:when test="$t = 'p'"&gt;)&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'paren'"&gt;)&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'r'"&gt;)&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'round'"&gt;)&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'c'"&gt;}&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'curl'"&gt;}&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'b'"&gt;}&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'brace'"&gt;}&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'angle'"&gt;&amp;#9002;&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'square'"&gt;]&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'sq'"&gt;]&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'abs'"&gt;|&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'norm'"&gt;||&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'ceil'"&gt;&amp;#8969;&lt;/xsl:when&gt;
-  &lt;xsl:when test="$t = 'floor'"&gt;&amp;#8971;&lt;/xsl:when&gt;
-  &lt;xsl:otherwise&gt;&amp;#9002;&lt;/xsl:otherwise&gt;
- &lt;/xsl:choose&gt;
-&lt;/xsl:variable&gt;
+<xsl:variable name="r">
+ <xsl:choose>
+  <xsl:when test="$t = 'p'">)</xsl:when>
+  <xsl:when test="$t = 'paren'">)</xsl:when>
+  <xsl:when test="$t = 'r'">)</xsl:when>
+  <xsl:when test="$t = 'round'">)</xsl:when>
+  <xsl:when test="$t = 'c'">}</xsl:when>
+  <xsl:when test="$t = 'curl'">}</xsl:when>
+  <xsl:when test="$t = 'b'">}</xsl:when>
+  <xsl:when test="$t = 'brace'">}</xsl:when>
+  <xsl:when test="$t = 'angle'">&#9002;</xsl:when>
+  <xsl:when test="$t = 'square'">]</xsl:when>
+  <xsl:when test="$t = 'sq'">]</xsl:when>
+  <xsl:when test="$t = 'abs'">|</xsl:when>
+  <xsl:when test="$t = 'norm'">||</xsl:when>
+  <xsl:when test="$t = 'ceil'">&#8969;</xsl:when>
+  <xsl:when test="$t = 'floor'">&#8971;</xsl:when>
+  <xsl:otherwise>&#9002;</xsl:otherwise>
+ </xsl:choose>
+</xsl:variable>
 
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
-    &lt;xsl:value-of select="$l"/&gt;
-  &lt;/span&gt;
-  &lt;xsl:apply-templates/&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
-    &lt;xsl:value-of select="$r"/&gt;
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
+    <xsl:value-of select="$l"/>
+  </span>
+  <xsl:apply-templates/>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
+    <xsl:value-of select="$r"/>
+  </span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.paren
+```css
+span.paren
 {
   font-style:normal;
   vertical-align:middle;
 }
-
-</pre>
+```

@@ -22,14 +22,14 @@ aliases:
 
 例えば、以下のようなクラスがあったとします。
 
-<pre class="source" title="レイアウトの例">
-<code><reserved></span><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">int</span> x;
-    <span class="reserved">int</span> y;
-    <span class="reserved">int</span> z;
+    int x;
+    int y;
+    int z;
 }
-</code></pre>
+```
 
 こういうフィールドの持ち方をすると、たいてい<sup>※</sup>の場合、以下のようなレイアウトになります。
 
@@ -43,22 +43,22 @@ aliases:
 
 続いて、クラスを継承した時のレイアウトがどうなるかについてですが、例として以下のようなクラス階層を考えます。
 
-<pre class="source" title="単一継承のレイアウトの例">
-<code><reserved></span><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">int</span> x;
+    int x;
 }
 
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+class B : A
 {
-    <span class="reserved">int</span> y;
+    int y;
 }
 
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">B</span>
+class C : B
 {
-    <span class="reserved">int</span> z;
+    int z;
 }
-</code></pre>
+```
 
 このときのレイアウトは「基底クラス側から順にフィールドを並べたものになります。この例の場合、下図のようになります。
 
@@ -74,22 +74,22 @@ aliases:
 面倒が出てくるのはここからです。先ほどと同じことを多重継承で考えてみましょう。
 C#では認められていませんが、仮に、以下のように書けたとしましょう。
 
-<pre class="source" title="多重継承のレイアウトの例(C#では認められていない)">
-<code><reserved></span><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">int</span> x;
+    int x;
 }
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">int</span> y;
+    int y;
 }
 
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">A</span>, <span class="type">B</span>
+class C : A, B
 {
-    <span class="reserved">int</span> z;
+    int z;
 }
-</code></pre>
+```
 
 レイアウトは以下のようにするのがシンプルでよいでしょう。
 
@@ -108,28 +108,27 @@ C#では認められていませんが、仮に、以下のように書けたと
 
 オフセット管理が必要な時点ですでに多重継承は面倒なんですが、より深い問題として、ダイヤモンド問題(diamond problem)というものがあります。ここで出てくるダイヤモンドという言葉は、野球用語の「ダイヤモンド」と同じく、ひし形形状のことを指します。すなわち、以下のように「ひし形な」多重継承をした場合にどうなるかという問題です。
 
-<pre class="source" title="ダイヤモンド継承の例">
-<code>
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">int</span> w;
+    int w;
 }
 
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+class B : A
 {
-    <span class="reserved">int</span> x;
+    int x;
 }
 
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">A</span>
+class C : A
 {
-    <span class="reserved">int</span> y;
+    int y;
 }
 
-<span class="reserved">class</span> <span class="type">D</span> : <span class="type">B</span>, <span class="type">C</span>
+class D : B, C
 {
-    <span class="reserved">int</span> z;
+    int z;
 }
-</code></pre>
+```
 
 クラス図を描くと下図のようにひし形になるので「ダイヤモンド継承」と呼ばれます。
 

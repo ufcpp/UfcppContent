@@ -26,19 +26,19 @@ aliases: []
 たぶん、徐々に、以下のように `while (true)` になっていくのかなぁとか。
 まあ、そもそも、ループの大半が `foreach` ですけど。`do-while` どころか `while` もそこそこレア。
 
-<pre class="source" title="while (true)">
-<code><reserved></span><span class="reserved">while</span> (<span class="reserved">true</span>)
+```csharp
+while (true)
 {
-    <span class="comment">// 前にも書きたいことあるし、</span>
-    <span class="reserved">if</span> (条件) <span class="reserved">break</span>;
-    <span class="comment">// 後ろにも書きたいことある</span>
+    // 前にも書きたいことあるし、
+    if (条件) break;
+    // 後ろにも書きたいことある
 }
-<span class="reserved">while</span> (<span class="reserved">true</span>)
+while (true)
 {
-    <span class="comment">// というか、メソッド抽出して return する方が多いかも</span>
-    <span class="reserved">if</span> (条件) <span class="reserved">return</span> ...;
+    // というか、メソッド抽出して return する方が多いかも
+    if (条件) return ...;
 }
-</code></pre>
+```
 
 さて、そんな`do-while`がなぜあるか、ですが。
 確かに`do-while`の「最低1回は実行したい」という要件はそもそも出番が少ない上に、やろうと思えば`while`だけで書けます。
@@ -52,43 +52,43 @@ aliases: []
 
 どういうことかというと、例えば、`do-while`は以下のように展開されます。
 
-<pre class="source" title="do-whileの展開">
-<code><reserved></span><span class="reserved">static</span> <span class="reserved">void</span> DoWhile(<span class="reserved">int</span> x)
+```csharp
+static void DoWhile(int x)
 {
-    <span class="reserved">do</span>
+    do
     {
         --x;
-    } <span class="reserved">while</span> (x &gt; 0);
+    } while (x > 0);
 }
-<span class="comment">// ↓</span>
-<span class="reserved">static</span> <span class="reserved">void</span> DoWhileCompiled(<span class="reserved">int</span> x)
+// ↓
+static void DoWhileCompiled(int x)
 {
     BEGIN_DO_WHILE:;
     --x;
-    <span class="reserved">if</span> (x &gt; 0) <span class="reserved">goto</span> BEGIN_DO_WHILE;
+    if (x > 0) goto BEGIN_DO_WHILE;
 }
-</code></pre>
+```
 
 これに対して、`while`だと以下のように、`goto` (IL 的には `br` 命令。x64 系 CPU のネイティブコード的には jmp 命令)が1個多く展開されたりします。
 
-<pre class="source" title="whileの展開">
-<code><reserved></span><span class="reserved">static</span> <span class="reserved">void</span> While(<span class="reserved">int</span> x)
+```csharp
+static void While(int x)
 {
-    <span class="reserved">while</span> (x &gt; 0)
+    while (x > 0)
     {
         --x;
     }
 }
-<span class="comment">// ↓</span>
-<span class="reserved">static</span> <span class="reserved">void</span> WhileCompiled(<span class="reserved">int</span> x)
+// ↓
+static void WhileCompiled(int x)
 {
-    <span class="reserved">goto</span> END_WHILE;<span class="comment">// この goto がいまいち好きになれない</span>
+    goto END_WHILE;// この goto がいまいち好きになれない
     BEGIN_WHILE:;
     --x;
     END_WHILE:;
-    <span class="reserved">if</span> (x &gt; 0) <span class="reserved">goto</span> BEGIN_WHILE;
+    if (x > 0) goto BEGIN_WHILE;
 }
-</code></pre>
+```
 
 この、`while`、`do-while`を使ったものと、展開結果の`goto`を使ったものが本当に一緒になるかも確認してみましょう。
 上記コードをコンパイルして、ildasmを掛けた結果は以下の通りです。

@@ -34,17 +34,17 @@ HTML を直接書くのではなく、
 勉強ページの更新履歴の元データは以下のような XML になっています。
 
 
-<pre class="xsource" title="whatsnew.xml">
-<code><span class="bracket">&lt;</span><span class="element">whatsnew</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">new</span> <span class="attribute">year</span><span class="attvalue">="2000"</span> <span class="attribute">month</span><span class="attvalue">="12"</span> <span class="attribute">day</span><span class="attvalue">="24"</span>
-  <span class="attribute">url</span><span class="attvalue">="../csharp/index.html"</span><span class="bracket">&gt;</span>
+```xml
+<whatsnew>
+<new year="2000" month="12" day="24"
+  url="../csharp/index.html">
   C#の解説ページ作りました
-<span class="bracket">&lt;/</span><span class="element">new</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">new</span> <span class="attribute">year</span><span class="attvalue">="2000"</span> <span class="attribute">month</span><span class="attvalue">="12"</span> <span class="attribute">day</span><span class="attvalue">="23"</span> <span class="attribute">url</span>=""<span class="bracket">&gt;</span>
+</new>
+<new year="2000" month="12" day="23" url="">
   ホームページ開設
-<span class="bracket">&lt;/</span><span class="element">new</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">whatsnew</span><span class="bracket">&gt;</span>
-</code></pre>
+</new>
+</whatsnew>
+```
 更新履歴に必要な情報というと、更新日時と更新したページのURLと更新内容だけあれば十分なわけです。
 
 こういう情報をブラウザで表示したい場合、テーブルか何かを使って一覧表示したいですよね。
@@ -68,22 +68,22 @@ HTML を直接書くのではなく、
 HTMLのソースはこんな感じです↓
 
 
-<pre class="xsource" title="更新履歴をテーブルで表示">
-<code><span class="bracket">&lt;</span><span class="element">table</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>2000年12月24日<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../programming/csharp/index.html"</span><span class="bracket">&gt;</span>
+```html
+<table>
+<tr>
+ <td>2000年12月24日</td>
+ <td>
+ <a href="../programming/csharp/index.html">
    C#の解説ページ作りました
- <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>2000年12月23日<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>ホームページ開設<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">table</span><span class="bracket">&gt;</span>
-</code></pre>
+ </a>
+ </td>
+</tr>
+<tr>
+ <td>2000年12月23日</td>
+ <td>ホームページ開設</td>
+</tr>
+</table>
+```
 元の XML と変換後の HTML には以下のような決定的な違いがあります。
 
 * 元の XML:
@@ -112,15 +112,15 @@ HTML の方では視覚的なタグの中に情報が埋まっています。
 例えば、テーブルを使うのをやめて、
 
 
-<pre class="xsource" title="whatsnew.xml を単なる p タグで表示">
-<code><span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-2000年12月24日 <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">target</span><span class="attvalue">="_top"</span>
-  <span class="attribute">href</span><span class="attvalue">="../csharp/index.html"</span><span class="bracket">&gt;</span>
+```xml
+<p>
+2000年12月24日 <a target="_top"
+  href="../csharp/index.html">
   C#の解説ページ作りました
-<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">br</span><span class="bracket">&gt;</span>
-2000年12月23日 ホームページ開設<span class="bracket">&lt;</span><span class="element">br</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-</code></pre>
+</a><br>
+2000年12月23日 ホームページ開設<br>
+</p>
+```
 こんな感じ↑に変更したくなったときに、いちいち更新履歴全体を書き換えるのはかなり面倒なわけで、
 こういう視覚デザイン的な情報は更新履歴という論理的な情報とは分離しておいた方が変更作業が楽になるわけです。
 
@@ -135,75 +135,75 @@ XSL によって視覚的な情報を持たせます。
 更新履歴の XML からテーブルを生成するには以下のような XSL を書きます。
 
 
-<pre class="xsource" title="whatsnew.xml をテーブル化する XSL">
-<code><span class="bracket">&lt;?</span><span class="element">xml</span> <span class="attribute">version</span><span class="attvalue">="1.0"</span> <span class="attribute">encoding</span><span class="attvalue">="Shift_JIS"</span><span class="bracket">?&gt;</span>
-<span class="bracket">&lt;</span><span class="element">xsl:stylesheet</span> <span class="attribute">xmlns:xsl</span><span class="attvalue">="http://www.w3.org/1999/XSL/Transform"</span> <span class="attribute">version</span><span class="attvalue">="2.0"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">xsl:output</span> <span class="attribute">method</span><span class="attvalue">="html"</span> <span class="attribute">encoding</span><span class="attvalue">="Shift_JIS"</span><span class="bracket">/&gt;</span>
+```xml
+<?xml version="1.0" encoding="Shift_JIS"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">
+  <xsl:output method="html" encoding="Shift_JIS"/>
 
-  <span class="bracket">&lt;</span><span class="element">xsl:template</span> <span class="attribute">match</span><span class="attvalue">="/"</span><span class="bracket">&gt;</span>
+  <xsl:template match="/">
 
-    <span class="comment">&lt;!-- 中略 --&gt;</span>
+    <!-- 中略 -->
 
-    <span class="bracket">&lt;</span><span class="element">table</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">xsl:for-each</span> <span class="attribute">select</span><span class="attvalue">="whatsnew/new"</span>
-        <span class="attribute">order-by</span><span class="attvalue">="-number(@year);-number(@month);-number(@day)"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="@year"</span> <span class="bracket">/&gt;</span>年
-          <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="@month"</span> <span class="bracket">/&gt;</span>月
-          <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="@day"</span> <span class="bracket">/&gt;</span>日
-        <span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">xsl:choose</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">xsl:when</span> <span class="attribute">test</span><span class="attvalue">=".[@url!='']"</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">target</span><span class="attvalue">="_top"</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span><span class="element">xsl:attribute</span> <span class="attribute">name</span><span class="attvalue">="href"</span><span class="bracket">&gt;</span>
-                <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="@url"</span> <span class="bracket">/&gt;</span>
-                <span class="bracket">&lt;/</span><span class="element">xsl:attribute</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="."</span> <span class="bracket">/&gt;</span>
-              <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;/</span><span class="element">xsl:when</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">xsl:otherwise</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="."</span> <span class="bracket">/&gt;</span>
-            <span class="bracket">&lt;/</span><span class="element">xsl:otherwise</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;/</span><span class="element">xsl:choose</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">xsl:for-each</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">table</span><span class="bracket">&gt;</span>
+    <table>
+      <xsl:for-each select="whatsnew/new"
+        order-by="-number(@year);-number(@month);-number(@day)">
+      <tr>
+        <td>
+          <xsl:value-of select="@year" />年
+          <xsl:value-of select="@month" />月
+          <xsl:value-of select="@day" />日
+        </td>
+        <td>
+          <xsl:choose>
+            <xsl:when test=".[@url!='']">
+              <a target="_top">
+              <xsl:attribute name="href">
+                <xsl:value-of select="@url" />
+                </xsl:attribute>
+              <xsl:value-of select="." />
+              </a>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="." />
+            </xsl:otherwise>
+          </xsl:choose>
+        </td>
+      </tr>
+      </xsl:for-each>
+    </table>
 
-    <span class="comment">&lt;!-- 中略 --&gt;</span>
+    <!-- 中略 -->
 
-  <span class="bracket">&lt;/</span><span class="element">xsl:template</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">xsl:stylesheet</span><span class="bracket">&gt;</span>
-</code></pre>
+  </xsl:template>
+</xsl:stylesheet>
+```
 こうすることで、ページのデザインを変えたくなったときにはこのXSLを修正するだけですむようになるわけです。
 例えば、先ほどのようにテーブルを使うのをやめたくなったときには、
 XSL の table の部分を以下のように修正するだけでデザインの変更が出来ます。
 
 
-<pre class="xsource" title="whatsnew.xml を p タグに展開">
-<code><span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">xsl:for-each</span> <span class="attribute">select</span><span class="attvalue">="whatsnew/new"</span>
-    <span class="attribute">order-by</span><span class="attvalue">="-number(@year);-number(@month);-number(@day)"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="@year"</span> <span class="bracket">/&gt;</span>年
-      <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="@month"</span> <span class="bracket">/&gt;</span>月
-      <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="@day"</span> <span class="bracket">/&gt;</span>日
-  <span class="bracket">&lt;</span><span class="element">xsl:choose</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">xsl:when</span> <span class="attribute">test</span><span class="attvalue">=".[@url!='']"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">target</span><span class="attvalue">="_top"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">xsl:attribute</span> <span class="attribute">name</span><span class="attvalue">="href"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="@url"</span> <span class="bracket">/&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">xsl:attribute</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="."</span> <span class="bracket">/&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">xsl:when</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">xsl:otherwise</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">xsl:value-of</span> <span class="attribute">select</span><span class="attvalue">="."</span> <span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">xsl:otherwise</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">xsl:choose</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">br</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">xsl:for-each</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<p>
+  <xsl:for-each select="whatsnew/new"
+    order-by="-number(@year);-number(@month);-number(@day)">
+      <xsl:value-of select="@year" />年
+      <xsl:value-of select="@month" />月
+      <xsl:value-of select="@day" />日
+  <xsl:choose>
+    <xsl:when test=".[@url!='']">
+      <a target="_top">
+      <xsl:attribute name="href">
+        <xsl:value-of select="@url" />
+      </xsl:attribute>
+      <xsl:value-of select="." />
+      </a>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="." />
+    </xsl:otherwise>
+  </xsl:choose>
+  <br />
+  </xsl:for-each>
+</p>
+```
 ちなみにこの XSL では、ついでだから更新日時でソートして、URLが指定されているときに限って&lt;a&gt;タグをつけるように条件分岐するようにしています。

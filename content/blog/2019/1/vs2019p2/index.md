@@ -35,27 +35,27 @@ aliases: []
 
 一応、0引数・1引数での `Deconstruct` ができるようになったりしているみたいです。
 
-<pre class="source" title="0, 1引数 Deconstructと再帰パターン">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">struct</span> <span class="type">X</span>
+struct X
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span style="color:#74531f;">Deconstruct</span>() { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span style="color:#74531f;">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span style="color:#1f377f;">x</span>) =&gt; <span style="color:#1f377f;">x</span> = 0;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span style="color:#74531f;">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span style="color:#1f377f;">x</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span style="color:#1f377f;">y</span>) =&gt; (<span style="color:#1f377f;">x</span>, <span style="color:#1f377f;">y</span>) = (0, 0);
+    public void Deconstruct() { }
+    public void Deconstruct(out int x) => x = 0;
+    public void Deconstruct(out int x, out int y) => (x, y) = (0, 0);
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span style="font-weight:bold;color:#74531f;">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span style="color:#1f377f;">x</span> = <span class="reserved">new</span> <span class="type">X</span>();
-        <span style="font-weight:bold;color:#2b91af;">Console</span>.<span style="font-weight:bold;color:#74531f;">WriteLine</span>(<span style="color:#1f377f;">x</span> <span class="reserved">is</span> ());      <span class="comment">// 0引数</span>
-        <span style="font-weight:bold;color:#2b91af;">Console</span>.<span style="font-weight:bold;color:#74531f;">WriteLine</span>(<span style="color:#1f377f;">x</span> <span class="reserved">is</span> <span class="reserved">var</span> (<span class="reserved">_</span>)); <span class="comment">// 1引数のだけは、() 式とかキャストとかとの弁別のために var 必須</span>
-        <span style="font-weight:bold;color:#2b91af;">Console</span>.<span style="font-weight:bold;color:#74531f;">WriteLine</span>(<span style="color:#1f377f;">x</span> <span class="reserved">is</span> (<span class="reserved">_</span>, <span class="reserved">_</span>));  <span class="comment">// 2引数</span>
+        var x = new X();
+        Console.WriteLine(x is ());      // 0引数
+        Console.WriteLine(x is var (_)); // 1引数のだけは、() 式とかキャストとかとの弁別のために var 必須
+        Console.WriteLine(x is (_, _));  // 2引数
     }
 }
-</code></pre>
+```
 
 ## using の改善
 
@@ -67,41 +67,41 @@ aliases: []
 はい、残念なお知らせ。パターン ベースでの`Dispose`呼び出しが[`ref struct`](../../../../study/csharp/resource/refstruct.md)限定になりました。
 そうしないと破壊的変更を起こす可能性があってやむなく限定したそうです。
 
-<pre class="source" title="パターン ベースの using">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// インターフェイスなし、ref なし</span>
-<span class="reserved">struct</span> <span class="type">A</span> { <span class="reserved">public</span> <span class="reserved">void</span> <span style="color:#74531f;">Dispose</span>() { } }
+// インターフェイスなし、ref なし
+struct A { public void Dispose() { } }
  
-<span class="comment">// インターフェイスあり</span>
-<span class="reserved">struct</span> <span class="type">B</span> : <span class="type">IDisposable</span> { <span class="reserved">public</span> <span class="reserved">void</span> <span style="color:#74531f;">Dispose</span>() { } }
+// インターフェイスあり
+struct B : IDisposable { public void Dispose() { } }
  
-<span class="comment">// ref あり</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">C</span> { <span class="reserved">public</span> <span class="reserved">void</span> <span style="color:#74531f;">Dispose</span>() { } }
+// ref あり
+ref struct C { public void Dispose() { } }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span style="font-weight:bold;color:#74531f;">Main</span>()
+    static void Main()
     {
-        <span class="reserved">using</span> <span class="reserved">var</span> <span style="color:#1f377f;">a</span> = <span class="reserved">new</span> <span class="type">A</span>(); <span class="comment">// ダメ</span>
-        <span class="reserved">using</span> <span class="reserved">var</span> <span style="color:#1f377f;">b</span> = <span class="reserved">new</span> <span class="type">B</span>(); <span class="comment">// 元々 OK</span>
-        <span class="reserved">using</span> <span class="reserved">var</span> <span style="color:#1f377f;">c</span> = <span class="reserved">new</span> <span class="type">C</span>(); <span class="comment">// C# 8.0 で OK に</span>
+        using var a = new A(); // ダメ
+        using var b = new B(); // 元々 OK
+        using var c = new C(); // C# 8.0 で OK に
     }
 }
-</code></pre>
+```
 
 ## 静的ローカル関数
 
 ローカル関数に `static` 修飾を付けることで、[ローカル変数のキャプチャ](../../../../study/csharp/functional/sp2_anonymousmethod.md#closure)をしないということを明示できるようになります。
 
-<pre class="source" title="">
-<code><span class="comment">// ローカル関数に static を付けると、ローカル変数をキャプチャできなくなる。</span>
-<span class="reserved">static</span> <span class="reserved">int</span> <span style="color:#74531f;">a</span>(<span class="reserved">int</span> <span style="color:#1f377f;">x</span>) =&gt; 2 * <span style="color:#1f377f;">x</span>;
+```csharp
+// ローカル関数に static を付けると、ローカル変数をキャプチャできなくなる。
+static int a(int x) => 2 * x;
  
-<span class="comment">// 以下のコードは2行目の n のところでエラーに。</span>
-<span class="reserved">int</span> <span style="color:#1f377f;">n</span> = 0;
-<span class="reserved">static</span> <span class="reserved">int</span> <span style="color:#74531f;">b</span>(<span class="reserved">int</span> <span style="color:#1f377f;">x</span>) =&gt; <span style="color:#1f377f;">n</span> * <span style="color:#1f377f;">x</span>;
-</code></pre>
+// 以下のコードは2行目の n のところでエラーに。
+int n = 0;
+static int b(int x) => n * x;
+```
 
 ## Preview 1 からのその他の修正
 

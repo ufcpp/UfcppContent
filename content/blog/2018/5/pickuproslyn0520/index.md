@@ -24,15 +24,15 @@ aliases: []
 
 [先週書いた](../cs80preview/index.md)通り、現状のプレビュー版では、以下のような文法で「式」としてswitchを書けます。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> s = x <span class="reserved">switch</span>
+```csharp
+var s = x switch
 {
-    1 =&gt; <span class="string">"one"</span>,
-    2 =&gt; <span class="string">"two"</span>,
-    3 =&gt; <span class="string">"three"</span>,
-    _ =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">IndexOutOfRangeException</span>()
+    1 => "one",
+    2 => "two",
+    3 => "three",
+    _ => throw new IndexOutOfRangeException()
 };
-</code></pre>
+```
 
 今のところ、`=>` で実装されているんですが、これに関して:
 
@@ -58,34 +58,34 @@ aliases: []
 
 
 
-<pre class="source" title="">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">static</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">bool</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">IsNullOrEmpty</span>([<span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">NotNullWhenFalse</span>] <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">string</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">s</span>) { }
-</code></pre>
+```csharp
+static bool IsNullOrEmpty([NotNullWhenFalse] string? s) { }
+```
 
 また、以下のように `EnsuresNotNull` 属性で、「このメソッドを呼んだら、引数は null ではないことを確認済み」
 
-<pre class="source" title="">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">static</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">void</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">AssertNotNull</span>&lt;<span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">T</span>&gt;([<span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">EnsuresNotNull</span>] <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">T</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">t</span>) <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">where</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">T</span> : <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">class</span> { }
-</code></pre>
+```csharp
+static void AssertNotNull<T>([EnsuresNotNull] T? t) where T : class { }
+```
 
 `AssertNotNull` だと「null だったらそこで例外」みたいな挙動だけども、別に例外でなくても、
 「メソッド内部で null でない値に上書き」とかもあり得る。
 
-<pre class="source" title="">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">static</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">void</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">EnsureNotNull</span>([<span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">EnsuresNotNull</span>] <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">ref</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">string</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">s</span>) { <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">if</span> (<span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">s</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">is</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">null</span>) <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">s</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">=</span> <span class="pl-s" style="box-sizing: border-box; color: rgb(3, 47, 98);"><span class="pl-pds" style="box-sizing: border-box; color: rgb(3, 47, 98);">"</span><span class="pl-pds" style="box-sizing: border-box; color: rgb(3, 47, 98);">"</span></span>; }
-</code></pre>
+```csharp
+static void EnsureNotNull([EnsuresNotNull] ref string? s) { if (s is null) s = ""; }
+```
 
 `==` 以外での null チェックもできるように、「`Equals` の類のメソッドです。null 解析に使ってください」を表す `NullableEquals` 属性も。
 
-<pre class="source" title="">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">class</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Object</span>
+```csharp
+class Object
 {
-    [<span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">NullableEquals</span>] <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">static</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">bool</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">ReferenceEquals</span>(<span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">object</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">x</span>, <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">object</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">y</span>) { }
-    [<span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">NullableEquals</span>] <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">static</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">bool</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Equals</span>(<span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">object</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">x</span>, <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">object</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">y</span>) { }
-    [<span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">NullableEquals</span>] <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">virtual</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">bool</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Equals</span>(<span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">object</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">other</span>) { }
-    [<span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">NullableEquals</span>] <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">static</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">bool</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">operator</span><span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">==</span>(<span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">object</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">x</span>, <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">object</span>? <span class="pl-smi" style="box-sizing: border-box; color: rgb(36, 41, 46);">y</span>) { }
+    [NullableEquals] public static bool ReferenceEquals(object? x, object? y) { }
+    [NullableEquals] public static bool Equals(object? x, object? y) { }
+    [NullableEquals] public virtual bool Equals(object? other) { }
+    [NullableEquals] public static bool operator==(object? x, object? y) { }
 }
-</code></pre>
+```
 
 既存のコードでこの属性が付いてない場合に備えて、
 「外からアノテーションを足す」みたいな機能も欲しい。
@@ -108,60 +108,60 @@ aliases: []
 
 以下のような感じで、「Animal の派生クラスは Dog と Cat しか認めない」みたいな状態を作ったとして
 
-<pre class="source" title="">
-<code><span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Animal</span>
+```csharp
+abstract class Animal
 {
-    <span class="reserved">private</span> Animal() { }
-    <span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">Dog</span> : <span class="type">Animal</span> { }
-    <span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">Cat</span> : <span class="type">Animal</span> { }
+    private Animal() { }
+    sealed class Dog : Animal { }
+    sealed class Cat : Animal { }
 }
-</code></pre>
+```
 
 switch の網羅性(考えうるケースを網羅してたら `_` や `default` を警告なしで省略できるようにしたい)はどう考えるべきか。
 以下のコードだとダメ。
 
-<pre class="source" title="">
-<code><span class="reserved">int</span> M(<span class="type">Animal</span> a)
+```csharp
+int M(Animal a)
 {
-    <span class="reserved">return</span> a <span class="reserved">switch</span>
+    return a switch
     {
-        <span class="type">Cat</span> c =&gt; 1,
-        <span class="type">Dog</span> d =&gt; 2
+        Cat c => 1,
+        Dog d => 2
     }
 }
-<span class="reserved">int</span> M(<span class="type">Box</span>&lt;<span class="type">Animal</span>&gt; b)
+int M(Box<Animal> b)
 {
-    <span class="reserved">return</span> b <span class="reserved">switch</span>
+    return b switch
     {
-        <span class="type">Box</span> (<span class="type">Cat</span> c) =&gt; 1,
-        <span class="type">Box</span> (<span class="type">Dog</span> d) =&gt; 2
+        Box (Cat c) => 1,
+        Box (Dog d) => 2
     }
 }
-</code></pre>
+```
 
 実際には以下のように書かないと網羅的じゃない。
 
-<pre class="source" title="">
-<code><span class="reserved">int</span> M(<span class="type">Animal</span> a)
+```csharp
+int M(Animal a)
 {
-    <span class="reserved">return</span> a <span class="reserved">switch</span>
+    return a switch
     {
-        <span class="type">Cat</span> c =&gt; 1,
-        <span class="type">Dog</span> d =&gt; 2,
-        <span class="reserved">null</span> =&gt; 3
+        Cat c => 1,
+        Dog d => 2,
+        null => 3
     }
 }
-<span class="reserved">int</span> M(<span class="type">Box</span>&lt;<span class="type">Animal</span>&gt; b)
+int M(Box<Animal> b)
 {
-    <span class="reserved">return</span> b <span class="reserved">switch</span>
+    return b switch
     {
-        <span class="type">Box</span> (<span class="type">Cat</span> c) =&gt; 1,
-        <span class="type">Box</span> (<span class="type">Dog</span> d) =&gt; 2,
-        <span class="type">Box</span> (<span class="reserved">null</span>) =&gt; 3
-        <span class="reserved">null</span> =&gt; 3
+        Box (Cat c) => 1,
+        Box (Dog d) => 2,
+        Box (null) => 3
+        null => 3
     }
 }
-</code></pre>
+```
 
 ### struct unions
 

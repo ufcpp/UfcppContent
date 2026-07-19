@@ -163,7 +163,7 @@ x / y ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal"
 
 ## <a id="sec-generated-title-10"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 ・有理数と実数の関係
 有理数 ⊂ 実数
 （有理数は実数の真部分集合）
@@ -198,4 +198,4 @@ x / y ＝ <table class="sigma" summary="limitation"><tr><td><span class="normal"
 （絶対値（いわゆるユークリッドノルム）の代わりにp進ノルムというものを使う。）
 
 詳しくは群・環・体で説明。
-</pre>
+```

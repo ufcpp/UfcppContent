@@ -51,23 +51,23 @@ ref 構造体に掛かっている制限は多少緩めることができます�
 ということで、デリゲートに対して `ref T` を型引数として与えられるようにしたのが上記 pull request。
 以下のようなコードが書けるようになります。
 
-<pre class="source" title="デリゲートの ref T 型引数">
-<code><span class="type">Func</span>&lt;<em><span class="reserved">ref</span> <span class="reserved">int</span></em>, <em><span class="reserved">ref</span> <span class="reserved">int</span></em>&gt; <span class="variable">f</span> = (<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="reserved">ref</span> <span class="variable">x</span>;
-</code></pre>
+```csharp
+Func<ref int, ref int> f = (ref int x) => ref x;
+```
 
 デリゲートだけ特別扱いと言うのがちょっと気持ち悪くはあるんですが…
 
 C# 10.0 の[デリゲートの自然の型](../../../../study/csharp/functional/sp_delegate.md#natural-type)の仕様も十分気持ち悪いですからね…
 「`Action` や `Func` で表現できないものは匿名の型を作る」みたいなことをしていて、これはこれで微妙です。
 
-<pre class="source" title="C# 10.0 のデリゲートの自然な型決定">
-<code><span class="comment">// C# 10.0 時点では Func&lt;ref int, ref int&gt; というデリゲートは作れないので、</span>
-<span class="comment">// しょうがないので delegate ref int Anonymous(ref int x) という匿名のデリゲート型を作ってる。</span>
-<span class="reserved">var</span> <span class="variable">f</span> = (<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="reserved">ref</span> <span class="variable">x</span>;
+```csharp
+// C# 10.0 時点では Func<ref int, ref int> というデリゲートは作れないので、
+// しょうがないので delegate ref int Anonymous(ref int x) という匿名のデリゲート型を作ってる。
+var f = (ref int x) => ref x;
 
-<span class="reserved">int</span> <span class="variable">x</span> = 10;
-<span class="reserved">ref</span> <span class="reserved">var</span> <span class="variable">y</span> = <span class="reserved">ref</span> <span class="variable">f</span>(<span class="reserved">ref</span> <span class="variable">x</span>);
-</code></pre>
+int x = 10;
+ref var y = ref f(ref x);
+```
 
 ## ジェネリック型引数に ref 構造体
 
@@ -84,24 +84,24 @@ C# 10.0 の[デリゲートの自然の型](../../../../study/csharp/functional/
 
 これで、例えば以下のようなコードを書けるようになります。
 
-<pre class="source" title="ref struct 制約">
-<code><span class="reserved">class</span> <span class="type">Writer</span>
+```csharp
+class Writer
 {
-    <span class="reserved">void</span> <span class="method">Write</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">value</span>)
-        <span class="reserved">where</span> <span class="type">T</span> : <em><span class="reserved">ref</span> <span class="reserved">struct</span>, <span class="type">ISpanFormattable</span></em>
+    void Write<T>(T value)
+        where T : ref struct, ISpanFormattable
     {
-        <span class="type">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable">buffer</span> = <span class="reserved">stackalloc</span> <span class="reserved">char</span>[100];
+        Span<char> buffer = stackalloc char[100];
 
-        <span class="comment">// Constrained interface call which does not box</span>
-        <span class="control">if</span> (<span class="variable">value</span>.<span class="method">TryFormat</span>(<span class="variable">buffer</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">written</span>, <span class="reserved">default</span>, <span class="reserved">null</span>))
+        // Constrained interface call which does not box
+        if (value.TryFormat(buffer, out var written, default, null))
         {
-            <span class="reserved">this</span>.<span class="method">Write</span>(<span class="variable">buffer</span>);
+            this.Write(buffer);
         }
     }
 
-    <span class="reserved">void</span> <span class="method">Write</span>(<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; <span class="variable">data</span>) { <span class="comment">/* 省略 */</span> }
+    void Write(ReadOnlySpan<char> data) { /* 省略 */ }
 }
-</code></pre>
+```
 
 ここでちょっと気持ち悪い点が1つあるんですが…
 `where T : ref struct` は「アンチ制約」になっています。

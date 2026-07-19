@@ -35,16 +35,16 @@ C# 7.1 の時と同様、7.2 を有効にするには `LangVersion` 指定が必
 
 ![LangVersion latest](../../../../../assets/media/1154/langversionlatest.png)
 
-<pre class="xsource" title="">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>netcoreapp2.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span><em>latest</em><span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 うちのサイト、今回はもうちゃんと全機能網羅できているはず。
 

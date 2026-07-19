@@ -48,95 +48,95 @@ Match メソッド（最初の1件を得る）や、Matches メソッド（マ�
 </ul>
 <div>
 
-<pre class="source" title="ハイフンで区切られた単語の検索" lang="C#">
-<code><span class="reserved">var</span> text = <span class="literal">@"</span>
-<span class="literal">C# (pronounced C sharp) is a programming language that</span>
-<span class="literal">is designed for building a variety of applications that</span>
-<span class="literal">run on the .NET Framework. C# is simple, powerful,</span>
-<span class="literal">type-safe, and object-oriented. The many innovations</span>
-<span class="literal">in C# enable rapid application development while</span>
-<span class="literal">retaining the expressiveness and elegance of C-style</span>
-<span class="literal">languages. "</span>;
+```csharp
+var text = @"
+C# (pronounced C sharp) is a programming language that
+is designed for building a variety of applications that
+run on the .NET Framework. C# is simple, powerful,
+type-safe, and object-oriented. The many innovations
+in C# enable rapid application development while
+retaining the expressiveness and elegance of C-style
+languages. ";
 
-<span class="reserved">var</span> withHyphen = <span class="reserved">new</span> <span class="type">Regex</span>(<span class="literal">@"\w+-\w+"</span>, RegexOptions.Multiline);
+var withHyphen = new Regex(@"\w+-\w+", RegexOptions.Multiline);
 
-<span class="reserved">var</span> hyphenedWord =
-    <span class="reserved">from</span> <span class="type">Match</span> m <span class="reserved">in</span> withHyphen.<em>Matches</em>(text)
-    <span class="reserved">select</span> m.Value;
+var hyphenedWord =
+    from Match m in withHyphen.Matches(text)
+    select m.Value;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> hyphonedWords)
+foreach (var item in hyphonedWords)
 {
-    <span class="type">Console</span>.WriteLine(item);
+    Console.WriteLine(item);
 }
-</code></pre>
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Dim</span> text = <span class="literal">"C# (pronounced C sharp) is a programming language that"</span> &amp; vbCrLf &amp;
-    <span class="literal">"is designed for building a variety of applications that"</span> &amp; vbCrLf &amp;
-    <span class="literal">"run on the .NET Framework. C# is simple, powerful,"</span> &amp; vbCrLf &amp;
-    <span class="literal">"type-safe, and object-oriented. The many innovations"</span> &amp; vbCrLf &amp;
-    <span class="literal">"in C# enable rapid application development while"</span> &amp; vbCrLf &amp;
-    <span class="literal">"retaining the expressiveness and elegance of C-style"</span> &amp; vbCrLf &amp;
-    <span class="literal">"languages. "</span>
+```vbnet
+Dim text = "C# (pronounced C sharp) is a programming language that" & vbCrLf &
+    "is designed for building a variety of applications that" & vbCrLf &
+    "run on the .NET Framework. C# is simple, powerful," & vbCrLf &
+    "type-safe, and object-oriented. The many innovations" & vbCrLf &
+    "in C# enable rapid application development while" & vbCrLf &
+    "retaining the expressiveness and elegance of C-style" & vbCrLf &
+    "languages. "
 
-<span class="reserved">Dim</span> withHyphen = <span class="reserved">New</span> <span class="type">Regex</span>(<span class="literal">"\w+-\w+"</span>, <span class="type">RegexOptions</span>.Multiline)
+Dim withHyphen = New Regex("\w+-\w+", RegexOptions.Multiline)
 
-<span class="reserved">Dim</span> hyphenedWord = <span class="reserved">From</span> m <span class="reserved">As</span> <span class="type">Match</span> <span class="reserved">In</span> withHyphen.Matches(text).OfType(<span class="reserved">Of</span> <span class="type">Match</span>)()
-                   <span class="reserved">Select</span> m.Value
+Dim hyphenedWord = From m As Match In withHyphen.Matches(text).OfType(Of Match)()
+                   Select m.Value
 
-<span class="reserved">For</span> <span class="reserved">Each</span> item <span class="reserved">In</span> hyphenedWord
-    <span class="type">Console</span>.WriteLine(item)
-<span class="reserved">Next</span>
-</code></pre>
+For Each item In hyphenedWord
+    Console.WriteLine(item)
+Next
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="F#">
-<code><span class="reserved">open</span> System
-<span class="reserved">open</span> System.Text.RegularExpressions
+```fsharp
+open System
+open System.Text.RegularExpressions
 
-<span class="reserved">let</span> text = <span class="literal">"</span>
-<span class="literal">C# (pronounced C sharp) is a programming language that</span>
-<span class="literal">is designed for building a variety of applications that</span>
-<span class="literal">run on the .NET Framework. C# is simple, powerful,</span>
-<span class="literal">type-safe, and object-oriented. The many innovations</span>
-<span class="literal">in C# enable rapid application development while</span>
-<span class="literal">retaining the expressiveness and elegance of C-style</span>
-<span class="literal">languages. "</span>
+let text = "
+C# (pronounced C sharp) is a programming language that
+is designed for building a variety of applications that
+run on the .NET Framework. C# is simple, powerful,
+type-safe, and object-oriented. The many innovations
+in C# enable rapid application development while
+retaining the expressiveness and elegance of C-style
+languages. "
 
-<span class="reserved">let</span> withHyphen = <span class="reserved">new</span> Regex(<span class="literal">@"\w+-\w+"</span>, RegexOptions.Multiline)
+let withHyphen = new Regex(@"\w+-\w+", RegexOptions.Multiline)
 
-<span class="reserved">let</span> hyphenedWord = seq {
-    <span class="reserved">for</span> m <span class="reserved">in</span> withHyphen.Matches(text) <span class="reserved">do</span>
-        <span class="reserved">yield</span> m.Value
+let hyphenedWord = seq {
+    for m in withHyphen.Matches(text) do
+        yield m.Value
         }
 
-<span class="reserved">let</span> e = seq {
-    <span class="reserved">for</span> x <span class="reserved">in</span> 0..10 <span class="reserved">do</span>
-        <span class="reserved">for</span> y <span class="reserved">in</span> 0..10 <span class="reserved">do</span>
+let e = seq {
+    for x in 0..10 do
+        for y in 0..10 do
             System.Threading.Thread.Sleep(100)
-            <span class="reserved">yield</span> x * y
+            yield x * y
             }
 
-<span class="reserved">for</span> x <span class="reserved">in</span> hyphenedWord <span class="reserved">do</span> Console.WriteLine x
-</code></pre>
+for x in hyphenedWord do Console.WriteLine x
+```
 
 
 </div>
 </div>
 
 
-<pre class="console" title="実行結果">
+```console
 type-safe
 object-oriented
 C-style
-</pre>
+```
 
 
 もう1つ、単語の出現頻度を数える例を示しましょう。
@@ -151,87 +151,87 @@ Split メソッドで、単語の切り出しを行います。
 </ul>
 <div>
 
-<pre class="source" title="単語の出現頻度" lang="C#">
-<code><span class="reserved">var</span> text = <span class="literal">@"</span>
-<span class="literal">C# (pronounced C sharp) is a programming language that</span>
-<span class="literal">is designed for building a variety of applications that</span>
-<span class="literal">run on the .NET Framework. C# is simple, powerful,</span>
-<span class="literal">type-safe, and object-oriented. The many innovations</span>
-<span class="literal">in C# enable rapid application development while</span>
-<span class="literal">retaining the expressiveness and elegance of C-style</span>
-<span class="literal">languages. "</span>;
+```csharp
+var text = @"
+C# (pronounced C sharp) is a programming language that
+is designed for building a variety of applications that
+run on the .NET Framework. C# is simple, powerful,
+type-safe, and object-oriented. The many innovations
+in C# enable rapid application development while
+retaining the expressiveness and elegance of C-style
+languages. ";
 
-<span class="reserved">var</span> splitter = <span class="reserved">new</span> <span class="type">Regex</span>(<span class="literal">@"[\s\(\)\.,\n\r]+"</span>, RegexOptions.Multiline);
+var splitter = new Regex(@"[\s\(\)\.,\n\r]+", RegexOptions.Multiline);
 
-<span class="reserved">var</span> wordCount =
-    <span class="reserved">from</span> word <span class="reserved">in</span> splitter.<em>Split</em>(text)
-    <span class="reserved">where</span> !<span class="reserved">string</span>.IsNullOrEmpty(word)
-    <span class="reserved">group</span> word <span class="reserved">by</span> word <span class="reserved">into</span> g
-    <span class="reserved">orderby</span> g.Count()
-    <span class="reserved">select</span> <span class="reserved">new</span> { Count = g.Count(), Word = g.Key };
+var wordCount =
+    from word in splitter.Split(text)
+    where !string.IsNullOrEmpty(word)
+    group word by word into g
+    orderby g.Count()
+    select new { Count = g.Count(), Word = g.Key };
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> wordCount)
+foreach (var item in wordCount)
 {
-    <span class="type">Console</span>.WriteLine(item);
+    Console.WriteLine(item);
 }
-</code></pre>
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Dim</span> text = <span class="literal">"C# (pronounced C sharp) is a programming language that"</span> &amp; vbCrLf &amp;
-    <span class="literal">"is designed for building a variety of applications that"</span> &amp; vbCrLf &amp;
-    <span class="literal">"run on the .NET Framework. C# is simple, powerful,"</span> &amp; vbCrLf &amp;
-    <span class="literal">"type-safe, and object-oriented. The many innovations"</span> &amp; vbCrLf &amp;
-    <span class="literal">"in C# enable rapid application development while"</span> &amp; vbCrLf &amp;
-    <span class="literal">"retaining the expressiveness and elegance of C-style"</span> &amp; vbCrLf &amp;
-    <span class="literal">"languages. "</span>
+```vbnet
+Dim text = "C# (pronounced C sharp) is a programming language that" & vbCrLf &
+    "is designed for building a variety of applications that" & vbCrLf &
+    "run on the .NET Framework. C# is simple, powerful," & vbCrLf &
+    "type-safe, and object-oriented. The many innovations" & vbCrLf &
+    "in C# enable rapid application development while" & vbCrLf &
+    "retaining the expressiveness and elegance of C-style" & vbCrLf &
+    "languages. "
 
-<span class="reserved">Dim</span> splitter = <span class="reserved">New</span> <span class="type">Regex</span>(<span class="literal">"[\s\(\)\.,\n\r]+"</span>, <span class="type">RegexOptions</span>.Multiline)
+Dim splitter = New Regex("[\s\(\)\.,\n\r]+", RegexOptions.Multiline)
 
-<span class="reserved">Dim</span> wordCount = <span class="reserved">From</span> word <span class="reserved">In</span> splitter.Split(text)
-                <span class="reserved">Where</span> <span class="reserved">Not</span> <span class="reserved">String</span>.IsNullOrEmpty(word)
-                <span class="reserved">Group</span> <span class="reserved">By</span> Word = word <span class="reserved">Into</span> <span class="reserved">Group</span>
-                <span class="reserved">Order</span> <span class="reserved">By</span> Group.Count()
-                <span class="reserved">Select</span> <span class="reserved">New</span> <span class="reserved">With</span> {Group.Count(), Word}
+Dim wordCount = From word In splitter.Split(text)
+                Where Not String.IsNullOrEmpty(word)
+                Group By Word = word Into Group
+                Order By Group.Count()
+                Select New With {Group.Count(), Word}
 
-<span class="reserved">For</span> <span class="reserved">Each</span> item <span class="reserved">In</span> wordCount
-    <span class="type">Console</span>.WriteLine(item)
-<span class="reserved">Next</span>
-</code></pre>
+For Each item In wordCount
+    Console.WriteLine(item)
+Next
+```
 
 
 </div>
 </div>
 
 
-<pre class="console" title="実行結果">
-<span class="input">前略</span>
+```console
+前略
 { Count = 2, Word = of }
 { Count = 2, Word = the }
 { Count = 2, Word = and }
 { Count = 3, Word = C# }
 { Count = 3, Word = is }    
-</pre>
+```
 
 
 これらの例では、Regex クラスのインスタンスを作っています。
 作ったインスタンスを取っておけば、文字列で与えた正規表現を、内部的な表現にコンパイルする作業を1度限りにできて、実行効率が良くなります。
 一方、実行効率を気にしない、もしくは、一度きりのパターン マッチングなら、静的メソッド版も使えます。
 
-<pre class="source" title="静的メソッド版の Match" lang="">
-<code><span class="reserved">var</span> text = <span class="literal">"abcde"</span>;
-<span class="type">Console</span>.WriteLine(<span class="type">Regex</span>.Match(text, <span class="literal">"a+"</span>));
-<span class="type">Console</span>.WriteLine(<span class="type">Regex</span>.Match(text, <span class="literal">"a.*e"</span>));
-</code></pre>
+```csharp
+var text = "abcde";
+Console.WriteLine(Regex.Match(text, "a+"));
+Console.WriteLine(Regex.Match(text, "a.*e"));
+```
 
 
-<pre class="console" title="実行結果">
+```console
 a
 abcde
-</pre>
+```
 
 
 以下では、正規表現の中身（Regex クラスに与える文字列）の説明をしていきましょう。
@@ -266,13 +266,13 @@ abcde
 
 この例をC#で書くと、以下のようになります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> r = <span class="reserved">new</span> <span class="type">Regex</span>(<span class="literal">"ab"</span>);
-<span class="type">Console</span>.WriteLine(r.Match(<span class="literal">"abc"</span>).Success); <span class="comment">// true</span>
-<span class="type">Console</span>.WriteLine(r.Match(<span class="literal">"enable"</span>).Success); <span class="comment">// true</span>
-<span class="type">Console</span>.WriteLine(r.Match(<span class="literal">"a"</span>).Success); <span class="comment">// false</span>
-<span class="type">Console</span>.WriteLine(r.Match(<span class="literal">"acb"</span>).Success); <span class="comment">// false</span>
-</code></pre>
+```csharp
+var r = new Regex("ab");
+Console.WriteLine(r.Match("abc").Success); // true
+Console.WriteLine(r.Match("enable").Success); // true
+Console.WriteLine(r.Match("a").Success); // false
+Console.WriteLine(r.Match("acb").Success); // false
+```
 
 
 
@@ -389,14 +389,14 @@ abcde
 
 通常、これらの数量指定は「最大一致」になります。一方、これらの記号の後ろに ? （はてな）をつけることで、「最小一致」パターンも作れます。
 
-<pre class="source" title="最小一致パターン" lang="">
-<code><span class="reserved">var</span> r1 = <span class="reserved">new</span> <span class="type">Regex</span>(<span class="literal">@".*,"</span>);  <span class="comment">// 任意の文字の後ろにコンマ</span>
-<span class="reserved">var</span> r2 = <span class="reserved">new</span> <span class="type">Regex</span>(<span class="literal">@".*?,"</span>); <span class="comment">// 同上。ただし、最小一致</span>
-<span class="reserved">var</span> str = <span class="literal">"aaa,aaa,aaa,"</span>;
+```csharp
+var r1 = new Regex(@".*,");  // 任意の文字の後ろにコンマ
+var r2 = new Regex(@".*?,"); // 同上。ただし、最小一致
+var str = "aaa,aaa,aaa,";
 
-<span class="type">Console</span>.WriteLine(r1.Match(str)); <span class="comment">// aaa,aaa,aaa, まで拾われる</span>
-<span class="type">Console</span>.WriteLine(r2.Match(str)); <span class="comment">// aaa, だけ拾われる</span>
-</code></pre>
+Console.WriteLine(r1.Match(str)); // aaa,aaa,aaa, まで拾われる
+Console.WriteLine(r2.Match(str)); // aaa, だけ拾われる
+```
 
 
 
@@ -615,34 +615,34 @@ abcde
 
 例えば以下のようなコードを見てみましょう。
 
-<pre class="source" title="正規表現のグループ化" lang="">
-<code><span class="reserved">var</span> r = <span class="reserved">new</span> <span class="type">Regex</span>(<span class="literal">@"(\d{4})/(\d{2})/(\d{2})"</span>);
-<span class="reserved">var</span> m = r.Match(<span class="literal">"2011/12/15"</span>);
+```csharp
+var r = new Regex(@"(\d{4})/(\d{2})/(\d{2})");
+var m = r.Match("2011/12/15");
  
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> m.Groups)
+foreach (var x in m.Groups)
 {
-    <span class="type">Console</span>.WriteLine(x);
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 
 <code>()</code>が3か所あります。マッチ結果（m）のGroupsには、マッチした全体と、<code>()</code> でくくった3か所の結果が格納されています。したがって、実行結果は以下の通りです。
 
-<pre class="console" title="実行結果">
+```console
 2011/12/15
 2011
 12
 15
-</pre>
+```
 
 
 グループには、名前を付けておくこともできます。<code>(?&lt;id&gt;パターン)</code> というように、<code>()</code> 内の先頭に <code>?&lt;&gt;</code> をつけます。
 
-<pre class="source" title="正規表現グループに名前を付ける" lang="">
-<code><span class="reserved">var</span> r = <span class="reserved">new</span> <span class="type">Regex</span>(@"(<em>?&lt;y&gt;</em>\d{4})/(<em>?&lt;m&gt;</em>\d{2})/(<em>?&lt;d&gt;</em>\d{2})");
-<span class="reserved">var</span> m = r.Match(<span class="string">"2011/12/15"</span>);
+```csharp
+var r = new Regex(@"(?<y>\d{4})/(?<m>\d{2})/(?<d>\d{2})");
+var m = r.Match("2011/12/15");
 
-<span class="type">Console</span>.WriteLine(m.Groups[<span class="string">"y"</span>]); <span class="comment">// 2011</span>
-<span class="type">Console</span>.WriteLine(m.Groups[<span class="string">"m"</span>]); <span class="comment">// 12</span>
-<span class="type">Console</span>.WriteLine(m.Groups[<span class="string">"d"</span>]); <span class="comment">// 15</span>
-</code></pre>
+Console.WriteLine(m.Groups["y"]); // 2011
+Console.WriteLine(m.Groups["m"]); // 12
+Console.WriteLine(m.Groups["d"]); // 15
+```

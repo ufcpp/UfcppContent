@@ -21,12 +21,12 @@ aliases: []
 
 今のところ、以下のような構文で検討中。
 
-<pre class="source" title="">
-<code><span class="reserved">extension class</span> <span class="type">クラス名</span> : <span class="type">拡張したい型</span>
+```csharp
+extension class クラス名 : 拡張したい型
 {
-    <span class="comment">// ここにメンバーは、拡張したい型の拡張メソッド、拡張プロパティなどになる</span>
+    // ここにメンバーは、拡張したい型の拡張メソッド、拡張プロパティなどになる
 }
-</code></pre>
+```
 
 ## C# Design Notes (タプル型関連 再び)
 
@@ -55,16 +55,16 @@ aliases: []
 
 が、例えば、その発想で行くと、以下のように、なんか直観にそぐわない「タプル型リテラルからの構築」ができてしまう。
 
-<pre class="source" title="">
-<code><type></span><span class="type">Dictionary</span>&lt;<span class="reserved">int</span>, <span class="reserved">string</span>&gt; d = (16, <span class="type">EqualityComparer</span>&lt;<span class="reserved">int</span>&gt;.Default); <span class="comment">// さすがにこれは気持ち悪い</span>
-</code></pre>
+```csharp
+Dictionary<int, string> d = (16, EqualityComparer<int>.Default); // さすがにこれは気持ち悪い
+```
 
 代わりと言ってはなんだけど、以下のような、`new`の後ろの型の省略を認めようという感じになってるみたい。
 
-<pre class="source" title="">
-<code><type></span><span class="type">Point</span> p = <span class="reserved">new</span> (3, 4); <span class="comment">// new Point(3, 4) と同じ</span>
-<span class="type">List</span>&lt;<span class="reserved">string</span>&gt; l1 = <span class="reserved">new</span> (10); <span class="comment">// 引数0個 or 1個でも大丈夫</span>
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; l2 = <span class="reserved">new</span> () { 3, 4, 5 }; <span class="comment">// コレクション初期化子との併用もできるけど、() は省略できない</span>
-</code></pre>
+```csharp
+Point p = new (3, 4); // new Point(3, 4) と同じ
+List<string> l1 = new (10); // 引数0個 or 1個でも大丈夫
+List<int> l2 = new () { 3, 4, 5 }; // コレクション初期化子との併用もできるけど、() は省略できない
+```
 
 要するに、結局、左辺からの型推論みたいな構文を追加することになりそう。

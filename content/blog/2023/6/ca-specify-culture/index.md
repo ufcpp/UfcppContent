@@ -25,19 +25,19 @@ aliases: []
 
 [例えば以下のようなやつ](https://gist.github.com/ufcpp/071785157dfb8402af27b443427f8b90)。
 
-<pre class="source" title="正気とは思えない ContaisKey">
-<span class="reserved">using</span> <span class="reserved">static</span> System<span class="operator">.</span><span class="static"><span class="type">Console</span></span>;
+```csharp
+using static System.Console;
 
-<span class="comment">// 正規化すると同じ文字になる、文字コード的には別の文字。</span>
-<span class="reserved">var</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;a\u0301&quot;</span>; <span class="comment">// á = a + ́</span>
-<span class="reserved">var</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;\u00e1&quot;</span>; <span class="comment">// á</span>
+// 正規化すると同じ文字になる、文字コード的には別の文字。
+var s1 = "a\u0301"; // á = a + ́
+var s2 = "\u00e1"; // á
 
-<span class="comment">// これは false。Ordinal 比較。</span>
-<span class="method"><span class="static">WriteLine</span></span>(<span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; { { <span class="variable">s1</span>, <span class="number">0</span> } }<span class="operator">.</span><span class="method">ContainsKey</span>(<span class="variable">s2</span>));
+// これは false。Ordinal 比較。
+WriteLine(new Dictionary<string, int> { { s1, 0 } }.ContainsKey(s2));
 
-<span class="comment">// これは true。CurrentCulture 比較。</span>
-<span class="method"><span class="static">WriteLine</span></span>(<span class="reserved">new</span> <span class="type">SortedDictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; { { <span class="variable">s1</span>, <span class="number">0</span> } }<span class="operator">.</span><span class="method">ContainsKey</span>(<span class="variable">s2</span>));
-</pre>
+// これは true。CurrentCulture 比較。
+WriteLine(new SortedDictionary<string, int> { { s1, 0 } }.ContainsKey(s2));
+```
 
 なんでこんなことになるかというと、
 
@@ -84,21 +84,21 @@ NetAnalyzers は要するに、「.NET SDK 付属の公式コード解析」で�
 ということで、このコード解析の警告・エラー レベルを上げてしまった方がいいかもしれません。
 .editorconfig に以下のような行を足せばエラーにできます。
 
-<pre class="source">
-<span class="type">[*.cs]</span>
-<span class="reserved">dotnet_diagnostic.CA1304.severity</span> = error
-<span class="reserved">dotnet_diagnostic.CA1305.severity</span> = error
-<span class="reserved">dotnet_diagnostic.CA1307.severity</span> = error
-<span class="reserved">dotnet_diagnostic.CA1310.severity</span> = error
-</pre>
+```csharp
+[*.cs]
+dotnet_diagnostic.CA1304.severity = error
+dotnet_diagnostic.CA1305.severity = error
+dotnet_diagnostic.CA1307.severity = error
+dotnet_diagnostic.CA1310.severity = error
+```
 
 例えば以下のようなメソッドを警告にできます。
 
-<pre class="source" title="">
-<span class="reserved">using</span> System<span class="operator">.</span>Resources;
+```csharp
+using System.Resources;
 
-<span class="reserved">static</span> <span class="reserved">string</span><span class="operator">?</span> <span class="method"><span class="static">M</span></span>(<span class="type">ResourceManager</span> <span class="variable local">m</span>) <span class="operator">=&gt;</span> <span class="error" title="CA1304"><span class="variable local">m</span><span class="operator">.</span><span class="method">GetString</span>(<span class="string">&quot;&quot;</span>)</span>; <span class="comment">// CA1304</span>
-<span class="error" title="CA1305"><span class="type struct">DateTime</span><span class="operator">.</span><span class="property"><span class="static">Now</span></span><span class="operator">.</span><span class="method">ToString</span>()</span>; <span class="comment">// CA1305</span>
-<span class="error" title="CA1307"><span class="string">&quot;&quot;</span><span class="operator">.</span><span class="method">IndexOf</span>(<span class="string">' '</span>)</span>; <span class="comment">// CA1307</span>
-<span class="error" title="CA1310"><span class="string">&quot;abc&quot;</span><span class="operator">.</span><span class="method">StartsWith</span>(<span class="string">&quot;abc&quot;</span>)</span>; <span class="comment">// CA1310</span>
-</pre>
+static string? M(ResourceManager m) => m.GetString(""); // CA1304
+DateTime.Now.ToString(); // CA1305
+"".IndexOf(' '); // CA1307
+"abc".StartsWith("abc"); // CA1310
+```

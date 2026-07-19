@@ -96,10 +96,10 @@ VBが死ぬときは、今のVBユーザーが絶滅したときであって、V
 
 `*`とかきもくない？↓みたいな、`null`使う文法の方がよくない？とか言ってる人が。
 
-<pre class="source" title="">
-<code>p.GetCoordinates(<span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">null</span>); <span class="comment">// Ignore return</span>
-p.GetCoordinates(<span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">null</span>); <span class="comment">// Alternative ignore return</span>
-</code></pre>
+```csharp
+p.GetCoordinates(out int x, null); // Ignore return
+p.GetCoordinates(out int x, out null); // Alternative ignore return
+```
 
 何この、見た印象ぬるぽ起こしそうな構文…
 値を受け取るべき場所に`null`書くとかちょっと…

@@ -35,12 +35,12 @@ aliases:
 単語（string）を鍵として、個数（int）を値とするような辞書を用意して、
 以下のような感じでカウントできます。
 
-<pre class="source" title="" lang="">
-<code>IDictionary&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; dic;
-<span class="reserved">string</span> word;
+```csharp
+IDictionary<string, int> dic;
+string word;
 
 dic[word] = dic[word] + 1;
-</code></pre>
+```
 
 
 辞書には、要素の順序は関係なく、要素の検索が高速なデータ構造があれば実装できるので、
@@ -57,50 +57,50 @@ dic[word] = dic[word] + 1;
 必要な操作は同じなので、
 以下のような「[インターフェース](../../csharp/oop/oo_interface.md#interface)」  IDictionary を定義しておきます。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 辞書。
-/// &lt;/summary&gt;
-/// &lt;typeparam name="TKey"&gt;鍵の型&lt;/typeparam&gt;
-/// &lt;typeparam name="TValue"&gt;値の型&lt;/typeparam&gt;</span>
-<span class="reserved">public interface</span> IDictionary&lt;TKey, TValue&gt;
-  : IEnumerable&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;
+/// </summary>
+/// <typeparam name="TKey">鍵の型</typeparam>
+/// <typeparam name="TValue">値の型</typeparam>
+public interface IDictionary<TKey, TValue>
+  : IEnumerable<KeyValuePair<TKey, TValue>>
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 新しい要素の挿入。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">void</span> Insert(TKey key, TValue val);
+  /// </summary>
+  void Insert(TKey key, TValue val);
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 要素の削除。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">void</span> Erase(TKey key);
+  /// </summary>
+  void Erase(TKey key);
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 要素を含むかどうか。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">bool</span> Contains(TKey key);
+  /// </summary>
+  bool Contains(TKey key);
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// [] を使って値を取り出す。
-  /// &lt;/summary&gt;</span>
-  TValue <span class="reserved">this</span>[TKey key]
+  /// </summary>
+  TValue this[TKey key]
   {
-    <span class="reserved">set</span>;
-    <span class="reserved">get</span>;
+    set;
+    get;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 鍵一覧取得
-  /// &lt;/summary&gt;</span>
-  IEnumerable&lt;TKey&gt; Keys { <span class="reserved">get</span>; }
+  /// </summary>
+  IEnumerable<TKey> Keys { get; }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 値一覧取得
-  /// &lt;/summary&gt;</span>
-  IEnumerable&lt;TValue&gt; Values { <span class="reserved">get</span>; }
+  /// </summary>
+  IEnumerable<TValue> Values { get; }
 }
-</code></pre>
+```
 
 
 IDictionary で定義しているのは、
@@ -128,36 +128,36 @@ Perl 等いくつかの言語では「連想配列（associated array）」と�
 ハッシュ関数や、等値判定は鍵の物をそのまま使います。
 （すなわち、値は無視して、鍵が等しいかどうかだけを見る。）
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 辞書のエントリー。
-/// &lt;/summary&gt;</span>
-<span class="reserved">internal class</span> Entry&lt;TKey, TValue&gt;
+/// </summary>
+internal class Entry<TKey, TValue>
 {
-  <span class="reserved">internal</span> TKey key;
-  <span class="reserved">internal</span> TValue val;
+  internal TKey key;
+  internal TValue val;
 
-  <span class="reserved">internal</span> Entry(TKey key) : <span class="reserved">this</span>(key, <span class="reserved">default</span>(TValue)) { }
+  internal Entry(TKey key) : this(key, default(TValue)) { }
 
-  <span class="reserved">internal</span> Entry(TKey key, TValue val)
+  internal Entry(TKey key, TValue val)
   {
-    <span class="reserved">this</span>.key = key;
-    <span class="reserved">this</span>.val = val;
+    this.key = key;
+    this.val = val;
   }
 
-  <span class="reserved">public override int</span> GetHashCode()
+  public override int GetHashCode()
   {
-    <span class="reserved">return this</span>.key.GetHashCode();
+    return this.key.GetHashCode();
   }
 
-  <span class="reserved">public override bool</span> Equals(<span class="reserved">object</span> obj)
+  public override bool Equals(object obj)
   {
-    Entry&lt;TKey, TValue&gt; ent = obj <span class="reserved">as</span> Entry&lt;TKey, TValue&gt;;
-    <span class="reserved">if</span> (ent == <span class="reserved">null</span>) <span class="reserved">return false</span>;
-    <span class="reserved">return this</span>.key.Equals(ent.key);
+    Entry<TKey, TValue> ent = obj as Entry<TKey, TValue>;
+    if (ent == null) return false;
+    return this.key.Equals(ent.key);
   }
 }
-</code></pre>
+```
 
 
 「[ハッシュテーブル](col_hash.md#hashtable)」を用いる場合にはこれで十分ですが、
@@ -165,76 +165,76 @@ Perl 等いくつかの言語では「連想配列（associated array）」と�
 「[2分探索木](col_tree.md#bintree)」を用いる場合、
 鍵の大小比較が必要なので、IComparable を実装して以下のようにします。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">internal class</span> ComparableEntry&lt;TKey, TValue&gt;
-  : Entry&lt;TKey, TValue&gt;,
-  IComparable&lt;ComparableEntry&lt;TKey, TValue&gt;&gt;
-  <span class="reserved">where</span> TKey : IComparable&lt;TKey&gt;
+```csharp
+internal class ComparableEntry<TKey, TValue>
+  : Entry<TKey, TValue>,
+  IComparable<ComparableEntry<TKey, TValue>>
+  where TKey : IComparable<TKey>
 {
-  <span class="reserved">internal</span> ComparableEntry(TKey key) : <span class="reserved">base</span>(key) { }
-  <span class="reserved">internal</span> ComparableEntry(TKey key, TValue val) : <span class="reserved">base</span>(key, val) { }
+  internal ComparableEntry(TKey key) : base(key) { }
+  internal ComparableEntry(TKey key, TValue val) : base(key, val) { }
 
-  <span class="reserved">public int</span> CompareTo(ComparableEntry&lt;TKey, TValue&gt; other)
+  public int CompareTo(ComparableEntry<TKey, TValue> other)
   {
-    <span class="reserved">return this</span>.key.CompareTo(other.key);
+    return this.key.CompareTo(other.key);
   }
 }
-</code></pre>
+```
 
 
 そして、辞書本体ですが、
 この Entry クラスの「[ハッシュテーブル](col_hash.md#hashtable)」をメンバー変数として持ちます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> HashDictionary&lt;TKey, TValue&gt; : IDictionary&lt;TKey, TValue&gt;
+```csharp
+public class HashDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 {
-  HashTable&lt;Entry&lt;TKey, TValue&gt;&gt; table;
+  HashTable<Entry<TKey, TValue>> table;
 }
-</code></pre>
+```
 
 
 値の挿入・削除・検索などは、この table に丸投げすれば OK です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public void</span> Insert(TKey key, TValue val)
+```csharp
+public void Insert(TKey key, TValue val)
 {
-  <span class="reserved">this</span>.table.Insert(<span class="reserved">new</span> Entry&lt;TKey, TValue&gt;(key, val));
+  this.table.Insert(new Entry<TKey, TValue>(key, val));
 }
 
-<span class="reserved">public void</span> Erase(TKey key)
+public void Erase(TKey key)
 {
-  <span class="reserved">this</span>.table.Erase(<span class="reserved">new</span> Entry&lt;TKey, TValue&gt;(key));
+  this.table.Erase(new Entry<TKey, TValue>(key));
 }
 
-<span class="reserved">public bool</span> Contains(TKey key)
+public bool Contains(TKey key)
 {
-  <span class="reserved">return this</span>.table.Contains(<span class="reserved">new</span> Entry&lt;TKey, TValue&gt;(key));
+  return this.table.Contains(new Entry<TKey, TValue>(key));
 }
-</code></pre>
+```
 
 
 最後に、「[インデクサー](../../csharp/oop/oo_indexer.md#indexer)」は、
 検索と挿入の組み合わせで実装します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public</span> TValue <span class="reserved">this</span>[TKey key]
+```csharp
+public TValue this[TKey key]
 {
-  <span class="reserved">get</span>
+  get
   {
-    Entry&lt;TKey, TValue&gt; entry
-      = <span class="reserved">this</span>.table.Find(<span class="reserved">new</span> Entry&lt;TKey, TValue&gt;(key));
-    <span class="reserved">if</span> (entry == <span class="reserved">null</span>) <span class="reserved">return default</span>(TValue);
-    <span class="reserved">return</span> entry.val;
+    Entry<TKey, TValue> entry
+      = this.table.Find(new Entry<TKey, TValue>(key));
+    if (entry == null) return default(TValue);
+    return entry.val;
   }
-  <span class="reserved">set</span>
+  set
   {
-    Entry&lt;TKey, TValue&gt; entry
-      = <span class="reserved">this</span>.table.Find(<span class="reserved">new</span> Entry&lt;TKey, TValue&gt;(key));
-    <span class="reserved">if</span> (entry == <span class="reserved">null</span>) <span class="reserved">this</span>.Insert(key, value);
-    <span class="reserved">else</span> entry.val = value;
+    Entry<TKey, TValue> entry
+      = this.table.Find(new Entry<TKey, TValue>(key));
+    if (entry == null) this.Insert(key, value);
+    else entry.val = value;
   }
 }
-</code></pre>
+```
 
 
 

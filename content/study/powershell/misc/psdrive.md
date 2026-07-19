@@ -26,8 +26,8 @@ PowerShell では、
 
 Get-PSDrive Cmdlet
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span>Get-PSDrive
+```console
+> Get-PSDrive
 
 Name       Provider      Root
 ----       --------      ----
@@ -40,20 +40,20 @@ Function   Function
 HKCU       Registry      HKEY_CURRENT_USER
 HKLM       Registry      HKEY_LOCAL_MACHINE
 Variable   Variable
-</pre>
+```
 
 
 PowerShell 中で定義したエイリアス、関数、変数すらも、ファイルシステムと同じ構文でアクセス可能。
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span>ls variable:*
+```console
+> ls variable:*
 
 Name                           Value
 ----                           -----
 Error                          {}
 DebugPreference                SilentlyContinue
-<span class="input">後略</span>
-</pre>
+後略
+```
 
 
 パスの書き方
@@ -67,18 +67,18 @@ DebugPreference                SilentlyContinue
 
 環境変数とかは、以下のような構文で、あたかも変数のようにアクセス可能。
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span>$env:windir
+```console
+> $env:windir
 C:\WINDOWS
-</pre>
+```
 
 
 ${C:\Users\Public\test.txt} みたいなのでファイルの中身を読み書きできるのも同じ原理みたい。
 
 こういう、ファイルシステム以外もファイルシステムと同様の扱いするための機構を提供するのがプロバイダらしい。
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span>Get-PSProvider
+```console
+> Get-PSProvider
 
 Name                 Capabilities                            Drives
 ----                 ------------                            ------
@@ -89,4 +89,4 @@ Function             ShouldProcess                           {Function}
 Registry             ShouldProcess                           {HKLM, HKCU}
 Variable             ShouldProcess                           {Variable}
 Certificate          ShouldProcess                           {cert}
-</pre>
+```

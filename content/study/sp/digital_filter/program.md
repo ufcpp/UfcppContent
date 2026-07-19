@@ -46,25 +46,25 @@ C# 言語による実装を示します。
 （プログラミングの知識に関しては、
 「[インターフェース](../../csharp/oop/oo_interface.md)」辺りを参照してください。）
 
-<pre class="source" title="フィルタインターフェース" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// ディジタルフィルタインターフェース。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public interface</span> IFilter : ICloneable
+/// </summary>
+public interface IFilter : ICloneable
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// フィルタリングを行い、その結果を返す。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;フィルタ入力。&lt;/param&gt;
-  /// &lt;returns&gt;フィルタ出力。&lt;/returns&gt;</span>
-  <span class="reserved">double</span> GetValue(<span class="reserved">double</span> x);
+  /// </summary>
+  /// <param name="x">フィルタ入力。</param>
+  /// <returns>フィルタ出力。</returns>
+  double GetValue(double x);
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// フィルタの内部状態をクリアする。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">void</span> Clear();
+  /// </summary>
+  void Clear();
 }
-</code></pre>
+```
 
 
 完全版: 
@@ -96,30 +96,30 @@ GetValue メソッドです。
 実装も非常に簡単です。
 要点だけ抜き出すと、以下の通り。
 
-<pre class="source" title="増幅器" lang="">
-<code><span class="reserved">public class</span> Amplifier : IFilter
+```csharp
+public class Amplifier : IFilter
 {
-  <span class="reserved">double</span> amp; <span class="comment">// 倍率</span>
+  double amp; // 倍率
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 倍率
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Amplitude
+  /// </summary>
+  public double Amplitude
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.amp; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.amp = value; }
+    get { return this.amp; }
+    set { this.amp = value; }
   }
 
-  <span class="reserved">public double</span> GetValue(<span class="reserved">double</span> x)
+  public double GetValue(double x)
   {
-    <span class="reserved">return this</span>.amp * x;
+    return this.amp * x;
   }
 
-  <span class="reserved">public void</span> Clear()
+  public void Clear()
   {
   }
 }
-</code></pre>
+```
 
 
 完全版: 
@@ -151,46 +151,46 @@ GetValue メソッドです。
  
 循環バッファの実装方法は、例えば以下のようになります。
 
-<pre class="source" title="循環バッファ（その1）" lang="">
-<code><span class="reserved">public class</span> CircularBuffer : ICloneable
+```csharp
+public class CircularBuffer : ICloneable
 {
-  <span class="reserved">double</span>[] buf;
+  double[] buf;
 
-  <span class="comment">// 中略</span>
+  // 中略
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// n サンプル前の値の取得
-  /// &lt;/summary&gt;
-  /// &lt;param name="n"&gt;何サンプル前の値を読み書きするか&lt;/param&gt;
-  /// &lt;returns&gt;n サンプル前の値&lt;/returns&gt;</span>
-  <span class="reserved">public double this</span>[<span class="reserved">int</span> n]
+  /// </summary>
+  /// <param name="n">何サンプル前の値を読み書きするか</param>
+  /// <returns>n サンプル前の値</returns>
+  public double this[int n]
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.buf[n]; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.buf[n] = value; }
+    get { return this.buf[n]; }
+    set { this.buf[n] = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 値の挿入
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;挿入したい値&lt;/param&gt;</span>
-  <span class="reserved">public void</span> Insert(<span class="reserved">double</span> x)
+  /// </summary>
+  /// <param name="x">挿入したい値</param>
+  public void Insert(double x)
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> n = <span class="reserved">this</span>.buf.Length - 1; n &gt; 0; --n)
+    for (int n = this.buf.Length - 1; n > 0; --n)
     {
-      <span class="reserved">this</span>.buf[n] = <span class="reserved">this</span>.buf[n - 1];
+      this.buf[n] = this.buf[n - 1];
     }
-    <span class="reserved">this</span>.buf[0] = x;
+    this.buf[0] = x;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 要素数
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Count
+  /// </summary>
+  public double Count
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.buf.Length; }
+    get { return this.buf.Length; }
   }
 }
-</code></pre>
+```
 
 
 完全版: 
@@ -201,45 +201,45 @@ GetValue メソッドです。
 効率がよくありません。
 そこで、以下のような実装方法もあります。
 
-<pre class="source" title="循環バッファ（その2）" lang="">
-<code><span class="reserved">public class</span> CircularBuffer : ICloneable
+```csharp
+public class CircularBuffer : ICloneable
 {
-  <span class="reserved">double</span>[] buf;
-  <span class="reserved">int</span> top;
+  double[] buf;
+  int top;
 
-  <span class="comment">// 中略</span>
+  // 中略
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// n サンプル前の値の取得
-  /// &lt;/summary&gt;
-  /// &lt;param name="n"&gt;何サンプル前の値を読み書きするか&lt;/param&gt;
-  /// &lt;returns&gt;n サンプル前の値&lt;/returns&gt;</span>
-  <span class="reserved">public double this</span>[<span class="reserved">int</span> n]
+  /// </summary>
+  /// <param name="n">何サンプル前の値を読み書きするか</param>
+  /// <returns>n サンプル前の値</returns>
+  public double this[int n]
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.buf[(n + <span class="reserved">this</span>.top) % <span class="reserved">this</span>.buf.Length]; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.buf[(n + <span class="reserved">this</span>.top) % <span class="reserved">this</span>.buf.Length] = value; }
+    get { return this.buf[(n + this.top) % this.buf.Length]; }
+    set { this.buf[(n + this.top) % this.buf.Length] = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 値の挿入
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;挿入したい値&lt;/param&gt;</span>
-  <span class="reserved">public void</span> Insert(<span class="reserved">double</span> x)
+  /// </summary>
+  /// <param name="x">挿入したい値</param>
+  public void Insert(double x)
   {
-    --<span class="reserved">this</span>.top;
-    <span class="reserved">if</span> (<span class="reserved">this</span>.top &lt; 0) <span class="reserved">this</span>.top += <span class="reserved">this</span>.buf.Length;
-    <span class="reserved">this</span>.buf[<span class="reserved">this</span>.top] = x;
+    --this.top;
+    if (this.top < 0) this.top += this.buf.Length;
+    this.buf[this.top] = x;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 要素数
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public int</span> Count
+  /// </summary>
+  public int Count
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.buf.Length; }
+    get { return this.buf.Length; }
   }
 }
-</code></pre>
+```
 
 
 完全版: 
@@ -250,45 +250,45 @@ GetValue メソッドです。
 これに対して、バッファ長を2の冪に制限することで、
 剰余演算を論理 AND 演算に置き換える方法もあります。
 
-<pre class="source" title="循環バッファ（その3）" lang="">
-<code><span class="reserved">public class</span> CircularBuffer : ICloneable
+```csharp
+public class CircularBuffer : ICloneable
 {
-  <span class="reserved">double</span>[] buf;
-  <span class="reserved">int</span> length;
-  <span class="reserved">int</span> top;
-  <span class="reserved">int</span> mask;
+  double[] buf;
+  int length;
+  int top;
+  int mask;
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// n サンプル前の値の取得
-  /// &lt;/summary&gt;
-  /// &lt;param name="n"&gt;何サンプル前の値を読み書きするか&lt;/param&gt;
-  /// &lt;returns&gt;n サンプル前の値&lt;/returns&gt;</span>
-  <span class="reserved">public double this</span>[<span class="reserved">int</span> n]
+  /// </summary>
+  /// <param name="n">何サンプル前の値を読み書きするか</param>
+  /// <returns>n サンプル前の値</returns>
+  public double this[int n]
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.buf[(<span class="reserved">this</span>.top + n) &amp; <span class="reserved">this</span>.mask]; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.buf[(<span class="reserved">this</span>.top + n) &amp; <span class="reserved">this</span>.mask] = value; }
+    get { return this.buf[(this.top + n) & this.mask]; }
+    set { this.buf[(this.top + n) & this.mask] = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 値の挿入
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;挿入したい値&lt;/param&gt;</span>
-  <span class="reserved">public void</span> Insert(<span class="reserved">double</span> x)
+  /// </summary>
+  /// <param name="x">挿入したい値</param>
+  public void Insert(double x)
   {
-    --<span class="reserved">this</span>.top;
-    <span class="reserved">this</span>.top &amp;= <span class="reserved">this</span>.mask;
-    <span class="reserved">this</span>.buf[<span class="reserved">this</span>.top] = x;
+    --this.top;
+    this.top &= this.mask;
+    this.buf[this.top] = x;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 要素数
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public int</span> Count
+  /// </summary>
+  public int Count
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.length; }
+    get { return this.length; }
   }
 }
-</code></pre>
+```
 
 
 完全版: 
@@ -307,29 +307,29 @@ GetValue メソッドです。
 過去数サンプル分のデータを循環バッファに記憶しておいて、
 所望の位置のデータを出力するだけです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> Delay : IFilter
+```csharp
+public class Delay : IFilter
 {
   CircularBuffer buf;
 
-  <span class="reserved">public</span> Delay(<span class="reserved">int</span> delaytime)
+  public Delay(int delaytime)
   {
-    <span class="reserved">this</span>.buf = <span class="reserved">new</span> CircularBuffer(delaytime);
+    this.buf = new CircularBuffer(delaytime);
   }
 
-  <span class="reserved">public double</span> GetValue(<span class="reserved">double</span> x)
+  public double GetValue(double x)
   {
-    <span class="reserved">double</span> y = <span class="reserved">this</span>.buf[<span class="reserved">this</span>.buf.Count - 1];
-    <span class="reserved">this</span>.buf.Insert(x);
-    <span class="reserved">return</span> y;
+    double y = this.buf[this.buf.Count - 1];
+    this.buf.Insert(x);
+    return y;
   }
 
-  <span class="reserved">public void</span> Clear()
+  public void Clear()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> n = <span class="reserved">this</span>.buf.Count; n &gt; 0; --n)
-      <span class="reserved">this</span>.buf.Insert(0);
+    for (int n = this.buf.Count; n > 0; --n)
+      this.buf.Insert(0);
   }
-</code></pre>
+```
 
 
 完全版: 

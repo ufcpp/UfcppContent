@@ -34,20 +34,20 @@ aliases:
 .NET 8 から、
 以下のように、構造体に属性を付けると構造体のサイズが変わります。
 
-<pre class="source" title="InlineArray 属性">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// この属性を付けると、 .NET ランタイムが特別扱いして、構造体のサイズを拡大する。</span>
-<span class="comment">// (コンストラクター引数で Length 指定。)</span>
-[<span class="type">InlineArray</span>(<span class="number">3</span>)]
-<span class="reserved">struct</span> <span class="type struct">FixedBuffer</span>&lt;<span class="type param">T</span>&gt;
+// この属性を付けると、 .NET ランタイムが特別扱いして、構造体のサイズを拡大する。
+// (コンストラクター引数で Length 指定。)
+[InlineArray(3)]
+struct FixedBuffer<T>
 {
-    <span class="comment">// フィールドを1個だけ書く。</span>
-    <span class="comment">// (2個以上書くとコンパイル エラーになる。)</span>
-    <span class="comment">// 構造体のサイズが sizeof(T) × Length になる。</span>
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field">_value</span>;
+    // フィールドを1個だけ書く。
+    // (2個以上書くとコンパイル エラーになる。)
+    // 構造体のサイズが sizeof(T) × Length になる。
+    private T _value;
 }
-</pre>
+```
 
 inline array という名前通り、「埋め込み配列」として使います。
 (長さ N の配列代わりに、長さ N 個分のサイズを持った構造体を作ります。
@@ -55,23 +55,23 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 
 要は、以下のような「N 個のフィールドを並べる」みたいな構造体を、ランタイム側で自動的に作ってくれる機能です。
 
-<pre class="source" title="N 個のフィールドを手書きで並べた例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="reserved">struct</span> <span class="type struct">FixedBuffer3</span>&lt;<span class="type param">T</span>&gt;
+struct FixedBuffer3<T>
 {
-    <span class="comment">// 所望の個数フィールドを書く。</span>
-    <span class="comment">// (3要素くらいならいいけども、数十とか数百になるときつい。)</span>
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field">_value0</span>;
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field"><span class="warning" title="CS0169">_value1</span></span>;
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field"><span class="warning" title="CS0169">_value2</span></span>;
+    // 所望の個数フィールドを書く。
+    // (3要素くらいならいいけども、数十とか数百になるときつい。)
+    private T _value0;
+    private T _value1;
+    private T _value2;
 
-    <span class="comment">// 変換とかも自前で書く。</span>
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="type param">T</span>&gt; <span class="method">AsSpan</span>() <span class="operator">=&gt;</span> <span class="type"><span class="static">MemoryMarshal</span></span><span class="operator">.</span><span class="static"><span class="method">CreateSpan</span></span>(<span class="reserved">ref</span> <span class="field">_value0</span>, <span class="number">3</span>);
+    // 変換とかも自前で書く。
+    public Span<T> AsSpan() => MemoryMarshal.CreateSpan(ref _value0, 3);
 
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type param">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>] <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="method">AsSpan</span>()[<span class="variable local">index</span>];
+    public ref T this[int index] => ref AsSpan()[index];
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="vs-stackalloc">stackalloc との違い</a>
 
@@ -83,30 +83,30 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 (これを認めようとすると[ガベコレ](../../computer/essential-software/memorymanagement.md#garbage-collection)の負担が上がって、パフォーマンス的にかえって不利になるそうです)。
 例えば以下のコードでは、`string` 以下の型に対してコンパイル エラーになります。
 
-<pre class="source" title="参照を含むときには stackalloc は使えない">
-<span class="comment">// 構造体に対しては使える。</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">i</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">100</span>];
-<span class="type struct">Span</span>&lt;<span class="type struct">DateTimeOffset</span>&gt; <span class="variable">d</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="type struct">DateTimeOffset</span>[<span class="number">100</span>];
+```csharp
+// 構造体に対しては使える。
+Span<int> i = stackalloc int[100];
+Span<DateTimeOffset> d = stackalloc DateTimeOffset[100];
 
-<span class="comment">// クラスに対しては使えない。</span>
-<span class="comment">// (コンパイル エラーになる。)</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">s</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved"><span class="error" title="CS0208">string</span></span>[<span class="number">100</span>];
+// クラスに対しては使えない。
+// (コンパイル エラーになる。)
+Span<string> s = stackalloc string[100];
 
-<span class="comment">// クラスや参照を含む構造体に対しても使えない。</span>
-<span class="comment">// (コンパイル エラーになる。)</span>
-<span class="type struct">Span</span>&lt;<span class="type struct">ContainsRefType</span>&gt; <span class="variable">r1</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="type struct"><span class="error" title="CS0208">ContainsRefType</span></span>[<span class="number">100</span>];
-<span class="type struct">Span</span>&lt;<span class="type struct"><span class="error" title="CS0306">ContainsRefField</span></span>&gt; <span class="variable">r2</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="error" title="CS0208"><span class="type struct">ContainsRefField</span></span>[<span class="number">100</span>];
+// クラスや参照を含む構造体に対しても使えない。
+// (コンパイル エラーになる。)
+Span<ContainsRefType> r1 = stackalloc ContainsRefType[100];
+Span<ContainsRefField> r2 = stackalloc ContainsRefField[100];
 
-<span class="reserved">struct</span> <span class="type struct">ContainsRefType</span>
+struct ContainsRefType
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="warning" title="CS0649"><span class="field">String</span></span>;
+    public string String;
 }
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">ContainsRefField</span>
+ref struct ContainsRefField
 {
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="warning" title="CS0649"><span class="field">Ref</span></span>;
+    public ref int Ref;
 }
-</pre>
+```
 
 また、`stackalloc` で確保したスタック領域は、メソッドを抜けるまで解放されません。
 このせいで、ループの内側で間違って `stackalloc` を使ってしまうと簡単にスタック オーバーフロー(要はメモリ不足)を引き起こします
@@ -114,12 +114,12 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 例えば以下のコードを Windows で実行するとスタック オーバーフローします
 (1000 とか 200 とか、そこまで大きくない数字ですら簡単にスタック オーバーフローになります)。
 
-<pre class="source" title="">
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; <span class="variable">i</span> <span class="operator">&lt;</span> <span class="number">1000</span>; <span class="variable">i</span><span class="operator">++</span>)
+```csharp
+for (int i = 0; i < 1000; i++)
 {
-    <span class="reserved">_</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">long</span>[<span class="number">200</span>];
+    _ = stackalloc long[200];
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="special-syntax">C# 側特殊対応</a>
 
@@ -130,16 +130,16 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 すでに前述の例でも書いていますが、
 `InlineArray` 属性を付けた型にフィールドが2つ以上あるとコンパイル エラーになります。
 
-<pre class="source" title="InlineArray 属性を付けた型に対するチェック">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-[<span class="type">InlineArray</span>(<span class="number">3</span>)]
-<span class="reserved">struct</span> <span class="type struct">FixedBuffer</span>&lt;<span class="type param">T</span>&gt;
+[InlineArray(3)]
+struct FixedBuffer<T>
 {
-    <span class="comment">// フィールドを2個以上書くとコンパイル エラーになるのは一応「C# の新機能」。</span>
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field">_value</span>;
+    // フィールドを2個以上書くとコンパイル エラーになるのは一応「C# の新機能」。
+    private T _value;
 }
-</pre>
+```
 
 また、この型を使う側に、以下のような特殊対応が入っています。
 
@@ -147,23 +147,23 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 * `Span<T>`/`ReadOnlySpan<T>` に暗黙的に変換できる
 * `foreach` で列挙できる
 
-<pre class="source" title="InlineArray 型利用側の特殊対応">
-<span class="type struct">FixedBuffer</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">buffer</span> <span class="operator">=</span> <span class="reserved">new</span>();
+```csharp
+FixedBuffer<string> buffer = new();
 
-<span class="comment">// InlineArray に対して直接インデクサーを書ける。</span>
-<span class="variable">buffer</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="string">&quot;zero&quot;</span>;
-<span class="variable">buffer</span>[<span class="number">1</span>] <span class="operator">=</span> <span class="string">&quot;one&quot;</span>;
+// InlineArray に対して直接インデクサーを書ける。
+buffer[0] = "zero";
+buffer[1] = "one";
 
-<span class="comment">// Span/ReadOnlySpan に暗黙的に変換できる。</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">span</span> <span class="operator">=</span> <span class="variable">buffer</span>;
-<span class="variable">span</span>[<span class="number">2</span>] <span class="operator">=</span> <span class="string">&quot;two&quot;</span>;
+// Span/ReadOnlySpan に暗黙的に変換できる。
+Span<string> span = buffer;
+span[2] = "two";
 
-<span class="comment">// foreach で列挙できる。</span>
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">buffer</span>)
+// foreach で列挙できる。
+foreach (var x in buffer)
 {
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span>);
+    Console.WriteLine(x);
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="collection-expressions">コレクション式と InlineArray</a>
 
@@ -176,43 +176,43 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 `InlineArray` に展開されます。
 例えば以下のようなコードの場合、
 
-<pre class="source" title="Span/ReadOnlySpan に対するコレクション式の例">
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">i</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+```csharp
+Span<int> i = [1, 2, 3, 4, 5];
 
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">s</span> <span class="operator">=</span> [<span class="string">&quot;a&quot;</span>, <span class="string">&quot;abc&quot;</span>, <span class="string">&quot;&quot;</span>];
-</pre>
+ReadOnlySpan<string> s = ["a", "abc", ""];
+```
 
 以下のようなコードとほぼ同じ挙動になります。
 
-<pre class="source" title="上記のコレクション式は InlineArray に展開される">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">i0</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">FixedArray5</span>&lt;<span class="reserved">int</span>&gt;();
-<span class="variable">i0</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="number">1</span>;
-<span class="variable">i0</span>[<span class="number">1</span>] <span class="operator">=</span> <span class="number">2</span>;
-<span class="variable">i0</span>[<span class="number">2</span>] <span class="operator">=</span> <span class="number">3</span>;
-<span class="variable">i0</span>[<span class="number">3</span>] <span class="operator">=</span> <span class="number">4</span>;
-<span class="variable">i0</span>[<span class="number">4</span>] <span class="operator">=</span> <span class="number">5</span>;
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">i</span> <span class="operator">=</span> <span class="variable">i0</span>;
+var i0 = new FixedArray5<int>();
+i0[0] = 1;
+i0[1] = 2;
+i0[2] = 3;
+i0[3] = 4;
+i0[4] = 5;
+Span<int> i = i0;
 
-<span class="reserved">var</span> <span class="variable">s0</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">FixedArray3</span>&lt;<span class="reserved">string</span>&gt;();
-<span class="variable">s0</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="string">&quot;a&quot;</span>;
-<span class="variable">s0</span>[<span class="number">1</span>] <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>;
-<span class="variable">s0</span>[<span class="number">2</span>] <span class="operator">=</span> <span class="string">&quot;&quot;</span>;
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">s</span> <span class="operator">=</span> <span class="variable">s0</span>;
+var s0 = new FixedArray3<string>();
+s0[0] = "a";
+s0[1] = "abc";
+s0[2] = "";
+ReadOnlySpan<string> s = s0;
 
-[<span class="type">InlineArray</span>(<span class="number">3</span>)]
-<span class="reserved">struct</span> <span class="type struct">FixedArray3</span>&lt;<span class="type param">T</span>&gt;
+[InlineArray(3)]
+struct FixedArray3<T>
 {
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field">_value</span>;
+    private T _value;
 }
 
-[<span class="type">InlineArray</span>(<span class="number">5</span>)]
-<span class="reserved">struct</span> <span class="type struct">FixedArray5</span>&lt;<span class="type param">T</span>&gt;
+[InlineArray(5)]
+struct FixedArray5<T>
 {
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field">_value</span>;
+    private T _value;
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-6"></a> <a id="future">将来展望</a>
 
@@ -224,29 +224,29 @@ C# の配列はヒープに割り当てられるのに対して、この inline 
 根本的に大工事して型システムを改善するなら、
 例えば、以下のように「整数型引数」を導入して、これを使って `InlineArray` を作りたいという話もなくはないです。
 
-<pre class="source" title="「整数型引数」で InlineArray">
-<span class="comment">// ※仮定の文法</span>
-<span class="reserved">namespace</span> System;
+```csharp
+// ※仮定の文法
+namespace System;
 
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type struct">InlineArray</span>&lt;<span class="type param">T</span>, <span class="reserved">int</span> <span class="variable">N</span>&gt;;
-</pre>
+public struct InlineArray<T, int N>;
+```
 
 こういう「public にできる(一時しのぎではないちゃんとした) `InlineArray` 型」があるのなら、
 C# 側でももう少し踏み込んだ文法を導入したかったみたいです。
 候補として挙がっていたのは、`int[N]` という書き方で「長さ N の `InlineArray`」を書けるようにするというものです。
 
-<pre class="source" title="T[N]">
-<span class="comment">// ※仮定の文法</span>
-<span class="reserved">var</span> <span class="variable">c</span> = <span class="reserved">new</span> <span class="type">C</span>();
+```csharp
+// ※仮定の文法
+var c = new C();
 
-<span class="reserved">int</span>[3] <span class="reserved">values</span> = <span class="variable">c</span>.Values;
+int[3] values = c.Values;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">private</span> <span class="reserved">int</span>[3] _values;
-    <span class="reserved">public</span> <span class="reserved">int</span>[3] Values =&gt; _values;
+    private int[3] _values;
+    public int[3] Values => _values;
 }
-</pre>
+```
 
 前述の `InlineArray<T, int N>` みたいな書き方をできるようにするのは結構大変で、
 短期的には実現しそうになく、

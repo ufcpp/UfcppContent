@@ -25,59 +25,59 @@ C# 7.2 の頃、[`Span<T>` 型](../../../../study/csharp/resource/span.md)が追
 
 例えば直近では、C# 12 でコレクション式を導入するにあたって「[普通にやってたら使い勝手が悪いので `Span` を特別扱い](../../../../study/csharp/datatype/collection-expression.md#priority)」みたいなことをやっています。
 
-<pre class="source" title="コレクション式の Span 特別対応">
-<span class="comment">// 普通にやると IEnumerable と Span の優先度はつかなくてコンパイルエラー。</span>
-<span class="type">EnumerableVsSpan</span><span class="operator">.</span><span class="method"><span class="error" title="CS0121"><span class="static">M</span></span></span>(<span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">5</span>]);
+```csharp
+// 普通にやると IEnumerable と Span の優先度はつかなくてコンパイルエラー。
+EnumerableVsSpan.M(new int[5]);
 
-<span class="comment">// コレクション式は Span を優先する。</span>
-<span class="type">EnumerableVsSpan</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+// コレクション式は Span を優先する。
+EnumerableVsSpan.M([1, 2, 3]);
 
-<span class="comment">// Span を優先しちゃう(パフォーマンス的に好ましくない)。</span>
-<span class="type">SpanVsReadOnlySpan</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">5</span>]);
+// Span を優先しちゃう(パフォーマンス的に好ましくない)。
+SpanVsReadOnlySpan.M(new int[5]);
 
-<span class="comment">// ReadOnlySpan を優先するよう特別扱い。</span>
-<span class="type">SpanVsReadOnlySpan</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+// ReadOnlySpan を優先するよう特別扱い。
+SpanVsReadOnlySpan.M([1, 2, 3]);
 
-<span class="reserved">class</span> <span class="type">EnumerableVsSpan</span>
+class EnumerableVsSpan
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
+    public static void M(IEnumerable<int> _) { }
+    public static void M(Span<int> _) { }
 }
 
-<span class="reserved">class</span> <span class="type">SpanVsReadOnlySpan</span>
+class SpanVsReadOnlySpan
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
+    public static void M(ReadOnlySpan<int> _) { }
+    public static void M(Span<int> _) { }
 }
-</pre>
+```
 
 また、いわゆる共変性の辺りが微妙だったりします。
 以下のように、コンパイルできてほしくないのに実行時エラーになるのが1件、
 コンパイルできてほしいのにできないのが1件。
 
-<pre class="source" title="ReadOnlySpan の共変性">
-<span class="reserved">var</span> <span class="variable">strArray</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="reserved">string</span>[<span class="number">5</span>];
+```csharp
+var strArray = new string[5];
 
-<span class="comment">// 行ける。 Span に implicit operator が定義されているので。</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">strSpan</span> <span class="operator">=</span> <span class="variable">strArray</span>;
+// 行ける。 Span に implicit operator が定義されているので。
+Span<string> strSpan = strArray;
 
-<span class="comment">// なぜか行ける…</span>
-<span class="comment">// 配列に共変性(object[] objArray = strArray; が合法という負の遺産)があるせい。</span>
-<span class="comment">// が、実行時例外起こす。</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">objSpan</span> <span class="operator">=</span> <span class="variable">strArray</span>;
+// なぜか行ける…
+// 配列に共変性(object[] objArray = strArray; が合法という負の遺産)があるせい。
+// が、実行時例外起こす。
+Span<object> objSpan = strArray;
 
-<span class="comment">// 行ける。</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">strRos1</span> <span class="operator">=</span> <span class="variable">strArray</span>;
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">strRos2</span> <span class="operator">=</span> <span class="variable">strSpan</span>;
+// 行ける。
+ReadOnlySpan<string> strRos1 = strArray;
+ReadOnlySpan<string> strRos2 = strSpan;
 
-<span class="comment">// これも行ける。</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">objRos1</span> <span class="operator">=</span> <span class="variable">objSpan</span>;
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">objRos2</span> <span class="operator">=</span> <span class="variable">strArray</span>;
+// これも行ける。
+ReadOnlySpan<object> objRos1 = objSpan;
+ReadOnlySpan<object> objRos2 = strArray;
 
-<span class="comment">// ダメ…</span>
-<span class="comment">// (できても問題ないけど、ReadOnlySpan を特別扱いしないとコンパイラーにはそれがわからない。)</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">objRos3</span> <span class="operator">=</span> <span class="variable"><span class="error" title="CS0029">strSpan</span></span>;
-</pre>
+// ダメ…
+// (できても問題ないけど、ReadOnlySpan を特別扱いしないとコンパイラーにはそれがわからない。)
+ReadOnlySpan<object> objRos3 = strSpan;
+```
 
 ということで、まあ、
 「`Span<T>`、`ReadOnlySpan<T>` をコンパイラーで特別扱いしたい」という話になります。

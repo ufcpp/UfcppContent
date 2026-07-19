@@ -70,15 +70,15 @@ Arena Allocation という手法です。
 以下のように、「ごっそり消す」タイミングを明示するような方式。
 メモリ放棄のまとまった単位を指して arena (舞台、競技場、界)と呼んでいます。
 
-<pre class="source" title="Arena メモリ管理">
-<code><span class="type">Arena</span> arena = <span class="reserved">new</span> <span class="type">Arena</span>();
-<span class="reserved">using</span> (arena.Activate())
+```csharp
+Arena arena = new Arena();
+using (arena.Activate())
 {
-    <span class="comment">// この内側で new したものは「arena」内に確保される</span>
+    // この内側で new したものは「arena」内に確保される
 }
-<span class="comment">// arena 内のオブジェクトは arena の Dispose 時にまとめて解放</span>
+// arena 内のオブジェクトは arena の Dispose 時にまとめて解放
 arena.Dispose();
-</code></pre>
+```
 
 この方式はトランザクションのスコープがはっきりしているものに対して有効です。
 Protocol Buffers が採用していることからわかるように、シリアライズ・デシリアライズが好例です。

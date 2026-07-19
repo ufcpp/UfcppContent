@@ -304,15 +304,15 @@ C# 7 = Visual Studio 2017と同時期リリース。
 
 属性の実装は簡単。例えば以下のようなコードで終わり。
 
-<pre class="source" title="ExtensionAttribute の実装" lang="">
-<code><span class="reserved">namespace</span> System.Runtime.CompilerServices
+```csharp
+namespace System.Runtime.CompilerServices
 {
-    [<span class="type">AttributeUsage</span>(<span class="type">AttributeTargets</span>.Assembly | <span class="type">AttributeTargets</span>.Class | <span class="type">AttributeTargets</span>.Method)]
-    <span class="reserved">public sealed class</span> <span class="type">ExtensionAttribute</span> : <span class="type">Attribute</span>
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method)]
+    public sealed class ExtensionAttribute : Attribute
     {
     }
 }
-</code></pre>
+```
 
 
 
@@ -321,21 +321,21 @@ C# 7 = Visual Studio 2017と同時期リリース。
 System.Linq名前空間のクラスがなくて動くの？と一瞬思うかもしれませんが、SelectとかWhereとかを自前実装すれば使えます。そんなに難易度も高くないものなので割とちょろい。
 例えば、Select の実装は以下のような感じです(本物と比べるとちょっとだけ手抜き実装。引数の null チェックがない)。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">namespace</span> System.Linq
+namespace System.Linq
 {
-    <span class="reserved">public static class</span> <span class="type">Enumerable</span>
+    public static class Enumerable
     {
-        <span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="type">TResult</span>&gt; Select&lt;<span class="type">TSource</span>, <span class="type">TResult</span>&gt;( <span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">TSource</span>&gt; source, <span class="type">Func</span>&lt;<span class="type">TSource</span>, <span class="type">TResult</span>&gt; selector)
+        public static IEnumerable<TResult> Select<TSource, TResult>( this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
-            <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> source)
-                <span class="reserved">yield return</span> selector(item);
+            foreach (var item in source)
+                yield return selector(item);
         }
     }
 }
-</code></pre>
+```
 
 
 あと、SelectとかWhereは、普通のインスタンス メソッドでも拡張メソッドでもどちらでもOKです。
@@ -348,10 +348,10 @@ System.Linq名前空間のクラスがなくて動くの？と一瞬思うかも
 残念なの点としては、標準ライブラリ(BCL: Base Class Library)中のクラスにちゃんとした変性注釈がついたのは.NET Framework 4 からということです。
 つまり、以下のようなコードを書けるのは、結局、.NET Framework 4 以降のみ。
 
-<pre class="source" title="" lang="">
-<code><span class="type">List</span>&lt;<span class="reserved">string</span>&gt; x = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">string</span>&gt; { <span class="literal">"one"</span>, <span class="literal">"two"</span>, <span class="literal">"three"</span> };
-<span class="type">IEnumerable</span>&lt;<span class="reserved">object</span>&gt; y = x;
-</code></pre>
+```csharp
+List<string> x = new List<string> { "one", "two", "three" };
+IEnumerable<object> y = x;
+```
 
 
 いくら、C# 側が変性に対応したからといって、IEnumerable インターフェイスにその注釈がついていなければ恩恵を受けれません。
@@ -392,58 +392,58 @@ dynamicが使っているのはSystem.Dynamic名前空間以下のクラスな�
 文字列補間は、普通に使う分にはただのstring.Formatへの展開なので、.NET Framework 2.0上でも動きます。
 例えば、以下のような構文なんですが、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> s = <span class="literal">$"{</span>x<span class="literal">}, {</span>y<span class="literal">}"</span>;
-</code></pre>
+```csharp
+var s = $"{x}, {y}";
+```
 
 
 この s はstring型で、この行は以下のように展開されます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> s = <span class="reserved">string</span>.Format(<span class="literal">"{0}, {1}"</span>, x, y);
-</code></pre>
+```csharp
+var s = string.Format("{0}, {1}", x, y);
+```
 
 
 ただ、この文法だとカルチャー指定付きでのFormatなどができません。
 参考: 「[文字列挿入](../start/st_string.md#string-interpolation)」、「[書式とカルチャー](../../dotnet/bcl/bcl_format.md#culture)」。
 そこで、別途、以下のように書けるバージョンが追加される予定です(string ではなく、IFormattable 型の変数で受け取る)。
 
-<pre class="source" title="" lang="">
-<code><span class="type">IFormattable</span> s = <span class="literal">$"{</span>x<span class="literal">}, {</span>y<span class="literal">}"</span>;
-</code></pre>
+```csharp
+IFormattable s = $"{x}, {y}";
+```
 
 
 この場合、以下のように展開されます。
 
-<pre class="source" title="" lang="">
-<code><span class="type">IFormattable</span> s = <span class="reserved">new</span> System.Runtime.CompilerServices.<span class="type">FormattableString</span>(<span class="literal">"{0}, {1}"</span>, x, y);
-</code></pre>
+```csharp
+IFormattable s = new System.Runtime.CompilerServices.FormattableString("{0}, {1}", x, y);
+```
 
 
 この、`FormattableString`クラスは、.NET Framework 4.6で追加される予定のクラスです。
 それほど複雑ではなく、自作は簡単でしょう。以下のような内容です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">namespace</span> System.Runtime.CompilerServices
+```csharp
+namespace System.Runtime.CompilerServices
 {
-    <span class="reserved">public struct</span> <span class="type">FormattableString</span> : System.<span class="type">IFormattable</span>
+    public struct FormattableString : System.IFormattable
     {
-        <span class="reserved">private readonly</span> <span class="type">String</span> format;
-        <span class="reserved">private readonly object</span>[] args;
-        <span class="reserved">public</span> FormattableString(<span class="type">String</span> format, <span class="reserved">params object</span>[] args)
+        private readonly String format;
+        private readonly object[] args;
+        public FormattableString(String format, params object[] args)
         {
-            <span class="reserved">this</span>.format = format;
-            <span class="reserved">this</span>.args = args;
+            this.format = format;
+            this.args = args;
         }
-        <span class="reserved">public</span> <span class="type">String</span> Format =&gt; <span class="reserved">this</span>.format;
-        <span class="reserved">public object</span>[] Args =&gt; <span class="reserved">this</span>.args;
-        <span class="reserved">string</span> <span class="type">IFormattable</span>.ToString(<span class="reserved">string</span> ignored, <span class="type">IFormatProvider</span> formatProvider)
+        public String Format => this.format;
+        public object[] Args => this.args;
+        string IFormattable.ToString(string ignored, IFormatProvider formatProvider)
         {
-            <span class="reserved">return</span> <span class="type">String</span>.Format(formatProvider, format, args);
+            return String.Format(formatProvider, format, args);
         }
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-18"></a> <a id="ValueTuple"></a>タプル
 

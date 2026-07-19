@@ -75,37 +75,37 @@ aliases:
 ノードは要素を格納しておくための変数と、
 次のノードを指す参照変数を持っています。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> Node&lt;T&gt;
+```csharp
+public class Node<T>
 {
   T val;
   Node next;
 
-  <span class="reserved">internal</span> Node(T val, Node next)
+  internal Node(T val, Node next)
   {
-    <span class="reserved">this</span>.val = val;
-    <span class="reserved">this</span>.next = next;
+    this.val = val;
+    this.next = next;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 格納している要素を取得。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> T Value
+  /// </summary>
+  public T Value
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.val; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.val = value; }
+    get { return this.val; }
+    set { this.val = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 次のノード。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Node Next
+  /// </summary>
+  public Node Next
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.next; }
-    <span class="reserved">internal set</span> { <span class="reserved">this</span>.next = value; }
+    get { return this.next; }
+    internal set { this.next = value; }
   }
 }
-</code></pre>
+```
 
 
 ここで1つ注意しておくべきことは、
@@ -118,116 +118,116 @@ aliases:
 そして、片方向連結リスト本体ですが、
 リストの先頭ノードを格納するための変数を1つ持ちます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> ForwardLinkedList&lt;T&gt; : IEnumerable&lt;T&gt;
+```csharp
+public class ForwardLinkedList<T> : IEnumerable<T>
 {
   Node first;
 }
-</code></pre>
+```
 
 
 そして、リストの先頭への要素の追加・削除は以下のように行います。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 先頭に新しい要素を追加。
-/// &lt;/summary&gt;
-/// &lt;param name="elem"&gt;新しい要素&lt;/param&gt;
-/// &lt;returns&gt;新しく挿入されたノード&lt;/returns&gt;</span>
-<span class="reserved">public</span> Node InsertFirst(T elem)
+/// </summary>
+/// <param name="elem">新しい要素</param>
+/// <returns>新しく挿入されたノード</returns>
+public Node InsertFirst(T elem)
 {
-  Node m = <span class="reserved">new</span> Node(elem, <span class="reserved">this</span>.first);
-  <span class="reserved">this</span>.first = m;
-  <span class="reserved">return</span> m;
+  Node m = new Node(elem, this.first);
+  this.first = m;
+  return m;
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 先頭の要素を削除。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public void</span> EraseFirst()
+/// </summary>
+public void EraseFirst()
 {
-  <span class="reserved">if</span> (<span class="reserved">this</span>.first != <span class="reserved">null</span>)
-    <span class="reserved">this</span>.first = <span class="reserved">this</span>.first.Next;
+  if (this.first != null)
+    this.first = this.first.Next;
 }
-</code></pre>
+```
 
 
 また、以下のようにして、ノードを与えてそのノードの直後の要素を追加・削除できます。
 
-<pre class="source" title="" lang="">
-<code>  <span class="comment">/// &lt;summary&gt;
+```csharp
+  /// <summary>
   /// ノード n の後ろに新しい要素を追加。
-  /// &lt;/summary&gt;
-  /// &lt;param name="n"&gt;要素の挿入位置&lt;/param&gt;
-  /// &lt;param name="elem"&gt;新しい要素&lt;/param&gt;
-  /// &lt;returns&gt;新しく挿入されたノード&lt;/returns&gt;</span>
-  <span class="reserved">public</span> Node InsertAfter(Node n, T elem)
+  /// </summary>
+  /// <param name="n">要素の挿入位置</param>
+  /// <param name="elem">新しい要素</param>
+  /// <returns>新しく挿入されたノード</returns>
+  public Node InsertAfter(Node n, T elem)
 {
-  Node m = <span class="reserved">new</span> Node(elem, n.Next);
+  Node m = new Node(elem, n.Next);
   n.Next = m;
-  <span class="reserved">return</span> m;
+  return m;
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// ノード n の後ろの要素を削除。
-/// &lt;/summary&gt;
-/// &lt;param name="n"&gt;要素の削除位置&lt;/param&gt;</span>
-<span class="reserved">public void</span> EraseAfter(Node n)
+/// </summary>
+/// <param name="n">要素の削除位置</param>
+public void EraseAfter(Node n)
 {
-  <span class="reserved">if</span> (n.Next != <span class="reserved">null</span>)
+  if (n.Next != null)
     n.Next = n.Next.Next;
 }
-</code></pre>
+```
 
 
 見ての通り、これらの操作は常に一定の時間で実行可能です。
 しかしながら、ノード自身を削除する場合、
 そのノードの直前のノードを探す作業を行う必要があります。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// ノード n の自身を削除。
-/// &lt;/summary&gt;
-/// &lt;param name="n"&gt;要素の削除位置&lt;/param&gt;
-/// &lt;returns&gt;削除した要素の次のノード&lt;/returns&gt;</span>
-<span class="reserved">public</span> Node Erase(Node n)
+/// </summary>
+/// <param name="n">要素の削除位置</param>
+/// <returns>削除した要素の次のノード</returns>
+public Node Erase(Node n)
 {
-  Node prev = <span class="reserved">this</span>.first;
-  <span class="reserved">for</span> (; prev != <span class="reserved">null</span> &amp;&amp; prev.Next != n; prev = prev.Next) ;
-  <span class="reserved">if</span> (prev == <span class="reserved">this</span>.first)
+  Node prev = this.first;
+  for (; prev != null && prev.Next != n; prev = prev.Next) ;
+  if (prev == this.first)
   {
-    <span class="reserved">this</span>.first = <span class="reserved">null</span>;
-    <span class="reserved">return null</span>;
+    this.first = null;
+    return null;
   }
-  <span class="reserved">if</span> (prev != <span class="reserved">null</span>)
+  if (prev != null)
   {
-    <span class="reserved">this</span>.EraseAfter(prev);
-    <span class="reserved">return</span> prev.Next;
+    this.EraseAfter(prev);
+    return prev.Next;
   }
-  <span class="reserved">return null</span>;
+  return null;
 }
-</code></pre>
+```
 
 
 また、リストに含まれている要素数を求めるのも、
 前から順にノードをたどって数えるしかありません。
 （要素数を保持しておく変数を別に用意しておくという手はあります。）
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 要素の個数。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public int</span> Count
+/// </summary>
+public int Count
 {
-  <span class="reserved">get</span>
+  get
   {
-    <span class="reserved">int</span> i = 0;
-    <span class="reserved">for</span>(Node n = <span class="reserved">this</span>.first; n!=<span class="reserved">null</span>; n=n.Next)
+    int i = 0;
+    for(Node n = this.first; n!=null; n=n.Next)
       ++i;
-    <span class="reserved">return</span> i;
+    return i;
   }
 }
-</code></pre>
+```
 
 
 ちなみに、末尾のノードを指す変数も持っておくことで、

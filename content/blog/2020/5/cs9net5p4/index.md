@@ -99,30 +99,30 @@ native int は、
 
 1つはフィールドとかプロパティの初期化子。
 
-<pre class="source" title="フィールド/プロパティ初期化子での new">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
  
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Dictionary</span>&lt;<span class="reserved">int</span>, <span class="reserved">string</span>&gt; _cache = <span class="reserved">new</span>();
+    private static Dictionary<int, string> _cache = new();
 }
-</code></pre>
+```
 
 もう1つはメソッドの引数。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">string</span>&gt; <span class="variable">options</span>) { }
+```csharp
+static void M(Dictionary<string, string> options) { }
  
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+static void Main()
 {
-    <span class="method">M</span>(<span class="reserved">new</span>()
+    M(new()
     {
-        { <span class="string">&quot;define&quot;</span>, <span class="string">&quot;DEBUG&quot;</span> },
-        { <span class="string">&quot;o&quot;</span>, <span class="string">&quot;true&quot;</span> },
-        { <span class="string">&quot;w&quot;</span>, <span class="string">&quot;4&quot;</span> },
+        { "define", "DEBUG" },
+        { "o", "true" },
+        { "w", "4" },
     });
 }
-</code></pre>
+```
 
 特に、ジェネリックな型でフルネームを書くと長ったらしくなるものに対して有効で、
 ここで挙げた例みたいに `Dictionary` に対して使うことが多くなるんじゃないかなと思います。
@@ -152,106 +152,106 @@ C# 7.0 から脈々と、ちょっとずつ拡充されてきた[パターン �
 
 前者は、以下のように、`_` なしで型パターンを使えるというもの。
 
-<pre class="source" title="simplified type patter">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="control">switch</span>
+```csharp
+static int M(object obj) => obj switch
 {
-    <span class="comment">// C# 8.0 までだと _ が必須だった。</span>
-    <span class="comment">// 型名だけだと定数パターンとの区別がつかないため。</span>
-    <span class="reserved">short</span> <span class="reserved">_</span> =&gt; 1,
-    <span class="reserved">int</span> <span class="reserved">_</span> =&gt; 1,
-    <span class="reserved">long</span> <span class="reserved">_</span> =&gt; 1,
+    // C# 8.0 までだと _ が必須だった。
+    // 型名だけだと定数パターンとの区別がつかないため。
+    short _ => 1,
+    int _ => 1,
+    long _ => 1,
  
-    <span class="comment">// C# 9.0 では型名だけで型パターンにできるようになった。</span>
-    <span class="comment">// 文脈を読んでくれてる(型名だったら型パターン、型がなければ定数パターンとして解釈)。</span>
-    <span class="reserved">ushort</span> =&gt; 2,
-    <span class="reserved">uint</span> =&gt; 2,
-    <span class="reserved">ulong</span> =&gt; 2,
+    // C# 9.0 では型名だけで型パターンにできるようになった。
+    // 文脈を読んでくれてる(型名だったら型パターン、型がなければ定数パターンとして解釈)。
+    ushort => 2,
+    uint => 2,
+    ulong => 2,
 };
-</code></pre>
+```
 
 後者は名前通り「パターンを満たさないとき」用の構文です。
 たぶん、`not null` が一番使うと思います。
 
-<pre class="source" title="not pattern">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="control">switch</span>
+```csharp
+static int M(object obj) => obj switch
 {
-    <span class="comment">// string 型のインスタンスじゃないとき</span>
-    <span class="reserved">not</span> <span class="reserved">string</span> =&gt; 1,
-    <span class="comment">// null じゃないとき</span>
-    <span class="reserved">not</span> <span class="reserved">null</span> =&gt; 2,
+    // string 型のインスタンスじゃないとき
+    not string => 1,
+    // null じゃないとき
+    not null => 2,
 };
-</code></pre>
+```
 
 ちなみに、「こんな変な文法を追加しなくても、既存の構文で `if` とか `when` とか並べればいいんじゃないのか？」と思うかもしれませんが、パターン マッチングは結構賢くて、
 ちゃんと条件が網羅的かどうかの判定をやってくれます。
 
-<pre class="source" title="条件の網羅性チェック">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">Invalid</span>(<span class="reserved">object</span> <span class="variable">obj</span>)
+```csharp
+static int Invalid(object obj)
 {
-    <span class="control">if</span> (!(<span class="variable">obj</span> <span class="reserved">is</span> <span class="reserved">string</span>)) <span class="control">return</span> 1;
-    <span class="control">if</span> (!(<span class="variable">obj</span> <span class="reserved">is</span> <span class="reserved">null</span>)) <span class="control">return</span> 2;
+    if (!(obj is string)) return 1;
+    if (!(obj is null)) return 2;
  
-    <span class="comment">// null の時は1つ目の if に引っかかっているはずで、</span>
-    <span class="comment">// 2つめ if と合わせると全条件網羅してる。</span>
-    <span class="comment">// なので、ここには到達できないはずだけど、if だと到達判定が効かない。</span>
-    <span class="comment">// このメソッドはコンパイル エラーを起こす。</span>
+    // null の時は1つ目の if に引っかかっているはずで、
+    // 2つめ if と合わせると全条件網羅してる。
+    // なので、ここには到達できないはずだけど、if だと到達判定が効かない。
+    // このメソッドはコンパイル エラーを起こす。
 }
  
-<span class="comment">// パターンを使うと網羅性の判定が正しく動く。</span>
-<span class="comment">// このメソッドはエラーにもならないし警告も出ない。</span>
-<span class="comment">// 逆に、網羅できてない場合は警告が出る。</span>
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">Valid</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="control">switch</span>
+// パターンを使うと網羅性の判定が正しく動く。
+// このメソッドはエラーにもならないし警告も出ない。
+// 逆に、網羅できてない場合は警告が出る。
+static int Valid(object obj) => obj switch
 {
-    <span class="reserved">not</span> <span class="reserved">string</span> =&gt; 1,
-    <span class="reserved">not</span> <span class="reserved">null</span> =&gt; 2,
+    not string => 1,
+    not null => 2,
 };
-</code></pre>
+```
 
 あと、数値の範囲を表すパターンとして `min..max` を使いたいという意見も結構あるんですが…
 「両端を含む・含まない」の区別が紛らわしすぎるということで愚直に `<`、`<=`、`>`、`>=` を使うということになりました。
 
-<pre class="source" title="両端含む・含まない問題の回避策としての比較パターン">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">byte</span> <span class="variable">b</span>) =&gt; <span class="variable">b</span> <span class="control">switch</span>
+```csharp
+static int M(byte b) => b switch
 {
-    &gt;= 0 <span class="reserved">and</span> &lt;= 10 =&gt; 1, <span class="comment">// 0 も 10 も含んで [0, 10] の範囲</span>
-    &gt; 10 <span class="reserved">and</span> &lt;= 20 =&gt; 2, <span class="comment">// 10 は含まず 20 は含んで (10, 20] の範囲</span>
-    &gt; 20 <span class="reserved">and</span> &lt; 30 =&gt; 3, <span class="comment">// 20 も 30 も含まず (20, 30) の範囲</span>
-    &gt;= 30 <span class="reserved">and</span> &lt; 40 =&gt; 4, <span class="comment">// 30 は含んで 40 は含まず [30, 40) の範囲</span>
-    <span class="reserved">_</span> =&gt; 0,
+    >= 0 and <= 10 => 1, // 0 も 10 も含んで [0, 10] の範囲
+    > 10 and <= 20 => 2, // 10 は含まず 20 は含んで (10, 20] の範囲
+    > 20 and < 30 => 3, // 20 も 30 も含まず (20, 30) の範囲
+    >= 30 and < 40 => 4, // 30 は含んで 40 は含まず [30, 40) の範囲
+    _ => 0,
 };
-</code></pre>
+```
 
 ちなみに、比較パターンでも網羅性のチェックが働いています。
 
-<pre class="source" title="">
-<code><span class="comment">// これは無警告</span>
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">byte</span> <span class="variable">b</span>) =&gt; <span class="variable">b</span> <span class="control">switch</span>
+```csharp
+// これは無警告
+static int M(byte b) => b switch
 {
-    &gt;= 0 <span class="reserved">and</span> &lt;= 250 =&gt; 1,
-    251 <span class="reserved">or</span> 252 <span class="reserved">or</span> 253 <span class="reserved">or</span> 254 =&gt; 2,
-    255 =&gt; 3,
+    >= 0 and <= 250 => 1,
+    251 or 252 or 253 or 254 => 2,
+    255 => 3,
 };
  
-<span class="comment">// 例えば以下の3つには警告が出る</span>
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M1</span>(<span class="reserved">byte</span> <span class="variable">b</span>) =&gt; <span class="variable">b</span> <span class="control">switch</span>
+// 例えば以下の3つには警告が出る
+static int M1(byte b) => b switch
 {
-    &gt;= 0 <span class="reserved">and</span> &lt; 250 =&gt; 1, <span class="comment">// &lt;= と間違えて &lt; を書いて、250 が漏れてる</span>
-    251 <span class="reserved">or</span> 252 <span class="reserved">or</span> 253 <span class="reserved">or</span> 254 =&gt; 2,
-    255 =&gt; 3,
+    >= 0 and < 250 => 1, // <= と間違えて < を書いて、250 が漏れてる
+    251 or 252 or 253 or 254 => 2,
+    255 => 3,
 };
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M2</span>(<span class="reserved">byte</span> <span class="variable">b</span>) =&gt; <span class="variable">b</span> <span class="control">switch</span>
+static int M2(byte b) => b switch
 {
-    &gt;= 0 <span class="reserved">and</span> &lt;= 250 =&gt; 1,
-    251 <span class="reserved">or</span> 253 <span class="reserved">or</span> 254 =&gt; 2, <span class="comment">// 252 が漏れてる </span>
-    255 =&gt; 3,
+    >= 0 and <= 250 => 1,
+    251 or 253 or 254 => 2, // 252 が漏れてる 
+    255 => 3,
 };
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M3</span>(<span class="reserved">byte</span> <span class="variable">b</span>) =&gt; <span class="variable">b</span> <span class="control">switch</span>
+static int M3(byte b) => b switch
 {
-    &gt;= 0 <span class="reserved">and</span> &lt;= 250 =&gt; 1,
-    251 <span class="reserved">or</span> 252 <span class="reserved">or</span> 253 <span class="reserved">or</span> 254 =&gt; 2,
-    <span class="comment">// 255 が漏れてる</span>
+    >= 0 and <= 250 => 1,
+    251 or 252 or 253 or 254 => 2,
+    // 255 が漏れてる
 };
-</code></pre>
+```
 
 この辺りのパターンの最適化の掛け方とか網羅性のチェックは、
 先達となるプログラミング言語があって割と十分に検証されているらしく、

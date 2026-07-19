@@ -43,11 +43,11 @@ C# には <code>int</code> 型から <code>double</code> 型というように�
 暗黙的(implicit)な型変換とは、ある型の変数を別の型の変数に代入するだけで自動的に型を変換してくれる機能です。
 以下に暗黙的な型変換の例を挙げます。
 
-<pre class="source" title="暗黙的な型変換の例" lang="">
-<code><span class="reserved">short</span>   m = 365;
-<span class="reserved">long</span>    n = m; <span class="comment">// short から long への暗黙的な型変換。</span>
-<span class="reserved">double</span>  x = n; <span class="comment">// long から double への暗黙的な型変換。</span>
-</code></pre>
+```csharp
+short   m = 365;
+long    n = m; // short から long への暗黙的な型変換。
+double  x = n; // long から double への暗黙的な型変換。
+```
 
 
 C# で定義されている組込み型同士の間の暗黙的な型変換は以下のとおりです。
@@ -116,17 +116,17 @@ C# における暗黙的な型変換の基本的なルールは以下のとお�
 
 暗黙的に変換を行えない型同士の変換は以下のように明示的(explicit)に行う必要があります。
 
-<pre class="source" title="明示的な型変換" lang="">
-<code><span class="reserved">int</span>     i = 365;
-<span class="reserved">short</span>   j = (<span class="reserved">short</span>)i; <span class="comment">// int から short への明示的な型変換。</span>
-<span class="reserved">int</span>     m = 365;
-<span class="reserved">byte</span>    n = (<span class="reserved">byte</span>)m;  <span class="comment">// int から byte への明示的な型変換。</span>
-                      <span class="comment">// byte は 0～255 までの範囲しか表現できないので、</span>
-                      <span class="comment">// n の値は 365 mod 256 = 109 になる。</span>
-<span class="reserved">double</span>  x = 3.14159;
-<span class="reserved">long</span>    y = (<span class="reserved">long</span>)x; <span class="comment">// double から long への明示的な型変換。</span>
-                      <span class="comment">// 値は小数点以下切捨てられて 3 になる。</span>
-</code></pre>
+```csharp
+int     i = 365;
+short   j = (short)i; // int から short への明示的な型変換。
+int     m = 365;
+byte    n = (byte)m;  // int から byte への明示的な型変換。
+                      // byte は 0～255 までの範囲しか表現できないので、
+                      // n の値は 365 mod 256 = 109 になる。
+double  x = 3.14159;
+long    y = (long)x; // double から long への明示的な型変換。
+                      // 値は小数点以下切捨てられて 3 になる。
+```
 
 
 この、「<code>
@@ -149,22 +149,22 @@ C# では、すべての数値型同士の間で明示的な型変換を行う�
 #### 解答例 1
 
 
-<pre class="source" title="文字コードの表示" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">char</span> c;
+    char c;
 
-    Console.Write(<span class="literal">"文字を入力してください: "</span>);
+    Console.Write("文字を入力してください: ");
     c = Console.ReadLine()[0];
 
-    Console.Write(<span class="literal">"文字 {0} の文字コードは {1}\n"</span>, c, (<span class="reserved">int</span>)c);
+    Console.Write("文字 {0} の文字コードは {1}\n", c, (int)c);
   }
 }
-</code></pre>
+```
 
 
 
@@ -183,23 +183,23 @@ C# では、すべての数値型同士の間で明示的な型変換を行う�
 #### 解答例 1
 
 
-<pre class="source" title="整数と浮動小数点数の割り算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"input a: "</span>);
-    <span class="reserved">int</span> a = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"input b: "</span>);
-    <span class="reserved">int</span> b = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    Console.Write("input a: ");
+    int a = int.Parse(Console.ReadLine());
+    Console.Write("input b: ");
+    int b = int.Parse(Console.ReadLine());
 
-    Console.Write(<span class="literal">"整数: {0} / {1} = {2} … {3}\n"</span>, a, b, a / b, a % b);
-    Console.Write(<span class="literal">"実数: {0} / {1} = {2}\n"</span>, a, b, a / (<span class="reserved">double</span>)b);
+    Console.Write("整数: {0} / {1} = {2} … {3}\n", a, b, a / b, a % b);
+    Console.Write("実数: {0} / {1} = {2}\n", a, b, a / (double)b);
   }
 }
-</code></pre>
+```
 
 
 
@@ -214,33 +214,33 @@ double → int にキャストすると、値が整数に切り詰められま�
 #### 解答例 1
 
 
-<pre class="source" title="double → int" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// まず、正の数をいくつか確認。</span>
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 3.8, (<span class="reserved">int</span>)3.8);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 3.1, (<span class="reserved">int</span>)3.1);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 2.7, (<span class="reserved">int</span>)2.7);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 2.4, (<span class="reserved">int</span>)2.4);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 1.5, (<span class="reserved">int</span>)1.5);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 0.5, (<span class="reserved">int</span>)0.5);
-    <span class="comment">// 負の数も。</span>
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -3.8, (<span class="reserved">int</span>)-3.8);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -3.1, (<span class="reserved">int</span>)-3.1);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -2.7, (<span class="reserved">int</span>)-2.7);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -2.4, (<span class="reserved">int</span>)-2.4);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -1.5, (<span class="reserved">int</span>)-1.5);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -0.5, (<span class="reserved">int</span>)-0.5);
+    // まず、正の数をいくつか確認。
+    Console.Write("{0} → {1}\n", 3.8, (int)3.8);
+    Console.Write("{0} → {1}\n", 3.1, (int)3.1);
+    Console.Write("{0} → {1}\n", 2.7, (int)2.7);
+    Console.Write("{0} → {1}\n", 2.4, (int)2.4);
+    Console.Write("{0} → {1}\n", 1.5, (int)1.5);
+    Console.Write("{0} → {1}\n", 0.5, (int)0.5);
+    // 負の数も。
+    Console.Write("{0} → {1}\n", -3.8, (int)-3.8);
+    Console.Write("{0} → {1}\n", -3.1, (int)-3.1);
+    Console.Write("{0} → {1}\n", -2.7, (int)-2.7);
+    Console.Write("{0} → {1}\n", -2.4, (int)-2.4);
+    Console.Write("{0} → {1}\n", -1.5, (int)-1.5);
+    Console.Write("{0} → {1}\n", -0.5, (int)-0.5);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="double → int">
+```console
 3.8 → 3
 3.1 → 3
 2.7 → 2
@@ -253,7 +253,7 @@ double → int にキャストすると、値が整数に切り詰められま�
 -2.4 → -2
 -1.5 → -1
 -0.5 → 0
-</pre>
+```
 
 
 結果を見ての通り、正の数は切り捨て、負の数は切り上げ（0 に向かって丸め）になります。

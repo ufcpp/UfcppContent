@@ -35,18 +35,18 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/BubbleSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/BubbleSort.cs)
 
-<pre class="source" title="バブルソート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// バブルソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;</span>
-<span class="reserved">public static void</span> BubbleSort&lt;T&gt;(T[] a)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+public static void BubbleSort<T>(T[] a)
+  where T : IComparable<T>
 {
-  <span class="reserved">int</span> n = a.Length;
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n - 1; i++)
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = n - 1; j &gt; i; j--)
-      <span class="reserved">if</span> (a[j].CompareTo(a[j - 1]) &lt; 0)
-        Swap(<span class="reserved">ref</span> a[j], <span class="reserved">ref</span> a[j - 1]);
+  int n = a.Length;
+  for (int i = 0; i < n - 1; i++)
+    for (int j = n - 1; j > i; j--)
+      if (a[j].CompareTo(a[j - 1]) < 0)
+        Swap(ref a[j], ref a[j - 1]);
 }
-</code></pre>
+```

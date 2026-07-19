@@ -42,42 +42,42 @@ Wildcards(ワイルドカード、万能札)と言われてたものが、Discar
 要するに、[分解](../../../../study/csharp/datatype/deconstruction.md)や[out var](../../../../study/csharp/resource/sp_ref.md#out-var)で、要らない値のところに `_` を書けば無視できるという機能。
 以下のようなコードが書けます。
 
-<pre class="source" title="discards">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="comment">// 分解と out var では _ が discard 使いになったっぽい</span>
-        <span class="reserved">var</span> (_, sum) = Tally(<span class="reserved">new</span>[] { 1, 2, 3, 4, 5 });
-        (_, <span class="reserved">var</span> sum2) = Tally(<span class="reserved">new</span>[] { 2, 3, 5, 7, 11 });
-        <span class="reserved">var</span> (count, _) = Tally(<span class="reserved">new</span>[] { 1, 3, 5 });
+        // 分解と out var では _ が discard 使いになったっぽい
+        var (_, sum) = Tally(new[] { 1, 2, 3, 4, 5 });
+        (_, var sum2) = Tally(new[] { 2, 3, 5, 7, 11 });
+        var (count, _) = Tally(new[] { 1, 3, 5 });
 
-        <span class="type">Console</span>.WriteLine((count, sum, sum2));
+        Console.WriteLine((count, sum, sum2));
 
-        <span class="reserved">if</span> (<span class="reserved">int</span>.TryParse(<span class="string">"123"</span>, <span class="reserved">out</span> _) &amp;&amp; <span class="reserved">int</span>.TryParse(<span class="string">"456"</span>, <span class="reserved">out</span> _))
-            <span class="type">Console</span>.WriteLine(<span class="string">"successfully parsed"</span>);
+        if (int.TryParse("123", out _) && int.TryParse("456", out _))
+            Console.WriteLine("successfully parsed");
 
-        <span class="comment">// 既存文法に対しては未対応。</span>
-        <span class="comment">// 計画上は出てたはずだけど、いつ対応するかは不明。</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>&gt; f = (_, _) =&gt; 1;
+        // 既存文法に対しては未対応。
+        // 計画上は出てたはずだけど、いつ対応するかは不明。
+        Func<int, int, int> f = (_, _) => 1;
     }
 
-    <span class="reserved">static</span> (<span class="reserved">int</span> count, <span class="reserved">int</span> sum) Tally(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; items)
+    static (int count, int sum) Tally(IEnumerable<int> items)
     {
-        <span class="reserved">var</span> count = 0;
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> items)
+        var count = 0;
+        var sum = 0;
+        foreach (var x in items)
         {
             count++;
             sum += x;
         }
-        <span class="reserved">return</span> (count, sum);
+        return (count, sum);
     }
 }
-</code></pre>
+```
 
 これ、今までのC#だと、`_`も有効な識別子なので、1度どこかで使ってしまうと、他の場所では二重定義扱いになってコンパイル エラーになります。
 それが、とりあえず分解とout varというC# 7からの新構文な場所では、識別子ではなくてdiscards扱いされるようになりました。

@@ -17,13 +17,13 @@ aliases: []
 
 C# 10.0 で[構造体の引数なしコンストラクター](../../../../study/csharp/cheatsheet/ap_ver10.md#struct-parameterless-ctor)が書けるようになりました。
 
-<pre class="source" title="構造体の引数なしコンストラクター">
-<code><span class="reserved">struct</span> <span class="type">A</span>
+```csharp
+struct A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="type">A</span>() =&gt; X = 1; <span class="comment">// ←要はこういうの</span>
+    public int X;
+    public A() => X = 1; // ←要はこういうの
 }
-</code></pre>
+```
 
 [今年2月にブログで書いてるんですが](../../2/parameterlessstructctor/index.md)、これ、C# 6.0 の時に一度採用しようとしたものの、[`Activator.CreateInstance`](https://docs.microsoft.com/ja-jp/dotnet/api/system.activator.createinstance) にバグがあって、いくつかの場面でまっとうに動かないということで延期されたという経緯があります。
 
@@ -40,17 +40,17 @@ C# の構造体は `new T()` と `default(T)` が同じ「0初期化」を表し
 
 例えば、先ほどの、引数なしコンストラクターで `X` を 1 に初期化しているはずの構造体 `A` を使って以下のようなコードを書いたとします。
 
-<pre class="source" title="引数なしコンストラクターが呼ばれなかったコードの例">
-<code><span class="reserved">var</span> <span class="variable">a</span> = <span class="method">New</span>&lt;<span class="type">A</span>&gt;();
+```csharp
+var a = New<A>();
 
-<span class="comment">// 古いランタイムだとこれで a.X == 0 に</span>
-<span class="comment">// 1 になるはずなのに…</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span>.X);
+// 古いランタイムだとこれで a.X == 0 に
+// 1 になるはずなのに…
+Console.WriteLine(a.X);
 
-<span class="reserved">static</span> <span class="type">T</span> <span class="method">New</span>&lt;<span class="type">T</span>&gt;()
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>()
-    =&gt; <span class="reserved">new</span> <span class="type">T</span>();
-</code></pre>
+static T New<T>()
+    where T : new()
+    => new T();
+```
 
 直接 `new A()` すればちゃんと `X` が 1 に初期化されるんですが、
 `New<T>` メソッドを介すると 0 になっていました。
@@ -76,10 +76,10 @@ C# 6.0 当時の話なので確か、
 先ほどと同じ構造体 `A` と `New<T>` メソッドを使った場合、
 .NET Framework 4.8 で実行すると「2度目がおかしい」という状態になります。
 
-<pre class="source" title=".NET Framework 限定 Activator バグ">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">New</span>&lt;<span class="type">A</span>&gt;().X); <span class="comment">// 1回目は大丈夫。ちゃんと 1。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">New</span>&lt;<span class="type">A</span>&gt;().X); <span class="comment">// 2回目以降なぜか 0 に… (.NET Framework 限定のバグ)</span>
-</code></pre>
+```csharp
+Console.WriteLine(New<A>().X); // 1回目は大丈夫。ちゃんと 1。
+Console.WriteLine(New<A>().X); // 2回目以降なぜか 0 に… (.NET Framework 限定のバグ)
+```
 
 ## TargetFramework net4.8 じゃなくてもバグる
 
@@ -89,36 +89,37 @@ C# 6.0 当時の話なので確か、
 
 1. netstandard2.0 なライブラリで以下のようなコードを書く (LangVersion 指定で明示的に C# のバージョンを 10.0 に上げる)
 
-<pre class="source" title="netstandard2.0 で C# 10.0 を有効化して書く">
-<code><span class="reserved">namespace</span> ClassLibrary1;
+```csharp
+namespace ClassLibrary1;
 
-<span class="reserved">public struct</span> <span class="type">A</span>
+public struct A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="type">A</span>() =&gt; X = 1;
+    public int X;
+    public A() => X = 1;
 }
-</code></pre>
+```
 
 2. 以下のようなアプリ コードを書く (これは C# 7.3 でも動く)
 
-<pre class="source" title="アプリ コード">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// ジェネリックな new() は、内部的には CreateInstance&lt;T&gt;() と一緒</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">New</span>&lt;ClassLibrary1.<span class="type">A</span>&gt;().X);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">New</span>&lt;ClassLibrary1.<span class="type">A</span>&gt;().X);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">New</span>&lt;ClassLibrary1.<span class="type">A</span>&gt;().X);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">New</span>&lt;ClassLibrary1.<span class="type">A</span>&gt;().X);
+        // ジェネリックな new() は、内部的には CreateInstance<T>() と一緒
+        Console.WriteLine(New<ClassLibrary1.A>().X);
+        Console.WriteLine(New<ClassLibrary1.A>().X);
+        Console.WriteLine(New<ClassLibrary1.A>().X);
+        Console.WriteLine(New<ClassLibrary1.A>().X);
     }
 
-    <span class="reserved">static</span> <span class="type">T</span> <span class="method">New</span>&lt;<span class="type">T</span>&gt;()
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>()
-        =&gt; <span class="reserved">new</span> <span class="type">T</span>();
-}</code></pre>
+    static T New<T>()
+        where T : new()
+        => new T();
+}
+```
 
 とやると、アプリ側、 netcoreapp1.0 とか net5.0 とかで動かす分には問題なく 1, 1, 1, 1 という結果になるんですが、
 これを .NET Framework 4.8 で実行すると、1, 0, 0, 0 という結果になります。

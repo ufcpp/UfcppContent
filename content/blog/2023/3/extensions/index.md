@@ -39,11 +39,11 @@ aliases: []
 
 例えば、`int` に対する「拡張」を書くのなら、以下のような書き方をします。
 
-<pre class="source" title="int に対する extension">
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">Ex</span> <span class="reserved">for</span> <span class="reserved">int</span>
+```csharp
+implicit extension Ex for int
 {
 }
-</pre>
+```
 
 ### なんでも拡張
 
@@ -52,139 +52,139 @@ aliases: []
 今の拡張メソッドの文法がプロパティなどに向いていなさ過ぎて、導入できずにいます。
 また、静的メンバーにも対応していません。
 
-<pre class="source" title="プロパティに向かない文法、静的メンバーにも未対応">
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Extensions</span></span>
+```csharp
+static class Extensions
 {
-    <span class="comment">// x.Method() と呼べる。</span>
-    <span class="comment">// 第1引数を特別扱いしてる都合上…</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Method</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
+    // x.Method() と呼べる。
+    // 第1引数を特別扱いしてる都合上…
+    public static void Method(this int x) { }
 
-    <span class="comment">// 引数のないプロパティとか、</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="property"><span class="error" title="CS0548">Property</span></span></span> { }
+    // 引数のないプロパティとか、
+    public static int Property { }
 
-    <span class="comment">// インデクサーはどうするか悩ましい。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="error" title="CS0720"><span class="error" title="CS0548"><span class="error" title="CS0106"><span class="reserved">this</span></span></span></span>[<span class="reserved">int</span> <span class="variable local">index</span>] { }
+    // インデクサーはどうするか悩ましい。
+    public static int this[int index] { }
 
-    <span class="comment">// 元が static なものを拡張する手段もない。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="reserved">operator</span> <span class="error" title="CS1534"><span class="error" title="CS0715"><span class="error" title="CS0161"><span class="operator">+</span></span></span></span>() { }
+    // 元が static なものを拡張する手段もない。
+    public static int operator +() { }
 }
-</pre>
+```
 
 `extension` を使った定義では、インスタンス フィールドと[自動プロパティ](../../../../study/csharp/oop/oo_property.md#auto)・[自動イベント](../../../../study/csharp/functional/sp_event.md#auto-event)(暗黙的にフィールドが必要)を除いて、どのメンバーでも使えます。
 
-<pre class="source" title="プロパティやインデクサー、静的メンバーにも対応">
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">Ex</span> <span class="reserved">for</span> <span class="reserved">int</span>
+```csharp
+implicit extension Ex for int
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Method</span>() { }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span> => <span class="reserved">this</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable">index</span>] => <span class="variable">index</span>;
+    public void Method() { }
+    public int Property => this;
+    public int this[int index] => index;
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">StaticMethod</span></span>() { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Ex</span> <span class="reserved">operator</span>+ (<span class="type">Ex</span> <span class="variable">x</span>) => <span class="variable">x</span>;
+    public static void StaticMethod() { }
+    public static Ex operator+ (Ex x) => x;
 }
-</pre>
+```
 
 ちなみに、インターフェイスも実装できる予定です。
 既存の(第3者が作っていて自分では手を入れられない)型にインターフェイスを後挿しできます。
 
-<pre class="source" title="拡張インターフェイス実装">
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">Ex</span> <span class="reserved">for</span> <span class="reserved">bool</span> : <span class="type">IFormattable</span>
+```csharp
+implicit extension Ex for bool : IFormattable
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">ToString</span>(<span class="reserved">string</span>? <span class="variable">format</span>, <span class="type">IFormatProvider</span>? <span class="variable">formatProvider</span>) =&gt; <span class="reserved">this</span> ? <span class="string">"true"</span> : <span class="string">"false"</span>;
+    public void ToString(string? format, IFormatProvider? formatProvider) => this ? "true" : "false";
 }
-</pre>
+```
 
 これで、以下のような呼び出しができるようになる予定です。
 
-<pre class="source" title="拡張定義したプロパティ、インデクサー、静的メソッドを呼び出し">
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>;
+```csharp
+int x = 0;
 
-<span class="variable">x</span><span class="operator">.</span><span class="method">Method</span>();
-<span class="reserved">_</span> <span class="operator">=</span> <span class="variable">x</span><span class="operator">.</span><span class="property">Property</span>;
-<span class="reserved">_</span> <span class="operator">=</span> <span class="variable">x</span>[<span class="number">1</span>];
-<span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">StaticMethod</span></span>();
+x.Method();
+_ = x.Property;
+_ = x[1];
+int.StaticMethod();
 
-<span class="type">IFormattable</span> f = <span class="reserved">true</span>;
-</pre>
+IFormattable f = true;
+```
 
 ### 拡張「型」
 
 既存の拡張メソッドでも起こるんですが、
 複数の拡張があるとき、同名のメソッドが被ってどちらを呼ぶべきか解決できない時があります。
 
-<pre class="source" title="名前被りで解決できない拡張メソッド">
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>;
+```csharp
+int x = 0;
 
-<span class="comment">// 2つ同名のメソッドがあって優先度解決できないのでコンパイル エラー。</span>
-<span class="variable">x</span><span class="operator">.</span><span class="method"><span class="error" title="CS0121">Method</span></span>();
+// 2つ同名のメソッドがあって優先度解決できないのでコンパイル エラー。
+x.Method();
 
-<span class="comment">// 解決するためには途端に「普通の静的メソッド」呼びに戻る。</span>
-<span class="static"><span class="type">Ex1</span></span><span class="operator">.</span><span class="method"><span class="static">Method</span></span>(<span class="variable">x</span>);
-<span class="type"><span class="static">Ex2</span></span><span class="operator">.</span><span class="static"><span class="method">Method</span></span>(<span class="variable">x</span>);
+// 解決するためには途端に「普通の静的メソッド」呼びに戻る。
+Ex1.Method(x);
+Ex2.Method(x);
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Ex1</span></span>
+static class Ex1
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Method</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
+    public static void Method(this int x) { }
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">Ex2</span></span>
+static class Ex2
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Method</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
+    public static void Method(this int x) { }
 }
-</pre>
+```
 
 また、拡張メソッドは元々あるインスタンス メソッドよりも優先度が低いので、
 同名のメソッドで「上書き」することもできません。
 
-<pre class="source" title="拡張メソッドでは同名インスタンス メソッドの上書きはできない">
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>;
+```csharp
+int x = 0;
 
-<span class="comment">// インスタンス メソッドの方が優先度が高く、この書き方で Ex1.ToString は呼べない。</span>
-<span class="variable">x</span><span class="operator">.</span><span class="method">ToString</span>();
+// インスタンス メソッドの方が優先度が高く、この書き方で Ex1.ToString は呼べない。
+x.ToString();
 
-<span class="comment">// 「普通の静的メソッド」呼びで一応解決は可能。</span>
-<span class="type"><span class="static">Ex1</span></span><span class="operator">.</span><span class="static"><span class="method">ToString</span></span>(<span class="variable">x</span>);
+// 「普通の静的メソッド」呼びで一応解決は可能。
+Ex1.ToString(x);
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Ex1</span></span>
+static class Ex1
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">ToString</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span><span class="operator">.</span><span class="method">ToString</span>(<span class="string">&quot;X2&quot;</span>);
+    public static void ToString(this int x) => x.ToString("X2");
 }
-</pre>
+```
 
 これらの例の通り、
 名前被り時の解決方法は「普通の静的メソッドとして呼ぶ」という手段です。
 
 一方、`extension` では、以下のように、キャスト的な文法で解決します。
 
-<pre class="source" title="キャストで拡張を使う">
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>;
+```csharp
+int x = 0;
 
-<span class="comment">// 「暗黙」にやろうとすると、extension を使ったやり方でも解決不能・元々あるメソッド優先。</span>
-<span class="variable">x</span><span class="operator">.</span><span class="method">Method</span>();   <span class="comment">// これは解決不能。</span>
-<span class="variable">x</span><span class="operator">.</span><span class="method">ToString</span>(); <span class="comment">// これは int.ToString が呼ばれる。</span>
+// 「暗黙」にやろうとすると、extension を使ったやり方でも解決不能・元々あるメソッド優先。
+x.Method();   // これは解決不能。
+x.ToString(); // これは int.ToString が呼ばれる。
 
-<span class="comment">// キャスト構文で解決可能。</span>
-((<span class="type">Ex1</span>)<span class="variable">x</span>)<span class="operator">.</span><span class="method">Method</span>();   <span class="comment">// Ex1.Method。</span>
-((<span class="type">Ex2</span>)<span class="variable">x</span>)<span class="operator">.</span><span class="method">Method</span>();   <span class="comment">// Ex2.Method。</span>
-((<span class="type">Ex2</span>)<span class="variable">x</span>)<span class="operator">.</span><span class="method">ToString</span>(); <span class="comment">// Ex1.ToString。</span>
+// キャスト構文で解決可能。
+((Ex1)x).Method();   // Ex1.Method。
+((Ex2)x).Method();   // Ex2.Method。
+((Ex2)x).ToString(); // Ex1.ToString。
 
-<span class="comment">// 「拡張型」の変数で1度受けるのでも解決可能。</span>
-<span class="comment">// この場合は int のメソッドよりも extension のメソッドの方が優先。</span>
-<span class="type">Ex1</span> <span class="variable">ex</span> <span class="operator">=</span> <span class="variable">x</span>;
-<span class="variable">ex</span><span class="operator">.</span><span class="method">Method</span>();
-<span class="variable">ex</span><span class="operator">.</span><span class="method">ToString</span>();
+// 「拡張型」の変数で1度受けるのでも解決可能。
+// この場合は int のメソッドよりも extension のメソッドの方が優先。
+Ex1 ex = x;
+ex.Method();
+ex.ToString();
 
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">Ex1</span> <span class="reserved">for</span> <span class="reserved">int</span>
+implicit extension Ex1 for int
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Method</span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">ToString</span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span><span class="operator">.</span><span class="method">ToString</span>(<span class="string">&quot;X2&quot;</span>);
+    public void Method(this int x) { }
+    public void ToString(this int x) => x.ToString("X2");
 }
 
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">Ex2</span> <span class="reserved">for</span> <span class="reserved">int</span>
+implicit extension Ex2 for int
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Method</span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
+    public void Method(this int x) { }
 }
-</pre>
+```
 
 ### 実際に型として使える
 
@@ -194,30 +194,30 @@ aliases: []
 
 変数だけではなく、引数、型引数などにも使えます。
 
-<pre class="source" title="拡張型引数">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections;
+```csharp
+using System.Collections;
 
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>;
+int x = 0;
 
-<span class="comment">// int → Ex1 の暗黙の変換。</span>
-<span class="method"><span class="static">M1</span></span>(<span class="variable">x</span>);
+// int → Ex1 の暗黙の変換。
+M1(x);
 
-<span class="comment">// IEnumerable&lt;int&gt; → IEnumerable&lt;Ex1&gt; の暗黙の変換。</span>
-<span class="static"><span class="method">M2</span></span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> });
+// IEnumerable<int> → IEnumerable<Ex1> の暗黙の変換。
+M2(new[] { 1, 2, 3 });
 
-<span class="comment">// 引数に拡張型を使う。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M1</span></span>(<span class="type">Ex1</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">x</span>);
+// 引数に拡張型を使う。
+static void M1(Ex1 x) => Console.WriteLine(x);
 
-<span class="comment">// 型引数に拡張型を使う。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M2</span></span>(<span class="type">IEnumerable</span>&lt;<span class="type">Ex1</span>&gt; <span class="variable local">x</span>)
+// 型引数に拡張型を使う。
+static void M2(IEnumerable<Ex1> x)
 {
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">item</span> <span class="control">in</span> <span class="variable local">x</span>) <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">item</span>);
+    foreach (var item in x) Console.WriteLine(item);
 }
 
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">Ex1</span> <span class="reserved">for</span> <span class="reserved">int</span>
+implicit extension Ex1 for int
 {
 }
-</pre>
+```
 
 ### explicit extension
 
@@ -226,22 +226,22 @@ aliases: []
 名前通り型の明示が必須になって、
 `int` などの元の型のままでメンバーを呼ぶことができなくなります。
 
-<pre class="source" title="explicit exntension">
-<span class="comment">// (implicit なら呼べるけど) explicit extension では呼べない。</span>
-<span class="number">1</span>.<span class="method">Method</span>();
-<span class="reserved">int</span>.<span class="method"><span class="static">StaticMethod</span></span>();
+```csharp
+// (implicit なら呼べるけど) explicit extension では呼べない。
+1.Method();
+int.StaticMethod();
 
-<span class="comment">// こんな風に、型を明示して呼ぶ想定。</span>
-<span class="type">Ex</span> <span class="variable">ex</span> <span class="operator">=</span> <span class="number">1</span>;
-<span class="variable">ex</span><span class="operator">.</span><span class="method">Method</span>();
-<span class="type">Ex</span>.<span class="method"><span class="static">StaticMethod</span></span>();
+// こんな風に、型を明示して呼ぶ想定。
+Ex ex = 1;
+ex.Method();
+Ex.StaticMethod();
 
-<span class="reserved"><em>explicit</em></span> <span class="reserved">extension</span> <span class="type">Ex</span> <span class="reserved">for</span> <span class="reserved">int</span>
+explicit extension Ex for int
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Method</span>() { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">StaticMethod</span></span>() { }
+    public void Method() { }
+    public static void StaticMethod() { }
 }
-</pre>
+```
 
 「`1.Method()` みたな呼び方ができないものが『extension』なのか？」みたいな話はあります。
 なので、元々は role, view, shape (同じデータの別の役割・見え方・輪郭)みたいな言葉を使おうかという話も出ていました。
@@ -249,17 +249,17 @@ aliases: []
 
 ちなみに、同じ型に対する別の extension はお互い型変換させるつもりはないそうです。
 
-<pre class="source" title="2つの異なる explicit exntension">
-<span class="comment">// 基となる型から extension への変換は暗黙 OK。</span>
-<span class="type">Ex1</span> <span class="variable">ex1</span> = 1;
-<span class="type">Ex2</span> <span class="variable">ex2</span> = 2;
+```csharp
+// 基となる型から extension への変換は暗黙 OK。
+Ex1 ex1 = 1;
+Ex2 ex2 = 2;
 
-<span class="comment">// extension 同士の変換はダメ。</span>
-<span class="type">Ex2</span> <span class="variable">ex3</span> = <span class="variable">ex1</span>;
+// extension 同士の変換はダメ。
+Ex2 ex3 = ex1;
 
-<span class="reserved">explicit</span> <span class="reserved">extension</span> <span class="type">Ex1</span> <span class="reserved">for</span> <span class="reserved">int</span> { }
-<span class="reserved">explicit</span> <span class="reserved">extension</span> <span class="type">Ex2</span> <span class="reserved">for</span> <span class="reserved">int</span> { }
-</pre>
+explicit extension Ex1 for int { }
+explicit extension Ex2 for int { }
+```
 
 要は、strong-typedef 的なものに使えます。
 (この辺りが「それは extension なのか？」と言われるゆえんです。
@@ -275,11 +275,11 @@ extension は別の extension からの派生もOKで、
 例えば以下のような感じ。
 (`T` は通常の型、`I` 始まりのものがインターフェイス、`X` 始まりのものが extension。)
 
-<pre class="source" title="extension 定義(文法まとめ)">
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">X</span> <span class="reserved">for</span> <span class="type">T</span> : <span class="type">XA</span>, <span class="type">XB</span>, <span class="type">IA</span>, <span class="type">IB</span>
+```csharp
+implicit extension X for T : XA, XB, IA, IB
 {
 }
-</pre>
+```
 
 ちなみに、ここでいう `T` (`for` の後ろの型)のことを「基になる型」(underlying type: 根底にある型、基礎となる型)と言います。
 (C# 的には、`enum` なんかの `enum E : int { }` とかの `int` の部分も underlying type と言います。Microsoft の和訳では undelying type = 基になる型。)
@@ -289,72 +289,72 @@ extension の場合は `for` を使って `:` とは分ける方向で考えて�
 基底型をいくつも持てるし、ただでさえ基底型とインターフェイスの混在があるのに、さらに基になる型 `T` も並べた時に、「同じ `:` を使って、一番先頭という縛りを設ける」というのはいささか不安だったそうです。
 特に、`partial` を認めるつもりなので、その場合に「一番先頭」があやふやになるのを懸念したみたいです。
 
-<pre class="source" title="partial extension">
-<span class="reserved">implicit</span> <span class="reserved">partial</span> <span class="reserved">extension</span> <span class="type">X</span> <span class="reserved">for</span> <span class="type">T</span> : <span class="type">XA</span>, <span class="type">IA</span>
+```csharp
+implicit partial extension X for T : XA, IA
 {
 }
 
-<span class="reserved">implicit</span> <span class="reserved">partial</span> <span class="reserved">extension</span> <span class="type">X</span> : <span class="type">XB</span>, <span class="type">IB</span>
+implicit partial extension X : XB, IB
 {
 }
-</pre>
+```
 
 また、既存の拡張メソッドがトップレベルの型での定義以外を認めていないのに対して、
 新しい extension は入れ子を認めるそうです。
 
-<pre class="source" title="partial extension">
-<span class="reserved">using</span> <span class="reserved">static</span> <span class="type">Ex</span>;
-<span class="reserved">using</span> <span class="reserved">static</span> <span class="type">C</span>;
+```csharp
+using static Ex;
+using static C;
 
-<span class="comment">// ちゃんと呼べる。</span>
-1.<span class="method">M1</span>();
-2.<span class="method">M2</span>();
+// ちゃんと呼べる。
+1.M1();
+2.M2();
 
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">Ex</span> <span class="reserved">for</span> <span class="type">T</span>
+implicit extension Ex for T
 {
-    <span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">NextedEx</span> <span class="reserved">for</span> <span class="reserved">int</span>
+    implicit extension NextedEx for int
     {
-        <span class="reserved">void</span> <span class="method">M1</span>() { }
+        void M1() { }
     }
 }
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">NextedEx</span> <span class="reserved">for</span> <span class="reserved">int</span>
+    implicit extension NextedEx for int
     {
-        <span class="reserved">void</span> <span class="method">M2</span>() { }
+        void M2() { }
     }
 }
-</pre>
+```
 
 さらに、ジェネリックにもできるそうです。
 
-<pre class="source" title="generic extension">
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">X</span>&lt;<span class="type">T</span>&gt; <span class="reserved">for</span> <span class="type">T</span> : <span class="type">XA</span>, <span class="type">IA</span>
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IT</span>
+```csharp
+implicit extension X<T> for T : XA, IA
+    where T : IT
 {
 }
-</pre>
+```
 
 派生 extension を作る際には、
 基となる型の条件を強める方向でなら、基となる型の変更もできるみたいです。
 
-<pre class="source" title="基となる型の変更">
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">XBase</span> <span class="reserved">for</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">object</span>&gt;
+```csharp
+implicit extension XBase for IEnumerable<object>
 {
 }
 
-<span class="comment">// IEnumerable&lt;object&gt; から IEnumerable&lt;string&gt; への変更はOK。</span>
-<span class="comment">// (逆だとダメ。)</span>
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">XDerived1</span> <span class="reserved">for</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>&gt; : <span class="type">XBase</span>
+// IEnumerable<object> から IEnumerable<string> への変更はOK。
+// (逆だとダメ。)
+implicit extension XDerived1 for IEnumerable<string> : XBase
 {
 }
 
-<span class="comment">// ちなみに、基となる型に変更がないなら for は省略可。</span>
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">XDerived2</span> : <span class="type">XBase</span>
+// ちなみに、基となる型に変更がないなら for は省略可。
+implicit extension XDerived2 : XBase
 {
 }
-</pre>
+```
 
 ## 実装方法
 
@@ -364,34 +364,34 @@ extension の場合は `for` を使って `:` とは分ける方向で考えて�
 
 例えば、前述の(以下に再掲) extension に対して、
 
-<pre class="source" title="前述の extension">
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">Ex</span> <span class="reserved">for</span> <span class="reserved">int</span>
+```csharp
+implicit extension Ex for int
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Method</span>() { }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span> => <span class="reserved">int</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable">index</span>] => <span class="variable">index</span>;
+    public void Method() { }
+    public int Property => int;
+    public int this[int index] => index;
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">StaticMethod</span></span>() { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Ex</span> <span class="reserved">operator</span>+ (<span class="type">Ex</span> <span class="variable">x</span>) => <span class="variable">x</span>;
+    public static void StaticMethod() { }
+    public static Ex operator+ (Ex x) => x;
 }
-</pre>
+```
 
 以下のようなラッパー構造体を作るのはどうかという案になっています。
 
-<pre class="source" title="">
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Ex</span>
+```csharp
+ref struct Ex
 {
-    <span class="reserved">private</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="field">@this</span>;
-    <span class="reserved">public</span> <span class="type struct">Ex</span>(<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">@this</span>) <span class="operator">=&gt;</span> <span class="reserved">this</span><span class="operator">.</span><span class="field">@this</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">@this</span>;
+    private ref int @this;
+    public Ex(ref int @this) => this.@this = ref @this;
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Method</span>() { }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span> <span class="operator">=&gt;</span> <span class="field">@this</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>] <span class="operator">=&gt;</span> <span class="variable local">index</span>;
+    public void Method() { }
+    public int Property => @this;
+    public int this[int index] => index;
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">StaticMethod</span></span>() { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">Ex</span> <span class="reserved">operator</span> <span class="operator">+</span>(<span class="type struct">Ex</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span>;
+    public static void StaticMethod() { }
+    public static Ex operator +(Ex x) => x;
 }
-</pre>
+```
 
 [ref 構造体](../../../../study/csharp/resource/refstruct.md)、[ref フィールド](../../../../study/csharp/resource/refstruct.md#ref-field)を使う想定なので、
 別途以下のような機能(C# 11 時点で認められていない)が必要になります。
@@ -400,20 +400,20 @@ extension の場合は `for` を使って `:` とは分ける方向で考えて�
 * ref 構造体をジェネリック型引数にする
 * ref 構造体でインターフェイスを実装する
 
-<pre class="source" title="C# 11 で無理なものの、extension の実装に欲しいもの">
-<span class="comment">// 現状、ref 構造体はインターフェイス実装を持てない。</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">S</span> : <span class="error" title="CS0535"><span class="error" title="CS0535"><span class="error" title="CS8343"><span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;</span></span></span>
+```csharp
+// 現状、ref 構造体はインターフェイス実装を持てない。
+ref struct S : IEnumerable<int>
 {
-    <span class="comment">// 現状、ref 構造体の ref フィールドはダメ。</span>
-    <span class="error" title="CS9050"><span class="reserved">ref</span> <span class="type struct">S</span></span> <span class="warning" title="CS0169"><span class="field"><span class="error" title="CS0523">_refS</span></span></span>;
+    // 現状、ref 構造体の ref フィールドはダメ。
+    ref S _refS;
 
-    <span class="comment">// 現状、ref 構造体を型引数に渡せない。</span>
-    <span class="type">IEnumerable</span>&lt;<span class="type struct">S</span>&gt; <span class="method"><span class="error" title="CS0306">GetItems</span></span>()
+    // 現状、ref 構造体を型引数に渡せない。
+    IEnumerable<S> GetItems()
     {
-        <span class="control">yield</span> <span class="control">return</span> <span class="reserved">default</span>;
+        yield return default;
     }
 }
-</pre>
+```
 
 ## 実装フェーズ
 

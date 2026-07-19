@@ -37,21 +37,21 @@ aliases: []
 
 [`switch` 式](../../../../study/csharp/cheatsheet/ap_ver8.md#switch-expression)でも、以下のような書き方に需要があるので、式ステートメント化をしたいという話は前々からあります。
 
-<pre class="source" title="switch 式ステートメントの例">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">A</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;A&quot;</span>);
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">B</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;B&quot;</span>);
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">C</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;C&quot;</span>);
+```csharp
+static void A() => Console.WriteLine("A");
+static void B() => Console.WriteLine("B");
+static void C() => Console.WriteLine("C");
  
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">bool</span>? <span class="variable">state</span>)
+static void M(bool? state)
 {
-    <span class="variable">state</span> <span class="control">switch</span>
+    state switch
     {
-        <span class="reserved">true</span> =&gt; <span class="method">A</span>(),
-        <span class="reserved">false</span> =&gt; <span class="method">B</span>(),
-        <span class="reserved">null</span> =&gt; <span class="method">C</span>(),
+        true => A(),
+        false => B(),
+        null => C(),
     };
 }
-</code></pre>
+```
 
 C# 8.0 には間に合わなかったので、9.0 での提案に。
 
@@ -61,22 +61,22 @@ C# 8.0 には間に合わなかったので、9.0 での提案に。
 
 これは要するに以下のような奴。
 
-<pre class="source" title="共変戻り値の例">
-<code><span class="reserved">class</span> <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span> { }
+```csharp
+class Base { }
+class Derived : Base { }
  
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">Base</span> <span class="method">M</span>() =&gt; <span class="reserved">null</span>;
+    public virtual Base M() => null;
 }
  
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="comment">// 戻り値が Base じゃなくて Derived。</span>
-    <span class="comment">// 原理的には問題ないはずだけど、今までの .NET ではできなかった。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="type">Derived</span> <span class="method">M</span>() =&gt; <span class="reserved">null</span>;
+    // 戻り値が Base じゃなくて Derived。
+    // 原理的には問題ないはずだけど、今までの .NET ではできなかった。
+    public override Derived M() => null;
 }
-</code></pre>
+```
 
 これはずっと「C# 上の構文糖衣ではなく、ランタイムに手を入れた方がいいので難しめ」ということでなかなか手付かずだったやつです。
 

@@ -47,24 +47,24 @@ C#には、歴史的経緯から、[匿名型](../start/sp3_inference.md#anonymo
 関数を作るとき、複数の値を返したい場合があります。
 例えば、「最小値、最大値、平均値を同時に求めるメソッド」があったとしましょう。
 
-<pre class="source" title="最小値、最大値、平均値を同時に求めるメソッド">
-<code><span class="reserved">static</span> <span class="type">X</span> Measure(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; items)
+```csharp
+static X Measure(IEnumerable<int> items)
 {
-    <span class="reserved">var</span> count = 0;
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">var</span> min = <span class="reserved">int</span>.MaxValue;
-    <span class="reserved">var</span> max = <span class="reserved">int</span>.MinValue;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> items)
+    var count = 0;
+    var sum = 0;
+    var min = int.MaxValue;
+    var max = int.MinValue;
+    foreach (var x in items)
     {
         sum += x;
         count++;
-        min = <span class="type">Math</span>.Min(x, min);
-        max = <span class="type">Math</span>.Max(x, max);
+        min = Math.Min(x, min);
+        max = Math.Max(x, max);
     }
 
-    <span class="reserved">return</span> <span class="reserved">new</span> <span class="type">X</span>(min, max, (<span class="reserved">double</span>)sum / count);
+    return new X(min, max, (double)sum / count);
 }
-</code></pre>
+```
 
 この、戻り値の型`X`は、どういう名前であるべきでしょう。
 メソッドがメソッドなので、「最小値と最大値と平均値」みたいな名前、すなわち、`MinMaxAverage`とかでしょうか？
@@ -78,24 +78,24 @@ C#には、歴史的経緯から、[匿名型](../start/sp3_inference.md#anonymo
 
 こういう場合には、「名前のない型」を認めるべきです。例えば、以下のような書き方です。
 
-<pre class="source" title="タプルを使った書き方">
-<code><span class="reserved">static</span> <em>(<span class="reserved">int</span> min, <span class="reserved">int</span> max, <span class="reserved">double</span> average)</em> Measure(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; items)
+```csharp
+static (int min, int max, double average) Measure(IEnumerable<int> items)
 {
-    <span class="reserved">var</span> count = 0;
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">var</span> min = <span class="reserved">int</span>.MaxValue;
-    <span class="reserved">var</span> max = <span class="reserved">int</span>.MinValue;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> items)
+    var count = 0;
+    var sum = 0;
+    var min = int.MaxValue;
+    var max = int.MinValue;
+    foreach (var x in items)
     {
         sum += x;
         count++;
-        min = <span class="type">Math</span>.Min(x, min);
-        max = <span class="type">Math</span>.Max(x, max);
+        min = Math.Min(x, min);
+        max = Math.Max(x, max);
     }
 
-    <span class="reserved">return</span> (min, max, (<span class="reserved">double</span>)sum / count);
+    return (min, max, (double)sum / count);
 }
-</code></pre>
+```
 
 これで十分に、「itemsの最小値(min)、最大値(max)、平均値(average)を計って(measure)返す」という意図を書き表せています。
 
@@ -110,43 +110,43 @@ C#には、歴史的経緯から、[匿名型](../start/sp3_inference.md#anonymo
 例えば、以下のようなデータがあったとします。
 これは、「[疑似個人情報データ生成サービス](http://hogehoge.tk/personal/)」を使って作った架空の個人情報です。
 
-<pre class="source">
+```csharp
 1,奥野茉奈,オクノマナ,女,0288250107,1972/05/18
 2,久保敏行,クボトシユキ,男,086288618,1984/10/13
 3,長瀬由美,ナガセユミ,女,0548252320,1965/09/25
 4,植田良子,ウエダヨシコ,女,0954083389,1977/03/18
 ・・・
-</pre>
+```
 
 全データ: [personal_infomation.csv](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/StructuredProgramming/Tuples/personal_infomation.csv)
 
 このデータを以下のような型で読み込んで使うとします。
 
-<pre class="source" title="個人情報を表すクラス">
-<code><span class="reserved">class</span> <span class="type">Person</span>
+```csharp
+class Person
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Id { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span> Kana { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Sex</span> Sex { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span> PhoneNumber { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">DateTime</span> BirthDay { <span class="reserved">get</span>; }
+    public int Id { get; }
+    public string Name { get; }
+    public string Kana { get; }
+    public Sex Sex { get; }
+    public string PhoneNumber { get; }
+    public DateTime BirthDay { get; }
 }
-</code></pre>
+```
 
 このデータ列に対して、性別・年代ごとの人数構成を調べたいとします。
 C# には、グループ化するための関数(`GroupBy`)や、個数を調べるための関数(`Count`)が備わっているのでそれを使いたいと思います。
 
-<pre class="source" title="性別・年代ごとの人数調査">
-<code><span class="reserved">var</span> persons = ReadAll(<span class="string">"personal_infomation.csv"</span>).ToArray();
+```csharp
+var persons = ReadAll("personal_infomation.csv").ToArray();
 
-<span class="comment">// 性別・年代(10年区切り)ごとに何人いるかを集計</span>
-<span class="reserved">var</span> histgram = persons
-    .GroupBy(p =&gt; <span class="reserved">new</span> <span class="type">X</span> { Sex = p.Sex, BirthDecade = p.BirthDay.Year / 10 })
-    .Select(g =&gt; <span class="reserved">new</span> <span class="type">Y</span>{ Sex = g.Key.Sex, BirthDecade = g.Key.BirthDecade, Count = g.Count() })
-    .OrderBy(x =&gt; x.BirthDecade)
-    .ThenBy(x =&gt; x.Sex);
-</code></pre>
+// 性別・年代(10年区切り)ごとに何人いるかを集計
+var histgram = persons
+    .GroupBy(p => new X { Sex = p.Sex, BirthDecade = p.BirthDay.Year / 10 })
+    .Select(g => new Y{ Sex = g.Key.Sex, BirthDecade = g.Key.BirthDecade, Count = g.Count() })
+    .OrderBy(x => x.BirthDecade)
+    .ThenBy(x => x.Sex);
+```
 
 ここで再び命名問題です。
 グループ化のキーとして使っている`X`型と、結果をまとめるために使っている`Y`型は、どういう名前であるべきでしょう。
@@ -156,21 +156,21 @@ C# には、グループ化するための関数(`GroupBy`)や、個数を調べ
 
 こういう場合もやはり、「名前のない型」を認めるべきです。例えば以下のような書き方です。
 
-<pre class="source" title="匿名型を使った書き方">
-<code><span class="reserved">var</span> persons = ReadAll(<span class="string">"personal_infomation.csv"</span>).ToArray();
+```csharp
+var persons = ReadAll("personal_infomation.csv").ToArray();
 
-<span class="comment">// 性別・年代(10年区切り)ごとに何人いるかを集計</span>
-<span class="reserved">var</span> histgram = persons
-    .GroupBy(p =&gt; <span class="reserved">new</span> { p.Sex, BirthDecade = p.BirthDay.Year / 10 })
-    .Select(g =&gt; <span class="reserved">new</span> { g.Key.Sex, g.Key.BirthDecade, Count = g.Count() })
-    .OrderBy(x =&gt; x.BirthDecade)
-    .ThenBy(x =&gt; x.Sex);
-</code></pre>
+// 性別・年代(10年区切り)ごとに何人いるかを集計
+var histgram = persons
+    .GroupBy(p => new { p.Sex, BirthDecade = p.BirthDay.Year / 10 })
+    .Select(g => new { g.Key.Sex, g.Key.BirthDecade, Count = g.Count() })
+    .OrderBy(x => x.BirthDecade)
+    .ThenBy(x => x.Sex);
+```
 
 コード全体: [AnonymousTypes.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/StructuredProgramming/Tuples/AnonymousTypes.cs)
 
-<pre class="console" title="実行結果">
-<code>{ Sex = Male, BirthDecade = 195, Count = 45 }
+```console
+{ Sex = Male, BirthDecade = 195, Count = 45 }
 { Sex = Female, BirthDecade = 195, Count = 43 }
 { Sex = Male, BirthDecade = 196, Count = 117 }
 { Sex = Female, BirthDecade = 196, Count = 115 }
@@ -180,7 +180,7 @@ C# には、グループ化するための関数(`GroupBy`)や、個数を調べ
 { Sex = Female, BirthDecade = 198, Count = 133 }
 { Sex = Male, BirthDecade = 199, Count = 79 }
 { Sex = Female, BirthDecade = 199, Count = 71 }
-</code></pre>
+```
 
 この、<code><span class="reserved">new</span> { p.Sex, BirthDecade = p.BirthDay.Year / 10 }</code>というような書き方を匿名型と言います。
 

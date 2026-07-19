@@ -29,24 +29,24 @@ aliases: []
 
 汎用性が要らないなら簡単な話で、以下のようなコードで書けます。
 
-<pre class="source" title="float の配列に対するユークリッド距離">
-<code><span class="reserved">class</span> <span class="type">Euclidean</span>
+```csharp
+class Euclidean
 {
-    <span class="comment">// a と b の長さが同じとか、いくつか前提を置いちゃってるけども、最低限のコード</span>
-    <span class="comment">// a, b を N 次元空間上の点とみなして、その間の距離の2乗、</span>
-    <span class="comment">// 要するに「差の2乗和」を求める。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">float</span> DistanceSquared(<span class="reserved">float</span>[] a, <span class="reserved">float</span>[] b)
+    // a と b の長さが同じとか、いくつか前提を置いちゃってるけども、最低限のコード
+    // a, b を N 次元空間上の点とみなして、その間の距離の2乗、
+    // 要するに「差の2乗和」を求める。
+    public static float DistanceSquared(float[] a, float[] b)
     {
-        <span class="reserved">var</span> d = 0f;
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; i++)
+        var d = 0f;
+        for (int i = 0; i < a.Length; i++)
         {
-            <span class="reserved">var</span> dif = b[i] - a[i];
+            var dif = b[i] - a[i];
             d += dif * dif;
         }
-        <span class="reserved">return</span> d;
+        return d;
     }
 }
-</code></pre>
+```
 
 ここで、汎用性を気にすると以下のような要望が出てきます。
 
@@ -67,58 +67,58 @@ aliases: []
 となったときに問題になるのが、C# では、数値の四則演算を素直にジェネリックにできないこと。
 以下のコードはコンパイルできません。
 
-<pre class="source" title="ジェネリックな型には演算子が使えない">
-<code><span class="comment">// int や double でも使いたいからと言って、以下のようには書けない。</span>
-<span class="comment">// ジェネリックな型 T には +, -, * が定義されていない。</span>
-<span class="reserved">class</span> <span class="type">Euclidean</span>&lt;<span class="type">T</span>&gt;
+```csharp
+// int や double でも使いたいからと言って、以下のようには書けない。
+// ジェネリックな型 T には +, -, * が定義されていない。
+class Euclidean<T>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> DistanceSquared(<span class="type">T</span>[] a, <span class="type">T</span>[] b)
+    public static T DistanceSquared(T[] a, T[] b)
     {
-        <span class="type">T</span> d = <span class="error">0</span>;
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; i++)
+        T d = 0;
+        for (int i = 0; i < a.Length; i++)
         {
-            <span class="reserved">var</span> dif = b[i] <span class="error">-</span> a[i];
+            var dif = b[i] - a[i];
             d += dif * dif;
         }
-        <span class="reserved">return</span> d;
+        return d;
     }
 }
-</code></pre>
+```
 
 しょうがなく、以下のように書いたりします。
 
-<pre class="source" title="">
-<code><span class="reserved">interface</span> <span class="type">IArithmetic</span>&lt;<span class="type">T</span>&gt;
+```csharp
+interface IArithmetic<T>
 {
-    <span class="type">T</span> Zero { <span class="reserved">get</span>; }
-    <span class="type">T</span> Add(<span class="type">T</span> a, <span class="type">T</span> b);
-    <span class="type">T</span> Subtract(<span class="type">T</span> a, <span class="type">T</span> b);
-    <span class="type">T</span> Multiply(<span class="type">T</span> a, <span class="type">T</span> b);
+    T Zero { get; }
+    T Add(T a, T b);
+    T Subtract(T a, T b);
+    T Multiply(T a, T b);
 }
 
-<span class="reserved">class</span> <span class="type">Euclidean</span>&lt;<span class="type">T</span>&gt;
+class Euclidean<T>
 {
-    <span class="comment">// 四則演算用のインターフェイスを外からもらう</span>
-    <span class="type">IArithmetic</span>&lt;<span class="type">T</span>&gt; _arithmetic;
-    <span class="reserved">public</span> Euclidean(<span class="type">IArithmetic</span>&lt;<span class="type">T</span>&gt; arithmetic) =&gt; _arithmetic = arithmetic;
+    // 四則演算用のインターフェイスを外からもらう
+    IArithmetic<T> _arithmetic;
+    public Euclidean(IArithmetic<T> arithmetic) => _arithmetic = arithmetic;
 
 
-    <span class="comment">// static にするのはあきらめる</span>
-    <span class="reserved">public</span> <span class="type">T</span> DistanceSquared(<span class="type">T</span>[] a, <span class="type">T</span>[] b)
+    // static にするのはあきらめる
+    public T DistanceSquared(T[] a, T[] b)
     {
-        <span class="reserved">var</span> arith = _arithmetic;
-        <span class="comment">// IArithmetic&lt;T&gt; 越しに 0 をもらったり、四則演算したり</span>
-        <span class="reserved">var</span> d = arith.Zero;
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; i++)
+        var arith = _arithmetic;
+        // IArithmetic<T> 越しに 0 をもらったり、四則演算したり
+        var d = arith.Zero;
+        for (int i = 0; i < a.Length; i++)
         {
-            <span class="reserved">var</span> dif = arith.Subtract(b[i], a[i]);
-            <span class="reserved">var</span> sq = arith.Multiply(dif, dif);
+            var dif = arith.Subtract(b[i], a[i]);
+            var sq = arith.Multiply(dif, dif);
             d = arith.Add(d, sq);
         }
-        <span class="reserved">return</span> d;
+        return d;
     }
 }
-</code></pre>
+```
 
 が、これだと、
 
@@ -130,48 +130,48 @@ aliases: []
 で、ちょっとしたトリックなんですが、[値型ジェネリックを使うとインライン化が効く](../../../../study/csharp/oop/sp2_generics.md#pseudo-static)という黒魔術がありまして。
 以下のように書けば倍は速くなります。
 
-<pre class="source" title="値型ジェネリックで四則演算">
-<code><span class="reserved">class</span> <span class="type">Euclidean</span>&lt;<span class="type">T</span>, <span class="type">TArithmetic</span>&gt;
-    <span class="comment">// 構造体にして、型引数で受け取る</span>
-    <span class="reserved">where</span> <span class="type">TArithmetic</span> : <span class="reserved">struct</span>, <span class="type">IArithmetic</span>&lt;<span class="type">T</span>&gt;
+```csharp
+class Euclidean<T, TArithmetic>
+    // 構造体にして、型引数で受け取る
+    where TArithmetic : struct, IArithmetic<T>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> DistanceSquared(<span class="type">T</span>[] a, <span class="type">T</span>[] b)
+    public static T DistanceSquared(T[] a, T[] b)
     {
-        <span class="comment">// default を使って IArithmetic&lt;T&gt; を作る</span>
-        <span class="reserved">var</span> arith = <span class="reserved">default</span>(<span class="type">TArithmetic</span>);
-        <span class="comment">// あとは先ほどと同じ</span>
-        <span class="reserved">var</span> d = arith.Zero;
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; i++)
+        // default を使って IArithmetic<T> を作る
+        var arith = default(TArithmetic);
+        // あとは先ほどと同じ
+        var d = arith.Zero;
+        for (int i = 0; i < a.Length; i++)
         {
-            <span class="reserved">var</span> dif = arith.Subtract(b[i], a[i]);
-            <span class="reserved">var</span> sq = arith.Multiply(dif, dif);
+            var dif = arith.Subtract(b[i], a[i]);
+            var sq = arith.Multiply(dif, dif);
             d = arith.Add(d, sq);
         }
-        <span class="reserved">return</span> d;
+        return d;
     }
 }
 
-<span class="reserved">struct</span> <span class="type">FloatArithmetic</span> : <span class="type">IArithmetic</span>&lt;<span class="reserved">float</span>&gt;
+struct FloatArithmetic : IArithmetic<float>
 {
-    <span class="reserved">public</span> <span class="reserved">float</span> Zero =&gt; 0;
-    <span class="reserved">public</span> <span class="reserved">float</span> Add(<span class="reserved">float</span> a, <span class="reserved">float</span> b) =&gt; a + b;
-    <span class="reserved">public</span> <span class="reserved">float</span> Multiply(<span class="reserved">float</span> a, <span class="reserved">float</span> b) =&gt; a - b;
-    <span class="reserved">public</span> <span class="reserved">float</span> Subtract(<span class="reserved">float</span> a, <span class="reserved">float</span> b) =&gt; a * b;
+    public float Zero => 0;
+    public float Add(float a, float b) => a + b;
+    public float Multiply(float a, float b) => a - b;
+    public float Subtract(float a, float b) => a * b;
 }
 
-<span class="comment">// IntArithmetic, DoubleArithmetic, ...</span>
-<span class="comment">// 使いたい型の分だけ同じ IArithmetic&lt;T&gt; を書く</span>
+// IntArithmetic, DoubleArithmetic, ...
+// 使いたい型の分だけ同じ IArithmetic<T> を書く
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// FloatArithmetic の時点で T は float で確定なんだけど、残念ながら型推論はされない</span>
-        <span class="comment">// 常にこの2つの型引数をペアで渡さないといけない</span>
-        Euclidean&lt;<span class="reserved">float</span>, <span class="type">FloatArithmetic</span>&gt;.DistanceSquared(<span class="reserved">new</span>[] { 1f, 2f }, <span class="reserved">new</span>[] { 3f, 4f });
+        // FloatArithmetic の時点で T は float で確定なんだけど、残念ながら型推論はされない
+        // 常にこの2つの型引数をペアで渡さないといけない
+        Euclidean<float, FloatArithmetic>.DistanceSquared(new[] { 1f, 2f }, new[] { 3f, 4f });
     }
 }
-</code></pre>
+```
 
 一応これで、最初の `float` 専用で書いたコードに近いパフォーマンスになります。
 まあ、面倒も多々あって、特に大変なのが、型引数を常にペアで渡さないと行けなくなる部分です。
@@ -191,114 +191,114 @@ aliases: []
 
 ということで、配列の代わりに以下のような構造体を使いたくなったりします。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Array1</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Array1<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Item1;
+    public T Item1;
 }
 
-<span class="reserved">struct</span> <span class="type">Array2</span>&lt;<span class="type">T</span>&gt;
+struct Array2<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Item1;
-    <span class="reserved">public</span> <span class="type">T</span> Item2;
+    public T Item1;
+    public T Item2;
 }
 
-<span class="reserved">struct</span> <span class="type">Array3</span>&lt;<span class="type">T</span>&gt;
+struct Array3<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Item1;
-    <span class="reserved">public</span> <span class="type">T</span> Item2;
-    <span class="reserved">public</span> <span class="type">T</span> Item3;
+    public T Item1;
+    public T Item2;
+    public T Item3;
 }
 
-<span class="comment">// 以下、必要なだけ ArrayN を用意</span>
-</code></pre>
+// 以下、必要なだけ ArrayN を用意
+```
 
 で、以下の理由から、こいつに対しても先ほどと同様の「値型ジェネリックを使ったトリック」が必要になります。
 
 - 固定長の配列なんだから、長さを静的に取得したい
 - 構造体は、自身のフィールドを `ref` 戻り値で返せない
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Array2</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Array2<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Item1;
-    <span class="reserved">public</span> <span class="type">T</span> Item2;
+    public T Item1;
+    public T Item2;
 
-    <span class="comment">// これをジェネリックに使いたければトリックが必要</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Length =&gt; 2;
+    // これをジェネリックに使いたければトリックが必要
+    public static int Length => 2;
 
-    <span class="comment">// ただでさえ、safe にインデックス アクセスを実現する方法はないんだけど…</span>
-    <span class="comment">// そもそも、C# の構造体は ref Item1 したものを、ref 戻り値では返せない仕様</span>
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] =&gt; <span class="reserved">ref</span> <span class="type">Unsafe</span>.Add&lt;T&gt;(<span class="reserved">ref</span> <span class="error">Item1</span>, index);
+    // ただでさえ、safe にインデックス アクセスを実現する方法はないんだけど…
+    // そもそも、C# の構造体は ref Item1 したものを、ref 戻り値では返せない仕様
+    public ref T this[int index] => ref Unsafe.Add<T>(ref Item1, index);
 }
-</code></pre>
+```
 
 その結果、行きつく先は以下のようなコードになります。
 
-<pre class="source" title="値型ジェネリックを使った固定長配列">
-<code><span class="comment">// 配列自体用。これは大して意味は持ってない。誤用防止程度</span>
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IFixedArray</span>&lt;<span class="type">T</span>&gt; { }
+```csharp
+// 配列自体用。これは大して意味は持ってない。誤用防止程度
+public interface IFixedArray<T> { }
 
-<span class="comment">// 値型ジェネリック トリック用</span>
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IFixedArrayAccessor</span>&lt;<span class="type">T</span>, <span class="type">TArray</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArray</span> : <span class="reserved">struct</span>, <span class="type">IFixedArray</span>&lt;T&gt;
+// 値型ジェネリック トリック用
+public interface IFixedArrayAccessor<T, TArray>
+    where TArray : struct, IFixedArray<T>
 {
-    <span class="type">TArray</span> New();
-    <span class="reserved">ref</span> <span class="type">T</span> At(<span class="reserved">ref</span> <span class="type">TArray</span> array, <span class="reserved">int</span> i);
-    <span class="reserved">int</span> Length { <span class="reserved">get</span>; }
+    TArray New();
+    ref T At(ref TArray array, int i);
+    int Length { get; }
 }
 
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Fixed2</span>&lt;<span class="type">T</span>&gt; : <span class="type">IFixedArrayAccessor</span>&lt;<span class="type">T</span>, <span class="type">Fixed2</span>&lt;T&gt;.<span class="type">Array</span>&gt;
+public struct Fixed2<T> : IFixedArrayAccessor<T, Fixed2<T>.Array>
 {
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Array</span> : <span class="type">IFixedArray</span>&lt;<span class="type">T</span>&gt;
+    public struct Array : IFixedArray<T>
     {
-        <span class="reserved">public</span> <span class="type">T</span> Item1; <span class="reserved">public</span> <span class="type">T</span> Item2;
-        <span class="reserved">public</span> Array(<span class="type">T</span> item1, <span class="type">T</span> item2) =&gt; (Item1, Item2) = (item1, item2);
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> Array((<span class="type">T</span>, <span class="type">T</span>) value) =&gt; <span class="reserved">new</span> <span class="type">Array</span>(value.Item1, value.Item2);
+        public T Item1; public T Item2;
+        public Array(T item1, T item2) => (Item1, Item2) = (item1, item2);
+        public static implicit operator Array((T, T) value) => new Array(value.Item1, value.Item2);
     }
 
-    <span class="reserved">public</span> <span class="type">Array</span> New() =&gt; <span class="reserved">default</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> Length =&gt; 2;
-    <span class="reserved">public</span> <span class="reserved">unsafe</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt; AsSpan(<span class="reserved">ref</span> <span class="type">Array</span> array) =&gt; <span class="reserved">new</span> Span&lt;<span class="type">T</span>&gt;(Unsafe.AsPointer(<span class="reserved">ref</span> array.Item1), 2);
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> At(<span class="reserved">ref</span> <span class="type">Array</span> array, <span class="reserved">int</span> i) =&gt; <span class="reserved">ref</span> AsSpan(<span class="reserved">ref</span> array)[i];
-    <span class="comment">// 範囲チェックをさぼる(危険でいい)なら以下の書き方でも OK</span>
-    <span class="comment">//public ref T At(ref Array array, int i) =&gt; ref Unsafe.Add(ref array.Item1, i);</span>
+    public Array New() => default;
+    public int Length => 2;
+    public unsafe Span<T> AsSpan(ref Array array) => new Span<T>(Unsafe.AsPointer(ref array.Item1), 2);
+    public ref T At(ref Array array, int i) => ref AsSpan(ref array)[i];
+    // 範囲チェックをさぼる(危険でいい)なら以下の書き方でも OK
+    //public ref T At(ref Array array, int i) => ref Unsafe.Add(ref array.Item1, i);
 }
-</code></pre>
+```
 
 この時点で結構悩ましいコードですが、されにこれを距離計算に組み込むと以下のようになります。
 
-<pre class="source" title="固定長配列を距離計算に組み込み">
-<code><span class="reserved">class</span> <span class="type">Euclidean</span>&lt;<span class="type">T</span>, <span class="type">TArithmetic</span>, <span class="type">TArray</span>, <span class="type">TArrayAccessor</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArithmetic</span> : <span class="reserved">struct</span>, <span class="type">I/OArithmetic</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArray</span> : <span class="reserved">struct</span>, <span class="type">IFixedArray</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArrayAccessor</span> : <span class="reserved">struct</span>, <span class="type">IFixedArrayAccessor</span>&lt;<span class="type">T</span>, <span class="type">TArray</span>&gt;
+```csharp
+class Euclidean<T, TArithmetic, TArray, TArrayAccessor>
+    where TArithmetic : struct, I/OArithmetic<T>
+    where TArray : struct, IFixedArray<T>
+    where TArrayAccessor : struct, IFixedArrayAccessor<T, TArray>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> DistanceSquared(<span class="type">TArray</span> a, <span class="type">TArray</span> b)
+    public static T DistanceSquared(TArray a, TArray b)
     {
-        <span class="reserved">var</span> arith = <span class="reserved">default</span>(<span class="type">TArithmetic</span>);
-        <span class="reserved">var</span> accessor = <span class="reserved">default</span>(<span class="type">TArrayAccessor</span>);
-        <span class="reserved">var</span> d = arith.Zero;
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; accessor.Length; i++)
+        var arith = default(TArithmetic);
+        var accessor = default(TArrayAccessor);
+        var d = arith.Zero;
+        for (int i = 0; i < accessor.Length; i++)
         {
-            <span class="reserved">var</span> dif = arith.Subtract(accessor.At(<span class="reserved">ref</span> b, i), accessor.At(<span class="reserved">ref</span> a, i));
-            <span class="reserved">var</span> sq = arith.Multiply(dif, dif);
+            var dif = arith.Subtract(accessor.At(ref b, i), accessor.At(ref a, i));
+            var sq = arith.Multiply(dif, dif);
             d = arith.Add(d, sq);
         }
-        <span class="reserved">return</span> d;
+        return d;
     }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// これも、Fixed2&lt;float&gt; を使う時点で残りの型引数確定なんだけど、残念ながら型推論はされない</span>
-        <span class="comment">// 常にこの4つの型引数が必要</span>
-        <span class="type">Euclidean</span>&lt;<span class="reserved">float</span>, <span class="type">FloatArithmetic</span>, <span class="type">Fixed2</span>&lt;<span class="reserved">float</span>&gt;.<span class="type">Array</span>, <span class="type">Fixed2</span>&lt;<span class="reserved">float</span>&gt;&gt;.DistanceSquared((1, 2), (3, 4));
+        // これも、Fixed2<float> を使う時点で残りの型引数確定なんだけど、残念ながら型推論はされない
+        // 常にこの4つの型引数が必要
+        Euclidean<float, FloatArithmetic, Fixed2<float>.Array, Fixed2<float>>.DistanceSquared((1, 2), (3, 4));
     }
 }
-</code></pre>
+```
 
 型引数が4つに増えました。
 しかし、実際のところ意味がある情報は、`float`、「2次元」の2つだけです。
@@ -325,62 +325,62 @@ aliases: []
 パフォーマンスを考えると値型ジェネリックを使うことになります。
 行きつく先が以下のようなコード。
 
-<pre class="source" title="距離もジェネリック化">
-<code><span class="reserved">interface</span> <span class="type">IMetric</span>&lt;<span class="type">T</span>, <span class="type">TArray</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArray</span> : <span class="reserved">struct</span>, <span class="type">IFixedArray</span>&lt;T&gt;
+```csharp
+interface IMetric<T, TArray>
+    where TArray : struct, IFixedArray<T>
 {
-    <span class="type">T</span> DistanceSquared(<span class="type">TArray</span> a, <span class="type">TArray</span> b);
+    T DistanceSquared(TArray a, TArray b);
 }
 
-<span class="reserved">struct</span> <span class="type">EuclideanMetric</span>&lt;<span class="type">T</span>, <span class="type">TArithmetic</span>, <span class="type">TArray</span>, <span class="type">TArrayAccessor</span>&gt; : <span class="type">IMetric</span>&lt;<span class="type">T</span>, <span class="type">TArray</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArithmetic</span> : <span class="reserved">struct</span>, <span class="type">IArithmetic</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArray</span> : <span class="reserved">struct</span>, <span class="type">IFixedArray</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArrayAccessor</span> : <span class="reserved">struct</span>, <span class="type">IFixedArrayAccessor</span>&lt;<span class="type">T</span>, <span class="type">TArray</span>&gt;
+struct EuclideanMetric<T, TArithmetic, TArray, TArrayAccessor> : IMetric<T, TArray>
+    where TArithmetic : struct, IArithmetic<T>
+    where TArray : struct, IFixedArray<T>
+    where TArrayAccessor : struct, IFixedArrayAccessor<T, TArray>
 {
-    <span class="reserved">public</span> <span class="type">T</span> DistanceSquared(<span class="type">TArray</span> a, <span class="type">TArray</span> b)
+    public T DistanceSquared(TArray a, TArray b)
     {
-        <span class="reserved">var</span> arith = <span class="reserved">default</span>(<span class="type">TArithmetic</span>);
-        <span class="reserved">var</span> accessor = <span class="reserved">default</span>(<span class="type">TArrayAccessor</span>);
-        <span class="reserved">var</span> d = arith.Zero;
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; accessor.Length; i++)
+        var arith = default(TArithmetic);
+        var accessor = default(TArrayAccessor);
+        var d = arith.Zero;
+        for (int i = 0; i < accessor.Length; i++)
         {
-            <span class="reserved">var</span> dif = arith.Subtract(accessor.At(<span class="reserved">ref</span> b, i), accessor.At(<span class="reserved">ref</span> a, i));
-            <span class="reserved">var</span> sq = arith.Multiply(dif, dif);
+            var dif = arith.Subtract(accessor.At(ref b, i), accessor.At(ref a, i));
+            var sq = arith.Multiply(dif, dif);
             d = arith.Add(d, sq);
         }
-        <span class="reserved">return</span> d;
+        return d;
     }
 }
 
-<span class="comment">// Manhattan とか Chebychev とかも同様に作る</span>
+// Manhattan とか Chebychev とかも同様に作る
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 近い方の点を求める</span>
-    <span class="reserved">static</span> <span class="type">TArray</span> Nearest&lt;<span class="type">T</span>, <span class="type">TArray</span>, <span class="type">TMetric</span>&gt;(<span class="type">TArray</span> origin, <span class="type">TArray</span> a, <span class="type">TArray</span> b)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IComparable</span>&lt;<span class="type">T</span>&gt;
-        <span class="reserved">where</span> <span class="type">TArray</span> : <span class="reserved">struct</span>, <span class="type">IFixedArray</span>&lt;<span class="type">T</span>&gt;
-        <span class="reserved">where</span> <span class="type">TMetric</span> : <span class="reserved">struct</span>, <span class="type">IMetric</span>&lt;<span class="type">T</span>, <span class="type">TArray</span>&gt;
+    // 近い方の点を求める
+    static TArray Nearest<T, TArray, TMetric>(TArray origin, TArray a, TArray b)
+        where T : IComparable<T>
+        where TArray : struct, IFixedArray<T>
+        where TMetric : struct, IMetric<T, TArray>
     {
-        <span class="reserved">var</span> metric = <span class="reserved">default</span>(<span class="type">TMetric</span>);
+        var metric = default(TMetric);
 
-        <span class="reserved">var</span> da = metric.DistanceSquared(origin, a);
-        <span class="reserved">var</span> db = metric.DistanceSquared(origin, b);
+        var da = metric.DistanceSquared(origin, a);
+        var db = metric.DistanceSquared(origin, b);
 
-        <span class="reserved">return</span> da.CompareTo(db) &lt;= 0 ? a : b;
+        return da.CompareTo(db) <= 0 ? a : b;
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 型引数は3つと思いきや、Euclidean がさらに4つ求めるので合計7つ</span>
-        <span class="comment">// 常にこの7つの型引数が必要</span>
-        <span class="reserved">var</span> n = Nearest&lt;<span class="reserved">float</span>, <span class="type">Fixed2</span>&lt;<span class="reserved">float</span>&gt;.<span class="type">Array</span>, <span class="type">EuclideanMetric</span>&lt;<span class="reserved">float</span>, <span class="type">FloatArithmetic</span>, <span class="type">Fixed2</span>&lt;<span class="reserved">float</span>&gt;.<span class="type">Array</span>, <span class="type">Fixed2</span>&lt;<span class="reserved">float</span>&gt;&gt;&gt;(
+        // 型引数は3つと思いきや、Euclidean がさらに4つ求めるので合計7つ
+        // 常にこの7つの型引数が必要
+        var n = Nearest<float, Fixed2<float>.Array, EuclideanMetric<float, FloatArithmetic, Fixed2<float>.Array, Fixed2<float>>>(
             (0, 0), (1, 2), (3, 4));
 
-        <span class="type">Console</span>.WriteLine((n.Item1, n.Item2));
+        Console.WriteLine((n.Item1, n.Item2));
     }
 }
-</code></pre>
+```
 
 型引数だけで画面の横幅目いっぱい使うようなメソッドができました…
 もちろん、意味がある部分は`float`, `2`, `Euclidean`だけで、残りは冗長です。
@@ -396,63 +396,63 @@ aliases: []
 やっぱりすぐにつらくなって断念。
 代わりに、以下のようなごまかしコードを書くことになりました。
 
-<pre class="source" title="派生でごまかす">
-<code><span class="comment">// ジェネリックな型を1個用意しておいて、派生で型引数を与えておく</span>
-<span class="comment">// 数値の型</span>
-<span class="reserved">class</span> <span class="type">FloatPoint</span> : <span class="type">Point</span>&lt;<span class="reserved">float</span>, <span class="type">FloatArithmetic</span>&gt; { }
-<span class="reserved">class</span> <span class="type">DoublePoint</span> : <span class="type">Point</span>&lt;<span class="reserved">double</span>, <span class="type">DoubleArithmetic</span>&gt; { }
-<span class="reserved">class</span> <span class="type">IntPoint</span> : <span class="type">Point</span>&lt;<span class="reserved">int</span>, <span class="type">IntArithmetic</span>&gt; { }
-<span class="reserved">class</span> <span class="type">ShortPoint</span> : <span class="type">Point</span>&lt;<span class="reserved">short</span>, <span class="type">ShortArithmeti</span>c&gt; { }
+```csharp
+// ジェネリックな型を1個用意しておいて、派生で型引数を与えておく
+// 数値の型
+class FloatPoint : Point<float, FloatArithmetic> { }
+class DoublePoint : Point<double, DoubleArithmetic> { }
+class IntPoint : Point<int, IntArithmetic> { }
+class ShortPoint : Point<short, ShortArithmetic> { }
 
-<span class="reserved">class</span> <span class="type">Point</span>&lt;<span class="type">T</span>, <span class="type">TArithmetic</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IComparable</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">TArithmetic</span> : <span class="reserved">struct</span>, <span class="type">IArithmetic</span>&lt;<span class="type">T</span>&gt;
+class Point<T, TArithmetic>
+    where T : IComparable<T>
+    where TArithmetic : struct, IArithmetic<T>
 {
-    <span class="comment">// 数値の「組」の型</span>
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">_1</span> : <span class="type">Dimension</span>&lt;<span class="type">Fixed1</span>&lt;<span class="type">T</span>&gt;.<span class="type">Array</span>, <span class="type">Fixed1</span>&lt;<span class="type">T</span>&gt;&gt; { }
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">_2</span> : <span class="type">Dimension</span>&lt;<span class="type">Fixed2</span>&lt;<span class="type">T</span>&gt;.<span class="type">Array</span>, <span class="type">Fixed2</span>&lt;<span class="type">T</span>&gt;&gt; { }
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">_3</span> : <span class="type">Dimension</span>&lt;<span class="type">Fixed3</span>&lt;<span class="type">T</span>&gt;.<span class="type">Array</span>, <span class="type">Fixed3</span>&lt;<span class="type">T</span>&gt;&gt; { }
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">_4</span> : <span class="type">Dimension</span>&lt;<span class="type">Fixed4</span>&lt;<span class="type">T</span>&gt;.<span class="type">Array</span>, <span class="type">Fixed4</span>&lt;<span class="type">T</span>&gt;&gt; { }
+    // 数値の「組」の型
+    public class _1 : Dimension<Fixed1<T>.Array, Fixed1<T>> { }
+    public class _2 : Dimension<Fixed2<T>.Array, Fixed2<T>> { }
+    public class _3 : Dimension<Fixed3<T>.Array, Fixed3<T>> { }
+    public class _4 : Dimension<Fixed4<T>.Array, Fixed4<T>> { }
 
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Dimension</span>&lt;<span class="type">TArray</span>, <span class="type">TArrayAccessor</span>&gt;
-        <span class="reserved">where</span> <span class="type">TArray</span> : <span class="reserved">struct</span>, <span class="type">IFixedArray</span>&lt;<span class="type">T</span>&gt;
-        <span class="reserved">where</span> <span class="type">TArrayAccessor</span> : <span class="reserved">struct</span>, <span class="type">IFixedArrayAccessor</span>&lt;<span class="type">T</span>, <span class="type">TArray</span>&gt;
+    public class Dimension<TArray, TArrayAccessor>
+        where TArray : struct, IFixedArray<T>
+        where TArrayAccessor : struct, IFixedArrayAccessor<T, TArray>
     {
-        <span class="comment">// 距離計算の方法</span>
-        <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Euclidean</span> : <span class="type">Metric</span>&lt;<span class="type">EuclideanMetric</span>&lt;<span class="type">T</span>, <span class="type">TArithmetic</span>, <span class="type">TArray</span>, <span class="type">TArrayAccessor</span>&gt;&gt; { }
-        <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Manhattan</span> : <span class="type">Metric</span>&lt;<span class="type">ManhattanMetric</span>&lt;<span class="type">T</span>, <span class="type">TArithmetic</span>, <span class="type">TArray</span>, <span class="type">TArrayAccessor</span>&gt;&gt; { }
-        <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Chebyshev</span> : <span class="type">Metric</span>&lt;<span class="type">ChebyshevMetric</span>&lt;<span class="type">T</span>, <span class="type">TArithmetic</span>, <span class="type">TArray</span>, <span class="type">TArrayAccessor</span>&gt;&gt; { }
+        // 距離計算の方法
+        public class Euclidean : Metric<EuclideanMetric<T, TArithmetic, TArray, TArrayAccessor>> { }
+        public class Manhattan : Metric<ManhattanMetric<T, TArithmetic, TArray, TArrayAccessor>> { }
+        public class Chebyshev : Metric<ChebyshevMetric<T, TArithmetic, TArray, TArrayAccessor>> { }
 
-        <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Metric</span>&lt;<span class="type">TMetric</span>&gt;
-            <span class="reserved">where</span> <span class="type">TMetric</span> : <span class="reserved">struct</span>, <span class="type">IMetric</span>&lt;<span class="type">T</span>, <span class="type">TArray</span>&gt;
+        public class Metric<TMetric>
+            where TMetric : struct, IMetric<T, TArray>
         {
-            <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">TArray</span> Nearest(<span class="type">TArray</span> origin, <span class="type">TArray</span> a, <span class="type">TArray</span> b)
+            public static TArray Nearest(TArray origin, TArray a, TArray b)
             {
-                <span class="reserved">var</span> metric = <span class="reserved">default</span>(<span class="type">TMetric</span>);
+                var metric = default(TMetric);
 
-                <span class="reserved">var</span> da = metric.DistanceSquared(origin, a);
-                <span class="reserved">var</span> db = metric.DistanceSquared(origin, b);
+                var da = metric.DistanceSquared(origin, a);
+                var db = metric.DistanceSquared(origin, b);
 
-                <span class="reserved">return</span> da.CompareTo(db) &lt;= 0 ? a : b;
+                return da.CompareTo(db) <= 0 ? a : b;
             }
 
-            <span class="comment">// その他、距離空間に対するアルゴリズムをこの中に書く</span>
+            // その他、距離空間に対するアルゴリズムをこの中に書く
         }
     }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 使う側に関してはだいぶ短く書けた</span>
-        <span class="reserved">var</span> n = <span class="type">FloatPoint</span>.<span class="type">_2</span>.<span class="type">Euclidean</span>.<span class="type">Nearest</span>(
+        // 使う側に関してはだいぶ短く書けた
+        var n = FloatPoint._2.Euclidean.Nearest(
             (0, 0), (1, 2), (3, 4));
 
-        <span class="type">Console</span>.WriteLine((n.Item1, n.Item2));
+        Console.WriteLine((n.Item1, n.Item2));
     }
 }
-</code></pre>
+```
 
 一応、使う側のコードはだいぶ短くなり、許容範囲になったかなと思います。
 ただ、これはこれで、以下のような問題があって、妥協的です。

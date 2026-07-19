@@ -132,24 +132,24 @@ VS 上のはプロパティ ウィンドウで。
 
 実行時に見てるのは
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Console</span>.WriteLine(<span class="reserved">typeof</span>(<span class="reserved">int</span>).Assembly.Location);
-        <span class="type">Console</span>.WriteLine(<span class="reserved">typeof</span>(<span class="type">Uri</span>).Assembly.Location);
+        Console.WriteLine(typeof(int).Assembly.Location);
+        Console.WriteLine(typeof(Uri).Assembly.Location);
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\mscorlib.dll
 C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll
-</pre>
+```
 
 
 Visual Studio から見ているアセンブリの中身をのぞくと

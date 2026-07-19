@@ -31,28 +31,28 @@ aliases: []
 一番の用途としては、自動生成されているコードに、一部分だけ手動で処理をカスタマイズしたいみたいなときに使います。
 例えば、以下のようなソースコードを T4 テンプレートなどを使って生成していると考えてください。
 
-<pre class="source" title="自動生成されている想定のコード">
-<code><span class="comment">// T4 テンプレートとか XAML とかから自動生成されている想定のコード</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+// T4 テンプレートとか XAML とかから自動生成されている想定のコード
+partial class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X
+    public int X
     {
-        <span class="reserved">get</span> =&gt; _x;
-        <span class="reserved">set</span>
+        get => _x;
+        set
         {
-            <span class="method">OnXChanging</span>();
-            _x = <span class="reserved">value</span>;
-            <span class="method">OnXChanged</span>();
+            OnXChanging();
+            _x = value;
+            OnXChanged();
         }
     }
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
+    private int _x;
  
-    <span class="comment">// 既定動作としては何もしたくない。</span>
-    <span class="comment">// 人手で、何かしら _x = value; の前後に処理を挟みたいときにはこれに実装を持たせる。</span>
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnXChanging</span>();
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnXChanged</span>();
+    // 既定動作としては何もしたくない。
+    // 人手で、何かしら _x = value; の前後に処理を挟みたいときにはこれに実装を持たせる。
+    partial void OnXChanging();
+    partial void OnXChanged();
 }
-</code></pre>
+```
 
 一部分だけカスタマイズしたいからといって、このコードに手作業で修正を加えてしまうと、
 再度自動生成がかかったタイミングで上書きされて消えてしまいます。
@@ -60,16 +60,16 @@ aliases: []
 
 もしも、手作業カスタマイズが必要なら、以下のように、別ファイルで partial メソッドに実装を与えます。
 
-<pre class="source" title="手書きする想定のコード">
-<code><span class="comment">// 手書きする想定のコード</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+// 手書きする想定のコード
+partial class Sample
 {
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnXChanged</span>()
+    partial void OnXChanged()
     {
-        System.<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;X: &quot;</span> + X);
+        System.Console.WriteLine("X: " + X);
     }
 }
-</code></pre>
+```
 
 今回上げた例では、`OnXChanging` と `OnXChanged` という2つの partial メソッドがありますが、
 そのうち `OnXChanged` の方にだけ実装を与えています。
@@ -89,28 +89,28 @@ Entity Framework の Scaffolding とかで使われているはず…
 ただ、まあ、[dotnet/runtime](https://github.com/dotnet/runtime)とかで用例を探してみたものの、テストを除けば数十件くらいしか出てこないんですよね。確かにレア機能。
 しかも、自動生成のコードと手書きコードの橋渡しと言うよりも、プラットフォーム依存な処理の分離に使われてることの方が多そう。
 
-<pre class="source" title="プラットフォーム依存処理の分離">
-<code><span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+partial class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>()
+    public void M()
     {
-        <span class="method">OnMBegin</span>();
+        OnMBegin();
  
-        <span class="comment">// 全プラットフォーム共通処理</span>
+        // 全プラットフォーム共通処理
     }
  
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnMBegin</span>();
+    partial void OnMBegin();
 }
  
-<span class="comment">// Sample.Windows.cs みたいなファイル</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Sample</span>
+// Sample.Windows.cs みたいなファイル
+partial class Sample
 {
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnMBegin</span>()
+    partial void OnMBegin()
     {
-        <span class="comment">// Windows 限定処理</span>
+        // Windows 限定処理
     }
 }
-</code></pre>
+```
 
 ## 新 partial メソッド
 
@@ -119,16 +119,16 @@ Entity Framework の Scaffolding とかで使われているはず…
 
 例えば以下のような書き方をします。
 
-<pre class="source" title="手書きする想定のコード">
-<code><span class="comment">// 手書きコード側</span>
-<span class="reserved">using</span> System;
+```csharp
+// 手書きコード側
+using System;
  
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Sample</span>
+partial class Sample
 {
-    [<span class="type">Utf8</span>(<span class="string">&quot;abcd&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="method">M</span>();
+    [Utf8("abcd")]
+    public partial ReadOnlySpan<byte> M();
 }
-</code></pre>
+```
 
 2.0 の頃からある partial との違いは以下の通りです。
 
@@ -143,14 +143,14 @@ Entity Framework の Scaffolding とかで使われているはず…
 
 例えば上記の例は、Source Generator を使って以下のようなコードを生成する想定で書いています。
 
-<pre class="source" title="Source Generator で生成する想定のコード">
-<code><span class="comment">// Source Generator で生成する想定のコード</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+// Source Generator で生成する想定のコード
+partial class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="method">M</span>()
-        =&gt; <span class="reserved">new</span> <span class="reserved">byte</span>[] { 0x41, 0x42, 0x43, 0x44, };
+    public partial ReadOnlySpan<byte> M()
+        => new byte[] { 0x41, 0x42, 0x43, 0x44, };
 }
-</code></pre>
+```
 
 アクセシビリティの有無で挙動が違うっていうのはそこそこ気持ち悪くはあるんですが。
 元々の partial メソッド自体がほとんど使われていませんし、

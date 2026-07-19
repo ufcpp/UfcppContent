@@ -73,49 +73,49 @@ C# を始めとするオブジェクト指向言語では、
 あるクラスが他のクラスを継承するための構文が用意されています。
 C# でクラスの継承を行うためには、クラス定義の際に以下のように書きます。
 
-<pre class="source" title="クラスの継承" lang="">
-<code><span class="reserved">class</span> <span class="input">派生クラス名</span> : <span class="input">基底クラス名</span>
+```csharp
+class 派生クラス名 : 基底クラス名
 {
-  <span class="input">派生クラスの定義</span>
+  派生クラスの定義
 }
-</code></pre>
+```
 
 
 クラスの継承の例として、先ほどの「人間」と「学生」にあたるクラス
 <code>Person</code> と <code>Student</code> を
 C# でクラス化すると以下のようになります。
 
-<pre class="source" title="継承の例。人間と学生。" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">public string</span> name; <span class="comment">// 名前</span>
-  <span class="reserved">public int</span>    age;  <span class="comment">// 年齢</span>
+  public string name; // 名前
+  public int    age;  // 年齢
 }
 
-<em><span class="reserved">class</span> Student : Person</em>
+class Student : Person
 {
-  <span class="reserved">public int</span>    id;   <span class="comment">// 学籍番号</span>
+  public int    id;   // 学籍番号
 }
-</code></pre>
+```
 
 
 クラス利用側のコードは以下のようになります。
 
-<pre class="source" title="" lang="">
-<code>Person p1 = <span class="reserved">new</span> Person();
-p1.name = <span class="literal">"天野舞耶"</span>;
+```csharp
+Person p1 = new Person();
+p1.name = "天野舞耶";
 p1.age  = 23;
 
-Student s1 = <span class="reserved">new</span> Student();
-s1.name = <span class="literal">"周防達也"</span>; <span class="comment">// Person のメンバーをそのまま利用出来る</span>
+Student s1 = new Student();
+s1.name = "周防達也"; // Person のメンバーをそのまま利用出来る
 s1.age  = 18;
 s1.id   = 50012;
 
-Person p2 = s1; <span class="comment">// Student は Person として扱うことが出来る。</span>
+Person p2 = s1; // Student は Person として扱うことが出来る。
 
-Student s2 = p1; <span class="comment">// でも、Person は Student として扱っちゃ駄目。
-//↑この1行はエラーになる。</span>
-</code></pre>
+Student s2 = p1; // でも、Person は Student として扱っちゃ駄目。
+//↑この1行はエラーになる。
+```
 
 
 C# では、派生クラスのインスタンスは基底クラスの変数に代入することが出来ます。
@@ -143,30 +143,30 @@ C# では、基底クラスを指定せずに作成した型は全て自動的�
 まず、<code>Base</code> クラスのコンストラクタが呼ばれ、
 その後 <code>Derived</code> クラスのコンストラクタが呼ばれます。
 
-<pre class="source" title="呼び出し順序">
-<span class="reserved">_</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">Derived</span>();
+```csharp
+_ = new Derived();
 
-<span class="reserved">class</span> <span class="type">Base</span>
+class Base
 {
-    <span class="reserved">public</span> <span class="type">Base</span>()
+    public Base()
     {
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;Base&quot;</span>);
+        Console.WriteLine("Base");
     }
 }
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="type">Derived</span>()
+    public Derived()
     {
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;Derived&quot;</span>);
+        Console.WriteLine("Derived");
     }
 }
-</pre>
+```
 
-<pre class="console" title="呼び出し順序">
+```console
 Base
 Derived
-</pre>
+```
 
 一方で、フィールド初期化子の呼び出し順序は逆で、派生クラス側の初期化子の方が先に実行されます。
 結果的に、実行順序は以下の順序になります。
@@ -176,63 +176,63 @@ Derived
 3. 基底クラスのコンストラクター
 4. 派生クラスのコンストラクター
 
-<pre class="source" title="フィールド初期化子を含む場合の実行順序">
-<span class="reserved">_</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">Derived</span>();
+```csharp
+_ = new Derived();
 
-<span class="reserved">class</span> <span class="type">Base</span>
+class Base
 {
-    <span class="comment">// 呼び出される順序を確認するために呼ぶメソッド。</span>
-    <span class="reserved">protected</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">string</span> <span class="variable local">message</span>)
+    // 呼び出される順序を確認するために呼ぶメソッド。
+    protected static int M(string message)
     {
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">message</span>);
-        <span class="control">return</span> <span class="number">0</span>;
+        Console.WriteLine(message);
+        return 0;
     }
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">X</span> <span class="operator">=</span> <span class="static"><span class="method">M</span></span>(<span class="string">&quot;Base フィールド初期化子&quot;</span>);
+    public int X = M("Base フィールド初期化子");
 
-    <span class="reserved">public</span> <span class="type">Base</span>()
+    public Base()
     {
-        <span class="method"><span class="static">M</span></span>(<span class="string">&quot;Base コンストラクター&quot;</span>);
+        M("Base コンストラクター");
     }
 }
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">Y</span> <span class="operator">=</span> <span class="method"><span class="static">M</span></span>(<span class="string">&quot;Derived フィールド初期化子&quot;</span>);
+    public int Y = M("Derived フィールド初期化子");
 
-    <span class="reserved">public</span> <span class="type">Derived</span>()
+    public Derived()
     {
-        <span class="static"><span class="method">M</span></span>(<span class="string">&quot;Derived コンストラクター&quot;</span>);
+        M("Derived コンストラクター");
     }
 }
-</pre>
+```
 
-<pre class="console" title="フィールド初期化子を含む場合の実行順序">
+```console
 Derived フィールド初期化子
 Base フィールド初期化子
 Base コンストラクター
 Derived コンストラクター
-</pre>
+```
 
 あと、「[コンストラクター](oo_construct.md#initializer-order)」で説明している「初期化の順序との兼ね合い」も改めて問題になります。
 フィールド初期化子でインスタンス メソッドを呼べてしまうと、
 以下のように「基底クラスの未初期化のフィールドを読めてしまう」ということが起きます。
 (クラスが分かれているので、派生がない場合よりも深刻です。)
 
-<pre class="source" title="初期化子内ではインスタンス メソッドを呼んではいけない">
-<span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field"><span class="warning" title="CS0649">BaseField</span></span>;
+    public int BaseField;
 
-    <span class="reserved">protected</span> <span class="reserved">int</span> <span class="method">M</span>() <span class="operator">=&gt;</span> <span class="field">BaseField</span>;
+    protected int M() => BaseField;
 }
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// ここで M を呼べてしまうと、未初期化の BaseField を読んでしまう。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">DerivedField</span> <span class="operator">=</span> <span class="method"><span class="error" title="CS0236">M</span></span>();
+    // ここで M を呼べてしまうと、未初期化の BaseField を読んでしまう。
+    public int DerivedField = M();
 }
-</pre>
+```
 
 
 ## <a id="sec-generated-title-7"></a> <a id="base_ctor"></a>基底クラスのコンストラクタを明示的に呼び出す
@@ -244,57 +244,57 @@ Derived コンストラクター
 基底クラスの引数つきのコンストラクタを呼び出すためには、
 以下のように自分でコードを書いて明示的に基底クラスのコンストラクタを呼び出す必要があります。
 
-<pre class="source" title="基底クラスのコンストラクタ呼び出し" lang="">
-<code><span class="input">派生クラスのコンストラクタ</span>(<span class="input">引数</span>) : <span class="reserved">base</span>(<span class="input">基底クラスに渡したい引数</span>)
+```csharp
+派生クラスのコンストラクタ(引数) : base(基底クラスに渡したい引数)
 {
 }
-</code></pre>
+```
 
 
 例として、先ほどの <code>Person</code> クラスと <code>Student</code> クラスにコンストラクタを追加してみましょう。
 ついでに実装の隠蔽も行った結果を以下に示します。
 
-<pre class="source" title="Person と Student にコンストラクタを追加" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">private string</span> name; <span class="comment">// 名前</span>
-  <span class="reserved">private int</span>    age;  <span class="comment">// 年齢</span>
+  private string name; // 名前
+  private int    age;  // 年齢
 
-  <span class="reserved">public</span> Person(<span class="reserved">string</span> name, <span class="reserved">int</span> age)
+  public Person(string name, int age)
   {
-    <span class="reserved">this</span>.name = name;
-    <span class="reserved">this</span>.age  = age;
+    this.name = name;
+    this.age  = age;
   }
 
-  <span class="reserved">public string</span> Name
+  public string Name
   {
-    <span class="reserved">set</span>{<span class="reserved">this</span>.name = value;}
-    <span class="reserved">get</span>{<span class="reserved">return this</span>.name;}
+    set{this.name = value;}
+    get{return this.name;}
   }
 
-  <span class="reserved">public int</span> Age
+  public int Age
   {
-    <span class="reserved">set</span>{<span class="reserved">this</span>.age = value;}
-    <span class="reserved">get</span>{<span class="reserved">return this</span>.age;}
+    set{this.age = value;}
+    get{return this.age;}
   }
 }
 
-<span class="reserved">class</span> Student : Person
+class Student : Person
 {
-  <span class="reserved">private int</span>    id;   <span class="comment">// 学籍番号</span>
+  private int    id;   // 学籍番号
 
-  <span class="reserved">public</span> Student(<span class="reserved">string</span> name, <span class="reserved">int</span> age, <span class="reserved">int</span> id) : <span class="reserved">base</span>(name, age)
+  public Student(string name, int age, int id) : base(name, age)
   {
-    <span class="reserved">this</span>.id   = id;
+    this.id   = id;
   }
 
-  <span class="reserved">public int</span> Id
+  public int Id
   {
-    <span class="reserved">set</span>{<span class="reserved">this</span>.id = value;}
-    <span class="reserved">get</span>{<span class="reserved">return this</span>.id;}
+    set{this.id = value;}
+    get{return this.id;}
   }
 }
-</code></pre>
+```
 
 この構文は[コンストラクター初期化子](oo_construct.md#initializer)の一種です。
 `this`の方と区別して base 初期化子と呼ぶ場合もあります。
@@ -308,43 +308,43 @@ private はクラス内部からのみアクセス可能なレベルです。
 これらに対し、protected はクラスとそのクラスを継承する派生クラス内からアクセス可能なレベルです(private は派生クラス内からアクセスできない)。
 以下に例を挙げます。
 
-<pre class="source" title="protected" lang="">
-<code><span class="reserved">class</span> Base
+```csharp
+class Base
 {
-  <span class="reserved">public    int</span> public_val;
-  <span class="reserved">protected int</span> protected_val;
-  <span class="reserved">private   int</span> private_val;
+  public    int public_val;
+  protected int protected_val;
+  private   int private_val;
 
-  <span class="reserved">void</span> BaseTest()
+  void BaseTest()
   {
-    public_val    = 0; <span class="comment">// OK</span>
-    protected_val = 0; <span class="comment">// OK</span>
-    private_val   = 0; <span class="comment">// OK</span>
+    public_val    = 0; // OK
+    protected_val = 0; // OK
+    private_val   = 0; // OK
   }
 }
 
-<span class="reserved">class</span> Derived : Base
+class Derived : Base
 {
-  <span class="reserved">void</span> DerivedTest()
+  void DerivedTest()
   {
-    public_val    = 0; <span class="comment">// OK</span>
-    <em>protected_val = 0; <span class="comment">// OK   (protected は派生クラスからアクセス可能)</span></em>
-    private_val   = 0; <span class="comment">// エラー(private   は派生クラスからアクセス不能)</span>
+    public_val    = 0; // OK
+    protected_val = 0; // OK   (protected は派生クラスからアクセス可能)
+    private_val   = 0; // エラー(private   は派生クラスからアクセス不能)
   }
 }
 
-<span class="reserved">class</span> Test
+class Test
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Base b = <span class="reserved">new</span> Base();
+    Base b = new Base();
 
-    b.public_val    = 0; <span class="comment">// OK</span>
-    b.protected_val = 0; <span class="comment">// エラー(protected は外部からアクセス不能)</span>
-    b.private_val   = 0; <span class="comment">// エラー(private   は外部からアクセス不能)</span>
+    b.public_val    = 0; // OK
+    b.protected_val = 0; // エラー(protected は外部からアクセス不能)
+    b.private_val   = 0; // エラー(private   は外部からアクセス不能)
   }
 }
-</code></pre>
+```
 
 
 
@@ -355,47 +355,47 @@ private はクラス内部からのみアクセス可能なレベルです。
 基底クラスのメンバーが新しく追加されたメンバーに隠れてしまいます。
 このような状態を「基底クラスのメンバーを隠蔽する」といいます。
 
-<pre class="source" title="基底クラスのメンバーの再定義" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Base
+class Base
 {
-  <span class="reserved">public void</span> Test()
+  public void Test()
   {
-    Console.Write(<span class="literal">"Base.Test()\n"</span>);
+    Console.Write("Base.Test()\n");
   }
 }
 
-<span class="reserved">class</span> Derived : Base
+class Derived : Base
 {
-  <span class="reserved">public void</span> Test() <span class="comment">//基底クラスの Test() と同名のメソッド</span>
+  public void Test() //基底クラスの Test() と同名のメソッド
   {
-    Console.Write(<span class="literal">"Derived.Test()\n"</span>);
+    Console.Write("Derived.Test()\n");
   }
 }
 
-<span class="reserved">class</span> Test
+class Test
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Base b = <span class="reserved">new</span> Base();
-    b.Test(); <span class="comment">// Base の Test が呼ばれる</span>
+    Base b = new Base();
+    b.Test(); // Base の Test が呼ばれる
 
-    Derived d = <span class="reserved">new</span> Derived();
-    d.Test(); <span class="comment">// Derived の Test が呼ばれる</span>
+    Derived d = new Derived();
+    d.Test(); // Derived の Test が呼ばれる
 
     ((Base)d).Test();
-    <span class="comment">// Base に キャストしてから Test を呼ぶと Base の Test が呼ばれる</span>
+    // Base に キャストしてから Test を呼ぶと Base の Test が呼ばれる
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 Base.Test()
 Derived.Test()
 Base.Test()
-</pre>
+```
 
 
 ここで、プログラマが意図して基底クラスのメンバーの隠蔽を行う分には何の問題もないんですが、
@@ -404,60 +404,60 @@ Base.Test()
 そこで、C#では基底クラスのメンバーの隠蔽を行う場合、メソッドにnew修飾子を付ける必要があります。
 (new修飾子を付けていない場合、コンパイラが警告を出します。)
 
-<pre class="source" title="new修飾子" lang="">
-<code><span class="reserved">class</span> Derived : Base
+```csharp
+class Derived : Base
 {
-  <span class="comment">//基底クラスのメンバーを隠蔽するには new を付ける必要がある。</span>
-  <span class="reserved">public <em>new</em> void</span> Test()
+  //基底クラスのメンバーを隠蔽するには new を付ける必要がある。
+  public new void Test()
   {
-    Console.Write(<span class="literal">"Derived.Test()\n"</span>);
+    Console.Write("Derived.Test()\n");
   }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="base-access"></a>base アクセス
 
 ちなみに、`base` キーワードを使って基底クラスのメンバーを参照できます。
 この機能を使って、以下のように、隠蔽されたメンバーを呼び出すこともできます。
 
-<pre class="source" title="隠蔽された基底クラスのメンバー呼び出し" lang="">
-<code><span class="reserved">class</span> Base
+```csharp
+class Base
 {
-  <span class="reserved">public void</span> Test()
+  public void Test()
   {
-    Console.Write(<span class="literal">"Base.Test()\n"</span>);
+    Console.Write("Base.Test()\n");
   }
 }
 
-<span class="reserved">class</span> Derived : Base
+class Derived : Base
 {
-  <span class="reserved">public new void</span> Test() <span class="comment">//基底クラスの Test() と同名のメソッド</span>
+  public new void Test() //基底クラスの Test() と同名のメソッド
   {
-    Console.Write(<span class="literal">"Derived.Test()\n"</span>);
+    Console.Write("Derived.Test()\n");
   }
 
-  <span class="reserved">public void</span> Test2()
+  public void Test2()
   {
-<em>    <span class="reserved">this</span>.Test(); <span class="comment">// Derived の Test が呼ばれる。</span>
-    <span class="reserved">base</span>.Test(); <span class="comment">// Base の Test が呼ばれる。</span></em>
+    this.Test(); // Derived の Test が呼ばれる。
+    base.Test(); // Base の Test が呼ばれる。
   }
 }
-</code></pre>
+```
 
 ちなみに、[`this`アクセス](oo_class.md#this-access)と同様に、`base`アクセスでも[インデクサー](oo_indexer.md)にアクセスできます。
 (一方で、[拡張メソッド](../functional/sp3_extension.md)の呼び出しには使えません。)
 
-<pre class="source" title="base を使ってインデクサーにアクセスする例">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable">i</span>] =&gt; <span class="variable">i</span>;
+    public virtual int this[int i] => i;
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable">i</span>] =&gt; <span class="reserved">base</span>[<span class="variable">i</span>]; <span class="comment">// Base のインデクサーが呼ばれる</span>
+    public override int this[int i] => base[i]; // Base のインデクサーが呼ばれる
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-11"></a> <a id="non-virtual-base-access"></a>base(T) アクセス
 
@@ -472,32 +472,32 @@ C# 8.0 のプレビュー版で一時的に使える時期はありましたが�
 これに対して、将来的には、`base(T)` という形で、特定のクラスを明示的に指定できるようになりました。
 (主に[インターフェイスのデフォルト実装](oo_interface.md#dim)のための機能でしたが、クラスに対しても認められています。)
 
-<pre class="source" title="base(T) アクセスの例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;A.M&quot;</span>);
+    public virtual void M() => Console.WriteLine("A.M");
 }
  
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+class B : A
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;B.M&quot;</span>);
+    public override void M() => Console.WriteLine("B.M");
 }
  
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">B</span>
+class C : B
 {
-    <span class="comment">// 今までであれば、必ず「自分に近い方の M」が呼ばれる。</span>
-    <span class="comment">// この場合は B.M。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="reserved">base</span>.<span class="method">M</span>();
+    // 今までであれば、必ず「自分に近い方の M」が呼ばれる。
+    // この場合は B.M。
+    public override void M() => base.M();
  
-    <span class="comment">// この書き方なら絶対に A.M が呼ばれる。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M1</span>() =&gt; <em><span class="reserved">base</span>(<span class="type">A</span>)</em>.<span class="method">M</span>();
+    // この書き方なら絶対に A.M が呼ばれる。
+    public void M1() => base(A).M();
  
-    <span class="comment">// この書き方なら絶対に B.M が呼ばれる。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M2</span>() =&gt; <em><span class="reserved">base</span>(<span class="type">B</span>)</em>.<span class="method">M</span>();
+    // この書き方なら絶対に B.M が呼ばれる。
+    public void M2() => base(B).M();
 }
-</code></pre>
+```
 
 C# 8.0 から外れたのは、以下のような `base` の方との挙動の差が問題になったからです。
 
@@ -524,13 +524,13 @@ C# のクラスは基本的に常に継承して派生クラスを作ること�
 このような場合、クラス定義時に sealed （封印された）というキーワードをつけることで、
 継承を禁止することができます。
 
-<pre class="source" title="sealed クラス" lang="">
-<code><span class="reserved"><em>sealed</em> class</span> SealedClass { }
+```csharp
+sealed class SealedClass { }
 
-<span class="reserved">class</span> Derived : SealedClass <span class="comment">// SealedClass は継承不可なので、エラーになる。</span>
+class Derived : SealedClass // SealedClass は継承不可なので、エラーになる。
 {
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-13"></a> <a id="single"></a>単一継承
 
@@ -538,10 +538,10 @@ C#のクラス継承では、1つのクラスしか継承できません。こ�
 (逆を意味するのは多重継承(multiple inheritance)で、「C#では多重継承を認めていない」などと言ったりもします。)
 つまり、以下のように、2つ以上のクラスを継承しようとするとコンパイル エラーになります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Base1</span> { }
-<span class="reserved">class</span> <span class="type">Base2</span> { }
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base1</span>, <span class="type">Base2</span> { }
-</code></pre>
+```csharp
+class Base1 { }
+class Base2 { }
+class Derived : Base1, Base2 { }
+```
 
 別項で説明する[インターフェイス](oo_interface.md)であればこの制限はなく、いくつでも実装できます。

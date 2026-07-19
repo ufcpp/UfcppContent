@@ -49,71 +49,71 @@ C# のデリゲートも、そもそもの関数ポインターって概念も�
 
 例えば以下のようなデリゲート型を定義したとします。
 
-<pre class="source" title="">
-<code><span class="reserved">delegate</span> <span class="reserved">int</span> <span class="type">A</span>(<span class="reserved">int</span> x, <span class="reserved">int</span> y);
-</code></pre>
+```csharp
+delegate int A(int x, int y);
+```
 
 内部的に、このデリゲートに対して、以下のようなクラスが生成されます。
 
-<pre class="source" title="">
-<code><span class="comment">// 実際には MulticastDelegate 型から派生していて、MulticastDelegate 側に処理があったりする。</span>
-<span class="comment">// C# では書けない処理が入ってて、InternalCall (.NET ランタイム内の特殊処理)になってる。</span>
-<span class="comment">// 細かいところは端折ってるけど、やらないといけないことは概ねこんな感じ。</span>
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+// 実際には MulticastDelegate 型から派生していて、MulticastDelegate 側に処理があったりする。
+// C# では書けない処理が入ってて、InternalCall (.NET ランタイム内の特殊処理)になってる。
+// 細かいところは端折ってるけど、やらないといけないことは概ねこんな感じ。
+class A
 {
-    <span class="comment">// obj.Method みたいに書いた時の obj を渡す</span>
-    <span class="reserved">object</span> _target;
+    // obj.Method みたいに書いた時の obj を渡す
+    object _target;
 
-    <span class="comment">// obj.Method みたいに書いた時の Method に当たる情報を渡す</span>
-    <span class="comment">// Method 本体が置かれてるメモリ上のアドレス</span>
-    <span class="type">IntPtr</span> _functionPointer;
+    // obj.Method みたいに書いた時の Method に当たる情報を渡す
+    // Method 本体が置かれてるメモリ上のアドレス
+    IntPtr _functionPointer;
 
-    <span class="comment">// multicast 用</span>
-    <span class="type">A</span>[] _invocationList;
+    // multicast 用
+    A[] _invocationList;
 
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">int</span> Invoke(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    public virtual int Invoke(int x, int y)
     {
-        <span class="comment">// _target をロード</span>
-        <span class="comment">// x をロード</span>
-        <span class="comment">// y をロード</span>
-        <span class="comment">// _functionPointer をロード</span>
-        <span class="comment">// calli 命令 (現状の C# では出力できない命令)</span>
-        <span class="comment">// ret 命令</span>
+        // _target をロード
+        // x をロード
+        // y をロード
+        // _functionPointer をロード
+        // calli 命令 (現状の C# では出力できない命令)
+        // ret 命令
     }
 
-    <span class="comment">// single cast</span>
-    <span class="reserved">public</span> A(<span class="reserved">object</span> target, <span class="type">IntPtr</span> functionPointer)
+    // single cast
+    public A(object target, IntPtr functionPointer)
     {
         _target = target;
         _functionPointer = functionPointer;
     }
 
-    <span class="comment">// multicast</span>
-    <span class="reserved">public</span> A(<span class="type">A</span>[] invocationList)
+    // multicast
+    public A(A[] invocationList)
     {
-        _target = <span class="reserved">this</span>;
-        <span class="comment">// _functionPointer に MulticastInvoke のアドレスを代入</span>
+        _target = this;
+        // _functionPointer に MulticastInvoke のアドレスを代入
         _invocationList = invocationList;
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">A</span> Combine(<span class="type">A</span> a, <span class="type">A</span> b)
+    public static A Combine(A a, A b)
     {
-        <span class="comment">// a, b がそれぞれ _invocationList を持ってたら1つの配列にまとめたりしてるかも</span>
-        <span class="reserved">return</span> <span class="reserved">new</span> <span class="type">A</span>(<span class="reserved">new</span>[] { a, b });
+        // a, b がそれぞれ _invocationList を持ってたら1つの配列にまとめたりしてるかも
+        return new A(new[] { a, b });
     }
 
-    <span class="reserved">private</span> <span class="reserved">int</span> MulticastInvoke(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    private int MulticastInvoke(int x, int y)
     {
-        <span class="reserved">var</span> ret = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> _invocationList)
+        var ret = 0;
+        foreach (var item in _invocationList)
         {
             ret = item.Invoke(x, y);
         }
-        <span class="comment">// 最後の1個しか戻り値が返らない</span>
-        <span class="reserved">return</span> ret;
+        // 最後の1個しか戻り値が返らない
+        return ret;
     }
 }
-</code></pre>
+```
 
 C# では「他の言語でいう関数ポインターのようなもの」としてデリゲートを使うわけですが、
 実は、.NET の IL 命令上は生の「関数ポインター」も持っています。
@@ -142,26 +142,26 @@ C# では「他の言語でいう関数ポインターのようなもの」と�
 `ldftn` (load function)は、現状のC#でも、デリゲート型のインスタンスを作るときに使われています。
 例えば以下のようなコードを書いた場合、
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+static class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">A</span> a = Sum;
+        A a = Sum;
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span> Sum(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x + y;
-    <span class="reserved">public</span> <span class="reserved">delegate</span> <span class="reserved">int</span> <span class="type">A</span>(<span class="reserved">int</span> x, <span class="reserved">int</span> y);
+    static int Sum(int x, int y) => x + y;
+    public delegate int A(int x, int y);
 }
-</code></pre>
+```
 
 以下のような IL コードが生成されます。
 
-<pre class="source" title="">
-<code><span class="reserved">ldnull</span> <span class="comment">// 静的メソッドなので target が null</span>
-<span class="reserved">ldftn</span> int32 C::Sum(int32, int32) <span class="comment">// これが関数ポインター読み込み</span>
-<span class="reserved">newobj</span> instance void A::.ctor(object, native int) <span class="comment">// デリゲート型のコンストラクターに関数ポインターを渡す</span>
-</code></pre>
+```cil
+ldnull // 静的メソッドなので target が null
+ldftn int32 C::Sum(int32, int32) // これが関数ポインター読み込み
+newobj instance void A::.ctor(object, native int) // デリゲート型のコンストラクターに関数ポインターを渡す
+```
 
 一方、`calli` (call indirect)の方は前節のデリゲート型の`Invoke`メソッドの中や、P/Invokeで使われているくらいで、
 大多数の C# コードからは生成されません。

@@ -60,14 +60,14 @@ async/await の導入でかなり簡素化されることになります。
 URL 指定してダウンロードしてきた文字列をテキストボックスに表示という GUI アプリケーションを考えてみましょう。
 同期的に書くなら、ボタンに対して以下のようなイベント ハンドラーを登録します。
 
-<pre class="source" title="同期的に文字列をダウンロード" lang="">
-<code><span class="reserved">private void</span> Button_Click(<span class="reserved">object</span> sender, <span class="type">RoutedEventArgs</span> e)
+```csharp
+private void Button_Click(object sender, RoutedEventArgs e)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
-    <span class="reserved">var</span> html = client.DownloadString(<span class="reserved">this</span>.Url.Text);
-    <span class="reserved">this</span>.Output.Text = html;
+    var client = new WebClient();
+    var html = client.DownloadString(this.Url.Text);
+    this.Output.Text = html;
 }
-</code></pre>
+```
 
 
 このように同期でダウンロードを行うと、図1に示すように、ネットワークの通信速度が遅い環境では GUI がフリーズしてしまいます。
@@ -88,17 +88,17 @@ URL 指定してダウンロードしてきた文字列をテキストボック�
 しかし、これまで、非同期呼び出しは少し面倒な書き方をする必要がありました。
 いくつかのパターンがありますが、例えば、イベント非同期パターン（EAP: Event-based Asynchronous Pattern）と呼ばれるものの場合、以下のようになります。
 
-<pre class="source" title="非同期に文字列をダウンロード" lang="">
-<code><span class="reserved">private void</span> Button_Click(<span class="reserved">object</span> sender_, <span class="type">RoutedEventArgs</span> e_)
+```csharp
+private void Button_Click(object sender_, RoutedEventArgs e_)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
-    client.DownloadStringCompleted += (sender, e) =&gt;
+    var client = new WebClient();
+    client.DownloadStringCompleted += (sender, e) =>
     {
-        <span class="reserved">this</span>.Output.Text = e.Result;
+        this.Output.Text = e.Result;
     };
-    client.DownloadStringAsync(<span class="reserved">new</span> <span class="type">Uri</span>(<span class="reserved">this</span>.Url.Text));
+    client.DownloadStringAsync(new Uri(this.Url.Text));
 }
-</code></pre>
+```
 
 
 以下のような面倒事が出てきています。
@@ -115,40 +115,40 @@ URL 指定してダウンロードしてきた文字列をテキストボック�
 
 ダウンロード先が1個ならまだましで、例えば、複数の URL からダウンロードしてくる場合にはもっと複雑になります。
 
-<pre class="source" title="複数の URL から文字列をダウンロード" lang="">
-<code><span class="reserved">private void</span> Button_Click(<span class="reserved">object</span> sender, <span class="type">RoutedEventArgs</span> e)
+```csharp
+private void Button_Click(object sender, RoutedEventArgs e)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
-    <span class="reserved">var</span> urlList = <span class="reserved">this</span>.Url.Text.Split(<span class="literal">','</span>);
+    var client = new WebClient();
+    var urlList = this.Url.Text.Split(',');
 
-    <span class="reserved">int</span> i = -1;
-    <span class="type">Action</span>&lt;<span class="type">DownloadStringCompletedEventArgs</span>&gt; a = <span class="reserved">null</span>;
+    int i = -1;
+    Action<DownloadStringCompletedEventArgs> a = null;
 
-    client.DownloadStringCompleted += (sender, e) =&gt;
+    client.DownloadStringCompleted += (sender, e) =>
     {
-        <span class="reserved">var</span> continuation = e.UserState <span class="reserved">as</span> <span class="type">Action</span>&lt;<span class="type">DownloadStringCompletedEventArgs</span>&gt;;
+        var continuation = e.UserState as Action<DownloadStringCompletedEventArgs>;
         continuation(e);
     };
 
-    a = e =&gt;
+    a = e =>
     {
-        <span class="reserved">if</span> (e != <span class="reserved">null</span>)
+        if (e != null)
         {
-            <span class="reserved">this</span>.Output.Text += e.Result;
+            this.Output.Text += e.Result;
         }
 
         ++i;
-        <span class="reserved">if</span> (i &gt;= urlList.Length)
+        if (i >= urlList.Length)
         {
-            <span class="reserved">return</span>;
+            return;
         }
-        client.DownloadStringAsync(<span class="reserved">new</span> <span class="type">Uri</span>(urlList[i]), a);
+        client.DownloadStringAsync(new Uri(urlList[i]), a);
     };
 
-    <span class="reserved">this</span>.Output.Text = <span class="reserved">string</span>.Empty;
-    a(<span class="reserved">null</span>);
+    this.Output.Text = string.Empty;
+    a(null);
 }
-</code></pre>
+```
 
 
 何番目までダウンロード完了したかを自前で状態管理しています。
@@ -168,44 +168,44 @@ C# 5.0 の新機能で、この手の非ブロッキング処理が簡単にな�
 （背景色を変えて強調表示している部分が同期版との差分です。
 この部分を削除すればそのまま同期処理として動きます。）
 
-<pre class="source" title="同期的に文字列をダウンロード" lang="">
-<code><span class="reserved">private void</span> Button_Click(<span class="reserved">object</span> sender_, <span class="type">RoutedEventArgs</span> e_)
+```csharp
+private void Button_Click(object sender_, RoutedEventArgs e_)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
-    <span class="reserved">var</span> html = client.DownloadString(<span class="reserved">this</span>.Url.Text);
-    <span class="reserved">this</span>.Output.Text = html;
+    var client = new WebClient();
+    var html = client.DownloadString(this.Url.Text);
+    this.Output.Text = html;
 }
-</code></pre>
+```
 
 
-<pre class="source" title="非同期に文字列をダウンロード" lang="">
-<code><span class="reserved">private <em>async</em> void</span> Button_Click(<span class="reserved">object</span> sender_, <span class="type">RoutedEventArgs</span> e_)
+```csharp
+private async void Button_Click(object sender_, RoutedEventArgs e_)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
-    <span class="reserved">var</span> html = <span class="reserved"><em>await</em></span> client.DownloadString<em>TaskAsync</em>(<span class="reserved">this</span>.Url.Text);
-    <span class="reserved">this</span>.Output.Text = html;
+    var client = new WebClient();
+    var html = await client.DownloadStringTaskAsync(this.Url.Text);
+    this.Output.Text = html;
 }
-</code></pre>
+```
 
 
 複雑な場合でも、ずいぶんと楽に書けるようになります。
 前節の最後で書いた、複数の URL からダウンロードしてくる処理は以下のように書けます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">private <em>async</em> void</span> Button_Click(<span class="reserved">object</span> sender_, <span class="type">RoutedEventArgs</span> e_)
+```csharp
+private async void Button_Click(object sender_, RoutedEventArgs e_)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
-    <span class="reserved">var</span> urlList = <span class="reserved">this</span>.Url.Text.Split(<span class="literal">','</span>);
+    var client = new WebClient();
+    var urlList = this.Url.Text.Split(',');
 
-    <span class="reserved">this</span>.Output.Text = <span class="reserved">string</span>.Empty;
+    this.Output.Text = string.Empty;
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> url <span class="reserved">in</span> urlList)
+    foreach (var url in urlList)
     {
-        <span class="reserved">var</span> html = <span class="reserved"><em>await</em></span> client.DownloadString<em>TaskAsync</em>(url);
-        <span class="reserved">this</span>.Output.Text += html;
+        var html = await client.DownloadStringTaskAsync(url);
+        this.Output.Text += html;
     }
 }
-</code></pre>
+```
 
 
 同期処理とほとんど同じ書き方ができます。
@@ -254,51 +254,51 @@ C# 6まででは、非同期メソッドの戻り値の型は void、Task、も�
 
 （非同期でない）普通のメソッドから、（戻り値が Task 型の）非同期メソッドの完了を待つには以下のように書きます。
 
-<pre class="source" title="非同期メソッドの完了待ち" lang="">
-<code><span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+```csharp
+static void Main(string[] args)
 {
     RunAsync().Wait();
 }
 
-<span class="reserved">static async</span> <span class="type">Task</span> RunAsync()
+static async Task RunAsync()
 {
-    <span class="reserved">await</span> <span class="type">TaskEx</span>.Delay(1000);
+    await TaskEx.Delay(1000);
 }
-</code></pre>
+```
 
 
 ただし、即座に Wait で完了待ちしてしまうと非同期にした意味があまりないので、
 通常は、他の作業を並行して行ってから最後に Wait したり、
 複数のタスクを同時実行したりします。
 
-<pre class="source" title="並行して他の作業" lang="">
-<code><span class="reserved">var</span> task = RunAsync();
-<span class="comment">// 並行して別の処理</span>
+```csharp
+var task = RunAsync();
+// 並行して別の処理
 DoSomeTask();
 task.Wait();
-</code></pre>
+```
 
 
-<pre class="source" title="複数の非同期処理を同時実行" lang="">
-<code><span class="comment">// 複数の処理を並行に実行</span>
-<span class="type">TaskEx</span>.WhenAll(
+```csharp
+// 複数の処理を並行に実行
+TaskEx.WhenAll(
     RunAsync(),
     RunAsync(),
     RunAsync()).Wait();
-</code></pre>
+```
 
 
 完了待ちが必要ない（戻り値が void）場合というのは、
 例えば、GUI アプリケーションのイベント ハンドラーなどで利用します。
 
-<pre class="source" title="イベント ハンドラーで非同期処理" lang="">
-<code><span class="reserved">private async void</span> Button_Click(<span class="reserved">object</span> sender, <span class="type">RoutedEventArgs</span> e)
+```csharp
+private async void Button_Click(object sender, RoutedEventArgs e)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
-    <span class="reserved">var</span> html = <span class="reserved">await</span> client.DownloadStringTaskAsync(<span class="reserved">this</span>.Url.Text);
-    <span class="reserved">this</span>.Output.Text = html;
+    var client = new WebClient();
+    var html = await client.DownloadStringTaskAsync(this.Url.Text);
+    this.Output.Text = html;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="task-like"></a>一般化非同期戻り値(Task-like)
 
@@ -316,52 +316,52 @@ Task-likeであるための条件は以下の通りです。
 
 最低限の条件を満たす型を書くと以下のようになります。
 
-<pre class="source" title="Task-likeの例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
 
-[<span class="type">AsyncMethodBuilder</span>(<span class="reserved">typeof</span>(<span class="type">AsyncValueTaskMethodBuilder</span>&lt;&gt;))]
-<span class="reserved">struct</span> <span class="type">TaskLike</span>&lt;<span class="type">TResult</span>&gt;
+[AsyncMethodBuilder(typeof(AsyncValueTaskMethodBuilder<>))]
+struct TaskLike<TResult>
 {
 }
 
-<span class="reserved">struct</span> <span class="type">AsyncValueTaskMethodBuilder</span>&lt;<span class="type">TResult</span>&gt;
+struct AsyncValueTaskMethodBuilder<TResult>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">AsyncValueTaskMethodBuilder</span>&lt;<span class="type">TResult</span>&gt; Create() =&gt; <span class="reserved">default</span>(<span class="type">AsyncValueTaskMethodBuilder</span>&lt;<span class="type">TResult</span>&gt;);
-    <span class="reserved">public</span> <span class="reserved">void</span> Start&lt;<span class="type">TStateMachine</span>&gt;(<span class="reserved">ref</span> <span class="type">TStateMachine</span> stateMachine) <span class="reserved">where</span> <span class="type">TStateMachine</span> : <span class="type">IAsyncStateMachine</span> { }
-    <span class="reserved">public</span> <span class="reserved">void</span> SetStateMachine(<span class="type">IAsyncStateMachine</span> stateMachine) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> SetResult(<span class="type">TResult</span> result) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> SetException(<span class="type">Exception</span> exception) { }
-    <span class="reserved">public</span> <span class="type">TaskLike</span>&lt;<span class="type">TResult</span>&gt; Task { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">void</span> AwaitOnCompleted&lt;<span class="type">TAwaiter</span>, <span class="type">TStateMachine</span>&gt;(<span class="reserved">ref</span> <span class="type">TAwaiter</span> awaiter, <span class="reserved">ref</span> <span class="type">TStateMachine</span> stateMachine)
-        <span class="reserved">where</span> <span class="type">TAwaiter</span> : <span class="type">INotifyCompletion</span>
-        <span class="reserved">where</span> <span class="type">TStateMachine</span> : <span class="type">IAsyncStateMachine</span>
+    public static AsyncValueTaskMethodBuilder<TResult> Create() => default(AsyncValueTaskMethodBuilder<TResult>);
+    public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine { }
+    public void SetStateMachine(IAsyncStateMachine stateMachine) { }
+    public void SetResult(TResult result) { }
+    public void SetException(Exception exception) { }
+    public TaskLike<TResult> Task { get; }
+    public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+        where TAwaiter : INotifyCompletion
+        where TStateMachine : IAsyncStateMachine
     { }
-    <span class="reserved">public</span> <span class="reserved">void</span> AwaitUnsafeOnCompleted&lt;<span class="type">TAwaiter</span>, <span class="type">TStateMachine</span>&gt;(<span class="reserved">ref</span> <span class="type">TAwaiter</span> awaiter, <span class="reserved">ref</span> <span class="type">TStateMachine</span> stateMachine)
-        <span class="reserved">where</span> <span class="type">TAwaiter</span> : <span class="type">ICriticalNotifyCompletion</span>
-        <span class="reserved">where</span> <span class="type">TStateMachine</span> : <span class="type">IAsyncStateMachine</span>
+    public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+        where TAwaiter : ICriticalNotifyCompletion
+        where TStateMachine : IAsyncStateMachine
     { }
 }
-</code></pre>
+```
 
 ちなみに、`AsyncMethodBuilder`属性は、フルネームさえ一致していればどこに定義されたものであっても構いません。
 最終的には標準ライブラリに含まれると思いますが、もし、標準化される前のバージョンで使いたい場合、自前で用意しても大丈夫です
 (この場合、`internal`でも構いません)。
 
-<pre class="source" title="AsyncMethodBuilderAttributeの実装例">
-<code><span class="reserved">namespace</span> System.Runtime.CompilerServices
+```csharp
+namespace System.Runtime.CompilerServices
 {
-    <span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">AsyncMethodBuilderAttribute</span> : <span class="type">Attribute</span>
+    sealed class AsyncMethodBuilderAttribute : Attribute
     {
-        <span class="reserved">public</span> AsyncMethodBuilderAttribute(<span class="type">Type</span> builderType)
+        public AsyncMethodBuilderAttribute(Type builderType)
         {
             BuilderType = builderType;
         }
 
-        <span class="reserved">public</span> <span class="type">Type</span> BuilderType { <span class="reserved">get</span>; }
+        public Type BuilderType { get; }
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-9"></a> <a id="valuetask"></a>ValueTask構造体
 
@@ -378,38 +378,38 @@ Task-likeを自作しようと思う場面はほとんどないでしょう。
 大部分の非同期が必要ない場面では直接`TResult`を作ることで、パフォーマンスの改善が見込めます。
 例えば以下のようなコードです。
 
-<pre class="source" title="ValueTaskの使い道">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">ValueTask</span>&lt;<span class="reserved">int</span>&gt; XAsync(<span class="type">Random</span> r)
+    static async ValueTask<int> XAsync(Random r)
     {
-        <span class="reserved">if</span> (r.NextDouble() &lt; 0.99)
+        if (r.NextDouble() < 0.99)
         {
-            <span class="comment">// 99% ここを通る。</span>
-            <span class="comment">// この場合、await が1度もなく、非同期処理にならない。</span>
-            <span class="comment">// 非同期処理じゃないのに Task&lt;int&gt; のインスタンスが作られるのはもったいない</span>
-            <span class="reserved">return</span> 1;
+            // 99% ここを通る。
+            // この場合、await が1度もなく、非同期処理にならない。
+            // 非同期処理じゃないのに Task<int> のインスタンスが作られるのはもったいない
+            return 1;
         }
 
-        <span class="comment">// こちら側は本当に非同期処理なので、Task&lt;int&gt; が必要。</span>
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(100);
-        <span class="reserved">return</span> 0;
+        // こちら側は本当に非同期処理なので、Task<int> が必要。
+        await Task.Delay(100);
+        return 0;
     }
 
-    <span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; _cache;
+    static Task<int> _cache;
 
-    <span class="comment">// キャッシュしてるものなので、少し時間がたてば、確実に完了済みになる。</span>
-    <span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; CachedX =&gt; _cache ?? (_cache = <span class="type">Task</span>.Run(() =&gt; 1));
+    // キャッシュしてるものなので、少し時間がたてば、確実に完了済みになる。
+    static Task<int> CachedX => _cache ?? (_cache = Task.Run(() => 1));
 
-    <span class="comment">// 完了済みだと非同期処理にならない。</span>
-    <span class="comment">// 非同期処理じゃないのに Task&lt;int&gt; のインスタンスが作られるのはもったいない</span>
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">ValueTask</span>&lt;<span class="reserved">int</span>&gt; Y() =&gt; <span class="reserved">await</span> CachedX;
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">ValueTask</span>&lt;<span class="reserved">int</span>&gt; Z() =&gt; <span class="reserved">await</span> Y();
+    // 完了済みだと非同期処理にならない。
+    // 非同期処理じゃないのに Task<int> のインスタンスが作られるのはもったいない
+    static async ValueTask<int> Y() => await CachedX;
+    static async ValueTask<int> Z() => await Y();
 }
-</code></pre>
+```
 
 この`ValueTask<TResult>`構造体は、いずれは標準ライブラリに入る予定です。
 .NET Framewor 4.6.2/.NET Standard 1.6以下で使いたい場合には、以下のパッケージの参照が必要です。
@@ -469,24 +469,24 @@ Task 的なものの独自実装は結構危険。
 
 C# 6で、catch句、finally句内に`await`を書けるようになりました。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> XAsync()
+```csharp
+public static async Task XAsync()
 {
-    <span class="reserved">try</span>
+    try
     {
-        <span class="reserved">await</span> SomeAsyncMethod();
+        await SomeAsyncMethod();
     }
-    <span class="reserved">catch</span> (<span class="type">InvalidOperationException</span> e)
+    catch (InvalidOperationException e)
     {
-        <span class="reserved">using</span> (<span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">StreamWriter</span>(<span class="string">"error.txt"</span>))
-            <span class="reserved">await</span> s.WriteAsync(e.ToString());
+        using (var s = new StreamWriter("error.txt"))
+            await s.WriteAsync(e.ToString());
     }
-    <span class="reserved">finally</span>
+    finally
     {
-        <span class="reserved">using</span> (<span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">StreamWriter</span>(<span class="string">"trace.txt"</span>))
-            <span class="reserved">await</span> s.WriteAsync(<span class="string">"XAsync done."</span>);
+        using (var s = new StreamWriter("trace.txt"))
+            await s.WriteAsync("XAsync done.");
     }
-</code></pre>
+```
 
 catch句内では、起きた例外の内容をログに記録する処理を書くことが結構ありますが、ログ記録は往々にして非同期処理になったりします。(例えば、Universal Windows アプリを作る場合、ファイルの読み書きもすべて非同期で行う必要があります。)
 
@@ -508,14 +508,14 @@ unsafe コンテキスト内でも、ポインターを使わない限り(fixed�
 
 ##### <a id="sec-generated-title-15"></a>キャンセル
 
-<pre>
+```text
 CancellationToken を利用。
-</pre>
+```
 
 ##### <a id="sec-generated-title-16"></a>進捗報告
 
 （参考： [サンプルの ProgressSample プロジェクト](http://code.msdn.microsoft.com/C-Async-3185c2e8/sourcecode?itemId=105652)。）
-<pre>
+```text
 IProgress インターフェイスと EventProgress クラス
 
 BackgroundWorker は、
@@ -528,8 +528,7 @@ async/await では、
   1. 非同期処理を同期っぽく書ける
   2. 進捗報告は IProgress インターフェイスを通して行う
   3. 完了通知は、同期っぽく、非同期メソッドの最後に書けばそれだけで OK。
-
-</pre>
+```
 
 ## <a id="sec-generated-title-17"></a> <a id="async-stream"></a>非同期ストリーム
 

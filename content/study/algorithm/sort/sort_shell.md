@@ -42,20 +42,20 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/ShellSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/ShellSort.cs)
 
-<pre class="source" title="シェルソート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// シェルソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;</span>
-<span class="reserved">public static void</span> ShellSort&lt;T&gt;(T[] a)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+public static void ShellSort<T>(T[] a)
+  where T : IComparable<T>
 {
-  <span class="reserved">int</span> n = a.Length;
-  <span class="reserved">int</span> h;
-  <span class="reserved">for</span> (h = 1; h &lt; n / 9; h = h * 3 + 1) ;
-  <span class="reserved">for</span> (; h &gt; 0; h /= 3)
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = h; i &lt; n; i++)
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = i; j &gt;= h &amp;&amp; a[j - h].CompareTo(a[j]) &gt; 0; j -= h)
-        Swap(<span class="reserved">ref</span> a[j], <span class="reserved">ref</span> a[j - h]);
+  int n = a.Length;
+  int h;
+  for (h = 1; h < n / 9; h = h * 3 + 1) ;
+  for (; h > 0; h /= 3)
+    for (int i = h; i < n; i++)
+      for (int j = i; j >= h && a[j - h].CompareTo(a[j]) > 0; j -= h)
+        Swap(ref a[j], ref a[j - h]);
 }
-</code></pre>
+```

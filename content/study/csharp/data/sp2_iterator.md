@@ -41,28 +41,28 @@ C# の foreach 構文は、コレクションクラスの利用者側から見�
 
 イテレーター ブロックを使うことで、「[foreach 文](sp_foreach.md#foreach)」で利用可能なコレクションを返すメソッドやプロパティを簡単に実装することができます。
 
-<pre class="source" title="イテレーター ブロック" lang="">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">class</span> TestEnumerable
+class TestEnumerable
 {
-  <span class="comment">// ↓これがイテレーター ブロック。IEnumerable を実装するクラスを自動生成してくれる。</span>
-<em>  <span class="reserved">static public</span> IEnumerable&lt;<span class="reserved">int</span>&gt; FromTo(<span class="reserved">int</span> from, <span class="reserved">int</span> to)
+  // ↓これがイテレーター ブロック。IEnumerable を実装するクラスを自動生成してくれる。
+  static public IEnumerable<int> FromTo(int from, int to)
   {
-    <span class="reserved">while</span>(from &lt;= to)
-      <span class="reserved">yield return</span> from++;
-  }</em>
+    while(from <= to)
+      yield return from++;
+  }
 
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="comment">// ↓こんな感じで使う。</span>
-    <em><span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in</span> FromTo(10, 20))</em>
+    // ↓こんな感じで使う。
+    foreach(int i in FromTo(10, 20))
     {
-      Console.Write(<span class="literal">"{0}\n"</span>, i);
+      Console.Write("{0}\n", i);
     }
   }
 }
-</code></pre>
+```
 
 
 ちなみに、yield という単語は「譲る」という意味です
@@ -92,16 +92,16 @@ C# の foreach 構文は、コレクションクラスの利用者側から見�
 foreach 文中で使われる値を1つ得ます。
 for 文や while 文を使わず、ベタに yield return を並べても OK です。
 
-<pre class="source" title="イテレーター ブロック" lang="">
-<code><span class="reserved">static public</span> IEnumerable GetEnumerable(<span class="reserved">int</span> from, <span class="reserved">int</span> to)
+```csharp
+static public IEnumerable GetEnumerable(int from, int to)
 {
-  <span class="reserved">yield return</span> 1;
-  <span class="reserved">yield return</span> 3.14;
-  <span class="reserved">yield return</span> <span class="literal">"文字列"</span>;
-  <span class="reserved">yield return new</span> System.Drawing.Point(1, 2);
-  <span class="reserved">yield return</span> 1.0f;
+  yield return 1;
+  yield return 3.14;
+  yield return "文字列";
+  yield return new System.Drawing.Point(1, 2);
+  yield return 1.0f;
 }
-</code></pre>
+```
 
 
 また、yield break を記述した行まで処理が進むと、イテレーターの処理をそこで終了します。
@@ -111,30 +111,30 @@ for 文や while 文を使わず、ベタに yield return を並べても OK で
 また、プロパティ風の記述も可能です。
 上述の例は static なメソッドですが、以下のような非 static なプロパティ風の定義も可能です。
 
-<pre class="source" title="非 static プロパティ風イテレーター ブロック" lang="">
-<code><span class="reserved">class</span> FromTo
+```csharp
+class FromTo
 {
-  <span class="reserved">int</span> from, to;
-  <span class="reserved">public</span> FromTo(<span class="reserved">int</span> from, <span class="reserved">int</span> to){<span class="reserved">this</span>.from = from; <span class="reserved">this</span>.to = to;}
+  int from, to;
+  public FromTo(int from, int to){this.from = from; this.to = to;}
 
-<em>  <span class="reserved">public</span> IEnumerable&lt;<span class="reserved">int</span>&gt; Enumerable
+  public IEnumerable<int> Enumerable
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="reserved">while</span>(from &lt;= to)
-        <span class="reserved">yield return</span> from++;
+      while(from <= to)
+        yield return from++;
     }
-  }</em>
+  }
 
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <em><span class="reserved">foreach</span>(<span class="reserved">int</span> i <span class="reserved">in new</span> FromTo(10, 20).Enumerable)</em>
+    foreach(int i in new FromTo(10, 20).Enumerable)
     {
-      Console.Write(<span class="literal">"{0}\n"</span>, i);
+      Console.Write("{0}\n", i);
     }
   }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="restriction"></a>イテレーターの制限
 
@@ -176,22 +176,22 @@ GetEnumerator と言う名前のイテレーター ブロックを定義する�
 コレクションクラスを作成できます。
 ここでは、「[ジェネリック](../oop/sp2_generics.md)」で例に挙げた Stack クラスにイテレーターを追加してみましょう。
 
-<pre class="source" title="GetEnumerator イテレーター ブロック" lang="">
-<code><span class="reserved">class</span> Stack&lt;Type&gt;
+```csharp
+class Stack<Type>
 {
   Type[] buf;
-  <span class="reserved">int</span> top;
-  <span class="reserved">public</span> Stack(<span class="reserved">int</span> max) { <span class="reserved">this</span>.buf = <span class="reserved">new</span> Type[max]; <span class="reserved">this</span>.top = 0; }
-  <span class="reserved">public void</span> Push(Type item) { <span class="reserved">this</span>.buf[<span class="reserved">this</span>.top++] = item; }
-  <span class="reserved">public</span> Type Pop() { <span class="reserved">return this</span>.buf[--<span class="reserved">this</span>.top]; }
+  int top;
+  public Stack(int max) { this.buf = new Type[max]; this.top = 0; }
+  public void Push(Type item) { this.buf[this.top++] = item; }
+  public Type Pop() { return this.buf[--this.top]; }
 
-<em>  <span class="reserved">public</span> IEnumerator&lt;Type&gt; GetEnumerator()
+  public IEnumerator<Type> GetEnumerator()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = <span class="reserved">this</span>.top - 1; i &gt;= 0; --i)
-      <span class="reserved">yield return</span> buf[i];
-  }</em>
+    for (int i = this.top - 1; i >= 0; --i)
+      yield return buf[i];
+  }
 }
-</code></pre>
+```
 
 
 
@@ -200,80 +200,80 @@ GetEnumerator と言う名前のイテレーター ブロックを定義する�
 「[foreach](sp_foreach.md)」で挙げた例を、
 ジェネリックスとイテレーターを用いて書き直してみます。
 
-<pre class="source" title="イテレーターの例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 片方向連結リストクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> LinearList&lt;T&gt;
+/// </summary>
+class LinearList<T>
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 連結リストのセル
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">private class</span> Cell
+  /// </summary>
+  private class Cell
   {
-    <span class="reserved">public</span> T value;
-    <span class="reserved">public</span> Cell next;
+    public T value;
+    public Cell next;
 
-    <span class="reserved">public</span> Cell(T value, Cell next)
+    public Cell(T value, Cell next)
     {
-      <span class="reserved">this</span>.value = value;
-      <span class="reserved">this</span>.next = next;
+      this.value = value;
+      this.next = next;
     }
   }
 
-  <span class="reserved">private</span> Cell head;
+  private Cell head;
 
-  <span class="reserved">public</span> LinearList()
+  public LinearList()
   {
-    <span class="reserved">this</span>.head = <span class="reserved">null</span>;
+    this.head = null;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// リストに新しい要素を追加
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public void</span> Add(T value)
+  /// </summary>
+  public void Add(T value)
   {
-    <span class="reserved">this</span>.head = <span class="reserved">new</span> Cell(value, head);
+    this.head = new Cell(value, head);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 列挙子を取得
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> IEnumerator&lt;T&gt; GetEnumerator()
+  /// </summary>
+  public IEnumerator<T> GetEnumerator()
   {
-    <span class="reserved">for</span>(Cell c = <span class="reserved">this</span>.head; c != <span class="reserved">null</span>; c = c.next)
+    for(Cell c = this.head; c != null; c = c.next)
     {
-      <span class="reserved">yield return</span> c.value;
+      yield return c.value;
     }
   }
 }
 
-<span class="reserved">class</span> ForeachSample
+class ForeachSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    LinearList&lt;<span class="reserved">int</span>&gt; list = <span class="reserved">new</span> LinearList&lt;<span class="reserved">int</span>&gt;();
+    LinearList<int> list = new LinearList<int>();
 
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;10; ++i)
+    for(int i=0; i<10; ++i)
     {
       list.Add(i * (i + 1) / 2);
     }
 
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> s <span class="reserved">in</span> list)
+    foreach(int s in list)
     {
-      Console.Write(s + <span class="literal">" "</span>);
+      Console.Write(s + " ");
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 45 36 28 21 15 10 6 3 1 0 
-</pre>
+```
 
 
 
@@ -297,79 +297,79 @@ GetEnumerator と言う名前のイテレーター ブロックを定義する�
 一種の状態機械（state machine）を自動生成していて、
 例えば、先ほど例に挙げた Stack なら以下のようなコードと等価になるそうです。
 
-<pre class="source" title="イテレーターのコンパイル結果（と等価なコード）" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Collections;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Collections;
 
-<span class="reserved">class</span> Stack&lt;T&gt; : IEnumerable&lt;T&gt;
+class Stack<T> : IEnumerable<T>
 {
   T[] buf;
-  <span class="reserved">int</span> top;
-  <span class="reserved">public</span> Stack(<span class="reserved">int</span> max) { <span class="reserved">this</span>.buf = <span class="reserved">new</span> T[max]; <span class="reserved">this</span>.top = 0; }
-  <span class="reserved">public void</span> Push(T item) { <span class="reserved">this</span>.buf[<span class="reserved">this</span>.top++] = item; }
-  <span class="reserved">public</span> T Pop() { <span class="reserved">return this</span>.buf[--<span class="reserved">this</span>.top]; }
+  int top;
+  public Stack(int max) { this.buf = new T[max]; this.top = 0; }
+  public void Push(T item) { this.buf[this.top++] = item; }
+  public T Pop() { return this.buf[--this.top]; }
 
-  <span class="reserved">public</span> IEnumerator&lt;T&gt; GetEnumerator() {
-    <span class="reserved">return new</span> __Enumerator1(<span class="reserved">this</span>);
+  public IEnumerator<T> GetEnumerator() {
+    return new __Enumerator1(this);
   }
-  <span class="reserved">class</span> __Enumerator1: IEnumerator&lt;T&gt;, IEnumerator
+  class __Enumerator1: IEnumerator<T>, IEnumerator
   {
-    <span class="reserved">int</span> __state;
+    int __state;
     T __current;
-    Stack&lt;T&gt; __this;
-    <span class="reserved">int</span> i;
+    Stack<T> __this;
+    int i;
 
-    <span class="reserved">public</span> __Enumerator1(Stack&lt;T&gt; __this)
+    public __Enumerator1(Stack<T> __this)
     {
-      <span class="reserved">this</span>.__this = __this;
+      this.__this = __this;
     }
 
-    <span class="reserved">public</span> T Current
+    public T Current
     {
-      <span class="reserved">get</span> { <span class="reserved">return</span> __current; }
+      get { return __current; }
     }
 
-    <span class="reserved">object</span> IEnumerator.Current
+    object IEnumerator.Current
     {
-      <span class="reserved">get</span> { <span class="reserved">return</span> __current; }
+      get { return __current; }
     }
 
-    <span class="reserved">public bool</span> MoveNext()
+    public bool MoveNext()
     {
-      <span class="reserved">switch</span> (__state)
+      switch (__state)
       {
-        <span class="reserved">case</span> 1: <span class="reserved">goto</span> __state1;
-        <span class="reserved">case</span> 2: <span class="reserved">goto</span> __state2;
+        case 1: goto __state1;
+        case 2: goto __state2;
       }
       i = __this.top - 1;
 
     __loop:
-      <span class="reserved">if</span> (i &lt; 0) <span class="reserved">goto</span> __state2;
+      if (i < 0) goto __state2;
       __current = __this.buf[i];
       __state = 1;
-      <span class="reserved">return true</span>;
+      return true;
 
     __state1:
       --i;
-      <span class="reserved">goto</span> __loop;
+      goto __loop;
 
     __state2:
       __state = 2;
-      <span class="reserved">return false</span>;
+      return false;
     }
-    <span class="reserved">public void</span> Dispose()
+    public void Dispose()
     {
       __state = 2;
     }
 
-    <span class="reserved">void</span> IEnumerator.Reset()
+    void IEnumerator.Reset()
     {
-      <span class="reserved">throw new</span> NotSupportedException();
+      throw new NotSupportedException();
     }
   }
 }
-</code></pre>
+```
 
 
 C# 2.0 コンパイラは、
@@ -377,12 +377,12 @@ C# 2.0 コンパイラは、
 この MoveNext メソッド内のようなコードに展開してくれるそうです。
 やっていることを簡単に言うと、<code>yield return x;</code> の部分を以下のように置き換えています。
 
-<pre class="source" title="yield return の置き換え" lang="">
-<code>state = State1; <span class="comment">// 次に復帰するときのための状態の記録</span>
-Current = x;    <span class="comment">// 戻り値を Current に保持</span>
-<span class="reserved">return</span> true;    <span class="comment">// いったん処理終了</span>
-<span class="reserved">case</span> State1:    <span class="comment">// 次に呼ばれたときに続きから処理するためのラベル</span>
-</code></pre>
+```csharp
+state = State1; // 次に復帰するときのための状態の記録
+Current = x;    // 戻り値を Current に保持
+return true;    // いったん処理終了
+case State1:    // 次に呼ばれたときに続きから処理するためのラベル
+```
 
 (疑似コードです。実際の C# では `case` に変数は使えないので、
 「これに相当する `goto` が生成される」くらいのものだと思って読んでください。)
@@ -405,65 +405,65 @@ Reset を呼ぼうとすると NotSupportedException がスローされます。
 以下のように、イテレーター ブロック中で Dispose() を呼び出しても、
 正しく呼び出されない場合があります。
 
-<pre class="source" title="不適切なリソース破棄" lang="">
-<code><span class="reserved">static</span> IEnumerable&lt;<span class="reserved">string</span>&gt; Lines(<span class="reserved">string</span> path)
+```csharp
+static IEnumerable<string> Lines(string path)
 {
-  System.IO.StreamReader sr = <span class="reserved">new</span> System.IO.StreamReader(path);
+  System.IO.StreamReader sr = new System.IO.StreamReader(path);
 
-  <span class="reserved">string</span> line;
-  <span class="reserved">while</span> ((line = sr.ReadLine()) != <span class="reserved">null</span>)
+  string line;
+  while ((line = sr.ReadLine()) != null)
   {
-    <span class="reserved">yield return</span> line;
+    yield return line;
   }
 
-  <em>sr.Dispose(); <span class="comment">// この行は呼ばれないことがある</span></em>
+  sr.Dispose(); // この行は呼ばれないことがある
 }
-</code></pre>
+```
 
 利用側の`foreach`ループに`break`などを書くと、`yield return`から後ろが実行されなくなります。
 以下の例のように、`break`を1つ追加するだけで、イテレーター ブロック内の最後の1行が実行されなくなります。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Iterator()
+```csharp
+static IEnumerable<int> Iterator()
 {
-    <span class="type">Console</span>.Write(<span class="string">"1の前 "</span>);
-    <span class="reserved">yield</span> <span class="reserved">return</span> 1;
-    <span class="type">Console</span>.Write(<span class="string">"1の後 "</span>);
+    Console.Write("1の前 ");
+    yield return 1;
+    Console.Write("1の後 ");
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> Foreach()
+static void Foreach()
 {
-    <span class="reserved">var</span> items = Iterator();
+    var items = Iterator();
 
-    <span class="comment">// こちらのループの結果: 1の前 1を消費 1の後</span>
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> items)
+    // こちらのループの結果: 1の前 1を消費 1の後
+    foreach (var item in items)
     {
-        <span class="type">Console</span>.Write(<span class="string">$"</span>{item}<span class="string">を消費 "</span>);
+        Console.Write($"{item}を消費 ");
     }
 
-    <span class="comment">// こちらのループの結果: 1の前 1を消費</span>
-    <span class="comment">// (yield return より後ろ(1の後)は実行されない)</span>
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> items)
+    // こちらのループの結果: 1の前 1を消費
+    // (yield return より後ろ(1の後)は実行されない)
+    foreach (var item in items)
     {
-        <span class="type">Console</span>.Write(<span class="string">$"</span>{item}<span class="string">を消費"</span>);
-        <span class="reserved">break</span>; <span class="comment">// break 1つで挙動が変わる</span>
+        Console.Write($"{item}を消費");
+        break; // break 1つで挙動が変わる
     }
 }
-</code></pre>
+```
 
 正しく sr.Dispose(); が呼ばれるようにしたければ、
 イテレーター ブロック内で「[try-catch-finally 文](../structured/oo_exception.md#try)」や「[using ステートメント](../resource/oo_dispose.md#using)」を使います。
 
-<pre class="source" title="using を使ったリソース破棄" lang="">
-<code><span class="reserved">static</span> IEnumerable&lt;<span class="reserved">string</span>&gt; Lines(<span class="reserved">string</span> path)
+```csharp
+static IEnumerable<string> Lines(string path)
 {
-  <span class="reserved">using</span> (System.IO.StreamReader sr = <span class="reserved">new</span> System.IO.StreamReader(path))
+  using (System.IO.StreamReader sr = new System.IO.StreamReader(path))
   {
-    <span class="reserved">string</span> line;
-    <span class="reserved">while</span> ((line = sr.ReadLine()) != <span class="reserved">null</span>)
+    string line;
+    while ((line = sr.ReadLine()) != null)
     {
-      <span class="reserved">yield return</span> line;
+      yield return line;
     }
   }
 }
-</code></pre>
+```

@@ -76,19 +76,19 @@ C++ でいうところの __FILE__ や __LINE__ マクロに相当するデバ�
 
 以下のように、メソッドの引数に属性をつけておくと、その引数に対して、コンパイラーが診断情報を渡してくれます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public static class</span> <span class="type">Trace</span>
+```csharp
+public static class Trace
 {
-    <span class="reserved">public static void</span> WriteLine(<span class="reserved">string</span> message,
-        [<span class="type">CallerFilePath</span>] <span class="reserved">string</span> file = <span class="literal">""</span>,
-        [<span class="type">CallerLineNumber</span>] <span class="reserved">int</span> line = 0,
-        [<span class="type">CallerMemberName</span>] <span class="reserved">string</span> member = <span class="literal">""</span>)
+    public static void WriteLine(string message,
+        [CallerFilePath] string file = "",
+        [CallerLineNumber] int line = 0,
+        [CallerMemberName] string member = "")
     {
-        <span class="reserved">var</span> s = <span class="reserved">string</span>.Format(<span class="literal">"{0}:{1} - {2}: {3}"</span>, file, line, member, message);
-        <span class="type">Console</span>.WriteLine(s);
+        var s = string.Format("{0}:{1} - {2}: {3}", file, line, member, message);
+        Console.WriteLine(s);
     }
 }
-</code></pre>
+```
 
 
 * CallerFilePath: 呼び出し元のファイル名。
@@ -114,91 +114,91 @@ C# 5.0 で、foreach の仕様が少しだけ変わるそうです。
 
 C# 4.0 までは、foreach ステートメントは以下のように展開されていました。
 
-<pre class="source" title="C# 4.0 までの foreach" lang="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> ForeachSample&lt;T&gt;(IEnumerable&lt;T&gt; data)
+```csharp
+static void ForeachSample<T>(IEnumerable<T> data)
 {
-    <span class="comment">// 展開前</span>
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+    // 展開前
+    foreach (var x in data)
     {
-        <span class="type">Console</span>.WriteLine(x);
+        Console.WriteLine(x);
     }
 
-    <span class="comment">// 展開後</span>
-    <span class="reserved">using</span> (<span class="reserved">var</span> e = data.GetEnumerator())
+    // 展開後
+    using (var e = data.GetEnumerator())
     {
         T x;
-        <span class="reserved">while</span>(e.MoveNext())
+        while(e.MoveNext())
         {
             x = e.Current;
-            <span class="type">Console</span>.WriteLine(x);
+            Console.WriteLine(x);
         }
     }
 }
-</code></pre>
+```
 
 
 これで何が嫌かというと、ラムダ式で、foreach のループ変数（上記の例でいう x）をキャプチャしたときの挙動がいまいちなことです。
 例えば、以下のコードを実行したとします。
 
-<pre class="source" title="forach のループ変数をラムダ式中で利用" lang="">
-<code><span class="reserved">var</span> data = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
+```csharp
+var data = new[] { 1, 2, 3, 4, 5 };
 
-Action a = <span class="reserved">null</span>;
+Action a = null;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+foreach (var x in data)
 {
-    a += () =&gt; <span class="type">Console</span>.WriteLine(x);
+    a += () => Console.WriteLine(x);
 }
 
 a();
-</code></pre>
+```
 
 
 C# 4.0 まででは、以下のような結果が得られる仕様になっていました。
 
-<pre class="console" title="C# 4.0 での実行結果">
+```console
 5
 5
 5
 5
 5
-</pre>
+```
 
 
 C# 5.0 では foreach の展開結果が以下のように変わる予定です。ループ変数の位置が、while ループの中に移動しました。
 
-<pre class="source" title="C# 5.0 からの foreach" lang="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> ForeachSample&lt;T&gt;(IEnumerable&lt;T&gt; data)
+```csharp
+static void ForeachSample<T>(IEnumerable<T> data)
 {
-    <span class="comment">// 展開前</span>
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+    // 展開前
+    foreach (var x in data)
     {
-        <span class="type">Console</span>.WriteLine(x);
+        Console.WriteLine(x);
     }
 
-    <span class="comment">// 展開後</span>
-    <span class="reserved">using</span> (<span class="reserved">var</span> e = data.GetEnumerator())
+    // 展開後
+    using (var e = data.GetEnumerator())
     {
-        <span class="reserved">while</span>(e.MoveNext())
+        while(e.MoveNext())
         {
-            <em>T x;</em>
+            T x;
             x = e.Current;
-            <span class="type">Console</span>.WriteLine(x);
+            Console.WriteLine(x);
         }
     }
 }
-</code></pre>
+```
 
 
 これで、先ほどのラムダ式の例の実行結果は、以下のように変わります。
 
-<pre class="console" title="C# 5.0 での実行結果">
+```console
 1
 2
 3
 4
 5
-</pre>
+```
 
 
 C# 4.0 までの仕様が前述のようになっていたのは、以下のような理由によるものです。

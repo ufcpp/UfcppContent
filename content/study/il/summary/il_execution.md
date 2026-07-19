@@ -29,18 +29,18 @@ aliases:
 
 例として、以下のような C# コードを考えてみます。
 
-<pre class="source" title="C# の例1" lang="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> X(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+```csharp
+static int X(int x, int y)
 {
-    <span class="reserved">return</span> 2 * (x + y);
+    return 2 * (x + y);
 }
-</code></pre>
+```
 
 
 これをコンパイルすると、以下のような IL が得られます。
 
-<pre class="source" title="例1のコンパイル結果の IL" lang="">
-<code>.method private hidebysig static int32  X(int32 x,
+```cil
+.method private hidebysig static int32  X(int32 x,
                                           int32 y) cil managed
 {
   .maxstack  8
@@ -51,7 +51,7 @@ aliases:
   IL_0004:  mul
   IL_0005:  ret
 }
-</code></pre>
+```
 
 
 この例で出てきた IL 命令を簡単に説明すると、表1のようになります。
@@ -147,20 +147,20 @@ aliases:
 もう1つ、ローカル変数やメソッド呼び出しも行う例を示しましょう。
 以下のような C# コードを考えてみます。
 
-<pre class="source" title="C# の例2" lang="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="reserved">var</span> x = <span class="reserved">int</span>.Parse(<span class="type">Console</span>.ReadLine());
-    <span class="reserved">var</span> y = <span class="reserved">int</span>.Parse(<span class="type">Console</span>.ReadLine());
-    <span class="type">Console</span>.WriteLine(<span class="literal">"{0} + {1} = {2}"</span>, x, y, x + y);
+    var x = int.Parse(Console.ReadLine());
+    var y = int.Parse(Console.ReadLine());
+    Console.WriteLine("{0} + {1} = {2}", x, y, x + y);
 }
-</code></pre>
+```
 
 
 これをコンパイルすると、以下のような IL が得られます。
 
-<pre class="source" title="例2のコンパイル結果の IL" lang="">
-<code>.method private hidebysig static void  Main() cil managed
+```cil
+.method private hidebysig static void  Main() cil managed
 {
   .entrypoint
   .maxstack  5
@@ -187,7 +187,7 @@ aliases:
                                                                 object)
   IL_0034:  ret
 }
-</code></pre>
+```
 
 
 いくつか新しい IL 命令が出てきました。これらの意味は、表2の通りです。

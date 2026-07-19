@@ -49,9 +49,9 @@ C# 7.0 時点では「型パターン」が主だった機能だったため、
 
 C# 7では、`is`演算子で以下のような書き方ができるようになりました。
 
-<pre class="source" title="is = 型判定">
-<code><span class="input">型を調べたい変数</span> <span class="reserved">is</span> <span class="input">型</span> <span class="input">新しい変数</span>
-</code></pre>
+```csharp
+型を調べたい変数 is 型 新しい変数
+```
 
 (正確に言うと`is`の後ろに新たに書けるようになったのは「パターン」で、
 これはそのうちの「型パターン」と呼ばれるものです。)
@@ -61,43 +61,43 @@ C# 6以前の`is`演算子は少し使い勝手が悪い面がありました。
 
 例えば、以下のように型を判定するだけなら`is`演算子の出番です。
 
-<pre class="source" title="is = 型判定">
-<code><span class="comment">// 型判定のみなら、これまでの is 演算子でも十分</span>
-<span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">string</span>) <span class="type">Console</span>.WriteLine(<span class="string">"string"</span>);
-</code></pre>
+```csharp
+// 型判定のみなら、これまでの is 演算子でも十分
+if (obj is string) Console.WriteLine("string");
+```
 
 ところが、型を判定したうえでダウンキャストしたいという場面では、以下のように、「2度手間」になって、コード量的にも実行効率的にもよくないです。
 
-<pre class="source" title="ダウンキャストしたい場合、is はいまいち">
-<code><span class="comment">// 型変換もしたい</span>
-<span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">string</span>)
+```csharp
+// 型変換もしたい
+if (obj is string)
 {
-    <span class="reserved">var</span> s = (<span class="reserved">string</span>)obj;
-    <span class="comment">//↑ isとキャストで2つの別命令を使う。二重処理になってるだけで無駄</span>
-    <span class="type">Console</span>.WriteLine(<span class="string">"string #"</span> + s.Length);
+    var s = (string)obj;
+    //↑ isとキャストで2つの別命令を使う。二重処理になってるだけで無駄
+    Console.WriteLine("string #" + s.Length);
 }
-</code></pre>
+```
 
 結局、以下のように、`as`演算子を使うことが推奨されます。
 
-<pre class="source" title="ダウンキャストにはasを使う">
-<code><span class="comment">// 結局、as 演算子 + null チェックを使うことになる</span>
-<span class="reserved">var</span> s = obj <span class="reserved">as</span> <span class="reserved">string</span>;
-<span class="reserved">if</span> (s != <span class="reserved">null</span>)
+```csharp
+// 結局、as 演算子 + null チェックを使うことになる
+var s = obj as string;
+if (s != null)
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">"string #"</span> + s.Length);
+    Console.WriteLine("string #" + s.Length);
 }
-</code></pre>
+```
 
 これに対して、C# 7では、`is`演算子で以下のような書き方ができるようになりました。
 
-<pre class="source" title="">
-<code><span class="comment">// C# 7での新しい書き方</span>
-<span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">string</span> <em>s</em>)
+```csharp
+// C# 7での新しい書き方
+if (obj is string s)
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">"string #"</span> + s.Length);
+    Console.WriteLine("string #" + s.Length);
 }
-</code></pre>
+```
 
 挙動的には、先ほどの`as`演算子を使ったものとまったく同じ挙動になります。
 `is`演算子で型を判定しつつ(`bool`の戻り値を返しつつ)、その型への変換結果を新しい変数で受け取れます。
@@ -114,60 +114,60 @@ C# 6以前の`is`演算子は少し使い勝手が悪い面がありました。
 
 元々の`is`演算子の仕様でもあるんですが、`null`には型がなくて常に`is`に失敗します(`false`を返す)。
 
-<pre class="source" title="nullは型を持たない">
-<code><span class="reserved">string</span> x = <span class="reserved">null</span>;
+```csharp
+string x = null;
 
-<span class="reserved">if</span> (x <span class="reserved">is</span> <span class="reserved">string</span>)
+if (x is string)
 {
-    <span class="comment">// x の変数の型は string なのに、is string は false</span>
-    <span class="comment">// is 演算子は変数の実行時の中身を見る ＆ null には型がない</span>
-    <span class="type">Console</span>.WriteLine(<span class="string">"ここは絶対通らない"</span>);
+    // x の変数の型は string なのに、is string は false
+    // is 演算子は変数の実行時の中身を見る ＆ null には型がない
+    Console.WriteLine("ここは絶対通らない");
 }
-</code></pre>
+```
 
 この仕様は、C# 7からの新しい構文でも引き継いでいて、`null`じゃないときだけだけ何かの処理をしたいときに使えます。
 と言っても、参照型の場合にはあまり使い道はありませんが、以下のような書き方ができます。
 
-<pre class="source" title="is演算子でnullチェック">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">string</span> nullable)
+```csharp
+static void F(string nullable)
 {
-    <span class="reserved">if</span> (nullable <span class="reserved">is</span> <span class="reserved">string</span> nonNull)
+    if (nullable is string nonNull)
     {
-        <span class="comment">// nonNull には絶対に null が入らない</span>
-        <span class="comment">// nullable をそのまま使っても、if の結果、null じゃない保証があるのであまり意味はないけども</span>
-        <span class="type">Console</span>.WriteLine(nonNull.Length);
+        // nonNull には絶対に null が入らない
+        // nullable をそのまま使っても、if の結果、null じゃない保証があるのであまり意味はないけども
+        Console.WriteLine(nonNull.Length);
     }
 }
-</code></pre>
+```
 
 この書き方が役に立つのは、値型と[null許容型](../resource/sp2_nullable.md)を使う場合でしょう。
 例えばC# 6以前だと、以下のような書き方になります。
 
-<pre class="source" title="C# 6以前のnull許容型のnullチェック">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">int</span>? x)
+```csharp
+static void F(int? x)
 {
-    <span class="comment">// C# 6以前の書き方</span>
-    <span class="reserved">if</span> (x.HasValue)
+    // C# 6以前の書き方
+    if (x.HasValue)
     {
-        <span class="comment">// この「.GetValueOrDefault()」をいちいち書くのが結構うっとおしい</span>
-        <span class="comment">// x * x だと、(x.HasValue & x.HasValue) ? (int?)(x.GetValueOrDefault() * x.GetValueOrDefault()) : null みたいなコードに展開されてしまう</span>
-        <span class="reserved">int</span> n = x.GetValueOrDefault();
-        <span class="type">Console</span>.WriteLine(n * n);
+        // この「.GetValueOrDefault()」をいちいち書くのが結構うっとおしい
+        // x * x だと、(x.HasValue & x.HasValue) ? (int?)(x.GetValueOrDefault() * x.GetValueOrDefault()) : null みたいなコードに展開されてしまう
+        int n = x.GetValueOrDefault();
+        Console.WriteLine(n * n);
     }
 }
-</code></pre>
+```
 
 これが、C# 7で以下のように書けるようになります。
 
-<pre class="source" title="C# 7からのnull許容型のnullチェック">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">int</span>? x)
+```csharp
+static void F(int? x)
 {
-    <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="reserved">int</span> <em>n</em>)
+    if (x is int n)
     {
-        <span class="type">Console</span>.WriteLine(n * n);
+        Console.WriteLine(n * n);
     }
 }
-</code></pre>
+```
 
 ただ、1つ注意が必要なのは、`is var` という似て非なる構文がある点です。
 `is var` ([`var`パターン](patterns.md#var)と言って、[`is T`](patterns.md#declaration) とは別扱い)を使った場合、nullチェックはされません。
@@ -176,56 +176,56 @@ C# 6以前の`is`演算子は少し使い勝手が悪い面がありました。
 ちなみに、C# 8.0 では、[再帰パターン](patterns.md#recursive)が暗黙的に null チェックも含んでいることを使って、手短に null チェックもできます
 (参考: [非 null マッチング](patterns.md#non-null))。
 
-<pre class="source" title="パターンを使って非 null チェック">
-<code><span class="reserved">string</span> <span class="variable">s</span> = <span class="reserved">null</span>;
+```csharp
+string s = null;
  
-<span class="comment">// 型を明示した場合、null にマッチしない</span>
-<span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">string</span>) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;ここは通らない&quot;</span>);
+// 型を明示した場合、null にマッチしない
+if (s is string) Console.WriteLine("ここは通らない");
  
-<span class="comment">// var パターンは何にでも(null 含む)マッチする</span>
-<span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">var</span> <span class="reserved">_</span>) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;ここは通る&quot;</span>);
+// var パターンは何にでも(null 含む)マッチする
+if (s is var _) Console.WriteLine("ここは通る");
  
-<span class="comment">// 再帰パターンで型を省略すると null チェックも含む</span>
-<span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> { }) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;ここは通らない&quot;</span>);
-</code></pre>
+// 再帰パターンで型を省略すると null チェックも含む
+if (s is { }) Console.WriteLine("ここは通らない");
+```
 
 ### <a id="sec-generated-title-5"></a> <a id="invariant-meaning"></a>余談: 変数の意味を変えない
 
 プログラミング言語によっては、以下のように、`is`演算子で型を判定した後には、自動的にその型扱いしてくれる言語もあります。
 
-<pre class="source" title="is によって変数の意味を変える">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">object</span> obj)
+```csharp
+static void F(object obj)
 {
-    <span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">string</span>)
+    if (obj is string)
     {
-        <span class="comment">// この中では obj を string 扱いできる言語がある</span>
-        <span class="comment">// C# ではコンパイル エラー</span>
-        <span class="type">Console</span>.WriteLine(<span class="string">"string #"</span> + obj.Length);
+        // この中では obj を string 扱いできる言語がある
+        // C# ではコンパイル エラー
+        Console.WriteLine("string #" + obj.Length);
     }
-    <span class="reserved">else</span> <span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">int</span>)
+    else if (obj is int)
     {
-        <span class="comment">// 同上、int 扱いできる言語がある</span>
-        <span class="comment">// C# ではコンパイル エラー</span>
-        <span class="type">Console</span>.WriteLine(<span class="string">"int "</span> + (obj * obj));
+        // 同上、int 扱いできる言語がある
+        // C# ではコンパイル エラー
+        Console.WriteLine("int " + (obj * obj));
     }
 }
-</code></pre>
+```
 
 C# では、こういう、「`object`だと思っていたものが一定範囲でだけ別の型になる」というようなことはやらない方針です。
 
 また、以下のように、同名の別変数を導入できる言語もありますが、こちらもC#では認めていません。
 
-<pre class="source" title="is 演算子で同名の別変数を導入">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">object</span> x)
+```csharp
+static void F(object x)
 {
-    <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="reserved">string</span> x)
+    if (x is string x)
     {
-        <span class="comment">// 引数の x とは別に、is 演算子で別の「x」を導入できる言語もある</span>
-        <span class="comment">// C# ではコンパイル エラー</span>
-        <span class="type">Console</span>.WriteLine(<span class="string">"string #"</span> + x.Length);
+        // 引数の x とは別に、is 演算子で別の「x」を導入できる言語もある
+        // C# ではコンパイル エラー
+        Console.WriteLine("string #" + x.Length);
     }
 }
-</code></pre>
+```
 
 C#では、変数はスコープ内で意味不変(invariant meaning)であるべきという方針を持っています。
 上記の2つの例では、`obj`や`x`が部分的に(`if`の中でだけ)別の意味になるので、C#としては認めたくないものになります。
@@ -239,55 +239,55 @@ C# 7では、`switch`ステートメントの`case`句に、値だけでなく�
 パターンの書き方は、前節の`is`演算子と同様です。
 また、型による条件に加えて、`when`句というものを付けて追加の条件式を書くこともできます。
 
-<pre class="source" title="switchステートメントの拡張" lang="">
-<code><span class="reserved">switch</span>(<span class="input">変数</span>)
+```csharp
+switch(変数)
 {
-    <span class="reserved">case</span> <span class="input">型</span> <span class="input">変数</span>:
-        <span class="comment">// 型が一致しているときにここに来る</span>
-        <span class="comment">// その型に変換した結果が変数に入っている</span>
-        <span class="reserved">break</span>;
-    <span class="reserved">case</span> <span class="input">型</span> <span class="input">変数</span> <span class="reserved">when</span> <span class="input">条件式</span>:
-        <span class="comment">// 型が一致していて、かつ、条件式満たしているときにここに来る</span>
-        <span class="reserved">break</span>;
-    <span class="reserved">case</span> <span class="input">値</span>:
-        <span class="comment">// 通常の値による条件との混在も可能</span>
-        <span class="reserved">break</span>;
+    case 型 変数:
+        // 型が一致しているときにここに来る
+        // その型に変換した結果が変数に入っている
+        break;
+    case 型 変数 when 条件式:
+        // 型が一致していて、かつ、条件式満たしているときにここに来る
+        break;
+    case 値:
+        // 通常の値による条件との混在も可能
+        break;
       ・
       ・
       ・
-    <span class="reserved">default</span>:
-        <span class="comment">// どの条件も満たさない時に実行される</span>
-        <span class="reserved">break</span>;
+    default:
+        // どの条件も満たさない時に実行される
+        break;
 }
-</code></pre>
+```
 
 例えば以下のような書き方ができます。
 
-<pre class="source" title="型を見て分岐する switch ステートメントの例">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">object</span> obj)
+```csharp
+static void F(object obj)
 {
-    <span class="reserved">switch</span> (obj)
+    switch (obj)
     {
-        <span class="reserved">case</span> <span class="reserved">string</span> s:
-            <span class="type">Console</span>.WriteLine(<span class="string">"string #"</span> + s.Length);
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> 7:
-            <span class="type">Console</span>.WriteLine(<span class="string">"7の時だけここに来る"</span>);
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> <span class="reserved">int</span> n <span class="reserved">when</span> n &gt; 0:
-            <span class="type">Console</span>.WriteLine(<span class="string">"正の数の時にここに来る "</span> + n);
-            <span class="comment">// ただし、上から順に判定するので、7 の時には来なくなる</span>
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> <span class="reserved">int</span> n:
-            <span class="type">Console</span>.WriteLine(<span class="string">"整数の時にここに来る"</span> + n);
-            <span class="comment">// 同上、0 以下の時にしか来ない</span>
-            <span class="reserved">break</span>;
-        <span class="reserved">default</span>:
-            <span class="type">Console</span>.WriteLine(<span class="string">"その他"</span>);
-            <span class="reserved">break</span>;
+        case string s:
+            Console.WriteLine("string #" + s.Length);
+            break;
+        case 7:
+            Console.WriteLine("7の時だけここに来る");
+            break;
+        case int n when n > 0:
+            Console.WriteLine("正の数の時にここに来る " + n);
+            // ただし、上から順に判定するので、7 の時には来なくなる
+            break;
+        case int n:
+            Console.WriteLine("整数の時にここに来る" + n);
+            // 同上、0 以下の時にしか来ない
+            break;
+        default:
+            Console.WriteLine("その他");
+            break;
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="sequential"></a>上から逐次判定
 
@@ -304,44 +304,44 @@ C# 6までの、値による分岐しかなかった`switch`ステートメン�
 
 ジャンプ テーブル化の説明のために、以下のような`switch`を考えましょう。
 
-<pre class="source" title="値による条件のみのswitchの例">
-<code><span class="reserved">switch</span>(n)
+```csharp
+switch(n)
 {
-    <span class="reserved">case</span> 0: <span class="reserved">return</span> <span class="string">"zero"</span>;
-    <span class="reserved">case</span> 1: <span class="reserved">return</span> <span class="string">"one"</span>;
-    <span class="reserved">case</span> 2: <span class="reserved">return</span> <span class="string">"two"</span>;
-    <span class="reserved">case</span> 3: <span class="reserved">return</span> <span class="string">"three"</span>;
-    <span class="reserved">case</span> 4: <span class="reserved">return</span> <span class="string">"four"</span>;
-    <span class="reserved">case</span> 5: <span class="reserved">return</span> <span class="string">"five"</span>;
-    <span class="reserved">case</span> 6: <span class="reserved">return</span> <span class="string">"six"</span>;
-    <span class="reserved">case</span> 7: <span class="reserved">return</span> <span class="string">"seven"</span>;
-    <span class="reserved">case</span> 8: <span class="reserved">return</span> <span class="string">"eight"</span>;
-    <span class="reserved">case</span> 9: <span class="reserved">return</span> <span class="string">"nine"</span>;
-    <span class="reserved">default</span>: <span class="reserved">return</span> <span class="string">"other"</span>;
+    case 0: return "zero";
+    case 1: return "one";
+    case 2: return "two";
+    case 3: return "three";
+    case 4: return "four";
+    case 5: return "five";
+    case 6: return "six";
+    case 7: return "seven";
+    case 8: return "eight";
+    case 9: return "nine";
+    default: return "other";
 }
-</code></pre>
+```
 
 こういう`switch`であれば、以下のように、辞書を引いて結果を得ることもできるはずです。
 
-<pre class="source" title="switchの辞書化">
-<code><span class="reserved">var</span> map = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">int</span>, <span class="reserved">string</span>&gt;
+```csharp
+var map = new Dictionary<int, string>
 {
-    { 0, <span class="string">"zero"</span> },
-    { 1, <span class="string">"one"</span> },
-    { 2, <span class="string">"two"</span> },
-    { 3, <span class="string">"three"</span> },
-    { 4, <span class="string">"four"</span> },
-    { 5, <span class="string">"five"</span> },
-    { 6, <span class="string">"six"</span> },
-    { 7, <span class="string">"seven"</span> },
-    { 8, <span class="string">"eight"</span> },
-    { 9, <span class="string">"nine"</span> },
+    { 0, "zero" },
+    { 1, "one" },
+    { 2, "two" },
+    { 3, "three" },
+    { 4, "four" },
+    { 5, "five" },
+    { 6, "six" },
+    { 7, "seven" },
+    { 8, "eight" },
+    { 9, "nine" },
 };
 
-<span class="reserved">string</span> s;
-<span class="reserved">if</span> (map.TryGetValue(n, <span class="reserved">out</span> s)) <span class="reserved">return</span> s;
-<span class="reserved">else</span> <span class="reserved">return</span> <span class="string">"other"</span>;
-</code></pre>
+string s;
+if (map.TryGetValue(n, out s)) return s;
+else return "other";
+```
 
 `case`の個数が少ないうちは普通に上から順に等値判定していく方が軽いんですが、
 `case`数が増えれば増えるほど、辞書化した方が有利になります。
@@ -358,58 +358,58 @@ C# 6までの、値による分岐しかなかった`switch`ステートメン�
 以下のように、一番上の`case`と一番下の`case`では、かなりパフォーマンスに差が出ます。
 (なので、パフォーマンスが気になるなら、発生頻度が高いものほど上の方に書く必要があります。)
 
-<pre class="source" title="逐次判定によるパフォーマンスの変化">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Diagnostics;
+```csharp
+using System;
+using System.Diagnostics;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> sw = <span class="reserved">new</span> <span class="type">Stopwatch</span>();
+        var sw = new Stopwatch();
 
-        <span class="comment">// bool 型は一番先頭 = 速い</span>
-        <span class="reserved">object</span> t = <span class="reserved">true</span>;
+        // bool 型は一番先頭 = 速い
+        object t = true;
         sw.Start();
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100000; i++) TypeSwitch(t);
+        for (int i = 0; i < 100000; i++) TypeSwitch(t);
         sw.Stop();
-        <span class="type">Console</span>.WriteLine(<span class="string">"bool   "</span> + sw.Elapsed); <span class="comment">// かなり速いはず</span>
+        Console.WriteLine("bool   " + sw.Elapsed); // かなり速いはず
 
-        <span class="comment">// double 型は一番末尾 = 遅い</span>
-        <span class="reserved">object</span> d = 1.1;
+        // double 型は一番末尾 = 遅い
+        object d = 1.1;
         sw.Restart();
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100000; i++) TypeSwitch(d);
+        for (int i = 0; i < 100000; i++) TypeSwitch(d);
         sw.Stop();
-        <span class="type">Console</span>.WriteLine(<span class="string">"string "</span> + sw.Elapsed); <span class="comment">// 手元の環境では5倍くらい遅かった</span>
+        Console.WriteLine("string " + sw.Elapsed); // 手元の環境では5倍くらい遅かった
 
-        <span class="comment">// どの case にもない型。default 句に行く</span>
-        <span class="reserved">var</span> s = <span class="type">DateTime</span>.UtcNow;
+        // どの case にもない型。default 句に行く
+        var s = DateTime.UtcNow;
         sw.Restart();
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100000; i++) TypeSwitch(s);
+        for (int i = 0; i < 100000; i++) TypeSwitch(s);
         sw.Stop();
-        <span class="type">Console</span>.WriteLine(<span class="string">"string "</span> + sw.Elapsed); <span class="comment">// 一番最後まで判定するので遅い</span>
+        Console.WriteLine("string " + sw.Elapsed); // 一番最後まで判定するので遅い
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span> TypeSwitch(<span class="reserved">object</span> x)
+    static int TypeSwitch(object x)
     {
-        <span class="reserved">switch</span> (x)
+        switch (x)
         {
-            <span class="reserved">default</span>: <span class="reserved">return</span> -1; <span class="comment">// ちなみに、default 句はどこに書こうと必ず一番最後</span>
-            <span class="reserved">case</span> <span class="reserved">bool</span> <span class="reserved">_</span>: <span class="reserved">return</span> 0; <span class="comment">// 前から順に判定ということは、bool の時が一番早い</span>
-            <span class="reserved">case</span> <span class="reserved">sbyte</span> <span class="reserved">_</span>: <span class="reserved">return</span> 1;
-            <span class="reserved">case</span> <span class="reserved">byte</span> <span class="reserved">_</span>: <span class="reserved">return</span> 2;
-            <span class="reserved">case</span> <span class="reserved">short</span> <span class="reserved">_</span>: <span class="reserved">return</span> 3;
-            <span class="reserved">case</span> <span class="reserved">ushort</span> <span class="reserved">_</span>: <span class="reserved">return</span> 4;
-            <span class="reserved">case</span> <span class="reserved">int</span> <span class="reserved">_</span>: <span class="reserved">return</span> 5;
-            <span class="reserved">case</span> <span class="reserved">uint</span> <span class="reserved">_</span>: <span class="reserved">return</span> 6;
-            <span class="reserved">case</span> <span class="reserved">long</span> <span class="reserved">_</span>: <span class="reserved">return</span> 7;
-            <span class="reserved">case</span> <span class="reserved">ulong</span> <span class="reserved">_</span>: <span class="reserved">return</span> 8;
-            <span class="reserved">case</span> <span class="reserved">float</span> <span class="reserved">_</span>: <span class="reserved">return</span> 9;
-            <span class="reserved">case</span> <span class="reserved">double</span> <span class="reserved">_</span>: <span class="reserved">return</span> 10; <span class="comment">// 逆に double の時は凄く遅い</span>
+            default: return -1; // ちなみに、default 句はどこに書こうと必ず一番最後
+            case bool _: return 0; // 前から順に判定ということは、bool の時が一番早い
+            case sbyte _: return 1;
+            case byte _: return 2;
+            case short _: return 3;
+            case ushort _: return 4;
+            case int _: return 5;
+            case uint _: return 6;
+            case long _: return 7;
+            case ulong _: return 8;
+            case float _: return 9;
+            case double _: return 10; // 逆に double の時は凄く遅い
         }
     }
 }
-</code></pre>
+```
 
 ちなみに、この例でも書いてありますが、逐次判定になっていたとしても`default`句にたどり着くのは必ず一番最後です。
 
@@ -426,50 +426,50 @@ C# 6までの、値による分岐しかなかった`switch`ステートメン�
 
 例として、以下のようなクラス階層を考えます。
 
-<pre class="source" title="式ノード">
-<code><span class="reserved">public abstract class</span> <span class="type">Node</span> { }
+```csharp
+public abstract class Node { }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Var</span> : <span class="type">Node</span> { }
+public class Var : Node { }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Const</span> : <span class="type">Node</span>
+public class Const : Node
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> Const(<span class="reserved">int</span> value) { Value = value; }
+    public int Value { get; }
+    public Const(int value) { Value = value; }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Add</span> : <span class="type">Node</span>
+public class Add : Node
 {
-    <span class="reserved">public</span> <span class="type">Node</span> Left { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Node</span> Right { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> Add(<span class="type">Node</span> left, <span class="type">Node</span> right)
+    public Node Left { get; }
+    public Node Right { get; }
+    public Add(Node left, Node right)
     {
         Left = left;
         Right = right;
     }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Mul</span> : <span class="type">Node</span>
+public class Mul : Node
 {
-    <span class="reserved">public</span> <span class="type">Node</span> Left { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Node</span> Right { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> Mul(<span class="type">Node</span> left, <span class="type">Node</span> right)
+    public Node Left { get; }
+    public Node Right { get; }
+    public Mul(Node left, Node right)
     {
         Left = left;
         Right = right;
     }
 }
-</code></pre>
+```
 
 説明都合で簡素化していますが、数式を扱うようなクラスです。
 要するに、例えば、「<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><mo>×</mo><mi>x</mi><mo>+</mo><mn>1</mn></math>」というような式を、以下のようなコードで表すためのクラスです。
 
-<pre class="source" title="x × x + 1">
-<code><span class="reserved">var</span> expression = <span class="reserved">new</span> <span class="type">Add</span>(
-    <span class="reserved">new</span> <span class="type">Mul</span>(
-        <span class="reserved">new</span> <span class="type">Var</span>(),
-        <span class="reserved">new</span> <span class="type">Var</span>()),
-    <span class="reserved">new</span> <span class="type">Const</span>(1));
-</code></pre>
+```csharp
+var expression = new Add(
+    new Mul(
+        new Var(),
+        new Var()),
+    new Const(1));
+```
 
 ![式を扱いためのクラス](../../../../assets/media/1094/expressions.png)
 
@@ -477,51 +477,51 @@ C# 6までの、値による分岐しかなかった`switch`ステートメン�
 
 まず、仮想メソッドなら以下のようになるでしょう(必要な部分だけを抜き出してあります)。
 
-<pre class="source" title="仮想メソッドで実装する例">
-<code><span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Node</span>
+```csharp
+abstract class Node
 {
-    <span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">int</span> Calculate(<span class="reserved">int</span> x);
+    public abstract int Calculate(int x);
 }
 
-<span class="reserved">class</span> <span class="type">Var</span>
+class Var
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> Calculate(<span class="reserved">int</span> x) =&gt; x;
+    public override int Calculate(int x) => x;
 }
 
-<span class="reserved">class</span> <span class="type">Const</span>
+class Const
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> Calculate(<span class="reserved">int</span> x) =&gt; Value;
+    public override int Calculate(int x) => Value;
 }
 
-<span class="reserved">class</span> <span class="type">Add</span>
+class Add
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> Calculate(<span class="reserved">int</span> x) =&gt; Left.Calculate(x) + Right.Calculate(x);
+    public override int Calculate(int x) => Left.Calculate(x) + Right.Calculate(x);
 }
 
-<span class="reserved">class</span> <span class="type">Mul</span>
+class Mul
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> Calculate(<span class="reserved">int</span> x) =&gt; Left.Calculate(x) * Right.Calculate(x);
+    public override int Calculate(int x) => Left.Calculate(x) * Right.Calculate(x);
 }
-</code></pre>
+```
 
 一方、型スイッチを使って書くなら以下のようになります。
 
-<pre class="source" title="型スイッチで実装する例">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">NodeExtensions</span>
+```csharp
+public static class NodeExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Calculate(<span class="reserved">this</span> <span class="type">Node</span> n, <span class="reserved">int</span> x)
+    public static int Calculate(this Node n, int x)
     {
-        <span class="reserved">switch</span> (n)
+        switch (n)
         {
-            <span class="reserved">case</span> <span class="type">Var</span> v: <span class="reserved">return</span> x;
-            <span class="reserved">case</span> <span class="type">Const</span> c: <span class="reserved">return</span> c.Value;
-            <span class="reserved">case</span> <span class="type">Add</span> a: <span class="reserved">return</span> Calculate(a.Left, x) + Calculate(a.Right, x);
-            <span class="reserved">case</span> <span class="type">Mul</span> m: <span class="reserved">return</span> Calculate(m.Left, x) * Calculate(m.Right, x);
+            case Var v: return x;
+            case Const c: return c.Value;
+            case Add a: return Calculate(a.Left, x) + Calculate(a.Right, x);
+            case Mul m: return Calculate(m.Left, x) * Calculate(m.Right, x);
         }
-        <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentOutOfRangeException</span>();
+        throw new ArgumentOutOfRangeException();
     }
 }
-</code></pre>
+```
 
 それぞれ、以下のような特徴があります。
 
@@ -592,57 +592,57 @@ C# 7.0の時点では、[ジェネリクス](../oop/sp2_generics.md)が絡む場
 例えば以下のようなコードはコンパイル エラーになっていました。
 (ジェネリックな型`T`の変数に対して`switch`できない。ちなみに、一度`object`にキャストすればできる。)
 
-<pre class="source" title="C# 7.0ではコンパイルできないswitchの例">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x)
+```csharp
+static void M<T>(T x)
 {
-    <span class="reserved">switch</span> (x)
+    switch (x)
     {
-        <span class="reserved">case</span> <span class="reserved">int</span> i:
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> <span class="reserved">string</span> s:
-            <span class="reserved">break</span>;
+        case int i:
+            break;
+        case string s:
+            break;
     }
 }
-</code></pre>
+```
 
 「`T`を`int`や`string`として処理できない」と言った旨のコンパイル エラーが出ます。
 
 さらにいうと、以下のような需要が結構ありそうな場面でも、C# 7.0ではコンパイル エラーになりました。
 
-<pre class="source" title="C# 7.0ではコンパイルできないswitchの例(型制約付き)">
-<code><span class="reserved">class</span> <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">Derived1</span> : <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">Derived2</span> : <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">Derived3</span> : <span class="type">Base</span> { }
+```csharp
+class Base { }
+class Derived1 : Base { }
+class Derived2 : Base { }
+class Derived3 : Base { }
 
-<span class="comment">// こういう、型制約付きのやつですら 7.0 ではダメだった</span>
-<span class="reserved">static</span> <span class="reserved">void</span> N&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="type">Base</span>
+// こういう、型制約付きのやつですら 7.0 ではダメだった
+static void N<T>(T x)
+    where T : Base
 {
-    <span class="reserved">switch</span> (x)
+    switch (x)
     {
-        <span class="reserved">case</span> <span class="type">Derived1</span> d:
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> <span class="type">Derived2</span> d:
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> <span class="type">Derived3</span> d:
-            <span class="reserved">break</span>;
+        case Derived1 d:
+            break;
+        case Derived2 d:
+            break;
+        case Derived3 d:
+            break;
     }
 }
-</code></pre>
+```
 
 C# 7.0でも、以下のように、`as`演算子を使った場合にはちゃんとコンパイルできます。
 型パターンは、内部的には`as`演算子に展開される機能で、`as`演算子にできて型パターンにできないことがあるのは不自然です。
 
-<pre class="source" title="as 演算子での置き換え">
-<code><span class="reserved">static</span> <span class="reserved">void</span> N&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="type">Base</span>
+```csharp
+static void N<T>(T x)
+    where T : Base
 {
-    { <span class="reserved">var</span> d = x <span class="reserved">as</span> <span class="type">Derived1</span>; <span class="reserved">if</span> (d != <span class="reserved">null</span>) { <span class="reserved">return</span>; } }
-    { <span class="reserved">var</span> d = x <span class="reserved">as</span> <span class="type">Derived2</span>; <span class="reserved">if</span> (d != <span class="reserved">null</span>) { <span class="reserved">return</span>; } }
-    { <span class="reserved">var</span> d = x <span class="reserved">as</span> <span class="type">Derived3</span>; <span class="reserved">if</span> (d != <span class="reserved">null</span>) { <span class="reserved">return</span>; } }
+    { var d = x as Derived1; if (d != null) { return; } }
+    { var d = x as Derived2; if (d != null) { return; } }
+    { var d = x as Derived3; if (d != null) { return; } }
 }
-</code></pre>
+```
 
 そこで、C# 7.1では、上記コードのような、ジェネリックな型に対する型パターンを使えるようになりました。
 (新機能というよりは、仕様漏れ・バグ修正の類です。)
@@ -654,9 +654,9 @@ C# 7.0でも、以下のように、`as`演算子を使った場合にはちゃ�
 C# 8.0 から、
 以下のコードがコンパイルできるようになりました。
 
-<pre class="source" title="ジェネリック型に対する is null">
-<code><span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span>;
-</code></pre>
+```csharp
+static bool M<T>(T x) => x is null;
+```
 
 元々 `x == null` であればコンパイルできていたのに、`x is null` がコンパイルできないのは変だということで修正されました。
 型引数 `T` が[非 null 値型](../resource/sp2_nullable.md#non-nullable)の時には常に false になります。
@@ -675,40 +675,40 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
 
 例えば、以下のような列挙型を使った分岐を考えてみます。
 
-<pre class="source" title="例として使う列挙型(改元で困るやつ)">
-<code><span class="reserved">using</span> <span class="reserved">static</span> <span class="type">年号</span>;
+```csharp
+using static 年号;
  
-<span class="reserved">enum</span> <span class="type">年号</span>
+enum 年号
 {
     明治, 大正, 昭和, 平成
 }
-</code></pre>
+```
 
 これまでだと、以下のような書き方をせざるを得ないことがあったかと思います。
 
-<pre class="source" title="switch ステートメントの例">
-<code><span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">年号</span> <span class="variable">e</span>)
+```csharp
+public void M(年号 e)
 {
-    <span class="reserved">int</span> <span class="variable">y</span>;
-    <span class="control">switch</span> (<span class="variable">e</span>)
+    int y;
+    switch (e)
     {
-        <span class="control">case</span> 明治:
-            <span class="variable">y</span> = 45;
-            <span class="control">break</span>;
-        <span class="control">case</span> 大正:
-            <span class="variable">y</span> = 15;
-            <span class="control">break</span>;
-        <span class="control">case</span> 昭和:
-            <span class="variable">y</span> = 64;
-            <span class="control">break</span>;
-        <span class="control">case</span> 平成:
-            <span class="variable">y</span> = 31;
-            <span class="control">break</span>;
-        <span class="control">default</span>: <span class="control">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
+        case 明治:
+            y = 45;
+            break;
+        case 大正:
+            y = 15;
+            break;
+        case 昭和:
+            y = 64;
+            break;
+        case 平成:
+            y = 31;
+            break;
+        default: throw new InvalidOperationException();
     }
-    <span class="comment">// y を使って何か</span>
+    // y を使って何か
 }
-</code></pre>
+```
 
 こういう書き方は結構しんどいわけですが、しんどい理由は以下のような点にあります。
 
@@ -718,55 +718,55 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
 
 ちょこっとごまかす方法として、以下のように別メソッドを1段挟む方法もあるにはありますが、相変わらず`case`や`return`がうっとおしいです。
 
-<pre class="source" title="1段メソッドを挟んでごまかす">
-<code><span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">年号</span> <span class="variable">e</span>)
+```csharp
+public void M(年号 e)
 {
-    <span class="reserved">int</span> <span class="method">lastYear</span>()
+    int lastYear()
     {
-        <span class="control">switch</span> (<span class="variable">e</span>)
+        switch (e)
         {
-            <span class="control">case</span> 明治: <span class="control">return</span> 45;
-            <span class="control">case</span> 大正: <span class="control">return</span> 15;
-            <span class="control">case</span> 昭和: <span class="control">return</span> 64;
-            <span class="control">case</span> 平成: <span class="control">return</span> 31;
-            <span class="control">default</span>: <span class="control">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
+            case 明治: return 45;
+            case 大正: return 15;
+            case 昭和: return 64;
+            case 平成: return 31;
+            default: throw new InvalidOperationException();
         }
     }
  
-    <span class="reserved">var</span> <span class="variable">y</span> = <span class="method">lastYear</span>();
-    <span class="comment">// y を使って何か</span>
+    var y = lastYear();
+    // y を使って何か
 }
-</code></pre>
+```
 
 これは、C# 8.0 の `switch` 式を使うと、以下のように書き直すことができます。
 
-<pre class="source" title="switch 式で書き直し">
-<code><span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">年号</span> <span class="variable">e</span>)
+```csharp
+public void M(年号 e)
 {
-    <span class="reserved">var</span> <span class="variable">y</span> = <span class="variable">e</span> <span class="control">switch</span>
+    var y = e switch
     {
-        明治 =&gt; 45,
-        大正 =&gt; 15,
-        昭和 =&gt; 64,
-        平成 =&gt; 31,
-        <span class="reserved">_</span> =&gt; <span class="control">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>()
+        明治 => 45,
+        大正 => 15,
+        昭和 => 64,
+        平成 => 31,
+        _ => throw new InvalidOperationException()
     };
-    <span class="comment">// y を使って何か</span>
+    // y を使って何か
 }
-</code></pre>
+```
 
 文法的には以下のようになります。
 
-<pre class="source" title="switch式の書式">
-<code><span class="input">変数</span> <span class="control">switch</span>
+```csharp
+変数 switch
 {
-    <span class="input">パターン1</span> =&gt; <span class="input">式1</span>,
-    <span class="input">パターン2</span> =&gt; <span class="input">式2</span>,
+    パターン1 => 式1,
+    パターン2 => 式2,
       ・
       ・
       ・
 }
-</code></pre>
+```
 
 ステートメントの方の`switch`との弁別のために、`switch`キーワードは後置きになっています。
 
@@ -776,14 +776,14 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
 パターンの部分には「[パターン マッチング](patterns.md)」で説明している任意のパターンを書けます。
 また、[`when`句](#switch)を付けることもできます。
 
-<pre class="source" title="switch 式に型パターン、破棄パターン、when 句">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="control">switch</span>
+```csharp
+static int M(object obj) => obj switch
 {
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="control">when</span> <span class="variable">x</span> &gt; 0 =&gt; 1,
-    <span class="reserved">int</span> <span class="reserved">_</span> =&gt; 2,
-    <span class="reserved">_</span> =&gt; 3,
+    int x when x > 0 => 1,
+    int _ => 2,
+    _ => 3,
 };
-</code></pre>
+```
 
 ### <a id="sec-generated-title-13"></a> <a id="switch-priority"></a>switch 式の優先度
 
@@ -791,22 +791,22 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
 `++x` や `await x` は `switch` 式よりも先に評価されて、
 `x * y` や `x + y` は `switch` 式よりも後に評価されます。
 
-<pre class="source" title="switch 式の優先度の例">
-<code><span class="comment">// これは (await b) switch { ... } の意味になって、</span>
-<span class="comment">// bool を await できないのでコンパイル エラー。</span>
-<span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">M1</span>(<span class="reserved">bool</span> <span class="variable">b</span>, <span class="type">Task</span> <span class="variable">x</span>, <span class="type">Task</span> <span class="variable">y</span>)
-    =&gt; <span class="reserved">await</span> <span class="variable">b</span> <span class="control">switch</span> { <span class="reserved">true</span> =&gt; <span class="variable">x</span>, <span class="reserved">false</span> =&gt; <span class="variable">y</span> };
+```csharp
+// これは (await b) switch { ... } の意味になって、
+// bool を await できないのでコンパイル エラー。
+static async Task M1(bool b, Task x, Task y)
+    => await b switch { true => x, false => y };
  
-<span class="comment">// これは (++x) switch { ... } の意味で、</span>
-<span class="comment">// x に -1 を渡した時だけ false に。</span>
-<span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">M2</span>(<span class="reserved">int</span> <span class="variable">x</span>)
-    =&gt; ++<span class="variable">x</span> <span class="control">switch</span> { 0 =&gt; <span class="reserved">false</span>, <span class="reserved">_</span> =&gt; <span class="reserved">true</span> };
+// これは (++x) switch { ... } の意味で、
+// x に -1 を渡した時だけ false に。
+static bool M2(int x)
+    => ++x switch { 0 => false, _ => true };
  
-<span class="comment">// これは y * (switch { ... }) の意味で、</span>
-<span class="comment">// 0 か y が返る。</span>
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M2</span>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">y</span>)
-    =&gt; <span class="variable">y</span> * <span class="variable">x</span> <span class="control">switch</span> { 0 =&gt; 0, <span class="reserved">_</span> =&gt; 1 };
-</code></pre>
+// これは y * (switch { ... }) の意味で、
+// 0 か y が返る。
+static int M2(int x, int y)
+    => y * x switch { 0 => 0, _ => 1 };
+```
 
 ### <a id="sec-generated-title-14"></a> <a id="exhaustive"></a>網羅性
 
@@ -817,41 +817,41 @@ C# 8.0 では、`switch` の[式](../structured/miscexpressions.md#term)版が�
 
 多くの場合、末尾に[`var`パターン](patterns.md#var)か[破棄パターン](patterns.md#discard)を書いて漏れを防ぎます。
 
-<pre class="source" title="var/破棄で「残り全部」を網羅">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+static int M(int x) => x switch
 {
-    1 =&gt; 2,
-    2 =&gt; 4,
-    <span class="reserved">_</span> =&gt; 8, <span class="comment">// 破棄パターンで「残り全部」を受付</span>
+    1 => 2,
+    2 => 4,
+    _ => 8, // 破棄パターンで「残り全部」を受付
 };
  
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+static int M(object x) => x switch
 {
-    <span class="reserved">int</span> <span class="variable">i</span> =&gt; <span class="variable">i</span>,
-    <span class="reserved">string</span> <span class="variable">s</span> =&gt; <span class="variable">s</span>.Length,
-    <span class="reserved">var</span> other =&gt; <span class="variable">other</span>.<span class="method">GetHashCode</span>(), <span class="comment">// var パターンで「残り全部」を受付</span>
+    int i => i,
+    string s => s.Length,
+    var other => other.GetHashCode(), // var パターンで「残り全部」を受付
 };
-</code></pre>
+```
 
 今のところ、`bool`だけは網羅性を確実にチェックできます。
 
-<pre class="source" title="bool の網羅性チェック">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+static int M(bool x) => x switch
 {
-    <span class="reserved">true</span> =&gt; 1,
-    <span class="reserved">false</span> =&gt; 0,
-    <span class="comment">// true/false で全パターン網羅できているので _ とかは不要</span>
+    true => 1,
+    false => 0,
+    // true/false で全パターン網羅できているので _ とかは不要
 };
  
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">x</span>, <span class="reserved">bool</span> <span class="variable">y</span>) =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) <span class="control">switch</span>
+static int M(bool x, bool y) => (x, y) switch
 {
-    (<span class="reserved">false</span>, <span class="reserved">false</span>) =&gt; 0,
-    (<span class="reserved">true</span>, <span class="reserved">false</span>) =&gt; 1,
-    (<span class="reserved">false</span>, <span class="reserved">true</span>) =&gt; 2,
-    (<span class="reserved">true</span>, <span class="reserved">true</span>) =&gt; 4,
-    <span class="comment">// 上記4パターンしかありえないので _ とかは不要</span>
+    (false, false) => 0,
+    (true, false) => 1,
+    (false, true) => 2,
+    (true, true) => 4,
+    // 上記4パターンしかありえないので _ とかは不要
 };
-</code></pre>
+```
 
 将来的には、`enum`型の網羅性や、派生クラスの網羅性もチェックしたいそうですが、
 「後からのメンバー追加に弱くなる」など課題があるため、実装されるかどうかは不明瞭です。
@@ -863,17 +863,17 @@ C# 8.0 前後で挙動が変わるのでご注意ください。
 
 すなわち、以下のような`switch`ステートメントを書いたとき、`default`句に関する扱いが変わります。
 
-<pre class="source" title="bool の網羅性">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">b</span>)
+```csharp
+static int M(bool b)
 {
-    <span class="control">switch</span> (<span class="variable">b</span>)
+    switch (b)
     {
-        <span class="control">case</span> <span class="reserved">false</span>: <span class="control">return</span> 0;
-        <span class="control">case</span> <span class="reserved">true</span>: <span class="control">return</span> 1;
-        <span class="control">default</span>: <span class="control">return</span> -1;
+        case false: return 0;
+        case true: return 1;
+        default: return -1;
     }
 }
-</code></pre>
+```
 
 - C# 7.3 以前: `default` が必須
 - C# 8.0 以降: `default` が要らないというか、むしろ書くと警告(絶対に来ない条件があるという扱い)
@@ -887,85 +887,85 @@ C# 7.3 以前がどうしてそうなっていたかは以前ブログを書い�
 ここでいうターゲットというのは結果を渡す先のことで、例えば以下のような書き方をした場合、
 null を渡す先が `int?` 型の変数なので、この `int?` が「ターゲットの型」になります。
 
-<pre class="source" title="ターゲット(渡す先)の型(この場合は int?)">
-<code><span class="reserved">int</span>? <span class="variable">x</span> = <span class="reserved">null</span>;
-</code></pre>
+```csharp
+int? x = null;
+```
 
 `switch` 式では、いろいろな条件でいろいろな値を返すわけですが、
 値から「共通の型」を決定できない場合があります。
 例えば、以下のように、(例え同じクラスから派生していたとしても)異なる型 `A` と `B` の「共通の型」は判定できず、
 コンパイル エラーを起こします。
 
-<pre class="source" title="共通の型を見つけられなくてエラーになる例">
-<code><span class="reserved">class</span> <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">Base</span> { }
+```csharp
+class Base { }
+class A : Base { }
+class B : Base { }
  
-<span class="reserved">static</span> <span class="reserved">object</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">i</span>)
+static object M(int i)
 {
-    <span class="comment">// 値が A と B で違う型なので、switch 式が返す型を決定できない。</span>
-    <span class="comment">// コンパイル エラーになる。</span>
-    <span class="reserved">var</span> <span class="variable">x</span> = <span class="variable">i</span> <span class="error"><span class="control">switch</span></span>
+    // 値が A と B で違う型なので、switch 式が返す型を決定できない。
+    // コンパイル エラーになる。
+    var x = i switch
     {
-        0 =&gt; <span class="reserved">new</span> <span class="type">A</span>(),
-        <span class="reserved">_</span> =&gt; <span class="reserved">new</span> <span class="type">B</span>(),
+        0 => new A(),
+        _ => new B(),
     };
  
-    <span class="control">return</span> <span class="variable">x</span>;
+    return x;
 }
-</code></pre>
+```
 
 これくらいならば `Base` が共通の型だと判定してほしくも思いますが、
 多段派生していたり、インターフェイスも実装していたり複雑な場合のことを考えるとそんなに簡単な話ではありません。
 
-<pre class="source" title="共通型の決定が難しい例">
-<code><span class="comment">// 型 D と F の「共通型」といわれると何？</span>
-<span class="comment">// インターフェイス J？ それともクラス A？</span>
-<span class="reserved">interface</span> <span class="type">I</span> { }
-<span class="reserved">interface</span> <span class="type">J</span> { }
-<span class="reserved">class</span> <span class="type">A</span> { }
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>, <span class="type">I</span> { }
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">A</span> { }
-<span class="reserved">class</span> <span class="type">D</span> : <span class="type">B</span>, <span class="type">J</span> { }
-<span class="reserved">class</span> <span class="type">E</span> : <span class="type">B</span> { }
-<span class="reserved">class</span> <span class="type">F</span> : <span class="type">C</span>, <span class="type">J</span> { }
-</code></pre>
+```csharp
+// 型 D と F の「共通型」といわれると何？
+// インターフェイス J？ それともクラス A？
+interface I { }
+interface J { }
+class A { }
+class B : A, I { }
+class C : A { }
+class D : B, J { }
+class E : B { }
+class F : C, J { }
+```
 
 この問題の回避策は2つあって、1つは特に難しいこともなく、「[キャスト](../start/st_cast.md#cast)しろ」というものです。
 C# コンパイラーが理解できるところまでかみ砕いたコードを書いてあげなきゃいけないということで、ちょっと煩雑なコードになります。
 
-<pre class="source" title="キャストで解決">
-<code><span class="comment">// 片方を既定型にキャストしておくことで「共通型は Base」と判定できるようになる</span>
-<span class="reserved">var</span> <span class="variable">x</span> = <span class="variable">i</span> <span class="control">switch</span>
+```csharp
+// 片方を既定型にキャストしておくことで「共通型は Base」と判定できるようになる
+var x = i switch
 {
-    0 =&gt; (<span class="type">Base</span>)<span class="reserved">new</span> <span class="type">A</span>(),
-    <span class="reserved">_</span> =&gt; <span class="reserved">new</span> <span class="type">B</span>(),
+    0 => (Base)new A(),
+    _ => new B(),
 };
-</code></pre>
+```
 
 もう1つが本節の主題の「ターゲット型からの型決定」です。
 先ほどの例では左辺が `var` (型推論)なのでコンパイルできませんが、
 以下のように、ターゲット側の型を明示することで、`switch` 式の側の型を `Base` に決定できます。
 
-<pre class="source" title="ターゲットからの型決定">
-<code><span class="comment">// 左辺(Base 型の変数)から switch 式の型を Base に決定。</span>
-<span class="comment">// コンパイルできるようになる。</span>
-<span class="type">Base</span> <span class="variable">x</span> = <span class="variable">i</span> <span class="control">switch</span>
+```csharp
+// 左辺(Base 型の変数)から switch 式の型を Base に決定。
+// コンパイルできるようになる。
+Base x = i switch
 {
-    0 =&gt; <span class="reserved">new</span> <span class="type">A</span>(),
-    <span class="reserved">_</span> =&gt; <span class="reserved">new</span> <span class="type">B</span>(),
+    0 => new A(),
+    _ => new B(),
 };
-</code></pre>
+```
 
 特に役立つのは「1 と null」(`int?` になってほしい)とかでしょう。
 
-<pre class="source" title="1 と null の共通型を判定できないので代わりにターゲット型で解決">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">b</span>)
+```csharp
+static void M(bool b)
 {
-    <span class="comment">// これはコンパイル エラー。1 と null の共通型は C# 8.0 時点では決定できない。</span>
-    <span class="reserved">var</span> <span class="variable">x</span> = <span class="variable">b</span> <span class="error"><span class="control">switch</span></span> { <span class="reserved">true</span> =&gt; 1, <span class="reserved">_</span> =&gt; <span class="reserved">null</span> };
+    // これはコンパイル エラー。1 と null の共通型は C# 8.0 時点では決定できない。
+    var x = b switch { true => 1, _ => null };
  
-    <span class="comment">// これはコンパイルできる。ターゲット型から int? に決定済みなので、1 も null も受け付ける。</span>
-    <span class="reserved">int</span>? <span class="variable">y</span> = <span class="variable">b</span> <span class="control">switch</span> { <span class="reserved">true</span> =&gt; 1, <span class="reserved">_</span> =&gt; <span class="reserved">null</span> };
+    // これはコンパイルできる。ターゲット型から int? に決定済みなので、1 も null も受け付ける。
+    int? y = b switch { true => 1, _ => null };
 }
-</code></pre>
+```

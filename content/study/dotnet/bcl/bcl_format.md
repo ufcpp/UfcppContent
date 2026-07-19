@@ -62,51 +62,51 @@ C#では、数値などから文字列への型変換は、そのままではで
 </ul>
 <div>
 
-<pre class="source" title="ToString をオーバーライド" lang="C#">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
  
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> ToString()
+    public override string ToString()
     {
-        <span class="reserved">return</span> <span class="literal">"("</span> + X + <span class="literal">", "</span> + Y + <span class="literal">")"</span>;
+        return "(" + X + ", " + Y + ")";
     }
 }
-</code></pre>
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Class</span> <span class="type">Point</span>
-    <span class="reserved">Public</span> <span class="reserved">Property</span> X <span class="reserved">As</span> <span class="reserved">Integer</span>
-    <span class="reserved">Public</span> <span class="reserved">Property</span> Y <span class="reserved">As</span> <span class="reserved">Integer</span>
+```vbnet
+Class Point
+    Public Property X As Integer
+    Public Property Y As Integer
 
-    <span class="reserved">Public</span> <span class="reserved">Overrides</span> <span class="reserved">Function</span> ToString() <span class="reserved">As</span> <span class="reserved">String</span>
-        <span class="reserved">Return</span> <span class="literal">"("</span> &amp; X &amp; <span class="literal">", "</span> &amp; Y &amp; <span class="literal">")"</span>
-    <span class="reserved">End</span> <span class="reserved">Function</span>
-<span class="reserved">End</span> <span class="reserved">Class</span>
-</code></pre>
+    Public Overrides Function ToString() As String
+        Return "(" & X & ", " & Y & ")"
+    End Function
+End Class
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="C++">
-<code><span class="reserved">ref</span> <span class="reserved">class</span> Point
+```cpp
+ref class Point
 {
-<span class="reserved">public</span>:
-  <span class="reserved">property</span> <span class="reserved">int</span> X;
-  <span class="reserved">property</span> <span class="reserved">int</span> Y;
+public:
+  property int X;
+  property int Y;
 
-  <span class="reserved">virtual</span> String^ ToString() <span class="reserved">override</span>
+  virtual String^ ToString() override
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + X + <span class="literal">", "</span> + Y + <span class="literal">")"</span>;
+    return "(" + X + ", " + Y + ")";
   }
 };
-</code></pre>
+```
 
 
 </div>
@@ -124,39 +124,39 @@ C#では、数値などから文字列への型変換は、そのままではで
 </ul>
 <div>
 
-<pre class="source" title="" lang="C#">
-<code><span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span> { X = 10, Y = 20 };
-<span class="type">Console</span>.WriteLine(p);
-</code></pre>
+```csharp
+var p = new Point { X = 10, Y = 20 };
+Console.WriteLine(p);
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Dim</span> p = <span class="reserved">New</span> <span class="type">Point</span> <span class="reserved">With</span> {.X = 10, .Y = 20}
-<span class="type">Console</span>.WriteLine(p)
-</code></pre>
+```vbnet
+Dim p = New Point With {.X = 10, .Y = 20}
+Console.WriteLine(p)
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="C++">
-<code><span class="reserved">auto</span> p = <span class="reserved">gcnew</span> Point();
-p-&gt;X = 10;
-p-&gt;Y = 20;
+```cpp
+auto p = gcnew Point();
+p->X = 10;
+p->Y = 20;
 Console::WriteLine(p);
-</code></pre>
+```
 
 
 </div>
 </div>
 
 
-<pre class="console" title="">
+```console
 (10, 20)
-</pre>
+```
 
 
 
@@ -164,15 +164,15 @@ Console::WriteLine(p);
 
 intやDateTimeなど、主要な型には、書式設定が可能なバージョンのToStringメソッドが提供されています。書式を、ToStringの引数として渡します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> n = 1980;
-<span class="type">Console</span>.WriteLine(n.ToString(<span class="literal">"d"</span>)); <span class="comment">// 1980</span>
-<span class="type">Console</span>.WriteLine(n.ToString(<span class="literal">"x"</span>)); <span class="comment">// 7bc</span>
+```csharp
+var n = 1980;
+Console.WriteLine(n.ToString("d")); // 1980
+Console.WriteLine(n.ToString("x")); // 7bc
  
-<span class="reserved">var</span> x = 0.12;
-<span class="type">Console</span>.WriteLine(x.ToString(<span class="literal">"f"</span>)); <span class="comment">// 0.12</span>
-<span class="type">Console</span>.WriteLine(x.ToString(<span class="literal">"e"</span>)); <span class="comment">// 1.200000e-001</span>
-</code></pre>
+var x = 0.12;
+Console.WriteLine(x.ToString("f")); // 0.12
+Console.WriteLine(x.ToString("e")); // 1.200000e-001
+```
 
 
 <code>"d"</code> などが書式です。
@@ -183,12 +183,12 @@ intやDateTimeなど、主要な型には、書式設定が可能なバージョ
 
 stringクラスのFormat静的メソッドで、複数の値をまとめて書式設定することができます。
 
-<pre class="source" title="string.Format 静的メソッド" lang="">
-<code><span class="reserved">var</span> x = 7;
-<span class="reserved">var</span> y = 13;
-<span class="reserved">var</span> line = <span class="reserved">string</span>.Format(<span class="literal">"{0} × {1} = {2}"</span>, x, y, x * y);
-<span class="type">Console</span>.WriteLine(line); <span class="comment">// 7 × 13 = 91</span>
-</code></pre>
+```csharp
+var x = 7;
+var y = 13;
+var line = string.Format("{0} × {1} = {2}", x, y, x * y);
+Console.WriteLine(line); // 7 × 13 = 91
+```
 
 
 1つ目の引数が書式で、2つ目以降の引数を、それぞれ、<code>{0}</code>、<code>{1}</code>、<code>{2}</code> の部分に展開します。
@@ -196,24 +196,24 @@ stringクラスのFormat静的メソッドで、複数の値をまとめて書�
 
 Console.Writeや、StreamWriter.Writeなど、内部的にstring.Formatを呼び出してくれる（＝文字列整形の挙動は string.Format と同じ）ものもあります。
 
-<pre class="source" title="Console.WriteLine は string.Format と同じ書式設定ができる" lang="">
-<code><span class="type">Console</span>.WriteLine(<span class="literal">"({0}, {1})"</span>, 1, 2); <span class="comment">// (1, 2)</span>
-</code></pre>
+```csharp
+Console.WriteLine("({0}, {1})", 1, 2); // (1, 2)
+```
 
 
 インデックスに続けて、<code>,</code>（コンマ）で区切って幅を指定することもできます。この時、正の数を指定すると右詰め、負の数を指定すると左詰めになります。
 
-<pre class="source" title="複合書式中での幅指定" lang="">
-<code><span class="type">Console</span>.WriteLine(<span class="literal">"({0,-5}) ({1,5})"</span>, 1, 1); <span class="comment">// (1    ) (    1)</span>
-</code></pre>
+```csharp
+Console.WriteLine("({0,-5}) ({1,5})", 1, 1); // (1    ) (    1)
+```
 
 
 また、インデックスに続けて、<code>:</code> （コロン）で区切って、個別の書式（＝ ToString メソッドに渡す書式）を指定できます。
 
-<pre class="source" title="個別書式指定" lang="">
-<code><span class="type">Console</span>.WriteLine(<span class="literal">"{0:x}, {1:c}"</span>, 123, 123); <span class="comment">// 7b, \123</span>
-<span class="comment">//↑ "{0}, {1}", 123.ToString("x"), 123.ToString("c") と同じ扱い</span>
-</code></pre>
+```csharp
+Console.WriteLine("{0:x}, {1:c}", 123, 123); // 7b, \123
+//↑ "{0}, {1}", 123.ToString("x"), 123.ToString("c") と同じ扱い
+```
 
 
 それでは、個別の書式についてみていきましょう。
@@ -225,12 +225,12 @@ Console.Writeや、StreamWriter.Writeなど、内部的にstring.Formatを呼び
 
 dは10進数、xは16進数を表します。xを大文字にするか小文字にするかで、16進数のa～fの大小を選べます。
 
-<pre class="source" title="標準の整数書式" lang="">
-<code><span class="comment">// d：10進数、0詰め桁数指定</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:d}, {0:d4}"</span>, 5); <span class="comment">// 5, 0005</span>
-<span class="comment">// x: 16進数、0詰め桁数指定</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:x}, {0:X}, {0:x4}, {0:X4}"</span>, 140); <span class="comment">// 8c, 8C, 008c, 008C</span>
-</code></pre>
+```csharp
+// d：10進数、0詰め桁数指定
+Console.WriteLine("{0:d}, {0:d4}", 5); // 5, 0005
+// x: 16進数、0詰め桁数指定
+Console.WriteLine("{0:x}, {0:X}, {0:x4}, {0:X4}", 140); // 8c, 8C, 008c, 008C
+```
 
 
 
@@ -238,14 +238,14 @@ dは10進数、xは16進数を表します。xを大文字にするか小文字�
 
 fで固定小数点表示、eで指数表記を表します。また、gで、fとeのどちらか、簡潔な方を自動選択してくれます。
 
-<pre class="source" title="標準の浮動小数点数書式" lang="">
-<code><span class="comment">// f: 小数点、小数点以下の桁数指定</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:f}, {0:f5}"</span>, 0.1234); <span class="comment">// 0.12, 0.12340</span>
-<span class="comment">// e: 指数表記、精度指定</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:e}, {0:e2}, {0:E2}"</span>, 0.1234); <span class="comment">// 1.234000e-001, 1.23e-001, 1.23E-001</span>
-<span class="comment">// g: f か e かを自動選択</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:g}, {1:g}"</span>, 1200000000000000.0, 0.12); <span class="comment">// 1.2e+15, 0.12</span>
-</code></pre>
+```csharp
+// f: 小数点、小数点以下の桁数指定
+Console.WriteLine("{0:f}, {0:f5}", 0.1234); // 0.12, 0.12340
+// e: 指数表記、精度指定
+Console.WriteLine("{0:e}, {0:e2}, {0:E2}", 0.1234); // 1.234000e-001, 1.23e-001, 1.23E-001
+// g: f か e かを自動選択
+Console.WriteLine("{0:g}, {1:g}", 1200000000000000.0, 0.12); // 1.2e+15, 0.12
+```
 
 
 
@@ -253,16 +253,16 @@ fで固定小数点表示、eで指数表記を表します。また、gで、f�
 
 適宜桁区切り、通貨記号などをはさんでくれるn、cや、精度を自動判定してくれるr、パーセント化してくれるpなども利用できます。
 
-<pre class="source" title="その他の数値書式" lang="">
-<code><span class="comment">// n: 適宜、桁区切りなどを挿入、小数点以下の桁数指定</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:n}, {0:n0}"</span>, 1234567); <span class="comment">// 1,234,567.00, 1,234,567</span>
-<span class="comment">// c: 通貨</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:c}"</span>, 1234567); <span class="comment">// \1,234,567</span>
-<span class="comment">// r: 復元するのに十分な桁数で出力</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:r}"</span>, 0.1234567890123456789f); <span class="comment">// 0.123456791</span>
-<span class="comment">// p: パーセント表示、小数点以下の桁数指定</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:p1}"</span>, 0.1234); <span class="comment">// 12.30%</span>
-</code></pre>
+```csharp
+// n: 適宜、桁区切りなどを挿入、小数点以下の桁数指定
+Console.WriteLine("{0:n}, {0:n0}", 1234567); // 1,234,567.00, 1,234,567
+// c: 通貨
+Console.WriteLine("{0:c}", 1234567); // \1,234,567
+// r: 復元するのに十分な桁数で出力
+Console.WriteLine("{0:r}", 0.1234567890123456789f); // 0.123456791
+// p: パーセント表示、小数点以下の桁数指定
+Console.WriteLine("{0:p1}", 0.1234); // 12.30%
+```
 
 
 * 参考:[標準の数値書式指定文字列](http://msdn.microsoft.com/ja-jp/library/dwhawy9k.aspx)
@@ -273,14 +273,14 @@ fで固定小数点表示、eで指数表記を表します。また、gで、f�
 
 数値は、0や#（ナンバー記号）などを使って、かなり自由な書式を作れます。
 
-<pre class="source" title="カスタム数値書式" lang="">
-<code><span class="comment">// 桁数を明示。0. の 0 は省略</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:#.##}"</span>, 0.2345); <span class="comment">// .23</span>
-<span class="comment">// 0詰め4ケタ.4ケタ</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:0000.0000}"</span>, 1.23); <span class="comment">// 0001.2300</span>
-<span class="comment">// 3ケタ区切り、小数点以下0詰め2ケタ</span>
-<span class="type">Console</span>.WriteLine(<span class="literal">"{0:#,#.00}"</span>, 1234567); <span class="comment">// 1,234,567.00</span>
-</code></pre>
+```csharp
+// 桁数を明示。0. の 0 は省略
+Console.WriteLine("{0:#.##}", 0.2345); // .23
+// 0詰め4ケタ.4ケタ
+Console.WriteLine("{0:0000.0000}", 1.23); // 0001.2300
+// 3ケタ区切り、小数点以下0詰め2ケタ
+Console.WriteLine("{0:#,#.00}", 1234567); // 1,234,567.00
+```
 
 
 * 参考:[カスタム数値書式指定文字列](http://msdn.microsoft.com/ja-jp/library/0c899ak8.aspx)
@@ -291,24 +291,24 @@ fで固定小数点表示、eで指数表記を表します。また、gで、f�
 
 DateTime 型、DateTimeOffset 型に対しても、標準書式（<code>"d"</code>など）や、カスタム書式（<code>"y/M/d"</code> など）を設定できます。
 
-<pre class="source" title="標準の日付書式" lang="">
-<code><span class="reserved">var</span> d = <span class="reserved">new</span> <span class="type">DateTime</span>(2008, 5, 4, 8, 30, 0);
-<span class="type">Console</span>.WriteLine(d.ToString(<span class="literal">"d"</span>)); <span class="comment">// 2008/05/04</span>
-<span class="type">Console</span>.WriteLine(d.ToString(<span class="literal">"D"</span>)); <span class="comment">// 2008年5月4日</span>
-</code></pre>
+```csharp
+var d = new DateTime(2008, 5, 4, 8, 30, 0);
+Console.WriteLine(d.ToString("d")); // 2008/05/04
+Console.WriteLine(d.ToString("D")); // 2008年5月4日
+```
 
 
 * 参考:[標準の日付と時刻の書式指定文字列](http://msdn.microsoft.com/ja-jp/library/az4se3k1.aspx)
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> d = <span class="reserved">new</span> <span class="type">DateTime</span>(2008, 5, 4, 8, 30, 0);
-<span class="type">Console</span>.WriteLine(d.ToString(<span class="literal">"y/M/d h:m:s"</span>)); <span class="comment">// 8/5/4 8:30:0</span>
-<span class="type">Console</span>.WriteLine(d.ToString(<span class="literal">"hh:mm:ss"</span>));    <span class="comment">// 08:30:00</span>
-<span class="type">Console</span>.WriteLine(d.ToString(<span class="literal">"yy/MM/dd"</span>));    <span class="comment">// 08/05/04 8:30:0</span>
-<span class="type">Console</span>.WriteLine(d.ToString(<span class="literal">"yyyy/MM/dd"</span>));  <span class="comment">// 2008/12/04</span>
-<span class="type">Console</span>.WriteLine(d.ToString(<span class="literal">"ddd dddd"</span>));    <span class="comment">// 日 日曜日</span>
-</code></pre>
+```csharp
+var d = new DateTime(2008, 5, 4, 8, 30, 0);
+Console.WriteLine(d.ToString("y/M/d h:m:s")); // 8/5/4 8:30:0
+Console.WriteLine(d.ToString("hh:mm:ss"));    // 08:30:00
+Console.WriteLine(d.ToString("yy/MM/dd"));    // 08/05/04 8:30:0
+Console.WriteLine(d.ToString("yyyy/MM/dd"));  // 2008/12/04
+Console.WriteLine(d.ToString("ddd dddd"));    // 日 日曜日
+```
 
 
 * 参考:[カスタムの日付と時刻の書式指定文字列](http://msdn.microsoft.com/ja-jp/library/8kb3ddd4.aspx)
@@ -399,30 +399,30 @@ DateTime 型、DateTimeOffset 型に対しても、標準書式（<code>"d"</cod
 
 <code>"c"</code> 書式を使うと、金額に対して、カルチャーごとに最適な整形を掛けてくれます。
 
-<pre class="source" title="カルチャーごとの通貨書式" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Globalization;
+```csharp
+using System;
+using System.Globalization;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> cultures = <span class="reserved">new</span>[] { <span class="literal">"ja-jp"</span>, <span class="literal">"zh-cn"</span>, <span class="literal">"en-us"</span>, <span class="literal">"en-gb"</span>, <span class="literal">"fr-fr"</span>, <span class="literal">"de-de"</span>, <span class="literal">"pt-br"</span>, <span class="literal">"tr-tr"</span>, <span class="literal">"he-il"</span> };
-        <span class="reserved">var</span> price = 9800;
+        var cultures = new[] { "ja-jp", "zh-cn", "en-us", "en-gb", "fr-fr", "de-de", "pt-br", "tr-tr", "he-il" };
+        var price = 9800;
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> c <span class="reserved">in</span> cultures)
+        foreach (var c in cultures)
         {
-            <span class="reserved">var</span> culture = <span class="reserved">new</span> <span class="type">CultureInfo</span>(c);
-            <span class="reserved">var</span> plus = price.ToString(<span class="literal">"c"</span>, culture);
-            <span class="reserved">var</span> minus = (-price).ToString(<span class="literal">"c"</span>, culture);
-            <span class="type">Console</span>.WriteLine(<span class="literal">"{0,-11} / {1,-12} ({2})"</span>, plus, minus, culture.DisplayName);
+            var culture = new CultureInfo(c);
+            var plus = price.ToString("c", culture);
+            var minus = (-price).ToString("c", culture);
+            Console.WriteLine("{0,-11} / {1,-12} ({2})", plus, minus, culture.DisplayName);
         }
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 ¥9,800      / -¥9,800      (日本語 (日本))
 ￥9,800.00   / ￥-9,800.00   (中国語 (中華人民共和国))
 $9,800.00   / ($9,800.00)  (英語 (米国))
@@ -432,7 +432,7 @@ $9,800.00   / ($9,800.00)  (英語 (米国))
 R$ 9.800,00 / -R$ 9.800,00 (ポルトガル語 (ブラジル))
 9.800,00 TL / -9.800,00 TL (トルコ語 (トルコ))
 ₪ 9,800.00  / ₪-9,800.00   (ヘブライ語 (イスラエル))
-</pre>
+```
 
 
 ちなみに、特にカルチャーを指定しなかった場合、OS 設定のカルチャー（日本語 Windows を使っているなら、デフォルトでは当然日本語）に基づいて整形します。

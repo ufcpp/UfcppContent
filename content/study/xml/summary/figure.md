@@ -25,56 +25,56 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
 
-<pre class="xsource" title="ソース">
-<code><span class="bracket">&lt;</span><span class="element">figure</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">image</span> <span class="attribute">src</span><span class="attvalue">="test.png"</span> <span class="attribute">width</span><span class="attvalue">="200"</span> <span class="attribute">height</span><span class="attvalue">="200"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">legend</span><span class="bracket">&gt;</span>テスト用の画像<span class="bracket">&lt;/</span><span class="element">legend</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">figure</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">figure</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">image</span> <span class="attribute">src</span><span class="attvalue">="test.png"</span> <span class="attribute">width</span><span class="attvalue">="100"</span> <span class="attribute">height</span><span class="attvalue">="100"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">legend</span><span class="bracket">&gt;</span>←通し番号も付きます<span class="bracket">&lt;/</span><span class="element">legend</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">figure</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">table</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">th</span><span class="bracket">&gt;</span>i<span class="bracket">&lt;/</span><span class="element">th</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">th</span><span class="bracket">&gt;</span>ii<span class="bracket">&lt;/</span><span class="element">th</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">th</span><span class="bracket">&gt;</span>A<span class="bracket">&lt;/</span><span class="element">th</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>10<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>15<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">th</span><span class="bracket">&gt;</span>B<span class="bracket">&lt;/</span><span class="element">th</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>25<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>50<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">caption</span><span class="bracket">&gt;</span>表も書けます<span class="bracket">&lt;/</span><span class="element">caption</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">table</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">table</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">thead</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">th</span><span class="bracket">&gt;</span>あ<span class="bracket">&lt;/</span><span class="element">th</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">th</span><span class="bracket">&gt;</span>い<span class="bracket">&lt;/</span><span class="element">th</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">thead</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">tbody</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">th</span><span class="bracket">&gt;</span>イ<span class="bracket">&lt;/</span><span class="element">th</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>三<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>五<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">th</span><span class="bracket">&gt;</span>ロ<span class="bracket">&lt;/</span><span class="element">th</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>八<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>四<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">tbody</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">caption</span><span class="bracket">&gt;</span>←表も同様に通し番号が付きます<span class="bracket">&lt;/</span><span class="element">caption</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">table</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<figure>
+  <image src="test.png" width="200" height="200" />
+  <legend>テスト用の画像</legend>
+</figure>
+<figure>
+  <image src="test.png" width="100" height="100" />
+  <legend>←通し番号も付きます</legend>
+</figure>
+<table>
+  <tr>
+    <td></td>
+    <th>i</th>
+    <th>ii</th>
+  </tr>
+  <tr>
+    <th>A</th>
+    <td>10</td>
+    <td>15</td>
+  </tr>
+  <tr>
+    <th>B</th>
+    <td>25</td>
+    <td>50</td>
+  </tr>
+  <caption>表も書けます</caption>
+</table>
+<table>
+  <thead>
+    <tr>
+      <td></td>
+      <th>あ</th>
+      <th>い</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>イ</th>
+      <td>三</td>
+      <td>五</td>
+    </tr>
+    <tr>
+      <th>ロ</th>
+      <td>八</td>
+      <td>四</td>
+    </tr>
+  </tbody>
+  <caption>←表も同様に通し番号が付きます</caption>
+</table>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
 

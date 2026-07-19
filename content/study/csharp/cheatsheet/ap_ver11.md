@@ -37,15 +37,15 @@ aliases:
 
 `"abc"u8` みたいに、文字列リテラルの後ろに u8 接尾辞を付けることで、UTF-8 な byte 列を文字列リテラルの形で書けるようになりました。
 
-<pre class="source" title="u8 リテラルの例">
-<code><span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">hex</span> <span class="operator">=</span> <span class="string">&quot;0123456789ABCDEF&quot;u8</span>;
-</code></pre>
+```csharp
+ReadOnlySpan<byte> hex = "0123456789ABCDEF"u8;
+```
 
 以下のような byte 列とほぼ同じ意味になります。
 
-<pre class="source" title="u8 リテラルの展開結果の例">
-<code><span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">s</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="reserved">byte</span>[] { <span class="number">97</span>, <span class="number">98</span>, <span class="number">99</span> };
-</code></pre>
+```csharp
+ReadOnlySpan<byte> s = new byte[] { 97, 98, 99 };
+```
 
 詳しくは「[UTF-8 リテラル](../start/st_string.md#utf8-literal)」で説明します。
 
@@ -53,28 +53,28 @@ aliases:
 
 C# 11 で、3つ以上の連続した `"` を使うことで、「一切エスケープが必要ない文字列リテラル」を書けるようになりました。
 
-<pre class="source" title="raw string literal">
-<code><span class="comment">// &quot;&quot;&quot; から始まる文字列リテラル(raw string, 生文字列)。</span>
-<span class="reserved">var</span> <span class="variable">quote</span> = <span class="string">&quot;&quot;&quot;
-    &quot; はそのまま &quot; として使われて、
+```csharp
+// """ から始まる文字列リテラル(raw string, 生文字列)。
+var quote = """
+    " はそのまま " として使われて、
     \ も \ のままの意味。
     \\ は \ が2個。
     {} とかも特別な解釈はされない。
-    &quot;&quot;&quot;</span>;
-</code></pre>
+    """;
+```
 
 この `"""` を使った書き方で、さらに文字列補間をすることもできます。
 
-<pre class="source" title="$ を2個にすれば、{ 1個はエスケープなしで書ける">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">format</span>(123, <span class="string">&quot;abc&quot;</span>));
+```csharp
+Console.WriteLine(format(123, "abc"));
 
-<span class="reserved">static</span> <span class="reserved">string</span> <span class="method">format</span>(<span class="reserved">int</span> <span class="variable">id</span>, <span class="reserved">string</span> <span class="variable">name</span>) =&gt; <span class="string">$$&quot;&quot;&quot;
-</span><span class="string">    {
-      &quot;id&quot;: </span>{{<span class="variable">id</span> <span class="comment">/* ここは補間 */</span> }}<span class="string">,
-      &quot;name&quot;: &quot;</span>{{<span class="variable">name</span> <span class="comment">/* ここも補間 */</span>}}<span class="string">&quot;
-    }</span><span class="string">
-    &quot;&quot;&quot;</span>;
-</code></pre>
+static string format(int id, string name) => $$"""
+    {
+      "id": {{id /* ここは補間 */ }},
+      "name": "{{name /* ここも補間 */}}"
+    }
+    """;
+```
 
 詳しくは「[生文字列リテラル](../start/st_string.md#raw-string)」で説明します。
 
@@ -85,19 +85,19 @@ C# 11 で、3つ以上の連続した `"` を使うことで、「一切エス�
 例えば以下のようなコードを書いたとき、`a1` 以外の `new A` はエラーになります。
 (警告ではなくエラーにします。)
 
-<pre class="source" title="required 修飾子">
-<span class="reserved">var</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span> { <span class="property">X</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>, <span class="property">Y</span> <span class="operator">=</span> <span class="number">123</span> };
+```csharp
+var a1 = new A { X = "abc", Y = 123 };
 
-<span class="reserved">var</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type"><span class="error" title="CS9035">A</span></span> { <span class="property">X</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span> }; <span class="comment">// Y を代入していないのでエラー。</span>
-<span class="reserved">var</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type"><span class="error" title="CS9035">A</span></span> { <span class="property">Y</span> <span class="operator">=</span> <span class="number">123</span> };   <span class="comment">// X を代入していないのでエラー。</span>
-<span class="reserved">var</span> <span class="variable">a4</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type"><span class="error" title="CS9035"><span class="error" title="CS9035">A</span></span></span>();             <span class="comment">// X も Y も代入していないのでエラー。</span>
+var a2 = new A { X = "abc" }; // Y を代入していないのでエラー。
+var a3 = new A { Y = 123 };   // X を代入していないのでエラー。
+var a4 = new A();             // X も Y も代入していないのでエラー。
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <em><span class="reserved">required</span></em> <span class="reserved">string</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <em><span class="reserved">required</span></em> <span class="reserved">int</span> <span class="property">Y</span>;
+    public required string X { get; init; }
+    public required int Y;
 }
-</pre>
+```
 
 詳しくは「[required メンバー](../oop/oo_property.md#required)」で説明します。
 
@@ -106,16 +106,16 @@ C# 11 で、3つ以上の連続した `"` を使うことで、「一切エス�
 C# 11で、`[]` を使ってリスト(配列や `List<T>` など)に対するパターン マッチングができるようになりました。
 例えば以下のような `switch` を書けます。
 
-<pre class="source" title="リスト パターンの例">
-<code><span class="reserved">static</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="method">removeBom</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable local">utf8</span>)
-    <span class="operator">=&gt;</span> <span class="variable local">utf8</span> <span class="reserved">is</span> [<span class="number">0xEF</span>, <span class="number">0xBB</span>, <span class="number">0xBF</span>, .. <span class="reserved">var</span> noBom] <span class="operator">?</span> <span class="variable">noBom</span> <span class="operator">:</span> <span class="variable local">utf8</span>;
+```csharp
+static ReadOnlySpan<byte> removeBom(ReadOnlySpan<byte> utf8)
+    => utf8 is [0xEF, 0xBB, 0xBF, .. var noBom] ? noBom : utf8;
 
-<span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">palindrome</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">list</span>) <span class="operator">=&gt;</span> <span class="variable local">list</span> <span class="control">switch</span>
+static bool palindrome(ReadOnlySpan<int> list) => list switch
 {
-    [] <span class="reserved">or</span> [<span class="reserved">_</span>] <span class="operator">=&gt;</span> <span class="reserved">true</span>,
-    [<span class="reserved">var</span> first, .. <span class="reserved">var</span> rest, <span class="reserved">var</span> last] <span class="operator">=&gt;</span> <span class="variable">first</span> <span class="operator">==</span> <span class="variable">last</span> <span class="operator">&amp;&amp;</span> <span class="method">palindrome</span>(<span class="variable">rest</span>),
+    [] or [_] => true,
+    [var first, .. var rest, var last] => first == last && palindrome(rest),
 };
-</code></pre>
+```
 
 詳しくは「[リスト パターン](../datatype/patterns.md#list)」で説明します。
 
@@ -139,26 +139,26 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 まず、インターフェイスの静的メンバーについてですが、
 例えば以下のようなコードが書けるようになりました。
 
-<pre class="source" title="ジェネリックな Sum メソッド">
-<span class="reserved">using</span> System<span class="operator">.</span>Numerics;
+```csharp
+using System.Numerics;
 
-<span class="comment">// よくある「和を取るコード」なものですら、これまでだとジェネリックに書く手段がなかった。</span>
-<span class="comment">// C# 11 で可能に。</span>
-<span class="reserved">static</span> <span class="type param">T</span> <span class="static"><span class="method">Sum</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type">IEnumerable</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">items</span>)
-    <span class="reserved">where</span> <span class="type param">T</span> : <span class="type">INumber</span>&lt;<span class="type param">T</span>&gt;
+// よくある「和を取るコード」なものですら、これまでだとジェネリックに書く手段がなかった。
+// C# 11 で可能に。
+static T Sum<T>(IEnumerable<T> items)
+    where T : INumber<T>
 {
-    <span class="reserved">var</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="type param">T</span><span class="operator">.</span><span class="property"><span class="static">Zero</span></span>;
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">items</span>) <span class="variable">sum</span> += <span class="variable">x</span>;
-    <span class="control">return</span> <span class="variable">sum</span>;
+    var sum = T.Zero;
+    foreach (var x in items) sum += x;
+    return sum;
 }
 
-<span class="comment">// いろんな型に対して sum&lt;T&gt; を呼ぶ。</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="method"><span class="static">Sum</span></span>(<span class="reserved">new</span> <span class="reserved">byte</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="static"><span class="method">Sum</span></span>(<span class="reserved">new</span> <span class="reserved">int</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="method"><span class="static">Sum</span></span>(<span class="reserved">new</span> <span class="reserved">float</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
-<span class="static"><span class="type">Console<span class="operator"></span></span>.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="method"><span class="static">Sum</span></span>(<span class="reserved">new</span> <span class="reserved">double</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="method"><span class="static">Sum</span></span>(<span class="reserved">new</span> <span class="reserved">decimal</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }));
-</pre>
+// いろんな型に対して sum<T> を呼ぶ。
+Console.WriteLine(Sum(new byte[] { 1, 2, 3, 4, 5 }));
+Console.WriteLine(Sum(new int[] { 1, 2, 3, 4, 5 }));
+Console.WriteLine(Sum(new float[] { 1, 2, 3, 4, 5 }));
+Console.WriteLine(Sum(new double[] { 1, 2, 3, 4, 5 }));
+Console.WriteLine(Sum(new decimal[] { 1, 2, 3, 4, 5 }));
+```
 
 (詳しくは「[インターフェイスの静的抽象メンバー](../oop/oo_interface.md#static-abstract)」で説明します。)
 
@@ -167,24 +167,24 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 符号付き整数(`int` とか `sbyte` とか)でも符号なし整数(`uint` とか `byte` とか)でも無関係に、
 常に「符号なし右シフト(論理シフト)」をするための `>>>`演算子 (`>` の数が3つ)が追加されました。
 
-<pre class="source" title="C# にも符号なし右シフト演算子を導入">
-<code><span class="reserved">using</span> System.Numerics;
+```csharp
+using System.Numerics;
 
-<span class="reserved">sbyte</span> <span class="variable">s</span> = -1;
+sbyte s = -1;
 
-<span class="comment">// ちゃんと符号なし右シフトに。</span>
-<span class="comment">// FF → 7F → 3F → 1F → F → 7 → 3 → 1</span>
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; <span class="variable">i</span> &lt; 8; <span class="variable">i</span>++)
+// ちゃんと符号なし右シフトに。
+// FF → 7F → 3F → 1F → F → 7 → 3 → 1
+for (int i = 0; i < 8; i++)
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">$&quot;</span>{<span class="variable">s</span>:<span class="string">X</span>}<span class="string">&quot;</span>);
-    <span class="variable">s</span> = <span class="method">LogicalRightShift</span>(<span class="variable">s</span>, 1);
+    Console.WriteLine($"{s:X}");
+    s = LogicalRightShift(s, 1);
 }
 
-<span class="comment">// &gt;&gt;&gt; でどの型に対しても符号なし右シフト。</span>
-<span class="reserved">static</span> <span class="type">T</span> <span class="method">LogicalRightShift</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">s</span>, <span class="reserved">int</span> <span class="variable">bits</span>)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IShiftOperators</span>&lt;<span class="type">T</span>,<span class="type">T</span>&gt;
-    =&gt; <span class="variable">s</span> <em>&gt;&gt;&gt;</em> <span class="variable">bits</span>;
-</code></pre>
+// >>> でどの型に対しても符号なし右シフト。
+static T LogicalRightShift<T>(T s, int bits)
+    where T : IShiftOperators<T,T>
+    => s >>> bits;
+```
 
 詳しくは「[【Generic Math】 C# 11 での演算子の新機能](../oop/generic-math-operators.md#unsigned-right-shift)」で説明します。
 
@@ -194,19 +194,19 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 「`checked` 演算子」を定義できるようになりました。
 これにより、ユーザー定義の演算子オーバーロードでも `checked`(オーバーフロー時に例外を投げる)と `unchecked` (オーバーフローしても例外を投げない)を切り替えられるようになります。
 
-<pre class="source" title="checked 演算子オーバーロードの例">
-<code><span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type struct">Int2Bit</span>
+```csharp
+readonly struct Int2Bit
 {
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">byte</span> <span class="field">Value</span>;
-    <span class="reserved">public</span> <span class="type struct">Int2Bit</span>(<span class="reserved">int</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="field">Value</span> <span class="operator">=</span> (<span class="reserved">byte</span>)(<span class="variable local">value</span> <span class="operator">&amp;</span> <span class="number">0b11</span>);
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="field">Value</span><span class="operator">.</span><span class="method">ToString</span>();
+    public readonly byte Value;
+    public Int2Bit(int value) => Value = (byte)(value & 0b11);
+    public override string ToString() => Value.ToString();
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">Int2Bit</span> <span class="method">Checked</span>(<span class="reserved">int</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="variable local">value</span> <span class="reserved">is</span> <span class="operator">&lt;</span> <span class="number">2</span> <span class="reserved">and</span> <span class="operator">&gt;=</span> <span class="number">0</span> <span class="operator">?</span> <span class="reserved">new</span>(<span class="variable local">value</span>) <span class="operator">:</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">OverflowException</span>();
+    public static Int2Bit Checked(int value) => value is < 2 and >= 0 ? new(value) : throw new OverflowException();
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">Int2Bit</span> <span class="reserved">operator</span> <span class="operator">+</span>(<span class="type struct">Int2Bit</span> <span class="variable local">x</span>, <span class="type struct">Int2Bit</span> <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="reserved">new</span>(<span class="variable local">x</span><span class="operator">.</span><span class="field">Value</span> <span class="operator">+</span> <span class="variable local">y</span><span class="operator">.</span><span class="field">Value</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">Int2Bit</span> <span class="reserved">operator</span> <span class="reserved"><em>checked</em></span> <span class="operator">+</span>(<span class="type struct">Int2Bit</span> <span class="variable local">x</span>, <span class="type struct">Int2Bit</span> <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="method">Checked</span>(<span class="variable local">x</span><span class="operator">.</span><span class="field">Value</span> <span class="operator">+</span> <span class="variable local">y</span><span class="operator">.</span><span class="field">Value</span>);
+    public static Int2Bit operator +(Int2Bit x, Int2Bit y) => new(x.Value + y.Value);
+    public static Int2Bit operator checked +(Int2Bit x, Int2Bit y) => Checked(x.Value + y.Value);
 }
-</code></pre>
+```
 
 詳しくは「[【Generic Math】 C# 11 での演算子の新機能](../oop/generic-math-operators.md#checked-operator-overload)」で説明します。
 
@@ -214,16 +214,16 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 
 シフト演算子の右オペランドに `int` 以外の型を使えるようになりました。
 
-<pre class="source" title="C# 11 で operator &lt;&lt;(A x, A y) とかが書けるように">
-<code><span class="reserved">struct</span> <span class="type struct">A</span>
+```csharp
+struct A
 {
-    <span class="comment">// C# 10 以前でも書けるオーバーロード。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">A</span> <span class="reserved">operator</span> <span class="operator">&lt;&lt;</span>(<span class="type struct">A</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="reserved">default</span>;
+    // C# 10 以前でも書けるオーバーロード。
+    public static A operator <<(A x, int y) => default;
 
-    <span class="comment">// C# 11 以降でだけ書けるオーバーロード。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">A</span> <span class="reserved">operator</span> <span class="operator">&lt;&lt;</span>(<span class="type struct">A</span> <span class="variable local">x</span>, <em><span class="type struct">A</span> <span class="variable local">y</span></em>) <span class="operator">=&gt;</span> <span class="reserved">default</span>;
+    // C# 11 以降でだけ書けるオーバーロード。
+    public static A operator <<(A x, A y) => default;
 }
-</code></pre>
+```
 
 詳しくは「[【Generic Math】 C# 11 での演算子の新機能](../oop/generic-math-operators.md#relaxing-shift)」で説明します。
 
@@ -231,23 +231,23 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 
 `file` という修飾子を使って「書いたファイル内からだけアクセスできる型」を作れるようになりました。
 
-<pre class="source" title="file 修飾付きの型を使う例">
-<span class="number">1</span><span class="operator">.</span><span class="method">M</span>();
+```csharp
+1.M();
 
-<em><span class="reserved">file</span></em> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Extensions</span></span>
+file static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=></span> <span class="type"><span class="static">Console</span><span class="operator">.<span class="method"><span class="static">WriteLine</span></span>(<span class="variable local">x</span>);
+    public static void M(this int x) => Console.WriteLine(x);
 }
-</pre>
+```
 
 これと同じプロジェクト内の別のファイルに以下のようなコードを書いてもエラーにはなりません。
 
-<pre class="source" title="別のファイルに同名の file 修飾付きの型を定義">
-<em><span class="reserved">file</span></em> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Extensions</span></span>
+```csharp
+file static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=></span> <span class="type"><span class="static">Console</span><span class="operator">.<span class="method"><span class="static">WriteLine</span></span>(<span class="string">"別ファイルの file-local Extensions"</span>);
+    public static void M(this int x) => Console.WriteLine("別ファイルの file-local Extensions");
 }
-</pre>
+```
 
 詳しくは「[file ローカル型](../misc/file-local.md)」で説明します。
 
@@ -257,12 +257,12 @@ generic math 関連で、数値型の演算子関連で3つ新機能が追加さ
 
 ref フィールドの書き方は参照引数や参照戻り値と同じく、型の前に `ref` 修飾を付けます。
 
-<pre class="source" title="ref フィールド">
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">ByReference</span>&lt;<span class="type param">T</span>&gt;
+```csharp
+ref struct ByReference<T>
 {
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type param">T</span> <span class="field">Value</span>;
+    public ref T Value;
 }
-</pre>
+```
 
 詳しくは「[ref フィールド](../resource/refstruct.md#ref-field)」で説明します。
 
@@ -272,65 +272,65 @@ ref フィールドの書き方は参照引数や参照戻り値と同じく、�
 
 C# 11 で、`ReadOnlySpan<char>` に対して[文字列リテラルによる定数パターン](../datatype/patterns.md#span)が使えるようになりました。
 
-<pre class="source" title="">
-<span class="comment">// string を渡せたところには ReadOnlySpan&lt;char&gt; を渡せるように。</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; <span class="variable">s</span> <span class="operator">=</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">ReadLine</span></span>();
+```csharp
+// string を渡せたところには ReadOnlySpan<char> を渡せるように。
+ReadOnlySpan<char> s = Console.ReadLine();
 
-<span class="comment">// is も</span>
-<span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="string">&quot;a&quot;</span>) { }
+// is も
+if (s is "a") { }
 
-<span class="comment">// switch ステートメントも</span>
-<span class="control">switch</span> (<span class="variable">s</span>)
+// switch ステートメントも
+switch (s)
 {
-    <span class="control">case</span> <span class="string">&quot;b&quot;</span>:
-        <span class="control">break</span>;
+    case "b":
+        break;
 }
 
-<span class="comment">// switch 式も OK。</span>
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="variable">s</span> <span class="control">switch</span>
+// switch 式も OK。
+var x = s switch
 {
-    <span class="string">&quot;c&quot;</span> <span class="operator">=&gt;</span> <span class="number">1</span>,
-    <span class="reserved">_</span> <span class="operator">=&gt;</span> <span class="number">2</span>,
+    "c" => 1,
+    _ => 2,
 };
-</pre>
+```
 
 ### <a id="sec-generated-title-14"></a> <a id="nameof-parameter"></a>nameof(引数) のスコープ変更
 
 [`nameof`](../start/st_string.md#nameof-parameter) にちょっとだけ変更が掛かりました。
 以下のように、メソッドに対する属性の中で、そのメソッドの引数の名前が参照できるようになりました。
 
-<pre class="source" title="nameof(引数名)">
-<code><span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="comment">// C# 10 までこの属性、 NotNullIfNotNull(&quot;x&quot;) と書かないといけなくて割かしつらかった。</span>
-[<span class="reserved">return</span>: <span class="type">NotNullIfNotNull</span>(<span class="reserved">nameof</span>(x))]
-<span class="reserved">static</span> <span class="reserved">string</span><span class="operator">?</span> <span class="method">m</span>(<span class="reserved">string</span><span class="operator">?</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span>;
-</code></pre>
+// C# 10 までこの属性、 NotNullIfNotNull("x") と書かないといけなくて割かしつらかった。
+[return: NotNullIfNotNull(nameof(x))]
+static string? m(string? x) => x;
+```
 
 ### <a id="sec-generated-title-15"></a> <a id="auto-default">構造体のフィールドの既定値初期化</a>
 
 C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
 クラスと同じく、明示的に代入しなかったフィールド・自動プロパティには既定値が入ります。
 
-<pre class="source" title="構造体のフィールドが自動的に 0 初期化されるように">
-<code><span class="reserved">struct</span> <span class="type struct">Sample</span>
+```csharp
+struct Sample
 {
-    <span class="reserved">int</span> <span class="field">_x</span>;
-    <span class="reserved">int</span> <span class="field">_y</span>;
-    <span class="reserved">int</span> <span class="field">_z</span>;
+    int _x;
+    int _y;
+    int _z;
 
-    <span class="reserved">public</span> <span class="type struct">Sample</span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>)
+    public Sample(int x, int y)
     {
-        <span class="method">M</span>(); <span class="comment">// C# 11 では初期化よりも先に読んでも平気。_x, _y にもこの時点でいったん 0 が入ってる。</span>
+        M(); // C# 11 では初期化よりも先に読んでも平気。_x, _y にもこの時点でいったん 0 が入ってる。
 
-        <span class="field">_x</span> <span class="operator">=</span> <span class="variable local">x</span>;
-        <span class="field">_y</span> <span class="operator">=</span> <span class="variable local">y</span>;
-        <span class="comment">// C# 11 では _z に 0 が自動で入る。</span>
+        _x = x;
+        _y = y;
+        // C# 11 では _z に 0 が自動で入る。
     }
 
-    <span class="reserved">void</span> <span class="method">M</span>() <span class="operator">=&gt;</span> <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">$&quot;</span>{<span class="field">_x</span>}<span class="string">, </span>{<span class="field">_y</span>}<span class="string">, </span>{<span class="field">_z</span>}<span class="string">&quot;</span>);
+    void M() => Console.WriteLine($"{_x}, {_y}, {_z}");
 }
-</code></pre>
+```
 
 詳しくは「[構造体](../resource/rm_struct.md#auto-default)」や「[既定値](../resource/rm_default.md#auto-default)」で説明します。
 
@@ -340,37 +340,37 @@ C# 11 では、構造体でもフィールドの明示的な初期化が不要�
 [属性をジェネリック クラスにできるようになりました](../dynamic/sp_attribute.md#generic-attribute
 )。
 
-<pre class="source" title="C# 11 以降">
-<code><span class="comment">// 属性クラスをジェネリックにできるように。</span>
-<span class="reserved">class</span> <span class="type">TypeConverter</span>&lt;<span class="type">T</span>&gt; : <span class="type">Attribute</span> { }
+```csharp
+// 属性クラスをジェネリックにできるように。
+class TypeConverter<T> : Attribute { }
 
-<span class="comment">// &lt;&gt; で型引数を指定できる。</span>
-[<span class="type">TypeConverter</span>&lt;<span class="type">MyConverter</span>&gt;]
-<span class="reserved">class</span> <span class="type">MyClass</span> { }
-</code></pre>
+// <> で型引数を指定できる。
+[TypeConverter<MyConverter>]
+class MyClass { }
+```
 
 ### <a id="sec-generated-title-17"></a> <a id="newline-in-interpolation">文字列補間中の改行</a>
 
 [文字列補間](../start/st_string.md#string-interpolation)で、以下のようなコードが書けるようになりました
 (`{}` の中で改行を入れれるようになりました)。
 
-<pre class="source" title="{} の中の改行">
-<code><span class="reserved">var</span> <span class="variable">a</span> = 1;
-<span class="reserved">var</span> <span class="variable">b</span> = 2;
-<span class="reserved">var</span> <span class="variable">s</span> = <span class="string">$&quot;</span><span class="string">a: </span>{
-    <span class="variable">a</span> <span class="comment">// ここで改行できるのは C# 11 から</span>
-    }<span class="string">, b: </span>{<span class="variable">b</span>}<span class="string">&quot;</span>;
-</code></pre>
+```csharp
+var a = 1;
+var b = 2;
+var s = $"a: {
+    a // ここで改行できるのは C# 11 から
+    }, b: {b}";
+```
 
 ちなみに、以下のように、`$@` (文字列補間、かつ、逐語的文字列リテラル)を使う場合には C# 10.0 以前でも以下のようなコードが普通に書けました。
 
-<pre class="source" title="$@ なら10以前でもOK">
-<code><span class="reserved">var</span> <span class="variable">a</span> = 1;
-<span class="reserved">var</span> <span class="variable">b</span> = 2;
-<span class="reserved">var</span> <span class="variable">s</span> = <span class="string">$@&quot;</span><span class="string">a: </span>{
-    <span class="variable">a</span> <span class="comment">// $@ の場合は C# 10.0 以前でも OK</span>
-    }<span class="string">, b: </span>{<span class="variable">b</span>}<span class="string">&quot;</span>;
-</code></pre>
+```csharp
+var a = 1;
+var b = 2;
+var s = $@"a: {
+    a // $@ の場合は C# 10.0 以前でも OK
+    }, b: {b}";
+```
 
 「`$""` の場合だけダメだった理由は今となっては思い出せない」というレベルだそうで、
 仕様漏れ・バグ修正の類にギリギリの「新機能」になります。
@@ -401,13 +401,13 @@ C# 9.0 の頃には、`IntPtr`、`UIntPtr` 型に算術演算子の定義がな�
 一応これが既存のコードに対する破壊的変更になる可能性があって、
 例えば、以下のようなコードはこれまで例外が絶対に出なかったのが、C# 11 以降は例外が出る可能性があります。
 
-<pre class="source" title="Numeric IntPtr 関連の破壊的変更">
-<span class="reserved">unsafe</span> <span class="reserved">void</span> <span class="method"><span class="warning" title="CS8321">M</span></span>(<span class="reserved">void</span><span class="operator">*</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>)
+```csharp
+unsafe void M(void* x, int y)
 {
-    <span class="reserved">var</span> <span class="variable">p</span> <span class="operator">=</span> <span class="reserved">checked</span>((<span class="type struct">IntPtr</span>)<span class="variable local">x</span>); <span class="comment">// unsigned → singed 変換扱い</span>
-    <span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> <span class="reserved">checked</span>(<span class="variable">p</span> + <span class="variable local">y</span>);
+    var p = checked((IntPtr)x); // unsigned → singed 変換扱い
+    var z = checked(p + y);
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-19"></a> <a id="cache-static-method-group">静的メソッドをデリゲート化するときのキャッシュ化</a>
 
@@ -416,53 +416,53 @@ C# 9.0 の頃には、`IntPtr`、`UIntPtr` 型に算術演算子の定義がな�
 
 例えば以下のようなコードを考えます。
 
-<pre class="source" title="ラムダ式と、メソッド グループからのデリゲート化の例">
-<span class="comment">// この X と</span>
-<span class="reserved">int</span> <span class="method">X</span>(<span class="reserved">int</span>[] <span class="variable local">data</span>) <span class="operator">=&gt;</span> <span class="variable local">data</span><span class="operator">.</span><span class="method">Sum</span>(<span class="variable local">x</span> <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="variable local">x</span>);
+```csharp
+// この X と
+int X(int[] data) => data.Sum(x => x * x);
 
-<span class="comment">// この Y、やってることは一緒。</span>
-<span class="reserved">int</span> <span class="method">Y</span>(<span class="reserved">int</span>[] <span class="variable local">data</span>) <span class="operator">=&gt;</span> <span class="variable local">data</span><span class="operator">.</span><span class="method">Sum</span>(<span class="static"><span class="method">square</span></span>);
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">square</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="variable local">x</span>;
-</pre>
+// この Y、やってることは一緒。
+int Y(int[] data) => data.Sum(square);
+static int square(int x) => x * x;
+```
 
 C# 10 までは、おおむね以下のようなコードに展開されていました。
 
-<pre class="source" title="C# 10 までの展開結果">
-<span class="comment">// ラムダ式だと導入当初からキャッシュが効いてた。</span>
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;<span class="operator">?</span> <span class="variable">_anonymous1</span> <span class="operator">=</span> <span class="reserved">null</span>;
+```csharp
+// ラムダ式だと導入当初からキャッシュが効いてた。
+Func<int, int>? _anonymous1 = null;
 
-<span class="reserved">int</span> <span class="method">X</span>(<span class="reserved">int</span>[] <span class="variable local">data</span>)
+int X(int[] data)
 {
-    <span class="comment">// こんな感じのコードに展開されてて、 new Func&lt;int, int&gt;() のアロケーションは1回限り。</span>
-    <span class="variable">_anonymous1</span> <span class="operator">??=</span> <span class="reserved">new</span> <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;(<span class="variable local">x</span> <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="variable local">x</span>);
-    <span class="control">return</span> <span class="variable local">data</span><span class="operator">.</span><span class="method">Sum</span>(<span class="variable">_anonymous1</span>);
+    // こんな感じのコードに展開されてて、 new Func<int, int>() のアロケーションは1回限り。
+    _anonymous1 ??= new Func<int, int>(x => x * x);
+    return data.Sum(_anonymous1);
 }
 
-<span class="comment">// ところが、メソッド グループを直接渡した場合、都度 new Func&lt;int, int&gt;() してた(C# 10 まで)。</span>
-<span class="reserved">int</span> <span class="method">Y</span>(<span class="reserved">int</span>[] <span class="variable local">data</span>)
+// ところが、メソッド グループを直接渡した場合、都度 new Func<int, int>() してた(C# 10 まで)。
+int Y(int[] data)
 {
-    <span class="comment">// おおむねこういうコードと同じ。</span>
-    <span class="reserved">var</span> <span class="variable">f</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;(<span class="static"><span class="method">square</span></span>);
-    <span class="control">return</span> <span class="variable local">data</span><span class="operator">.</span><span class="method">Sum</span>(<span class="variable">f</span>);
+    // おおむねこういうコードと同じ。
+    var f = new Func<int, int>(square);
+    return data.Sum(f);
 }
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">square</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="variable local">x</span>;
-</pre>
+static int square(int x) => x * x;
+```
 
 メソッド グループをデリゲート化するとき(`Y` の側)、常に `new Func<int, int>()` のコストがかかっていました。
 これが、C# 11 からは以下のような感じのコードに展開されます。
 
-<pre class="source" title="C# 11 からの展開結果">
-<span class="comment">// C# 11 で、メソッド グループの場合でも、static なものはキャッシュするようになった。</span>
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;<span class="operator">?</span> <span class="variable">_square</span> <span class="operator">=</span> <span class="reserved">null</span>;
+```csharp
+// C# 11 で、メソッド グループの場合でも、static なものはキャッシュするようになった。
+Func<int, int>? _square = null;
 
-<span class="reserved">int</span> <span class="method">Y</span>(<span class="reserved">int</span>[] <span class="variable local">data</span>)
+int Y(int[] data)
 {
-    <span class="comment">// この類のコードになった。ラムダ式の場合のものと一緒。</span>
-    <span class="variable">_square</span> <span class="operator">??=</span> <span class="reserved">new</span> <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;(<span class="method"><span class="static">square</span></span>);
-    <span class="control">return</span> <span class="variable local">data</span><span class="operator">.</span><span class="method">Sum</span>(<span class="variable">_square</span>);
+    // この類のコードになった。ラムダ式の場合のものと一緒。
+    _square ??= new Func<int, int>(square);
+    return data.Sum(_square);
 }
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">square</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span> <span class="operator">*</span> <span class="variable local">x</span>;
-</pre>
+static int square(int x) => x * x;
+```
 
 ### <a id="sec-generated-title-20"></a> <a id="CS9029">補足: required, scoped, file キーワードと型名</a>
 
@@ -474,45 +474,45 @@ C# 11 で追加される `required`, `scoped`, `file` の3つも文脈キーワ�
 型名として使えなくしたようです。
 以下のようにコンパイル エラーになります。
 
-<pre class="source" title="文脈キーワードな型名">
-<span class="comment">// 古めの文脈キーワードはクラス名にしても警告にしかならない。</span>
-<span class="comment">// 警告の出方も、古いやつは「小文字始まり ASCII のみの型名はやめて欲しい」の CS8981</span>
-<span class="reserved">class</span> <span class="type"><span class="warning" title="CS8981">async</span></span> { }
-<span class="reserved">class</span> <span class="type"><span class="warning" title="CS8981">await</span></span> { }
-<span class="reserved">class</span> <span class="type"><span class="warning" title="CS8981">dynamic</span></span> { }
+```csharp
+// 古めの文脈キーワードはクラス名にしても警告にしかならない。
+// 警告の出方も、古いやつは「小文字始まり ASCII のみの型名はやめて欲しい」の CS8981
+class async { }
+class await { }
+class dynamic { }
 
-<span class="comment">// record に関しては専用の警告。CS8860。</span>
-<span class="comment">// 今となっては、これもエラーでよかった説はある。</span>
-<span class="reserved">class</span> <span class="type"><span class="warning" title="CS8860">record</span></span> { }
+// record に関しては専用の警告。CS8860。
+// 今となっては、これもエラーでよかった説はある。
+class record { }
 
-<span class="comment">// 最近の文脈キーワードはクラス名にするとエラーにするようにしたみたい。</span>
-<span class="reserved">class</span> <span class="error" title="CS9029"><span class="type">required</span></span> { }
-<span class="reserved">class</span> <span class="error" title="CS9062"><span class="type">scoped</span></span> { }
-<span class="reserved">class</span> <span class="error" title="CS9056"><span class="type">file</span></span> { }
+// 最近の文脈キーワードはクラス名にするとエラーにするようにしたみたい。
+class required { }
+class scoped { }
+class file { }
 
-<span class="comment">// ちなみに、この辺りのクラス名をあえて使いたいときは @ を付けとけば OK。</span>
-<span class="comment">// (警告にもならない。)</span>
-<span class="reserved">class</span> <span class="type">@required</span> { }
+// ちなみに、この辺りのクラス名をあえて使いたいときは @ を付けとけば OK。
+// (警告にもならない。)
+class @required { }
 
-<span class="comment">// まあ、@ を付ければ、文脈によらない通常キーワードですら名前に使えるので。</span>
-<span class="reserved">class</span> <span class="type">@class</span> { }
-</pre>
+// まあ、@ を付ければ、文脈によらない通常キーワードですら名前に使えるので。
+class @class { }
+```
 
 ### <a id="sec-generated-title-21"></a> <a id="pointer-of-managed-types">マネージ型のポインター</a>
 
 C# 11 から、マネージ型のポインターを使えるようになりました。
 
-<pre class="source" title="マネージ型のポインター型/アドレス取得">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="reserved">string</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;
-    <span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="number">4</span>];
+    string s = "";
+    Span<byte> x = stackalloc byte[4];
 
-    <span class="comment">// 以下のような型、アドレス取得はこれまではエラーになっていた。</span>
-    <span class="comment">// (C# 11 以降も警告にはなる。多少の緩和があった。)</span>
-    <span class="warning" title="CS8500"><span class="reserved">string</span><span class="operator">*</span></span> <span class="variable">ps</span> <span class="operator">=</span> <span class="warning" title="CS8500"><span class="operator">&amp;</span><span class="variable">s</span></span>;
-    <span class="warning" title="CS8500"><span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt;<span class="operator">*</span></span> <span class="variable">px</span> <span class="operator">=</span> <span class="warning" title="CS8500"><span class="operator">&amp;</span><span class="variable">x</span></span>;
+    // 以下のような型、アドレス取得はこれまではエラーになっていた。
+    // (C# 11 以降も警告にはなる。多少の緩和があった。)
+    string* ps = &s;
+    Span<byte>* px = &x;
 }
-</pre>
+```
 
 詳しくは「[unsafe](../interop/sp_unsafe.md#pointer-of-managed-types)」で説明します。

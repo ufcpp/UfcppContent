@@ -28,51 +28,51 @@ aliases:
 
 #### <a id="sec-generated-title-3"></a>構造体
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">SampleStruct</span> : <span class="type">InterfaceA</span>, <span class="type">InterfaceB</span>
+```csharp
+public struct SampleStruct : InterfaceA, InterfaceB
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> A { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> B { <span class="reserved">get</span>; }
+    public int A { get; }
+    public int B { get; }
 
-    <span class="reserved">public</span> SampleStruct(<span class="reserved">int</span> a, <span class="reserved">int</span> b) { A = a; B = b; }
+    public SampleStruct(int a, int b) { A = a; B = b; }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">SampleStruct</span> <span class="reserved">operator</span>-(<span class="type">SampleStruct</span> x)
-        =&gt; <span class="reserved">new</span> <span class="type">SampleStruct</span>(-x.A, -x.B);
+    public static SampleStruct operator-(SampleStruct x)
+        => new SampleStruct(-x.A, -x.B);
 }
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">InterfaceA</span> { <span class="reserved">int</span> A { <span class="reserved">get</span>; } }
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">InterfaceB</span> { <span class="reserved">int</span> B { <span class="reserved">get</span>; } }
-</code></pre>
+public interface InterfaceA { int A { get; } }
+public interface InterfaceB { int B { get; } }
+```
 
 #### <a id="sec-generated-title-4"></a>クラス
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">SampleClass</span> : <span class="type">BaseClass</span>, <span class="type">InterfaceA</span>, <span class="type">InterfaceB</span>
+```csharp
+public sealed class SampleClass : BaseClass, InterfaceA, InterfaceB
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> A { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> B { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int A { get; set; }
+    public int B { get; set; }
 
-    <span class="reserved">public</span> SampleClass() { }
-    <span class="reserved">public</span> SampleClass(<span class="reserved">int</span> a, <span class="reserved">int</span> b) { A = a; B = b; }
+    public SampleClass() { }
+    public SampleClass(int a, int b) { A = a; B = b; }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">SampleClass</span> <span class="reserved">operator</span> -(<span class="type">SampleClass</span> x)
-        =&gt; <span class="reserved">new</span> <span class="type">SampleClass</span>(-x.A, -x.B);
+    public static SampleClass operator -(SampleClass x)
+        => new SampleClass(-x.A, -x.B);
 
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">void</span> X() { }
+    public override void X() { }
 
     ~SampleClass() { }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">BaseClass</span>
+public class BaseClass
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">void</span> X() { }
+    public virtual void X() { }
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">StaticClass</span>
+public static class StaticClass
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span> Hex(<span class="reserved">int</span> x) =&gt; x.ToString(<span class="string">"X"</span>);
+    public static string Hex(int x) => x.ToString("X");
 }
-</code></pre>
+```
 
 単純に、クラスの方ができることは多いです。
 
@@ -128,37 +128,36 @@ aliases:
 
 これら、0初期化状態にある値を、<em>構造体の既定値</em>(default value)と呼びます。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Sample</span>
+struct Sample
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> I;
-    <span class="reserved">public</span> <span class="reserved">double</span> D;
-    <span class="reserved">public</span> <span class="reserved">bool</span> B;
-    <span class="reserved">public</span> <span class="reserved">string</span> S;
+    public int I;
+    public double D;
+    public bool B;
+    public string S;
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="type">Sample</span> s;
+    static Sample s;
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="type">Console</span>.WriteLine(s.I);
-        <span class="type">Console</span>.WriteLine(s.D);
-        <span class="type">Console</span>.WriteLine(s.B);
-        <span class="type">Console</span>.WriteLine(s.S);
+        Console.WriteLine(s.I);
+        Console.WriteLine(s.D);
+        Console.WriteLine(s.B);
+        Console.WriteLine(s.S);
     }
 }
-</code></pre>
+```
 
-<pre class="console" title="">
-<code>0
+```console
+0
 0
 False
-
-</code></pre>
+```
 
 ## <a id="sec-generated-title-7"></a> <a id="parameterless-ctor"></a>引数なしコンストラクター
 
@@ -168,37 +167,37 @@ C# 9.0 まで、構造体のメンバーとして引数なしのコンストラ�
 例えば以下のコードでは、`Point`クラスには引数なしのコンストラクターを定義していませんが、
 `new Point()`という書き方で 0 初期化を行っています。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Point</span>
+struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y) { X = x; Y = y; }
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> ToString() =&gt; <span class="string">$"(</span>{X}<span class="string">, </span>{Y}<span class="string">)"</span>;
+    public int X { get; }
+    public int Y { get; }
+    public Point(int x, int y) { X = x; Y = y; }
+    public override string ToString() => $"({X}, {Y})";
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> p1 = <span class="reserved">new</span> <span class="type">Point</span>(); <span class="comment">// 既定値、つまり、「XもYも0に初期化」という意味で使われる</span>
-        <span class="reserved">var</span> p2 = <span class="reserved">new</span> <span class="type">Point</span>(10, 20);
-        <span class="reserved">var</span> p3 = <span class="reserved">default</span>(<span class="type">Point</span>); <span class="comment">// C# 2.0～9.0 まで、p1と同じ意味</span>
+        var p1 = new Point(); // 既定値、つまり、「XもYも0に初期化」という意味で使われる
+        var p2 = new Point(10, 20);
+        var p3 = default(Point); // C# 2.0～9.0 まで、p1と同じ意味
 
-        <span class="type">Console</span>.WriteLine(p1);
-        <span class="type">Console</span>.WriteLine(p2);
-        <span class="type">Console</span>.WriteLine(p3);
+        Console.WriteLine(p1);
+        Console.WriteLine(p2);
+        Console.WriteLine(p3);
     }
 }
-</code></pre>
+```
 
-<pre class="console" title="">
-<code>(0, 0)
+```console
+(0, 0)
 (10, 20)
 (0, 0)
-</code></pre>
+```
 
 <h5 class="version version2">Ver. 2.0</h5>
 
@@ -218,13 +217,13 @@ C# 10.0 で、ついにその案が採用されることになり、
 引数なしコンストラクターを書けるようになりました。
 例えば以下のようなコードが書けるようになります。
 
-<pre class="source" title="構造体の引数なしコンストラクターの例">
-<code><span class="reserved">struct</span> <span class="type">A</span>
+```csharp
+struct A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="type">A</span>() =&gt; X = 1;
+    public int X;
+    public A() => X = 1;
 }
-</code></pre>
+```
 
 これで、`new A()` で `X` が1になります。
 
@@ -233,37 +232,37 @@ C# 10.0 で、ついにその案が採用されることになり、
 背景説明の通り、`new()` と `default` の意味が変わったので注意が必要です。
 この例の構造体 `A` の場合、以下のような挙動になります。
 
-<pre class="source" title="new A() と default(A)">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">new</span> <span class="type">A</span>().X); <span class="comment">// コンストラクターが呼ばれて、X == 1 になってる。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">default</span>(<span class="type">A</span>).X); <span class="comment">// コンストラクターも呼ばれず 0 初期化で、X == 0 になってる。</span>
-</code></pre>
+```csharp
+Console.WriteLine(new A().X); // コンストラクターが呼ばれて、X == 1 になってる。
+Console.WriteLine(default(A).X); // コンストラクターも呼ばれず 0 初期化で、X == 0 になってる。
+```
 
 C# 7.1/9.0 で、`new()` や `default` に[ターゲット型からの推論](../start/misctyperesolution.md#target-type)が働くようになったので、以下のようにも書けます。
 
-<pre class="source" title="new() と default">
-<code><span class="type">A</span> a = <span class="reserved">new</span>();
-<span class="type">Console</span>.<span class="method">WriteLine</span>(a.X); <span class="comment">// 1</span>
+```csharp
+A a = new();
+Console.WriteLine(a.X); // 1
 
-a = <span class="reserved">default</span>;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(a.X); <span class="comment">// 0</span>
-</code></pre>
+a = default;
+Console.WriteLine(a.X); // 0
+```
 
 `default` を書く以外に、配列の要素も既定値(0初期化)になるので注意が必要です。
 
-<pre class="source" title=" 配列の要素は暗黙的に default">
-<code><span class="comment">// 配列の要素は暗黙的に default…</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>((<span class="reserved">new</span> <span class="type">A</span>[1])[0].X); <span class="comment">// default(A) と同じ扱いで、X == 0 になってる。</span>
-</code></pre>
+```csharp
+// 配列の要素は暗黙的に default…
+Console.WriteLine((new A[1])[0].X); // default(A) と同じ扱いで、X == 0 になってる。
+```
 
 ちなみに、ジェネリクス越しでも `new()` と `default` の呼び分けが掛かります。
 
-<pre class="source" title="ジェネリクス越しの new() と default">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">New</span>&lt;<span class="type">A</span>&gt;().X); <span class="comment">// 1</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">Default</span>&lt;<span class="type">A</span>&gt;().X); <span class="comment">// 0</span>
+```csharp
+Console.WriteLine(New<A>().X); // 1
+Console.WriteLine(Default<A>().X); // 0
 
-<span class="reserved">static</span> <span class="type">T</span> <span class="method">New</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>() =&gt; <span class="reserved">new</span>();
-<span class="reserved">static</span> <span class="type">T</span>? <span class="method">Default</span>&lt;<span class="type">T</span>&gt;() =&gt; <span class="reserved">default</span>;
-</code></pre>
+static T New<T>() where T : new() => new();
+static T? Default<T>() => default;
+```
 
 また、これまで `default` と同じ意味だった `new()` が、引数なしコンストラクターの有無で違う意味になるのでこの点にも注意が必要です。
 例えば、一般の構造体で[オプション引数](../structured/st_function.md#default-parameter)を使いたい場合、
@@ -271,18 +270,18 @@ a = <span class="reserved">default</span>;
 引数なしコンストラクターがない場合には `new()` も既定値扱いですが、
 ある場合には `new()` を渡せなくなります。
 
-<pre class="source" title="引数なしコンストラクターの有無で new() の意味が変わる例">
-<code><span class="reserved">void</span> <span class="method">m</span>(
-    <span class="type">NoCtor</span> n1 = <span class="reserved">new</span>(),
-    <span class="type">NoCtor</span> n2 = <span class="reserved">default</span>,
-    <span class="type">Ctor</span> c1 = <span class="error"><span class="reserved">new</span>()</span>, <span class="comment">// この行だけコンパイル エラー</span>
-    <span class="type">Ctor</span> c2 = <span class="reserved">default</span>
+```csharp
+void m(
+    NoCtor n1 = new(),
+    NoCtor n2 = default,
+    Ctor c1 = new(), // この行だけコンパイル エラー
+    Ctor c2 = default
     )
 { }
 
-<span class="reserved">struct</span> <span class="type">NoCtor</span> { }
-<span class="reserved">struct</span> <span class="type">Ctor</span> { <span class="reserved">public</span> <span class="type">Ctor</span>() { } }
-</code></pre>
+struct NoCtor { }
+struct Ctor { public Ctor() { } }
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="field-initialize"></a>フィールド初期化子
 
@@ -290,23 +289,23 @@ C# 10.0 で構造体に引数なしコンストラクターが使えるように
 フィールド初期化子も使えるようになりました。
 以下のようなコードは C# 10.0 から書けるようになります。
 
-<pre class="source" title="構造体のフィールド初期化子の例">
-<code><span class="reserved">struct</span> <span class="type struct">FieldInitializer</span>
+```csharp
+struct FieldInitializer
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">X</span> <span class="operator">=</span> <span class="number">1</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">Y</span> <span class="operator">=</span> <span class="number">2</span>;
+    public int X = 1;
+    public int Y = 2;
 
-    <span class="reserved">public</span> <span class="type struct">FieldInitializer</span>() { }
+    public FieldInitializer() { }
 }
-</code></pre>
+```
 
 `new()` だけで、`X`、`Y` の値がそれぞれ1、2に初期化されます。
 
-<pre class="source" title="引数なしコンストラクターでフィールド初期化子が呼ばれる例">
-<code><span class="reserved">var</span> f = <span class="reserved">new</span> <span class="type">FieldInitializer</span>();
-<span class="type">Console</span>.<span class="method">WriteLine</span>(f.X); <span class="comment">// 1</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(f.Y); <span class="comment">// 2
-</code></pre>
+```csharp
+var f = new FieldInitializer();
+Console.WriteLine(f.X); // 1
+Console.WriteLine(f.Y); // 2
+```
 
 (※ 初期案では、明示的なコンストラクター定義もなしでフィールド初期化子を書けるようにする予定でした。
 この際、フィールド初期化子を書くとコンパイラーが引数なしコンストラクターを生成していました。
@@ -319,19 +318,19 @@ C# 10 リリース当初はその案に基づいた実装になっていまし�
 それとも引数なしコンストラクターの呼び出しになるのか紛らわしくなるので、
 構造体の引数なしコンストラクターは public 以外を認めていません。
 
-<pre class="source" title="private、internal な引数なしコンストラクターはエラーになる">
-<code><span class="reserved">struct</span> <span class="type">A</span>
+```csharp
+struct A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">private</span> <span class="error"><span class="type">A</span></span>() =&gt; X = 0; <span class="comment">// エラー</span>
+    public int X;
+    private A() => X = 0; // エラー
 }
 
-<span class="reserved">struct</span> <span class="type">B</span>
+struct B
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">internal</span> <span class="error"><span class="type">B</span></span>() =&gt; X = 0; <span class="comment">// エラー</span>
+    public int X;
+    internal B() => X = 0; // エラー
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-11"></a> <a id="definite-assignment"></a>確実な初期化
 
@@ -342,43 +341,43 @@ C# 10 リリース当初はその案に基づいた実装になっていまし�
 
 例えば、以下のコードは、コンストラクター内で `_z` の初期化を忘れているのでコンパイル エラーになっていました。
 
-<pre class="source" title="_z の初期化忘れ">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">Sample</span>
+```csharp
+struct Sample
 {
-    <span class="reserved">int</span> _x;
-    <span class="reserved">int</span> _y;
-    <span class="reserved">int</span> _z;
+    int _x;
+    int _y;
+    int _z;
 
-    <span class="reserved">public</span> Sample(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    public Sample(int x, int y)
     {
         _x = x;
         _y = y;
-        <span class="comment">// C# 10 以前はコンパイル エラー</span>
+        // C# 10 以前はコンパイル エラー
     }
 }
-</code></pre>
+```
 
 (クラスの場合はこういう制限はなく、明示的に初期化しなかったフィールドは既定値(0)で初期化されます。)
 
 また、全てのフィールドを初期化するまで、プロパティやメソッドなどの関数メンバーを呼べないという制約もありました。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">Sample</span>
+```csharp
+struct Sample
 {
-    <span class="reserved">int</span> _x;
-    <span class="reserved">int</span> _y;
+    int _x;
+    int _y;
 
-    <span class="reserved">public</span> Sample(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    public Sample(int x, int y)
     {
-        M(); <span class="comment">// エラー: _x, _y の初期化より前に呼んじゃダメ。</span>
+        M(); // エラー: _x, _y の初期化より前に呼んじゃダメ。
         _x = x;
         _y = y;
-        M(); <span class="comment">// この順ならOK。</span>
+        M(); // この順ならOK。
     }
 
-    <span class="reserved">void</span> M() { }
+    void M() { }
 }
-</code></pre>
+```
 
 (同じくクラスの場合は制限はなし。既定値(0)が使われるだけ。)
 
@@ -391,25 +390,25 @@ C# 11 では、構造体でもフィールドの明示的な初期化が不要�
 
 前節のコードとほぼ同じですが、 C# 11 にすれば以下のようなコードがコンパイルできるようになります。
 
-<pre class="source" title="構造体のフィールドが自動的に 0 初期化されるように">
-<code><span class="reserved">struct</span> <span class="type struct">Sample</span>
+```csharp
+struct Sample
 {
-    <span class="reserved">int</span> <span class="field">_x</span>;
-    <span class="reserved">int</span> <span class="field">_y</span>;
-    <span class="reserved">int</span> <span class="field">_z</span>;
+    int _x;
+    int _y;
+    int _z;
 
-    <span class="reserved">public</span> <span class="type struct">Sample</span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>)
+    public Sample(int x, int y)
     {
-        <span class="method">M</span>(); <span class="comment">// C# 11 では初期化よりも先に読んでも平気。_x, _y にもこの時点でいったん 0 が入ってる。</span>
+        M(); // C# 11 では初期化よりも先に読んでも平気。_x, _y にもこの時点でいったん 0 が入ってる。
 
-        <span class="field">_x</span> <span class="operator">=</span> <span class="variable local">x</span>;
-        <span class="field">_y</span> <span class="operator">=</span> <span class="variable local">y</span>;
-        <span class="comment">// C# 11 では _z に 0 が自動で入る。</span>
+        _x = x;
+        _y = y;
+        // C# 11 では _z に 0 が自動で入る。
     }
 
-    <span class="reserved">void</span> <span class="method">M</span>() <span class="operator">=&gt;</span> <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">$&quot;</span>{<span class="field">_x</span>}<span class="string">, </span>{<span class="field">_y</span>}<span class="string">, </span>{<span class="field">_z</span>}<span class="string">&quot;</span>);
+    void M() => Console.WriteLine($"{_x}, {_y}, {_z}");
 }
-</code></pre>
+```
 
 
 ### <a id="sec-generated-title-13"></a> <a id="auto-property"></a>自動プロパティの扱い変更
@@ -420,20 +419,20 @@ C# 11 では、構造体でもフィールドの明示的な初期化が不要�
 
 C# 5.0 以前の場合、以下のコードはコンパイル エラーを起こします。
 
-<pre class="source" title="C# 5.0まではエラーになるコード">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Point</span>
+```csharp
+public struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
+    public int X { get; private set; }
+    public int Y { get; private set; }
 
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    public Point(int x, int y)
     {
-        <span class="comment">// C# 5.0 まではエラーになる</span>
+        // C# 5.0 まではエラーになる
         X = x;
         Y = y;
     }
 }
-</code></pre>
+```
 
 エラーを起こす原因は、以下の組み合わせのせいです。
 
@@ -443,22 +442,22 @@ C# 5.0 以前の場合、以下のコードはコンパイル エラーを起こ
 
 このせいで、構造体と自動プロパティは相性が悪く、以下のように、自動プロパティを使わない書き方に書き換える必要がありました。
 
-<pre class="source" title="C# 5.0までで正しくコンパイルできるようにするには">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Point</span>
+```csharp
+public struct Point
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span> { <span class="reserved">return</span> _x; } }
+    private int _x;
+    public int X { get { return _x; } }
 
-    <span class="reserved">private</span> <span class="reserved">int</span> _y;
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span> { <span class="reserved">return</span> _y; } }
+    private int _y;
+    public int Y { get { return _y; } }
 
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    public Point(int x, int y)
     {
         _x = x;
         _y = y;
     }
 }
-</code></pre>
+```
 
 これに対して、C# 6では、最初のコードがコンパイルできるようになっています。
 C#の仕様書に以下の1文が追加されたことによります。
@@ -469,52 +468,52 @@ C#の仕様書に以下の1文が追加されたことによります。
 
 ちなみに、C# 6の場合は get のみの自動プロパティ(get-only auto-property)という構文が追加されて、先ほどのコードはさらに、以下のように書けるようになりました。
 
-<pre class="source" title="C# 6のget-only自動プロパティ">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Point</span>
+```csharp
+public struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    public int X { get; }
+    public int Y { get; }
 
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    public Point(int x, int y)
     {
         X = x;
         Y = y;
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-14"></a> <a id="memberwise"></a>メンバー毎コピー、メンバー毎比較
 
 構造体の変数への代入は、全メンバーのコピーになります。
 また、構造体には自動的に`Equals`メソッドが実装されて、メンバー毎の比較(全メンバー一致の場合に一致)になります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Point</span>
+    public struct Point
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-        <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+        public int X { get; }
+        public int Y { get; }
 
-        <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y) { X = x; Y = y; }
-        <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> ToString() =&gt; <span class="string">$"(</span>{X}<span class="string">, </span>{Y}<span class="string">)"</span>;
+        public Point(int x, int y) { X = x; Y = y; }
+        public override string ToString() => $"({X}, {Y})";
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
-        <span class="reserved">var</span> y = x;
+        var x = new Point(1, 2);
+        var y = x;
 
-        <span class="type">Console</span>.WriteLine(y); <span class="comment">// x のメンバー毎コピー = (1, 2)</span>
+        Console.WriteLine(y); // x のメンバー毎コピー = (1, 2)
 
-        <span class="comment">// メンバー毎比較(全メンバー一致なら一致)</span>
-        <span class="type">Console</span>.WriteLine(x.Equals(<span class="reserved">new</span> <span class="type">Point</span>(1, 2))); <span class="comment">// true</span>
-        <span class="type">Console</span>.WriteLine(x.Equals(<span class="reserved">new</span> <span class="type">Point</span>(1, 3))); <span class="comment">// false</span>
+        // メンバー毎比較(全メンバー一致なら一致)
+        Console.WriteLine(x.Equals(new Point(1, 2))); // true
+        Console.WriteLine(x.Equals(new Point(1, 3))); // false
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-15"></a> <a id="struct-modifier"></a>構造体に対する特別な修飾子
 
@@ -531,27 +530,27 @@ C#の仕様書に以下の1文が追加されたことによります。
 
 いくつか実例を挙げます。
 
-<pre class="source" title="ref の語順の例">
-<code><span class="comment">// OK</span>
-<span class="reserved">readonly</span> <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Ok1</span> { }
-<span class="reserved">readonly</span> <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">Ok2</span> { }
-<span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">Ok3</span> { }
+```csharp
+// OK
+readonly public ref struct Ok1 { }
+readonly public ref partial struct Ok2 { }
+public readonly ref partial struct Ok3 { }
 
-<span class="comment">// コンパイル エラー</span>
-<span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved"><span class="error">struct</span></span> <span class="type">Ng1</span> { }
-<span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved"><span class="error">public</span></span> <span class="reserved">struct</span> <span class="type">Ng2</span> { }
-<span class="reserved">readonly</span> <span class="reserved">public</span> <span class="error">partial</span> <span class="reserved"><span class="error">ref</span></span> <span class="reserved">struct</span> <span class="type">Ng3</span> { }
-<span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved"><span class="error">partial</span></span> <span class="reserved">struct</span> <span class="type">Ng4</span> { }
-<span class="reserved">public</span> <span class="reserved">ref</span> <span class="error">partial</span> <span class="reserved"><span class="error">readonly</span></span> <span class="reserved">struct</span> <span class="type">Ng5</span> { }
-</code></pre>
+// コンパイル エラー
+ref readonly struct Ng1 { }
+readonly ref public struct Ng2 { }
+readonly public partial ref struct Ng3 { }
+public ref readonly partial struct Ng4 { }
+public ref partial readonly struct Ng5 { }
+```
 
 おそらく、以下のような型の入れ子とメソッド定義の区別を楽にするための制限(あくまでコンパイラー都合)と思われます。
 
-<pre class="source" title="ref の語順に制限がある理由">
-<code><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="comment">// 以下のエラー行、エラー内容は「readonly の後ろには型名が必要」になる</span>
-    <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved"><span class="error">struct</span></span> <span class="type">InnerStruct</span> { }
-    <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> Method(<span class="reserved">in</span> <span class="reserved">int</span> x) =&gt; <span class="reserved">ref</span> x;
+    // 以下のエラー行、エラー内容は「readonly の後ろには型名が必要」になる
+    ref readonly struct InnerStruct { }
+    ref readonly int Method(in int x) => ref x;
 }
-</code></pre>
+```

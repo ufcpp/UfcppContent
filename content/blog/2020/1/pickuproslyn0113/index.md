@@ -25,18 +25,18 @@ C# 9.0 に向けた [null 許容参照型](../../../../study/csharp/resource/nul
 
 C# 8.0 だと、以下のような感じのコードの null 警告は [`!` 演算子](../../../../study/csharp/resource/nullablereferencetype.md#null-forgiving) で無視する以外に消す方法がありません。
 
-<pre class="source" title="属性がメソッド内に効いてない">
-<code><span class="reserved">bool</span> <span class="method">TryGetValue</span>&lt;<span class="type">T</span>&gt;([<span class="type">NotNullWhen</span>(<span class="reserved">true</span>)]<span class="reserved">out</span> <span class="type">T</span> <span class="variable">t</span>) <span class="reserved">where</span> <span class="type">T</span>: <span class="reserved">class</span>
+```csharp
+bool TryGetValue<T>([NotNullWhen(true)]out T t) where T: class
 {
-    <span class="variable">t</span> = <span class="warning"><span class="reserved">null</span></span>; <span class="comment">// 今、警告が出る</span>
-    <span class="control">return</span> <span class="reserved">false</span>;
+    t = null; // 今、警告が出る
+    return false;
 }
-[<span class="reserved">return</span>: <span class="type">MaybeNull</span>]
-<span class="type">T</span> <span class="method">GetFirstOrDefault</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
+[return: MaybeNull]
+T GetFirstOrDefault<T>() where T : class
 {
-    <span class="control">return</span> <span class="warning"><span class="reserved">null</span></span>; <span class="comment">// 今、警告が出る</span>
+    return null; // 今、警告が出る
 }
-</code></pre>
+```
 
 C# 8.0 ではスケジュール都合で放置(属性をメソッドの中にまで反映させるのは結構大変＆これを使う人(= ライブラリ作者側 << 利用側)は少ない)されてたやつです。
 機能要望どころか、バグだと思われてバグ報告がたびたび入ります(重複 issue がたくさんある)し、9.0 で再検討。
@@ -46,10 +46,10 @@ C# 8.0 ではスケジュール都合で放置(属性をメソッドの中にま
 
 Task-like (= 要は非同期メソッドの戻り値)の[変性](../../../../study/csharp/oop/sp4_variance.md)も不便な場面がよくあります。
 
-<pre class="source" title="Task の null 許容共変性">
-<code><span class="type">Task</span>&lt;<span class="reserved">string</span>&gt; <span class="method">A</span>() =&gt; <span class="type">Task</span>.<span class="method">FromResult</span>(<span class="string">&quot;&quot;</span>);
-<span class="type">Task</span>&lt;<span class="reserved">string</span>?&gt; <span class="method">B</span>() =&gt; <span class="warning"><span class="method">A</span>()</span>; <span class="comment">// async/await が付いていればOKなものの、この書き方だと警告</span>
-</code></pre>
+```csharp
+Task<string> A() => Task.FromResult("");
+Task<string?> B() => A(); // async/await が付いていればOKなものの、この書き方だと警告
+```
 
 これも要望が多いわけですが…
 というか、これに関してはそもそも `Task<object> x = new Task<string>();` 的な、(null 許容性関係ない)一般の共変性を認めてほしいという話もありましが、
@@ -58,24 +58,24 @@ Task-like (= 要は非同期メソッドの戻り値)の[変性](../../../../stu
 Task-like (`Task` とか `ValueTask` とか、非同期メソッドの戻り値に使うもの)だけ特別扱いするのも気持ち悪い話なんですが、
 特別扱いというなら今、どうもそもそも、`IEnumerable<T>` だけ特別扱いしているそうなので今更とのこと。
 
-<pre class="source" title="">
-<code><span class="reserved">interface</span> <span class="type">I</span>&lt;<span class="reserved">in</span> <span class="type">T</span>&gt; { }
-<span class="reserved">class</span> <span class="type">C</span>&lt;<span class="type">T</span>&gt; : <span class="type">I</span>&lt;<span class="type">T</span>&gt; { }
+```csharp
+interface I<in T> { }
+class C<T> : I<T> { }
  
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+static void Main()
 {
-    <span class="comment">// string は string? に代入可能</span>
-    <span class="reserved">string</span> <span class="variable">s1</span> = <span class="string">&quot;&quot;</span>;
-    <span class="reserved">string</span>? <span class="variable">s2</span> = <span class="variable">s1</span>;
+    // string は string? に代入可能
+    string s1 = "";
+    string? s2 = s1;
  
-    <span class="type">I</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">x1</span> = <span class="reserved">new</span> <span class="type">C</span>&lt;<span class="reserved">string</span>&gt;();
-    <span class="type">I</span>&lt;<span class="reserved">string</span>?&gt; <span class="variable">x2</span> = <span class="warning"><span class="variable">x1</span></span>; <span class="comment">// 一般にはここで警告。in が付いてても ? 違いの共変性はない</span>
+    I<string> x1 = new C<string>();
+    I<string?> x2 = x1; // 一般にはここで警告。in が付いてても ? 違いの共変性はない
  
-    <span class="comment">// でも、IEnumerable だけは特別扱いして共変らしい</span>
-    <span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">e1</span> = <span class="reserved">new</span> <span class="reserved">string</span>[1];
-    <span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>?&gt; <span class="variable">e2</span> = <span class="variable">e1</span>;
+    // でも、IEnumerable だけは特別扱いして共変らしい
+    IEnumerable<string> e1 = new string[1];
+    IEnumerable<string?> e2 = e1;
 }
-</code></pre>
+```
 
 なので、Task-like を特別扱いするの自体はありだろうという雰囲気。
 ただ、「オーバーロード解決とかで問題起こさないかとか要検証」という感じ。
@@ -84,12 +84,12 @@ Task-like (`Task` とか `ValueTask` とか、非同期メソッドの戻り値�
 
 今、以下のようなコードは警告が出るようになっています。非 null 型にキャストしたければそれより前に null チェックが必須。
 
-<pre class="source" title="null チェックなしで非 null な型にキャスト">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span>? <span class="variable">nullable</span>)
+```csharp
+static void M(string? nullable)
 {
-    <span class="reserved">string</span> <span class="variable">nonNull</span> = <span class="warning">(<span class="reserved">string</span>)<span class="variable">nullable</span></span>;
+    string nonNull = (string)nullable;
 }
-</code></pre>
+```
 
 これも意図的にそうしてるんですが、「うっとおしいと思う場面と有益だと思う場面、どちらが多いか」ということで再検討。
 例えば Roslyn (C# コンパイラー自身のコード)内では `(object)x == null` という書き方をよくするそうです。
@@ -117,9 +117,9 @@ C# 8.0 で [`switch` 式](../../../../study/csharp/datatype/typeswitch.md#switch
 
 末尾のたった1個の `;` の有無で意味が変わるというのはだいぶ気持ち悪いんですが… 他に適切な記号もなさげ。
 
-<pre class="source" title="; の有無で意味が違う">
-<code><span class="variable">f</span> = () =&gt; { <span class="method">F</span>(); <span class="method">G</span>(); }; <span class="comment">// block body</span>
-<span class="variable">f</span> = () =&gt; { <span class="method">F</span>(); <span class="method">G</span>() };  <span class="comment">// expression body</span>
-</code></pre>
+```csharp
+f = () => { F(); G(); }; // block body
+f = () => { F(); G() };  // expression body
+```
 
 `switch` 式の枝の方の話だけに留めるか、式ブロックの方までやるべきか、とりあえず C# 9.0 で何かしら実装する前提で調査は始めようという感じみたいです。

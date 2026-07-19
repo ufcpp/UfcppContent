@@ -28,33 +28,33 @@ params の改善話は紆余曲折ありまして。
 現在の C# の params (可変長引数)は、`params T[]` (引数の型は配列)しか書けません。
 これに対して、任意のコレクション型を使って、`params List<T>` とか `params IEnumerable<T>` とか書きたいという要望が長らくありました。
 
-<pre class="source" title="過去の params 改善案">
-<span class="comment">// (あくまでも過去の案)</span>
-<span class="method"><span class="static">M1</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
-<span class="method"><span class="static">M2</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
-<span class="static"><span class="method">M3</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+```csharp
+// (あくまでも過去の案)
+M1(1, 2, 3);
+M2(1, 2, 3);
+M3(1, 2, 3);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M1</span></span>(<span class="reserved">params</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">items</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M2</span></span>(<span class="reserved">params</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">items</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M3</span></span>(<span class="reserved">params</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">items</span>) { }
-</pre>
+static void M1(params IEnumerable<int> items) { }
+static void M2(params List<int> items) { }
+static void M3(params Span<int> items) { }
+```
 
 「この類の何かを書きたい」という要望は今でもあるんですが、
 ただ、ここにきて[コレクション リテラル](../../1/collection-literal/index.md)という提案が出ています。
 コレクション リテラルがあれば、別に params がなくても以下のように書くことができます。
 
-<pre class="source" title="コレクション リテラルがあれば別にいいのでは…">
-<span class="comment">// 呼び出し側をコレクション リテラルにしてしまう。</span>
-<span class="comment">// 元の params 案との差は [] の2文字だけ。</span>
-<span class="method"><span class="static">M1</span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
-<span class="method"><span class="static">M2</span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
-<span class="static"><span class="method">M3</span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+```csharp
+// 呼び出し側をコレクション リテラルにしてしまう。
+// 元の params 案との差は [] の2文字だけ。
+M1([1, 2, 3]);
+M2([1, 2, 3]);
+M3([1, 2, 3]);
 
-<span class="comment">// params で任意のコレクションを扱うのはやめちゃう。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M1</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">items</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M2</span></span>(<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">items</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M3</span></span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">items</span>) { }
-</pre>
+// params で任意のコレクションを扱うのはやめちゃう。
+static void M1(IEnumerable<int> items) { }
+static void M2(List<int> items) { }
+static void M3(Span<int> items) { }
+```
 
 `[]` の2文字程度ならさぼらず書いてもいいんじゃないかという感じがします。
 なので、「params の汎用化」という目的においてはもう別にやらなくてもいいんじゃないかという雰囲気になっています。
@@ -82,26 +82,26 @@ ReadOnly で受け取っているので書き換えできず、scoped なので�
 
 以下のようなコードを書いたとき、
 
-<pre class="source" title="params ReadOnlySpan">
-<span class="method"><span class="static">M</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
-<span class="method"><span class="static">M</span></span>(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>);
+```csharp
+M(1, 2, 3);
+M("a", "b", "c");
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type">T</span>&gt;(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="type">T</span>&gt; <span class="variable local">items</span>) { }
-</pre>
+static void M<T>(params ReadOnlySpan<T> items) { }
+```
 
 概念的には、以下のように「スタック割り当て」をしたいです。
 
-<pre class="source" title="">
-<span class="comment">// int の場合はこれで問題ない。</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">temp1</span> <span class="operator">=</span> <span class="reserved">stackalloc</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> };
-<span class="method"><span class="static">M</span></span>(<span class="variable">temp1</span>);
+```csharp
+// int の場合はこれで問題ない。
+ReadOnlySpan<int> temp1 = stackalloc[] { 1, 2, 3 };
+M(temp1);
 
-<span class="comment">// 現状、参照型の stackalloc はできないので、何らかの対処が必要。</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">temp2</span> <span class="operator">=</span> <span class="error" title="CS0208"><span class="reserved">stackalloc</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span> }</span>;
-<span class="static"><span class="method">M</span></span>(<span class="variable">temp2</span>);
+// 現状、参照型の stackalloc はできないので、何らかの対処が必要。
+ReadOnlySpan<string> temp2 = stackalloc[] { "a", "b", "c" };
+M(temp2);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type">T</span>&gt;(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="type">T</span>&gt; <span class="variable local">items</span>) { }
-</pre>
+static void M<T>(params ReadOnlySpan<T> items) { }
+```
 
 そこで、参照型にも使えるスタック割り当て手段を必要とするわけですが。
 [去年の時点で](../../../2022/2/params-span/index.md)、

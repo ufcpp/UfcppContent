@@ -41,19 +41,19 @@ ASP.NET のウェブフォームでは、HTML （ただし、拡張子は .html 
 以下のような内容を、拡張子 .aspx を付けて保存するだけで OK です。
 
 
-<pre class="xsource" title="now.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page Language="C#" %>
 
-<span class="bracket">&lt;</span><span class="element">html</span> <span class="attribute">lang</span><span class="attvalue">="ja"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">p</span> <span class="attribute">style</span><span class="attvalue">="color:#0000ff;"</span><span class="bracket">&gt;</span>
+<html lang="ja">
+<body>
+<p style="color:#0000ff;">
 
-<span class="bracket">&lt;%</span>= DateTime.Now.ToString() <span class="bracket">%&gt;</span>
+<%= DateTime.Now.ToString() %>
 
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+</p>
+</body>
+</html>
+```
 こうすると、
 &lt;% %&gt; という特殊なタグでくくられた部分がサーバ上で解釈されて、
 結果を該当箇所に埋め込んだ HTML が出力されます。
@@ -74,28 +74,28 @@ ASP.NET のウェブフォームでは、HTML （ただし、拡張子は .html 
 代わりに、以下のように、&lt;script&gt; タグを使ってロジックを分離します。
 
 
-<pre class="xsource" title="now.aspx その2">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page Language="C#" %>
 
-<span class="bracket">&lt;</span><span class="element">script</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">type</span><span class="attvalue">="text/C#"</span><span class="bracket">&gt;</span>
+<script runat="server" type="text/C#">
   void Page_Load(object sender, EventArgs e)
   {
     this.label1.Text = DateTime.Now.ToString();
   }
-<span class="bracket">&lt;/</span><span class="element">script</span><span class="bracket">&gt;</span>
+</script>
 
-<span class="bracket">&lt;</span><span class="element">html</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">form</span> <span class="attribute">id</span><span class="attvalue">="form1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<html>
+<body>
+<form id="form1" runat="server">
 
-<span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">asp:Label</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="label1"</span> <span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
+<p>
+<asp:Label runat="server" ID="label1" />
+</p>
 
-<span class="bracket">&lt;/</span><span class="element">form</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+</form>
+</body>
+</html>
+```
 Page_Load というのは、このページが表示される際に呼び出される特殊な関数です。
 属性に runat="server" と書いたタグの箇所には、サーバ側での処理の結果が表示されます。
 
@@ -106,39 +106,39 @@ Page_Load というのは、このページが表示される際に呼び出さ�
 .aspx ファイルとプログラムコードを完全に分離して書くことができます。
 例えば、以下の通り。
 
-<pre class="source" title="now.aspx.cs" lang="">
-<code><span class="reserved">using</span> System;
+```html
+using System;
 
-<span class="reserved">namespace</span> WebApplication1
+namespace WebApplication1
 {
-  <span class="reserved">public partial class</span> _Default : System.Web.UI.Page
+  public partial class _Default : System.Web.UI.Page
   {
-    <span class="reserved">protected void</span> Page_Load(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Page_Load(object sender, EventArgs e)
     {
-      <span class="reserved">this</span>.label1.Text = DateTime.Now.ToString();
+      this.label1.Text = DateTime.Now.ToString();
     }
   }
 }
-</code></pre>
+```
 
 
 
-<pre class="xsource" title="now.aspx コードビハインド版">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span>
-  <span class="attribute">CodeBehind</span><span class="attvalue">="Default.aspx.cs"</span> <span class="attribute">Inherits</span><span class="attvalue">="WebApplication1._Default"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page Language="C#"
+  CodeBehind="Default.aspx.cs" Inherits="WebApplication1._Default" %>
 
-<span class="bracket">&lt;</span><span class="element">html</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">form</span> <span class="attribute">id</span><span class="attvalue">="form1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<html>
+<body>
+<form id="form1" runat="server">
 
-<span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">asp:Label</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="label1"</span> <span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
+<p>
+<asp:Label runat="server" ID="label1" />
+</p>
 
-<span class="bracket">&lt;/</span><span class="element">form</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+</form>
+</body>
+</html>
+```
 このような方式を<strong id="codebehind" class="keyword">コードビハインド</strong>（code-behind: ニュアンスとしては code behind the page、aspx ページの後ろに隠れたコード。「分離コード」と訳すことも。）といいます。
 こうすることで、
 完全にビジュアル（見た目・視覚的なデザイン）とロジック（処理内容・論理的なデザイン）を分離できます。

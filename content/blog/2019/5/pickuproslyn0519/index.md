@@ -28,9 +28,9 @@ aliases: []
 
 以下のようなコマンドで簡単にインストールできるツール([.NET Global Tool](https://docs.microsoft.com/ja-jp/dotnet/core/tools/global-tools) という仕組み)として、 dotnet-try というものが公開されました。
 
-<pre class="console" title="">
-<code>dotnet tool install --global dotnet-try
-</code></pre>
+```console
+dotnet tool install --global dotnet-try
+```
 
 C# でいわゆる interactive workshop (ドキュメント中に直接コードが埋め込まれてて、実行結果が見れるような講習資料)を簡単に作れるようにしようというもの。
 以下のような仕組み。
@@ -75,10 +75,10 @@ C# でいわゆる interactive workshop (ドキュメント中に直接コード
 見る側も自前で以下のようにコマンドラインでツール起動してもらう作り。
 
 
-<pre class="console" title="">
-<code>git clone 公開先
+```console
+git clone 公開先
 dotnet try cloneしてきたリポジトリ
-</code></pre>
+```
 
 ## .NET Core 3.0 のパフォーマンス向上
 
@@ -128,9 +128,9 @@ null 許容参照型(破壊的変更にならないように opt-in)を有効化
 
 結果、指定できるオプションは以下のようにまとめたいとのこと。
 
-<pre class="source" title="">
-<code>#nullable (enable | disable | restore) [ warnings | annotations ]
-</code></pre>
+```csharp
+#nullable (enable | disable | restore) [ warnings | annotations ]
+```
 
 - enable、disable で有効・無効を切り替え
   - restore は1つ前のディレクティブの状態に復元
@@ -208,52 +208,52 @@ null 許容参照型(破壊的変更にならないように opt-in)を有効化
 
 今ある「[確実な初期化ルール](../../../../study/csharp/resource/rm_struct.md#definite-assignment)」でもそうなんですが、到達できない場所のフロー解析はされません。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">int</span> <span class="variable">x</span>;
-        <span class="control">return</span>;
+        int x;
+        return;
 
-        <span class="comment">// 本来「x を初期化せずに使っちゃダメ」と怒られるようなコード。</span>
-        <span class="comment">// 別にエラーにならない。その代わり、「return のせいでここには絶対来ないよ」警告が出る。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+        // 本来「x を初期化せずに使っちゃダメ」と怒られるようなコード。
+        // 別にエラーにならない。その代わり、「return のせいでここには絶対来ないよ」警告が出る。
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 nullability のフロー解析もこれと同じ挙動になります。
 
 そこで困るのが、以下のような状況。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 例外を出すのでこのメソッドより後ろは絶対に実行されない。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Throw</span>() =&gt; <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
+    // 例外を出すのでこのメソッドより後ろは絶対に実行されない。
+    static void Throw() => throw new Exception();
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">int</span> <span class="variable">x</span>;
+        int x;
  
-        <span class="comment">// 絶対に戻ってこない。</span>
-        <span class="method">Throw</span>();
+        // 絶対に戻ってこない。
+        Throw();
  
-        <span class="comment">// 以下の2行もアプリケーション クラッシュになるのでここより後ろは実行されない。</span>
-        System.Diagnostics.<span class="type">Debug</span>.<span class="method">Assert</span>(<span class="reserved">false</span>);
-        <span class="type">Environment</span>.<span class="method">FailFast</span>(<span class="string">&quot;fatal error&quot;</span>);
+        // 以下の2行もアプリケーション クラッシュになるのでここより後ろは実行されない。
+        System.Diagnostics.Debug.Assert(false);
+        Environment.FailFast("fatal error");
  
-        <span class="comment">// でも、現状だとコンパイラーがそれを知るすべがな。</span>
-        <span class="comment">// なので「到達できない」警告じゃなく「未初期化」エラーに。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+        // でも、現状だとコンパイラーがそれを知るすべがな。
+        // なので「到達できない」警告じゃなく「未初期化」エラーに。
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 ということで、以下のような属性も用意。
 

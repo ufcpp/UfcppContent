@@ -55,21 +55,21 @@ MathML という数式を表現するための XML 仕様もあるのですが�
 分数一つ書くにしても、
 
 
-<pre class="xsource" title="分数っぽく見える HTML 記述">
-<code><span class="bracket">&lt;</span><span class="element">table</span> <span class="attribute">style</span><span class="attvalue">="
+```html
+<table style="
   display:inline;
   vertical-align:middle;
   font-style:italic;
-  font-size:90%;text-align:center;"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">td</span> <span class="attribute">style</span><span class="attvalue">="
-  border-bottom:#000000 1pt solid;"</span><span class="bracket">&gt;</span>
+  font-size:90%;text-align:center;">
+<tr><td style="
+  border-bottom:#000000 1pt solid;">
 x
-<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>
+</td></tr>
+<tr><td>
 y
-<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">table</span><span class="bracket">&gt;</span>
-</code></pre>
+</td></tr>
+</table>
+```
 となるわけです。
 ちなみに、こんな感じの見た目になります↓
 
@@ -80,46 +80,46 @@ y
 さすがにこんなもんがそこら中にちりばめられるのは、書くのも見るのも辛いです。
 同じことを LaTeX で書こうと思うと、
 
-<pre class="source" title="TeX なら" lang="">
-<code>\begin{math}
+```csharp
+\begin{math}
 \frac{x}{y}
 \end{math}
-</code></pre>
+```
 
 
 これだけですむわけです。
 せめて XML を使ってこんな風↓に書ければいくらか書きやすくなりますよね。
 
 
-<pre class="xsource" title="独自に分数用 XML を定義">
-<code><span class="bracket">&lt;</span><span class="element">math</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">frac</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">num</span><span class="bracket">&gt;</span>x<span class="bracket">&lt;/</span><span class="element">num</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">denom</span><span class="bracket">&gt;</span>y<span class="bracket">&lt;/</span><span class="element">denom</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;/</span><span class="element">frac</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">math</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<math>
+ <frac>
+  <num>x</num>
+  <denom>y</denom>
+ </frac>
+</math>
+```
 そこで、XSL を使ってこの XML を先ほど書いたような HTML に変換するルールを書いてやることにしました。 
 スタイルも CSS 使って指定するようにしました。
 
 
-<pre class="xsource" title="分数用 XML → HTML に変換">
-<code><span class="bracket">&lt;</span><span class="element">xsl:template</span> <span class="attribute">match</span><span class="attvalue">="math"</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="math"</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">nobr</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">xsl:apply-templates</span><span class="bracket">/&gt;</span><span class="bracket">&lt;/</span><span class="element">nobr</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">xsl:template</span><span class="bracket">&gt;</span>
+```xml
+<xsl:template match="math">
+ <span class="math"><nobr><xsl:apply-templates/></nobr></span>
+</xsl:template>
 
-<span class="bracket">&lt;</span><span class="element">xsl:template</span> <span class="attribute">match</span><span class="attvalue">="frac"</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">table</span> <span class="attribute">class</span><span class="attvalue">="frac"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">td</span> <span class="attribute">class</span><span class="attvalue">="num"</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">xsl:apply-templates</span> <span class="attribute">select</span><span class="attvalue">="num"</span><span class="bracket">/&gt;</span><span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">xsl:apply-templates</span> <span class="attribute">select</span><span class="attvalue">="denom"</span><span class="bracket">/&gt;</span><span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;/</span><span class="element">table</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">xsl:template</span><span class="bracket">&gt;</span>
+<xsl:template match="frac">
+ <table class="frac">
+  <tr><td class="num"><xsl:apply-templates select="num"/></td></tr>
+  <tr><td><xsl:apply-templates select="denom"/></td></tr>
+ </table>
+</xsl:template>
 
-<span class="bracket">&lt;</span><span class="element">xsl:template</span> <span class="attribute">match</span><span class="attvalue">="num"</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">xsl:apply-templates</span><span class="bracket">/&gt;</span><span class="bracket">&lt;/</span><span class="element">xsl:template</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">xsl:template</span> <span class="attribute">match</span><span class="attvalue">="denom"</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">xsl:apply-templates</span><span class="bracket">/&gt;</span><span class="bracket">&lt;/</span><span class="element">xsl:template</span><span class="bracket">&gt;</span>
-</code></pre>
-<pre class="source" title="" lang="">
-<code>span.math{font-style:italic;font-family: serif;}
+<xsl:template match="num"><xsl:apply-templates/></xsl:template>
+<xsl:template match="denom"><xsl:apply-templates/></xsl:template>
+```
+```csharp
+span.math{font-style:italic;font-family: serif;}
 table.frac{
   display:inline;
   vertical-align:middle;
@@ -128,7 +128,7 @@ table.frac{
   text-align:center;
 }
 td.num{border-bottom:#000000 1pt solid;}
-</code></pre>
+```
 
 
 同様にしてベクトル（太字イタリック体にする）や積分（∫を120%拡大して左右のマージンを調整）、

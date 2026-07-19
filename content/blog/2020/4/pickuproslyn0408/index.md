@@ -139,17 +139,17 @@ init-only プロパティというのを足す方向で議論が進んでいま�
 
 以下のようなやつ。
 
-<pre class="source" title="プロパティ内の field キーワード">
-<code><span class="reserved">public</span> <span class="reserved">int</span> P
+```csharp
+public int P
 {
-    <span class="reserved">get</span> =&gt; <span class="reserved">field </span>;
-    <span class="reserved">set</span>
+    get => field ;
+    set
     {
-        <span class="method">PropertyChanged</span>();
-        <span class="reserved">field </span> = <span class="reserved">value</span>;
+        PropertyChanged();
+        field  = value;
     }
 }
-</code></pre>
+```
 
 プロパティに対する[バック フィールド](../../../../study/csharp/oop/oo_property.md#auto_prop)にアクセスするためのキーワードが欲しいと。
 

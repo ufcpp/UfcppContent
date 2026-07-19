@@ -47,10 +47,11 @@ Immutable Collections は、連結リスト的なデータ構造で、
 再帰的に、「既存の経路候補に次の1マスをつなぐ」みたいな処理を繰り返して経路を調べていく。
 
 「既存の経路候補に次の1マスをつなぐ」を単純に配列を使ってやると、
-<pre>
+```csharp
 foreach (var node in path.Last().NextNodes)
     yield return path.Concat(new[] { node }).ToArray();
-        </pre>
+        
+```
 <figure>
 	[![配列を使った実装(mutable)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable.png)
 	<figcaption>配列を使った実装(mutable)</figcaption>
@@ -58,7 +59,7 @@ foreach (var node in path.Last().NextNodes)
 
 
 連結リストでやると、
-<pre>
+```csharp
 class Path
 {
     public Path Previous { get; private set; }
@@ -75,7 +76,8 @@ class Path
 
 foreach (var node in path.Last.NextNodes)
     yield return new Path(path, node);
-        </pre>
+        
+```
 <figure>
 	[![連結リストを使った実装(immutable)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link.png)
 	<figcaption>連結リストを使った実装(immutable)</figcaption>

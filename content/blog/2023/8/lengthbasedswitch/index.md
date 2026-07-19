@@ -23,19 +23,19 @@ aliases: []
 
 例として以下のような `switch` を考えます。
 
-<pre class="source" title="文字列に対する switch の例">
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">StringSwitch</span></span>(<span class="reserved">string</span> <span class="variable local">s</span>) <span class="operator">=&gt;</span> <span class="variable local">s</span> <span class="control">switch</span>
+```csharp
+static int StringSwitch(string s) => s switch
 {
-    <span class="string">&quot;abc&quot;</span> <span class="operator">=&gt;</span> <span class="number">0</span>,
-    <span class="string">&quot;def&quot;</span> <span class="operator">=&gt;</span> <span class="number">1</span>,
-    <span class="string">&quot;ghi&quot;</span> <span class="operator">=&gt;</span> <span class="number">2</span>,
-    <span class="string">&quot;01234a&quot;</span> <span class="operator">=&gt;</span> <span class="number">3</span>,
-    <span class="string">&quot;01234b&quot;</span> <span class="operator">=&gt;</span> <span class="number">4</span>,
-    <span class="string">&quot;01234c&quot;</span> <span class="operator">=&gt;</span> <span class="number">5</span>,
-    <span class="string">&quot;aaaaaaaa&quot;</span> <span class="operator">=&gt;</span> <span class="number">6</span>,
-    <span class="reserved">_</span> <span class="operator">=&gt;</span> <span class="operator">-</span><span class="number">1</span>,
+    "abc" => 0,
+    "def" => 1,
+    "ghi" => 2,
+    "01234a" => 3,
+    "01234b" => 4,
+    "01234c" => 5,
+    "aaaaaaaa" => 6,
+    _ => -1,
 };
-</pre>
+```
 
 C# コンパイラー的には、
 
@@ -70,29 +70,29 @@ Length-based switch dispatch (文字列長ベースの switch 分配)という�
 (実際はもうちょっと goto だらけのコードになりますが、
 見やすさ優先で変更。)
 
-<pre class="source" title="length-based switch の例">
-<span class="static"><span class="method">StringSwitch</span></span>(<span class="string">&quot;&quot;</span>);
+```csharp
+StringSwitch("");
 
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">StringSwitch</span></span>(<span class="reserved">string</span> <span class="variable local">s</span>) <span class="operator">=&gt;</span> <span class="variable local">s</span><span class="operator">.</span><span class="property">Length</span> <span class="control">switch</span>
+static int StringSwitch(string s) => s.Length switch
 {
-    <span class="number">3</span> <span class="operator">=&gt;</span> <span class="variable local">s</span>[<span class="number">0</span>] <span class="control">switch</span>
+    3 => s[0] switch
     {
-        <span class="string">'a'</span> <span class="operator">=&gt;</span> <span class="variable local">s</span> <span class="operator">==</span> <span class="string">&quot;abc&quot;</span> <span class="operator">?</span> <span class="number">0</span> <span class="operator">:</span> <span class="operator">-</span><span class="number">1</span>,
-        <span class="string">'d'</span> <span class="operator">=&gt;</span> <span class="variable local">s</span> <span class="operator">==</span> <span class="string">&quot;def&quot;</span> <span class="operator">?</span> <span class="number">1</span> <span class="operator">:</span> <span class="operator">-</span><span class="number">1</span>,
-        <span class="string">'g'</span> <span class="operator">=&gt;</span> <span class="variable local">s</span> <span class="operator">==</span> <span class="string">&quot;ghi&quot;</span> <span class="operator">?</span> <span class="number">2</span> <span class="operator">:</span> <span class="operator">-</span><span class="number">1</span>,
-        <span class="reserved">_</span> <span class="operator">=&gt;</span> <span class="operator">-</span><span class="number">1</span>,
+        'a' => s == "abc" ? 0 : -1,
+        'd' => s == "def" ? 1 : -1,
+        'g' => s == "ghi" ? 2 : -1,
+        _ => -1,
     },
-    <span class="number">6</span> <span class="operator">=&gt;</span> <span class="variable local">s</span>[<span class="number">5</span>] <span class="control">switch</span>
+    6 => s[5] switch
     {
-        <span class="string">'a'</span> <span class="operator">=&gt;</span> <span class="variable local">s</span> <span class="operator">==</span> <span class="string">&quot;01234a&quot;</span> <span class="operator">?</span> <span class="number">3</span> <span class="operator">:</span> <span class="operator">-</span><span class="number">1</span>,
-        <span class="string">'b'</span> <span class="operator">=&gt;</span> <span class="variable local">s</span> <span class="operator">==</span> <span class="string">&quot;01234b&quot;</span> <span class="operator">?</span> <span class="number">4</span> <span class="operator">:</span> <span class="operator">-</span><span class="number">1</span>,
-        <span class="string">'c'</span> <span class="operator">=&gt;</span> <span class="variable local">s</span> <span class="operator">==</span> <span class="string">&quot;01234c&quot;</span> <span class="operator">?</span> <span class="number">5</span> <span class="operator">:</span> <span class="operator">-</span><span class="number">1</span>,
-        <span class="reserved">_</span> <span class="operator">=&gt;</span> <span class="operator">-</span><span class="number">1</span>,
+        'a' => s == "01234a" ? 3 : -1,
+        'b' => s == "01234b" ? 4 : -1,
+        'c' => s == "01234c" ? 5 : -1,
+        _ => -1,
     },
-    <span class="number">8</span> <span class="operator">=&gt;</span> <span class="variable local">s</span> <span class="operator">==</span> <span class="string">&quot;aaaaaaaa&quot;</span> <span class="operator">?</span> <span class="number">6</span> <span class="operator">:</span> <span class="operator">-</span><span class="number">1</span>,
-    <span class="reserved">_</span> <span class="operator">=&gt;</span> <span class="operator">-</span><span class="number">1</span>,
+    8 => s == "aaaaaaaa" ? 6 : -1,
+    _ => -1,
 };
-</pre>
+```
 
 これで、どの `case` にも当たらないときには「長さ比較 + 1文字比較」で終わり、
 当たった時でもそれに加えて少数の文字列 `==` になります。

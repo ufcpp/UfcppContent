@@ -35,35 +35,35 @@ C#でもインターフェイスのデフォルト実装(まんま、Javaのデ�
 
 というくらい。後者の方は要するに、以下のような話。
 
-<pre class="source" title="デフォルト実装でGetEnumeratorの実装を楽に">
-<code><span class="reserved">namespace</span> System.Collections.Generic
+```csharp
+namespace System.Collections.Generic
 {
-    <span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt; : <span class="type">IEnumerable</span>
+    public interface IEnumerable<out T> : IEnumerable
     {
-        <span class="type">IEnumerator</span>&lt;<span class="type">T</span>&gt; GetEnumeartor();
+        IEnumerator<T> GetEnumeartor();
 
-        <span class="comment">// こんな風に、デフォルト実装を与えておいてもらう</span>
-        <span class="type">IEnumerator</span> <span class="type">IEnumerable</span>.GetEnumeartor() =&gt; GetEnumerator();
+        // こんな風に、デフォルト実装を与えておいてもらう
+        IEnumerator IEnumerable.GetEnumeartor() => GetEnumerator();
     }
 }
 
-<span class="reserved">namespace</span> ConsoleApp1
+namespace ConsoleApp1
 {
-    <span class="reserved">using</span> System.Collections.Generic;
+    using System.Collections.Generic;
 
-    <span class="reserved">class</span> <span class="type">MyEnumerable</span> : <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;
+    class MyEnumerable : IEnumerable<int>
     {
-        <span class="type">IEnumerator</span>&lt;<span class="reserved">int</span>&gt; GetEnumerator()
+        IEnumerator<int> GetEnumerator()
         {
-            <span class="reserved">yield</span> <span class="reserved">return</span> 1;
-            <span class="reserved">yield</span> <span class="reserved">return</span> 2;
-            <span class="reserved">yield</span> <span class="reserved">return</span> 3;
+            yield return 1;
+            yield return 2;
+            yield return 3;
         }
 
-        <span class="comment">// IEnumerator IEnumerable.GetEnumeartor の方は書かなくてもいい</span>
+        // IEnumerator IEnumerable.GetEnumeartor の方は書かなくてもいい
     }
 }
-</code></pre>
+```
 
 あったらあったで便利なんですが、ランタイム側の修正が必要となるとなかなか。
 

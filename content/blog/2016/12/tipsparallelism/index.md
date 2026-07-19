@@ -19,17 +19,17 @@ CPU律速になるような計算処理は、ガチガチに最適化するな�
 並列化によって高速化しやすい計算の例として、浮動小数点数のデータ列の積和演算を考えてみます。
 例えば、以下のようなコードになります。
 
-<pre class="source" title="シングルスレッド実行">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">float</span> SingleThreadScalar(<span class="reserved">float</span>[] x, <span class="reserved">float</span>[] y)
+```csharp
+private static float SingleThreadScalar(float[] x, float[] y)
 {
-    <span class="reserved">var</span> prod = 0f;
+    var prod = 0f;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; N; i++)
+    for (int i = 0; i < N; i++)
         prod += x[i] * y[i];
 
-    <span class="reserved">return</span> prod;
+    return prod;
 }
-</code></pre>
+```
 
 ## 並列化のレイヤー
 
@@ -75,29 +75,29 @@ CPU律速になるような計算処理は、ガチガチに最適化するな�
 そこで、ここでは`Task`クラスを使った例を挙げます。
 以下のような書き方になります。
 
-<pre class="source" title="マルチスレッド実行">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">float</span> MultiThreadScalar(<span class="reserved">float</span>[] x, <span class="reserved">float</span>[] y)
+```csharp
+private static float MultiThreadScalar(float[] x, float[] y)
 {
-    <span class="reserved">var</span> windowSize = N / NumWorkerThread;
+    var windowSize = N / NumWorkerThread;
 
-    <span class="reserved">var</span> prod = 0f;
+    var prod = 0f;
 
-    <span class="reserved">var</span> partialProds = <span class="type">Task</span>.WhenAll(
-        <span class="type">Enumerable</span>.Range(0, NumWorkerThread)
-        .Select(n =&gt; <span class="type">Task</span>.Run(() =&gt;
+    var partialProds = Task.WhenAll(
+        Enumerable.Range(0, NumWorkerThread)
+        .Select(n => Task.Run(() =>
         {
-            <span class="reserved">var</span> local = 0f;
-            <span class="reserved">for</span> (<span class="reserved">int</span> i = n * windowSize; i &lt; (n + 1) * windowSize; i++)
+            var local = 0f;
+            for (int i = n * windowSize; i < (n + 1) * windowSize; i++)
                 local += x[i] * y[i];
-            <span class="reserved">return</span> local;
+            return local;
         }))
         ).GetAwaiter().GetResult();
     prod = 0f;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; partialProds.Length; i++)
+    for (int i = 0; i < partialProds.Length; i++)
         prod += partialProds[i];
-    <span class="reserved">return</span> prod;
+    return prod;
 }
-</code></pre>
+```
 
 `NumWorkerThread`は、CPUのコア数にそろえておくのが一番効率がいいと言われています。
 例えば、`NumWorkerThread = Environment.ProcessorCount`で取得できます。
@@ -126,20 +126,20 @@ C#では、.NET Framework 4.6でSIMD命令対応がありました。
 2つの浮動小数点数データ列の積和を行っています。
 `Vector4.Dot`は、4つの浮動小数点数をまとめたもの(`Vector4`)の内積(積和演算)です。
 
-<pre class="source" title="SIMD命令化">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">float</span> SingleThreadVector(<span class="type">Vector4</span>[] vx, <span class="type">Vector4</span>[] vy)
+```csharp
+private static float SingleThreadVector(Vector4[] vx, Vector4[] vy)
 {
-    <span class="reserved">var</span> prod = 0f;
+    var prod = 0f;
     prod = 0f;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; N / 4; i++)
-        prod += <span class="type">Vector4</span>.Dot(vx[i], vy[i]);
-    <span class="reserved">return</span> prod;
+    for (int i = 0; i < N / 4; i++)
+        prod += Vector4.Dot(vx[i], vy[i]);
+    return prod;
 }
-</code></pre>
+```
 
 これを、x64向けにビルドして実行すると、JIT結果は以下のようなネイティブ コードになります(上記コードのループの中身に相当する部分を抜粋)。
 
-```
+```asm
 vmovupd     xmm1,xmmword ptr [rdi+r8+10h]  
 vdpps       xmm0,xmm0,xmm1,0F1h  
 vaddss      xmm0,xmm0,xmm6  
@@ -154,7 +154,7 @@ vmovaps     xmm6,xmm0
 
 同じコードを、Any CPU向けにビルドして実行すると、以下のような命令に変わります。
 
-```
+```asm
 fmul        dword ptr [edi+eax*4+8]  
 faddp       st(1),st  
 ```
@@ -167,28 +167,28 @@ faddp       st(1),st
 
 `Task`も`Vector`も使って、CPU間並列もCPU内並列も使った例も挙げておきます。
 
-<pre class="source" title="マルチスレッド化 ＋ SIMD命令化">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">float</span> MultiThreadVector(<span class="type">Vector4</span>[] vx, <span class="type">Vector4</span>[] vy)
+```csharp
+private static float MultiThreadVector(Vector4[] vx, Vector4[] vy)
 {
-    <span class="reserved">var</span> windowSize = N / NumWorkerThread;
+    var windowSize = N / NumWorkerThread;
 
-    <span class="reserved">var</span> prod = 0f;
-    <span class="reserved">var</span> partialProds = <span class="type">Task</span>.WhenAll(
-        <span class="type">Enumerable</span>.Range(0, NumWorkerThread)
-        .Select(n =&gt; <span class="type">Task</span>.Factory.StartNew(() =&gt;
+    var prod = 0f;
+    var partialProds = Task.WhenAll(
+        Enumerable.Range(0, NumWorkerThread)
+        .Select(n => Task.Factory.StartNew(() =>
         {
-            <span class="reserved">var</span> local = 0f;
-            <span class="reserved">for</span> (<span class="reserved">int</span> i = n * windowSize / 4; i &lt; (n + 1) * windowSize / 4; i++)
-                local += <span class="type">Vector4</span>.Dot(vx[i], vy[i]);
-            <span class="reserved">return</span> local;
+            var local = 0f;
+            for (int i = n * windowSize / 4; i < (n + 1) * windowSize / 4; i++)
+                local += Vector4.Dot(vx[i], vy[i]);
+            return local;
         }))
         ).GetAwaiter().GetResult();
     prod = 0f;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; partialProds.Length; i++)
+    for (int i = 0; i < partialProds.Length; i++)
         prod += partialProds[i];
-    <span class="reserved">return</span> prod;
+    return prod;
 }
-</code></pre>
+```
 
 計測コードの全体はGistに置いてあります。
 

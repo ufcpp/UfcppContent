@@ -48,12 +48,12 @@ C# では、デバッグ モードでのコンパイルをすれば、元のソ�
 
 例えば、以下のようなコードを実行したとします。
 
-<pre class="source" title="スタックトレースの例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
         Show(X);
         Show(A);
@@ -61,43 +61,42 @@ C# では、デバッグ モードでのコンパイルをすれば、元のソ�
         Show(C);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> X()
+    static void X()
     {
-        <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>(<span class="literal">"throw from X "</span>);
+        throw new Exception("throw from X ");
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> A() { X(); }
-    <span class="reserved">static</span> <span class="reserved">void</span> B() { X(); }
-    <span class="reserved">static</span> <span class="reserved">void</span> C() { X(); }
+    static void A() { X(); }
+    static void B() { X(); }
+    static void C() { X(); }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Show(<span class="type">Action</span> a)
+    static void Show(Action a)
     {
-        <span class="reserved">try</span>
+        try
         {
-            <span class="type">Console</span>.WriteLine(<span class="literal">"**** "</span> + a.Method.Name + <span class="literal">" ****"</span>);
+            Console.WriteLine("**** " + a.Method.Name + " ****");
             a();
         }
-        <span class="reserved">catch</span> (<span class="type">Exception</span> ex)
+        catch (Exception ex)
         {
             Show(ex);
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Show(<span class="type">Exception</span> ex)
+    static void Show(Exception ex)
     {
-        <span class="type">Console</span>.WriteLine(<span class="literal">"message: "</span> + ex.Message);
-        <span class="type">Console</span>.WriteLine(<span class="literal">"stack trace: "</span>);
-        <span class="type">Console</span>.WriteLine(ex.StackTrace);
-        <span class="type">Console</span>.WriteLine();
+        Console.WriteLine("message: " + ex.Message);
+        Console.WriteLine("stack trace: ");
+        Console.WriteLine(ex.StackTrace);
+        Console.WriteLine();
     }
 }
-
-</code></pre>
+```
 
 
 (デバッグ モードなら)以下のような実行結果が得られます。
 
-<pre class="console" title="スタックトレースの例">
+```console
 **** X ****
 message: throw from X
 stack trace:
@@ -124,7 +123,7 @@ stack trace:
    場所 Program.X() 場所 c:\temp\stacktrace1.cs:行 15
    場所 Program.C() 場所 c:\temp\stacktrace1.cs:行 20
    場所 Program.Show(Action a) 場所 c:\temp\stacktrace1.cs:行 27
-</pre>
+```
 
 
 例えば、「**** A ****」から始まる数行を見てください。
@@ -150,88 +149,88 @@ catch 句の中での再 throw の場合、<em>その時点のスタックトレ
 スタックトレースを紛失する例と、その回避方法を見てみましょう。
 以下のようなコードを書いたとします。
 
-<pre class="source" title="再 throw とスタックトレース" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
         Show(ThrowEx);
         Show(ThrowWithInnerException);
         Show(Rethrow);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> ThrowEx()
+    static void ThrowEx()
     {
-        <span class="reserved">try</span>
+        try
         {
             X();
         }
-        <span class="reserved">catch</span> (<span class="type">Exception</span> ex)
+        catch (Exception ex)
         {
-            <span class="reserved">throw</span> ex;  <span class="comment">// 21 行目</span>
+            throw ex;  // 21 行目
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> ThrowWithInnerException()
+    static void ThrowWithInnerException()
     {
-        <span class="reserved">try</span>
+        try
         {
             X();
         }
-        <span class="reserved">catch</span> (<span class="type">Exception</span> ex)
+        catch (Exception ex)
         {
-            <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>(<span class="literal">"throw at line "</span> + GetLineNumber(), ex); <span class="comment">// 33 行目</span>
+            throw new Exception("throw at line " + GetLineNumber(), ex); // 33 行目
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Rethrow()
+    static void Rethrow()
     {
-        <span class="reserved">try</span>
+        try
         {
             X();
         }
-        <span class="reserved">catch</span> (<span class="type">Exception</span>)
+        catch (Exception)
         {
-            <span class="reserved">throw</span>;   <span class="comment">// 45 行目</span>
+            throw;   // 45 行目
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> X()
+    static void X()
     {
-        <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>(<span class="literal">"throw from X at line "</span> + GetLineNumber()); <span class="comment">// 51 行目</span>
+        throw new Exception("throw from X at line " + GetLineNumber()); // 51 行目
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span> GetLineNumber([<span class="type">CallerLineNumber</span>] <span class="reserved">int</span> line = 0) { <span class="reserved">return</span> line; }
+    static int GetLineNumber([CallerLineNumber] int line = 0) { return line; }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Show(<span class="type">Action</span> a)
+    static void Show(Action a)
     {
-        <span class="reserved">try</span>
+        try
         {
-            <span class="type">Console</span>.WriteLine(<span class="literal">"**** "</span> + a.Method.Name + <span class="literal">" ****"</span>);
+            Console.WriteLine("**** " + a.Method.Name + " ****");
             a();
         }
-        <span class="reserved">catch</span> (<span class="type">Exception</span> ex)
+        catch (Exception ex)
         {
             ShowRecursively(ex);
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> ShowRecursively(<span class="type">Exception</span> ex, <span class="reserved">int</span> rank = 0)
+    static void ShowRecursively(Exception ex, int rank = 0)
     {
-        <span class="type">Console</span>.WriteLine(<span class="literal">"rank: "</span> + rank);
-        <span class="type">Console</span>.WriteLine(<span class="literal">"message: "</span> + ex.Message);
-        <span class="type">Console</span>.WriteLine(<span class="literal">"stack trace: "</span>);
-        <span class="type">Console</span>.WriteLine(ex.StackTrace);
-        <span class="type">Console</span>.WriteLine();
+        Console.WriteLine("rank: " + rank);
+        Console.WriteLine("message: " + ex.Message);
+        Console.WriteLine("stack trace: ");
+        Console.WriteLine(ex.StackTrace);
+        Console.WriteLine();
 
-        <span class="reserved">if</span> (ex.InnerException != <span class="reserved">null</span>)
+        if (ex.InnerException != null)
             ShowRecursively(ex.InnerException, rank + 1);
     }
 }
-</code></pre>
+```
 
 
 このコードには、3種類の「キャッチして投げ直し」が含まれています。
@@ -258,7 +257,7 @@ catch 句の中での再 throw の場合、<em>その時点のスタックトレ
 
 (デバッグ モードなら)実行結果は以下のようになります。
 
-<pre class="console" title="スタックトレースの例">
+```console
 **** ThrowEx ****
 rank: 0
 message: throw from X at line 51
@@ -286,7 +285,7 @@ stack trace:
    場所 Program.X() 場所 c:\temp\stacktrace2.cs:行 51
    場所 Program.Rethrow() 場所 c:\temp\stacktrace2.cs:行 47
    場所 Program.Show(Action a) 場所 c:\temp\stacktrace2.cs:行 61
-</pre>
+```
 
 
 最初の例(21行目、throw ex;)では、本来の例外の throw 場所である51行目の数字が失われています。
@@ -302,28 +301,28 @@ stack trace:
 `catch` 句の外で例外の再 throw を、スタックトレースを紛失せずに行えるよう、`ExceptionDispatchInfo` というクラスが追加されました。
 ([非同期メソッドの実装](../async/sp5_awaitable.md)に必要だったため、これと同世代の .NET Framework 4.5 の頃に追加されたものです。)
 
-<pre class="source" title="ExceptionDispatchInfo">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Runtime.ExceptionServices;
+```csharp
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 
-<span class="method">Show</span>(<span class="method">DispatchThrow</span>);
+Show(DispatchThrow);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">DispatchThrow</span>()
+static void DispatchThrow()
 {
-    <span class="type">Exception</span>? <span class="variable">exception</span> = <span class="reserved">null</span>;
-    <span class="control">try</span>
+    Exception? exception = null;
+    try
     {
-        <span class="method">X</span>();
+        X();
     }
-    <span class="control">catch</span> (<span class="type">Exception</span> <span class="variable">e</span>)
+    catch (Exception e)
     {
-        <span class="variable">exception</span> = <span class="variable">e</span>;
+        exception = e;
     }
 
-    <span class="control">if</span> (<span class="variable">exception</span> != <span class="reserved">null</span>)
+    if (exception != null)
     {
-        <span class="comment">// 諸事情あって catch 内で throw; ができない場合、これを使う。</span>
-        <span class="type">ExceptionDispatchInfo</span>.<span class="method">Throw</span>(<span class="variable">exception</span>);
+        // 諸事情あって catch 内で throw; ができない場合、これを使う。
+        ExceptionDispatchInfo.Throw(exception);
     }
 }
-</code></pre>
+```

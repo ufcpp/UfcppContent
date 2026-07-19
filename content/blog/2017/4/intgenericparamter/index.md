@@ -22,27 +22,27 @@ aliases: []
 
 ってことで、書きたいのはこんなコード:
 
-<pre class="source" title="[M, N)ビット目を読み書きする構造体">
-<code><span class="comment">// C# では書けない書き方。C++だとこんな感じのことができたりする。</span>
-<span class="comment">// [M, N) (N は含まない)の範囲のビットを読み書きする構造体。</span>
-<span class="reserved">struct</span> <span class="type">Bit</span>&lt;<span class="type">T</span>, <span class="type">M</span>, <span class="type">N</span>&gt;
+```csharp
+// C# では書けない書き方。C++だとこんな感じのことができたりする。
+// [M, N) (N は含まない)の範囲のビットを読み書きする構造体。
+struct Bit<T, M, N>
 {
-    <span class="comment">// C# で書けないことその1: 参照フィールド</span>
-    <span class="reserved">ref</span> <span class="type">T</span> _r;
-    <span class="reserved">public</span> Bit(<span class="reserved">ref</span> <span class="type">T</span> r) =&gt; _r = <span class="reserved">ref</span> r;
+    // C# で書けないことその1: 参照フィールド
+    ref T _r;
+    public Bit(ref T r) => _r = ref r;
 
-    <span class="comment">// C# で書けないことその2: ジェネリック引数が型じゃなくて int</span>
-    <span class="reserved">private</span> <span class="reserved">const</span> <span class="reserved">int</span> Shift = <span class="type">M</span>;
-    <span class="reserved">private</span> <span class="reserved">const</span> <span class="type">T</span> Mask = (1 &lt;&lt; <span class="type">N</span>) - (1 &lt;&lt; <span class="type">M</span>);
+    // C# で書けないことその2: ジェネリック引数が型じゃなくて int
+    private const int Shift = M;
+    private const T Mask = (1 << N) - (1 << M);
 
-    <span class="comment">// C# で書けないことその3: ジェネリックな型に対して静的な処理(&amp; とかの演算子)</span>
-    <span class="reserved">public</span> <span class="type">T</span> Value
+    // C# で書けないことその3: ジェネリックな型に対して静的な処理(& とかの演算子)
+    public T Value
     {
-        <span class="reserved">get</span> =&gt; (r &gt;&gt; Shift) &amp; Mask;
-        <span class="reserved">set</span> =&gt; r = (r &amp; (~Mask)) | ((<span class="reserved">value</span> &lt;&lt; Shift) &amp; Mask);
+        get => (r >> Shift) & Mask;
+        set => r = (r & (~Mask)) | ((value << Shift) & Mask);
     }
 }
-</code></pre>
+```
 
 素直にできないことが3つほどあります。
 
@@ -96,41 +96,41 @@ aliases: []
 
 必要な個所だけ抜き出すと、以下のような感じ。
 
-<pre class="source" title="C# でintジェネリック引数">
-<code><span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IConstant</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public interface IConstant<T>
 {
-    <span class="type">T</span> Value { <span class="reserved">get</span>; }
+    T Value { get; }
 }
 
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">GaloisField</span>&lt;<span class="type">N</span>&gt;
-    <span class="reserved">where</span> <span class="type">N</span> : <span class="reserved">struct</span>, <span class="type">IConstant</span>&lt;<span class="reserved">int</span>&gt;
+public struct GaloisField<N>
+    where N : struct, IConstant<int>
 {
-    <span class="comment">// ガロアの有限体を作るにあたって必要なのは、拡張ユークリッド互除法っていうアルゴリズム</span>
-    <span class="comment">// https://github.com/ufcpp/UfcppSample/blob/master/Demo/2017/IntTemplateParameter/IntTemplateParameter/GaloisField_N.cs#L43</span>
+    // ガロアの有限体を作るにあたって必要なのは、拡張ユークリッド互除法っていうアルゴリズム
+    // https://github.com/ufcpp/UfcppSample/blob/master/Demo/2017/IntTemplateParameter/IntTemplateParameter/GaloisField_N.cs#L43
 
-    <span class="comment">// で、その中で、「i を N で割った余り」を使う</span>
-    <span class="comment">// (C# の % だと、i が負の時に結果が負になるので、その場合には N を足して正にする。)</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> Mod(<span class="reserved">int</span> i)
+    // で、その中で、「i を N で割った余り」を使う
+    // (C# の % だと、i が負の時に結果が負になるので、その場合には N を足して正にする。)
+    static int Mod(int i)
     {
-        <span class="comment">// 定数「N」の代わりに、default(N).Value って書く</span>
-        i %= <span class="reserved">default</span>(<span class="type">N</span>).Value;
-        <span class="reserved">if</span> (i &lt; 0) i += <span class="reserved">default</span>(<span class="type">N</span>).Value;
-        <span class="reserved">return</span> i;
+        // 定数「N」の代わりに、default(N).Value って書く
+        i %= default(N).Value;
+        if (i < 0) i += default(N).Value;
+        return i;
     }
 }
-</code></pre>
+```
 
 ただし、定数代わりに、以下のような構造体を作っておく必要あり。
 
-<pre class="source" title="定数もどきの構造体">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">ConstantInt</span>
+```csharp
+public static class ConstantInt
 {
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">_0</span> : <span class="type">IConstant</span>&lt;<span class="reserved">int</span>&gt; { <span class="reserved">public</span> <span class="reserved">int</span> Value =&gt; 0; }
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">_1</span> : <span class="type">IConstant</span>&lt;<span class="reserved">int</span>&gt; { <span class="reserved">public</span> <span class="reserved">int</span> Value =&gt; 1; }
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">_2</span> : <span class="type">IConstant</span>&lt;<span class="reserved">int</span>&gt; { <span class="reserved">public</span> <span class="reserved">int</span> Value =&gt; 2; }
-    <span class="comment">//...</span>
+    public struct _0 : IConstant<int> { public int Value => 0; }
+    public struct _1 : IConstant<int> { public int Value => 1; }
+    public struct _2 : IConstant<int> { public int Value => 2; }
+    //...
 }
-</code></pre>
+```
 
 いちいち必要な分だけ構造体を定義しておかないといけないので、定数の置き換えとしては不完全ですけども、
 実行性能的には結構いい結果になるはずです。

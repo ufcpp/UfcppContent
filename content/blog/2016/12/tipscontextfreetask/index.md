@@ -55,11 +55,11 @@ C#で`await`を使って非同期処理をする場合、
 
 ということで、ライブラリ作者は、同期コンテキストを拾わないようにするために、以下のようなコードを書くことを強要されます。
 
-<pre class="source" title="ConfigureAwait">
-<code><span class="comment">// ConfigureAwait で同期コンテキストを拾うかどうか設定できる</span>
-<span class="comment">// 引数を false にすると拾わない</span>
-<span class="reserved">await</span> FAsync().ConfigureAwait(<span class="reserved">false</span>);
-</code></pre>
+```csharp
+// ConfigureAwait で同期コンテキストを拾うかどうか設定できる
+// 引数を false にすると拾わない
+await FAsync().ConfigureAwait(false);
+```
 
 ライブラリを書く側の人は毎度毎度、これで苦労します。
 正直に言って結構うざい…
@@ -71,52 +71,52 @@ C#で`await`を使って非同期処理をする場合、
 
 冒頭の通り、C# 7では非同期メソッドの戻り値の型を任意に変えれるようになったので、自作してみました。
 
-<pre class="source" title="ContextFreeTask">
-<code><span class="comment">// Task の代わりに ContextFreeTask を非同期メソッドの戻り値にできる</span>
-<span class="comment">// この中にある await は同期コンテキストを一切拾わない</span>
-<span class="reserved">private</span> <span class="reserved">async</span> <span class="type">ContextFreeTask</span> FAsync()
+```csharp
+// Task の代わりに ContextFreeTask を非同期メソッドの戻り値にできる
+// この中にある await は同期コンテキストを一切拾わない
+private async ContextFreeTask FAsync()
 {
-    <span class="comment">// この時点でどんなコンテキストで動いていようと…</span>
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(100);
-    <span class="comment">// コンテキストは拾われないので、元のコンテキストには戻らない</span>
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(100);
-    <span class="comment">// 同上、戻らない</span>
+    // この時点でどんなコンテキストで動いていようと…
+    await Task.Delay(100);
+    // コンテキストは拾われないので、元のコンテキストには戻らない
+    await Task.Delay(100);
+    // 同上、戻らない
 }
 
-<span class="reserved">private</span> <span class="reserved">async</span> <span class="type">Task</span> GAsync()
+private async Task GAsync()
 {
-    <span class="comment">// ContextFreeTask に対する await もできる</span>
-    <span class="comment">// この await も同期コンテキストを拾わない</span>
+    // ContextFreeTask に対する await もできる
+    // この await も同期コンテキストを拾わない
 
-    <span class="reserved">await</span> FAsync();
-    <span class="comment">// コンテキストは拾われない</span>
+    await FAsync();
+    // コンテキストは拾われない
 }
-</code></pre>
+```
 
 概ね、以下のコードと同じ挙動になります。
 
-<pre class="source" title="ContextFreeTask に対する await = ConfigureAwait(false)">
-<code><span class="reserved">private</span> <span class="reserved">async</span> <span class="type">ContextFreeTask</span> FAsync()
+```csharp
+private async ContextFreeTask FAsync()
 {
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(100).ConfigureAwait(<span class="reserved">false</span>);
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(100).ConfigureAwait(<span class="reserved">false</span>);
+    await Task.Delay(100).ConfigureAwait(false);
+    await Task.Delay(100).ConfigureAwait(false);
 }
 
-<span class="reserved">private</span> <span class="reserved">async</span> <span class="type">Task</span> GAsync()
+private async Task GAsync()
 {
-    <span class="reserved">await</span> FAsync().ConfigureAwait(<span class="reserved">false</span>);
+    await FAsync().ConfigureAwait(false);
 }
-</code></pre>
+```
 
 戻り値があるとき用、すなわち、`Task<TResult>` の代わりの `ContextFreeTask<T>` もあります。
 
-<pre class="source" title="ContextFreeTask&lt;T&gt;">
-<code><span class="reserved">private</span> <span class="reserved">async</span> <span class="type">ContextFreeTask</span>&lt;<span class="reserved">string</span>&gt; HAsync(<span class="reserved">int</span> n)
+```csharp
+private async ContextFreeTask<string> HAsync(int n)
 {
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(100);
-    <span class="reserved">return</span> n.ToString();
+    await Task.Delay(100);
+    return n.ToString();
 }
-</code></pre>
+```
 
 ### 中身
 
@@ -124,31 +124,31 @@ C#で`await`を使って非同期処理をする場合、
 ほとんどの処理は`Task`や、そのawaiter、async method builderへの丸投げです。
 その手前に`ConfigureAwait(false)`や`SetSynchronizationContext(null);`を挟んでいるだけ。
 
-<pre class="source" title="ContextFreeTask の中身">
-<code><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">ContextFreeTask</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public struct ContextFreeTask<T>
 {
-    <span class="reserved">public</span> <span class="type">Task</span>&lt;<span class="type">T</span>&gt; Task { <span class="reserved">get</span>; }
+    public Task<T> Task { get; }
 }
 
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">ContextFreeTaskAwaiter</span> : <span class="type">ICriticalNotifyCompletion</span>
+public struct ContextFreeTaskAwaiter : ICriticalNotifyCompletion
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">Task</span> _value;
-    <span class="reserved">public</span> <span class="reserved">void</span> OnCompleted(<span class="type">Action</span> continuation) =&gt; _value.ConfigureAwait(<span class="reserved">false</span>).GetAwaiter().OnCompleted(continuation);
+    private readonly Task _value;
+    public void OnCompleted(Action continuation) => _value.ConfigureAwait(false).GetAwaiter().OnCompleted(continuation);
 }
 
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">AsyncContextFreeTaskMethodBuilder</span>
+public struct AsyncContextFreeTaskMethodBuilder
 {
-    <span class="reserved">private</span> <span class="type">AsyncTaskMethodBuilder</span> _methodBuilder;
+    private AsyncTaskMethodBuilder _methodBuilder;
 
-    <span class="reserved">public</span> <span class="reserved">void</span> AwaitOnCompleted&lt;<span class="type">TAwaiter</span>, <span class="type">TStateMachine</span>&gt;(<span class="reserved">ref</span> <span class="type">TAwaiter</span> awaiter, <span class="reserved">ref</span> <span class="type">TStateMachine</span> stateMachine)
-        <span class="reserved">where</span> <span class="type">TAwaiter</span> : <span class="type">INotifyCompletion</span>
-        <span class="reserved">where</span> <span class="type">TStateMachine</span> : <span class="type">IAsyncStateMachine</span>
+    public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+        where TAwaiter : INotifyCompletion
+        where TStateMachine : IAsyncStateMachine
     {
-        <span class="type">SynchronizationContext</span>.SetSynchronizationContext(<span class="reserved">null</span>);
-        _methodBuilder.AwaitOnCompleted(<span class="reserved">ref</span> awaiter, <span class="reserved">ref</span> stateMachine);
+        SynchronizationContext.SetSynchronizationContext(null);
+        _methodBuilder.AwaitOnCompleted(ref awaiter, ref stateMachine);
     }
 }
-</code></pre>
+```
 
 ## やってみて
 

@@ -81,30 +81,26 @@ C# に関わるもう1つの大きな変化としては、C# コンパイラー�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    <span class="reserved">private int</span> _x;
+    private int _x;
 
-    <span class="reserved">public int</span> X
+    public int X
     {
-        <span class="reserved">get</span> { <span class="reserved">return</span> _x; }
-        <span class="reserved">set</span> { _x = <span class="reserved">value</span>; }
+        get { return _x; }
+        set { _x = value; }
     }
     
-    <span class="comment">// Y とか Z も同様に実装</span>
-}
-</code></pre>
+    // Y とか Z も同様に実装
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-}
-</code></pre>
+    public int X { get; set; }
+    public int Y { get; set; }
+}</code></pre>
 
 </td>
 	</tr>
@@ -127,50 +123,44 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    <span class="comment">// ↓この初期値を設定するためだけに自動実装をやめることに</span>
-    <span class="reserved">private int</span> _x = 10;
+    // ↓この初期値を設定するためだけに自動実装をやめることに
+    private int _x = 10;
 
-    <span class="reserved">public int</span> X
+    public int X
     {
-        <span class="reserved">get</span> { <span class="reserved">return</span> _x; }
-        <span class="reserved">set</span> { _x = <span class="reserved">value</span>; }
+        get { return _x; }
+        set { _x = value; }
     }
 
-    <span class="comment">// Y も同様に実装</span>
-}
-</code></pre>
+    // Y も同様に実装
+}</code></pre>
 
 </td>
 		<td markdown="1" rowspan="2">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; } = <em>10</em>;
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; } = <em>20</em>;
-}
-</code></pre>
+    public int X { get; set; } = 10;
+    public int Y { get; set; } = 20;
+}</code></pre>
 
 </td>
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 
-    <span class="reserved">public</span> Point()
+    public Point()
     {
-        <span class="comment">// ↓この初期値を設定するためだけにコンストラクターが必要</span>
+        // ↓この初期値を設定するためだけにコンストラクターが必要
         X = 10;
         Y = 20;
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 	</tr>
@@ -190,47 +180,41 @@ C# 6 では、自動プロパティに初期化子(プロパティの後ろに =
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    <span class="comment">// ↓getのみの自動実装はできないので仕方なくフィールドを用意</span>
-    <span class="reserved">private readonly int</span> _x = 10;
-    <span class="reserved">public int</span> X { <span class="reserved">get</span> { <span class="reserved">return</span> _x; } }
+    // ↓getのみの自動実装はできないので仕方なくフィールドを用意
+    private readonly int _x = 10;
+    public int X { get { return _x; } }
 
-    <span class="reserved">private readonly int</span> _y = 20;
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span> { <span class="reserved">return</span> _y; } }
-}
-</code></pre>
+    private readonly int _y = 20;
+    public int Y { get { return _y; } }
+}</code></pre>
 
 </td>
 		<td markdown="1" rowspan="2">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    <span class="comment">// ↓ set; を消すだけ</span>
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; } = 10;
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; } = 20;
-}
-</code></pre>
+    // ↓ set; を消すだけ
+    public int X { get; } = 10;
+    public int Y { get; } = 20;
+}</code></pre>
 
 </td>
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Point
 {
-    <span class="comment">// ↓setをprivateにすることで外からは書き替えれないように</span>
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">private set</span>; } 
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">private set</span>; }
+    // ↓setをprivateにすることで外からは書き替えれないように
+    public int X { get; private set; } 
+    public int Y { get; private set; }
 
-    <span class="reserved">public</span> Point()
+    public Point()
     {
         X = 10;
         Y = 20;
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 	</tr>
@@ -248,40 +232,36 @@ getだけ書いたプロパティは、readonlyフィールドと同じような
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">public class Point
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; }
+    public int X { get; }
+    public int Y { get; }
 
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    public Point(int x, int y)
     {
-        <span class="comment">// コンストラクター内でだけ set 可能。
-        // 以降は書き換え不可(readonly)</span>
+        // コンストラクター内でだけ set 可能。
+        // 以降は書き換え不可(readonly)
         X = x;
         Y = y;
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">public class Point
 {
-    <span class="reserved">private readonly int</span> _x;
-    <span class="reserved">public int</span> X =&gt; _x;
+    private readonly int _x;
+    public int X =&gt; _x;
 
-    <span class="reserved">private readonly int</span> _y;
-    <span class="reserved">public int</span> Y =&gt; _y;
+    private readonly int _y;
+    public int Y =&gt; _y;
 
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    public Point(int x, int y)
     {
         _x = x;
         _y = y;
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 	</tr>
@@ -306,37 +286,33 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">public class Point
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x = 0, <span class="reserved">int</span> y = 0) { X = x; Y = y; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public Point(int x = 0, int y = 0) { X = x; Y = y; }
 
-    <span class="reserved">public int</span> InnerProduct(<span class="type">Point</span> p)
+    public int InnerProduct(Point p)
     {
-        <span class="reserved">return</span> X * p.X + Y * p.Y;
+        return X * p.X + Y * p.Y;
     }
-    <span class="reserved">public static</span> <span class="type">Point</span> <span class="reserved">operator</span> -(<span class="type">Point</span> p)
+    public static Point operator -(Point p)
     {
-        <span class="reserved">return new</span> <span class="type">Point</span>(-p.X, -p.Y);
+        return new Point(-p.X, -p.Y);
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">Point</span>
+<pre class="source" title="" lang=""><code class="language-csharp">public class Point
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x = 0, <span class="reserved">int</span> y = 0) { X = x; Y = y; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public Point(int x = 0, int y = 0) { X = x; Y = y; }
 
-    <span class="reserved">public int</span> InnerProduct(<span class="type">Point</span> p) <em>=&gt;</em> X * p.X + Y * p.Y;
-    <span class="reserved">public static</span> <span class="type">Point</span> <span class="reserved">operator</span> -(<span class="type">Point</span> p) <em>=&gt;</em> <span class="reserved">new</span> <span class="type">Point</span>(-p.X, -p.Y);
-}
-</code></pre>
+    public int InnerProduct(Point p) =&gt; X * p.X + Y * p.Y;
+    public static Point operator -(Point p) =&gt; new Point(-p.X, -p.Y);
+}</code></pre>
 
 </td>
 	</tr>
@@ -354,39 +330,35 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">Polygon</span>
+<pre class="source" title="" lang=""><code class="language-csharp">public class Polygon
 {
-    <span class="reserved">private</span> <span class="type">Point</span>[] _vertexes;
+    private Point[] _vertexes;
 
-    <span class="reserved">public int</span> Count
+    public int Count
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">return</span> _vertexes.Length;
+            return _vertexes.Length;
         }
     }
-    <span class="reserved">public</span> <span class="type">Point</span> <span class="reserved">this</span>[<span class="reserved">int</span> i]
+    public Point this[int i]
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">return</span> _vertexes[i];
+            return _vertexes[i];
         }
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">Polygon</span>
+<pre class="source" title="" lang=""><code class="language-csharp">public class Polygon
 {
-    <span class="reserved">private</span> <span class="type">Point</span>[] _vertexes;
+    private Point[] _vertexes;
 
-    <span class="reserved">public int</span> Count <em>=&gt;</em> _vertexes.Length;
-    <span class="reserved">public</span> <span class="type">Point</span> <span class="reserved">this</span>[<span class="reserved">int</span> i] <em>=&gt;</em> _vertexes[i];
-}
-</code></pre>
+    public int Count =&gt; _vertexes.Length;
+    public Point this[int i] =&gt; _vertexes[i];
+}</code></pre>
 
 </td>
 	</tr>
@@ -408,31 +380,27 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">Sample</span>
+<pre class="source" title="" lang=""><code class="language-csharp">public class Sample
 {
-    <span class="reserved">public string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public string Name { get; set; }
 
-    <span class="reserved">public static int</span>? X(<span class="type">Sample</span> s)
+    public static int? X(Sample s)
     {
-        <span class="reserved">if</span> (s == <span class="reserved">null</span>) <span class="reserved">return null</span>;
-        <span class="reserved">var</span> name = s.Name;
-        <span class="reserved">if</span> (name == <span class="reserved">null</span>) <span class="reserved">return null</span>;
-        <span class="reserved">return</span> name.Length;
+        if (s == null) return null;
+        var name = s.Name;
+        if (name == null) return null;
+        return name.Length;
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> <span class="type">Sample</span>
+<pre class="source" title="" lang=""><code class="language-csharp">public class Sample
 {
-    <span class="reserved">public string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public string Name { get; set; }
 
-    <span class="reserved">public static int</span>? X(<span class="type">Sample</span> s) =&gt; <em>s?.Name?.Length</em>;
-}
-</code></pre>
+    public static int? X(Sample s) =&gt; s?.Name?.Length;
+}</code></pre>
 
 </td>
 	</tr>
@@ -441,19 +409,19 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 
 「[インデクサー](../oop/oo_indexer.md#indexer)」に対しても、?[] という形で、null 条件付きの値の取得ができます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">static char</span>? X(<span class="reserved">string</span> s, <span class="reserved">int</span> i) =&gt; <em>s?[i]</em>;
-</code></pre>
+```csharp
+static char? X(string s, int i) => s?[i];
+```
 
 
 一方で、デリゲートに対して ?() で呼び出しはできません。条件演算子 ? : との区別などで、文法上の問題があるからです。
 ただし、この場合でも、 ?.Invoke() という形で null 条件付きの呼び出しができます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">static</span> <span class="type">T</span> Y&lt;<span class="type">T</span>&gt;(<span class="type">Func</span>&lt;<span class="type">T</span>&gt; f)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
-    =&gt; <em>f?.Invoke()</em>;
-</code></pre>
+```csharp
+static T Y<T>(Func<T> f)
+    where T : class
+    => f?.Invoke();
+```
 
 
 
@@ -469,15 +437,11 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> formatted = <span class="reserved">string</span>.Format(<span class="literal">"({0}, {1})"</span>, x, y);
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">var formatted = string.Format(&quot;({0}, {1})&quot;, x, y);</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> formatted = <span class="literal">$"({</span>x<span class="literal">}, {</span>y<span class="literal">})"</span>;
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">var formatted = $&quot;({x}, {y})&quot;;</code></pre>
 
 </td>
 	</tr>
@@ -499,47 +463,43 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+<pre class="source" title="" lang=""><code class="language-csharp">using System;
 
-<span class="reserved">class</span> <span class="type">MyClass</span>
+class MyClass
 {
-    <span class="reserved">public int</span> MyProperty { <span class="reserved">get</span> { <span class="reserved">return</span> myField; } }
-    <span class="reserved">private int</span> myField = 10;
+    public int MyProperty { get { return myField; } }
+    private int myField = 10;
 
-    <span class="reserved">public void</span> MyMethod()
+    public void MyMethod()
     {
-        <span class="reserved">var</span> myLocal = 10;
-        <span class="type">Console</span>.WriteLine(<span class="literal">"MyClass"</span>);
-        <span class="type">Console</span>.WriteLine(<span class="literal">"MyProperty = "</span> + MyProperty);
-        <span class="type">Console</span>.WriteLine(<span class="literal">"myField = "</span> + myField);
-        <span class="type">Console</span>.WriteLine(<span class="literal">"MyMethod"</span>);
-        <span class="type">Console</span>.WriteLine(<span class="literal">"myLocal = "</span> + myLocal);
+        var myLocal = 10;
+        Console.WriteLine(&quot;MyClass&quot;);
+        Console.WriteLine(&quot;MyProperty = &quot; + MyProperty);
+        Console.WriteLine(&quot;myField = &quot; + myField);
+        Console.WriteLine(&quot;MyMethod&quot;);
+        Console.WriteLine(&quot;myLocal = &quot; + myLocal);
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="nameof 演算子の例" lang="">
-<code><span class="reserved">using</span> System;
+<pre class="source" title="nameof 演算子の例" lang=""><code class="language-csharp">using System;
 
-<span class="reserved">class</span> <span class="type">MyClass</span>
+class MyClass
 {
-    <span class="reserved">public int</span> MyProperty =&gt; myField;
-    <span class="reserved">private int</span> myField = 10;
+    public int MyProperty =&gt; myField;
+    private int myField = 10;
 
-    <span class="reserved">public void</span> MyMethod()
+    public void MyMethod()
     {
-        <span class="reserved">var</span> myLocal = 10;
-        <span class="type">Console</span>.WriteLine(<em><span class="reserved">nameof</span>(<span class="type">MyClass</span>)</em>);
-        <span class="type">Console</span>.WriteLine(<span class="reserved">nameof</span>(MyProperty) + <span class="literal">" = "</span> + MyProperty);
-        <span class="type">Console</span>.WriteLine(<span class="reserved">nameof</span>(myField) + <span class="literal">" = "</span> + myField);
-        <span class="type">Console</span>.WriteLine(<span class="reserved">nameof</span>(MyMethod));
-        <span class="type">Console</span>.WriteLine(<span class="reserved">nameof</span>(myLocal) + <span class="literal">" = "</span> + myLocal);
+        var myLocal = 10;
+        Console.WriteLine(nameof(MyClass));
+        Console.WriteLine(nameof(MyProperty) + &quot; = &quot; + MyProperty);
+        Console.WriteLine(nameof(myField) + &quot; = &quot; + myField);
+        Console.WriteLine(nameof(MyMethod));
+        Console.WriteLine(nameof(myLocal) + &quot; = &quot; + myLocal);
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 	</tr>
@@ -562,34 +522,30 @@ C# 6 では、関数メンバーの関数本体の部分が1つの式だけか�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+<pre class="source" title="" lang=""><code class="language-csharp">using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> pi = 2 * <span class="type">Math</span>.Asin(1);
-        <span class="type">Console</span>.WriteLine(<span class="type">Math</span>.PI == pi);
+        var pi = 2 * Math.Asin(1);
+        Console.WriteLine(Math.PI == pi);
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<em><span class="reserved">using static</span> System.<span class="type">Math</span></em>;
+<pre class="source" title="" lang=""><code class="language-csharp">using System;
+using static System.Math;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> pi = 2 * <em>Asin(1)</em>;
-        <span class="type">Console</span>.WriteLine(<em>PI</em> == pi);
+        var pi = 2 * Asin(1);
+        Console.WriteLine(PI == pi);
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 	</tr>
@@ -613,21 +569,17 @@ Math クラス(System 名前空間)など、純粋な関数のみを持ったク
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> dic = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;();
-dic[<span class="literal">"one"</span>] = 1;
-dic[<span class="literal">"two"</span>] = 2;
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">var dic = new Dictionary&lt;string, int&gt;();
+dic[&quot;one&quot;] = 1;
+dic[&quot;two&quot;] = 2;</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> dic = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;
+<pre class="source" title="" lang=""><code class="language-csharp">var dic = new Dictionary&lt;string, int&gt;
 {
-    [<span class="literal">"one"</span>] = 1,
-    [<span class="literal">"two"</span>] = 2,
-};
-</code></pre>
+    [&quot;one&quot;] = 1,
+    [&quot;two&quot;] = 2,
+};</code></pre>
 
 </td>
 	</tr>
@@ -636,53 +588,53 @@ dic[<span class="literal">"two"</span>] = 2;
 
 インデックス初期化子を使う利点は、式しか書けない場面(フィールド初期化子や、expression-bodied な関数定義など)で書けることです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; dic = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;
+    Dictionary<string, int> dic = new Dictionary<string, int>
     {
-        [<span class="literal">"one"</span>] = 1,
-        [<span class="literal">"two"</span>] = 2,
+        ["one"] = 1,
+        ["two"] = 2,
     };
 
-    <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; GetDic(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;
+    Dictionary<string, int> GetDic(int x, int y) => new Dictionary<string, int>
     {
-        [<span class="literal">"x"</span>] = x,
-        [<span class="literal">"y"</span>] = y,
+        ["x"] = x,
+        ["y"] = y,
     };
 }
-</code></pre>
+```
 
 
 プロパティへの代入と、インデクサーへの代入を混在させることもできます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">public string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public string Name { get; set; }
 
-    <span class="reserved">public int this</span>[<span class="reserved">string</span> key]
+    public int this[string key]
     {
-        <span class="reserved">get</span> { <span class="reserved">return</span> 0; }
-        <span class="reserved">set</span> { }
+        get { return 0; }
+        set { }
     }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>
+        var s = new Sample
         {
-            Name = <span class="literal">"sample"</span>,
-            [<span class="literal">"X"</span>] = 1,
-            [<span class="literal">"Y"</span>] = 2,
+            Name = "sample",
+            ["X"] = 1,
+            ["Y"] = 2,
         };
     }
 }
-</code></pre>
+```
 
 
 
@@ -690,39 +642,39 @@ dic[<span class="literal">"two"</span>] = 2;
 
 catch 句に追加の条件を付けれるようになりました。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">try</span>
+        try
         {
             SomeMethod(1, 2);
         }
-        <span class="reserved">catch</span> (<span class="type">ArgumentException</span> e) <span class="reserved">when</span> (e.ParamName == <span class="literal">"x"</span>)
+        catch (ArgumentException e) when (e.ParamName == "x")
         {
-            <span class="comment">// パラメーター名が x の時だけはエラー無視</span>
+            // パラメーター名が x の時だけはエラー無視
         }
-        <span class="reserved">catch</span> (<span class="type">ArgumentException</span> e) <span class="reserved">when</span> (e.ParamName == <span class="literal">"y"</span>)
+        catch (ArgumentException e) when (e.ParamName == "y")
         {
-            <span class="comment">// パラメーター名が y の時もエラー無視</span>
+            // パラメーター名が y の時もエラー無視
         }
-        <span class="reserved">catch</span> (<span class="type">ArgumentException</span> e)
+        catch (ArgumentException e)
         {
-            <span class="comment">// その他の時</span>
-            <span class="reserved">throw</span>;
+            // その他の時
+            throw;
         }
     }
 
-    <span class="reserved">private static void</span> SomeMethod(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    private static void SomeMethod(int x, int y)
     {
-        <span class="reserved">if</span> (x &lt; 0) <span class="reserved">throw new</span> <span class="type">ArgumentException</span>(<span class="reserved">nameof</span>(x));
-        <span class="reserved">if</span> (y &lt; 0) <span class="reserved">throw new</span> <span class="type">ArgumentException</span>(<span class="reserved">nameof</span>(y));
+        if (x < 0) throw new ArgumentException(nameof(x));
+        if (y < 0) throw new ArgumentException(nameof(y));
     }
 }
-</code></pre>
+```
 
 
 (.NET の実行エンジン的には最初から持っていた機能で、これまでは C# が対応してなかっただけのものです。)
@@ -734,25 +686,25 @@ catch 句に追加の条件を付けれるようになりました。
 
 C# 5.0 で導入された await 演算子ですが、5.0では、catch 句と finally 句内には書けないという制限がありました。C# 6 でこの制限がなくなります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public static async</span> <span class="type">Task</span> XAsync()
+```csharp
+public static async Task XAsync()
 {
-    <span class="reserved">try</span>
+    try
     {
-        <span class="reserved">await</span> SomeAsyncMethod();
+        await SomeAsyncMethod();
     }
-    <span class="reserved">catch</span> (<span class="type">InvalidOperationException</span> e)
+    catch (InvalidOperationException e)
     {
-        <span class="reserved">using</span> (<span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">StreamWriter</span>(<span class="literal">"error.txt"</span>))
-            <span class="reserved">await</span> s.WriteAsync(e.ToString());
+        using (var s = new StreamWriter("error.txt"))
+            await s.WriteAsync(e.ToString());
     }
-    <span class="reserved">finally</span>
+    finally
     {
-        <span class="reserved">using</span> (<span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">StreamWriter</span>(<span class="literal">"trace.txt"</span>))
-            <span class="reserved">await</span> s.WriteAsync(<span class="literal">"XAsync done."</span>);
+        using (var s = new StreamWriter("trace.txt"))
+            await s.WriteAsync("XAsync done.");
     }
 }
-</code></pre>
+```
 
 
 catch 句や finally 句での await は、一度全ての例外を拾ってから、非同期処理した後、再 throw するような、結構複雑なコードが生成されます。
@@ -763,48 +715,48 @@ C# 5.0 の頃に制限がかかっていた理由は、複雑なコード生成�
 
 C# 3.0 で「[コレクション初期化子](../functional/sp3_lambda.md#collectioninit)」が追加されましたが、これは、Add メソッドの呼び出しに展開されるものです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> x1 = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; { 1, 2, 3 };
-<span class="comment">// ↑と↓は同じ意味</span>
-<span class="reserved">var</span> x2 = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
+```csharp
+var x1 = new List<int> { 1, 2, 3 };
+// ↑と↓は同じ意味
+var x2 = new List<int>();
 x2.Add(1);
 x2.Add(2);
 x2.Add(3);
-</code></pre>
+```
 
 
 これまでは、Add は通常のメソッドでないといけませんでした。
 これが、C# 6 で、拡張メソッドでもよくなりました。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 }
 
-<span class="reserved">static class</span> <span class="type">PointExtensions</span>
+static class PointExtensions
 {
-    <span class="reserved">public static void</span> Add(<span class="reserved">this</span> <span class="type">List</span>&lt;<span class="type">Point</span>&gt; list, <span class="reserved">int</span> x, <span class="reserved">int</span> y)
-        =&gt; list.Add(<span class="reserved">new</span> <span class="type">Point</span> { X = x, Y = y });
+    public static void Add(this List<Point> list, int x, int y)
+        => list.Add(new Point { X = x, Y = y });
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> points = <span class="reserved">new</span> List&lt;<span class="type">Point</span>&gt;
+        var points = new List<Point>
         {
-            <span class="comment">// PointExtensions.Add が呼ばれる</span>
+            // PointExtensions.Add が呼ばれる
             { 1, 2 },
             { 4, 6 },
             { 0, 3 },
         };
     }
 }
-</code></pre>
+```
 
 
 
@@ -845,18 +797,18 @@ C# 6はコンパイラーを1から作りなおしたのもあって、「計画
 
 ### <a id="sec-generated-title-17"></a> <a id="struct-property-init"></a>構造体のプロパティ初期化
 
-<pre class="source" title="構造体のプロパティ初期化">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">Point</span>
+```csharp
+struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
+    public int X { get; private set; }
 
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x)
+    public Point(int x)
     {
-        <span class="comment">// C# 5.0まではエラーに。</span>
+        // C# 5.0まではエラーに。
         X = x;
     }
 }
-</code></pre>
+```
 
 C#の構造体のコンストラクターには、「すべてのフィールドを初期化するまで、関数メンバーを呼んではいけない」という制限がかかっています。
 C# 5.0までは、上記のコードはこの制限にプロパティ アクセスが引っかかって、コンパイル エラーになっていました。
@@ -865,13 +817,13 @@ C# 6では、自動実装プロパティのsetは、対応する[バックフィ
 
 ### <a id="sec-generated-title-18"></a> <a id="cyclic-ctor"></a>コンストラクターの循環参照
 
-<pre class="source" title="コンストラクターの循環参照">
-<code><reserved></span><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> C(<span class="reserved">int</span> x) : <span class="reserved">this</span>() { }
-    <span class="reserved">public</span> C() : <span class="reserved">this</span>(0) { } <span class="comment">// C# 6ではコンパイル エラーに</span>
+    public C(int x) : this() { }
+    public C() : this(0) { } // C# 6ではコンパイル エラーに
 }
-</code></pre>
+```
 
 このコードは、C# 5.0まではコンパイルできていました。コンストラクターが循環的に呼び出されているので、このクラスを`new`すると永久ループになって、スタック オーバーフローを起こします。
 
@@ -879,16 +831,16 @@ C# 6では、自動実装プロパティのsetは、対応する[バックフィ
 
 ### <a id="sec-generated-title-19"></a> <a id="definite-assignment"></a>「確実な初期化」の判定改善
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="reserved">int</span> x;
-    <span class="reserved">if</span> (<span class="reserved">false</span> &amp;&amp; x == 3) <span class="comment">// C# 5.0まではエラーに</span>
+    int x;
+    if (false && x == 3) // C# 5.0まではエラーに
     {
-        x = x + 1; <span class="comment">// ここはC# 5.0まででもOK</span>
+        x = x + 1; // ここはC# 5.0まででもOK
     }
 }
-</code></pre>
+```
 
 C#は、[未初期化領域](../resource/rm_default.md)の問題を避けるため、「変数は確実に初期化してからでないと値を読み出せない」という仕様になっています。この「確実な初期化」(definite assignment)がされたかどうかの判定は、ある程度コードの流れを追って判定してくれます。例えば`if`や`switch`で分岐がある場合でも、すべての分岐先で初期化してあれば「確実な初期化」済みと見なされます。
 
@@ -899,12 +851,12 @@ C#は、[未初期化領域](../resource/rm_default.md)の問題を避けるた�
 
 ### <a id="sec-generated-title-20"></a> <a id="enum-base-type"></a>列挙型の基底型
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">enum</span> <span class="type">X</span> : System.<span class="type">Int32</span> <span class="comment">// C# 5.0まではエラーに</span>
+```csharp
+enum X : System.Int32 // C# 5.0まではエラーに
 {
     A, B, C,
 }
-</code></pre>
+```
 
 [列挙型](../structured/st_enum.md)には基底型を指定できます(C#の列挙型は、内部的には単なる整数で、その整数の型を指定できます)。
 
@@ -925,32 +877,32 @@ C#は、[未初期化領域](../resource/rm_default.md)の問題を避けるた�
 
 ### <a id="sec-generated-title-21"></a> <a id="invaliant-meaning"></a>変数の「意味不変」ルール
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">class</span> <span class="type">InvariantMeaningInBlock</span>
+```csharp
+class InvariantMeaningInBlock
 {
-    <span class="reserved">double</span> x;
+    double x;
 
-    <span class="reserved">void</span> F(<span class="reserved">bool</span> b)
+    void F(bool b)
     {
         x = 1.0;
-        <span class="reserved">if</span> (b)
+        if (b)
         {
-            <span class="reserved">int</span> x; <span class="comment">// C# 5.0まではエラーに</span>
+            int x; // C# 5.0まではエラーに
             x = 1;
         }
     }
 
-    <span class="reserved">void</span> F1(<span class="reserved">bool</span> b)
+    void F1(bool b)
     {
-        <span class="reserved">if</span> (b)
+        if (b)
         {
-            <span class="reserved">int</span> x; <span class="comment">// ちなみに、これはC# 6でもエラー</span>
+            int x; // ちなみに、これはC# 6でもエラー
             x = 1;
         }
-        <span class="reserved">double</span> x = 1.0;
+        double x = 1.0;
     }
 }
-</code></pre>
+```
 
 C#は、「同じブロック内で変数の意味が変わってはいけない」という方針を持っています。
 上記コードの後半のように、`if`ステートメントとその外、入れ子になっている場所で、同じ名前の別変数を定義するというような書き方を認めていません。
@@ -961,19 +913,19 @@ C# 5.0まではこの方針を徹底していて、上記コードの前半の�
 
 ### <a id="sec-generated-title-22"></a> <a id="overload-resolution"></a>オーバーロード解決の改善
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    X(() =&gt; () =&gt; 10); <span class="comment">// C# 5.0まではエラーに</span>
-    Y(() =&gt; () =&gt; 10); <span class="comment">// C# 5.0まではエラーに</span>
+    X(() => () => 10); // C# 5.0まではエラーに
+    Y(() => () => 10); // C# 5.0まではエラーに
 }
 
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">int</span> X(<span class="type">Func</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt;&gt; f) { <span class="reserved">return</span> f()(); }
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">int</span> X(<span class="type">Func</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>?&gt;&gt; f) { <span class="reserved">return</span> f()() ?? 0; }
+private static int X(Func<Func<int>> f) { return f()(); }
+private static int X(Func<Func<int?>> f) { return f()() ?? 0; }
 
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">int</span> Y(<span class="type">Func</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt;&gt; f) { <span class="reserved">return</span> f()(); }
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">double</span> Y(<span class="type">Func</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">double</span>&gt;&gt; f) { <span class="reserved">return</span> f()(); }
-</code></pre>
+private static int Y(Func<Func<int>> f) { return f()(); }
+private static double Y(Func<Func<double>> f) { return f()(); }
+```
 
 C#では、同名・引数違いのメソッドを定義([オーバーロード](../structured/st_function.md#overload))できます。
 どのオーバーロードが呼ばれるかは、「実引数と仮引数の型が最も一致しているものを呼ぶ(暗黙的な型変換がないもの、少ないもの優先)」というルール(betternessルールと呼ばれます)に基いて決めます。
@@ -999,29 +951,29 @@ C# 5.0までは、`Func<Func<int>>`というような、入れ子になったジ
 以下のようなコードを書いた場合、C# 5.0までは x, y も無条件にフィールドに格上げされていました。
 それが、C# 6で、かつ、リリースビルドにすると、`yield return` や `await` をまたいだ場合にだけフィールド格上げされます(この例の場合、y はローカル変数のままで、x はフィールド格上げされる)。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; GetXItems()
+```csharp
+public static IEnumerable<int> GetXItems()
 {
-    <span class="reserved">var</span> x = 10;
-    <span class="reserved">yield</span> <span class="reserved">return</span> x;
+    var x = 10;
+    yield return x;
 
-    <span class="reserved">var</span> y = x * x;  <span class="comment">// x は yield を超えて使っている</span>
-    <span class="reserved">yield</span> <span class="reserved">return</span> y; <span class="comment">// y は yield を超えない</span>
+    var y = x * x;  // x は yield を超えて使っている
+    yield return y; // y は yield を超えない
 
-    <span class="reserved">yield</span> <span class="reserved">return</span> x;
+    yield return x;
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> XAsync()
+public static async Task XAsync()
 {
-    <span class="reserved">var</span> x = 10;
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(x);
+    var x = 10;
+    await Task.Delay(x);
 
-    <span class="reserved">var</span> y = x * x;       <span class="comment">// x は await を超えて使っている</span>
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(y); <span class="comment">// y は await を超えない</span>
+    var y = x * x;       // x は await を超えて使っている
+    await Task.Delay(y); // y は await を超えない
 
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(x);
+    await Task.Delay(x);
 }
-</code></pre>
+```
 
 リリースビルドとデバッグビルドで生成コードが少し変わるというのも、C# 6が初めてです。
 

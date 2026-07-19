@@ -17,13 +17,13 @@ aliases: []
 
 C# 6で導入されたnull条件演算子(`?.`)ですが、以下の2つの式が**ほぼ**同じ意味になります。
 
-<pre class="source" title="">
-<code>x != <span class="reserved">null</span> ? x.M() : <span class="reserved">null
-</code></pre>
+```csharp
+x != null ? x.M() : null
+```
 
-<pre class="source" title="">
-<code>x ?.M()
-</code></pre>
+```csharp
+x ?.M()
+```
 
 「ほぼ」であって「完全に同じ」と言えないのは、`==`演算子を呼ぶか呼ばないかが変わってしまうせいです。
 前者(自分で`==`を呼んでいるやつ)はオーバーロードされた`==`を呼び出しますが、
@@ -31,47 +31,47 @@ C# 6で導入されたnull条件演算子(`?.`)ですが、以下の2つの式�
 
 例えば、以下のように、本当はnullじゃないのにnullを自称する(`x == null`がtrueになる)クラスを作ると、ちょっと変な挙動になります。
 
-<pre class="source" title="null でないのに == nullなクラスを作る">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">class</span> <span class="type">NonDefault</span>&lt;<span class="type">T</span>&gt;
+class NonDefault<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> NonDefault(<span class="type">T</span> value) { Value = value; }
+    public T Value { get; }
+    public NonDefault(T value) { Value = value; }
 
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> ToString() =&gt; Value.ToString();
+    public override string ToString() => Value.ToString();
 
-    <span class="comment">// Value が既定値のときに null と同値扱いする</span>
-    <span class="comment">// null でないものとの x == null が true になることがある</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> ==(<span class="type">NonDefault</span>&lt;<span class="type">T</span>&gt; x, <span class="type">NonDefault</span>&lt;<span class="type">T</span>&gt; y) =&gt;
-        ReferenceEquals(x, <span class="reserved">null</span>) ? ReferenceEquals(y, <span class="reserved">null</span>) || Equals(y.Value, <span class="reserved">default</span>(<span class="type">T</span>)) :
-        ReferenceEquals(y, <span class="reserved">null</span>) ? ReferenceEquals(x, <span class="reserved">null</span>) || Equals(x.Value, <span class="reserved">default</span>(<span class="type">T</span>)) :
+    // Value が既定値のときに null と同値扱いする
+    // null でないものとの x == null が true になることがある
+    public static bool operator ==(NonDefault<T> x, NonDefault<T> y) =>
+        ReferenceEquals(x, null) ? ReferenceEquals(y, null) || Equals(y.Value, default(T)) :
+        ReferenceEquals(y, null) ? ReferenceEquals(x, null) || Equals(x.Value, default(T)) :
         Equals(x.Value, y.Value);
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> !=(<span class="type">NonDefault</span>&lt;<span class="type">T</span>&gt; x, <span class="type">NonDefault</span>&lt;<span class="type">T</span>&gt; y) =&gt; !(x == y);
+    public static bool operator !=(NonDefault<T> x, NonDefault<T> y) => !(x == y);
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// null の時には "null" と表示する ToString</span>
-    <span class="reserved">static</span> <span class="reserved">string</span> A(<span class="type">NonDefault</span>&lt;<span class="reserved">int</span>&gt; x) =&gt; (x != <span class="reserved">null</span> ? x.ToString() : <span class="reserved">null</span>) ?? <span class="string">"null"</span>;
-    <span class="comment">// A とほぼ同じ意味に見えて…</span>
-    <span class="reserved">static</span> <span class="reserved">string</span> B(<span class="type">NonDefault</span>&lt;<span class="reserved">int</span>&gt; x) =&gt; x?.ToString() ?? <span class="string">"null"</span>;
+    // null の時には "null" と表示する ToString
+    static string A(NonDefault<int> x) => (x != null ? x.ToString() : null) ?? "null";
+    // A とほぼ同じ意味に見えて…
+    static string B(NonDefault<int> x) => x?.ToString() ?? "null";
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        WriteLine(A(<span class="reserved">new</span> <span class="type">NonDefault</span>&lt;<span class="reserved">int</span>&gt;(1))); <span class="comment">// 1</span>
-        WriteLine(B(<span class="reserved">new</span> <span class="type">NonDefault</span>&lt;<span class="reserved">int</span>&gt;(1))); <span class="comment">// 1</span>
+        WriteLine(A(new NonDefault<int>(1))); // 1
+        WriteLine(B(new NonDefault<int>(1))); // 1
 
-        WriteLine(A(<span class="reserved">null</span>));                   <span class="comment">// null</span>
-        WriteLine(B(<span class="reserved">null</span>));                   <span class="comment">// null</span>
+        WriteLine(A(null));                   // null
+        WriteLine(B(null));                   // null
 
-        <span class="comment">// == を呼ぶ呼ばないことによる差がここで出る</span>
-        WriteLine(A(<span class="reserved">new</span> <span class="type">NonDefault</span>&lt;<span class="reserved">int</span>&gt;(0))); <span class="comment">// null</span>
-        WriteLine(B(<span class="reserved">new</span> <span class="type">NonDefault</span>&lt;<span class="reserved">int</span>&gt;(0))); <span class="comment">// 0</span>
+        // == を呼ぶ呼ばないことによる差がここで出る
+        WriteLine(A(new NonDefault<int>(0))); // null
+        WriteLine(B(new NonDefault<int>(0))); // 0
     }
 }
-</code></pre>
+```
 
 まあ、普通、こんな`==`演算子オーバーロードの仕方はしないんですが。
 というか、参照型に対する`==`オーバーロード自体めったにしないんですが。
@@ -114,31 +114,30 @@ nullの判定方法(2行目～4行目)だけが違って、残りは全く同じ
 
 以下のように書いた場合、
 
-<pre class="source" title="throw null">
-<code><span class="reserved">static</span> <span class="reserved">void</span> X() { <span class="reserved">throw</span> <span class="reserved">null</span>; }
-<span class="reserved">static</span> <span class="reserved">void</span> Y() { <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NullReferenceException</span>(); }
-</code></pre>
+```csharp
+static void X() { throw null; }
+static void Y() { throw new NullReferenceException(); }
+```
 
 コンパイル結果は以下の通り。
 
-<pre class="source" title="throw null">
-<code>.method <span class="reserved">private</span> <span class="reserved">hidebysig</span> <span class="reserved">static</span> <span class="reserved">void</span>  X() <span class="reserved">cil</span> <span class="reserved">managed</span>
+```cil
+.method private hidebysig static void  X() cil managed
 {
-  <span class="comment">// コード サイズ       2 (0x2)
-</span>  .maxstack  8
+  // コード サイズ       2 (0x2)
+  .maxstack  8
   IL_0000:  ldnull
   IL_0001:  throw
-} <span class="comment">// end of method Program::X
-</span>
-.method <span class="reserved">private</span> <span class="reserved">hidebysig</span> <span class="reserved">static</span> <span class="reserved">void</span>  Y() <span class="reserved">cil</span> <span class="reserved">managed</span>
+} // end of method Program::X
+
+.method private hidebysig static void  Y() cil managed
 {
-  <span class="comment">// コード サイズ       6 (0x6)
-</span>  .maxstack  8
-  IL_0000:  newobj     <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.NullReferenceException::<span class="reserved">.ctor</span>()
+  // コード サイズ       6 (0x6)
+  .maxstack  8
+  IL_0000:  newobj     instance void [mscorlib]System.NullReferenceException::.ctor()
   IL_0005:  throw
-} <span class="comment">// end of method Program::Y
-</span>
-</code></pre>
+} // end of method Program::Y
+```
 
 割かしそのまんまなILコードです。
 nullをロード(`ldnull`)して、`throw`命令を実行。

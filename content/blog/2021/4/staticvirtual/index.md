@@ -32,37 +32,37 @@ aliases: []
 
 ジェネリックなメソッドを作るとき、`new()` 制約を付けることで引数なしのコンストラクターなら呼び出せるんですが…
 
-<pre class="source" title="new() 制約">
-<code><span class="reserved">void</span> <span class="method">m</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>()
+```csharp
+void m<T>() where T : new()
 {
-    <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">T</span>(); <span class="comment">// OK</span>
+    var x = new T(); // OK
 }
-</code></pre>
+```
 
 ところが、この `new` には引数を渡せません。
 
-<pre class="source" title="new(X) は書けない">
-<code><span class="reserved">void</span> <span class="method">m</span>&lt;<span class="type">T</span>&gt;(<span class="reserved">int</span> <span class="variable">i</span>)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>(<span class="reserved">int</span>) <span class="comment">// こう書きたい(ダメ)</span>
+```csharp
+void m<T>(int i)
+    where T : new(int) // こう書きたい(ダメ)
 {
-    <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> T(i); <span class="comment">// ダメ</span>
+    var x = new T(i); // ダメ
 }
-</code></pre>
+```
 
 これを例えば以下のように書けるようにすることで代替できるようになります。
 
-<pre class="source" title="new(X) の代替で T.New(X)">
-<code><span class="reserved">void</span> <span class="method">m</span>&lt;<span class="type">T</span>&gt;(<span class="reserved">int</span> <span class="variable">i</span>)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IConvartibleFromInt</span> <span class="comment">// 普通のインターフェイス制約</span>
+```csharp
+void m<T>(int i)
+    where T : IConvartibleFromInt // 普通のインターフェイス制約
 {
-    <span class="reserved">var</span> <span class="variable">x</span> = <span class="type">T</span>.New(<span class="variable">i</span>); <span class="comment">// こう書けるようにする</span>
+    var x = T.New(i); // こう書けるようにする
 }
 
-<span class="reserved">interface</span> <span class="type">IConvartibleFromInt</span>
+interface IConvartibleFromInt
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">abstract</span> <span class="type">IConvartibleFromInt</span> <span class="method">New</span>(<span class="reserved">int</span> <span class="variable">i</span>);
+    public static abstract IConvartibleFromInt New(int i);
 }
-</code></pre>
+```
 
 ## <a id="generic-math">generic math</a>
 
@@ -70,12 +70,12 @@ aliases: []
 わかりやすい例だと「[`Enumerable.Sum`](https://source.dot.net/#System.Linq/System/Linq/Sum.cs,17ae8142727f08ee) の実装何個あるんだ」って話で。
 中身はほぼ定型文で、以下のようなコードのコピペが何個も並んでいます。
 
-<pre class="source" title="Sum">
-<code><span class="control">foreach</span> (<span class="reserved">int</span> <span class="variable">v</span> <span class="control">in</span> <span class="variable">source</span>)
+```csharp
+foreach (int v in source)
 {
-    <span class="variable">sum</span> += <span class="variable">v</span>;
+    sum += v;
 }
-</code></pre>
+```
 
 コピペせざるを得ないのはジェネリックな型に対して `+` を使えないからです。
 
@@ -97,34 +97,34 @@ aliases: []
 
 上記の `Sum` であれば、「0 を取得」と「足し算」の2つがあれば書けるので、まず以下のようなインターフェイスを用意。
 
-<pre class="source" title="static virtual / static abstract の宣言">
-<code><span class="reserved">interface</span> <span class="type">IAddable</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IAddable</span>&lt;<span class="type">T</span>&gt;
+```csharp
+interface IAddable<T> where T : IAddable<T>
 {
-    <span class="reserved">static</span> <span class="reserved">virtual</span> <span class="type">T</span> Zero { <span class="reserved">get</span>; } =&gt; <span class="reserved">default</span>(<span class="type">T</span>);
-    <span class="reserved">static</span> <span class="reserved">abstract</span> <span class="type">T</span> <span class="reserved">operator</span> +(<span class="type">T</span> <span class="variable">t1</span>, <span class="type">T</span> <span class="variable">t2</span>);
+    static virtual T Zero { get; } => default(T);
+    static abstract T operator +(T t1, T t2);
 }
-</code></pre>
+```
 
 これが入るのであれば、標準の `int` 型(`Int32` 構造体(`System` 名前空間))に以下のような実装も足されることになります。
 
-<pre class="source" title="static virtual / static abstract の実装">
-<code><span class="reserved">struct</span> <span class="type">Int32</span> : …, <span class="type">IAddable</span>&lt;<span class="type">Int32</span>&gt;
+```csharp
+struct Int32 : …, IAddable<Int32>
 {
-    <span class="reserved">static</span> <span class="type">Int32</span> I.<span class="reserved">operator</span> +(<span class="type">Int32</span> x, <span class="type">Int32</span> y) =&gt; x + y; <span class="comment">// Explicit</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Zero =&gt; 0;                          <span class="comment">// Implicit</span>
+    static Int32 I.operator +(Int32 x, Int32 y) => x + y; // Explicit
+    public static int Zero => 0;                          // Implicit
 }
-</code></pre>
+```
 
 これを使って `Sum` メソッドを書くと以下のようになります。
 
-<pre class="source" title="static virtual / static abstract の利用">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> <span class="method">Sum</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span>[] <span class="variable">ts</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IAddable</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public static T Sum<T>(T[] ts) where T : IAddable<T>
 {
-    <span class="type">T</span> <span class="variable">result</span> = <span class="type">T</span>.Zero;                   <span class="comment">// Call static operator</span>
-    <span class="control">foreach</span> (<span class="type">T</span> <span class="variable">t</span> <span class="control">in</span> <span class="variable">ts</span>) { <span class="variable">result</span> <span class="method">+=</span> <span class="variable">t</span>; } <span class="comment">// Use `+`</span>
-    <span class="control">return</span> <span class="variable">result</span>;
+    T result = T.Zero;                   // Call static operator
+    foreach (T t in ts) { result += t; } // Use `+`
+    return result;
 }
-</code></pre>
+```
 
 これ、下手な実装をするとパフォーマンスを著しく損ねます。
 `+` なんてネイティブコード化されると CPU の1命令だったりするわけですが、
@@ -132,82 +132,82 @@ aliases: []
 
 とはいえ、[前述の3年前のブログ](../../../2018/5/metricspace/index.md)でやっているような「値型ジェネリクスを使った黒魔術」でパフォーマンスは解決できるんですが、型引数が余分に1個増えたり、演算子を使えなかったり、だいぶ使い勝手は悪いです。
 
-<pre class="source" title="これまでの黒魔術的な回避策">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> <span class="method">Sum</span>&lt;<span class="type">T</span>, <span class="type">TAddable</span>&gt;(<span class="type">T</span>[] <span class="variable">ts</span>) <span class="reserved">where</span> <span class="type">TAddable</span> : <span class="type">IAddable</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public static T Sum<T, TAddable>(T[] ts) where TAddable : IAddable<T>
 {
-    <span class="type">T</span> <span class="variable">result</span> = <span class="reserved">default</span>(<span class="type">TAddable</span>).Zero;
-    <span class="control">foreach</span> (<span class="type">T</span> <span class="variable">t</span> <span class="control">in</span> <span class="variable">ts</span>) { <span class="variable">result</span> = <span class="reserved">default</span>(<span class="type">TAddable</span>).Add(<span class="variable">result</span>, <span class="variable">t</span>); }
-    <span class="control">return</span> <span class="variable">result</span>;
+    T result = default(TAddable).Zero;
+    foreach (T t in ts) { result = default(TAddable).Add(result, t); }
+    return result;
 }
-</code></pre>
+```
 
 ## <a id="type-param">型引数による分岐</a>
 
 普通の、既存の virtual/abstract メソッドの場合、
 実際にどのメソッドが呼び出されるかはインスタンスの実行時の型によって決まります。
 
-<pre class="source" title="通常の virtual/abstract は実行時の型によって呼び出し先が決定される">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// 型引数が何だろうと、インスタンスが A なので表示されるのは &quot;A&quot;。</span>
-<span class="method">m</span>&lt;<span class="type">I</span>&gt;(<span class="reserved">new</span> <span class="type">A</span>());
-<span class="method">m</span>&lt;<span class="type">A</span>&gt;(<span class="reserved">new</span> <span class="type">A</span>());
+// 型引数が何だろうと、インスタンスが A なので表示されるのは "A"。
+m<I>(new A());
+m<A>(new A());
  
-<span class="comment">// 型引数が何だろうと、インスタンスが B なので表示されるのは &quot;B&quot;。</span>
-<span class="method">m</span>&lt;<span class="type">I</span>&gt;(<span class="reserved">new</span> <span class="type">B</span>());
-<span class="method">m</span>&lt;<span class="type">A</span>&gt;(<span class="reserved">new</span> <span class="type">B</span>());
-<span class="method">m</span>&lt;<span class="type">B</span>&gt;(<span class="reserved">new</span> <span class="type">B</span>());
+// 型引数が何だろうと、インスタンスが B なので表示されるのは "B"。
+m<I>(new B());
+m<A>(new B());
+m<B>(new B());
  
-<span class="reserved">void</span> <span class="method">m</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">x</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">I</span> =&gt; <span class="variable">x</span>.<span class="method">M</span>();
+void m<T>(T x) where T : I => x.M();
  
-<span class="reserved">interface</span> <span class="type">I</span>
+interface I
 {
-    <span class="reserved">void</span> <span class="method">M</span>();
+    void M();
 }
  
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">I</span>
+class A : I
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;A&quot;</span>);
+    public virtual void M() => Console.WriteLine("A");
 }
  
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+class B : A
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;B&quot;</span>);
+    public override void M() => Console.WriteLine("B");
 }
-</code></pre>
+```
 
 一方、static virtual/abstract の場合は型引数を見ます。
 コンパイル時に決定済み。
 abstract なままのもの(実態がないもの)を使うとコンパイル自体できません。
 
-<pre class="source" title="static virtual/abstract はコンパイル時に渡した型引数で決定される">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// static virtual/abstract の場合は型引数の方で呼び出し先が決まる。</span>
-<span class="method">m</span>&lt;<span class="type">I</span>&gt;(<span class="reserved">new</span> <span class="type">A</span>()); <span class="comment">// コンパイル エラー。 I.M に実装がない。</span>
-<span class="method">m</span>&lt;<span class="type">A</span>&gt;(<span class="reserved">new</span> <span class="type">A</span>()); <span class="comment">// &quot;A&quot;</span>
+// static virtual/abstract の場合は型引数の方で呼び出し先が決まる。
+m<I>(new A()); // コンパイル エラー。 I.M に実装がない。
+m<A>(new A()); // "A"
  
-<span class="method">m</span>&lt;<span class="type">I</span>&gt;(<span class="reserved">new</span> <span class="type">B</span>()); <span class="comment">// コンパイル エラー。 I.M に実装がない。</span>
-<span class="method">m</span>&lt;<span class="type">A</span>&gt;(<span class="reserved">new</span> <span class="type">B</span>()); <span class="comment">// &quot;A&quot;</span>
-<span class="method">m</span>&lt;<span class="type">B</span>&gt;(<span class="reserved">new</span> <span class="type">B</span>()); <span class="comment">// &quot;B&quot;</span>
+m<I>(new B()); // コンパイル エラー。 I.M に実装がない。
+m<A>(new B()); // "A"
+m<B>(new B()); // "B"
  
-<span class="reserved">void</span> <span class="method">m</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">x</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">I</span> =&gt; <span class="type">T</span>.M();
+void m<T>(T x) where T : I => T.M();
  
-<span class="reserved">interface</span> <span class="type">I</span>
+interface I
 {
-    <span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>();
+    public abstract static void M();
 }
  
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">I</span>
+class A : I
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;A&quot;</span>);
+    public override static void M() => Console.WriteLine("A");
 }
  
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+class B : A
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;B&quot;</span>);
+    public override static void M() => Console.WriteLine("B");
 }
-</code></pre>
+```
 
 ## <a id="runtime-mod">型システムの修正</a>
 

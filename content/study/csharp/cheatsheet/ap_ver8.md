@@ -76,26 +76,26 @@ C# 8.0 の全ての機能を一切の小細工なしで満足に使えるのは 
 null 許容参照型と呼びます。
 ただ、これまでと型 `T` の意味を変えてしまうので、opt-in (オプションを明示しないと有効にならない)方式になっています。
 
-<pre class="source" title="null 許容参照型の例">
-<code><span class="comment">// 有効化のためのディレクティブ</span>
-<span class="inactive">#nullable</span> <span class="inactive">enable</span>
+```csharp
+// 有効化のためのディレクティブ
+#nullable enable
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 参照型でも ? の有無で null を許容するかどうかが変わる。</span>
-    <span class="reserved">string</span> <span class="method">NotNull</span>() =&gt; <span class="string">&quot;&quot;</span>;
-    <span class="reserved">string</span>? <span class="method">MaybeNull</span>() =&gt; <span class="reserved">null</span>;
+    // 参照型でも ? の有無で null を許容するかどうかが変わる。
+    string NotNull() => "";
+    string? MaybeNull() => null;
  
-    <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">s</span>)
+    int M(string s)
     {
-        <span class="reserved">var</span> <span class="variable">s1</span> = <span class="method">NotNull</span>();
-        <span class="reserved">var</span> <span class="variable">s2</span> = <span class="method">MaybeNull</span>();
+        var s1 = NotNull();
+        var s2 = MaybeNull();
  
-        <span class="comment">// null チェックをしていないので、以下の行の s2 のところに警告が出る。</span>
-        <span class="control">return</span> <span class="variable">s</span>.Length + <span class="variable">s1</span>.Length + <span class="warning"><span class="variable">s2</span></span>.Length;
+        // null チェックをしていないので、以下の行の s2 のところに警告が出る。
+        return s.Length + s1.Length + s2.Length;
     }
 }
-</code></pre>
+```
 
 「ぬるぽ」がなぜかネットスラングとして定着するくらい、「意図しない null によるバグ」は多くていらだたしいものです。
 コンパイラーによるフロー解析によってこの手のバグを事前に避けれるようになることで、プログラムの堅牢性が増します。
@@ -109,54 +109,54 @@ C# 8.0 で追加されるパターンは再帰的なマッチングが可能で�
 
 例えば以下のような感じです(new! と書いている行が再帰パターン)。
 
-<pre class="source" title="再帰パターンの例">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+public class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="method">Point</span>(<span class="reserved">int</span> <span class="variable">x</span> = 0, <span class="reserved">int</span> <span class="variable">y</span> = 0) =&gt; (X, Y) = (<span class="variable">x</span>, <span class="variable">y</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">y</span>) =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) = (X, Y);
+    public int X { get; set; }
+    public int Y { get; set; }
+    public Point(int x = 0, int y = 0) => (X, Y) = (x, y);
+    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>)
-        =&gt; <span class="variable">obj</span> <span class="reserved">switch</span>
+    static int M(object obj)
+        => obj switch
     {
-        0 =&gt; 1,
-        <span class="reserved">int</span> <span class="variable">i</span> =&gt; 2,
-        <em><span class="type">Point</span> (1, <span class="reserved">_</span>)</em> =&gt; 4, <span class="comment">// new! 位置パターン。</span>
-        <em><span class="type">Point</span> { X: 2, Y: <span class="reserved">var</span> y }</em> =&gt; <span class="variable">y</span>, <span class="comment">// new! プロパティ パターン。</span>
-        <span class="reserved">_</span> =&gt; 0
+        0 => 1,
+        int i => 2,
+        Point (1, _) => 4, // new! 位置パターン。
+        Point { X: 2, Y: var y } => y, // new! プロパティ パターン。
+        _ => 0
     };
 }
-</code></pre>
+```
 
 単に短く書けるというだけではなく、以下のように、
 コンパイラーによるチェックが掛かりやすく、人的ミスの回避にも貢献します。
 
-<pre class="source" title="再帰パターンはコンパイラーによるチェックがちょっと賢い">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>)
+```csharp
+void M(object obj)
 {
-    <span class="control">switch</span> (<span class="variable">obj</span>)
+    switch (obj)
     {
-        <span class="control">case</span> <span class="reserved">string</span> <span class="variable">s</span> <span class="control">when</span> <span class="variable">s</span>.Length == 0:
-            <span class="control">break</span>;
-        <span class="comment">// これまでの switch だと、間違えて同じ case を書いていてもエラーにならない。</span>
-        <span class="control">case</span> <span class="reserved">string</span> <span class="variable">s</span> <span class="control">when</span> <span class="variable">s</span>.Length == 0:
-            <span class="control">break</span>;
+        case string s when s.Length == 0:
+            break;
+        // これまでの switch だと、間違えて同じ case を書いていてもエラーにならない。
+        case string s when s.Length == 0:
+            break;
     }
  
-    <span class="control">switch</span> (<span class="variable">obj</span>)
+    switch (obj)
     {
-        <span class="control">case</span> <span class="reserved">string</span> { Length: 0 }:
-            <span class="control">break</span>;
-        <span class="comment">// 再帰パターンだと同じ条件があるとコンパイル エラーになる。</span>
-        <span class="control">case</span> <span class="error"><span class="reserved">string</span> { Length: 0 }</span>:
-            <span class="control">break</span>;
+        case string { Length: 0 }:
+            break;
+        // 再帰パターンだと同じ条件があるとコンパイル エラーになる。
+        case string { Length: 0 }:
+            break;
     }
 }
-</code></pre>
+```
 
 詳しくは「[再帰パターン](../datatype/patterns.md)」で説明します。
 
@@ -167,16 +167,16 @@ C# 8.0 で追加されるパターンは再帰的なマッチングが可能で�
 
 以下のような書き方ができます。
 
-<pre class="source" title="switch 式の例">
-<code><span class="reserved">public</span> <span class="reserved">int</span> <span class="method">Compare</span>(<span class="reserved">int</span>? <span class="variable">x</span>, <span class="reserved">int</span>? <span class="variable">y</span>)
-    =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) <em><span class="control">switch</span></em>
+```csharp
+public int Compare(int? x, int? y)
+    => (x, y) switch
     {
-        (<span class="reserved">int</span> <span class="variable">i</span>, <span class="reserved">int</span> <span class="variable">j</span>) =&gt; <span class="variable">i</span>.<span class="method">CompareTo</span>(<span class="variable">j</span>),
-        ({ }, <span class="reserved">null</span>) =&gt; 1,
-        (<span class="reserved">null</span>, { }) =&gt; -1,
-        (<span class="reserved">null</span>, <span class="reserved">null</span>) =&gt; 0
+        (int i, int j) => i.CompareTo(j),
+        ({ }, null) => 1,
+        (null, { }) => -1,
+        (null, null) => 0
     };
-</code></pre>
+```
 
 後置きの `switch` キーワードに続けて、`{}` 内に[パターン](../datatype/patterns.md)と返したい値を並べます。
 
@@ -186,26 +186,26 @@ C# 8.0 で追加されるパターンは再帰的なマッチングが可能で�
 
 `a[i..j]` という書き方で「i番目からj番目の要素を取り出す」というような操作ができるようになりました。
 
-<pre class="source" title=".. 構文">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">a</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
+        var a = new[] { 1, 2, 3, 4, 5 };
  
-        <span class="comment">// 前後1要素ずつ削ったもの</span>
-        <span class="reserved">var</span> <span class="variable">middle</span> = <span class="variable">a</span>[1..^1];
+        // 前後1要素ずつ削ったもの
+        var middle = a[1..^1];
  
-        <span class="comment">// 2, 3, 4 が表示される</span>
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">middle</span>)
+        // 2, 3, 4 が表示される
+        foreach (var x in middle)
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+            Console.WriteLine(x);
         }
     }
 }
-</code></pre>
+```
 
 この手の範囲指定は、例えば `(a, b)` みたいに書いたときに、「`a` から `b` まで」なのか「`a` から始めて `b` 個」なのかで迷ったり、前者だとすると「`b` は含むのか含まないのか」でで迷ったりします。
 言語構文として `a..b` を導入することでこういう不明瞭さを排除して、人的ミスを減らします。
@@ -229,41 +229,41 @@ C# 8.0 (.NET Core 3.0)で、インターフェイスの制限が緩和されま�
 
 これら指して「インターフェイスのデフォルト実装」(default implementations of interfaces)と呼びます。
 
-<pre class="source" title="デフォルト実装">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">interface</span> <span class="type">I</span>
+interface I
 {
-    <span class="reserved">void</span> <span class="method">X</span>();
+    void X();
  
-    <span class="comment">// 後から追加しても、デフォルト実装を持っているので平気</span>
-    <span class="reserved">void</span> <span class="method">Y</span>() { }
+    // 後から追加しても、デフォルト実装を持っているので平気
+    void Y() { }
 }
  
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">I</span>
+class A : I
 {
-    <span class="comment">// X だけ実装していればとりあえず大丈夫</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">X</span>() { }
+    // X だけ実装していればとりあえず大丈夫
+    public void X() { }
 }
  
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">I</span>
+class B : I
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">X</span>() { }
+    public void X() { }
  
-    <span class="comment">// Y も実装。I 越しでもちゃんとこれが呼ばれる。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Y</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;B&quot;</span>);
+    // Y も実装。I 越しでもちゃんとこれが呼ばれる。
+    public void Y() => Console.WriteLine("B");
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>() =&gt; <span class="method">M</span>(<span class="reserved">new</span> <span class="type">B</span>());
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">I</span> <span class="variable">i</span>) =&gt; <span class="variable">i</span>.<span class="method">Y</span>();
+    static void Main() => M(new B());
+    static void M(I i) => i.Y();
 }
-</code></pre>
+```
 
-<pre class="console" title="デフォルト実装">
-<code>B
-</code></pre>
+```console
+B
+```
 
 機能面で言うと、クラス(特に[抽象クラス](../oop/oo_abstract.md#abclass))との差は「フィールドを持てない代わりに多重継承できる」というくらいに縮まりました。
 ただ、
@@ -288,44 +288,44 @@ C# 8.0 では非同期メソッドが大幅に拡張されました。
 
 例えば以下のように書けます。
 
-<pre class="source" title="非同期イテレーターと非同期foreachの例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    public static async Task Main()
     {
-        <span class="reserved">await</span> <span class="method">WriteItems</span>(<span class="method">Select</span>(<span class="method">GetData</span>(), <span class="variable">x</span> =&gt; <span class="variable">x</span> * <span class="variable">x</span>));
+        await WriteItems(Select(GetData(), x => x * x));
     }
  
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">GetData</span>()
+    static async IAsyncEnumerable<int> GetData()
     {
-        <em><span class="control">yield</span> <span class="control">return</span></em> 1;
-        <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Delay</span>(1);
-        <span class="control">yield</span> <span class="control">return</span> 2;
-        <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Delay</span>(1);
-        <span class="control">yield</span> <span class="control">return</span> 3;
+        yield return 1;
+        await Task.Delay(1);
+        yield return 2;
+        await Task.Delay(1);
+        yield return 3;
     }
  
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">Select</span>(<span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">source</span>, <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">selector</span>)
+    static async IAsyncEnumerable<int> Select(IAsyncEnumerable<int> source, Func<int, int> selector)
     {
-        <em><span class="reserved">await</span> <span class="control">foreach</span></em> (<span class="reserved">var</span> <span class="variable">item</span> <span class="control">in</span> <span class="variable">source</span>)
+        await foreach (var item in source)
         {
-            <span class="control">yield</span> <span class="control">return</span> <span class="variable">selector</span>(<span class="variable">item</span>);
+            yield return selector(item);
         }
     }
  
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">WriteItems</span>(<span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">source</span>)
+    static async Task WriteItems(IAsyncEnumerable<int> source)
     {
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">item</span> <span class="control">in</span> <span class="variable">source</span>)
+        await foreach (var item in source)
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">item</span>);
+            Console.WriteLine(item);
         }
     }
 }
-</code></pre>
+```
 
 一連のデータ(data stream)を、非同期に生成(イテレーター)して非同期に消費(foreach)する機能なので、これらを合わせて非同期ストリーム(async stream)と呼ばれます。
 
@@ -339,31 +339,31 @@ C# 8.0 では非同期メソッドが大幅に拡張されました。
 その変数のスコープに紐づいて `using` ステートメントと同じ効果を得られるようになりました。
 これを `using` 変数宣言(using declaration)と呼びます。
 
-<pre class="source" title="using 変数宣言">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">DeferredMessage</span> : <span class="type">IDisposable</span>
+readonly struct DeferredMessage : IDisposable
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">string</span> _message;
-    <span class="reserved">public</span> <span class="type">DeferredMessage</span>(<span class="reserved">string</span> <span class="variable">message</span>) =&gt; _message = <span class="variable">message</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(_message);
+    private readonly string _message;
+    public DeferredMessage(string message) => _message = message;
+    public void Dispose() => Console.WriteLine(_message);
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// using var で、変数のスコープに紐づいた using になる。</span>
-        <span class="comment">// スコープを抜けるときに Dispose が呼ばれる。</span>
-        <span class="reserved">using</span> <span class="reserved">var</span> <span class="variable">a</span> = <span class="reserved">new</span> <span class="type">DeferredMessage</span>(<span class="string">&quot;a&quot;</span>);
-        <span class="reserved">using</span> <span class="reserved">var</span> <span class="variable">b</span> = <span class="reserved">new</span> <span class="type">DeferredMessage</span>(<span class="string">&quot;b&quot;</span>);
+        // using var で、変数のスコープに紐づいた using になる。
+        // スコープを抜けるときに Dispose が呼ばれる。
+        using var a = new DeferredMessage("a");
+        using var b = new DeferredMessage("b");
  
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;c&quot;</span>);
+        Console.WriteLine("c");
  
-        <span class="comment">// c, b, a の順でメッセージが表示される</span>
+        // c, b, a の順でメッセージが表示される
     }
 }
-</code></pre>
+```
 
 詳しくは「[using 変数宣言](../resource/oo_dispose.md#using-declaration)」で説明します。
 
@@ -372,24 +372,24 @@ C# 8.0 では非同期メソッドが大幅に拡張されました。
 [ref 構造体](../resource/refstruct.md)に限るんですが、
 パターン ベース(別にインターフェイスを実装していなくても、`Dispose` メソッドさえ持っていればOK)で [`using` ステートメント](../resource/oo_dispose.md#using)を使えるようになりました。
 
-<pre class="source" title="パターン ベースな using ステートメント">
-<code><span class="comment">// ref 構造体なので IDisposable インターフェイスは実装できない。</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">RefDisposable</span>
+```csharp
+// ref 構造体なので IDisposable インターフェイスは実装できない。
+ref struct RefDisposable
 {
-    <span class="comment">// けど、Dispose メソッドだけ用意。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() { }
+    // けど、Dispose メソッドだけ用意。
+    public void Dispose() { }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// C# 7.3 まではコンパイル エラーになっていた。</span>
-        <span class="comment">// C# 8.0 で OK に。</span>
-        <span class="reserved">using</span> (<span class="reserved">new</span> <span class="type">RefDisposable</span>()) { }
+        // C# 7.3 まではコンパイル エラーになっていた。
+        // C# 8.0 で OK に。
+        using (new RefDisposable()) { }
     }
 }
-</code></pre>
+```
 
 ref 構造体だけ対応したのは、需要が高く、既存コードを壊す心配が少ないからです
 (既存コードの心配さえなければ任意の型で認めたかったそうです)。
@@ -404,13 +404,13 @@ ref 構造体だけ対応したのは、需要が高く、既存コードを壊�
 
 C# 8.0 では、null合体演算子 (`??`)も複合代入に使えるようになりました(`??=`)。
 
-<pre class="source" title="null 合体代入">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span> s = <span class="reserved">null</span>)
+```csharp
+static void M(string s = null)
 {
-    s <em>??=</em> <span class="string">"default string"</span>;
+    s ??= "default string";
     Console.WriteLine(s);
 }
-</code></pre>
+```
 
 詳しくは「[null 合体代入 (??=)](../resource/sp2_nullable.md#null-coalescing-assignment)」で説明します。
 
@@ -420,17 +420,17 @@ C# 8.0 から、外部の変数を捕獲しないことを明示するため、
 ローカル関数に `static` 修飾を付けれるようになりました。
 この機能を<strong id="key-static-local-function" class="keyword">静的ローカル関数</strong>(static local function)と呼びます。
 
-<pre class="source" title="静的ローカル関数の例">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">a</span>)
+```csharp
+void M(int a)
 {
-    <span class="comment">// 外部の変数(引数)を捕獲(クロージャ化)。</span>
-    <span class="reserved">int</span> <span class="method">f</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="variable">a</span> * <span class="variable">x</span>;
+    // 外部の変数(引数)を捕獲(クロージャ化)。
+    int f(int x) => a * x;
  
-    <span class="comment">// static を付けて、クロージャ化を禁止。</span>
-    <span class="comment">// a を使っているところでコンパイル エラーになる。</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">g</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="error"><span class="variable">a</span></span> * <span class="variable">x</span>;
+    // static を付けて、クロージャ化を禁止。
+    // a を使っているところでコンパイル エラーになる。
+    static int g(int x) => a * x;
 }
-</code></pre>
+```
 
 詳しくは「[静的ローカル関数](../functional/fun_localfunctions.md#static-local-function)」で説明します。
 同時に、変数の[シャドーイング](../functional/fun_localfunctions.md#shadowing)も認められるようになりました。
@@ -445,18 +445,18 @@ C# 8.0では`@$`の順でも認められるようになりました。
 
 C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネージ型かどうかの判定するようになりました。
 型引数全てがアンマネージであれば、その構造体もアンマネージ扱いを受けるようになります。
-<pre class="source" title="ジェネリックな構造体に対するポインター">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    unsafe static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">kv</span> = <span class="reserved">new</span> <span class="type">KeyValuePair</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;(1, 2);
-        <em><span class="type">KeyValuePair</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;* <span class="variable">pkv</span> = &amp;<span class="variable">kv</span>;</em>
+        var kv = new KeyValuePair<int, int>(1, 2);
+        KeyValuePair<int, int>* pkv = &kv;
     }
 }
-</code></pre>
+```
 
 詳しくは「[アンマネージなジェネリック構造体](../interop/sp_unsafe.md#unmanaged-generic-struct)」で説明します。
 
@@ -464,16 +464,16 @@ C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネ�
 
 C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-member)単位で「フィールドを書き換えてない」ということを保証できるようになりました。
 
-<pre class="source" title="プロパティを readonly 修飾する例">
-<code><span class="reserved">struct</span> <span class="type">Point</span>
+```csharp
+struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">float</span> X;
-    <span class="reserved">public</span> <span class="reserved">float</span> Y;
+    public float X;
+    public float Y;
  
-    <span class="comment">// readonly 修飾でフィールドを書き換えないことを明示</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">float</span> LengthSquared =&gt; X * X + Y * Y;
+    // readonly 修飾でフィールドを書き換えないことを明示
+    public readonly float LengthSquared => X * X + Y * Y;
 }
-</code></pre>
+```
 
 「[隠れたコピー](../resource/readonlyness.md#struct-readonly)」問題を避けやすくなります。
 
@@ -484,22 +484,22 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 式中の任意の場所に `stackalloc` を書けるようになりました。
 例えば以下のような書き方ができます。
 
-<pre class="source" title="式中での stackalloc">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// Span を受け取る適当なメソッドを用意。</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">buf</span>) =&gt; 0;
+    // Span を受け取る適当なメソッドを用意。
+    static int M(Span<byte> buf) => 0;
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">len</span>)
+    static void M(int len)
     {
-        <span class="control">if</span> (<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[1] <span class="method">==</span> <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[1]) ;
-        <span class="method">M</span>(<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[1]);
-        <span class="method">M</span>(<span class="variable">len</span> &gt; 512 ? <span class="reserved">new</span> <span class="reserved">byte</span>[<span class="variable">len</span>] : <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="variable">len</span>]);
+        if (stackalloc byte[1] == stackalloc byte[1]) ;
+        M(stackalloc byte[1]);
+        M(len > 512 ? new byte[len] : stackalloc byte[len]);
     }
 }
-</code></pre>
+```
 
 詳しくは「[式中の stackalloc](../resource/span.md#nested-stackalloc)」で説明します。
 
@@ -508,9 +508,9 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 ほぼ「バグ修正」レベルですが、
 以下のコードがコンパイルできるようになりました。
 
-<pre class="source" title="ジェネリック型に対する is null">
-<code><span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span>;
-</code></pre>
+```csharp
+static bool M<T>(T x) => x is null;
+```
 
 元々 `x == null` であればコンパイルできていたのに、`x is null` がコンパイルできないのは変だということで修正されました。
 型引数 `T` が[非 null 値型](../resource/sp2_nullable.md#non-nullable)の時には常に false になります。
@@ -520,13 +520,13 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 プロパティの get/set アクセサーに対して、どちらか片方にだけ `Obsolete` 属性(`System`名前空間)を指定できるようになりました。
 以下のコードは C# 7.3 以前ではエラーになっていました。
 
-<pre class="source" title="set にだけ Obsolete">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X
+    public int X
     {
-        <span class="reserved">get</span>;
-        [<span class="type">Obsolete</span>] <span class="reserved">set</span>;
+        get;
+        [Obsolete] set;
     }
 }
-</code></pre>
+```

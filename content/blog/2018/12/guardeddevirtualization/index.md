@@ -43,25 +43,25 @@ coreclr 内で統計を取ってみたところ、クラスの仮想メソッド
 
 例えば、以下のようないくつかの型があったとして
 
-<pre class="source">
-<code><span class="reserved">interface</span> <span class="type">I</span> { <span class="reserved">void</span> M(); }
-<span class="reserved">struct</span> <span class="type">A1</span> : <span class="type">I</span> { <span class="reserved">public</span> <span class="reserved">void</span> M() { } }
-<span class="reserved">struct</span> <span class="type">A2</span> : <span class="type">I</span> { <span class="reserved">public</span> <span class="reserved">void</span> M() { } }
-<span class="reserved">struct</span> <span class="type">A3</span> : <span class="type">I</span> { <span class="reserved">public</span> <span class="reserved">void</span> M() { } }
-<span class="reserved">struct</span> <span class="type">A4</span> : <span class="type">I</span> { <span class="reserved">public</span> <span class="reserved">void</span> M() { } }
-</code></pre>
+```csharp
+interface I { void M(); }
+struct A1 : I { public void M() { } }
+struct A2 : I { public void M() { } }
+struct A3 : I { public void M() { } }
+struct A4 : I { public void M() { } }
+```
 
 以下のような呼び出しを考えます。
 
-<pre class="source">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">I</span>[] items)
+```csharp
+static void M(I[] items)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> items)
+    foreach (var i in items)
     {
         i.M();
     }
 }
-</code></pre>
+```
 
 何の前提もないと、このコードは最適化のやりようがないんですが、
 例えば、
@@ -69,19 +69,19 @@ coreclr 内で統計を取ってみたところ、クラスの仮想メソッド
 「その中でも`A1`の頻度が特に高い」みたいな前提が入ると、
 以下のようなコードが速くなったりします。
 
-<pre class="source">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">I</span>[] items)
+```csharp
+static void M(I[] items)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> items)
+    foreach (var i in items)
     {
-        <span class="reserved">if</span> (i.GetType() == <span class="reserved">typeof</span>(<span class="type">A1</span>)) ((<span class="type">A1</span>)i).M();
-        <span class="reserved">else</span> <span class="reserved">if</span> (i.GetType() == <span class="reserved">typeof</span>(<span class="type">A2</span>)) ((<span class="type">A2</span>)i).M();
-        <span class="reserved">else</span> <span class="reserved">if</span> (i.GetType() == <span class="reserved">typeof</span>(<span class="type">A3</span>)) ((<span class="type">A3</span>)i).M();
-        <span class="reserved">else</span> <span class="reserved">if</span> (i.GetType() == <span class="reserved">typeof</span>(<span class="type">A4</span>)) ((<span class="type">A4</span>)i).M();
-        <span class="reserved">else</span> i.M();
+        if (i.GetType() == typeof(A1)) ((A1)i).M();
+        else if (i.GetType() == typeof(A2)) ((A2)i).M();
+        else if (i.GetType() == typeof(A3)) ((A3)i).M();
+        else if (i.GetType() == typeof(A4)) ((A4)i).M();
+        else i.M();
     }
 }
-</code></pre>
+```
 
 数個程度の `if` 分岐であれば仮想呼び出しのコストよりも安くなります。
 特に、発生確率に偏りがある場合には分岐予測が効くので、

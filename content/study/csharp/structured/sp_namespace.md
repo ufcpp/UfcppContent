@@ -45,17 +45,17 @@ aliases:
 例えば、うちのサイトの場合、以下のようなフォルダ構成になっています。
 （注：今は構成が変わっています。昔はこういう構成でした。）
 
-<pre class="source" title="うちのサイトの階層構造" lang="">
-<code>/--+-- memo           <span class="comment">(ブログ的な何か)</span>
+```csharp
+/--+-- memo           (ブログ的な何か)
    |
-   +-- csharp         <span class="comment">(このコーナー)</span>
+   +-- csharp         (このコーナー)
    |
-   +-- study-------+  <span class="comment">(院試勉強まとめ用)</span>
+   +-- study-------+  (院試勉強まとめ用)
                    |
-                   +-- em      <span class="comment">(電磁理論)</span>
+                   +-- em      (電磁理論)
                    |
-                   +-- math    <span class="comment">(数学)</span>
-</code></pre>
+                   +-- math    (数学)
+```
 
 
 そして各フォルダの中にhtmlや画像ファイルがあります。
@@ -71,62 +71,62 @@ aliases:
 <code>System</code>名前空間の下に、<code>Text</code>、<code>IO</code>、<code>Drawing</code>などの名前空間があります。
 以下に、名前空間の階層構造と、各名前空間の説明および名前空間に属するクラスの一部を簡単に示します。
 
-<pre class="source" title="System名前空間の階層構造の例" lang="">
-<code>System --+
+```csharp
+System --+
          |
          +-- IO
-         |   <span class="comment">(ファイル入出力。File や Directory などが属する。)</span>
-         +-- Text -----+  <span class="comment">(文章処理。Encoding などが属する。)</span>
+         |   (ファイル入出力。File や Directory などが属する。)
+         +-- Text -----+  (文章処理。Encoding などが属する。)
          |             |
          |             +-- RegularExpressions
-         |                 <span class="comment">(正規表現。Regex や Match などが属する。)</span>
+         |                 (正規表現。Regex や Match などが属する。)
          |
-         +-- Drawing --+  <span class="comment">(GUI処理。Image や Font や Icon などが属する。)</span>
+         +-- Drawing --+  (GUI処理。Image や Font や Icon などが属する。)
                        |
                        +-- Imaging
-                       |   <span class="comment">(画像処理。ImageFormat や Encoder などが属する。)</span>
+                       |   (画像処理。ImageFormat や Encoder などが属する。)
                        +-- Printing
-                           <span class="comment">(印刷。PrintController などが属する。)</span>
-</code></pre>
+                           (印刷。PrintController などが属する。)
+```
 
 
 このように階層的に名前を管理することで、例えば、<code>System.Text.Encoding</code>クラス(Windowsのファイルシステムではフォルダの区切りに「 <code>\\</code> 」を使いますが、C#の名前空間の区切りには「 <code>.</code> 」を使います)は画像や音声のエンコード形式ではなくテキストの文字コードだと容易に見当が付きます。
 
 C# では、名前空間の定義(= フォルダーを掘るようなものに) `namespace` キーワードを使います。
 
-<pre class="source" title="namespace で名前空間を作る">
-<code><span class="reserved">namespace</span> MyNamespace <span class="comment">// ← MyNamespace という名前空間(フォルダーみたいなもの)を掘った状態</span>
+```csharp
+namespace MyNamespace // ← MyNamespace という名前空間(フォルダーみたいなもの)を掘った状態
 {
-    <span class="comment">// その中にクラスを置く</span>
-    <span class="reserved">class</span> <span class="type">X</span> { }
+    // その中にクラスを置く
+    class X { }
 }
-</code></pre>
+```
 
 一方で、「パスを通す」(フルネームで書かなくても `File` や `Regex` だけでクラスなどを参照する)ための構文も持っていて、こちらには `using` キーワードを使います。
 
-<pre class="source" title="using で名前空間の中身を参照する">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.IO;
+```csharp
+using System;
+using System.IO;
 
-<span class="comment">// System.IO の中に Directory がある。</span>
-<span class="comment">// フルネームで書くなら System.IO.Directory.GetFiles()</span>
-<span class="reserved">var</span> count = <span class="type">Directory</span>.<span class="method">GetFiles</span>(<span class="string">"."</span>).Length;
+// System.IO の中に Directory がある。
+// フルネームで書くなら System.IO.Directory.GetFiles()
+var count = Directory.GetFiles(".").Length;
 
-<span class="comment">// System の中に Console がある。</span>
-<span class="comment">// フルネームで書くなら System.Console()</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">$"フォルダーの下に </span>{count}<span class="string"> 個のファイルがあります"</span>);
-</code></pre>
+// System の中に Console がある。
+// フルネームで書くなら System.Console()
+Console.WriteLine($"フォルダーの下に {count} 個のファイルがあります");
+```
 
 ちなみに、名前空間に含まれない部分、ソースコードの一番上の部分を<strong id="global-namespace" class="keyword">グローバル名前空間</strong>(global namespace)と呼びます。
 
-<pre class="source" title="グローバル">
-<code><span class="comment">// この辺りの事を「グローバル」(global)と呼ぶ。</span>
+```csharp
+// この辺りの事を「グローバル」(global)と呼ぶ。
 
-<span class="reserved">namespace</span> MyNamespace
+namespace MyNamespace
 {
-    <span class="comment">// この辺りは「名前空間の中」。</span>
+    // この辺りは「名前空間の中」。
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="use"></a>名前空間の使い方
 
@@ -140,37 +140,37 @@ C# では、名前空間の定義(= フォルダーを掘るようなものに) 
 そして、リストクラス<code>List</code>と可変長配列クラス<code>Vector</code>は、名前空間<code>Collections</code>を作ってその下に、画像クラス<code>Image</code>は名前空間<code>Drawing</code>を作ってその下に作ることにします。
 階層構造は以下のようになります。
 
-<pre class="source" title="課題用の名前空間の階層構造" lang="">
-<code>Ufcpp --+-- String                    <span class="comment">(文字列クラス)</span>
+```csharp
+Ufcpp --+-- String                    (文字列クラス)
         |
-        +-- Collections --+-- List    <span class="comment">(リストクラス)</span>
+        +-- Collections --+-- List    (リストクラス)
         |                 |
-        |                 +-- Vector  <span class="comment">(可変長配列クラス)</span>
+        |                 +-- Vector  (可変長配列クラス)
         |
-        +-- Drawing --------- Image   <span class="comment">(画像クラス)</span>
-</code></pre>
+        +-- Drawing --------- Image   (画像クラス)
+```
 
 
 このような構造の名前空間を作るためには以下のように書きます。
 
-<pre class="source" title="名前空間の定義の仕方の例" lang="">
-<code><span class="reserved">namespace</span> Ufcpp
+```csharp
+namespace Ufcpp
 {
-  <span class="reserved">class</span> String{<span class="comment">// String の内容</span>}
+  class String{// String の内容}
 
-  <span class="reserved">namespace</span> Collections
+  namespace Collections
   {
-    <span class="reserved">class</span> List{<span class="comment">// List の内容</span>}
+    class List{// List の内容}
 
-    <span class="reserved">class</span> Vector{<span class="comment">// Vector の内容</span>}
+    class Vector{// Vector の内容}
   }
 
-  <span class="reserved">namespace</span> Drawing
+  namespace Drawing
   {
-    <span class="reserved">class</span> Image{<span class="comment">// Image の内容</span>}
+    class Image{// Image の内容}
   }
 }
-</code></pre>
+```
 
 
 名前空間を定義するためには<em>
@@ -179,27 +179,27 @@ C# では、名前空間の定義(= フォルダーを掘るようなものに) 
 そしてその後に続く {} の中で定義したクラスや名前空間はすべてその名前空間に属することになります。
 また、以下のように書いてもこれとまったく同じ意味になります。
 
-<pre class="source" title="名前空間の定義の仕方のもう一つの例" lang="">
-<code><span class="reserved">namespace</span> Ufcpp
+```csharp
+namespace Ufcpp
 {
-  <span class="reserved">class</span> String{<span class="comment">// String の内容</span>}
+  class String{// String の内容}
 }
 
-<span class="reserved">namespace</span> Ufcpp.Collections
+namespace Ufcpp.Collections
 {
-  <span class="reserved">class</span> List{<span class="comment">// List の内容</span>}
+  class List{// List の内容}
 }
 
-<span class="reserved">namespace</span> Ufcpp.Collections
+namespace Ufcpp.Collections
 {
-  <span class="reserved">class</span> Vector{<span class="comment">// Vector の内容</span>}
+  class Vector{// Vector の内容}
 }
 
-<span class="reserved">namespace</span> Ufcpp.Drawing
+namespace Ufcpp.Drawing
 {
-  <span class="reserved">class</span> Image{<span class="comment">// Image の内容</span>}
+  class Image{// Image の内容}
 }
-</code></pre>
+```
 
 
 つまり、名前空間を2つ以上の場所に分けて書くこともできますし、
@@ -208,20 +208,20 @@ C# では、名前空間の定義(= フォルダーを掘るようなものに) 
 次に、名前空間中に定義したクラスを参照する方法を説明します。
 名前空間中に定義したクラスは、以下のように、階層構造を「 <code>.</code> 」で区切って指定することで参照できます。
 
-<pre class="source" title="名前空間中のクラスの参照" lang="">
-<code><span class="reserved">class</span> NameSpaceTest
+```csharp
+class NameSpaceTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Ufcpp.String str = <span class="reserved">new</span> Ufcpp.String(<span class="literal">"test"</span>);
+    Ufcpp.String str = new Ufcpp.String("test");
 
-    Ufcpp.Collections.List list = <span class="reserved">new</span> Ufcpp.Collections.List();
-    Ufcpp.Collections.Vector vec = <span class="reserved">new</span> Ufcpp.Collections.Vector();
+    Ufcpp.Collections.List list = new Ufcpp.Collections.List();
+    Ufcpp.Collections.Vector vec = new Ufcpp.Collections.Vector();
 
-    Ufcpp.Drawing.Image image = <span class="reserved">new</span> Ufcpp.Drawing.Image(<span class="literal">"back.png"</span>);
+    Ufcpp.Drawing.Image image = new Ufcpp.Drawing.Image("back.png");
   }
 }
-</code></pre>
+```
 
 
 <code>Ufcpp.Collections.Vector</code>というように、名前空間をすべて指定した形式の名前を<em>完全修飾名</em>(fully qualified name)と言います。
@@ -232,32 +232,32 @@ C# では、名前空間の定義(= フォルダーを掘るようなものに) 
 
 C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定できるようになりました。
 
-<pre class="source" title="C# 10 からできる名前空間の書き方">
-<code><span class="reserved">namespace</span> Namespace;
+```csharp
+namespace Namespace;
 
-<span class="reserved">class</span> <span class="type">A</span> { }
-</code></pre>
+class A { }
+```
 
 これで以下のコードと同じ意味になります。
 
-<pre class="source" title="同じ意味のコード">
-<code><span class="reserved">namespace</span> Namespace
+```csharp
+namespace Namespace
 {
-    <span class="reserved">class</span> <span class="type">A</span> { }
+    class A { }
 }
-</code></pre>
+```
 
 新しい `{}` なしで `;` を書いてしまう書き方はファイル全体を `namespace {}` でくくったのを同じ意味になります。
 そういう意味でこの書き方を<strong id="key-file-scoped-namespace" class="keyword">ファイル スコープ名前空間</strong>(file-scoped namespace)と言います。
 
 ファイル スコープ名前空間は1つの C# ファイルにつき1つだけ書けます。例えば以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="複数のファイル スコープ名前空間を書くとエラー">
-<code><span class="reserved">namespace</span> Ns1;
-<span class="reserved">namespace</span> <span class="error">Ns2</span>;
+```csharp
+namespace Ns1;
+namespace Ns2;
 
-<span class="reserved">class</span> <span class="type">A</span> { }
-</code></pre>
+class A { }
+```
 
 また、ファイル スコープ名前空間はファイルの「ほぼ先頭」に書く必要があります。
 ファイル スコープ名前空間よりも前に書けるものはかなり限られていて、
@@ -270,32 +270,32 @@ C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定
 
 くらいです。このうち頻繁に利用するのはコメントと using くらいでしょう。
 
-<pre class="source" title="ファイル スコープ名前空間よりも前に書けるもの">
-<code><span class="comment">// コメントと using は namespace よりも前に書ける。</span>
-<span class="reserved">using</span> System.Text;
+```csharp
+// コメントと using は namespace よりも前に書ける。
+using System.Text;
 
-<span class="reserved">namespace</span> Ns1;
+namespace Ns1;
 
-<span class="comment">// using は後にも書ける。</span>
-<span class="reserved">using</span> System.Text.Encodings;
+// using は後にも書ける。
+using System.Text.Encodings;
 
-<span class="reserved">class</span> <span class="type">A</span> { }
-</code></pre>
+class A { }
+```
 
 これで以下のコードと同じ意味になります。
 
-<pre class="source" title="同じ意味のコード">
-<code><span class="comment">// コメントと using は namespace よりも前に書ける。</span>
-<span class="reserved">using</span> System.Text;
+```csharp
+// コメントと using は namespace よりも前に書ける。
+using System.Text;
 
-<span class="reserved">namespace</span> Ns1
+namespace Ns1
 {
-    <span class="comment">// using は後にも書ける。</span>
-    <span class="reserved">using</span> System.Text.Encodings;
+    // using は後にも書ける。
+    using System.Text.Encodings;
 
-    <span class="reserved">class</span> <span class="type">A</span> { }
+    class A { }
 }
-</code></pre>
+```
 
 「インデントが1段減る」程度の小さなメリットですが、
 一方でデメリットも「1ファイルに1つしか書けない」程度で、
@@ -305,39 +305,39 @@ C# 10.0 から `{}` なしの以下のような書き方で名前空間を指定
 
 また、いちいち完全修飾名を書かなくても済むように、<strong id="using" class="keyword">using ディレクティブ</strong>というものが用意されています。
 
-<pre class="source" title="usingディレクティブの例1" lang="">
-<code><span class="reserved">using</span> Ufcpp; <span class="comment">// 名前空間 Ufcpp 内にあるクラスを修飾名なしで使えるようになる</span>
+```csharp
+using Ufcpp; // 名前空間 Ufcpp 内にあるクラスを修飾名なしで使えるようになる
 
-<span class="reserved">class</span> NameSpaceTest
+class NameSpaceTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    String str = <span class="reserved">new</span> String(<span class="literal">"test"</span>); <span class="comment">// Ufcpp. が要らない</span>
+    String str = new String("test"); // Ufcpp. が要らない
 
-    Drawing.Image image = <span class="reserved">new</span> Drawing.Image(<span class="literal">"back.png"</span>);
+    Drawing.Image image = new Drawing.Image("back.png");
   }
 }
-</code></pre>
+```
 
 
-<pre class="source" title="usingディレクティブの例1" lang="">
-<code><span class="reserved">using</span> Ufcpp;
-<span class="reserved">using</span> Ufcpp.Collections;
-<span class="reserved">using</span> Ufcpp.Drawing;
+```csharp
+using Ufcpp;
+using Ufcpp.Collections;
+using Ufcpp.Drawing;
 
-<span class="reserved">class</span> NameSpaceTest
+class NameSpaceTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    String str = <span class="reserved">new</span> String(<span class="literal">"test"</span>);     <span class="comment">// Ufcpp. が要らない</span>
+    String str = new String("test");     // Ufcpp. が要らない
 
-    List list = <span class="reserved">new</span> List();              <span class="comment">// Ufcpp.Collections も要らない</span>
-    Vector vec = <span class="reserved">new</span> Vector();
+    List list = new List();              // Ufcpp.Collections も要らない
+    Vector vec = new Vector();
 
-    Image image = <span class="reserved">new</span> Image(<span class="literal">"back.png"</span>); <span class="comment">// Ufcpp.Drawing. も要らない</span>
+    Image image = new Image("back.png"); // Ufcpp.Drawing. も要らない
   }
 }
-</code></pre>
+```
 
 
 先頭の<em>
@@ -351,61 +351,61 @@ using ディレクティブよりも前に書けるのは、
 コメントや空白のようにプログラムに影響しないものか、
 [プリプロセッサー](../misc/sp_preprocess.md)や[extern alias](#extern)などのめったに使わない構文だけです。
 
-<pre class="source" title="using よりも前に書けるものはほとんどない">
-<code><span class="comment">// (コメントを除いて) using より前にはほぼ何も書けない。</span>
-<span class="reserved">using</span> System;
+```csharp
+// (コメントを除いて) using より前にはほぼ何も書けない。
+using System;
 
-Console.WriteLine(); <span class="comment">// 何か書いてしまうと…</span>
+Console.WriteLine(); // 何か書いてしまうと…
 
-<span class="error"><span class="reserved">using</span> System.IO;</span> <span class="comment">// この行はコンパイル エラー。</span>
-</code></pre>
+using System.IO; // この行はコンパイル エラー。
+```
 
 ただ、名前空間自体が入れ子に書けるので、「名前空間の先頭にしか書けない」といっても using ディレクティブも入れ子で書けます。
 
-<pre class="source" title="入れ子の名前空間と using ディレクティブ">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">namespace</span> Ns1
+namespace Ns1
 {
-    <span class="reserved">using</span> System.IO;
+    using System.IO;
 
-    <span class="reserved">namespace</span> Ns2
+    namespace Ns2
     {
-        <span class="reserved">using</span> System.Collections;
+        using System.Collections;
     }
 }
-</code></pre>
+```
 
 また「using しすぎ」にはそこそこ注意が必要です。
 名前の衝突を避けるために名前空間を掘っているのに、using するとその「名前空間分け」をなくすことになります。
 例えば、以下のように「別名前空間の同名の型」を用意します。
 
-<pre class="source" title="別名前空間の同名の型">
-<code><span class="comment">// 名前空間違いで同じ名前のクラスを用意しておく。</span>
-<span class="reserved">namespace</span> A
+```csharp
+// 名前空間違いで同じ名前のクラスを用意しておく。
+namespace A
 {
-    <span class="reserved">class</span> <span class="type">X</span> { }
+    class X { }
 }
 
-<span class="reserved">namespace</span> B
+namespace B
 {
-    <span class="reserved">class</span> <span class="type">X</span> { }
+    class X { }
 }
-</code></pre>
+```
 
 ここで、`using A` と `using B` を同時に書いてしまうと「どちらかわからない」というコンパイル エラーを起こします。
 (こういうエラーを「名前があいまい」(ambiguous)と言います。)
 
-<pre class="source" title="同列の using でエラーを起こす例">
-<code><span class="comment">// A と B の using を同列に並べる。</span>
-<span class="reserved">using</span> A;
-<span class="reserved">using</span> B;
+```csharp
+// A と B の using を同列に並べる。
+using A;
+using B;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="type"><span class="error">X</span></span> x; <span class="comment">// A.X か B.X かわからないのでエラー。</span>
+    X x; // A.X か B.X かわからないのでエラー。
 }
-</code></pre>
+```
 
 ちなみに、[後述しますが](#priority)、
 入れ子の場合は内側優先で名前解決します。
@@ -421,50 +421,50 @@ C# 10.0 から `using` ディレクティブの前に `global` という修飾�
 
 例えば、プロジェクト内のどこか1つのファイルに以下のようなコードを書いたとします。
 
-<pre class="source" title="global using の例">
-<code><span class="reserved">global</span> <span class="reserved">using</span> System.Text.RegularExpressions;
-</code></pre>
+```csharp
+global using System.Text.RegularExpressions;
+```
 
 これで、このプロジェクト内のすべてのファイルで、ファイルの先頭に `using System.Text.RegularExpressions` を書いたのと同じ状態になります。
 
 例えば別のファイルに以下のようなコードを書いたとき、
 
-<pre class="source" title="global using と同じプロジェクト内の別ファイルの例">
-<code><span class="reserved">var</span> line = <span class="type">Console</span>.<span class="method">ReadLine</span>();
-<span class="reserved">var</span> m = <span class="type">Regex</span>.<span class="method">Match</span>(line, <span class="string">@"\d+"</span>);
-<span class="control">if</span> (m.Success)
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(m.Value);
-</code></pre>
+```csharp
+var line = Console.ReadLine();
+var m = Regex.Match(line, @"\d+");
+if (m.Success)
+    Console.WriteLine(m.Value);
+```
 
 以下のコードと同じ扱いでコンパイルされます。
 (この例の場合、`Regex` クラスが `System.Text.RegularExpressions` 名前空間内で定義されいているクラスなので、`using System.Text.RegularExpressions` が必要。)
 
-<pre class="source" title="上記コードと同じ意味のもの">
-<code><span class="reserved">using</span> System.Text.RegularExpressions;
+```csharp
+using System.Text.RegularExpressions;
 
-<span class="reserved">var</span> line = <span class="type">Console</span>.<span class="method">ReadLine</span>();
-<span class="reserved">var</span> m = <span class="type">Regex</span>.<span class="method">Match</span>(line, <span class="string">@"\d+"</span>);
-<span class="control">if</span> (m.Success)
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(m.Value);
-</code></pre>
+var line = Console.ReadLine();
+var m = Regex.Match(line, @"\d+");
+if (m.Success)
+    Console.WriteLine(m.Value);
+```
 
 同じキーワードを流用したため後述する [global エイリアス](#global)と紛らわしいですが別物です。
 
 ちなみに、通常の using ディレクティブに加え、後述する [using static](#using-static) や [using エイリアス](#alias)に対しても同様に `global` 修飾を付けることでプロジェクト全域化できます。
 
-<pre class="source" title="global using static と global using エイリアス">
-<code><span class="reserved">global</span> <span class="reserved">using</span> System.Text.RegularExpressions;
-<span class="reserved">global</span> <span class="reserved">using</span> <span class="reserved">static</span> System.Linq.<span class="type">Enumerable</span>;
-<span class="reserved">global</span> <span class="reserved">using</span> <span class="type">Date</span> = System.<span class="type">DateOnly</span>;
-</code></pre>
+```csharp
+global using System.Text.RegularExpressions;
+global using static System.Linq.Enumerable;
+global using Date = System.DateOnly;
+```
 
 global using は通常の using ディレクティブの前にしか書けません。
 例えば以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="global using は using の前にしか書けない">
-<code><span class="reserved">using</span> System;
-<span class="error"><span class="reserved">global</span></span> <span class="reserved">using</span> System.Text.RegularExpressions;
-</code></pre>
+```csharp
+using System;
+global using System.Text.RegularExpressions;
+```
 
 using ディレクティブ自体が、ファイルの中でもかなり先頭の方にしか書けない構文なので、
 必然的に global using よりも前に書けるものはほとんどなくなります。
@@ -489,31 +489,31 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 初期状態で以下のようなコードが作られます。
 `System`、`System.Collections.Generic` などの名前空間は「ほぼみんな使う」と判断されていて、初期状態で using が付いてきます。
 
-<pre class="source" title="Visual Studio のテンプレート通りに作ったファイル">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Linq;
-<span class="reserved">using</span> System.Text;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-<span class="reserved">namespace</span> ConsoleApp1
+namespace ConsoleApp1
 {
-    <span class="reserved">class</span> <span class="type">A</span>
+    class A
     {
     }
 }
-</code></pre>
+```
 
 これを、[ファイル スコープ名前空間](#file-scoped-namespace)と併せて、
 以下のようなコードにまでテンプレートの行数を減らしたいというのが global using の主な目的になります。
 
-<pre class="source" title="Visual Studio のテンプレート通りに作ったファイル">
-<code><span class="reserved">namespace</span> ConsoleApp1;
+```csharp
+namespace ConsoleApp1;
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
 }
-</code></pre>
+```
 
 この場合でも、開発者自らが global using を書くことは少なくて、
 実際には「自動的に生成されているもの」なことが多くなると思います。
@@ -527,19 +527,19 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 静的メソッドに対する 「[using static](../oop/oo_static.md#key-using-static)」 です。
 以下のように、静的メソッドの呼び出しに対して、クラス名を省略できるようになる機能です(C# 6からの機能)。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<em><span class="reserved">using static</span> System.<span class="type">Math</span></em>;
+```csharp
+using System;
+using static System.Math;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> pi = 2 * <em>Asin(1)</em>;
-        <span class="type">Console</span>.WriteLine(<em>PI</em> == pi);
+        var pi = 2 * Asin(1);
+        Console.WriteLine(PI == pi);
     }
 }
-</code></pre>
+```
 
 
 詳しくは、「[静的メンバー](../oop/oo_static.md)」で説明します。
@@ -551,96 +551,96 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 
 エイリアスは以下のような書き方をします。
 
-<pre class="source" title="エイリアスの付け方" lang="">
-<code><span class="reserved">using</span> MyString = Ufcpp.String;
-</code></pre>
+```csharp
+using MyString = Ufcpp.String;
+```
 
 
 名前空間の先頭でこのような宣言をすることで、その名前空間中では<code>MyString</code>と書くことで<code>Ufcpp.String</code>を参照することが出来ます。
 
-<pre class="source" title="エイリアスの利用例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> MyString = Ufcpp.String;           <span class="comment">// クラスのエイリアス</span>
-<span class="reserved">using</span> MyCollections = Ufcpp.Collections; <span class="comment">// 名前空間のエイリアスも作れる</span>
+```csharp
+using System;
+using MyString = Ufcpp.String;           // クラスのエイリアス
+using MyCollections = Ufcpp.Collections; // 名前空間のエイリアスも作れる
 
-<span class="reserved">class</span> NameSpaceTest
+class NameSpaceTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    String str = <span class="reserved">new</span> String(<span class="literal">"test"</span>);
-    <span class="comment">//↑ System.String が参照される</span>
-    MyString str = <span class="reserved">new</span> MyString(<span class="literal">"test"</span>);
-    <span class="comment">//↑ Ufcpp.String が参照される</span>
-    MyCollections.List list = <span class="reserved">new</span> MyCollections.List();
-    <span class="comment">//↑ Ufcpp.Collections.List が参照される</span>
+    String str = new String("test");
+    //↑ System.String が参照される
+    MyString str = new MyString("test");
+    //↑ Ufcpp.String が参照される
+    MyCollections.List list = new MyCollections.List();
+    //↑ Ufcpp.Collections.List が参照される
   }
 }
-</code></pre>
+```
 
 
 
 ##### <a id="sec-generated-title-12"></a>サンプル
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;</span><span class="inactive">summary</span><span class="inactive">&gt;</span>
-<span class="inactive">///</span><span class="comment"> 自作クラス用の名前空間</span>
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/</span><span class="inactive">summary</span><span class="inactive">&gt;</span>
-<span class="reserved">namespace</span> Ufcpp
+/// <summary>
+/// 自作クラス用の名前空間
+/// </summary>
+namespace Ufcpp
 {
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;</span><span class="inactive">summary</span><span class="inactive">&gt;</span>
-    <span class="inactive">///</span><span class="comment"> 数学関数の自作</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/</span><span class="inactive">summary</span><span class="inactive">&gt;</span>
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Math</span>
+    /// <summary>
+    /// 数学関数の自作
+    /// </summary>
+    public class Math
     {
-        <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;</span><span class="inactive">summary</span><span class="inactive">&gt;</span>
-        <span class="inactive">///</span><span class="comment"> sin(x) の値を求める。</span>
-        <span class="inactive">///</span><span class="comment"> この実装は甘い。</span>
-        <span class="inactive">///</span><span class="comment"> 入力できる値は-0.1～0.1程度で、精度も4桁程度。</span>
-        <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/</span><span class="inactive">summary</span><span class="inactive">&gt;</span>
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">double</span> <span class="method">Sin</span>(<span class="reserved">double</span> <span class="variable">x</span>)
+        /// <summary>
+        /// sin(x) の値を求める。
+        /// この実装は甘い。
+        /// 入力できる値は-0.1～0.1程度で、精度も4桁程度。
+        /// </summary>
+        public static double Sin(double x)
         {
-            <span class="reserved">double</span> <span class="variable">xx</span> = -<span class="variable">x</span> * <span class="variable">x</span>;
-            <span class="reserved">double</span> <span class="variable">fact</span> = 1;
-            <span class="reserved">double</span> <span class="variable">sin</span> = <span class="variable">x</span>;
+            double xx = -x * x;
+            double fact = 1;
+            double sin = x;
  
-            <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 2; <span class="variable">i</span> &lt; 100;)
+            for (int i = 2; i < 100;)
             {
-                <span class="variable">fact</span> *= <span class="variable">i</span>; ++<span class="variable">i</span>; <span class="variable">fact</span> *= <span class="variable">i</span>; ++<span class="variable">i</span>;
-                <span class="variable">x</span> *= <span class="variable">xx</span>;
-                <span class="variable">sin</span> += <span class="variable">x</span> / <span class="variable">fact</span>;
+                fact *= i; ++i; fact *= i; ++i;
+                x *= xx;
+                sin += x / fact;
             }
-            <span class="control">return</span> <span class="variable">sin</span>;
+            return sin;
         }
     }
 }
  
-<span class="reserved">namespace</span> Sample
+namespace Sample
 {
-    <span class="reserved">using</span> <span class="type">MyMath</span> = Ufcpp.<span class="type">Math</span>;
+    using MyMath = Ufcpp.Math;
  
-    <span class="reserved">class</span> <span class="type">NameSpaceSample</span>
+    class NameSpaceSample
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+        static void Main()
         {
-            <span class="type">Console</span>.<span class="method">Write</span>(<span class="string">&quot;   x, System.Math.Sin(x), Ufcpp.Math.Sin(x)</span><span style="color:#b776fb;">\n</span><span class="string">&quot;</span>);
-            <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; <span class="variable">i</span> &lt; 10; ++<span class="variable">i</span>)
+            Console.Write("   x, System.Math.Sin(x), Ufcpp.Math.Sin(x)\n");
+            for (int i = 0; i < 10; ++i)
             {
-                <span class="reserved">double</span> <span class="variable">x</span> = 0.01 * <span class="variable">i</span>;
+                double x = 0.01 * i;
  
-                <span class="reserved">double</span> <span class="variable">y</span> = <span class="type">Math</span>.<span class="method">Sin</span>(<span class="variable">x</span>);   <span class="comment">// System.Math.Sin呼び出し</span>
-                <span class="reserved">double</span> <span class="variable">z</span> = <span class="type">MyMath</span>.<span class="method">Sin</span>(<span class="variable">x</span>); <span class="comment">// Ufcpp.Math.Sin呼び出し</span>
+                double y = Math.Sin(x);   // System.Math.Sin呼び出し
+                double z = MyMath.Sin(x); // Ufcpp.Math.Sin呼び出し
  
-                <span class="type">Console</span>.<span class="method">Write</span>(<span class="string">&quot;{0:f2},           {1:f6},            {2:f6}</span><span style="color:#b776fb;">\n</span><span class="string">&quot;</span>, <span class="variable">x</span>, <span class="variable">y</span>, <span class="variable">z</span>);
+                Console.Write("{0:f2},           {1:f6},            {2:f6}\n", x, y, z);
             }
         }
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
    x, System.Math.Sin(x), Ufcpp.Math.Sin(x)
 0.00,           0.000000,            0.000000
 0.01,           0.010000,            0.010000
@@ -652,7 +652,7 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 0.07,           0.069943,            0.069943
 0.08,           0.079915,            0.079915
 0.09,           0.089879,            0.089879
-</pre>
+```
 
 
 
@@ -662,12 +662,12 @@ using ディレクティブ自体が、ファイルの中でもかなり先頭�
 
 C# 12 から以下のようなコードをコンパイルできるようになりました。
 
-<pre class="source" title="C# 12 から">
-<span class="reserved">using</span> <span class="type struct">Primitive</span> <span class="operator">=</span> <span class="reserved">int</span>;
-<span class="reserved">using</span> <span class="type">Array</span> <span class="operator">=</span> <span class="reserved">int</span>[];
-<span class="reserved">using</span> <span class="type struct">Nullable</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">?</span>;
-<span class="reserved">using</span> <span class="type struct">Tuple</span> <span class="operator">=</span> (<span class="reserved">int</span>, <span class="reserved">int</span>);
-</pre>
+```csharp
+using Primitive = int;
+using Array = int[];
+using Nullable = int?;
+using Tuple = (int, int);
+```
 
 要するに以下の2点が改善点です。
 
@@ -676,21 +676,21 @@ C# 12 から以下のようなコードをコンパイルできるようにな�
 
 C# 11 以前でも以下のように、キーワード・専用構文を使わない書き方はできていました。
 
-<pre class="source" title="C# 11 でもできる書き方">
-<span class="reserved">using</span> <span class="type struct">Primitive</span> <span class="operator">=</span> System<span class="operator">.</span><span class="type struct">Int32</span>;
-<span class="reserved">using</span> <span class="type struct">Nullable</span> <span class="operator">=</span> System<span class="operator">.</span><span class="type struct">Nullable</span>&lt;System<span class="operator">.</span><span class="type struct">Int32</span>&gt;;
-<span class="reserved">using</span> <span class="type struct">Tuple</span> <span class="operator">=</span> System<span class="operator">.</span><span class="type struct">ValueTuple</span>&lt;System<span class="operator">.</span><span class="type struct">Int32</span>, System<span class="operator">.</span><span class="type struct">Int32</span>&gt;;
-<span class="comment">//※ 配列を書く手段はなかった</span>
-</pre>
+```csharp
+using Primitive = System.Int32;
+using Nullable = System.Nullable<System.Int32>;
+using Tuple = System.ValueTuple<System.Int32, System.Int32>;
+//※ 配列を書く手段はなかった
+```
 
 また、少々不可解なことに、以下のようなコードも C# 11 以前から書けていました。
 
-<pre class="source" title="C# 11 でもできる書き方(解せぬ)">
-<span class="reserved">using</span> <span class="type struct">Primitive</span> <span class="operator">=</span> System<span class="operator">.</span><span class="type struct">ValueTuple</span>&lt;<span class="reserved">int</span>&gt;;
-<span class="reserved">using</span> <span class="type struct">Array</span> <span class="operator">=</span> System<span class="operator">.</span><span class="type struct">ValueTuple</span>&lt;<span class="reserved">int</span>[]&gt;;
-<span class="reserved">using</span> <span class="type struct">Nullable</span> <span class="operator">=</span> System<span class="operator">.</span><span class="type struct">ValueTuple</span>&lt;<span class="reserved">int</span><span class="operator">?</span>&gt;;
-<span class="reserved">using</span> <span class="type struct">Tuple</span> <span class="operator">=</span> System<span class="operator">.</span><span class="type struct">ValueTuple</span>&lt;(<span class="reserved">int</span>, <span class="reserved">int</span>)&gt;;
-</pre>
+```csharp
+using Primitive = System.ValueTuple<int>;
+using Array = System.ValueTuple<int[]>;
+using Nullable = System.ValueTuple<int?>;
+using Tuple = System.ValueTuple<(int, int)>;
+```
 
 つまり、型引数(ジェネリック型 `X<T>` の `T` の部分)であればこれまでも `int` や `int[]` などが書けました。
 C# 12 では、なぜか最上位レベルの時にだけかかっていた謎の制限を取り払ったことになります。
@@ -709,25 +709,25 @@ C# 12 では、なぜか最上位レベルの時にだけかかっていた謎�
 例えば、以下のように、ちょっと長めの名前空間名 Ufcpp.Test.Utilities に、
 短いエイリアス Util を付けたとします。
 
-<pre class="source" title="エイリアス（これ自体は問題がないけども・・・）" lang="">
-<code><span class="reserved">namespace</span> Ufcpp.Test.Utilities
+```csharp
+namespace Ufcpp.Test.Utilities
 {
-  <span class="reserved">class</span> Image {}
+  class Image {}
 }
 
-<span class="reserved">namespace</span> TestNamespace
+namespace TestNamespace
 {
-  <em><span class="reserved">using</span> Util = Ufcpp.Test.Utilities;</em> <span class="comment">// エイリアスをつける。</span>
+  using Util = Ufcpp.Test.Utilities; // エイリアスをつける。
 
-  <span class="reserved">class</span> Program
+  class Program
   {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-      <em>Util.Image</em> img = <span class="reserved">new</span> Util.Image();
+      Util.Image img = new Util.Image();
     }
   }
 }
-</code></pre>
+```
 
 
 このコード自体には特に問題もなく、ちゃんとコンパイルが通ります。
@@ -735,27 +735,27 @@ C# 12 では、なぜか最上位レベルの時にだけかかっていた謎�
 例えば、複数人で開発しているものとして、
 自分以外の誰かが、TestNamespace 内に Util というクラスを作ってしまったとしましょう。
 
-<pre class="source" title="エイリアスが原因で問題発生" lang="">
-<code><span class="reserved">namespace</span> Ufcpp.Test.Utilities
+```csharp
+namespace Ufcpp.Test.Utilities
 {
-  <span class="reserved">class</span> Image {}
+  class Image {}
 }
 
-<span class="reserved">namespace</span> TestNamespace
+namespace TestNamespace
 {
-  <span class="reserved">using</span> Util = Ufcpp.Test.Utilities;
+  using Util = Ufcpp.Test.Utilities;
 
-  <span class="reserved">class</span> Program
+  class Program
   {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-      Util.Image img = <span class="reserved">new</span> Util.Image();
+      Util.Image img = new Util.Image();
     }
   }
 
-  <em><span class="reserved">class</span> Util {}</em> <span class="comment">// Util クラスを追加。エラーになる。</span>
+  class Util {} // Util クラスを追加。エラーになる。
 }
-</code></pre>
+```
 
 
 たったこれだけでこのコードはコンパイルエラーを起こします。
@@ -770,28 +770,28 @@ Util と言う名前は既に存在しますと怒られるはず。）
 このため、<code>::</code> の付いている部分の直前はエイリアスであることが確定し、
 エイリアスと同名のクラスが追加されても混乱が起こりません。
 
-<pre class="source" title="エイリアス修飾子" lang="">
-<code><span class="reserved">namespace</span> Ufcpp.Test.Utilities
+```csharp
+namespace Ufcpp.Test.Utilities
 {
-  <span class="reserved">class</span> Image {}
+  class Image {}
 }
 
-<span class="reserved">namespace</span> TestNamespace
+namespace TestNamespace
 {
-  <span class="reserved">using</span> Util = Ufcpp.Test.Utilities;
+  using Util = Ufcpp.Test.Utilities;
 
-  <span class="reserved">class</span> Program
+  class Program
   {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-      <em>Util::Image</em> img = <span class="reserved">new</span> Util::Image();
-      <span class="comment">//↑ この Util はエイリアスの Util とみなされる。</span>
+      Util::Image img = new Util::Image();
+      //↑ この Util はエイリアスの Util とみなされる。
     }
   }
 
-  <span class="reserved">class</span> Util {} <span class="comment">// Util と同名のクラスがあっても OK。</span>
+  class Util {} // Util と同名のクラスがあっても OK。
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-15"></a> <a id="global"></a>global 名前空間エイリアス
 
@@ -800,45 +800,45 @@ Util と言う名前は既に存在しますと怒られるはず。）
 名前の付け方次第では、完全修飾名で書いても参照できない場合があります。
 以下のように、名前空間の階層に同名の識別子がある場合です。
 
-<pre class="source" title="完全修飾名で参照できなくなる場合">
-<code><reserved></span><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">namespace</span> X.Y
+namespace X.Y
 {
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        static void Main()
         {
-            <span class="comment">// 単に Y って書くと、名前空間 X.Y の方の意味になる</span>
-            <span class="type">Y</span>.F(); <span class="comment">// コンパイル エラー。名前空間 Y に F がいない</span>
+            // 単に Y って書くと、名前空間 X.Y の方の意味になる
+            Y.F(); // コンパイル エラー。名前空間 Y に F がいない
         }
     }
 }
 
-<span class="reserved">class</span> <span class="type">Y</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"class Y"</span>); }
-</code></pre>
+class Y { public static void F() => WriteLine("class Y"); }
+```
 
 階層違いで同名のものがあることが原因なので、必ず最上位(グローバル名前空間)からたどる手段があれば解決します。
 そのために使うのが、`global`名前空間エイリアスです。
 以下のように、`global::`から書き始めれば、最上位から名前をたどれます。
 
-<pre class="source" title="global エイリアスを使って解決">
-<code><reserved></span><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">namespace</span> X.Y
+namespace X.Y
 {
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        static void Main()
         {
-            <span class="comment">// global エイリアスを使えば、最上位から名前をたどれる</span>
-            <span class="reserved">global</span>::<span class="type">Y</span>.F();
+            // global エイリアスを使えば、最上位から名前をたどれる
+            global::Y.F();
         }
     }
 }
 
-<span class="reserved">class</span> <span class="type">Y</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"class Y"</span>); }
-</code></pre>
+class Y { public static void F() => WriteLine("class Y"); }
+```
 
 `global`は、`::`の前でだけキーワード扱いされる文脈キーワードです。
 その他の場面では、`global`クラスを作ったり、`global`という名前の名前空間を作ったり、参照したりもできます。
@@ -853,25 +853,25 @@ C# 2.0 では、using を使ってエイリアスを定義する代わりに、
 外部エイリアスを使うにはまず、
 ソースファイル中に extern alias という宣言を書きます。
 
-<pre class="source" title="外部エイリアス" lang="">
-<code><em><span class="reserved">extern alias</span> X;</em>
+```csharp
+extern alias X;
 
-<span class="reserved">class</span> Program
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    X::A a = <span class="reserved">new</span> X::A();
+    X::A a = new X::A();
   }
 }
-</code></pre>
+```
 
 
 そして、ソースファイルのコンパイル時に、
 以下のようなオプションを追加します。
 
-<pre class="console" title="外部エイリアス（コンパイルオプション）">
-csc <em>/r:X=Ufcpp.dll</em> Test.cs
-</pre>
+```console
+csc /r:X=Ufcpp.dll Test.cs
+```
 
 
 これで、Ufcpp.dll というライブラリ中で定義された <code>A</code> というクラスを、
@@ -897,38 +897,38 @@ Visual Studio 上では、図1のように、参照しているライブラリ�
 
 以下のようなコードで呼び分けできます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">namespace</span> UsingStandard
+```csharp
+namespace UsingStandard
 {
-    <span class="reserved">using</span> System.Linq;
+    using System.Linq;
 
-    <span class="reserved">class</span> <span class="type">Sample</span>
+    class Sample
     {
-        <span class="reserved">public static void</span> Run()
+        public static void Run()
         {
-            <span class="reserved">var</span> x = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-            <span class="reserved">var</span> y = x.Where(i =&gt; (i &amp; 1) != 0).Select(i =&gt; i * i); <span class="comment">// 標準の LINQ</span>
-            <span class="type">Console</span>.WriteLine(<span class="reserved">string</span>.Join(<span class="literal">", "</span>, y));
+            var x = new[] { 1, 2, 3, 4, 5 };
+            var y = x.Where(i => (i & 1) != 0).Select(i => i * i); // 標準の LINQ
+            Console.WriteLine(string.Join(", ", y));
         }
     }
 }
 
-<span class="reserved">namespace</span> UsingBackport
+namespace UsingBackport
 {
-    <span class="reserved">extern alias</span> Backport; <span class="comment">// コンパイル オプションで BackportEnumerable.dll を指定</span>
-    <span class="reserved">using</span> Backport::System.Linq;
+    extern alias Backport; // コンパイル オプションで BackportEnumerable.dll を指定
+    using Backport::System.Linq;
 
-    <span class="reserved">class</span> <span class="type">Sample</span>
+    class Sample
     {
-        <span class="reserved">public static void</span> Run()
+        public static void Run()
         {
-            <span class="reserved">var</span> x = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-            <span class="reserved">var</span> y = x.Where(i =&gt; (i &amp; 1) != 0).Select(i =&gt; i * i); <span class="comment">// 自作のパックポート LINQ</span>
-            <span class="type">Console</span>.WriteLine(<span class="reserved">string</span>.Join(<span class="literal">", "</span>, y));
+            var x = new[] { 1, 2, 3, 4, 5 };
+            var y = x.Where(i => (i & 1) != 0).Select(i => i * i); // 自作のパックポート LINQ
+            Console.WriteLine(string.Join(", ", y));
         }
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-17"></a> <a id="priority"></a>名前解決の優先度
 
@@ -938,31 +938,31 @@ Visual Studio 上では、図1のように、参照しているライブラリ�
 
 まず、`using`の使い過ぎなどでどちらか判別できない状況になると、コンパイル エラーになります。
 
-<pre class="source" title="判別できずにコンパイル エラー">
-<code><reserved></span><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
-<span class="reserved">using</span> A;
-<span class="reserved">using</span> B;
+```csharp
+using static System.Console;
+using A;
+using B;
 
-<span class="reserved">namespace</span> MyApp
+namespace MyApp
 {
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        static void Main()
         {
-            <span class="type">Lib</span>.F(); <span class="comment">// コンパイル エラー。A, B 区別つかない</span>
+            Lib.F(); // コンパイル エラー。A, B 区別つかない
         }
     }
 }
 
-<span class="reserved">namespace</span> A
+namespace A
 {
-    <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"A"</span>); }
+    class Lib { public static void F() => WriteLine("A"); }
 }
-<span class="reserved">namespace</span> B
+namespace B
 {
-    <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"B"</span>); }
+    class Lib { public static void F() => WriteLine("B"); }
 }
-</code></pre>
+```
 
 `using`や型定義を書く場所によって優先度が付いています。
 優先度違いのものであれば、優先度が高い方が選ばれ、コンパイルできます。
@@ -970,51 +970,51 @@ Visual Studio 上では、図1のように、参照しているライブラリ�
 
 優先度ですが、以下のように、使う場所に近いほど優先、直接的なものほど優先です。
 
-<pre class="source" title="名前参照の優先度">
-<code><reserved></span><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
-<span class="reserved">using</span> A;
+```csharp
+using static System.Console;
+using A;
 
-<span class="comment">// using よりは、直接定義されているものの方が優先 A &lt; C, global</span>
-<span class="comment">// エイリアスと型定義は同列 C = global</span>
-<span class="reserved">using</span> <span class="type">Lib</span> = C.<span class="type">Lib</span>;
-<span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"global"</span>); }
+// using よりは、直接定義されているものの方が優先 A < C, global
+// エイリアスと型定義は同列 C = global
+using Lib = C.Lib;
+class Lib { public static void F() => WriteLine("global"); }
 
-<span class="reserved">namespace</span> MyApp
+namespace MyApp
 {
-    <span class="reserved">using</span> B; <span class="comment">// 内側に using を書くと、外より優先 A, C, global &lt; B</span>
+    using B; // 内側に using を書くと、外より優先 A, C, global < B
 
-    <span class="comment">// 同一名前空間内にあるものは1番高い優先度 B &lt; MyApp</span>
-    <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"MyApp"</span>); }
+    // 同一名前空間内にあるものは1番高い優先度 B < MyApp
+    class Lib { public static void F() => WriteLine("MyApp"); }
 
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        static void Main()
         {
-            <span class="comment">// Lib は5つある</span>
-            <span class="comment">// この場合 MyApp.Lib が使われる</span>
-            <span class="comment">// 優先度 高 MyApp &gt; B &gt; global = C &gt; A 低</span>
-            <span class="type">Lib</span>.F();
+            // Lib は5つある
+            // この場合 MyApp.Lib が使われる
+            // 優先度 高 MyApp > B > global = C > A 低
+            Lib.F();
 
-            <span class="comment">// ちゃんと呼び分けたければフルネームで書く</span>
-            A.<span class="type">Lib</span>.F();
-            B.<span class="type">Lib</span>.F();
-            C.<span class="type">Lib</span>.F();
-            MyApp.<span class="type">Lib</span>.F();
-            <span class="reserved">global</span>::<span class="type">Lib</span>.F();
+            // ちゃんと呼び分けたければフルネームで書く
+            A.Lib.F();
+            B.Lib.F();
+            C.Lib.F();
+            MyApp.Lib.F();
+            global::Lib.F();
         }
     }
 }
 
-<span class="reserved">namespace</span> A
+namespace A
 {
-    <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"A"</span>); }
+    class Lib { public static void F() => WriteLine("A"); }
 }
-<span class="reserved">namespace</span> B
+namespace B
 {
-    <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"B"</span>); }
+    class Lib { public static void F() => WriteLine("B"); }
 }
-<span class="reserved">namespace</span> C
+namespace C
 {
-    <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F() =&gt; WriteLine(<span class="string">"C"</span>); }
+    class Lib { public static void F() => WriteLine("C"); }
 }
-</code></pre>
+```

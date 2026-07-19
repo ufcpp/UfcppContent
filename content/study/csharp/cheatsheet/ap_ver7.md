@@ -82,34 +82,34 @@ C# 7では、タプルや型スイッチなどの機能が入ります。
 
 例えば以下のように書けます。
 
-<pre class="source" title="タプルの例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// タプルを使って2つの戻り値を返す</span>
-    <span class="reserved">static</span> <em>(<span class="reserved">int</span> count, <span class="reserved">int</span> sum)</em> Tally(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; items)
+    // タプルを使って2つの戻り値を返す
+    static (int count, int sum) Tally(IEnumerable<int> items)
     {
-        <span class="reserved">var</span> count = 0;
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> items)
+        var count = 0;
+        var sum = 0;
+        foreach (var x in items)
         {
             sum += x;
             count++;
         }
 
-        <span class="reserved">return</span> (count, sum);
+        return (count, sum);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> data = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-        <span class="reserved">var</span> t = Tally(data);
-        <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{t.sum}<span class="string">/</span>{t.count}<span class="string">"</span>);
+        var data = new[] { 1, 2, 3, 4, 5 };
+        var t = Tally(data);
+        Console.WriteLine($"{t.sum}/{t.count}");
     }
 }
-</code></pre>
+```
 
 詳しくは「[タプル](../datatype/tuples.md)」で説明します。
 
@@ -122,34 +122,34 @@ C# 7では、タプルや型スイッチなどの機能が入ります。
 C# 7では、そのための分解構文(deconstruction)も追加されました。
 前節のコードを、分解を使うように書き換えると以下のようになります。
 
-<pre class="source" title="タプルを分解して受け取る">
-<code><span class="reserved">var</span> data = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-<em><span class="reserved">var</span> (count, sum)</em> = Tally(data);
-<span class="type">Console</span>.WriteLine(<span class="string">$"</span>{sum}<span class="string">/</span>{count}<span class="string">"</span>);
-</code></pre>
+```csharp
+var data = new[] { 1, 2, 3, 4, 5 };
+var (count, sum) = Tally(data);
+Console.WriteLine($"{sum}/{count}");
+```
 
 ちなみに、分解はタプル専用の構文ではなく、以下のように、`Deconstruct`という名前のメソッド(拡張メソッドでも可)を持っている型なら何にでも使うことができます。
 
-<pre class="source" title="任意の型を分解する例">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> (key, value) = <span class="reserved">new</span> <span class="type">KeyValuePair</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;(<span class="string">"one"</span>, 1);
+        var (key, value) = new KeyValuePair<string, int>("one", 1);
     }
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Extensions</span>
+static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <em>Deconstruct</em>&lt;<span class="type">T</span>, <span class="type">U</span>&gt;(<span class="reserved">this</span> <span class="type">KeyValuePair</span>&lt;<span class="type">T</span>, <span class="type">U</span>&gt; pair, <span class="reserved">out</span> <span class="type">T</span> key, <span class="reserved">out</span> <span class="type">U</span> value)
+    public static void Deconstruct<T, U>(this KeyValuePair<T, U> pair, out T key, out U value)
     {
         key = pair.Key;
         value = pair.Value;
     }
 }
-</code></pre>
+```
 
 
 詳しくは「[分解](../datatype/deconstruction.md)
@@ -165,36 +165,36 @@ C# 7では既存の出力引数にも利便性向上のための機能が追加�
 
 以下のように、out引数を受け取ると同時に、式の中で変数宣言できるようになりました。
 
-<pre class="source" title="out-var">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Point</span>
+struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 
-    <span class="reserved">public</span> <span class="reserved">void</span> GetCoordinate(<span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">int</span> y)
+    public void GetCoordinate(out int x, out int y)
     {
         x = X;
         y = Y;
     }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-        p.GetCoordinate(<em><span class="reserved">out</span> <span class="reserved">var</span> x, <span class="reserved">out</span> <span class="reserved">var</span> y</em>);
+        var p = new Point { X = 1, Y = 2 };
+        p.GetCoordinate(out var x, out var y);
 
-        <span class="comment">// 以下のような書き方をしたのと同じ</span>
-        <span class="comment">// int x, y;</span>
-        <span class="comment">// p.GetCoordinate(out x, out y);</span>
+        // 以下のような書き方をしたのと同じ
+        // int x, y;
+        // p.GetCoordinate(out x, out y);
 
-        <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x}<span class="string">, </span>{y}<span class="string">"</span>);
+        Console.WriteLine($"{x}, {y}");
     }
 }
-</code></pre>
+```
 
 タプルが入っても、出力引数の方が使いやすい場面は残ります(参考: [出力引数との比較](../datatype/tuples.md#out-params))。
 そういう意味では、出力変数宣言はタプルと相補的な関係にあります。
@@ -215,30 +215,30 @@ C# 7で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステ�
 この機能を型スイッチ(type switch)と呼びます。
 以下のような書き方ができます。
 
-<pre class="source" title="isとcaseの拡張の例">
-<code><span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">string</span> <em>s</em>)
+```csharp
+if (obj is string s)
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">"string #"</span> + s.Length);
+    Console.WriteLine("string #" + s.Length);
 }
 
-<span class="reserved">switch</span> (obj)
+switch (obj)
 {
-    <span class="reserved">case</span> 7:
-        <span class="type">Console</span>.WriteLine(<span class="string">"7の時だけここに来る"</span>);
-        <span class="reserved">break</span>;
-    <span class="reserved">case</span> <em><span class="reserved">int</span> n <span class="reserved">when</span> n &gt; 0</em>:
-        <span class="type">Console</span>.WriteLine(<span class="string">"正の数の時にここに来る "</span> + n);
-        <span class="comment">// ただし、上から順に判定するので、7 の時には来なくなる</span>
-        <span class="reserved">break</span>;
-    <span class="reserved">case</span> <em><span class="reserved">int</span> n</em>:
-        <span class="type">Console</span>.WriteLine(<span class="string">"整数の時にここに来る"</span> + n);
-        <span class="comment">// 同上、0 以下の時にしか来ない</span>
-        <span class="reserved">break</span>;
-    <span class="reserved">default</span>:
-        <span class="type">Console</span>.WriteLine(<span class="string">"その他"</span>);
-        <span class="reserved">break</span>;
+    case 7:
+        Console.WriteLine("7の時だけここに来る");
+        break;
+    case int n when n > 0:
+        Console.WriteLine("正の数の時にここに来る " + n);
+        // ただし、上から順に判定するので、7 の時には来なくなる
+        break;
+    case int n:
+        Console.WriteLine("整数の時にここに来る" + n);
+        // 同上、0 以下の時にしか来ない
+        break;
+    default:
+        Console.WriteLine("その他");
+        break;
 }
-</code></pre>
+```
 
 詳しくは「[型スイッチ](../datatype/typeswitch.md)」で説明します。
 
@@ -259,21 +259,21 @@ C# 7で、[`is`演算子](../oop/oo_polymorphism.md#downcast)や[`switch`ステ�
 例えば、分解では、複数の値のうち、1つだけを受け取りたい場合があったとします。
 こういう場合に、`_`を使うことで、値を受け取らずに無視することができます。
 
-<pre class="source" title="_ で値を破棄">
-<code><span class="reserved">static</span> (<span class="reserved">int</span> quotient, <span class="reserved">int</span> remainder) DivRem(<span class="reserved">int</span> dividend, <span class="reserved">int</span> divisor)
-    =&gt; (<span class="type">Math</span>.DivRem(dividend, divisor, <span class="reserved">out</span> <span class="reserved">var</span> remainder), remainder);
+```csharp
+static (int quotient, int remainder) DivRem(int dividend, int divisor)
+    => (Math.DivRem(dividend, divisor, out var remainder), remainder);
 
-<span class="reserved">static</span> <span class="reserved">void</span> Deconstruct()
+static void Deconstruct()
 {
-    <span class="comment">// 商と余りを計算するメソッドがあるけども、ここでは商しか要らない</span>
-    <span class="comment">// _ を書いたところでは、値を受け取らずに無視する</span>
-    <span class="reserved">var</span> (q, <span class="reserved">_</span>) = DivRem(123, 11);
+    // 商と余りを計算するメソッドがあるけども、ここでは商しか要らない
+    // _ を書いたところでは、値を受け取らずに無視する
+    var (q, _) = DivRem(123, 11);
 
-    <span class="comment">// 逆に、余りしか要らない</span>
-    <span class="comment">// また、本来「var x」とか変数宣言を書くべき場所にも _ だけを書ける</span>
-    (_, <span class="reserved">var</span> r) = DivRem(123, 11);
+    // 逆に、余りしか要らない
+    // また、本来「var x」とか変数宣言を書くべき場所にも _ だけを書ける
+    (_, var r) = DivRem(123, 11);
 }
-</code></pre>
+```
 
 同様の機能は、型スイッチや出力変数宣言でも使えます。
 
@@ -300,32 +300,32 @@ C# 7で入るものの多くが、値型と参照渡しを活用したメモリ�
 
 戻り値とローカル変数でも参照渡しを使えるようになりました。 書き方はほぼ参照引数と同じです。 戻り値の型の前、値を渡す側、値を受ける側それぞれに`ref`修飾子を付けます。
 
-<pre class="source" title="参照戻り値と参照ローカル変数の例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = 10;
-        <span class="reserved">var</span> y = 20;
+        var x = 10;
+        var y = 20;
 
-        <span class="comment">// x, y のうち、大きい方の参照を返す。この例の場合 y を参照。</span>
-        <span class="reserved">ref</span> var m = <span class="reserved">ref</span> Max(<span class="reserved">ref</span> x, <span class="reserved">ref</span> y);
+        // x, y のうち、大きい方の参照を返す。この例の場合 y を参照。
+        ref var m = ref Max(ref x, ref y);
 
-        <span class="comment">// 参照の書き換えなので、その先の y が書き換わる。</span>
+        // 参照の書き換えなので、その先の y が書き換わる。
         m = 0;
 
-        <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x}<span class="string">, </span>{y}<span class="string">"</span>); <span class="comment">// 10, 0</span>
+        Console.WriteLine($"{x}, {y}"); // 10, 0
     }
 
-    <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> Max(<span class="reserved">ref</span> <span class="reserved">int</span> x, <span class="reserved">ref</span> <span class="reserved">int</span> y)
+    static ref int Max(ref int x, ref int y)
     {
-        <span class="reserved">if</span> (x &lt; y) <span class="reserved">return</span> <span class="reserved">ref</span> y;
-        <span class="reserved">else</span> <span class="reserved">return</span> <span class="reserved">ref</span> x;
+        if (x < y) return ref y;
+        else return ref x;
     }
 }
-</code></pre>
+```
 
 詳しくは「[参照戻り値と参照ローカル変数](../resource/sp_ref.md#ref-returns)」を参照してください。
 
@@ -337,20 +337,20 @@ C# 7で入るものの多くが、値型と参照渡しを活用したメモリ�
 入れ子の関数は、定義した関数の中でだけ使えます。
 この機能をローカル関数と呼びます。
 
-<pre class="source" title="ローカル関数の例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// Main 関数の中で、ローカル関数 f を定義</span>
-        <em><span class="reserved">int</span> f(<span class="reserved">int</span> n) =&gt; n &gt;= 1 ? n * f(n - 1) : 1;</em>
+        // Main 関数の中で、ローカル関数 f を定義
+        int f(int n) => n >= 1 ? n * f(n - 1) : 1;
 
-        <span class="type">Console</span>.WriteLine(f(10));
+        Console.WriteLine(f(10));
     }
 }
-</code></pre>
+```
 
 詳しくは、[ローカル関数と匿名関数](../functional/fun_localfunctions.md)で説明します。
 
@@ -366,28 +366,28 @@ C# 6までは、[非同期メソッド](../async/sp5_async.md#async)の戻り値
 最も有効と思われる例は、`ValueTask<TResult>`構造体(`System.Threading.Tasks`名前空間)です。
 以下のようなコードが書けるようになります。
 
-<pre class="source" title="ValueTaskの例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">ValueTask</span>&lt;<span class="reserved">int</span>&gt; XAsync(<span class="type">Random</span> r)
+    static async ValueTask<int> XAsync(Random r)
     {
-        <span class="reserved">if</span> (r.NextDouble() &lt; 0.99)
+        if (r.NextDouble() < 0.99)
         {
-            <span class="comment">// 99% ここを通る。</span>
-            <span class="comment">// この場合、await が1度もなく、非同期処理にならない。</span>
-            <span class="comment">// 非同期処理じゃないのに Task&lt;int&gt; のインスタンスが作られるのはもったいない</span>
-            <span class="reserved">return</span> 1;
+            // 99% ここを通る。
+            // この場合、await が1度もなく、非同期処理にならない。
+            // 非同期処理じゃないのに Task<int> のインスタンスが作られるのはもったいない
+            return 1;
         }
 
-        <span class="comment">// こちら側は本当に非同期処理なので、Task&lt;int&gt; が必要。</span>
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(100);
-        <span class="reserved">return</span> 0;
+        // こちら側は本当に非同期処理なので、Task<int> が必要。
+        await Task.Delay(100);
+        return 0;
     }
 }
-</code></pre>
+```
 
 この例のように、大部分が実際には非同期処理を行わないような場合、都度`Task`クラスを作ってしまうと無駄なメモリ確保が必要になります。
 それを避けるために使うのが`ValueTask`構造体です。
@@ -405,22 +405,22 @@ C# 6までは、[非同期メソッド](../async/sp5_async.md#async)の戻り値
 2進数リテラルが書けるようになりました。
 また、数値リテラルの途中に、`_` を挟んで桁区切りに使えるようになりました。
 
-<pre class="source" title="数値リテラルがらみの新機能の例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> M()
+    static void M()
     {
-        <span class="reserved">byte</span> bitMask = 0b1100_0000;
-        <span class="type">Console</span>.WriteLine(bitMask); <span class="comment">// 192</span>
+        byte bitMask = 0b1100_0000;
+        Console.WriteLine(bitMask); // 192
 
-        <span class="reserved">uint</span> magicNumber = 0xDEAD_BEEF;
-        <span class="type">Console</span>.WriteLine(magicNumber); <span class="comment">// 3735928559</span>
-        <span class="type">Console</span>.WriteLine(magicNumber.ToString(<span class="string">"X"</span>)); <span class="comment">// DEADBEEF </span>
+        uint magicNumber = 0xDEAD_BEEF;
+        Console.WriteLine(magicNumber); // 3735928559
+        Console.WriteLine(magicNumber.ToString("X")); // DEADBEEF 
     }
 }
-</code></pre>
+```
 
 詳しくは、「[2進数リテラル](../start/stnumber.md#binary)」や「[数字区切り文字](../start/stnumber.md#digit-separator)」を参照してください。
 
@@ -432,21 +432,21 @@ C# 6までは、[非同期メソッド](../async/sp5_async.md#async)の戻り値
 - [null合体演算子](../resource/sp2_nullable.md#nullableType)(`??`)の後ろ
 - [条件演算子](../structured/oo_exception.md)の第2、第3引数(条件式以外の部分。 `:` の前後)
 
-<pre class="source" title="throw 式">
-<code><span class="comment">// 式形式メンバーの中( =&gt; の直後)</span>
-<span class="reserved">static</span> <span class="reserved">void</span> A() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
+```csharp
+// 式形式メンバーの中( => の直後)
+static void A() => throw new NotImplementedException();
 
-<span class="reserved">static</span> <span class="reserved">string</span> B(<span class="reserved">object</span> obj)
+static string B(object obj)
 {
-    <span class="comment">// null 合体演算子(??)の後ろ</span>
-    <span class="reserved">var</span> s = obj <span class="reserved">as</span> <span class="reserved">string</span> ?? <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentException</span>(<span class="reserved">nameof</span>(obj));
+    // null 合体演算子(??)の後ろ
+    var s = obj as string ?? throw new ArgumentException(nameof(obj));
 
-    <span class="comment">// 条件演算子(?:)の条件以外の部分</span>
-    <span class="reserved">return</span> s.Length == 0 ? <span class="string">"empty"</span> :
-        s.Length &lt; 5 ? <span class="string">"short"</span> :
-        <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>(<span class="string">"too long"</span>);
+    // 条件演算子(?:)の条件以外の部分
+    return s.Length == 0 ? "empty" :
+        s.Length < 5 ? "short" :
+        throw new InvalidOperationException("too long");
 }
-</code></pre>
+```
 
 詳しくは、「[throw式](../structured/oo_exception.md#throwexpr)」を参照してください。
 
@@ -457,17 +457,17 @@ C# 6で、メソッド、演算子、プロパティとインデクサー(get-on
 これが、C# 7では、コンストラクター、ファイナライザー、プロパティとインデクサー(get/set それぞれ)、イベント(add/removeそれぞれ)でも使えるようになりました。
 例えば、コンストラクターとファイナライザーであれば以下のように書けます。
 
-<pre class="source" title="コンストラクター、ファイナライザーを式形式で定義する例。">
-<code><span class="reserved">class</span> <span class="type">Counter</span>
+```csharp
+class Counter
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> x;
+    static int x;
 
-    <span class="comment">// コンストラクター</span>
-    Counter() =&gt; x++;
+    // コンストラクター
+    Counter() => x++;
 
-    <span class="comment">// ファイナライザー</span>
-    ~Counter() =&gt; x--;
+    // ファイナライザー
+    ~Counter() => x--;
 }
-</code></pre>
+```
 
 詳しくは、「[expression-bodiedメンバーの拡充](../structured/st_function.md#sec-expression-bodied)」を参照してください。

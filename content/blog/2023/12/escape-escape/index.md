@@ -34,9 +34,9 @@ C# をはじめ、C 言語の影響を受けて作られた言語の多くは `\
 
 例えば C# で以下のようなコードを書いて実行すると、たいていの環境で赤い文字が表示されるはずです。
 
-<pre class="source" title="ANSI X3.64 を使って文字色を変える例">
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;\u001b[31mred text&quot;</span>);
-</pre>
+```csharp
+Console.WriteLine("\u001b[31mred text");
+```
 
 `\u001b` がエスケープ文字(以下、ESC と表記)で、ESC + `[31m` という文字列を Console に書き込むとそれ以降の文字色が変わります。
 
@@ -48,11 +48,11 @@ C# 12 以前でも `\x` + 16進数2桁とか、`\u` + 16進数4桁とか、 `\U`
 任意の文字コードを直接打ち込むエスケープ手段があったので、別にそれほどなくて困るものでもなかったりはします。
 以下のコードの `\x1b`, `\u001b`, `\U0000001b` はいずれもエスケープ文字です。
 
-<pre class="source" title="\x, \u, \U">
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;\x1b[31mred text&quot;</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;\u001b[4munderlined text&quot;</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;\U0000001b[0mreset style&quot;</span>);
-</pre>
+```csharp
+Console.WriteLine("\x1b[31mred text");
+Console.WriteLine("\u001b[4munderlined text");
+Console.WriteLine("\U0000001b[0mreset style");
+```
 
 古からある仕様ですが、
 長らく C# の主戦場だった Windows では
@@ -86,11 +86,11 @@ C# でも、ANSI X3.64 出力用のライブラリを提供してくれている
 コストに関しては、エスケープ シーケンスの解析用の `switch` ステートメントに1個 `case` を追加するだけです。
 以下のたった3行の追加。
 
-<pre class="source" title="\e 対応のためのコード">
-    <span class="control">case</span> <span class="string">'e'</span>:
-        <span class="variable">ch</span> <span class="operator">=</span> <span class="string">'\u001b'</span>;
-        <span class="control">break</span>;
-</pre>
+```csharp
+    case 'e':
+        ch = '\u001b';
+        break;
+```
 
 「C# 12 以下では使えない」みたいな判定を足すとしてもさらに追加で +3 行。
 テストとかを足しても数百行程度の修正になります。
@@ -111,11 +111,11 @@ C# でも、ANSI X3.64 出力用のライブラリを提供してくれている
 「Any Time」のわりにもうすでに実装されたものがあるわけですが。
 以下のコード、Visual Studio 17.9 Preview 1 (11月15日にリリース) で動きます。
 
-<pre class="source" title="\e エスケープ、もう動いてる">
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;\e[31mred text&quot;</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;\e[4munderlined text&quot;</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;\e[0mreset style&quot;</span>);
-</pre>
+```csharp
+Console.WriteLine("\e[31mred text");
+Console.WriteLine("\e[4munderlined text");
+Console.WriteLine("\e[0mreset style");
+```
 
 ![\e もう動いてる](../../../../../assets/media/1217/escapeescape.png)
 

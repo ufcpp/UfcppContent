@@ -55,43 +55,44 @@ C-Style 関数は、C言語で書いた関数や、C++ で「`extern "C"`」内�
 C# から C-Stlye 関数を呼び出すには、`DllImport`属性(`System.Runtime.InteropServices`名前空間)を使います。
 例えば、以下のように書きます。
 
-<pre class="source" title="DllImport を使って C-Style の Windows API を呼び出す">
-<code><reserved></span><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System;
+using System.Runtime.InteropServices;
 
-<span class="reserved">namespace</span> NativeInterop
+namespace NativeInterop
 {
-    <span class="reserved">class</span> <span class="type">DllImportSample</span>
+    class DllImportSample
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        static void Main()
         {
-            <span class="type">SYSTEMTIME</span> t;
-            GetLocalTime(<span class="reserved">out</span> t);
+            SYSTEMTIME t;
+            GetLocalTime(out t);
 
-            <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{t.wYear}<span class="string">/</span>{t.wMonth}<span class="string">/</span>{t.wDay}<span class="string"> </span>{t.wHour}<span class="string">:</span>{t.wMinute}<span class="string">:</span>{t.wSecond}<span class="string">"</span>);
+            Console.WriteLine($"{t.wYear}/{t.wMonth}/{t.wDay} {t.wHour}:{t.wMinute}:{t.wSecond}");
         }
 
-        [<span class="type">DllImport</span>(<span class="string">"kernel32.dll"</span>)]
-        <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> GetLocalTime(<span class="reserved">out</span> <span class="type">SYSTEMTIME</span> lpSystemTime);
+        [DllImport("kernel32.dll")]
+        static extern void GetLocalTime(out SYSTEMTIME lpSystemTime);
     }
 
-    [<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Sequential, Pack = 2)]
-    <span class="reserved">struct</span> <span class="type">SYSTEMTIME</span>
+    [StructLayout(LayoutKind.Sequential, Pack = 2)]
+    struct SYSTEMTIME
     {
-        <span class="reserved">public</span> <span class="reserved">ushort</span> wYear;
-        <span class="reserved">public</span> <span class="reserved">ushort</span> wMonth;
-        <span class="reserved">public</span> <span class="reserved">ushort</span> wDayOfWeek;
-        <span class="reserved">public</span> <span class="reserved">ushort</span> wDay;
-        <span class="reserved">public</span> <span class="reserved">ushort</span> wHour;
-        <span class="reserved">public</span> <span class="reserved">ushort</span> wMinute;
-        <span class="reserved">public</span> <span class="reserved">ushort</span> wSecond;
-        <span class="reserved">public</span> <span class="reserved">ushort</span> wMilliseconds;
+        public ushort wYear;
+        public ushort wMonth;
+        public ushort wDayOfWeek;
+        public ushort wDay;
+        public ushort wHour;
+        public ushort wMinute;
+        public ushort wSecond;
+        public ushort wMilliseconds;
     }
 }
-</code></pre>
+```
 
-<pre class="console"><code>2015/8/15 1:42:37
-</code></pre>
+```console
+2015/8/15 1:42:37
+```
 
 このコードで、`kernel32.dll` という Windows のネイティブ ライブラリ中にある[`GetLocalTime`](https://msdn.microsoft.com/ja-jp/library/Cc429760.aspx)という関数を呼び出せます。
 
@@ -161,99 +162,100 @@ Visual Studio 上で、下図のように、「参照の追加」→「COM」→
 この図の例の場合、MSXML2 という COM ライブラリを参照します。
 これで、例えば以下のように、MSXML2 中のクラス(この例では`DOMDocument60`クラス)を使えます。
 
-<pre class="source" title="COMの参照">
-<code><reserved></span><span class="reserved">using</span> MSXML2;
-<span class="reserved">using</span> System;
+```csharp
+using MSXML2;
+using System;
 
-<span class="reserved">namespace</span> NativeInterop
+namespace NativeInterop
 {
-    <span class="reserved">class</span> <span class="type">ComImportSample</span>
+    class ComImportSample
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        static void Main()
         {
-            <span class="reserved">var</span> doc = <span class="reserved">new</span> <span class="type">DOMDocument60</span>();
+            var doc = new DOMDocument60();
 
-            <span class="reserved">if</span> (doc.load(<span class="string">"Sample.xml"</span>))
+            if (doc.load("Sample.xml"))
             {
-                <span class="reserved">var</span> s = doc.documentElement;
+                var s = doc.documentElement;
 
-                <span class="reserved">foreach</span> (<span class="type">IXMLDOMElement</span> item <span class="reserved">in</span> s.getElementsByTagName(<span class="string">"Item"</span>))
+                foreach (IXMLDOMElement item in s.getElementsByTagName("Item"))
                 {
-                    <span class="reserved">var</span> name = item.getAttribute(<span class="string">"Name"</span>);
-                    <span class="reserved">var</span> value = item.getAttribute(<span class="string">"Value"</span>);
+                    var name = item.getAttribute("Name");
+                    var value = item.getAttribute("Value");
 
-                    <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{name}<span class="string"> = </span>{value}<span class="string">"</span>);
+                    Console.WriteLine($"{name} = {value}");
                 }
             }
         }
     }
 }
-</code></pre>
+```
 
 見ての通り、C#からCOMオブジェクトは、普通にC#のクラスっぽく見えます。
 造りが古臭いせいで面倒になりがちですが、そこまで違和感なく使えます。
 
 ここで、このコードに対して与えるデータ(`Sample.xml`)として以下のようなものを用意したとすると、
 
-<pre class="xsource" title="Sample.xml">
-<code><attvalue></span><span class="attvalue">&lt;?</span><span class="element">xml</span><span class="attvalue"> </span><span class="attribute">version</span><span class="attvalue">=</span>"<span class="attvalue">1.0</span>"<span class="attvalue"> </span><span class="attribute">encoding</span><span class="attvalue">=</span>"<span class="attvalue">utf-8</span>"<span class="attvalue"> ?&gt;</span>
-<span class="attvalue">&lt;</span><span class="element">Sample</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Item</span><span class="attvalue"> </span><span class="attribute">Name</span><span class="attvalue">=</span>"<span class="attvalue">a</span>"<span class="attvalue"> </span><span class="attribute">Value</span><span class="attvalue">=</span>"<span class="attvalue">1</span>"<span class="attvalue">/&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Item</span><span class="attvalue"> </span><span class="attribute">Name</span><span class="attvalue">=</span>"<span class="attvalue">b</span>"<span class="attvalue"> </span><span class="attribute">Value</span><span class="attvalue">=</span>"<span class="attvalue">2</span>"<span class="attvalue">/&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Item</span><span class="attvalue"> </span><span class="attribute">Name</span><span class="attvalue">=</span>"<span class="attvalue">c</span>"<span class="attvalue"> </span><span class="attribute">Value</span><span class="attvalue">=</span>"<span class="attvalue">3</span>"<span class="attvalue">/&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Item</span><span class="attvalue"> </span><span class="attribute">Name</span><span class="attvalue">=</span>"<span class="attvalue">d</span>"<span class="attvalue"> </span><span class="attribute">Value</span><span class="attvalue">=</span>"<span class="attvalue">4</span>"<span class="attvalue">/&gt;</span>
-<span class="attvalue">&lt;/</span><span class="element">Sample</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Sample>
+    <Item Name="a" Value="1"/>
+    <Item Name="b" Value="2"/>
+    <Item Name="c" Value="3"/>
+    <Item Name="d" Value="4"/>
+</Sample>
+```
 
 以下の結果が得られます。
 
-<pre class="console"><code>a = 1
+```console
+a = 1
 b = 2
 c = 3
 d = 4
-</code></pre>
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="rcw-ccw"></a>RCW と CCW
 
 前節の「COM参照」をすると、コンパイラーが以下のようなクラスを生成します。
 
-<pre class="source" title="「COM参照」でで生成されるクラス">
-<code><reserved></span><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Runtime.InteropServices;
-<span class="reserved">namespace</span> MSXML2
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+namespace MSXML2
 {
-    [<span class="type">CompilerGenerated</span>, <span class="type">CoClass</span>(<span class="reserved">typeof</span>(<span class="reserved">object</span>)), <span class="type">Guid</span>(<span class="string">"2933BF96-7B36-11D2-B20E-00C04F983E60"</span>), <span class="type">TypeIdentifier</span>]
-    [<span class="type">ComImport</span>]
-    <span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">DOMDocument60</span> : <span class="type">IXMLDOMDocument3</span>, <span class="type">XMLDOMDocumentEvents_Event</span>
+    [CompilerGenerated, CoClass(typeof(object)), Guid("2933BF96-7B36-11D2-B20E-00C04F983E60"), TypeIdentifier]
+    [ComImport]
+    public interface DOMDocument60 : IXMLDOMDocument3, XMLDOMDocumentEvents_Event
     {
     }
 }
-</code></pre>
+```
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Runtime.InteropServices;
-<span class="reserved">namespace</span> MSXML2
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+namespace MSXML2
 {
-    [<span class="type">CompilerGenerated</span>, <span class="type">Guid</span>(<span class="string">"2933BF86-7B36-11D2-B20E-00C04F983E60"</span>), <span class="type">TypeIdentifier</span>]
-    [<span class="type">ComImport</span>]
-    <span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IXMLDOMElement</span> : <span class="type">IXMLDOMNode</span>
+    [CompilerGenerated, Guid("2933BF86-7B36-11D2-B20E-00C04F983E60"), TypeIdentifier]
+    [ComImport]
+    public interface IXMLDOMElement : IXMLDOMNode
     {
-        <span class="reserved">void</span> _VtblGap1_37();
-        [<span class="type">DispId</span>(99)]
-        [<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.InternalCall)]
-        [<span class="reserved">return</span>: <span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span>.Struct)]
-        <span class="reserved">object</span> getAttribute([<span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span>.BStr)] [<span class="type">In</span>] <span class="reserved">string</span> name);
-        <span class="reserved">void</span> _VtblGap2_5();
-        [<span class="type">DispId</span>(105)]
-        [<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.InternalCall)]
-        [<span class="reserved">return</span>: <span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span>.Interface)]
-        <span class="type">IXMLDOMNodeList</span> getElementsByTagName([<span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span>.BStr)] [<span class="type">In</span>] <span class="reserved">string</span> tagName);
+        void _VtblGap1_37();
+        [DispId(99)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        [return: MarshalAs(UnmanagedType.Struct)]
+        object getAttribute([MarshalAs(UnmanagedType.BStr)] [In] string name);
+        void _VtblGap2_5();
+        [DispId(105)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        [return: MarshalAs(UnmanagedType.Interface)]
+        IXMLDOMNodeList getElementsByTagName([MarshalAs(UnmanagedType.BStr)] [In] string tagName);
     }
 }
-</code></pre>
+```
 
 要は、C-Style 関数の時に`DllImport`属性を使ったように、
 COM オブジェクトに対しては `ComImport` という属性を使います。
@@ -288,34 +290,34 @@ C# 4.0の `dynamic` (参考: 「[動的型付け変数](../dynamic/sp4_dynamic.m
 
 例えば、先ほどのコードは以下のように書き換えることもできます。
 
-<pre class="source" title="dynamic を使ったCOM呼び出し">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">namespace</span> NativeInterop
+namespace NativeInterop
 {
-    <span class="reserved">class</span> <span class="type">ComLateBindingSample</span>
+    class ComLateBindingSample
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        public static void Main()
         {
-            <span class="reserved">var</span> t = <span class="type">Type</span>.GetTypeFromProgID(<span class="string">"MSXML2.DOMDocument"</span>);
-            <em><span class="reserved">dynamic</span> doc = <span class="type">Activator</span>.CreateInstance(t);</em>
+            var t = Type.GetTypeFromProgID("MSXML2.DOMDocument");
+            dynamic doc = Activator.CreateInstance(t);
 
-            <span class="reserved">if</span> (doc.load(<span class="string">"Sample.xml"</span>))
+            if (doc.load("Sample.xml"))
             {
-                <span class="reserved">var</span> s = doc.documentElement;
+                var s = doc.documentElement;
 
-                <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> s.getElementsByTagName(<span class="string">"Item"</span>))
+                foreach (var item in s.getElementsByTagName("Item"))
                 {
-                    <span class="reserved">var</span> name = item.getAttribute(<span class="string">"Name"</span>);
-                    <span class="reserved">var</span> value = item.getAttribute(<span class="string">"Value"</span>);
+                    var name = item.getAttribute("Name");
+                    var value = item.getAttribute("Value");
 
-                    <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{name}<span class="string"> = </span>{value}<span class="string">"</span>);
+                    Console.WriteLine($"{name} = {value}");
                 }
             }
         }
     }
 }
-</code></pre>
+```
 
 インスタンス `doc` を作るところが `new` から `CreateInstance` に代わって、変数の型が `dynamic` になっただけで、そこから先のコードはほぼ同じです。
 これで、「COM 参照」は必要なくなり、RCW は実行時に動的に作られます。
@@ -360,77 +362,77 @@ Windows 8から Windows 10にかけて紆余曲折ありましたが、要は、
 
 csproj を手書きで書き換える必要があります。以下のように、`TargetPlatformVersion`というタグを1行追加します。
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;?</span><span class="element">xml</span><span class="attvalue"> </span><span class="attribute">version</span><span class="attvalue">=</span>"<span class="attvalue">1.0</span>"<span class="attvalue"> </span><span class="attribute">encoding</span><span class="attvalue">=</span>"<span class="attvalue">utf-8</span>"<span class="attvalue">?&gt;</span>
-<span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">ToolsVersion</span><span class="attvalue">=</span>"<span class="attvalue">14.0</span>"<span class="attvalue"> </span><span class="attribute">DefaultTargets</span><span class="attvalue">=</span>"<span class="attvalue">Build</span>"<span class="attvalue"> </span><span class="attribute">xmlns</span><span class="attvalue">=</span>"<span class="attvalue">http://schemas.microsoft.com/developer/msbuild/2003</span>"<span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">Import</span><span class="attvalue"> </span><span class="attribute">Project</span><span class="attvalue">=</span>"<span class="attvalue">$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props</span>"<span class="attvalue"> </span><span class="attribute">Condition</span><span class="attvalue">=</span>"<span class="attvalue">Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Configuration</span><span class="attvalue"> </span><span class="attribute">Condition</span><span class="attvalue">=</span>"<span class="attvalue"> '$(Configuration)' == '' </span>"<span class="attvalue">&gt;</span>Debug<span class="attvalue">&lt;/</span><span class="element">Configuration</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Platform</span><span class="attvalue"> </span><span class="attribute">Condition</span><span class="attvalue">=</span>"<span class="attvalue"> '$(Platform)' == '' </span>"<span class="attvalue">&gt;</span>AnyCPU<span class="attvalue">&lt;/</span><span class="element">Platform</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">ProjectGuid</span><span class="attvalue">&gt;</span>{F404E6CA-F7FD-4AB8-A531-D8203BCC3F70}<span class="attvalue">&lt;/</span><span class="element">ProjectGuid</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">AppDesignerFolder</span><span class="attvalue">&gt;</span>Properties<span class="attvalue">&lt;/</span><span class="element">AppDesignerFolder</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">RootNamespace</span><span class="attvalue">&gt;</span>NativeInterop<span class="attvalue">&lt;/</span><span class="element">RootNamespace</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">AssemblyName</span><span class="attvalue">&gt;</span>NativeInterop<span class="attvalue">&lt;/</span><span class="element">AssemblyName</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFrameworkVersion</span><span class="attvalue">&gt;</span>v4.6<span class="attvalue">&lt;/</span><span class="element">TargetFrameworkVersion</span><span class="attvalue">&gt;</span>
-<em><span class="attvalue">    &lt;</span><span class="element">TargetPlatformVersion</span><span class="attvalue">&gt;</span>10.0.10240.0<span class="attvalue">&lt;/</span><span class="element">TargetPlatformVersion</span><span class="attvalue">&gt;</span></em>
-<span class="attvalue">    &lt;</span><span class="element">FileAlignment</span><span class="attvalue">&gt;</span>512<span class="attvalue">&lt;/</span><span class="element">FileAlignment</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">AutoGenerateBindingRedirects</span><span class="attvalue">&gt;</span>true<span class="attvalue">&lt;/</span><span class="element">AutoGenerateBindingRedirects</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="inactive">...</span>
-</code></pre>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F404E6CA-F7FD-4AB8-A531-D8203BCC3F70}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NativeInterop</RootNamespace>
+    <AssemblyName>NativeInterop</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+...
+```
 
 `TargetPlatformVersion`タグの中身には、`8.0`, `8.1`, `10.0` など、Windows のバージョンを書きます。
 
 これで、例えば、以下のようなコンソール アプリで、WinRT コンポーネントを使えます。
 
-<pre class="source" title="WinRT コンポーネントをコンソール アプリから利用">
-<code><reserved></span><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Threading.Tasks;
-<span class="reserved">using</span> Windows.Foundation;
-<span class="reserved">using</span> Windows.System;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.System;
 
-<span class="reserved">namespace</span> NativeInterop
+namespace NativeInterop
 {
-    <span class="reserved">class</span> <span class="type">WinRtSample</span>
+    class WinRtSample
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        public static void Main()
         {
             MainAsync().Wait();
         }
 
-        <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> MainAsync()
+        static async Task MainAsync()
         {
-            <span class="reserved">var</span> allUsers = <span class="reserved">await</span> <span class="type">User</span>.FindAllAsync();
+            var allUsers = await User.FindAllAsync();
 
-            <span class="reserved">foreach</span> (<span class="reserved">var</span> user <span class="reserved">in</span> allUsers)
+            foreach (var user in allUsers)
             {
-                <span class="type">Console</span>.WriteLine(user.NonRoamableId);
+                Console.WriteLine(user.NonRoamableId);
             }
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">WinRtExtensions</span>
+    static class WinRtExtensions
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">TaskAwaiter</span>&lt;<span class="type">T</span>&gt; GetAwaiter&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IAsyncOperation</span>&lt;<span class="type">T</span>&gt; t) =&gt; t.AsTask().GetAwaiter();
+        public static TaskAwaiter<T> GetAwaiter<T>(this IAsyncOperation<T> t) => t.AsTask().GetAwaiter();
 
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="type">T</span>&gt; AsTask&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IAsyncOperation</span>&lt;<span class="type">T</span>&gt; t)
+        public static Task<T> AsTask<T>(this IAsyncOperation<T> t)
         {
-            <span class="reserved">var</span> tcs = <span class="reserved">new</span> <span class="type">TaskCompletionSource</span>&lt;<span class="type">T</span>&gt;();
-            t.Completed += (info, state) =&gt;
+            var tcs = new TaskCompletionSource<T>();
+            t.Completed += (info, state) =>
             {
-                <span class="reserved">try</span>
+                try
                 {
                     tcs.TrySetResult(info.GetResults());
                 }
-                <span class="reserved">catch</span>(<span class="type">Exception</span> ex)
+                catch(Exception ex)
                 {
                     tcs.TrySetException(ex);
                 }
             };
-            <span class="reserved">return</span> tcs.Task;
+            return tcs.Task;
         }
     }
 }
-</code></pre>
+```

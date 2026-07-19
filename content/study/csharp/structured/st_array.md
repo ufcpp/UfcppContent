@@ -45,22 +45,22 @@ C# などのプログラミング言語には、
 例として、5個の整数を入力して、それらの二乗和を求めることを考えます。
 プログラムは以下のようになるでしょう。
 
-<pre class="source" title="配列なしで複数のデータを扱う場合" lang="">
-<code><span class="reserved">int</span> a, b, c, d, e; <span class="comment">// 変数を入力したいデータの数だけ用意。</span>
+```csharp
+int a, b, c, d, e; // 変数を入力したいデータの数だけ用意。
 
-<span class="comment">// 値の入力</span>
-a = <span class="reserved">int</span>.Parse(Console.ReadLine());
-b = <span class="reserved">int</span>.Parse(Console.ReadLine());
-c = <span class="reserved">int</span>.Parse(Console.ReadLine());
-d = <span class="reserved">int</span>.Parse(Console.ReadLine());
-e = <span class="reserved">int</span>.Parse(Console.ReadLine());
+// 値の入力
+a = int.Parse(Console.ReadLine());
+b = int.Parse(Console.ReadLine());
+c = int.Parse(Console.ReadLine());
+d = int.Parse(Console.ReadLine());
+e = int.Parse(Console.ReadLine());
 
-<span class="comment">// 値の計算</span>
-<span class="reserved">int</span> square_sum = a*a + b*b + c*c + d*d + e*e;
+// 値の計算
+int square_sum = a*a + b*b + c*c + d*d + e*e;
 
-<span class="comment">// 値の出力</span>
-Console.Write(<span class="literal">"二乗和は {0} です"</span>, square_sum);
-</code></pre>
+// 値の出力
+Console.Write("二乗和は {0} です", square_sum);
+```
 
 
 似たような文が何度も繰り返し出てきています。
@@ -79,17 +79,17 @@ C# には複数のデータを一まとめにするために<strong id="array" c
         型名に <code>[]</code> を付けることで配列型を作ることができます
       </em>。
 
-<pre class="source" title="配列の書式" lang="">
-<code><span class="input">型名</span>[] <span class="input">変数名</span>;
-</code></pre>
+```csharp
+型名[] 変数名;
+```
 
 
 配列は宣言しただけでは利用できず、まずは配列の実体を作成する必要があります。
 実体の作成は <code>new</code> というキーワードを用いて以下のようにします。
 
-<pre class="source" title="配列の作成" lang="">
-<code><span class="input">配列型変数</span> = <span class="reserved">new</span> <span class="input">型名</span>[<span class="input">配列の長さ</span>];
-</code></pre>
+```csharp
+配列型変数 = new 型名[配列の長さ];
+```
 
 
 詳しくは「[クラス](../oop/oo_class.md)」で説明しますが、
@@ -99,25 +99,25 @@ C# には複数のデータを一まとめにするために<strong id="array" c
 
 先ほどの例を配列を使って書き直してみましょう。
 
-<pre class="source" title="配列の例" lang="">
-<code><span class="reserved">int</span>[] a = <span class="reserved">new int</span>[5]; <span class="comment">// 長さが5の整数型配列を用意。</span>
+```csharp
+int[] a = new int[5]; // 長さが5の整数型配列を用意。
 
-<span class="comment">// 値の入力</span>
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;a.Length; ++i) <span class="comment">// a.Length は配列 a の長さ。これの例では5。</span>
+// 値の入力
+for(int i=0; i<a.Length; ++i) // a.Length は配列 a の長さ。これの例では5。
 {
-  a[i] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+  a[i] = int.Parse(Console.ReadLine());
 }
 
-<span class="comment">// 値の計算</span>
-<span class="reserved">int</span> square_sum = 0;
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;a.Length; ++i)
+// 値の計算
+int square_sum = 0;
+for(int i=0; i<a.Length; ++i)
 {
   square_sum += a[i]*a[i];
 }
 
-<span class="comment">// 値の出力</span>
-Console.Write(<span class="literal">"二乗和は {0} です"</span>, square_sum);
-</code></pre>
+// 値の出力
+Console.Write("二乗和は {0} です", square_sum);
+```
 
 
 配列を使うことで、手動で何度も繰り返し書いていた文が1つの for 文にまとまりました。
@@ -127,78 +127,78 @@ Console.Write(<span class="literal">"二乗和は {0} です"</span>, square_sum
 
 ##### <a id="sec-generated-title-5"></a>サンプル
 
-<pre class="source" title="配列のサンプル" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> ArraySample
+class ArraySample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// フィボナッチ数列の20項目までを求める</span>
-    <span class="reserved">int</span>[] sequence = <span class="reserved">new int</span>[20];
+    // フィボナッチ数列の20項目までを求める
+    int[] sequence = new int[20];
 
-    <span class="comment">// 最初の2項を入力</span>
-    Console.Write(<span class="literal">"a1 = "</span>);
-    sequence[0] = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"a2 = "</span>);
-    sequence[1] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    // 最初の2項を入力
+    Console.Write("a1 = ");
+    sequence[0] = int.Parse(Console.ReadLine());
+    Console.Write("a2 = ");
+    sequence[1] = int.Parse(Console.ReadLine());
 
-    <span class="comment">// 漸化式を使って20項目までを計算</span>
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=2; i&lt;sequence.Length; ++i)
+    // 漸化式を使って20項目までを計算
+    for(int i=2; i<sequence.Length; ++i)
     {
       sequence[i] = sequence[i-1] + sequence[i-2];
     }
 
-    <span class="comment">// 結果の出力</span>
-    Console.Write(<span class="literal">"{"</span>);
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;sequence.Length-1; ++i)
+    // 結果の出力
+    Console.Write("{");
+    for(int i=0; i<sequence.Length-1; ++i)
     {
-      Console.Write(sequence[i] + <span class="literal">", "</span>);
+      Console.Write(sequence[i] + ", ");
     }
-    Console.Write(sequence[sequence.Length-1] + <span class="literal">"}"</span>);
+    Console.Write(sequence[sequence.Length-1] + "}");
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
-a1 = <span class="input">2</span>
-a2 = <span class="input">1</span>
+```console
+a1 = 2
+a2 = 1
 {2, 1, 3, 4, 7, 11, 18, 29, 47, 76, 123, 199, 322, 521, 843, 1364, 2207,
  3571, 5778, 9349}
-</pre>
+```
 
 
 また、配列は以下のようにして宣言時に初期化することも出来ます。
 
-<pre class="source" title="配列の初期化" lang="">
-<code><span class="input">型名</span>[] <span class="input">変数名</span> = <span class="reserved">new</span> <span class="input">型名</span>[] {<span class="input">値1</span>, <span class="input">値2</span>, <span class="input">.....</span>};
-</code></pre>
+```csharp
+型名[] 変数名 = new 型名[] {値1, 値2, .....};
+```
 
 
 例えば、1, 3, 5, 7, 9 という初期値を持った int 型配列を作成するには以下のようにします。
 
-<pre class="source" title="配列の初期化の例" lang="">
-<code><span class="reserved">int</span>[] a = <span class="reserved">new int</span>[] {1, 3, 5, 7, 9};
-</code></pre>
+```csharp
+int[] a = new int[] {1, 3, 5, 7, 9};
+```
 
 
 <em>変数宣言と同時に限り</em>、以下のような書き方も可能です。
 （new[] を省略できる。）
 
-<pre class="source" title="配列の初期化の例" lang="">
-<code><span class="reserved">int</span>[] a = {1, 3, 5, 7, 9};
-</code></pre>
+```csharp
+int[] a = {1, 3, 5, 7, 9};
+```
 
 ちなみに、こういう`{}`で初期値を与える書き方のことを「<strong id="key-initializer" class="keyword">初期化子</strong>」(initializer)と呼びます。
 
 また、初期化子内の最後には、コンマを付けてもつけなくても構いません。
 以下の2行は同じ意味になります。
 
-<pre class="source" title="初期化子末尾のコンマ">
-<code><span class="reserved">int</span>[] <span class="variable">a</span> = <span class="reserved">new</span> <span class="reserved">int</span>[] { 1, 3, 5, 7, 9 };
-<span class="reserved">int</span>[] <span class="variable">b</span> = <span class="reserved">new</span> <span class="reserved">int</span>[] { 1, 3, 5, 7, 9<em>,</em> };
-</code></pre>
+```csharp
+int[] a = new int[] { 1, 3, 5, 7, 9 };
+int[] b = new int[] { 1, 3, 5, 7, 9, };
+```
 
 ソースコード生成など機械的な処理で値を並べる場合には「最後だけ `,` を消さないといけない」みたいな処理の方が難しいので、末尾コンマを認めています。
 
@@ -207,9 +207,9 @@ a2 = <span class="input">1</span>
 C# 12 からは配列の初期化を以下のように書くことができるようになりました。
 これをコレクション式といいます。
 
-<pre class="source" title="">
-<span class="reserved">int</span>[] <span class="variable">a</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>];
-</pre>
+```csharp
+int[] a = [1, 3, 5, 7, 9];
+```
 
 `{}` を使った初期化子との差や、コレクション式のメリットなどは「[コレクション式](../datatype/collection-expression.md)」で説明します。
 
@@ -220,9 +220,9 @@ C# 12 からは配列の初期化を以下のように書くことができる�
 C# 3.0 では、
 配列の初期化時の、「new 型名[]」の型名を省略することが可能に成りました。
 
-<pre class="source" title="配列の初期化の例（暗黙的型付け）" lang="">
-<code><span class="reserved">var</span> a = <span class="reserved">new</span>[] {1, 3, 5, 7, 9};
-</code></pre>
+```csharp
+var a = new[] {1, 3, 5, 7, 9};
+```
 
 
 配列の型は、{} の中身から推論されます。
@@ -235,26 +235,26 @@ C# 3.0 では、
 
 C# 8.0 で、`a[i..j]` という書き方で「i番目からj番目の要素を取り出す」というような操作ができるようになりました。
 
-<pre class="source" title=".. 構文">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">a</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
+        var a = new[] { 1, 2, 3, 4, 5 };
  
-        <span class="comment">// 前後1要素ずつ削ったもの</span>
-        <span class="reserved">var</span> <span class="variable">middle</span> = <span class="variable">a</span>[1..^1];
+        // 前後1要素ずつ削ったもの
+        var middle = a[1..^1];
  
-        <span class="comment">// 2, 3, 4 が表示される</span>
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">middle</span>)
+        // 2, 3, 4 が表示される
+        foreach (var x in middle)
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+            Console.WriteLine(x);
         }
     }
 }
-</code></pre>
+```
 
 詳しくは「[インデックス/範囲処理](../data/dataranges.md)」で説明します。
 
@@ -271,50 +271,50 @@ C# の多次元配列は以下のようにして宣言します。
 （次節で説明する「配列の配列」と区別するために、「四角い多次元配列」と呼んだりする場合もあります。
 単に多次元配列という場合、こちらの四角い多次元配列を指します。）
 
-<pre class="source" title="多次元配列の宣言" lang="">
-<code><span class="input">型名</span><em>[,]</em> <span class="input">変数名</span>; <span class="comment">// 2次元配列</span>
-<span class="input">型名</span><em>[,,]</em> <span class="input">変数名</span>; <span class="comment">// 3次元配列</span>
-</code></pre>
+```csharp
+型名[,] 変数名; // 2次元配列
+型名[,,] 変数名; // 3次元配列
+```
 
 
 1次元配列のときと同じく、new キーワードを用いて配列を作成する必要があります。
 
-<pre class="source" title="多元配列の作成" lang="">
-<code><span class="input">変数名</span> = <span class="reserved">new</span> <span class="input">型名</span>[<span class="input">長さ1</span>, <span class="input">長さ2</span>]; <span class="comment">// 2次元配列の場合</span>
-<span class="input">変数名</span> = <span class="reserved">new</span> <span class="input">型名</span>[<span class="input">長さ1</span>, <span class="input">長さ2</span>, <span class="input">長さ3</span>]; <span class="comment">// 3次元配列の場合</span>
-</code></pre>
+```csharp
+変数名 = new 型名[長さ1, 長さ2]; // 2次元配列の場合
+変数名 = new 型名[長さ1, 長さ2, 長さ3]; // 3次元配列の場合
+```
 
 
 また、宣言時に値を初期化する場合には以下のようにします。
 
-<pre class="source" title="多次元配列の初期化" lang="">
-<code><span class="input">型名</span>[,] <span class="input">変数名</span> = <span class="reserved">new</span> <span class="input">型名</span>[,] {
-  {<span class="input">値1-1</span>, <span class="input">値1-2</span>, <span class="input">.....</span>},
-  {<span class="input">値2-1</span>, <span class="input">値2-2</span>, <span class="input">.....</span>},
-  <span class="input">.....</span>
+```csharp
+型名[,] 変数名 = new 型名[,] {
+  {値1-1, 値1-2, .....},
+  {値2-1, 値2-2, .....},
+  .....
 };
-</code></pre>
+```
 
 
 例えば、2次元配列を行列に見立てて行列の掛け算を行うプログラムは以下のようになります。
 
-<pre class="source" title="多元配列の例" lang="">
-<code><span class="reserved">double</span>[,] a = <span class="reserved">new double</span>[,]{{1, 2}, {2, 1}, {0, 1}}; <span class="comment">// 3行2列の行列</span>
-<span class="reserved">double</span>[,] b = <span class="reserved">new double</span>[,]{{1, 2, 0}, {0, 1, 2}};   <span class="comment">// 2行3列の行列</span>
-<span class="reserved">double</span>[,] c = <span class="reserved">new double</span>[3, 3];                      <span class="comment">// 3行3列の行列</span>
+```csharp
+double[,] a = new double[,]{{1, 2}, {2, 1}, {0, 1}}; // 3行2列の行列
+double[,] b = new double[,]{{1, 2, 0}, {0, 1, 2}};   // 2行3列の行列
+double[,] c = new double[3, 3];                      // 3行3列の行列
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;a.GetLength(0); ++i) <span class="comment">// a.GetLength(0) は a の行数を表す。</span>
+for(int i=0; i<a.GetLength(0); ++i) // a.GetLength(0) は a の行数を表す。
 {
-  <span class="reserved">for</span>(<span class="reserved">int</span> j=0; j&lt;b.GetLength(1); ++j) <span class="comment">// b.GetLength(1) は b の列数を表す。</span>
+  for(int j=0; j<b.GetLength(1); ++j) // b.GetLength(1) は b の列数を表す。
   {
     c[i, j] = 0;
-    <span class="reserved">for</span>(<span class="reserved">int</span> k=0; k&lt;a.GetLength(1); ++k) <span class="comment">// a.GetLength(1) は a の列数を表す。</span>
+    for(int k=0; k<a.GetLength(1); ++k) // a.GetLength(1) は a の列数を表す。
     {
-      <em>c[i, j] += a[i, k] * b[k, j];</em>
+      c[i, j] += a[i, k] * b[k, j];
     }
   }
 }
-</code></pre>
+```
 
 
 
@@ -326,32 +326,32 @@ C# の多次元配列は以下のようにして宣言します。
 
 例として、多次元配列のところで挙げた行列の掛け算を配列の配列を使って書き直すと以下のようになります。
 
-<pre class="source" title="配列の配列の例" lang="">
-<code><span class="reserved">double</span>[][] a = <span class="reserved">new double</span>[][]{  <span class="comment">// 3行2列の行列</span>
-  <span class="reserved">new double</span>[]{1, 2},
-  <span class="reserved">new double</span>[]{2, 1},
-  <span class="reserved">new double</span>[]{0, 1}
+```csharp
+double[][] a = new double[][]{  // 3行2列の行列
+  new double[]{1, 2},
+  new double[]{2, 1},
+  new double[]{0, 1}
 };
-<span class="reserved">double</span>[][] b = <span class="reserved">new double</span>[][]{  <span class="comment">// 2行3列の行列</span>
-  <span class="reserved">new double</span>[]{1, 2, 0},
-  <span class="reserved">new double</span>[]{0, 1, 2}
+double[][] b = new double[][]{  // 2行3列の行列
+  new double[]{1, 2, 0},
+  new double[]{0, 1, 2}
 };
-<span class="reserved">double</span>[][] c = <span class="reserved">new double</span>[3][]; <span class="comment">// 3行3列の行列</span>
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;c.Length; ++i)
-  c[i] = <span class="reserved">new double</span>[3];
+double[][] c = new double[3][]; // 3行3列の行列
+for(int i=0; i<c.Length; ++i)
+  c[i] = new double[3];
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;a.Length; ++i) <span class="comment">// a.Length は a の行数を表す。</span>
+for(int i=0; i<a.Length; ++i) // a.Length は a の行数を表す。
 {
-  <span class="reserved">for</span>(<span class="reserved">int</span> j=0; j&lt;b[0].Length; ++j) <span class="comment">// b[0].Length は b の列数を表す。</span>
+  for(int j=0; j<b[0].Length; ++j) // b[0].Length は b の列数を表す。
   {
     c[i][j] = 0;
-    <span class="reserved">for</span>(<span class="reserved">int</span> k=0; k&lt;a[0].Length; ++k) <span class="comment">// a[0].Length は a の列数を表す。</span>
+    for(int k=0; k<a[0].Length; ++k) // a[0].Length は a の列数を表す。
     {
-      <em>c[i][j] += a[i][k] * b[k][j];</em>
+      c[i][j] += a[i][k] * b[k][j];
     }
   }
 }
-</code></pre>
+```
 
 
 「多次元配列」は全ての行の列数が同じになりますが、
@@ -374,23 +374,19 @@ C# の多次元配列は以下のようにして宣言します。
 	<tr>
 		<th>書き方</th>
 		<td markdown="1">
-<pre class="source" title="多次元配列の例" lang="">
-<code><span class="reserved">int</span>[,] rect =
+<pre class="source" title="多次元配列の例" lang=""><code class="language-csharp">int[,] rect =
 {
-    { <span class="literal">1</span>, <span class="literal">2</span> },
-    { <span class="literal">3</span>, <span class="literal">4</span> },
-};
-</code></pre>
+    { 1, 2 },
+    { 3, 4 },
+};</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="多次元配列の例" lang="">
-<code><span class="reserved">int</span>[][] jug =
+<pre class="source" title="多次元配列の例" lang=""><code class="language-csharp">int[][] jug =
 {
-    <span class="reserved">new</span>[] { <span class="literal">1</span> },
-    <span class="reserved">new</span>[] { <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span> },
-};
-</code></pre>
+    new[] { 1 },
+    new[] { 2, 3, 4 },
+};</code></pre>
 
 </td>
 	</tr>
@@ -454,32 +450,32 @@ for 文を使って以下の漸化式の一般項 <span class="math">
 #### 解答例 1
 
 
-<pre class="source" title="数列計算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[] a = <span class="reserved">new int</span>[21];
+    int[] a = new int[21];
     a[0] = 3;
     a[1] = 1;
 
-    <span class="comment">// 数列を求める。</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 2; i &lt; a.Length; ++i)
+    // 数列を求める。
+    for (int i = 2; i < a.Length; ++i)
     {
       a[i] = 2 * a[i - 1] - 2 * a[i - 2];
     }
 
-    <span class="comment">// 求めた数列を表示。</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    // 求めた数列を表示。
+    for (int i = 0; i < a.Length; ++i)
     {
-      Console.Write(<span class="literal">"{0} "</span>, a[i]);
+      Console.Write("{0} ", a[i]);
     }
     Console.Write('\n');
   }
 }
-</code></pre>
+```
 
 
 
@@ -493,48 +489,48 @@ int 型の配列に格納されている値の最大値、最小値および平�
 #### 解答例 1
 
 
-<pre class="source" title="配列の最大値、最小値、平均値" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// 配列長の入力</span>
-    Console.Write(<span class="literal">"配列の長さ: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    // 配列長の入力
+    Console.Write("配列の長さ: ");
+    int n = int.Parse(Console.ReadLine());
 
-    <span class="comment">// 配列の値の入力</span>
-    <span class="reserved">int</span>[] a = <span class="reserved">new int</span>[n];
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; ++i)
+    // 配列の値の入力
+    int[] a = new int[n];
+    for (int i = 0; i < n; ++i)
     {
-      Console.Write(<span class="literal">"{0}: "</span>, i);
-      a[i] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+      Console.Write("{0}: ", i);
+      a[i] = int.Parse(Console.ReadLine());
     }
 
-    <span class="comment">// 最大値、最小値、平均値の計算</span>
-    <span class="reserved">int</span> max = <span class="reserved">int</span>.MinValue;
-    <span class="reserved">int</span> min = <span class="reserved">int</span>.MaxValue;
-    <span class="reserved">double</span> average = 0;
+    // 最大値、最小値、平均値の計算
+    int max = int.MinValue;
+    int min = int.MaxValue;
+    double average = 0;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; ++i)
+    for (int i = 0; i < n; ++i)
     {
-      <span class="reserved">if</span> (max &lt; a[i]) max = a[i];
-      <span class="reserved">if</span> (min &gt; a[i]) min = a[i];
+      if (max < a[i]) max = a[i];
+      if (min > a[i]) min = a[i];
       average += a[i];
     }
     average /= n;
 
     Console.Write(
-<span class="literal">@"
+@"
 最大値: {0}
 最小値: {1}
 平均値: {2}
-"</span>
+"
     , max, min, average);
   }
 }
-</code></pre>
+```
 
 
 
@@ -549,59 +545,59 @@ double 型の2次元配列を行列に見立てて、行列の掛け算を行う
 
 行列の次元は任意だけども、例として2×2行列の場合を示す。
 
-<pre class="source" title="行列の積" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">double</span>[,] a = <span class="reserved">new double</span>[,]
+    double[,] a = new double[,]
     {
       {1, 1},
       {1, 0},
     };
-    <span class="reserved">double</span>[,] b = <span class="reserved">new double</span>[,]
+    double[,] b = new double[,]
     {
       {1, 2},
       {3, 4},
     };
 
-    <span class="comment">// ここより下は、a, b のサイズが任意の場合でも正しく動作する。</span>
-    <span class="reserved">double</span>[,] c = <span class="reserved">new double</span>[a.GetLength(0), b.GetLength(1)];
+    // ここより下は、a, b のサイズが任意の場合でも正しく動作する。
+    double[,] c = new double[a.GetLength(0), b.GetLength(1)];
 
-    <span class="comment">// a×b を計算</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.GetLength(0); ++i)
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; b.GetLength(1); ++j)
-        <span class="reserved">for</span> (<span class="reserved">int</span> k = 0; k &lt; a.GetLength(1); ++k)
+    // a×b を計算
+    for (int i = 0; i < a.GetLength(0); ++i)
+      for (int j = 0; j < b.GetLength(1); ++j)
+        for (int k = 0; k < a.GetLength(1); ++k)
           c[i, j] += a[i, k] * b[k, j];
 
-    <span class="comment">// a を表示</span>
-    Console.Write(<span class="literal">"a =\n"</span>);
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.GetLength(0); ++i)
+    // a を表示
+    Console.Write("a =\n");
+    for (int i = 0; i < a.GetLength(0); ++i)
     {
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; a.GetLength(1); ++j)
-        Console.Write(<span class="literal">"{0, 4} "</span>, a[i, j]);
+      for (int j = 0; j < a.GetLength(1); ++j)
+        Console.Write("{0, 4} ", a[i, j]);
       Console.Write('\n');
     }
 
-    <span class="comment">// b を表示</span>
-    Console.Write(<span class="literal">"b =\n"</span>);
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; b.GetLength(0); ++i)
+    // b を表示
+    Console.Write("b =\n");
+    for (int i = 0; i < b.GetLength(0); ++i)
     {
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; b.GetLength(1); ++j)
-        Console.Write(<span class="literal">"{0, 4} "</span>, b[i, j]);
+      for (int j = 0; j < b.GetLength(1); ++j)
+        Console.Write("{0, 4} ", b[i, j]);
       Console.Write('\n');
     }
 
-    <span class="comment">// a×b を表示</span>
-    Console.Write(<span class="literal">"a×b =\n"</span>);
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; c.GetLength(0); ++i)
+    // a×b を表示
+    Console.Write("a×b =\n");
+    for (int i = 0; i < c.GetLength(0); ++i)
     {
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; c.GetLength(1); ++j)
-        Console.Write(<span class="literal">"{0, 4} "</span>, c[i, j]);
+      for (int j = 0; j < c.GetLength(1); ++j)
+        Console.Write("{0, 4} ", c[i, j]);
       Console.Write('\n');
     }
   }
 }
-</code></pre>
+```

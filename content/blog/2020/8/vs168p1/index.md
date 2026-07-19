@@ -39,19 +39,19 @@ C# 9.0 に今回追加されたのは以下の3つです。
 
 以下のように、`ModuleInitializer` 属性を付けた静的メソッドが、モジュール読み込み時に呼ばれます。
 
-<pre class="source" title="ModuleInitializer">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
 
-<span class="reserved">class</span> <span class="type">Init</span>
+class Init
 {
     [ModuleInitializer]
-    <span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">void</span> M1() =&gt; Console.WriteLine(<span class="string">"Init.M1"</span>);
+    internal static void M1() => Console.WriteLine("Init.M1");
 
     [ModuleInitializer]
-    <span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">void</span> M2() =&gt; Console.WriteLine(<span class="string">"Init.M2"</span>);
+    internal static void M2() => Console.WriteLine("Init.M2");
 }
-</code></pre>
+```
 
 [静的コンストラクター](../../../../study/csharp/oop/oo_static.md#ctor)でも近いことができるんですが、
 
@@ -74,18 +74,18 @@ C# 9.0 に今回追加されたのは以下の3つです。
 
 [匿名関数](../../../../study/csharp/functional/fun_localfunctions.md#anonymous-function) ([ラムダ式](../../../../study/csharp/functional/sp_delegate.md#lambda)と[匿名メソッド式](../../../../study/csharp/functional/sp_delegate.md#anonymous-method))に対して `static` 修飾を付けて、[キャプチャ](../../../../study/csharp/functional/sp2_anonymousmethod.md#closure)の抑止ができるようになりました。
 
-<pre class="source" title="静的匿名関数">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// OK</span>
-Action staticLambda = <span class="reserved">static</span> () =&gt; { };
-Action staticAnonymousMethod = <span class="reserved">static</span> <span class="reserved">delegate</span> () { };
+// OK
+Action staticLambda = static () => { };
+Action staticAnonymousMethod = static delegate () { };
 
-<span class="comment">// コンパイル エラー</span>
-<span class="reserved">int</span> local = 1;
-Action badStaticLambda = <span class="reserved">static</span> () =&gt; Console.WriteLine(<span class="error">local</span>);
-Action badStaticAnonymousMethod = <span class="reserved">static</span> <span class="reserved">delegate</span> () { Console.WriteLine(<span class="error">local</span>); };
-</code></pre>
+// コンパイル エラー
+int local = 1;
+Action badStaticLambda = static () => Console.WriteLine(local);
+Action badStaticAnonymousMethod = static delegate () { Console.WriteLine(local); };
+```
 
 これは割かし、「工数的な問題で 8.0 に入らなかっただけ」系の機能です。
 C# 8.0 時点で[ローカル関数に関しては同様の機能](../../../../study/csharp/functional/fun_localfunctions.md#static-local-function)が入っていて、
@@ -96,16 +96,16 @@ C# 8.0 時点で[ローカル関数に関しては同様の機能](../../../../s
 
 条件演算子 (`? :`)で、第2項と第3項で共通の型を決められないときに、[ターゲット型](../../../../study/csharp/start/misctyperesolution.md#target-type)を見て型を決定できるようになりました。
 
-<pre class="source" title="target-typed conditional exrpression">
-<code><span class="reserved">void</span> targetTypedConditional(<span class="reserved">bool</span> x)
+```csharp
+void targetTypedConditional(bool x)
 {
-    <span class="comment">// target-typed で、1 : null の部分がちゃんと int? になる。</span>
-    <span class="reserved">int</span>? v1 = x ? 1 : <span class="reserved">null</span>;
+    // target-typed で、1 : null の部分がちゃんと int? になる。
+    int? v1 = x ? 1 : null;
 
-    <span class="comment">// あくまで target-typed で判定してるので、以下のような推論は働かない(コンパイル エラー)。</span>
-    <span class="comment">// 1 と null の「共通型」は確定できない。</span>
-    <span class="comment">//var v2 = x ? 1 : null;</span>
+    // あくまで target-typed で判定してるので、以下のような推論は働かない(コンパイル エラー)。
+    // 1 と null の「共通型」は確定できない。
+    //var v2 = x ? 1 : null;
 }
-</code></pre>
+```
 
 [`switch` 式](../../../../study/csharp/datatype/typeswitch.md#switch-expression)の場合には C# 8.0 時点であった機能です。新しい文法である `switch` 式と違って、既存の文法に手を入れるのはリスクもある(というか、実際、ちょっと破壊的変更を起こしてる)ので 8.0 には間に合わなかった機能です。

@@ -43,27 +43,27 @@ aliases:
 
 例えば、以下のようなコードを見てください。
 
-<pre class="source" title="リテラルをちりばめたコード" lang="">
-<code><span class="reserved">int</span>[] array = <span class="reserved">new int</span>[<em>5</em>];
+```csharp
+int[] array = new int[5];
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;<em>5</em>; ++i)
-  array[i] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+for(int i=0; i<5; ++i)
+  array[i] = int.Parse(Console.ReadLine());
 
-<span class="reserved">int</span> sum = 0;
-<span class="reserved">int</span> sq_sum = 0;
+int sum = 0;
+int sq_sum = 0;
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;5; ++i)
+for(int i=0; i<5; ++i)
 {
-  <span class="reserved">int</span> n = array[i];
+  int n = array[i];
   sum += n;
   sq_sum += n*n;
 }
 
-<span class="reserved">double</span> mean = sum / <em>5</em>;
-<span class="reserved">double</span> var  = sq_sum / <em>5</em> - mean*mean;
+double mean = sum / 5;
+double var  = sq_sum / 5 - mean*mean;
 
-Console.Write(<span class="literal">"平均: {0}\n分散: {1}\n"</span>, mean, var);
-</code></pre>
+Console.Write("平均: {0}\n分散: {1}\n", mean, var);
+```
 
 
 値を5つ入力してもらって、その平均と分散を求めるものです。
@@ -78,28 +78,28 @@ Console.Write(<span class="literal">"平均: {0}\n分散: {1}\n"</span>, mean, v
 なので、普通はリテラルを直接使うということはしません。
 例えば、以下のように、5 と言う値を一度変数に代入して使うことを考えます。
 
-<pre class="source" title="一度変数に代入" lang="">
-<code><em><span class="reserved">int</span> NUM = 5;</em>
-<span class="reserved">int</span>[] array = <span class="reserved">new int</span>[NUM];
+```csharp
+int NUM = 5;
+int[] array = new int[NUM];
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;NUM; ++i)
-  array[i] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+for(int i=0; i<NUM; ++i)
+  array[i] = int.Parse(Console.ReadLine());
 
-<span class="reserved">int</span> sum = 0;
-<span class="reserved">int</span> sq_sum = 0;
+int sum = 0;
+int sq_sum = 0;
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;NUM; ++i)
+for(int i=0; i<NUM; ++i)
 {
-  <span class="reserved">int</span> n = array[i];
+  int n = array[i];
   sum += n;
   sq_sum += n*n;
 }
 
-<span class="reserved">double</span> mean = sum / (<span class="reserved">double</span>)NUM;
-<span class="reserved">double</span> var  = sq_sum / (<span class="reserved">double</span>)NUM - mean*mean;
+double mean = sum / (double)NUM;
+double var  = sq_sum / (double)NUM - mean*mean;
 
-Console.Write(<span class="literal">"平均: {0}\n分散: {1}\n"</span>, mean, var);
-</code></pre>
+Console.Write("平均: {0}\n分散: {1}\n", mean, var);
+```
 
 
 これで、もしデータの個数を変更する必要が生じても、
@@ -129,38 +129,38 @@ Console.Write(<span class="literal">"平均: {0}\n分散: {1}\n"</span>, mean, v
 こちらのことを指します。
 （リテラルの方は直定数と訳す。）
 
-<pre class="source" title="定数定義" lang="">
-<code><span class="reserved"><em>const</em> int</span> NUM = 5;
-<span class="reserved">int</span>[] array = <span class="reserved">new int</span>[NUM];
+```csharp
+const int NUM = 5;
+int[] array = new int[NUM];
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;NUM; ++i)
-  array[i] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+for(int i=0; i<NUM; ++i)
+  array[i] = int.Parse(Console.ReadLine());
 
-<span class="reserved">int</span> sum = 0;
-<span class="reserved">int</span> sq_sum = 0;
+int sum = 0;
+int sq_sum = 0;
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;NUM; ++i)
+for(int i=0; i<NUM; ++i)
 {
-  <span class="reserved">int</span> n = array[i];
+  int n = array[i];
   sum += n;
   sq_sum += n*n;
 }
 
-<span class="reserved">double</span> mean = sum / (<span class="reserved">double</span>)NUM;
-<span class="reserved">double</span> var  = sq_sum / (<span class="reserved">double</span>)NUM - mean*mean;
+double mean = sum / (double)NUM;
+double var  = sq_sum / (double)NUM - mean*mean;
 
-Console.Write(<span class="literal">"平均: {0}\n分散: {1}\n"</span>, mean, var);
-</code></pre>
+Console.Write("平均: {0}\n分散: {1}\n", mean, var);
+```
 
 
 const を付けて宣言された定数は、宣言文中における初期化時にのみ値を代入できます。
 定数というくらいですから、当然、
 その他の場所で値を書き換えることは出来ません。
 
-<pre class="source" title="定数に値を代入（エラー）" lang="">
-<code><span class="reserved">const int</span> NUM = 5; <span class="comment">// 宣言時の初期化のみ可能</span>
-NUM = 6; <span class="comment">// ここでエラーになる</span>
-</code></pre>
+```csharp
+const int NUM = 5; // 宣言時の初期化のみ可能
+NUM = 6; // ここでエラーになる
+```
 
 
 また、const を付けた定数を用いたソースコードは、
@@ -179,12 +179,12 @@ const を使った定数は、
 クラスのメンバーにする事も出来ます。
 （「[クラス](../oop/oo_class.md#class)」に関しては別章参照: 「[クラス](../oop/oo_class.md)」。）
 
-<pre class="source" title="クラスの const メンバー" lang="">
-<code><span class="reserved">class</span> Math
+```csharp
+class Math
 {
-  <span class="reserved">public const double</span> PI = 3.1415926535897932;
+  public const double PI = 3.1415926535897932;
 }
-</code></pre>
+```
 
 
 const メンバーはクラスに属します。
@@ -250,23 +250,23 @@ const との違いは以下のようになります。
 </table>
 
 
-<pre class="source" title="readonly メンバー" lang="">
-<code><span class="reserved">class</span> A
+```csharp
+class A
 {
-  <em><span class="reserved">readonly int</span> num;</em>
+  readonly int num;
 
-  <span class="reserved">public</span> A(<span class="reserved">int</span> num)
+  public A(int num)
   {
-    <span class="reserved">this</span>.num = num; <span class="comment">// コンストラクタ内では書き換え可能。</span>
+    this.num = num; // コンストラクタ内では書き換え可能。
   }
 
-  <span class="reserved">public void</span> Method(<span class="reserved">int</span> num)
+  public void Method(int num)
   {
-    <span class="reserved">int</span> x = <span class="reserved">this</span>.num; <span class="comment">// 読み取りは可能。</span>
-    <span class="reserved">this</span>.num = num;   <span class="comment">// 書き込み不可。エラー！</span>
+    int x = this.num; // 読み取りは可能。
+    this.num = num;   // 書き込み不可。エラー！
   }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="prefer-readonly"></a>注意: const の問題とreadonlyやプロパティ
 
@@ -280,19 +280,19 @@ const との違いは以下のようになります。
 
 その代替として、`readonly`なフィールドや、[get-onlyなプロパティ](../oop/oo_property.md#get-only)が使えます。
 
-<pre class="source" title="const の代替としての readonly">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// const はあんまり public にしたくない</span>
-    <span class="comment">// 今後絶対に値を変更しないという自信がない限りは使わない方がいい</span>
-    <span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">int</span> X = 1;
+    // const はあんまり public にしたくない
+    // 今後絶対に値を変更しないという自信がない限りは使わない方がいい
+    public const int X = 1;
 
-    <span class="comment">// readonly フィールドや、get-only プロパティ越しに公開することを推奨</span>
-    <span class="comment">// (プロパティの方がより推奨)</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> Y = 1;
-    <span class="reserved">public</span> <span class="reserved">int</span> Z =&gt; 1;
+    // readonly フィールドや、get-only プロパティ越しに公開することを推奨
+    // (プロパティの方がより推奨)
+    public readonly int Y = 1;
+    public int Z => 1;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="struct-class-readonly"></a>readonly の注意点
 
@@ -310,33 +310,33 @@ C# で `const` を使った定数にできるものには以下のようなも�
 
 例えば、以下のように複数のリテラル、定数を組み合わせたものも再び定数にできます。
 
-<pre class="source" title="const にできるもの">
-<code><span class="comment">// enum</span>
-<span class="reserved">const</span> <span class="type">DayOfWeek</span> D1 = <span class="type">DayOfWeek</span>.Friday;
-<span class="reserved">const</span> <span class="type">DayOfWeek</span> D2 = <span class="type">DayOfWeek</span>.Wednesday;
+```csharp
+// enum
+const DayOfWeek D1 = DayOfWeek.Friday;
+const DayOfWeek D2 = DayOfWeek.Wednesday;
 
-<span class="comment">// int のリテラル同士の掛け算。</span>
-<span class="reserved">const</span> <span class="reserved">int</span> I = 3 * 5;
+// int のリテラル同士の掛け算。
+const int I = 3 * 5;
 
-<span class="comment">// 他の定数を参照。</span>
-<span class="reserved">const</span> <span class="reserved">int</span> J = 2 * I;
+// 他の定数を参照。
+const int J = 2 * I;
 
-<span class="comment">// 参照しているものが全部定数なら多少複雑な式でも OK。</span>
-<span class="reserved">const</span> <span class="reserved">double</span> X = (<span class="reserved">int</span>)(J % 2 == 0 ? D1 : D2) * 1.25;
+// 参照しているものが全部定数なら多少複雑な式でも OK。
+const double X = (int)(J % 2 == 0 ? D1 : D2) * 1.25;
 
-<span class="comment">// 文字列も const にできる。</span>
-<span class="reserved">const</span> <span class="reserved">string</span> S = <span class="string">"abc"</span> + <span class="string">"def"</span>;
+// 文字列も const にできる。
+const string S = "abc" + "def";
 
-<span class="comment">// その他の型では、null だけ const にできる。</span>
-<span class="reserved">const</span> <span class="reserved">object</span> N = <span class="reserved">null</span>;
-</code></pre>
+// その他の型では、null だけ const にできる。
+const object N = null;
+```
 
 ちなみに、特殊なものでは [`nameof` 演算子](st_string.md#nameof-operator)は完全にリテラルと同列の扱いを受けるので、`const` に使えます。
 
-<pre class="source" title="nameof は const に使える">
-<code><span class="reserved">const</span> <span class="reserved">string</span> A = <span class="reserved">nameof</span>(A); <span class="comment">// "A" と同じ結果になる。</span>
-<span class="reserved">const</span> <span class="reserved">string</span> B = A + <span class="reserved">nameof</span>(B); <span class="comment">// 他の const + リテラル という扱い。</span>
-</code></pre>
+```csharp
+const string A = nameof(A); // "A" と同じ結果になる。
+const string B = A + nameof(B); // 他の const + リテラル という扱い。
+```
 
 ### <a id="sec-generated-title-11"></a> <a id="constant-string-interpolation"></a>const 文字列補間
 
@@ -345,38 +345,38 @@ C# で `const` を使った定数にできるものには以下のようなも�
 C# 10.0 からは、[文字列補間](st_string.md#string-interpolation)でも、`{}` の中身が `const` 文字列な場合に限り、補完結果も `const` にできます。
 例えば以下のような `const` 文字列を作れます。
 
-<pre class="source" title="const 文字列補間">
-<code><span class="reserved">const</span> <span class="reserved">string</span> A = <span class="string">"Abc"</span>;
-<span class="reserved">const</span> <span class="reserved">string</span> B = <span class="string">"Xyz"</span>;
-<span class="reserved">const</span> <span class="reserved">string</span> C = <span class="string">$"</span>{<span class="reserved">nameof</span>(A)}<span class="string">: </span>{A}<span class="string">, </span>{<span class="reserved">nameof</span>(B)}<span class="string">: </span>{B}<span class="string">"</span>; <span class="comment">// "A: Abc, B: Xyz"</span>
-</code></pre>
+```csharp
+const string A = "Abc";
+const string B = "Xyz";
+const string C = $"{nameof(A)}: {A}, {nameof(B)}: {B}"; // "A: Abc, B: Xyz"
+```
 
 この例のように `nameof` との組み合わせはそれなりに需要があるかと思います。
 
 一方で、`{}` の中身が文字列でない場合、たとえ `const` であっても文字列補間結果は `const` にできなくなります。
 
-<pre class="source" title="補完結果を const 文字列にできない例">
-<code><span class="reserved">const</span> <span class="reserved">int</span> A = 1;
-<span class="reserved">const</span> <span class="reserved">string</span> C = <span class="error"><span class="string">$"</span>{A}<span class="string">"</span></span>; <span class="comment">// A が文字列じゃないので $"" の結果を const にできない。</span>
-</code></pre>
+```csharp
+const int A = 1;
+const string C = $"{A}"; // A が文字列じゃないので $"" の結果を const にできない。
+```
 
 第一印象としては `const` にできてもよさげに見えるんですが…
 これは、文字列補間の結果が一定にならないためです。
 例えば、以下のように、浮動小数点数を文字列化した結果は国によって異なります。
 
-<pre class="source" title="C# で数値を文字列化した結果は国によって異なる">
-<code><span class="reserved">using</span> System.Globalization;
+```csharp
+using System.Globalization;
 
-<span class="comment">// 東南アジアの多くの国は . を小数点に使う。</span>
-<span class="type">Thread</span>.CurrentThread.CurrentCulture = <span class="reserved">new</span> <span class="type">CultureInfo</span>(<span class="string">"ja-jp"</span>);
-<span class="type">Console</span>.<span class="method">WriteLine</span>(1.234);
+// 東南アジアの多くの国は . を小数点に使う。
+Thread.CurrentThread.CurrentCulture = new CultureInfo("ja-jp");
+Console.WriteLine(1.234);
 
-<span class="comment">// 大陸ヨーロッパの多くの国は , を小数点に使う。</span>
-<span class="type">Thread</span>.CurrentThread.CurrentCulture = <span class="reserved">new</span> <span class="type">CultureInfo</span>(<span class="string">"fr-fr"</span>);
-<span class="type">Console</span>.<span class="method">WriteLine</span>(1.234);
-</code></pre>
+// 大陸ヨーロッパの多くの国は , を小数点に使う。
+Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-fr");
+Console.WriteLine(1.234);
+```
 
-<pre class="source" title="C# で数値を文字列化した結果は国によって異なる">
-<code>1.234
+```csharp
+1.234
 1,234
-</code></pre>
+```

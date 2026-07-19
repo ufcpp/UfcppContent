@@ -47,146 +47,146 @@ javadocとの違いは、コンパイラと別のツールとして提供され�
 XML Documentを理解するために、まずは実際にXML Documentを作成してみましょう。
 以下のようなソースファイルをdoctest.csという名前で作成して見てください。
 
-<pre class="source" title="doctest.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections;
+```csharp
+using System;
+using System.Collections;
 
-<span class="reserved">namespace</span> DocumentTest
+namespace DocumentTest
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 簡単なサンプルとして、リストを実装する。
   /// 片方向リストで、リストに値を加えることは出来るけど、削除は出来ない。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public class</span> List : IEnumerable
+  /// </summary>
+  public class List : IEnumerable
   {
-    <span class="comment">// リストのノード</span>
-    <span class="reserved">internal class</span> Node
+    // リストのノード
+    internal class Node
     {
-      <span class="reserved">public</span> object obj;
-      <span class="reserved">public</span> Node next;
+      public object obj;
+      public Node next;
 
-      <span class="reserved">public</span> Node(Node next)
+      public Node(Node next)
       {
-        <span class="reserved">this</span>.next = next;
-        <span class="reserved">this</span>.obj = <span class="reserved">null</span>;
+        this.next = next;
+        this.obj = null;
       }
 
-      <span class="reserved">public</span> Node(Node next, object obj)
+      public Node(Node next, object obj)
       {
-        <span class="reserved">this</span>.next = next;
-        <span class="reserved">this</span>.obj = obj;
+        this.next = next;
+        this.obj = obj;
       }
-    }<span class="comment">// Node</span>
+    }// Node
 
-    <span class="comment">// リストのEnumerator</span>
-    <span class="reserved">private class</span> ListEnumrator : IEnumerator
+    // リストのEnumerator
+    private class ListEnumrator : IEnumerator
     {
-      <span class="reserved">public</span> ListEnumrator(List list)
+      public ListEnumrator(List list)
       {
-        <span class="reserved">this</span>.list = list;
+        this.list = list;
         current = list.head;
       }
 
-      <span class="reserved">public bool</span> MoveNext()
+      public bool MoveNext()
       {
         current = current.next;
-        <span class="reserved">return</span> current != <span class="reserved">null</span>;
+        return current != null;
       }
 
-      <span class="reserved">public</span> object Current
+      public object Current
       {
-        <span class="reserved">get</span>{<span class="reserved">return</span> current.obj;}
-        <span class="reserved">set</span>{current.obj = value;}
+        get{return current.obj;}
+        set{current.obj = value;}
       }
 
-      <span class="reserved">public void</span> Reset()
+      public void Reset()
       {
-        current = <span class="reserved">this</span>.list.head;
+        current = this.list.head;
       }
 
       List list;
       Node current;
-    }<span class="comment">// ListEnumerator</span>
+    }// ListEnumerator
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// リストの作成
-    /// &lt;/summary&gt;</span>
-    <span class="reserved">public</span> List()
+    /// </summary>
+    public List()
     {
-      head = <span class="reserved">new</span> Node(<span class="reserved">null</span>);
+      head = new Node(null);
       tail = head;
     }
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// リストに値を加える。
-    /// &lt;/summary&gt;
-    /// &lt;param name="obj"&gt;加えたい値&lt;/param&gt;</span>
-    <span class="reserved">public void</span> Add(object obj)
+    /// </summary>
+    /// <param name="obj">加えたい値</param>
+    public void Add(object obj)
     {
-      tail.next = <span class="reserved">new</span> Node(<span class="reserved">null</span>, obj);
+      tail.next = new Node(null, obj);
       tail = tail.next;
     }
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// リストのEnumeratorを返す
-    /// &lt;/summary&gt;
-    /// &lt;returns&gt;リストのEnumerator&lt;/returns&gt;</span>
-    <span class="reserved">public</span> IEnumerator GetEnumerator()
+    /// </summary>
+    /// <returns>リストのEnumerator</returns>
+    public IEnumerator GetEnumerator()
     {
-      <span class="reserved">return new</span> ListEnumrator(<span class="reserved">this</span>);
+      return new ListEnumrator(this);
     }
 
-    <span class="reserved">private</span> Node head; <span class="comment">// リストのダミーヘッダー</span>
-    <span class="reserved">private</span> Node tail; <span class="comment">// リストの最後尾</span>
-  }<span class="comment">// List</span>
-}<span class="comment">// DocumentTest</span>
-</code></pre>
+    private Node head; // リストのダミーヘッダー
+    private Node tail; // リストの最後尾
+  }// List
+}// DocumentTest
+```
 
 
 そして、以下のようなオプションを付けてコンパイルしてください。
 Visual C#を使って作成する場合には、プロジェクトのプロパティを開いて、「構成プロパティ」→「ビルド」→「XML ドキュメント ファイル」という項目に、出力したいXMLファイルの名前を入れてビルドを行ってください。
 
-<pre class="console" title="XML Documentを生成する場合、/doc オプションをつける。">
+```console
 csc /out:DocumentTest.dll /target:library doctest.cs /doc:doctest.xml
-</pre>
+```
 
 
 すると、以下のような内容のXMLファイルが生成されているはずです。
 
 
-<pre class="xsource" title="doctest.xml">
-<code><span class="bracket">&lt;?</span><span class="element">xml</span> <span class="attribute">version</span><span class="attvalue">="1.0"</span><span class="bracket">?&gt;</span>
-<span class="bracket">&lt;</span><span class="element">doc</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">assembly</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">name</span><span class="bracket">&gt;</span>DocumentTest<span class="bracket">&lt;/</span><span class="element">name</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">assembly</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">members</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">member</span> <span class="attribute">name</span><span class="attvalue">="T:DocumentTest.List"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">summary</span><span class="bracket">&gt;</span>
+```xml
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DocumentTest</name>
+    </assembly>
+    <members>
+        <member name="T:DocumentTest.List">
+            <summary>
             簡単なサンプルとして、リストを実装する。
             片方向リストで、リストに値を加えることは出来るけど、削除は出来ない。
-            <span class="bracket">&lt;/</span><span class="element">summary</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">member</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">member</span> <span class="attribute">name</span><span class="attvalue">="M:DocumentTest.List.#ctor"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">summary</span><span class="bracket">&gt;</span>
+            </summary>
+        </member>
+        <member name="M:DocumentTest.List.#ctor">
+            <summary>
             リストの作成
-            <span class="bracket">&lt;/</span><span class="element">summary</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">member</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">member</span> <span class="attribute">name</span><span class="attvalue">="M:DocumentTest.List.Add(System.Object)"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">summary</span><span class="bracket">&gt;</span>
+            </summary>
+        </member>
+        <member name="M:DocumentTest.List.Add(System.Object)">
+            <summary>
             リストに値を加える。
-            <span class="bracket">&lt;/</span><span class="element">summary</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">param</span> <span class="attribute">name</span><span class="attvalue">="obj"</span><span class="bracket">&gt;</span>加えたい値<span class="bracket">&lt;/</span><span class="element">param</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">member</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">member</span> <span class="attribute">name</span><span class="attvalue">="M:DocumentTest.List.GetEnumerator"</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">summary</span><span class="bracket">&gt;</span>
+            </summary>
+            <param name="obj">加えたい値</param>
+        </member>
+        <member name="M:DocumentTest.List.GetEnumerator">
+            <summary>
             リストのEnumeratorを返す
-            <span class="bracket">&lt;/</span><span class="element">summary</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">returns</span><span class="bracket">&gt;</span>リストのEnumerator<span class="bracket">&lt;/</span><span class="element">returns</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;/</span><span class="element">member</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">members</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">doc</span><span class="bracket">&gt;</span>
-</code></pre>
+            </summary>
+            <returns>リストのEnumerator</returns>
+        </member>
+    </members>
+</doc>
+```
 このように、C#コンパイラでは /doc オプションを指定してやることによって、ソースファイルからXML形式のドキュメントを自動で生成することが出来ます。
 
 

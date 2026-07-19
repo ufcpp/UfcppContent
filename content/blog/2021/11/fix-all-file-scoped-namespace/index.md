@@ -37,20 +37,20 @@ TargetFramework や LangVersion を書き換えるだけならそこまで大き
 C# 10.0 のテーマの1つは「[シンプル プログラム](../../../../study/csharp/cheatsheet/ap_ver10.md#simple-program)」になっています。
 その一環で、
 
-<pre class="source" title="従来のコード">
-<code><span class="reserved">namespace</span> Namespace
+```csharp
+namespace Namespace
 {
-    <span class="reserved">class</span> <span class="type">A</span> { }
+    class A { }
 }
-</code></pre>
+```
 
 という従来コードを、
 
-<pre class="source" title="C# 10 からできる名前空間の書き方">
-<code><span class="reserved">namespace</span> Namespace;
+```csharp
+namespace Namespace;
 
-<span class="reserved">class</span> <span class="type">A</span> { }
-</code></pre>
+class A { }
+```
 
 と書き換えられる機能([ファイル スコープ名前空間](../../../../study/csharp/structured/sp_namespace.md#file-scoped-namespace))が入りました。
 
@@ -85,10 +85,10 @@ C# はこの手の「新しい体験が得られるわけではなく、単に�
 
 ファイル スコープ名前空間を率先して使いたい方は .editorconfig に以下の行を追加してみてください。
 
-<pre class="source">
-<code><span class="type">[*.{cs,vb}]</span>
-<span class="reserved">csharp_style_namespace_declarations</span>=file_scoped:suggestion
-</code></pre>
+```csharp
+[*.{cs,vb}]
+csharp_style_namespace_declarations=file_scoped:suggestion
+```
 
 これで、Visual Studio の一斉置換機能が働くようになります。
 

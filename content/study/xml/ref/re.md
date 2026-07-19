@@ -25,34 +25,37 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;Re/&gt; &lt;Im/&gt;
-</pre>
+```xml
+<Re/> <Im/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;exp/&gt;(z) = &lt;exp/&gt;(&lt;Re/&gt;(z))&lt;paren size="1.2"&gt;&lt;cos/&gt;&lt;Im/&gt;(z) + i&lt;sin/&gt;&lt;Im/&gt;(z)&lt;/paren&gt;
-</pre><div class="math"><span class="normal">exp</span>(z) = <span class="normal">exp</span>(<span class="script">Re</span>(z))<span class="paren" style="font-size:1.2em;">(</span><span class="normal">cos</span><span class="script">Im</span>(z) + i<span class="normal">sin</span><span class="script">Im</span>(z)<span class="paren" style="font-size:1.2em;">)</span>
+```xml
+<exp/>(z) = <exp/>(<Re/>(z))<paren size="1.2"><cos/><Im/>(z) + i<sin/><Im/>(z)</paren>
+```
+<div class="math"><span class="normal">exp</span>(z) = <span class="normal">exp</span>(<span class="script">Re</span>(z))<span class="paren" style="font-size:1.2em;">(</span><span class="normal">cos</span><span class="script">Im</span>(z) + i<span class="normal">sin</span><span class="script">Im</span>(z)<span class="paren" style="font-size:1.2em;">)</span>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:Re"&gt;
-  &lt;span class="script"&gt;Re&lt;/span&gt;
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:Re">
+  <span class="script">Re</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:Im"&gt;
-  &lt;span class="script"&gt;Im&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:Im">
+  <span class="script">Im</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.cursive
+```css
+span.cursive
 {
   font-family:cursive;
   font-style:italic;
   padding-right:0.2em;
 }
-
-</pre>
+```

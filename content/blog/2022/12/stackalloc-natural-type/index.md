@@ -23,36 +23,36 @@ aliases: []
 C# の文法の中には、「基本的にはターゲットを見て型決定するけども、別にターゲットがなくても型決定できる」ような文法がいくつかあります。
 例えば整数リテラルがそうなんですが、以下のように、ターゲット(左辺)の型が決まっていても決まっていなくても大丈夫です。
 
-<pre class="source" title="ターゲットからの型推論もできるし、推論できなかった時の自然な型も決まってる">
-<span class="comment">// ターゲット(左辺)の型に合わせて「100」の型を決めてる。</span>
-<span class="reserved">byte</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">100</span>;
-<span class="reserved">short</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">100</span>;
-<span class="reserved">int</span> <span class="variable">z</span> <span class="operator">=</span> <span class="number">100</span>;
+```csharp
+// ターゲット(左辺)の型に合わせて「100」の型を決めてる。
+byte x = 100;
+short y = 100;
+int z = 100;
 
-<span class="comment">// 一方で、var だとターゲットからは型決定できない。</span>
-<span class="comment">// そういう場合の 100 は int になる。</span>
-<span class="reserved">var</span> <span class="variable">v</span> <span class="operator">=</span> <span class="number">100</span>;
-</pre>
+// 一方で、var だとターゲットからは型決定できない。
+// そういう場合の 100 は int になる。
+var v = 100;
+```
 
 ちなみに、`var v = 100;` みたいに「普段ターゲットから型を決めている式が、決めれないときにデフォルトで何の型になるか」を指して「自然な型」(natural type)と言います。
 上述の場合、「整数リテラルの自然な型は `int` 」ということになります。
 
 他だと、補間文字列リテラルも「ターゲット型推論 + 自然な型持ち」です。
 
-<pre class="source" title="補間文字列の自然な型">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">100</span>;
+var x = 100;
 
-<span class="comment">// ターゲット(左辺)の型に合わせて「$&quot;abc{x}&quot;」の型を決めてる。</span>
-<span class="reserved">string</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">$&quot;</span><span class="string">abc</span>{<span class="variable">x</span>}<span class="string">&quot;</span>;
-<span class="type">IFormattable</span> <span class="variable">f</span> <span class="operator">=</span> <span class="string">$&quot;</span><span class="string">abc</span>{<span class="variable">x</span>}<span class="string">&quot;</span>;
-<span class="type struct">DefaultInterpolatedStringHandler</span> <span class="variable">h</span> <span class="operator">=</span> <span class="string">$&quot;</span><span class="string">abc</span>{<span class="variable">x</span>}<span class="string">&quot;</span>;
+// ターゲット(左辺)の型に合わせて「$"abc{x}"」の型を決めてる。
+string s = $"abc{x}";
+IFormattable f = $"abc{x}";
+DefaultInterpolatedStringHandler h = $"abc{x}";
 
-<span class="comment">// 一方で、こちらはターゲットからは型決定できない。</span>
-<span class="comment">// そういう場合の $&quot;abc{x}&quot; は string になる。</span>
-<span class="reserved">var</span> <span class="variable">v</span> <span class="operator">=</span> <span class="string">$&quot;</span><span class="string">abc</span>{<span class="variable">x</span>}<span class="string">&quot;</span>;
-</pre>
+// 一方で、こちらはターゲットからは型決定できない。
+// そういう場合の $"abc{x}" は string になる。
+var v = $"abc{x}";
+```
 
 ## <a id="stackalloc">stackalloc</a>
 
@@ -65,39 +65,39 @@ C# の文法の中には、「基本的にはターゲットを見て型決定�
 
 そして、安全な `stackalloc` の方が後入りなのもあって、`stackalloc` の自然な型はポインターのままです。
 
-<pre class="source" title="stackalloc は基本的にはポインター">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="comment">// stackalloc の昔からの用法。</span>
-    <span class="comment">// 元々がこういう文法なので、 stackalloc の結果は T* (ポインター)。</span>
-    <span class="reserved">int</span><span class="operator">*</span> <span class="variable">i1</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>];
+    // stackalloc の昔からの用法。
+    // 元々がこういう文法なので、 stackalloc の結果は T* (ポインター)。
+    int* i1 = stackalloc int[4];
 
-    <span class="comment">// 型推論でも T* 扱い。</span>
-    <span class="comment">// ↓の i2 は int* になる。</span>
-    <span class="reserved">var</span> <span class="variable">i2</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>];
+    // 型推論でも T* 扱い。
+    // ↓の i2 は int* になる。
+    var i2 = stackalloc int[4];
 }
 
-<span class="comment">// C# 7.2 から</span>
-<span class="comment">// ターゲットが Span のときに限り、safe コンテキストで stackalloc が使える。</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">s</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>];
+// C# 7.2 から
+// ターゲットが Span のときに限り、safe コンテキストで stackalloc が使える。
+Span<int> s = stackalloc int[4];
 
-<span class="comment">// ところが、stackalloc の自然な型はポインターのまま。</span>
-<span class="comment">// 以下の行は「safe コンテキストでポインターは使えません」エラー。</span>
-<span class="reserved">var</span> <span class="variable">p</span> <span class="operator">=</span> <span class="error" title="CS0214"><span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>]</span>;
-</pre>
+// ところが、stackalloc の自然な型はポインターのまま。
+// 以下の行は「safe コンテキストでポインターは使えません」エラー。
+var p = stackalloc int[4];
+```
 
 その後、C# 8.0 で、式の途中に `stackalloc` を書けるようになりました。
 (C# 8.0 未満では、ここまで上げてきた例のように、変数に直接代入する場所にしか書けませんでした。)
 
-<pre class="source" title="式の途中で stackalloc">
-<span class="comment">// C# 8.0 未満でも書けた書き方:</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">s</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>];
+```csharp
+// C# 8.0 未満でも書けた書き方:
+Span<int> s = stackalloc int[4];
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">s</span>) { }
+static void M(Span<int> s) { }
 
-<span class="comment">// こういう書き方は C# 8.0 以降でだけ書ける。</span>
-<span class="method"><span class="static">M</span></span>(<span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>]);
-</pre>
+// こういう書き方は C# 8.0 以降でだけ書ける。
+M(stackalloc int[4]);
+```
 
 こういう歴史的な流れから、現状の `stackalloc` がどうなっているかというと…
 
@@ -107,23 +107,23 @@ C# 8.0 のとき、「式の途中に `stackalloc` を書いた場合に限り�
 
 例えば、以下のようなコードを書くと、`M(int*)` と `M(Span<int>)` の呼び分けが掛かります。
 
-<pre class="source" title="式の途中かどうかで自然な型が違う stackalloc">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="comment">// こちらは昔ながらの型決定で、 stackalloc の自然な型はポインター。</span>
-    <span class="reserved">var</span> <span class="variable">p</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>]; <span class="comment">// int* 扱い。</span>
-    <span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">p</span>); <span class="comment">// M(int*) の方が呼ばれる。</span>
+    // こちらは昔ながらの型決定で、 stackalloc の自然な型はポインター。
+    var p = stackalloc int[4]; // int* 扱い。
+    C.M(p); // M(int*) の方が呼ばれる。
 
-    <span class="comment">// こちらは「式の途中」ということで、C# 8.0 以降のルールで、自然な型が Span&lt;T&gt; に。</span>
-    <span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>]); <span class="comment">// M(Span&lt;int&gt;) の方が呼ばれる。(なので実は unsafe 不要。)</span>
+    // こちらは「式の途中」ということで、C# 8.0 以降のルールで、自然な型が Span<T> に。
+    C.M(stackalloc int[4]); // M(Span<int>) の方が呼ばれる。(なので実は unsafe 不要。)
 }
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">int</span><span class="operator">*</span> <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
+    public static unsafe void M(int* _) { }
+    public static void M(Span<int> _) { }
 }
-</pre>
+```
 
 で、この「式の途中なら `Span<T>`」な仕様を使うと、以下のようなこともできたりします。
 
@@ -136,98 +136,98 @@ C# 8.0 のとき、「式の途中に `stackalloc` を書いた場合に限り�
 実は `()` の有無で自然な型を変えれます。
 `()` を付ければ safe。
 
-<pre class="source" title="() を付ければ safe">
-<span class="comment">// 前述のとおり、自然な型が int* で、unsafe 必須。</span>
-<span class="comment">// (今は unsafe を付けていないのでコンパイル エラー。)</span>
-<span class="reserved">var</span> <span class="variable">p</span> <span class="operator">=</span> <span class="error" title="CS0214"><span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>]</span>;
+```csharp
+// 前述のとおり、自然な型が int* で、unsafe 必須。
+// (今は unsafe を付けていないのでコンパイル エラー。)
+var p = stackalloc int[4];
 
-<span class="comment">// こっちは自然な型が Span&lt;int&gt;。</span>
-<span class="comment">// var に対して使っても Span&lt;int&gt; になるので safe。</span>
-<span class="reserved">var</span> <span class="variable">s</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>]);
-</pre>
+// こっちは自然な型が Span<int>。
+// var に対して使っても Span<int> になるので safe。
+var s = (stackalloc int[4]);
+```
 
 そしてまあ、型推論推進派(左辺と右辺で2度同じ型名を書きたくない)にとっては、
 安全な `stackalloc` を使いつつも型推論を掛けるための回避策になります。
 
-<pre class="source" title="左右に同じ型名を2度も書きたくない">
-<span class="comment">// こう書いてもいいけども…</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">s1</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>];
+```csharp
+// こう書いてもいいけども…
+Span<int> s1 = stackalloc int[4];
 
-<span class="comment">// こっちの方が短いという。</span>
-<span class="reserved">var</span> <span class="variable">s2</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>]);
+// こっちの方が短いという。
+var s2 = (stackalloc int[4]);
 
-<span class="comment">// まして、型名が長いときは… だいぶ差が大きい。</span>
-<span class="type struct">Span</span>&lt;<span class="type struct">LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm</span>&gt; <span class="variable">s3</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="type struct">LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm</span>[<span class="number">4</span>];
-<span class="reserved">var</span> <span class="variable">s4</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="type struct">LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm</span>[<span class="number">4</span>]);
+// まして、型名が長いときは… だいぶ差が大きい。
+Span<LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm> s3 = stackalloc LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm[4];
+var s4 = (stackalloc LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm[4]);
 
-<span class="reserved">struct</span> <span class="type struct">LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm</span> { }
-</pre>
+struct LongLongStructName1234567890qwertyuiopasdfghjklzxcvbnm { }
+```
 
 ### <a id="extension-method">stackalloc に対して拡張メソッドを呼ぶ</a>
 
 そして、拡張メソッドも呼べるみたいですよ。
 
-<pre class="source" title="(stackalloc) なら拡張メソッドも呼べる">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">4</span>])<span class="operator">.</span><span class="method">M</span>(<span class="number">123</span>);
+```csharp
+var x = (stackalloc int[4]).M(123);
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">C</span></span>
+static class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="type param">T</span>&gt; <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;(<span class="reserved">this</span> <span class="type struct">Span</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">span</span>, <span class="type param">T</span> <span class="variable local">value</span>)
+    public static ReadOnlySpan<T> M<T>(this Span<T> span, T value)
     {
-        <span class="variable local">span</span><span class="operator">.</span><span class="method">Fill</span>(<span class="variable local">value</span>);
-        <span class="control">return</span> <span class="variable local">span</span>;
+        span.Fill(value);
+        return span;
     }
 }
-</pre>
+```
 
 できる気はしていたものの、ほんとにできた…
 
 というか、以下のようなコードを書いててふと思いつき。
 
-<pre class="source" title="&quot;&quot;u8 拡張メソッド">
-<span class="reserved">using</span> System<span class="operator">.</span>Text;
+```csharp
+using System.Text;
 
-<span class="comment">// u8 リテラルの自然な型は ReadOnlySpan&lt;byte&gt; だったはず。</span>
-<span class="comment">// なら拡張メソッド M も呼べるはず。</span>
-<span class="string">&quot;abcあいう&quot;<span class="reserved">u8</span></span><span class="operator">.</span><span class="method">M</span>();
+// u8 リテラルの自然な型は ReadOnlySpan<byte> だったはず。
+// なら拡張メソッド M も呼べるはず。
+"abcあいう"u8.M();
 
-<span class="comment">// そういや stackalloc にも自然な型あるはずよな…?</span>
+// そういや stackalloc にも自然な型あるはずよな…?
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">C</span></span>
+static class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable local">span</span>)
+    public static void M(this ReadOnlySpan<byte> span)
     {
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">span</span>)
+        foreach (var x in span)
         {
-            <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">Write</span></span>(<span class="string">$&quot;</span>{<span class="variable">x</span>:<span class="string">X2</span>}<span class="string"> </span><span class="string">&quot;</span>);
+            Console.Write($"{x:X2} ");
         }
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>();
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="type">Encoding</span><span class="operator">.</span><span class="property"><span class="static">UTF8</span></span><span class="operator">.</span><span class="method">GetString</span>(<span class="variable local">span</span>));
+        Console.WriteLine();
+        Console.WriteLine(Encoding.UTF8.GetString(span));
     }
 }
-</pre>
+```
 
 ちなみに、拡張メソッド解決の仕様的に、以下のようなコードだとダメ(コンパイル エラー)だったりします。
 `Span<T>` から `ReadOnlySpan<T>` への暗黙の型変換は、拡張メソッド解決の際には使われません。
 
-<pre class="source" title="ReadOnlySpan の拡張メソッドに対しては使えない">
-<span class="reserved">using</span> System<span class="operator">.</span>Text;
+```csharp
+using System.Text;
 
-<span class="comment">// これは呼べない。</span>
-<span class="comment">// Span&lt;byte&gt; → ReadOnlySpan&lt;byte&gt; には暗黙の型変換があるものの、</span>
-<span class="comment">// 拡張メソッド解決の際に暗黙の型変換を挟むことは許容していない。</span>
-(<span class="error" title="CS1929"><span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="number">4</span>]</span>)<span class="operator">.</span>M();
+// これは呼べない。
+// Span<byte> → ReadOnlySpan<byte> には暗黙の型変換があるものの、
+// 拡張メソッド解決の際に暗黙の型変換を挟むことは許容していない。
+(stackalloc byte[4]).M();
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">C</span></span>
+static class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable local">span</span>)
+    public static void M(this ReadOnlySpan<byte> span)
     {
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">span</span>)
+        foreach (var x in span)
         {
-            <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">Write</span></span>(<span class="string">$&quot;</span>{<span class="variable">x</span>:<span class="string">X2</span>}<span class="string"> </span><span class="string">&quot;</span>);
+            Console.Write($"{x:X2} ");
         }
-        <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>();
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="type">Encoding</span><span class="operator">.</span><span class="static"><span class="property">UTF8</span></span><span class="operator">.</span><span class="method">GetString</span>(<span class="variable local">span</span>));
+        Console.WriteLine();
+        Console.WriteLine(Encoding.UTF8.GetString(span));
     }
 }
-</pre>
+```

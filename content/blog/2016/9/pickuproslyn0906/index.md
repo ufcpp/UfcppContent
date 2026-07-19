@@ -41,52 +41,52 @@ C#の型推論って、右辺から左辺の推論が多いです。`var`しか�
 
 以下のような感じ。
 
-<pre class="source" title="右辺からの左辺の型推論(var、ジェネリック)">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = 1; <span class="comment">// 1 からの推論で、int x = 1; 扱い。</span>
-        F(2); <span class="comment">// 2 からの推論で、F&lt;int&gt;(2); 扱い</span>
+        var x = 1; // 1 からの推論で、int x = 1; 扱い。
+        F(2); // 2 からの推論で、F<int>(2); 扱い
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> F&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) =&gt; System.<span class="type">Console</span>.WriteLine(<span class="reserved">typeof</span>(<span class="type">T</span>).Name);
+    static void F<T>(T x) => System.Console.WriteLine(typeof(T).Name);
 }
-</code></pre>
+```
 
 ## 左辺から右辺の型推論
 
 逆に左辺から右辺の型推論なのは、現状ではラムダ式くらい。
 
-<pre class="source" title="左辺から右辺の型推論(ラムダ式)">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">object</span>&gt; f = x =&gt; x.ToString(); <span class="comment">// f の型が&lt;int, string&gt;なので、(int x) =&gt; (object)x.ToString() 扱い</span>
-        X(x =&gt; x.ToString()); <span class="comment">// Xの引数が&lt;int, string&gt;なので、(int x) =&gt; (object)x.ToString() 扱い</span>
+        Func<int, object> f = x => x.ToString(); // f の型が<int, string>なので、(int x) => (object)x.ToString() 扱い
+        X(x => x.ToString()); // Xの引数が<int, string>なので、(int x) => (object)x.ToString() 扱い
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> X(<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">object</span>&gt; f) { }
+    static void X(Func<int, object> f) { }
 }
-</code></pre>
+```
 
 で、今、`default`と`new`の型推論を増やしたいという話が出ています。特に、`var`を使えないフィールドやプロパティに対する初期化子で有効そう。
 
-<pre class="source" title="defaultやnewの型推論">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Sample</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>()
+```csharp
+class Sample<T>
+    where T : new()
 {
-    <span class="reserved">static</span> <span class="type">T</span> newValue = <span class="reserved">new</span>();       <span class="comment">// new T() の T を省略</span>
-    <span class="reserved">static</span> <span class="type">T</span> defaultValue = <span class="reserved">default</span>; <span class="comment">// default(T) の T を省略</span>
+    static T newValue = new();       // new T() の T を省略
+    static T defaultValue = default; // default(T) の T を省略
 
-    <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="type">T</span> x = <span class="reserved">default</span>) <span class="comment">// default(T) の T を省略</span>
+    static void F(T x = default) // default(T) の T を省略
     {
     }
 }
-</code></pre>
+```
 
 で、なんか、`default`の方はプロトタイプ実装が始まったと。
 ちなみに、`new`の方は実装の兆し全然なし。

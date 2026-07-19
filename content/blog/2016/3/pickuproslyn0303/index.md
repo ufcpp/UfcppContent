@@ -29,14 +29,14 @@ aliases: []
 以下のようなメソッドを用意することで、position-to-propertyマッチしようというもの。
 拡張メソッドでもいいことにしておけば、既存のクラスの拡張もできます(ただし、その拡張メソッドを書くのは手動。大変めんどいはず)。
 
-<pre class="source" title="">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">class</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">Person</span>
+```csharp
+public class Person
 {
   ...
-  <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">public</span> (<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">string</span> FirstName, <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">string</span> LastName) <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">GetValues</span>() { ... }
-  <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">public</span> Person <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">With</span>((<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">string</span> <span class="pl-smi" style="box-sizing: border-box; color: rgb(51, 51, 51);">FirstName</span>, <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">string</span> <span class="pl-smi" style="box-sizing: border-box; color: rgb(51, 51, 51);">LastName</span>) builder) { ... }
+  public (string FirstName, string LastName) GetValues() { ... }
+  public Person With((string FirstName, string LastName) builder) { ... }
 }
-</code></pre>
+```
 
 with式みたいなものの実現には、既存の言語構文だけでやるならいわゆる「ビルダー パターン」を使ったりします。
 そのためにはビルダー用のクラスを1個余計に作らないと行けなくて、余計なメモリ アロケーションが発生したり、余計なクラスを書く手間が掛かったり。

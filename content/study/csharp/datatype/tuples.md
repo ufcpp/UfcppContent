@@ -61,20 +61,20 @@ n倍、n重、n連結というような意味しかなく、まさに「名前�
 これは、型を書ける場所であれば概ねどこにでもこの「型」を書けます。
 まず、以下のように、フィールドや戻り値などの型にできます。
 
-<pre class="source" title="フィールドや戻り値の型にタプルを使う">
-<code><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">private</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) value;
-    <span class="reserved">public</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) GetValue() =&gt; value;
+    private (int x, int y) value;
+    public (int x, int y) GetValue() => value;
 }
-</code></pre>
+```
 
 以下のように、ローカル変数の型としても明示できます。
 
-<pre class="source" title="明示的にローカル変数の型をタプル型にする">
-<code><reserved></span><span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>();
-(<span class="reserved">int</span> x, <span class="reserved">int</span> y) t = s.GetValue();
-</code></pre>
+```csharp
+var s = new Sample();
+(int x, int y) t = s.GetValue();
+```
 
 もちろん、`var`を使った型推論も効きます。
 
@@ -82,15 +82,15 @@ n倍、n重、n連結というような意味しかなく、まさに「名前�
 
 また、ジェネリックな型の型引数にも使えます。
 
-<pre class="source" title="型引数にタプルを使う">
-<code><span class="reserved">var</span> dic = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;(<span class="reserved">string</span> s, <span class="reserved">string</span> t), (<span class="reserved">int</span> x, <span class="reserved">int</span> y)&gt;
+```csharp
+var dic = new Dictionary<(string s, string t), (int x, int y)>
 {
-    { (<span class="string">"a"</span>, <span class="string">"b"</span>), (1, 2) },
-    { (<span class="string">"x"</span>, <span class="string">"y"</span>), (4, 8) },
+    { ("a", "b"), (1, 2) },
+    { ("x", "y"), (4, 8) },
 };
 
-<span class="type">Console</span>.WriteLine(dic[(<span class="string">"a"</span>, <span class="string">"b"</span>)]); <span class="comment">// (1, 2)</span>
-</code></pre>
+Console.WriteLine(dic[("a", "b")]); // (1, 2)
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="denotation-disallowed"></a>制限事項
 
@@ -103,122 +103,122 @@ n倍、n重、n連結というような意味しかなく、まさに「名前�
 
 例えば以下のコードはコンパイル エラーを起こします。
 
-<pre class="source" title="タプル型を掛けない場所">
-<code><span class="comment">// using でエイリアスを付けることはできない(C# 11 以前)</span>
-<span class="reserved">using</span> T = (<span class="reserved">int</span> x, <span class="reserved">int</span> y);
+```csharp
+// using でエイリアスを付けることはできない(C# 11 以前)
+using T = (int x, int y);
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// var t = new T(1, 2); みたいなのと同じノリでは書けない</span>
-        <span class="reserved">var</span> t1 = <span class="reserved">new</span> <span class="error">(<span class="reserved">int</span> x, <span class="reserved">int</span> y)</span>(1, 2);
-        <span class="reserved">var</span> t2 = <span class="reserved">new</span> <span class="error">(<span class="reserved">int</span> x, <span class="reserved">int</span> y)</span> { x = 1, y = 2 };
+        // var t = new T(1, 2); みたいなのと同じノリでは書けない
+        var t1 = new (int x, int y)(1, 2);
+        var t2 = new (int x, int y) { x = 1, y = 2 };
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">object</span> obj)
+    static void M(object obj)
     {
-        <span class="comment">// (C# 7.3 までは) is 演算子には使えない</span>
-        <span class="reserved">if</span>(obj <span class="reserved">is</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y))
+        // (C# 7.3 までは) is 演算子には使えない
+        if(obj is (int x, int y))
         {
         }
     }
 }
-</code></pre>
+```
 
 ただし、以下のように、配列やnull許容型を作る場合には`new`を使えます。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> a = <span class="reserved">new</span>(<span class="reserved">int</span> x, <span class="reserved">int</span> y)[10]; <span class="comment">// OK</span>
-<span class="reserved">var</span> n = <span class="reserved">new</span>(<span class="reserved">int</span> x, <span class="reserved">int</span> y)?();  <span class="comment">// OK</span>
-</code></pre>
+```csharp
+var a = new(int x, int y)[10]; // OK
+var n = new(int x, int y)?();  // OK
+```
 
 `new (int x, int y)`という書き方は、将来的な言語拡張の予定と被る(被ってしまったら将来の拡張ができない)ため禁止しているようです。
 `is`演算子は、C# 8.0で入った[位置パターン](patterns.md#positional)との競合を懸念して、C# 8.0までは認めていませんでした。
 
-<pre class="source" title="将来的な拡張予定">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> ticks = 100000;
-        <span class="comment">// (予定。C#7 ではできない) C# 8?</span>
-        <span class="type">DateTime</span> d = <span class="reserved">new</span>(ticks); <span class="comment">// 左辺から型推論して、new DateTime(ticks) が呼ばれる</span>
+        var ticks = 100000;
+        // (予定。C#7 ではできない) C# 8?
+        DateTime d = new(ticks); // 左辺から型推論して、new DateTime(ticks) が呼ばれる
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">object</span> obj)
+    static void M(object obj)
     {
-        <span class="comment">// C# 8.0 で入った構文</span>
-        <span class="comment">// is T 扱いじゃなくて、位置パターンで obj を x, y に分解</span>
-        <span class="reserved">if</span> (obj <span class="reserved">is</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y))
+        // C# 8.0 で入った構文
+        // is T 扱いじゃなくて、位置パターンで obj を x, y に分解
+        if (obj is (int x, int y))
         {
-            <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x}<span class="string">, </span>{y}<span class="string">"</span>);
+            Console.WriteLine($"{x}, {y}");
         }
     }
 }
-</code></pre>
+```
 
 また、タプルのメンバーは2つ以上である必要があります。`()`や`(int x)`というようなタプルは現在の仕様では作れません。
 
-<pre class="source" title="0-tuple, 1-tuple は書けない">
-<code>() noneple;     <span class="comment">// ダメ</span>
-(<span class="reserved">int</span> x) oneple; <span class="comment">// ダメ</span>
+```csharp
+() noneple;     // ダメ
+(int x) oneple; // ダメ
 
-<span class="comment">// タプル構文で書けるのは2つ以上だけ</span>
-(<span class="reserved">int</span> x, <span class="reserved">int</span> y) twople; <span class="comment">// OK</span>
+// タプル構文で書けるのは2つ以上だけ
+(int x, int y) twople; // OK
 
-<span class="comment">// タプル構文でなければ、0-tuple, 1-tuple も作れる</span>
-<span class="type">ValueTuple</span> none;     <span class="comment">// OK</span>
-<span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>&gt; one; <span class="comment">// OK</span>
-</code></pre>
+// タプル構文でなければ、0-tuple, 1-tuple も作れる
+ValueTuple none;     // OK
+ValueTuple<int> one; // OK
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="literal"></a>タプル リテラル
 
 タプルは`(1, 2)`というような書き方で[リテラル](../start/st_variable.md#literal)を書くことができます。
 タプル リテラルは実引数リスト(引数を渡す側の書き方)に似ています。
 
-<pre class="source" title="タプル リテラル">
-<code><span class="comment">// メソッド呼び出し時の F(1, 2); みたいなノリ</span>
-(<span class="reserved">int</span> x, <span class="reserved">int</span> y) t1 = (1, 2);
+```csharp
+// メソッド呼び出し時の F(1, 2); みたいなノリ
+(int x, int y) t1 = (1, 2);
 
-<span class="comment">// メソッド呼び出し時の F(x: 1, y: 2); みたいなノリ</span>
-<span class="reserved">var</span> t2 = (x: 1, y: 2);
-</code></pre>
+// メソッド呼び出し時の F(x: 1, y: 2); みたいなノリ
+var t2 = (x: 1, y: 2);
+```
 
 `null`のように単体では型が決まらないものも、左辺に型があれば推論が効きます。
 一方で、左辺も`var`等になっていて型が決まらない場合、コンパイル エラーになります。
 
-<pre class="source" title="">
-<code><span class="comment">// これは左辺から型推論が聞くので、null も書ける</span>
-(<span class="reserved">string</span> s, <span class="reserved">int</span> i) t1 = (<span class="reserved">null</span>, 1);
+```csharp
+// これは左辺から型推論が聞くので、null も書ける
+(string s, int i) t1 = (null, 1);
 
-<span class="comment">// これはダメ。null の型が決まらない。</span>
-<span class="reserved">var</span> t2 = (<span class="reserved">null</span>, 1); <span class="comment">// コンパイル エラー</span>
-</code></pre>
+// これはダメ。null の型が決まらない。
+var t2 = (null, 1); // コンパイル エラー
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="member-access"></a>メンバー参照
 
 メンバーの参照の仕方は普通の型と変わりません。`(int x, int y)`であれば、`x`、`y`という名前でアクセスできます。
 ちなみに、タプルのメンバーは書き換え可能です。
 
-<pre class="source" title="タプルのメンバー参照">
-<code><span class="reserved">var</span> t = (x: 1, y: 2);
-<span class="type">Console</span>.WriteLine(t.x); <span class="comment">// 1</span>
-<span class="type">Console</span>.WriteLine(t.y); <span class="comment">// 2</span>
+```csharp
+var t = (x: 1, y: 2);
+Console.WriteLine(t.x); // 1
+Console.WriteLine(t.y); // 2
 
-<span class="comment">// メンバーごとに書き換え可能</span>
+// メンバーごとに書き換え可能
 t.x = 10;
 t.y = 20;
-<span class="type">Console</span>.WriteLine(t.x); <span class="comment">// 10</span>
-<span class="type">Console</span>.WriteLine(t.y); <span class="comment">// 20</span>
+Console.WriteLine(t.x); // 10
+Console.WriteLine(t.y); // 20
 
-<span class="comment">// タプル自身も書き換え可能</span>
+// タプル自身も書き換え可能
 t = (100, 200);
-<span class="type">Console</span>.WriteLine(t.x); <span class="comment">// 100</span>
-<span class="type">Console</span>.WriteLine(t.y); <span class="comment">// 200</span>
-</code></pre>
+Console.WriteLine(t.x); // 100
+Console.WriteLine(t.y); // 200
+```
 
 ちなみに、タプルのメンバーはフィールドになっています
 (プロパティではない)。
@@ -227,40 +227,40 @@ t = (100, 200);
 
 例えば以下のようなメソッドがあったとします。
 
-<pre class="source" title="Swapメソッド">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Swap&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> x, <span class="reserved">ref</span> <span class="type">T</span> y)
+```csharp
+static void Swap<T>(ref T x, ref T y)
 {
-    <span class="reserved">var</span> t = x;
+    var t = x;
     x = y;
     y = t;
 }
-</code></pre>
+```
 
 このとき、以下のようにタプルのメンバーを渡せます。
 
-<pre class="source" title="タプルのメンバーを参照引数に渡す">
-<code><span class="reserved">var</span> t = (x: 1, y: 2);
-Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.y);
-<span class="type">Console</span>.WriteLine(t.x); <span class="comment">// 2</span>
-<span class="type">Console</span>.WriteLine(t.y); <span class="comment">// 1</span>
-</code></pre>
+```csharp
+var t = (x: 1, y: 2);
+Swap(ref t.x, ref t.y);
+Console.WriteLine(t.x); // 2
+Console.WriteLine(t.y); // 1
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="deconstruction"></a>タプルの分解
 
 タプルは、各メンバーを分解して、それぞれ別の変数に受けて使うことができます。
 
-<pre class="source" title="タプルの分解">
-<code><span class="reserved">var</span> t = (x: 1, y: 2);
+```csharp
+var t = (x: 1, y: 2);
 
-<span class="comment">// 分解宣言1</span>
-(<span class="reserved">int</span> x1, <span class="reserved">int</span> y1) = t; <span class="comment">// x1, y1 を宣言しつつ、ｔ を分解</span>
-<span class="comment">// 分解宣言2</span>
-<span class="reserved">var</span> (x2, y2) = t; <span class="comment">// 分解宣言の簡易記法</span>
+// 分解宣言1
+(int x1, int y1) = t; // x1, y1 を宣言しつつ、ｔ を分解
+// 分解宣言2
+var (x2, y2) = t; // 分解宣言の簡易記法
 
-<span class="comment">// 分解代入</span>
-<span class="reserved">int</span> x, y;
-(x, y) = t; <span class="comment">// 分解結果を既存の変数に代入</span>
-</code></pre>
+// 分解代入
+int x, y;
+(x, y) = t; // 分解結果を既存の変数に代入
+```
 
 この分解は、タプル以外の型に対しても使えるものです。
 詳しくは「[複合型の分解](deconstruction.md)」で説明します。
@@ -276,19 +276,19 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 
 例えば以下のように書くと、1番目同士(`x` → `s`)、2番目同士(`y` → `t`)で値が代入されます。
 
-<pre class="source" title="">
-<code>(<span class="reserved">int</span> s, <span class="reserved">int</span> t) t1 = (x: 1, y: 2);
-<span class="type">Console</span>.WriteLine(t1.s); <span class="comment">// 1</span>
-<span class="type">Console</span>.WriteLine(t1.t); <span class="comment">// 2</span>
-</code></pre>
+```csharp
+(int s, int t) t1 = (x: 1, y: 2);
+Console.WriteLine(t1.s); // 1
+Console.WriteLine(t1.t); // 2
+```
 
 同名であっても、位置が優先です。以下のような書き方をすると、`x`、`y`が入れ替わります。
 
-<pre class="source" title="">
-<code>(<span class="reserved">int</span> y, <span class="reserved">int</span> x) t2 = (x: 1, y: 2);
-<span class="type">Console</span>.WriteLine(t2.x); <span class="comment">// 2</span>
-<span class="type">Console</span>.WriteLine(t2.y); <span class="comment">// 1</span>
-</code></pre>
+```csharp
+(int y, int x) t2 = (x: 1, y: 2);
+Console.WriteLine(t2.x); // 2
+Console.WriteLine(t2.y); // 1
+```
 
 #### <a id="sec-generated-title-12"></a> <a id="different-types"></a>型違いのタプル
 
@@ -297,23 +297,23 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 
 例えば以下の場合、`x`も`y`も`z`も、それぞれが型変換できるので、タプルの暗黙的型変換が掛かります。
 
-<pre class="source" title="タプル間の暗黙の型変換">
-<code><span class="reserved">object</span> x = <span class="string">"abc"</span>; <span class="comment">// string → object は OK</span>
-<span class="reserved">long</span> y = 1; <span class="comment">// int → long は OK</span>
-<span class="reserved">int</span>? z = 2; <span class="comment">// int → int? は OK</span>
-<span class="comment">// ↓</span>
-(<span class="reserved">object</span> x, <span class="reserved">long</span> y, <span class="reserved">int</span>? z) t = (<span class="string">"abc"</span>, 1, 2); <span class="comment">// OK</span>
-</code></pre>
+```csharp
+object x = "abc"; // string → object は OK
+long y = 1; // int → long は OK
+int? z = 2; // int → int? は OK
+// ↓
+(object x, long y, int? z) t = ("abc", 1, 2); // OK
+```
 
 逆に、以下の場合はコンパイル エラーになります。この例では全部のメンバーが変換不能ですが、全部でなくても、どれか1つでも変換できないと、タプル自体の変換もエラーになります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">string</span> x = 1; <span class="comment">// int → string は NG</span>
-<span class="reserved">int</span> y = 1L; <span class="comment">// long → int は NG</span>
-<span class="reserved">int</span> z = <span class="reserved">default</span>(<span class="reserved">int</span>?); <span class="comment">// int? → int は NG</span>
-<span class="comment">// ↓</span>
-(<span class="reserved">string</span> x, <span class="reserved">int</span> y, <span class="reserved">int</span> z) t = (1, 1L, <span class="reserved">default</span>(<span class="reserved">int</span>?)); <span class="comment">// NG</span>
-</code></pre>
+```csharp
+string x = 1; // int → string は NG
+int y = 1L; // long → int は NG
+int z = default(int?); // int? → int は NG
+// ↓
+(string x, int y, int z) t = (1, 1L, default(int?)); // NG
+```
 
 #### <a id="sec-generated-title-13"></a> <a id="extensions"></a>拡張メソッドの解決
 
@@ -322,49 +322,49 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 例えば以下のように、配列×2のタプルに対して、`IEnumerable`×2のタプルの拡張メソッドを呼べます。
 (配列から`IEnumerable`への変換は暗黙的に行えるので、このタプル間の変換も暗黙的に行えます。)
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Linq;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">int</span>[] a1 = <span class="reserved">new</span>[] { 1, 2, 3 };
-        <span class="reserved">string</span>[] a2 = <span class="reserved">new</span>[] { <span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span> };
+        int[] a1 = new[] { 1, 2, 3 };
+        string[] a2 = new[] { "a", "b", "c" };
 
-        <span class="comment">// 配列 ×2のタプルに対して、IEnumerable ×2のタプルの拡張メソッドを呼べる</span>
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> (i, s) <span class="reserved">in</span> (a1, a2).Zip())
+        // 配列 ×2のタプルに対して、IEnumerable ×2のタプルの拡張メソッドを呼べる
+        foreach (var (i, s) in (a1, a2).Zip())
         {
-            <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{i}<span class="string">: </span>{s}<span class="string">"</span>);
+            Console.WriteLine($"{i}: {s}");
         }
     }
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">TupelExtensions</span>
+static class TupelExtensions
 {
-    <span class="comment">// IEnumerable ×2 に対する拡張メソッド</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;(<span class="type">T1</span> x1, <span class="type">T2</span> x2)&gt; Zip&lt;<span class="type">T1</span>, <span class="type">T2</span>&gt;(<span class="reserved">this</span> (<span class="type">IEnumerable</span>&lt;<span class="type">T1</span>&gt; items1, <span class="type">IEnumerable</span>&lt;<span class="type">T2</span>&gt; items2) t)
-        =&gt; t.items1.Zip(t.items2, (x1, x2) =&gt; (x1, x2));
+    // IEnumerable ×2 に対する拡張メソッド
+    public static IEnumerable<(T1 x1, T2 x2)> Zip<T1, T2>(this (IEnumerable<T1> items1, IEnumerable<T2> items2) t)
+        => t.items1.Zip(t.items2, (x1, x2) => (x1, x2));
 }
-</code></pre>
+```
 
 
 ### <a id="sec-generated-title-14"></a> <a id="nest"></a>タプルの入れ子
 
 タプルは入れ子にできます。
 
-<pre class="source" title="タプルの入れ子">
-<code><comment></span><span class="comment">// タプルの入れ子</span>
-(<span class="reserved">string</span> a, (<span class="reserved">int</span> x, <span class="reserved">int</span> y) b) t1 = (<span class="string">"abc"</span>, (1, 2));
-<span class="type">Console</span>.WriteLine(t1.a);   <span class="comment">// abc</span>
-<span class="type">Console</span>.WriteLine(t1.b.x); <span class="comment">// 1</span>
-<span class="type">Console</span>.WriteLine(t1.b.y); <span class="comment">// 2</span>
+```csharp
+// タプルの入れ子
+(string a, (int x, int y) b) t1 = ("abc", (1, 2));
+Console.WriteLine(t1.a);   // abc
+Console.WriteLine(t1.b.x); // 1
+Console.WriteLine(t1.b.y); // 2
 
-<span class="comment">// 型推論も可能</span>
-<span class="reserved">var</span> t2 = (a: <span class="string">"abc"</span>, b: (x: 1, y: 2));
-</code></pre>
+// 型推論も可能
+var t2 = (a: "abc", b: (x: 1, y: 2));
+```
 
 
 ### <a id="sec-generated-title-15"></a> <a id="anonymous-member"></a>メンバー名も匿名
@@ -372,11 +372,11 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 タプルは、メンバー名もなくして、完全に匿名(名無し)にすることもできます。
 この場合、メンバーを使う際には`Item1`、`Item2`、…というような名前で参照します。
 
-<pre class="source" title="メンバー名も匿名なタプル">
-<code><reserved></span><span class="reserved">var</span> t1 = (1, 2);
-<span class="type">Console</span>.WriteLine(t1.Item1); <span class="comment">// 1</span>
-<span class="type">Console</span>.WriteLine(t1.Item2); <span class="comment">// 2</span>
-</code></pre>
+```csharp
+var t1 = (1, 2);
+Console.WriteLine(t1.Item1); // 1
+Console.WriteLine(t1.Item2); // 2
+```
 
 `Item1`、`Item2`、… という名前は、後述する`ValueTuple`構造体のメンバー名です。
 
@@ -391,20 +391,20 @@ Swap(<span class="reserved">ref</span> t.x, <span class="reserved">ref</span> t.
 型違いのタプルを使うのであれば、オーバーロードに使えます。
 例えば、以下のメソッド`F`は、`y`の型が違うのでオーバーロード可能です。
 
-<pre class="source" title="型違いのタプルでのオーバーロードは可能">
-<code><span class="comment">// 型違いのタプルでのオーバーロードは可能</span>
-<span class="reserved">void</span> F((<span class="reserved">int</span> x, <span class="reserved">int</span> y) t) { }
-<span class="reserved">void</span> F((<span class="reserved">int</span> x, <span class="reserved">string</span> y) t) { }
-</code></pre>
+```csharp
+// 型違いのタプルでのオーバーロードは可能
+void F((int x, int y) t) { }
+void F((int x, string y) t) { }
+```
 
 一方、型が一緒で名前だけが違うタプルではオーバーロードできません。
 以下のメソッド`G`は、同じものが2つあるのでコンパイル エラーを起こします。
 
-<pre class="source" title="">
-<code><span class="comment">// 型が一緒で名前だけ違うタプルでのオーバーロードはダメ。コンパイル エラー</span>
-<span class="reserved">void</span> G((<span class="reserved">int</span> x, <span class="reserved">int</span> y) t) { }
-<span class="reserved">void</span> G((<span class="reserved">int</span> a, <span class="reserved">int</span> b) t) { }
-</code></pre>
+```csharp
+// 型が一緒で名前だけ違うタプルでのオーバーロードはダメ。コンパイル エラー
+void G((int x, int y) t) { }
+void G((int a, int b) t) { }
+```
 
 こういう仕様になっている理由は2つあります。
 1つは、次節で説明するように、内部実装的に名前だけ違うタプルを区別できないという、技術的な理由。
@@ -418,63 +418,63 @@ C# 7.1から、タプル構築時に渡した変数からタプルの要素名�
 例えば以下のように、`(x, y)` と書くだけで、1要素目に`x`、2要素目に `y` という名前が付きます。
 (これまでだと、`(x: x, y: y)` と書く必要がありました。)
 
-<pre class="source" title="タプル要素名の推論の例">
-<code><span class="reserved">var</span> x = 1;
-<span class="reserved">var</span> y = 2;
-<span class="reserved">var</span> t = (x, y);
+```csharp
+var x = 1;
+var y = 2;
+var t = (x, y);
 
-<span class="comment">// C# 7.0。t の要素には名前が付かない</span>
-<span class="type">Console</span>.WriteLine(t.Item1);
-<span class="type">Console</span>.WriteLine(t.Item2);
+// C# 7.0。t の要素には名前が付かない
+Console.WriteLine(t.Item1);
+Console.WriteLine(t.Item2);
 
-<span class="comment">// C# 7.1。(x, y) で (x: x, y: y) 扱い</span>
-<span class="comment">// t の要素に x, y という名前が付く</span>
-<span class="type">Console</span>.WriteLine(t.x);
-<span class="type">Console</span>.WriteLine(t.y);
-</code></pre>
+// C# 7.1。(x, y) で (x: x, y: y) 扱い
+// t の要素に x, y という名前が付く
+Console.WriteLine(t.x);
+Console.WriteLine(t.y);
+```
 
 以下のように、部分的な適用もされます。
 
-<pre class="source" title="タプル要素名の部分的な推論">
-<code><span class="reserved">var</span> y = 2;
-<span class="reserved">var</span> t = (1, y);
-<span class="type">Console</span>.WriteLine(t.Item1); <span class="comment">// 1</span>
-<span class="type">Console</span>.WriteLine(t.y);     <span class="comment">// 2</span>
-</code></pre>
+```csharp
+var y = 2;
+var t = (1, y);
+Console.WriteLine(t.Item1); // 1
+Console.WriteLine(t.y);     // 2
+```
 
 ただし、名前に被りがあるときには推論が働きません。
 
-<pre class="source" title="名前被りでタプル要素名の推論ができない例">
-<code><span class="reserved">var</span> x = 1;
-<span class="reserved">var</span> t = (x, x);
-<span class="type">Console</span>.WriteLine(t.Item1); <span class="comment">// t.x とは書けない</span>
-<span class="type">Console</span>.WriteLine(t.Item2); <span class="comment">// こっちも t.x とは書けない</span>
+```csharp
+var x = 1;
+var t = (x, x);
+Console.WriteLine(t.Item1); // t.x とは書けない
+Console.WriteLine(t.Item2); // こっちも t.x とは書けない
 
-<span class="reserved">var</span> u = (x: 0, x);
-<span class="type">Console</span>.WriteLine(u.x); <span class="comment">// u.x というと Item1 の方</span>
-<span class="type">Console</span>.WriteLine(u.Item2); <span class="comment">// Item2 の方は x とは書けない</span>
-</code></pre>
+var u = (x: 0, x);
+Console.WriteLine(u.x); // u.x というと Item1 の方
+Console.WriteLine(u.Item2); // Item2 の方は x とは書けない
+```
 
 名前がないので当然ですが、リテラルからは要素名の推論はできません
 
-<pre class="source" title="リテラルからは推論不可">
-<code><span class="reserved">var</span> t = (1, 2);
-<span class="type">Console</span>.WriteLine(t.Item1); <span class="comment">// さすがに t.1 とかは書けない</span>
-</code></pre>
+```csharp
+var t = (1, 2);
+Console.WriteLine(t.Item1); // さすがに t.1 とかは書けない
+```
 
 また、メソッド名からは推論されません。
 一方で、プロパティ名からは推論されます。
 プロパティやフィールドの場合、インスタンス メンバーへのアクセスでも推論されます
 (`t.x`とかなら、タプル要素名は`x`になります。`t?.x`でも可)。
 
-<pre class="source" title="メソッド不可、プロパティ可。インスタンス メンバー アクセス可。null 条件演算子可">
-<code><span class="reserved">int</span> F() =&gt; 1;
-<span class="reserved">var</span> s = <span class="string">"abc"</span>;
+```csharp
+int F() => 1;
+var s = "abc";
 
-<span class="reserved">var</span> t = (F(), s?.Length);
-<span class="type">Console</span>.WriteLine(t.Item1); <span class="comment">// メソッド名からは推論されない(t.F はダメ)</span>
-<span class="type">Console</span>.WriteLine(t.Length); <span class="comment">// プロパティ名からは推論される( . でも ?. でも OK)</span>
-</code></pre>
+var t = (F(), s?.Length);
+Console.WriteLine(t.Item1); // メソッド名からは推論されない(t.F はダメ)
+Console.WriteLine(t.Length); // プロパティ名からは推論される( . でも ?. でも OK)
+```
 
 ### <a id="sec-generated-title-18"></a> <a id="equality"></a>==、!= での比較
 
@@ -487,85 +487,85 @@ C# 7.3で、タプル同士を `==`、`!=` 演算子で比較できるように�
 
 タプルに対する`==`比較は、以下のように、メンバーごとの`==`を[`&&`](../start/st_operator.md#short-circuit)で繋いだものに展開されます。
 
-<pre class="source" title="タプル ==">
-<code><span class="reserved">void</span> M((<span class="reserved">int</span> a, (<span class="reserved">int</span> x, <span class="reserved">int</span> y) b) t)
+```csharp
+void M((int a, (int x, int y) b) t)
 {
-    <span class="comment">// このタプル == 比較は、</span>
-    <span class="type">Console</span>.WriteLine(t == (1, (2, 3)));
-    <span class="comment">// こんな感じで、メンバーごとの == を &amp;&amp; で繋いだものに展開される。</span>
-    <span class="type">Console</span>.WriteLine(t.a == 1 &amp;&amp; t.b.x == 2 &amp;&amp; t.b.y == 3);
+    // このタプル == 比較は、
+    Console.WriteLine(t == (1, (2, 3)));
+    // こんな感じで、メンバーごとの == を && で繋いだものに展開される。
+    Console.WriteLine(t.a == 1 && t.b.x == 2 && t.b.y == 3);
 }
-</code></pre>
+```
 
 同様に、`!=`は以下のように、メンバーごとの`!=`を[`||`](../start/st_operator.md#short-circuit)で繋いだものになります。
 
-<pre class="source" title="タプル !=">
-<code><span class="reserved">void</span> N((<span class="reserved">int</span> a, (<span class="reserved">int</span> x, <span class="reserved">int</span> y) b) t)
+```csharp
+void N((int a, (int x, int y) b) t)
 {
-    <span class="comment">// 同じく != 比較は、</span>
-    <span class="type">Console</span>.WriteLine(t != (1, (2, 3)));
-    <span class="comment">// こんな感じで、メンバーごとの != を || で繋いだものに展開される。</span>
-    <span class="type">Console</span>.WriteLine(t.a != 1 || t.b.x != 2 || t.b.y != 3);
+    // 同じく != 比較は、
+    Console.WriteLine(t != (1, (2, 3)));
+    // こんな感じで、メンバーごとの != を || で繋いだものに展開される。
+    Console.WriteLine(t.a != 1 || t.b.x != 2 || t.b.y != 3);
 }
-</code></pre>
+```
 
 `ValueTuple`の`==`演算子や`Equals`メソッドではなくこういうコンパイラーによる処理が入っているのは、
 「[タプル間の変換](#conversion)」で説明したような、メンバーごとの型変換を考慮してのことです。
 例えば、以下のように、暗黙的型変換ができるもの同士の比較ができます。
 
-<pre class="source" title="">
-<code>(<span class="reserved">long</span> a, (<span class="reserved">double</span> x, <span class="reserved">decimal</span> y) b) t = (1, (2, 3));
+```csharp
+(long a, (double x, decimal y) b) t = (1, (2, 3));
 
-<span class="comment">// byte → long</span>
-<span class="comment">// float → double</span>
-<span class="comment">// short → decimal</span>
-<span class="comment">// という、暗黙的型変換ができるもの同士の比較</span>
-<span class="type">Console</span>.WriteLine(t == ((<span class="reserved">byte</span>)1, ((<span class="reserved">float</span>)2, (<span class="reserved">short</span>)3)));
-</code></pre>
+// byte → long
+// float → double
+// short → decimal
+// という、暗黙的型変換ができるもの同士の比較
+Console.WriteLine(t == ((byte)1, ((float)2, (short)3)));
+```
 
 ちなみに、[ユーザー定義](../oop/oo_operator.md)の`==`、`!=`演算子を持っている場合、そのユーザー定義のものが呼ばれます。
 また、ユーザー定義であれば`==`が`bool`以外の型を返すこともありますが、
 その場合も、[`true`、`false`演算子](../oop/oo_operator.md#true-false)があれば比較できます。
 
-<pre class="source" title="ユーザー定義の ==, !=, true, false が呼ばれる例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">MyBool</span>
+struct MyBool
 {
-    <span class="reserved">public</span> <span class="reserved">bool</span> Value;
-    <span class="reserved">public</span> <span class="type">MyBool</span>(<span class="reserved">bool</span> value) =&gt; Value = value;
+    public bool Value;
+    public MyBool(bool value) => Value = value;
 
-    <span class="comment">// 何が呼ばれてるかがわかるように WriteLine を挟む</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="reserved">true</span>(<span class="type">MyBool</span> x) { <span class="type">Console</span>.WriteLine(<span class="string">"MyBool.true"</span>); <span class="reserved">return</span> x.Value; }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="reserved">false</span>(<span class="type">MyBool</span> x) { <span class="type">Console</span>.WriteLine(<span class="string">"MyBool.false"</span>); <span class="reserved">return</span> !x.Value; }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type">MyBool</span>(<span class="reserved">bool</span> b) =&gt; <span class="reserved">new</span> <span class="type">MyBool</span>(b);
+    // 何が呼ばれてるかがわかるように WriteLine を挟む
+    public static bool operator true(MyBool x) { Console.WriteLine("MyBool.true"); return x.Value; }
+    public static bool operator false(MyBool x) { Console.WriteLine("MyBool.false"); return !x.Value; }
+    public static implicit operator MyBool(bool b) => new MyBool(b);
 }
 
-<span class="reserved">struct</span> <span class="type">MyInt</span>
+struct MyInt
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Value;
-    <span class="reserved">public</span> MyInt(<span class="reserved">int</span> value) =&gt; Value = value;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">MyBool</span> <span class="reserved">operator</span> ==(<span class="type">MyInt</span> x, <span class="type">MyInt</span> y) =&gt; x.Value == y.Value;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">MyBool</span> <span class="reserved">operator</span> !=(<span class="type">MyInt</span> x, <span class="type">MyInt</span> y) =&gt; x.Value != y.Value;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type">MyInt</span>(<span class="reserved">int</span> b) =&gt; <span class="reserved">new</span> <span class="type">MyInt</span>(b);
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">bool</span> Equals(<span class="reserved">object</span> obj) =&gt; obj <span class="reserved">is</span> <span class="type">MyInt</span> x &amp;&amp; Value == x.Value;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> GetHashCode() =&gt; Value.GetHashCode();
+    public int Value;
+    public MyInt(int value) => Value = value;
+    public static MyBool operator ==(MyInt x, MyInt y) => x.Value == y.Value;
+    public static MyBool operator !=(MyInt x, MyInt y) => x.Value != y.Value;
+    public static implicit operator MyInt(int b) => new MyInt(b);
+    public override bool Equals(object obj) => obj is MyInt x && Value == x.Value;
+    public override int GetHashCode() => Value.GetHashCode();
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        (<span class="type">MyInt</span> a, (<span class="type">MyInt</span> x, <span class="type">MyInt</span> y) b) t = (1, (2, 3));
+        (MyInt a, (MyInt x, MyInt y) b) t = (1, (2, 3));
 
-        <span class="comment">// MyInt の == に展開されるので、MyBool が得られる。</span>
-        <span class="comment">// MyBool 同士の &amp;&amp; で、MyBool の false 演算子が呼ばれる。</span>
-        <span class="comment">// (この例の場合、"MyBool.false" が3回表示される。)</span>
-        <span class="comment">// (false の方が呼ばれるのは C# の &amp;&amp; の仕様。)</span>
-        <span class="type">Console</span>.WriteLine(t == (1, (2, 3)));
+        // MyInt の == に展開されるので、MyBool が得られる。
+        // MyBool 同士の && で、MyBool の false 演算子が呼ばれる。
+        // (この例の場合、"MyBool.false" が3回表示される。)
+        // (false の方が呼ばれるのは C# の && の仕様。)
+        Console.WriteLine(t == (1, (2, 3)));
     }
 }
-</code></pre>
+```
 
 
 <!-- original-page-break -->
@@ -585,44 +585,44 @@ C# 7.3で、タプル同士を `==`、`!=` 演算子で比較できるように�
 
 例えば、以下のようなコードを考えます。
 
-<pre class="source" title="ローカルでのタプル利用">
-<code><span class="reserved">var</span> t = (x: 3, y: 5);
-<span class="reserved">var</span> p = t.x * t.y;
-<span class="reserved">var</span> (x, y) = t;
-<span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x}<span class="string"> × </span>{y}<span class="string"> = </span>{p}<span class="string">"</span>);
-</code></pre>
+```csharp
+var t = (x: 3, y: 5);
+var p = t.x * t.y;
+var (x, y) = t;
+Console.WriteLine($"{x} × {y} = {p}");
+```
 
 以下のようなコードに展開されます。
 
-<pre class="source" title="ローカルでのタプルの展開結果">
-<code><span class="reserved">var</span> t = <span class="reserved">new</span> <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;(3, 5); <span class="comment">// (x: 3, y: 5)</span>
-<span class="reserved">var</span> p = t.Item1 * t.Item2; <span class="comment">// t.x * t.y</span>
-<span class="reserved">var</span> x = t.Item1;
-<span class="reserved">var</span> y = t.Item2;
-<span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x}<span class="string"> × </span>{y}<span class="string"> = </span>{p}<span class="string">"</span>);
-</code></pre>
+```csharp
+var t = new ValueTuple<int, int>(3, 5); // (x: 3, y: 5)
+var p = t.Item1 * t.Item2; // t.x * t.y
+var x = t.Item1;
+var y = t.Item2;
+Console.WriteLine($"{x} × {y} = {p}");
+```
 
 元々の`x`や`y`という名前は、内部的には残っていません。`ValueTuple`構造体のメンバーである`Item1`や`Item2`に展開されます。
 
 特に、一度`object`や`dynamic`を経由すると、名前を完全に紛失します。
 以下のコードでは、`x`や`y`が見つからず、実行時エラーを起こします。
 
-<pre class="source" title="タプル型は名前を紛失する">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> Dynamic()
+```csharp
+private static void Dynamic()
 {
-    <span class="comment">// 匿名型は名前が残る</span>
-    <span class="reserved">var</span> a = <span class="reserved">new</span> { x = 3, y = 5 };
-    <span class="reserved">var</span> s1 = Sum(a); <span class="comment">// 大丈夫</span>
-    <span class="type">Console</span>.WriteLine(s1);
+    // 匿名型は名前が残る
+    var a = new { x = 3, y = 5 };
+    var s1 = Sum(a); // 大丈夫
+    Console.WriteLine(s1);
 
-    <span class="comment">// タプル型は名前を紛失する</span>
-    <span class="reserved">var</span> t = (x: 3, y: 5);
-    <span class="reserved">var</span> s2 = Sum(t); <span class="comment">// x, yという名前が実行時になくてエラーに</span>
-    <span class="type">Console</span>.WriteLine(s2);
+    // タプル型は名前を紛失する
+    var t = (x: 3, y: 5);
+    var s2 = Sum(t); // x, yという名前が実行時になくてエラーに
+    Console.WriteLine(s2);
 }
 
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">dynamic</span> Sum(<span class="reserved">dynamic</span> d) =&gt; d.x + d.y;
-</code></pre>
+private static dynamic Sum(dynamic d) => d.x + d.y;
+```
 
 ### <a id="sec-generated-title-21"></a> <a id="TupleElementNames"></a>TupleElementNames属性
 
@@ -632,17 +632,17 @@ C#コンパイラーには名前がわかるようにしています。
 
 例えば、以下のような引数も戻り値もタプルなメソッドを書いたとします。
 
-<pre class="source" title="引数も戻り値もタプルなメソッド">
-<code><span class="reserved">public</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) F((<span class="reserved">int</span> a, <span class="reserved">int</span> b) t) =&gt; (t.a + t.b, t.a - t.b);
-</code></pre>
+```csharp
+public (int x, int y) F((int a, int b) t) => (t.a + t.b, t.a - t.b);
+```
 
 このメソッドは、以下のように展開されます。タプルが`ValueTuple`構造体に化けますが、`TupleElementNames`属性を付けて名前を残します。
 
-<pre class="source" title="">
-<code>[<span class="reserved">return</span>: <span class="type">TupleElementNames</span>(<span class="reserved">new</span>[] { <span class="string">"x"</span>, <span class="string">"y"</span> })]
-<span class="reserved">public</span> <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; F([<span class="type">TupleElementNames</span>(<span class="reserved">new</span>[] { <span class="string">"a"</span>, <span class="string">"b"</span> })] <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; t)
-    =&gt; <span class="reserved">new</span> <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;(t.Item1 + t.Item2, t.Item1 - t.Item2);
-</code></pre>
+```csharp
+[return: TupleElementNames(new[] { "x", "y" })]
+public ValueTuple<int, int> F([TupleElementNames(new[] { "a", "b" })] ValueTuple<int, int> t)
+    => new ValueTuple<int, int>(t.Item1 + t.Item2, t.Item1 - t.Item2);
+```
 
 C#コンパイラーは、この情報を元に、タプルの名前を復元します。
 
@@ -651,23 +651,23 @@ C#コンパイラーは、この情報を元に、タプルの名前を復元し
 タプルの展開結果にあたる`ValueTuple`は、型引数が0～8個の合計9個の構造体があります。
 例えば、型引数2個のものは以下のような定義になっています。
 
-<pre class="source" title="ValueTuple構造体">
-<code>[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Auto)]
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">ValueTuple</span>&lt;<span class="type">T1</span>, <span class="type">T2</span>&gt;
-    : <span class="type">IEquatable</span>&lt;<span class="type">ValueTuple</span>&lt;<span class="type">T1</span>, <span class="type">T2</span>&gt;&gt;, <span class="type">IStructuralEquatable</span>, <span class="type">IStructuralComparable</span>, <span class="type">IComparable</span>, <span class="type">IComparable</span>&lt;<span class="type">ValueTuple</span>&lt;<span class="type">T1</span>, <span class="type">T2</span>&gt;&gt;
+```csharp
+[StructLayout(LayoutKind.Auto)]
+public struct ValueTuple<T1, T2>
+    : IEquatable<ValueTuple<T1, T2>>, IStructuralEquatable, IStructuralComparable, IComparable, IComparable<ValueTuple<T1, T2>>
 {
-    <span class="reserved">public</span> <span class="type">T1</span> Item1;
-    <span class="reserved">public</span> <span class="type">T2</span> Item2;
+    public T1 Item1;
+    public T2 Item2;
 
-    <span class="reserved">public</span> ValueTuple(<span class="type">T1</span> item1, <span class="type">T2</span> item2)
+    public ValueTuple(T1 item1, T2 item2)
     {
         Item1 = item1;
         Item2 = item2;
     }
 
-    <span class="comment">// 後略、インターフェイスのメンバー定義</span>
+    // 後略、インターフェイスのメンバー定義
 }
-</code></pre>
+```
 
 基本的には、publicなフィールドだけを持つ構造体です。
 それに、値の比較用の各種インターフェイスが実装されています。
@@ -681,18 +681,18 @@ C#コンパイラーは、この情報を元に、タプルの名前を復元し
 メンバー名も匿名で作ったので `ItemN`(`N`は正の整数)といったような名前でメンバーを読み書きすることになります。
 C#上は、8番目以降のメンバーに対しても、`Item8`、`Item9`というような名前で参照できます。
 
-<pre class="source" title="メンバーが9個のタプル">
-<code><span class="reserved">var</span> t = (1, 2, 3, 4, 5, 6, 7, 8, 9);
-<span class="type">Console</span>.WriteLine(t.Item9);
-</code></pre>
+```csharp
+var t = (1, 2, 3, 4, 5, 6, 7, 8, 9);
+Console.WriteLine(t.Item9);
+```
 
 このコードは、以下のように展開されます。
 
-<pre class="source" title="メンバーが9個のタプルの展開結果">
-<code><span class="reserved">var</span> t = <span class="reserved">new</span> <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>, <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt;(
-    1, 2, 3, 4, 5, 6, 7, <span class="reserved">new</span> <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;(8, 9));
-<span class="type">Console</span>.WriteLine(t.Rest.Item2);
-</code></pre>
+```csharp
+var t = new ValueTuple<int, int, int, int, int, int, int, ValueTuple<int, int>>(
+    1, 2, 3, 4, 5, 6, 7, new ValueTuple<int, int>(8, 9));
+Console.WriteLine(t.Rest.Item2);
+```
 
 `ValueTuple`構造体には`Item8`、`Item9`という名前のメンバーはありません。
 型引数の数が最大のもので8メンバーで、その8つ目のメンバーの名前は`Rest` (残り)です。
@@ -721,15 +721,15 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 前述の通り、タプルのメンバーは2つ以上な必要があって、`()`や`(int x)`というようなタプルは作れません。
 一方で、`ValueTuple`構造体には、型引数0個と1個のものが存在します。
 
-<pre class="source" title="型引数0個と1個のValueTuple">
-<code><span class="comment">// メンバー0個、1個のものは、構造体はあるけど、タプル構文は使えない</span>
-<span class="reserved">var</span> noneple = <span class="reserved">new</span> <span class="type">ValueTuple</span>();
-<span class="reserved">var</span> oneple = <span class="reserved">new</span> <span class="type">ValueTuple</span>&lt;<span class="reserved">int</span>&gt;(1);
+```csharp
+// メンバー0個、1個のものは、構造体はあるけど、タプル構文は使えない
+var noneple = new ValueTuple();
+var oneple = new ValueTuple<int>(1);
 
-<span class="comment">// メンバー2個以上はタプル構文を使える</span>
-<span class="reserved">var</span> twople = (1, 2); <span class="comment">// new ValueTuple&lt;int, int&gt;(1, 2);</span>
-<span class="reserved">var</span> threeple = (1, 2, 3); <span class="comment">// new ValueTuple&lt;int, int, int&gt;(1, 2, 3);</span>
-</code></pre>
+// メンバー2個以上はタプル構文を使える
+var twople = (1, 2); // new ValueTuple<int, int>(1, 2);
+var threeple = (1, 2, 3); // new ValueTuple<int, int, int>(1, 2, 3);
+```
 
 型引数0個の`ValueTuple`(0-tuple)は、いわゆる[Unit型](../structured/st_function.md#unit)です。
 `void`の代わりにこの型を使うことで、戻り値がある場合とない場合のコードを統一的に書けてうれしい場合があります。
@@ -738,21 +738,21 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 
 例えば、以下の2つのコードはどちらの方が統一性があっていいかという話になります。
 
-<pre class="source" title="タプルでは0、1は書けない">
-<code><span class="comment">// タプルでは0、1は書けない</span>
-<span class="reserved">async</span> <span class="type">Task</span> F0() { }
-<span class="reserved">async</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; F1() =&gt; 1;
-<span class="reserved">async</span> <span class="type">Task</span>&lt;(<span class="reserved">int</span> x1, <span class="reserved">int</span> x2)&gt; F2() =&gt; (1, 2);
-<span class="reserved">async</span> <span class="type">Task</span>&lt;(<span class="reserved">int</span> x1, <span class="reserved">int</span> x2, <span class="reserved">int</span> x3)&gt; F3() =&gt; (1, 2, 3);
-</code></pre>
+```csharp
+// タプルでは0、1は書けない
+async Task F0() { }
+async Task<int> F1() => 1;
+async Task<(int x1, int x2)> F2() => (1, 2);
+async Task<(int x1, int x2, int x3)> F3() => (1, 2, 3);
+```
 
-<pre class="source" title="こう書けると統一性があってきれい">
-<code><span class="comment">// こう書けると統一性があってきれい(C# 7では書けない)</span>
-<span class="reserved">async</span> <span class="type">Task</span>&lt;()&gt; F0() { }
-<span class="reserved">async</span> <span class="type">Task</span>&lt;(<span class="reserved">int</span> x1)&gt; F1() =&gt; (1);
-<span class="reserved">async</span> <span class="type">Task</span>&lt;(<span class="reserved">int</span> x1, <span class="reserved">int</span> x2)&gt; F2() =&gt; (1, 2);
-<span class="reserved">async</span> <span class="type">Task</span>&lt;(<span class="reserved">int</span> x1, <span class="reserved">int</span> x2, <span class="reserved">int</span> x3)&gt; F3() =&gt; (1, 2, 3);
-</code></pre>
+```csharp
+// こう書けると統一性があってきれい(C# 7では書けない)
+async Task<()> F0() { }
+async Task<(int x1)> F1() => (1);
+async Task<(int x1, int x2)> F2() => (1, 2);
+async Task<(int x1, int x2, int x3)> F3() => (1, 2, 3);
+```
 
 特に、ソースコード生成などでまとめて、個数違いのメソッドを生成したい場合などには、0-tupleや1-tupleがほしくなります。
 0個と1個の時だけ特別扱いが必要になるかどうかという問題です。
@@ -813,26 +813,26 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 
 比較のために簡単な例を挙げてみましょう。まず、C# 6以前の出力引数を使ったものです。
 
-<pre class="source" title="出力引数(C# 6)版">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="type">Point</span> p)
+```csharp
+static void F(Point p)
 {
-    <span class="comment">// 事前に変数を用意しないといけない/var 不可</span>
-    <span class="reserved">int</span> x, y;
-    <span class="comment">// 1個1個 out を付けないといけない</span>
-    Deconstruct(p, <span class="reserved">out</span> x, <span class="reserved">out</span> y);
-    <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x}<span class="string">, </span>{y}<span class="string">"</span>);
+    // 事前に変数を用意しないといけない/var 不可
+    int x, y;
+    // 1個1個 out を付けないといけない
+    Deconstruct(p, out x, out y);
+    Console.WriteLine($"{x}, {y}");
 
-    <span class="comment">//非同期メソッドには使えない</span>
+    //非同期メソッドには使えない
 }
 
-<span class="comment">// 1個1個 out を付けないといけない</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Deconstruct(<span class="type">Point</span> p, <span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">int</span> y)
+// 1個1個 out を付けないといけない
+static void Deconstruct(Point p, out int x, out int y)
 {
-    <span class="comment">// 1個1個代入</span>
+    // 1個1個代入
     x = p.X;
     y = p.Y;
 }
-</code></pre>
+```
 
 1個1個`out`修飾子を付けて回るのは結構な煩雑さです。
 呼び出す前に別途変数宣言が必要なのも面倒です。
@@ -841,45 +841,45 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 
 ちなみに、煩雑さはC# 7で多少マシになりました。[出力変数宣言](../resource/sp_ref.md#out-var)という構文が追加されて、以下のように書けます。
 
-<pre class="source" title="出力引数(C# 7)版">
-<code><span class="reserved">static</span> <span class="reserved">void</span> F(<span class="type">Point</span> p)
+```csharp
+static void F(Point p)
 {
-    <span class="comment">// 変数の事前準備は不要に</span>
-    <span class="comment">// でも1個1個 out を付けないといけない</span>
-    Deconstruct(p, <em><span class="reserved">out</span> <span class="reserved">var</span> x, <span class="reserved">out</span> <span class="reserved">var</span> y</em>);
-    <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x}<span class="string">, </span>{y}<span class="string">"</span>);
+    // 変数の事前準備は不要に
+    // でも1個1個 out を付けないといけない
+    Deconstruct(p, out var x, out var y);
+    Console.WriteLine($"{x}, {y}");
 
-    <span class="comment">//非同期メソッドには相変わらず使えない</span>
+    //非同期メソッドには相変わらず使えない
 }
 
-<span class="comment">// 1個1個 out を付けないといけない</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Deconstruct(<span class="type">Point</span> p, <span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">int</span> y) =&gt; (x, y) = (p.X, p.Y);
-</code></pre>
+// 1個1個 out を付けないといけない
+static void Deconstruct(Point p, out int x, out int y) => (x, y) = (p.X, p.Y);
+```
 
 でも、相変わらず長くなりがちです。
 また、非同期メソッドで使えない点は変わりません。
 
 タプルを使えばこの問題は解決です。
 
-<pre class="source" title="タプル版">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> F(<span class="type">Point</span> p)
+```csharp
+static async Task F(Point p)
 {
-    <span class="comment">// 1個の var で受け取れる</span>
-    <span class="reserved">var</span> t1 = Deconstruct(p);
-    <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{t1.x}<span class="string">, </span>{t1.y}<span class="string">"</span>);
+    // 1個の var で受け取れる
+    var t1 = Deconstruct(p);
+    Console.WriteLine($"{t1.x}, {t1.y}");
 
-    <span class="comment">// 何なら分解と併せればもっと書き心地よく書ける</span>
-    <span class="reserved">var</span> (x, y) = Deconstruct(p);
-    <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x}<span class="string">, </span>{y}<span class="string">"</span>);
+    // 何なら分解と併せればもっと書き心地よく書ける
+    var (x, y) = Deconstruct(p);
+    Console.WriteLine($"{x}, {y}");
 
-    <span class="comment">// 非同期メソッドで使えるのはタプルだけ</span>
-    <span class="reserved">var</span> t2 = <span class="reserved">await</span> DeconstructAsync(p);
-    <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{t2.x}<span class="string">, </span>{t2.y}<span class="string">"</span>);
+    // 非同期メソッドで使えるのはタプルだけ
+    var t2 = await DeconstructAsync(p);
+    Console.WriteLine($"{t2.x}, {t2.y}");
 }
 
-<span class="reserved">static</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) Deconstruct(<span class="type">Point</span> p) =&gt; (p.X, p.Y); <span class="comment">// 1個の式で書けて楽</span>
-<span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span>&lt;(<span class="reserved">int</span> x, <span class="reserved">int</span> y)&gt; DeconstructAsync(<span class="type">Point</span> p) =&gt; (p.X, p.Y);
-</code></pre>
+static (int x, int y) Deconstruct(Point p) => (p.X, p.Y); // 1個の式で書けて楽
+static async Task<(int x, int y)> DeconstructAsync(Point p) => (p.X, p.Y);
+```
 
 一方で、出力引数を使いたくなる場面も残っています。
 
@@ -888,50 +888,50 @@ C# 7のリリースに合わせて、`ValueTuple`構造体は標準ライブラ�
 
 `if`内で使いたい場合は、例えば以下のようなコードになります。
 
-<pre class="source" title="if 内で使うなら bool 1個の戻り値の方が使いやすい">
-<code><span class="reserved">static</span> <span class="reserved">void</span> TryPattern()
+```csharp
+static void TryPattern()
 {
-    <span class="reserved">var</span> s = <span class="type">Console</span>.ReadLine();
-    <span class="reserved">if</span> (<span class="reserved">int</span>.TryParse(s, <span class="reserved">out</span> <span class="reserved">var</span> x)) <span class="type">Console</span>.WriteLine(x);
+    var s = Console.ReadLine();
+    if (int.TryParse(s, out var x)) Console.WriteLine(x);
 }
-</code></pre>
+```
 
 これはさすがにタプルを使う方が煩雑です。
 
-<pre class="source" title="if 内で使うならタプルの方が煩雑">
-<code><span class="reserved">static</span> <span class="reserved">void</span> TuplePattern()
+```csharp
+static void TuplePattern()
 {
-    <span class="reserved">var</span> s = <span class="type">Console</span>.ReadLine();
-    <span class="reserved">var</span> (success, x) = Parse(s);
-    <span class="reserved">if</span> (success) <span class="type">Console</span>.WriteLine(x);
+    var s = Console.ReadLine();
+    var (success, x) = Parse(s);
+    if (success) Console.WriteLine(x);
 }
 
-<span class="reserved">static</span> (<span class="reserved">bool</span> success, <span class="reserved">int</span> value) Parse(<span class="reserved">string</span> s) =&gt; <span class="reserved">int</span>.TryParse(s, <span class="reserved">out</span> <span class="reserved">var</span> x) ? (<span class="reserved">true</span>, x) : (<span class="reserved">false</span>, 0);
-</code></pre>
+static (bool success, int value) Parse(string s) => int.TryParse(s, out var x) ? (true, x) : (false, 0);
+```
 
 もっとも、C# 7では、以下のような `is` 演算子を使った`null`チェックで同様のことをすると言う手もあります。
 この書き方を型スイッチと呼びます(説明ページ準備中。でき次第リンク)。
 
-<pre class="source" title="C# 7の is を使って、int? の null チェック">
-<code><span class="reserved">static</span> <span class="reserved">void</span> NullCheckPattern()
+```csharp
+static void NullCheckPattern()
 {
-    <span class="reserved">var</span> s = <span class="type">Console</span>.ReadLine();
-    <span class="reserved">if</span> (ParseOrDefault(s) <em><span class="reserved">is</span> <span class="reserved">int</span> x</em>) <span class="type">Console</span>.WriteLine(x);
+    var s = Console.ReadLine();
+    if (ParseOrDefault(s) is int x) Console.WriteLine(x);
 }
 
-<span class="reserved">static</span> <span class="reserved">int</span>? ParseOrDefault(<span class="reserved">string</span> s) =&gt; <span class="reserved">int</span>.TryParse(s, <span class="reserved">out</span> <span class="reserved">var</span> x) ? x : <span class="reserved">default</span>(<span class="reserved">int</span>?);
-</code></pre>
+static int? ParseOrDefault(string s) => int.TryParse(s, out var x) ? x : default(int?);
+```
 
 もう1つ、[オーバーロード](../structured/st_function.md#overload)ですが、C#では(というか.NETでは)、引数でのオーバーロードはできますが、戻り値でのオーバーロードはできません。
 そこで、以下のように、オーバーロードに関しては出力引数の方が有利になります。
 
-<pre class="source" title="オーバーロードの可否">
-<code><span class="comment">// これはオーバーロード可能</span>
-<span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">int</span> y) =&gt; (x, y) = (1, 2);
-<span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">out</span> <span class="reserved">int</span> id, <span class="reserved">out</span> <span class="reserved">string</span> name) =&gt; (id, name) = (1, <span class="string">"abc"</span>);
+```csharp
+// これはオーバーロード可能
+static void F(out int x, out int y) => (x, y) = (1, 2);
+static void F(out int id, out string name) => (id, name) = (1, "abc");
 
-<span class="comment">// 戻り値でのオーバーロードはできない</span>
-<span class="comment">// コンパイル エラーに</span>
-<span class="reserved">static</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) F() =&gt; (1, 2);
-<span class="reserved">static</span> (<span class="reserved">int</span> id, <span class="reserved">string</span> name) F() =&gt; (1, <span class="string">"abc"</span>);
-</code></pre>
+// 戻り値でのオーバーロードはできない
+// コンパイル エラーに
+static (int x, int y) F() => (1, 2);
+static (int id, string name) F() => (1, "abc");
+```

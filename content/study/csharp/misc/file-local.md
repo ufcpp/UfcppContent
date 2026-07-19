@@ -21,23 +21,23 @@ C# 11 で、`file` という修飾子を使って「書いたファイル内か�
 
 例えば、あるファイルに以下のようなコードを書いたとします。
 
-<pre class="source" title="file 修飾付きの型を使う例">
-<span class="number">1</span><span class="operator">.</span><span class="method">M</span>();
+```csharp
+1.M();
 
-<em><span class="reserved">file</span></em> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Extensions</span></span>
+file static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=></span> <span class="type"><span class="static">Console</span><span class="operator">.<span class="method"><span class="static">WriteLine</span></span>(<span class="variable local">x</span>);
+    public static void M(this int x) => Console.WriteLine(x);
 }
-</pre>
+```
 
 これと同じプロジェクト内の別のファイルに以下のようなコードを書いてもエラーにはなりません。
 
-<pre class="source" title="別のファイルに同名の file 修飾付きの型を定義">
-<em><span class="reserved">file</span></em> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Extensions</span></span>
+```csharp
+file static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=></span> <span class="type"><span class="static">Console</span><span class="operator">.<span class="method"><span class="static">WriteLine</span></span>(<span class="string">"別ファイルの file-local Extensions"</span>);
+    public static void M(this int x) => Console.WriteLine("別ファイルの file-local Extensions");
 }
-</pre>
+```
 
 通常、global な場所(どの名前空間にも属さない場所)に、`Extensions` なんていうよくありそうな名前のクラスを作るとすぐに名前が衝突しますが、
 `file` が付いていることによって、全くの同名の型があってもコンパイルできるようになります。
@@ -51,61 +51,61 @@ C# 11 で、`file` という修飾子を使って「書いたファイル内か�
 `Disposable.FromAction` 越しに `IDisposable` でインスタンスを返し、
 実装クラスである `ActionDisposable` は直接は使わせないというようなことがしたいことがあります。
 
-<pre class="source" title="実装クラスを隠す例">
-<span class="comment">// file 修飾子を付けると、このファイル内からしかアクセスできない。</span>
-<span class="reserved">file</span> <span class="reserved">class</span> <span class="type">ActionDisposable</span> : <span class="type">IDisposable</span>
+```csharp
+// file 修飾子を付けると、このファイル内からしかアクセスできない。
+file class ActionDisposable : IDisposable
 {
-    <span class="reserved">private</span> <span class="type">Action</span> <span class="field">_disposer</span>;
-    <span class="reserved">public</span> <span class="type">ActionDisposable</span>(<span class="type">Action</span> <span class="variable local">disposer</span>) <span class="operator">=></span> <span class="field">_disposer</span> <span class="operator">=</span> <span class="variable local">disposer</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() <span class="operator">=></span> <span class="field">_disposer</span>();
+    private Action _disposer;
+    public ActionDisposable(Action disposer) => _disposer = disposer;
+    public void Dispose() => _disposer();
 }
 
-<span class="comment">// public クラスの、</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Disposable</span></span>
+// public クラスの、
+public static class Disposable
 {
-    <span class="comment">// public メソッドで、</span>
-    <span class="comment">// 戻り値は public interface なので大丈夫。</span>
-    <span class="comment">// 内部でだけ file-local な型を使う。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IDisposable</span> <span class="method"><span class="static">FromAction</span></span>(<span class="type">Action</span> <span class="variable local">disposer</span>) <span class="operator">=></span> <span class="reserved">new</span> <span class="type">ActionDisposable</span>(<span class="variable local">disposer</span>);
+    // public メソッドで、
+    // 戻り値は public interface なので大丈夫。
+    // 内部でだけ file-local な型を使う。
+    public static IDisposable FromAction(Action disposer) => new ActionDisposable(disposer);
 }
-</pre>
+```
 
 こういう「隠す」用途であれば、
 これまでも、`internal` や `private` でもある程度代用できました。
 
 `private` の例:
 
-<pre class="source" title="private で実装を隠す例">
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">Disposable</span></span>
+```csharp
+public static class Disposable
 {
-    <span class="comment">// private にしておけば Disposable クラスの外からは触れない。</span>
-    <span class="reserved">private</span> <span class="reserved">class</span> <span class="type">ActionDisposable</span> : <span class="type">IDisposable</span>
+    // private にしておけば Disposable クラスの外からは触れない。
+    private class ActionDisposable : IDisposable
     {
-        <span class="reserved">private</span> <span class="type">Action</span> <span class="field">_disposer</span>;
-        <span class="reserved">public</span> <span class="type">ActionDisposable</span>(<span class="type">Action</span> <span class="variable local">disposer</span>) <span class="operator">=></span> <span class="field">_disposer</span> <span class="operator">=</span> <span class="variable local">disposer</span>;
-        <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() <span class="operator">=></span> <span class="field">_disposer</span>();
+        private Action _disposer;
+        public ActionDisposable(Action disposer) => _disposer = disposer;
+        public void Dispose() => _disposer();
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IDisposable</span> <span class="method"><span class="static">FromAction</span></span>(<span class="type">Action</span> <span class="variable local">disposer</span>) <span class="operator">=></span> <span class="reserved">new</span> <span class="type">ActionDisposable</span>(<span class="variable local">disposer</span>);
+    public static IDisposable FromAction(Action disposer) => new ActionDisposable(disposer);
 }
-</pre>
+```
 
 `internal` の例:
 
-<pre class="source" title="internal で実装を隠す例">
-<span class="comment">// internal にしておけば別プロジェクトからは触れない。</span>
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">ActionDisposable</span> : <span class="type">IDisposable</span>
+```csharp
+// internal にしておけば別プロジェクトからは触れない。
+internal class ActionDisposable : IDisposable
 {
-    <span class="reserved">private</span> <span class="type">Action</span> <span class="field">_disposer</span>;
-    <span class="reserved">public</span> <span class="type">ActionDisposable</span>(<span class="type">Action</span> <span class="variable local">disposer</span>) <span class="operator">=></span> <span class="field">_disposer</span> <span class="operator">=</span> <span class="variable local">disposer</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() <span class="operator">=></span> <span class="field">_disposer</span>();
+    private Action _disposer;
+    public ActionDisposable(Action disposer) => _disposer = disposer;
+    public void Dispose() => _disposer();
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">Disposable</span></span>
+public static class Disposable
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IDisposable</span> <span class="method"><span class="static">FromAction</span></span>(<span class="type">Action</span> <span class="variable local">disposer</span>) <span class="operator">=></span> <span class="reserved">new</span> <span class="type">ActionDisposable</span>(<span class="variable local">disposer</span>);
+    public static IDisposable FromAction(Action disposer) => new ActionDisposable(disposer);
 }
-</pre>
+```
 
 多くの場合はこれらで十分ですし、
 C# 10 以前ではこれでしのいできました。
@@ -125,89 +125,90 @@ C# 10 以前ではこれでしのいできました。
 実際これは、.NET 6 で追加された `Regex` の Source Generator 対応(`GeneratedRegex`)から出て来た要望で、
 `GeneratedRegex` は .NET 7 で早速この `file` 修飾子を使ったコード生成をするようになりました。
 
-<pre class="source" title="GeneratedRegex の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>RegularExpressions;
+```csharp
+using System.Text.RegularExpressions;
 
-<span class="reserved">namespace</span> FileLocal;
+namespace FileLocal;
 
-<span class="reserved">internal</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">R</span>
+internal partial class R
 {
-    <span class="comment">// file 修飾子、Source Generator で使う需要が高い。</span>
-    <span class="comment">// 例えば、GeneratedRegex は早速(.NET 7 から)使ってる。</span>
-    [<span class="type">GeneratedRegex</span>(<span class="string">@"\d+"</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="type">Regex</span> <span class="method"><span class="static">M</span></span>();
+    // file 修飾子、Source Generator で使う需要が高い。
+    // 例えば、GeneratedRegex は早速(.NET 7 から)使ってる。
+    [GeneratedRegex(@"\d+")]
+    public static partial Regex M();
 
-    <span class="comment">// ↑このメソッドから、</span>
-    <span class="comment">// file sealed class M_0 : Regex { } みたいなクラスが作られてる。</span>
+    // ↑このメソッドから、
+    // file sealed class M_0 : Regex { } みたいなクラスが作られてる。
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-2"></a> <a id="applicable">適用範囲</a>
 
 `file` 修飾子は型にのみ適用できます。
 以下のように、フィールドやメソッドなどに使おうとするとコンパイル エラーになります。
 
-<pre class="source" title="file は型のみ">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">file</span> <span class="reserved">int</span> <span class="field"><span class="error" title="CS0106">_x</span></span>;
+    file int _x;
 
-    <span class="reserved">file</span> <span class="reserved">int</span> <span class="method"><span class="error" title="CS0106">M</span></span>() <span class="operator">=></span> <span class="field">_x</span>;
+    file int M() => _x;
 }
-</pre>
+```
 
 一方、型であれば何でもよくて、インターフェイス、列挙型、デリゲートなどにも使えます。
 以下のコードはいずれも問題なくコンパイルできます。
 
-<pre class="source" title="型なら何でも file を付けれる">
-<span class="reserved">file</span> <span class="reserved">interface</span> <span class="type">IA</span> { }
-<span class="reserved">file</span> <span class="reserved">enum</span> <span class="type">E</span> { }
-<span class="reserved">file</span> <span class="reserved">delegate</span> <span class="reserved">void</span> <span class="type">D</span>();
-<span class="reserved">file</span> <span class="reserved">struct</span> <span class="type struct">S</span> { }
-<span class="reserved">file</span> <span class="reserved">record</span> <span class="type">R</span>;</span>
-<span class="reserved">file</span> <span class="reserved">record</span> <span class="reserved">struct</span> <span class="type struct">RS</span>;
-</pre>
+```csharp
+file interface IA { }
+file enum E { }
+file delegate void D();
+file struct S { }
+file record R;
+file record struct RS;
+```
 
 インターフェイスであれば、file ローカルなインターフェイスを `public` な型で実装することもできます。
 これを使って、「file ローカルなメソッド」の代用にはなったりします。
 
-<pre class="source" title="file ローカルなインターフェイスを public なクラスで実装する例">
-<span class="comment">// file ローカルなインターフェイスも OK だし、</span>
-<span class="comment">// それを public な型で実装するのも OK。</span>
+```csharp
+// file ローカルなインターフェイスも OK だし、
+// それを public な型で実装するのも OK。
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">CX</span> : <span class="type">IX</span> <span class="comment">// OK</span>
+public class CX : IX // OK
 {
-    <span class="comment">// file ローカルなインターフェイス で明示的実装しておけば実質 file ローカルなメソッドになる。</span>
-    <span class="comment">// (ちなみに、別に明示的実装でなく普通に実装しても OK)。</span>
-    <span class="reserved">void</span> <span class="type">IX</span><span class="operator">.</span><span class="method">M</span>() { }
+    // file ローカルなインターフェイス で明示的実装しておけば実質 file ローカルなメソッドになる。
+    // (ちなみに、別に明示的実装でなく普通に実装しても OK)。
+    void IX.M() { }
 }
 
-<span class="reserved">file</span> <span class="reserved">interface</span> <span class="type">IX</span>
+file interface IX
 {
-    <span class="reserved">void</span> <span class="method">M</span>();
+    void M();
 }
-</pre>
+```
 
 また、`file` 修飾子は[アクセシビリティ修飾子](../oop/oo_conceal.md#level)と同時に使うことはできません。
 例えば以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="アクセシビリティとの併用不可">
-<em><span class="reserved">internal</span> <span class="reserved">file</span></em> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static"><span class="error" title="CS9052">X</span></span></span>
+```csharp
+internal file static class X
 {
 }
-</pre>
+```
 
 さらに、 `file` 修飾子は top-level (global な場所、もしくは、名前空間直下)の型にしか使えません。
 言い換えると、入れ子の型は file ローカルにできません。
 以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="入れ子の型不可">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <em><span class="reserved">file</span></em> <span class="reserved">class</span> <span class="type"><span class="error" title="CS9054">NestedFileClass</span></span>
+    file class NestedFileClass
     {
     }
-}</pre>
+}
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="implementation">内部実装</a>
 

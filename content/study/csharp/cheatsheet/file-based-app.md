@@ -35,16 +35,16 @@ C# 14 の `#!` と `#:` (無視ディレクティブ)について説明します
 改めて、 .NET 10 で C# ファイルを直接1コマンドで実行できるようになりました。
 例えば、以下の1行だけ書いたファイル `app1.cs` を用意して、
 
-<pre class="source" title="1行だけの .cs ファイル">
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;🐈&quot;</span>);
-</pre>
+```csharp
+Console.WriteLine("🐈");
+```
 
 以下のようなコマンドを打つと、この C# ファイルを単独で実行できます。
 
-<pre class="source" title="app1.cs ファイルを直接実行する">
-<span class="prompt">&gt;</span> dotnet app1.cs
+```console
+> dotnet app1.cs
 🐈
-</pre>
+```
 
 これは[スクリプト実行](apscripting.md)ではなく、通常の<sup>[※脚注](#non-scripting)</sup> C# 実行になります。
 この仕組みをファイル ベース実行(file-based execution) と言い、これを使って書かれた C# プログラムをファイル ベース アプリ(file-based app)と言ったりします。
@@ -74,21 +74,21 @@ C# コンパイラーからすると「単に無視するもの」なので、�
 C# 14 で、C# にもこの1行を入れることができるようになりました。
 例えば前節の `app1.cs` ファイルにちょっと手を加えて以下のような内容にします。
 
-<pre class="source" title="shebang 入り .cs ファイル">
-<span class="comment">#!/usr/bin/env dotnet</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;🐈&quot;</span>);
-</pre>
+```csharp
+#!/usr/bin/env dotnet
+Console.WriteLine("🐈");
+```
 
 このファイルは [bash](https://ja.wikipedia.org/wiki/Bash) などの Unix 系シェルで `./app1.cs` みたいに直接実行できるようになります。
 (実行権限が必要なので、最初に1回 `chmod +x` などの操作が必要。)
 
-<pre class="source" title="bash 上で app1.cs を直接実行する">
-<span class="prompt">$</span> ls
+```console
+$ ls
 app1.cs
-<span class="prompt">$</span> chmod +x app1.cs
-<span class="prompt">$</span> ./app1.cs
+$ chmod +x app1.cs
+$ ./app1.cs
 🐈
-</pre>
+```
 
 用途的に、`#!` はファイルの先頭にのみ書けます。
 `#!` の前には改行はもちろんのこと、空白文字や [BOM](https://ja.wikipedia.org/wiki/%E3%83%90%E3%82%A4%E3%83%88%E9%A0%86%E3%83%9E%E3%83%BC%E3%82%AF) を入れることもできません。
@@ -101,32 +101,32 @@ C# 上は単に無視されます。
 
 例えば、以下のような `.cs` ファイルをファイル ベース実行するのは、
 
-<pre class="source" title="#: を使ったファイル ベース実行の例">
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">property</span><span class="string"> InvariantGlobalization=true</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="reserved">new</span> <span class="type struct">DateTime</span>(<span class="number">2000</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>));
-</pre>
+```csharp
+#:property InvariantGlobalization=true
+Console.WriteLine(new DateTime(2000, 1, 2, 3, 4, 5));
+```
 
 以下のような2ファイルを使って既存の `.csproj` ベースの `dotnet run` をするのとほぼ同じ意味になります。
 
 `app1.csproj`:
 
-<pre class="xml" title="既存の .csproj ベース実行の例(app1.csproj)">
-&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
-    &lt;PropertyGroup&gt;
-    &lt;OutputType&gt;Exe&lt;/OutputType&gt;
-    &lt;TargetFramework&gt;net10.0&lt;/TargetFramework&gt;
-    &lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;
-    &lt;Nullable&gt;enable&lt;/Nullable&gt;
-    &lt;/PropertyGroup&gt;
-    <em>&lt;InvariantGlobalization&gt;true&lt;/InvariantGlobalization&gt;</em>
-&lt;/Project&gt;
-</pre>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <InvariantGlobalization>true</InvariantGlobalization>
+</Project>
+```
 
 `app1.cs`:
 
-<pre class="source" title="既存の .csproj ベース実行の例(app1.cs)">
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="reserved">new</span> <span class="type struct">DateTime</span>(<span class="number">2000</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>));
-</pre>
+```xml
+Console.WriteLine(new DateTime(2000, 1, 2, 3, 4, 5));
+```
 
 (ちなみに `InvariantGlobalization` を指定すると書式が北米フォーマットになるので、出力される結果は `01/02/2000 03:04:05` (MM/dd/yyyy)になります。)
 
@@ -134,17 +134,17 @@ C# 上は単に無視されます。
 例えば以下のコードでは、5行目(`LangVersion` の行)は問題なく、
 9行目(`ImplicitUsings` の行)でだけコンパイル エラーを起こします。
 
-<pre class="source" title="">
-<span class="comment">#!/usr/bin/env dotnet</span>
+```csharp
+#!/usr/bin/env dotnet
 
-<span class="comment">// コメントはあってもいい。</span>
+// コメントはあってもいい。
 
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">property</span><span class="string"> LangVersion=13</span>
+#:property LangVersion=13
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;🐈&quot;</span>);
+Console.WriteLine("🐈");
 
-<span class="preprocess">#</span><span class="preprocess"><span class="error" title="CS9297">:</span></span><span class="preprocess">property</span><span class="string"> ImplicitUsings=disable</span>
-</pre>
+#:property ImplicitUsings=disable
+```
 
 .NET 10 時点で、`dotnet` コマンドは以下のディレクティブを解釈できます。
 
@@ -163,13 +163,13 @@ C# 上は単に無視されます。
 
 例えば、以下のようなコードで ASP.NET なコードをファイル ベース実行できます。
 
-<pre class="source" title="ファイル ベース ASP.NET コード">
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">sdk</span><span class="string"> Microsoft.NET.Sdk.Web</span>
+```csharp
+#:sdk Microsoft.NET.Sdk.Web
 
-<span class="reserved">var</span> <span class="variable">app</span> <span class="operator">=</span> <span class="type">WebApplication</span><span class="operator">.</span>CreateBuilder(<span class="reserved">args</span>)<span class="operator">.</span>Build();
-<span class="variable">app</span><span class="operator">.</span>MapGet(<span class="string">&quot;/&quot;</span>, () <span class="operator">=&gt;</span> <span class="string">&quot;Hello World!&quot;</span>);
-<span class="variable">app</span><span class="operator">.</span>Run();
-</pre>
+var app = WebApplication.CreateBuilder(args).Build();
+app.MapGet("/", () => "Hello World!");
+app.Run();
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="property-directive">property ディレクティブ</a>
 
@@ -179,17 +179,17 @@ C# 上は単に無視されます。
 [無視ディレクティブの節](#ignored-directive)の冒頭の `InvariantGlobalization` の例もこれになります。
 その他、例えば [unsafe ブロック](../interop/sp_unsafe.md)はオプションを指定しないと使えない構文なわけですが、以下のように書くことでそのオプションを指定できます。
 
-<pre class="source" title="AllowUnsafeBlocks=true">
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">property</span><span class="string"> AllowUnsafeBlocks=true</span>
+```csharp
+#:property AllowUnsafeBlocks=true
 
-<span class="comment">// unsafe ブロックはオプションをつけないと使えない構文。</span>
-<span class="reserved">unsafe</span>
+// unsafe ブロックはオプションをつけないと使えない構文。
+unsafe
 {
-    <span class="reserved">int</span> <span class="variable">n</span> <span class="operator">=</span> <span class="number">1</span>;
-    <span class="reserved">int</span><span class="operator">*</span> <span class="variable">pn</span> <span class="operator">=</span> <span class="operator">&amp;</span><span class="variable">n</span>;
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">$&quot;</span>{(<span class="reserved">nint</span>)<span class="variable">pn</span>:<span class="string">x</span>}<span class="string">&quot;</span>);
+    int n = 1;
+    int* pn = &n;
+    Console.WriteLine($"{(nint)pn:x}");
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="package-directive">package ディレクティブ</a>
 
@@ -199,15 +199,15 @@ C# 上は単に無視されます。
 例として `Microsoft.CodeAnalysis.CSharp` パッケージ(C# 中から C# コンパイラー自身を呼ぶためのライブラリ)を参照したコードを書くと以下のようになります。
 (ちなみに、4.14.0 は C# 13 当時のバージョンです。)
 
-<pre class="source" title="Microsoft.CodeAnalysis.CSharp パッケージを参照する例">
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">package</span><span class="string"> Microsoft.CodeAnalysis.CSharp@4.14.0</span>
+```csharp
+#:package Microsoft.CodeAnalysis.CSharp@4.14.0
 
-<span class="reserved">using</span> Microsoft<span class="operator">.</span>CodeAnalysis<span class="operator">.</span>CSharp;
+using Microsoft.CodeAnalysis.CSharp;
 
-<span class="reserved">var</span> <span class="variable">tree</span> <span class="operator">=</span> <span class="type">CSharpSyntaxTree</span><span class="operator">.</span><span class="method"><span class="static">ParseText</span></span>(<span class="string">&quot;class Class1;&quot;</span>);
-<span class="reserved">var</span> <span class="variable">root</span> <span class="operator">=</span> <span class="control">await</span> <span class="variable">tree</span><span class="operator">.</span><span class="method">GetRootAsync</span>();
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">root</span><span class="operator">.</span><span class="method">GetFirstToken</span>()<span class="operator">.</span><span class="property">Text</span>);
-</pre>
+var tree = CSharpSyntaxTree.ParseText("class Class1;");
+var root = await tree.GetRootAsync();
+Console.WriteLine(root.GetFirstToken().Text);
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="project-directive">project ディレクティブ</a>
 
@@ -216,10 +216,10 @@ C# 上は単に無視されます。
 
 例えば以下のような書き方で、`.cs` のある場所からの相対パスで `Lib/Lib.csproj` プロジェクトを参照できます。
 
-<pre class="source" title="プロジェクトを参照する例">
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">project</span><span class="string"> Lib/Lib.csproj</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(Lib<span class="operator">.</span><span class="type">Class1</span><span class="operator">.</span><span class="property"><span class="static">Name</span></span>);
-</pre>
+```csharp
+#:project Lib/Lib.csproj
+Console.WriteLine(Lib.Class1.Name);
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="unknown-directive">未対応のディレクティブ</a>
 
@@ -227,10 +227,10 @@ C# 上は単に無視されます。
 例えば以下のようなコードを書いて `dotnet app1.cs` コマンド実行すると、
 「認識されないディレクティブ ' aaa' です。」というエラーが出ます。
 
-<pre class="source" title="わざと変な無視ディレクティブを書いた例">
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">aaa</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;🐈&quot;</span>);
-</pre>
+```csharp
+#:aaa
+Console.WriteLine("🐈");
+```
 
 ちなみにこのエラーを出すのはあくまで `dotnet` コマンドであって、
 C# コンパイラー的には「`#:` で始まるディレクティブはすべて無視」という挙動になっています。

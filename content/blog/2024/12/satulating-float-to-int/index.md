@@ -23,12 +23,12 @@ aliases: []
 
 最小再現コードは以下の通り。
 
-<pre class="source" title=".NET 8 と 9 で挙動が違うコードの例">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">.</span><span class="static"><span class="constant">MaxValue</span></span>;
-<span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> (<span class="reserved">float</span>)<span class="variable">x</span>;
-<span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> (<span class="reserved">int</span>)<span class="variable">y</span>;
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">z</span>);
-</pre>
+```csharp
+var x = int.MaxValue;
+var y = (float)x;
+var z = (int)y;
+Console.WriteLine(z);
+```
 
 `z` の値は、
 .NET 8 では `-2147483648` (`int.MinValue`) になって、
@@ -68,34 +68,34 @@ AVX512 が使えないとき向けのソフトウェア実装の挙動も改め�
 自社のコードに .NET 8 から 9 に変更したら永久ループを起こすコードがありました。
 すごく簡素化して書くと以下のようなコードがあったせい。
 
-<pre class="source" title="飽和変換の仕様変更が永久ループになる例">
-<span class="comment">// .NET 9 でだけ永久ループ…</span>
-<span class="static"><span class="method">M</span></span>((<span class="reserved">int</span>)<span class="type"><span class="static">Math</span></span><span class="operator">.</span><span class="static"><span class="method">Floor</span></span>(<span class="reserved">float</span><span class="operator">.</span><span class="constant"><span class="static">MaxValue</span></span>), (<span class="reserved">int</span>)<span class="static"><span class="type">Math</span></span><span class="operator">.</span><span class="static"><span class="method">Floor</span></span>(<span class="reserved">float</span><span class="operator">.</span><span class="static"><span class="constant">MaxValue</span></span>));
+```csharp
+// .NET 9 でだけ永久ループ…
+M((int)Math.Floor(float.MaxValue), (int)Math.Floor(float.MaxValue));
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;done.&quot;</span>);
+Console.WriteLine("done.");
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>)
+static void M(int x, int y)
 {
-    <span class="comment">// y が int.MaxValue だと、i++ がオーバーフローして永久ループになる。</span>
-    <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="variable local">x</span>; <span class="variable">i</span> <span class="operator">&lt;=</span> <span class="variable local">y</span>; <span class="variable">i</span><span class="operator">++</span>) ;
+    // y が int.MaxValue だと、i++ がオーバーフローして永久ループになる。
+    for (int i = x; i <= y; i++) ;
 }
-</pre>
+```
 
 .NET 8 では、`M` の引数に渡る値は `int.MinValue` でした。
 それが、.NET 9 になると `int.MaxValue` に変わります。
 
 で、以下のコードは「`for` の中を1回だけ実行」になりますが、
 
-<pre class="source" title="&lt;= MinVavlue">
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">.</span><span class="static"><span class="constant">MinValue</span></span>; <span class="variable">i</span> <span class="operator">&lt;=</span> <span class="reserved">int</span><span class="operator">.</span><span class="constant"><span class="static">MinValue</span></span>; <span class="variable">i</span><span class="operator">++</span>) ;
-</pre>
+```csharp
+for (int i = int.MinValue; i <= int.MinValue; i++) ;
+```
 
 以下のコードは永久ループです。
 
-<pre class="source" title="&lt;= MaxVavlue">
-<span class="comment">// i++ がオーバーフローするので i &lt;= int.MaxValue が false になることはない。</span>
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">.</span><span class="static"><span class="constant">MaxValue</span></span>; <span class="variable">i</span> <span class="operator">&lt;=</span> <span class="reserved">int</span><span class="operator">.</span><span class="constant"><span class="static">MaxValue</span></span>; <span class="variable">i</span><span class="operator">++</span>) ;
-</pre>
+```csharp
+// i++ がオーバーフローするので i <= int.MaxValue が false になることはない。
+for (int i = int.MaxValue; i <= int.MaxValue; i++) ;
+```
 
 背景としては以下のような感じ。
 

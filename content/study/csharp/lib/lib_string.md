@@ -24,49 +24,49 @@ C# の組込み型 string の実体は System.String クラスです。
 System.String クラスには以下のようなメソッドが標準で用意されています。
 （以下の例に挙げるもの以外にも、いくつかのメソッドがあります。）
 
-<pre class="source" title="System.String のメンバー" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> TestString
+class TestString
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">string</span> s = <span class="literal">"This Is a Program Which Allows You to Play It"</span>;
+    string s = "This Is a Program Which Allows You to Play It";
 
-    <span class="comment">// ToUpper … アルファベットを大文字に変換</span>
-    Console.Write(s.ToUpper() + <span class="literal">"\n"</span>);
+    // ToUpper … アルファベットを大文字に変換
+    Console.Write(s.ToUpper() + "\n");
 
-    <span class="comment">// ToLower … アルファベットを小文字に変換</span>
-    Console.Write(s.ToLower() + <span class="literal">"\n"</span>);
+    // ToLower … アルファベットを小文字に変換
+    Console.Write(s.ToLower() + "\n");
 
-    <span class="comment">// Replace … 文字列の置換</span>
-    Console.Write(s.Replace(<span class="literal">"Play"</span>, <span class="literal">"View"</span>) + <span class="literal">"\n"</span>);
+    // Replace … 文字列の置換
+    Console.Write(s.Replace("Play", "View") + "\n");
 
-    <span class="comment">// Split … 文字列を分割</span>
-    <span class="reserved">int</span> i = 0;
-    <span class="reserved">foreach</span>(<span class="reserved">string</span> word <span class="reserved">in</span> s.Split(' '))
+    // Split … 文字列を分割
+    int i = 0;
+    foreach(string word in s.Split(' '))
     {
-      <span class="reserved">if</span>((i % 2) == 0)
+      if((i % 2) == 0)
       {
-        <span class="comment">// PadLeft … 左寄せで10文字分の幅にする。</span>
-        Console.Write(<span class="literal">"/{0}/\n"</span>, word.PadLeft(10));
+        // PadLeft … 左寄せで10文字分の幅にする。
+        Console.Write("/{0}/\n", word.PadLeft(10));
       }
-      <span class="reserved">else</span>
+      else
       {
-        <span class="comment">// PadRight … 右寄せで10文字分の幅にする。</span>
-        Console.Write(<span class="literal">"/{0}/\n"</span>, word.PadRight(10));
+        // PadRight … 右寄せで10文字分の幅にする。
+        Console.Write("/{0}/\n", word.PadRight(10));
       }
       ++i;
     }
 
-    <span class="comment">// IndexOf … 文字列の検索</span>
-    Console.Write(<span class="literal">"\"Program\" is found at {0}\n"</span>, s.IndexOf(<span class="literal">"Program"</span>));
+    // IndexOf … 文字列の検索
+    Console.Write("\"Program\" is found at {0}\n", s.IndexOf("Program"));
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="System.String のメンバー">
+```console
 THIS IS A PROGRAM WHICH ALLOWS YOU TO PLAY IT
 this is a program which allows you to play it
 This Is a Program Which Allows You to View It
@@ -81,7 +81,7 @@ This Is a Program Which Allows You to View It
 /      Play/
 /It        /
 "Program" is found at 10
-</pre>
+```
 
 
 
@@ -92,56 +92,56 @@ String.Fomat メソッドや、Console.Write メソッドは、
 
 詳細説明に別ページを儲けました: 「[文字列の書式設定](../../dotnet/bcl/bcl_format.md)」
 
-<pre class="source" title="書式指定出力" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> TestConsoleWrite
+class TestConsoleWrite
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
   Console.Write(
-<span class="literal">@"
+@"
 通常     {0:d}
 通貨     {0:c}
 , 区切り {0:n}
 16進数   {0:x}
-"</span>, 19980);
+", 19980);
   Console.Write(
-<span class="literal">@"
+@"
 通常 {0:d}
 4桁  {0:d4}
 8桁  {0:d8}
-"</span>, 196);
+", 196);
   Console.Write(
-<span class="literal">@"
+@"
 通常       {0:g}
 固定桁     {0:f}
 指数表記   {0:e}
 パーセント {0:p}
-"</span>, 0.012345678);
+", 0.012345678);
   Console.Write(
-<span class="literal">@"
+@"
 標準 {0:f}
 4桁  {0:f4}
 6桁  {0:f6}
-"</span>, 365.242199);
+", 365.242199);
   Console.Write(
-<span class="literal">@"
+@"
 桁数明示 {0:000.000}
-"</span>, 3.14);
+", 3.14);
   Console.Write(
-<span class="literal">@"
+@"
 通常     {0}
 千単位   {0:#,} 千
 百万単位 {0:#,,}    百万
 電話番号 {0:(000) 000-0000}
-"</span>, 123456789);
+", 123456789);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="書式指定出力">
+```console
 通常     19980
 通貨     \19,980
 , 区切り 19,980.00
@@ -166,7 +166,7 @@ String.Fomat メソッドや、Console.Write メソッドは、
 千単位   121378 千
 百万単位 121    百万
 電話番号 (012) 137-8376
-</pre>
+```
 
 
 
@@ -179,54 +179,54 @@ System.Text.RegularExpressions.Regex クラスにより、
 
 Regex クラスの正規表現は、Perl や Awk などの有名な実装との互換性を意識して設計されています。
 
-<pre class="source" title="Regex クラス" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Text.RegularExpressions;
+```csharp
+using System;
+using System.Text.RegularExpressions;
 
-<span class="reserved">class</span> TestRexex
+class TestRexex
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">string</span> s =
-<span class="literal">@"
+    string s =
+@"
 This is a test program.
 you can download it from the following page.
 http://www.xxx.yyy/bin/test.exe
 If you have any questions about this,
 please contact us by sending e-mail to the following address.
 support@xxx.yyy
-"</span>;
+";
 
-    <span class="comment">// メールアドレス抽出</span>
-    Regex email = <span class="reserved">new</span> Regex(<span class="literal">@"\w*@[\w\.]*"</span>);
-    Console.Write(<span class="literal">"{0}\n"</span>, email.Match(s).Value);
+    // メールアドレス抽出
+    Regex email = new Regex(@"\w*@[\w\.]*");
+    Console.Write("{0}\n", email.Match(s).Value);
 
-    <span class="comment">// URL 抽出</span>
-    Regex http = <span class="reserved">new</span> Regex(<span class="literal">@"http://(?&lt;domain&gt;[\w\.]*)/(?&lt;path&gt;[\w\./]*)"</span>);
+    // URL 抽出
+    Regex http = new Regex(@"http://(?<domain>[\w\.]*)/(?<path>[\w\./]*)");
     Match m = http.Match(s);
-    Console.Write(<span class="literal">"{0}\n"</span>, m.Value);
-    Console.Write(<span class="literal">"domain: {0}\npath  : {1}\n"</span>,
-      m.Groups[<span class="literal">"domain"</span>].Value,
-      m.Groups[<span class="literal">"path"</span>].Value);
+    Console.Write("{0}\n", m.Value);
+    Console.Write("domain: {0}\npath  : {1}\n",
+      m.Groups["domain"].Value,
+      m.Groups["path"].Value);
 
-    <span class="comment">// t の付く単語全部抜き出し</span>
-    Regex wordIncludingT = <span class="reserved">new</span> Regex(<span class="literal">@"\w*[tT]\w*"</span>);
-    <span class="reserved">for</span>(m = wordIncludingT.Match(s); m.Success; m = m.NextMatch())
-      Console.Write(<span class="literal">"{0}\t"</span>, m.Value);
-    Console.Write(<span class="literal">"\n"</span>);
+    // t の付く単語全部抜き出し
+    Regex wordIncludingT = new Regex(@"\w*[tT]\w*");
+    for(m = wordIncludingT.Match(s); m.Success; m = m.NextMatch())
+      Console.Write("{0}\t", m.Value);
+    Console.Write("\n");
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="Regex クラス">
+```console
 support@xxx.yyy
 http://www.xxx.yyy/bin/test.exe
 domain: www.xxx.yyy
 path  : bin/test.exe
 This    test    it      the     http    test    questions       about   this
 contact to      the     support
-</pre>
+```
 
 
 
@@ -235,140 +235,140 @@ contact to      the     support
 正規表現クラス Regex を使って、
 XML の中身を HTML 中に貼り付けれる形に変換します。
 
-<pre class="source" title="XmlToText" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.IO;
-<span class="reserved">using</span> System.Text;
-<span class="reserved">using</span> System.Text.RegularExpressions;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 
-<span class="reserved">namespace</span> XmlToText
+namespace XmlToText
 {
-  <span class="reserved">class</span> Program
+  class Program
   {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-      Regex regComment = <span class="reserved">new</span> Regex(
-        <span class="literal">"\\&lt;!--(?&lt;inner&gt;.*?)--\\&gt;"</span>,
+      Regex regComment = new Regex(
+        "\\<!--(?<inner>.*?)--\\>",
         RegexOptions.Compiled
         );
-      Regex regElem = <span class="reserved">new</span> Regex(
-        <span class="literal">"\\&lt;(?&lt;inner&gt;/{0,1}[\\w:\\.]+\\s*"</span> +
-        <span class="literal">"([\\w:\\.]+\\s*=\\s*\\\"[^\\\"]+\\\"\\s*)*/{0,1})\\&gt;"</span>,
+      Regex regElem = new Regex(
+        "\\<(?<inner>/{0,1}[\\w:\\.]+\\s*" +
+        "([\\w:\\.]+\\s*=\\s*\\\"[^\\\"]+\\\"\\s*)*/{0,1})\\>",
         RegexOptions.Compiled
         );
-      Regex regName = <span class="reserved">new</span> Regex(
-        <span class="literal">"^/{0,1}(?&lt;name&gt;[\\w:\\.]+)"</span>,
+      Regex regName = new Regex(
+        "^/{0,1}(?<name>[\\w:\\.]+)",
         RegexOptions.Compiled
         );
-      Regex regAttrName = <span class="reserved">new</span> Regex(
-        <span class="literal">"(?&lt;attname&gt;[\\w:\\.]+)\\s*="</span>,
+      Regex regAttrName = new Regex(
+        "(?<attname>[\\w:\\.]+)\\s*=",
         RegexOptions.Compiled
         );
-      Regex regAttrValue = <span class="reserved">new</span> Regex(
-        <span class="literal">"(?&lt;attvalue&gt;=\\s*\\\"[^\\\"]+\\\")"</span>,
+      Regex regAttrValue = new Regex(
+        "(?<attvalue>=\\s*\\\"[^\\\"]+\\\")",
         RegexOptions.Compiled
         );
       
-      <span class="reserved">string</span> target;
+      string target;
 
-      <span class="reserved">using</span> (
-        StreamReader reader = <span class="reserved">new</span>
+      using (
+        StreamReader reader = new
           StreamReader(Console.OpenStandardInput(), Encoding.UTF8))
       {
         target = reader.ReadToEnd();
       }
 
-      <span class="reserved">string</span> result = target;
+      string result = target;
 
-      result = result.Replace(<span class="literal">"&amp;"</span>, <span class="literal">"&amp;amp;"</span>);
-      result = result.Replace(<span class="literal">"\t"</span>, <span class="literal">"  "</span>);
+      result = result.Replace("&", "&amp;");
+      result = result.Replace("\t", "  ");
 
       result = regComment.Replace(result,
-        <span class="reserved">delegate</span>(Match mc)
+        delegate(Match mc)
         {
-          <span class="reserved">return</span>
-            <span class="literal">"$$$comment$$$&amp;lt;!--"</span> +
-            mc.Groups[<span class="literal">"inner"</span>].Value.Replace(<span class="literal">"&lt;"</span>, <span class="literal">"&amp;lt;"</span>).Replace(<span class="literal">"&gt;"</span>, <span class="literal">"&amp;gt;"</span>) +
-            <span class="literal">"--&amp;gt;$$$/comment$$$"</span>;
+          return
+            "$$$comment$$$&lt;!--" +
+            mc.Groups["inner"].Value.Replace("<", "&lt;").Replace(">", "&gt;") +
+            "--&gt;$$$/comment$$$";
         });
 
       result = regElem.Replace(result,
-        <span class="reserved">delegate</span>(Match m)
+        delegate(Match m)
         {
-          <span class="reserved">string</span> q = m.Groups[<span class="literal">"inner"</span>].Value;
+          string q = m.Groups["inner"].Value;
 
           q = regName.Replace(q,
-            <span class="reserved">delegate</span>(Match m0)
+            delegate(Match m0)
             {
-              <span class="reserved">string</span> r = m0.Value;
-              <span class="reserved">string</span> name = m0.Groups[<span class="literal">"name"</span>].Value;
-              <span class="reserved">return</span> r.Replace(name, <span class="literal">"&lt;element&gt;"</span> + name + <span class="literal">"&lt;/element&gt;"</span>);
+              string r = m0.Value;
+              string name = m0.Groups["name"].Value;
+              return r.Replace(name, "<element>" + name + "</element>");
             });
 
           q = regAttrName.Replace(q,
-            <span class="reserved">delegate</span>(Match m1)
+            delegate(Match m1)
             {
-              <span class="reserved">string</span> s = m1.Value;
-              <span class="reserved">string</span> attname = m1.Groups[<span class="literal">"attname"</span>].Value;
-              <span class="reserved">return</span> s.Replace(attname, <span class="literal">"&lt;attribute&gt;"</span> + attname + <span class="literal">"&lt;/attribute&gt;"</span>);
+              string s = m1.Value;
+              string attname = m1.Groups["attname"].Value;
+              return s.Replace(attname, "<attribute>" + attname + "</attribute>");
             });
 
           q = regAttrValue.Replace(q,
-            <span class="reserved">delegate</span>(Match m2)
+            delegate(Match m2)
             {
-              <span class="reserved">string</span> t = m2.Value;
-              <span class="reserved">string</span> attvalue = m2.Groups[<span class="literal">"attvalue"</span>].Value;
-              <span class="reserved">return</span> t.Replace(attvalue, <span class="literal">"&lt;attvalue&gt;"</span> + attvalue + <span class="literal">"&lt;/attvalue&gt;"</span>);
+              string t = m2.Value;
+              string attvalue = m2.Groups["attvalue"].Value;
+              return t.Replace(attvalue, "<attvalue>" + attvalue + "</attvalue>");
             });
 
-          <span class="reserved">return</span> <span class="literal">"&lt;lt/&gt;"</span> + q + <span class="literal">"&lt;gt/&gt;"</span>;
+          return "<lt/>" + q + "<gt/>";
         });
 
-      result = result.Replace(<span class="literal">"$$$comment$$$"</span>, <span class="literal">"&lt;comment&gt;"</span>);
-      result = result.Replace(<span class="literal">"$$$/comment$$$"</span>, <span class="literal">"&lt;/comment&gt;"</span>);
+      result = result.Replace("$$$comment$$$", "<comment>");
+      result = result.Replace("$$$/comment$$$", "</comment>");
 
       Console.Write(result);
     }
   }
 }
-</code></pre>
+```
 
 
 入力 XML ファイル。
 
 
-<pre class="xsource" title="入力 XML ファイル">
-<code><span class="bracket">&lt;</span><span class="element">Page</span>
-  <span class="attribute">xmlns</span><span class="attvalue">=
-    "http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">=
-    "http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Background</span><span class="attvalue">="White"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Page
+  xmlns=
+    "http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x=
+    "http://schemas.microsoft.com/winfx/2006/xaml"
+  Background="White"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">FlowDocument</span><span class="bracket">&gt;</span>
+  <FlowDocument>
 
-  <span class="bracket">&lt;</span><span class="element">Paragraph</span>
-    <span class="attribute">FontSize</span><span class="attvalue">="32"</span>
-    <span class="attribute">Foreground</span><span class="attvalue">="Blue"</span><span class="bracket">&gt;</span>
+  <Paragraph
+    FontSize="32"
+    Foreground="Blue">
   Example
-  <span class="bracket">&lt;</span>/<span class="element">Paragraph</span><span class="bracket">&gt;</span>
+  </Paragraph>
 
-  <span class="bracket">&lt;</span><span class="element">Paragraph</span>
-    <span class="attribute">FontSize</span><span class="attvalue">="24"</span><span class="bracket">&gt;</span>
+  <Paragraph
+    FontSize="24">
   This is an example of a 
-  <span class="bracket">&lt;</span><span class="element">Span</span>
-    <span class="attribute">FontStyle</span><span class="attvalue">="Italic"</span>
-    <span class="attribute">Foreground</span><span class="attvalue">="Red"</span><span class="bracket">&gt;</span>
+  <Span
+    FontStyle="Italic"
+    Foreground="Red">
     xaml
-    <span class="bracket">&lt;</span>/<span class="element">Span</span><span class="bracket">&gt;</span>
+    </Span>
     application.
-  <span class="bracket">&lt;</span>/<span class="element">Paragraph</span><span class="bracket">&gt;</span>
+  </Paragraph>
 
-  <span class="bracket">&lt;</span>/<span class="element">FlowDocument</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Page</span><span class="bracket">&gt;</span>
-</code></pre>
+  </FlowDocument>
+</Page>
+```
 出力。
 この例では、
 &lt; 等を、
@@ -377,34 +377,34 @@ XML の中身を HTML 中に貼り付けれる形に変換します。
 （このサイトは、XML でドキュメントを記述して、XSLT で HTML 化しています。）
 
 
-<pre class="xsource" title="出力。">
-<code><span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>Page<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>xmlns<span class="bracket">&lt;</span>/<span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>=
-    "http://schemas.microsoft.com/winfx/2006/xaml/presentation"<span class="bracket">&lt;</span>/<span class="element">attvalue</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>xmlns:x<span class="bracket">&lt;</span>/<span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>=
-    "http://schemas.microsoft.com/winfx/2006/xaml"<span class="bracket">&lt;</span>/<span class="element">attvalue</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>Background<span class="bracket">&lt;</span>/<span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="White"<span class="bracket">&lt;</span>/<span class="element">attvalue</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
+```xml
+<lt/><element>Page</element>
+  <attribute>xmlns</attribute><attvalue>=
+    "http://schemas.microsoft.com/winfx/2006/xaml/presentation"</attvalue>
+  <attribute>xmlns:x</attribute><attvalue>=
+    "http://schemas.microsoft.com/winfx/2006/xaml"</attvalue>
+  <attribute>Background</attribute><attvalue>="White"</attvalue>
+  <gt/>
 
-  <span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>FlowDocument<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
+  <lt/><element>FlowDocument</element><gt/>
 
-  <span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>Paragraph<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>FontSize<span class="bracket">&lt;</span>/<span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="32"<span class="bracket">&lt;</span>/<span class="element">attvalue</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>Foreground<span class="bracket">&lt;</span>/<span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="Blue"<span class="bracket">&lt;</span>/<span class="element">attvalue</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
+  <lt/><element>Paragraph</element>
+    <attribute>FontSize</attribute><attvalue>="32"</attvalue>
+    <attribute>Foreground</attribute><attvalue>="Blue"</attvalue><gt/>
   Example
-  <span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span>/<span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>Paragraph<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
+  <lt/>/<element>Paragraph</element><gt/>
 
-  <span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>Paragraph<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>FontSize<span class="bracket">&lt;</span>/<span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="24"<span class="bracket">&lt;</span>/<span class="element">attvalue</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
+  <lt/><element>Paragraph</element>
+    <attribute>FontSize</attribute><attvalue>="24"</attvalue><gt/>
   This is an example of a 
-  <span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>Span<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>FontStyle<span class="bracket">&lt;</span>/<span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="Italic"<span class="bracket">&lt;</span>/<span class="element">attvalue</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>Foreground<span class="bracket">&lt;</span>/<span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="Red"<span class="bracket">&lt;</span>/<span class="element">attvalue</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
+  <lt/><element>Span</element>
+    <attribute>FontStyle</attribute><attvalue>="Italic"</attvalue>
+    <attribute>Foreground</attribute><attvalue>="Red"</attvalue><gt/>
   xaml
-  <span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span>/<span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>Span<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
+  <lt/>/<element>Span</element><gt/>
   application.
-  <span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span>/<span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>Paragraph<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
+  <lt/>/<element>Paragraph</element><gt/>
 
-  <span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span>/<span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>FlowDocument<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">lt</span>/<span class="bracket">&gt;</span>/<span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>Page<span class="bracket">&lt;</span>/<span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">gt</span>/<span class="bracket">&gt;</span>
-</code></pre>
+  <lt/>/<element>FlowDocument</element><gt/>
+<lt/>/<element>Page</element><gt/>
+```

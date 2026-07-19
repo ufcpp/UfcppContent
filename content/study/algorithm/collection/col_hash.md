@@ -62,11 +62,11 @@ hash という言葉は、料理のハッシュドビーフなどについてい
 
 通常、配列の [] の中には整数しか使えません。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span>[] x = <span class="reserved">new int</span>[N];
-x[0] = 0;        <span class="comment">// これは OK</span>
-x[<span class="literal">"string"</span>] = 0; <span class="comment">// これういうことは無理</span>
-</code></pre>
+```csharp
+int[] x = new int[N];
+x[0] = 0;        // これは OK
+x["string"] = 0; // これういうことは無理
+```
 
 
 ここで、
@@ -75,10 +75,10 @@ x[<span class="literal">"string"</span>] = 0; <span class="comment">// これう
 その整数値を使えば、
 任意のデータ（文字列だろうが、自分で定義した構造体だろうがなんでも）を配列に格納できたりしないでしょうか。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span>[] x = <span class="reserved">new int</span>[N];
-x[Hash(<span class="literal">"string"</span>)] = 0; <span class="comment">// ハッシュ値を使って文字列を整数化</span>
-</code></pre>
+```csharp
+int[] x = new int[N];
+x[Hash("string")] = 0; // ハッシュ値を使って文字列を整数化
+```
 
 
 ここではひとまず、ハッシュ関数（上のコード中でいう Hash）の作り方には触れずにおきます（のちほど）。
@@ -97,10 +97,10 @@ x[Hash(<span class="literal">"string"</span>)] = 0; <span class="comment">// ハ
 もう1つは、配列のサイズには制限があるので、
 実際にはハッシュ値を配列サイズで割ったあまりを使うということです。
 
-<pre class="source" title="" lang="">
-<code>List&lt;string&gt;[] x = <span class="reserved">new</span> List&lt;string&gt;[N]; <span class="comment">// とりあえず、標準ライブラリの List 使用</span>
-x[Hash(<span class="literal">"string"</span>) % N].Add(<span class="literal">"string"</span>); <span class="comment">// リスト化＆ N で剰余</span>
-</code></pre>
+```csharp
+List<string>[] x = new List<string>[N]; // とりあえず、標準ライブラリの List 使用
+x[Hash("string") % N].Add("string"); // リスト化＆ N で剰余
+```
 
 
 ハッシュ関数に偏りがなく、
@@ -142,19 +142,19 @@ x[Hash(<span class="literal">"string"</span>) % N].Add(<span class="literal">"st
 リストは、「[片方向連結リスト](col_flist.md#flist)」のような構造で十分です。
 そのため、まず、リストのノードを定義します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> Node
+```csharp
+class Node
 {
-  <span class="reserved">internal</span> T val;
-  <span class="reserved">internal</span> Node next;
+  internal T val;
+  internal Node next;
 
-  <span class="reserved">internal</span> Node(T val)
+  internal Node(T val)
   {
-    <span class="reserved">this</span>.val = val;
-    <span class="reserved">this</span>.next = <span class="reserved">null</span>;
+    this.val = val;
+    this.next = null;
   }
 }
-</code></pre>
+```
 
 
 そして、このノードの配列を用意します。
@@ -163,13 +163,13 @@ x[Hash(<span class="literal">"string"</span>) % N].Add(<span class="literal">"st
 （剰余演算の変わりにマスク演算（論理 AND 演算）にしたいので）、
 マスク用の変数も用意します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> HashTable&lt;T&gt; : IEnumerable&lt;T&gt;
+```csharp
+class HashTable<T> : IEnumerable<T>
 {
   Node[] table;
-  <span class="reserved">int</span> mask;
+  int mask;
 }
-</code></pre>
+```
 
 
 肝心のハッシュ関数に関してですが、
@@ -179,48 +179,48 @@ C# / .NET Framework では、
 
 このハッシュ関数を使って、要素の挿入は以下のように行います。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public void</span> Insert(T elem)
+```csharp
+public void Insert(T elem)
 {
-  <span class="reserved">int</span> code = elem.GetHashCode() &amp; <span class="reserved">this</span>.mask;
-  Node n = <span class="reserved">this</span>.table[code];
-  Node m = <span class="reserved">new</span> Node(elem, n);
+  int code = elem.GetHashCode() & this.mask;
+  Node n = this.table[code];
+  Node m = new Node(elem, n);
   m.next = n;
-  <span class="reserved">this</span>.table[code] = m;
+  this.table[code] = m;
 }
-</code></pre>
+```
 
 
 削除や検索は以下の通りです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public void</span> Erase(T elem)
+```csharp
+public void Erase(T elem)
 {
-  <span class="reserved">int</span> code = elem.GetHashCode() &amp; <span class="reserved">this</span>.mask;
-  Node n = <span class="reserved">this</span>.table[code];
+  int code = elem.GetHashCode() & this.mask;
+  Node n = this.table[code];
 
-  <span class="reserved">if</span> (n == <span class="reserved">null</span>) <span class="reserved">return</span>;
-  <span class="reserved">if</span> (n.next == <span class="reserved">null</span>)
-    <span class="reserved">this</span>.table[code] = <span class="reserved">null</span>;
+  if (n == null) return;
+  if (n.next == null)
+    this.table[code] = null;
 
-  <span class="reserved">while</span> (n.next != <span class="reserved">null</span> &amp;&amp; n.next.val.Equals(elem))
+  while (n.next != null && n.next.val.Equals(elem))
     n = n.next;
-  <span class="reserved">if</span>(n.next != <span class="reserved">null</span>)
+  if(n.next != null)
     n.next = n.next.next;
 }
-</code></pre>
+```
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public bool</span> Contains(T elem)
+```csharp
+public bool Contains(T elem)
 {
-  <span class="reserved">int</span> code = elem.GetHashCode() &amp; <span class="reserved">this</span>.mask;
-  Node n = <span class="reserved">this</span>.table[code];
-  <span class="reserved">while</span> (n != <span class="reserved">null</span> &amp;&amp; !n.val.Equals(elem))
+  int code = elem.GetHashCode() & this.mask;
+  Node n = this.table[code];
+  while (n != null && !n.val.Equals(elem))
     n = n.next;
-  <span class="reserved">return</span> n != <span class="reserved">null</span>;
+  return n != null;
 }
-</code></pre>
+```
 
 
 

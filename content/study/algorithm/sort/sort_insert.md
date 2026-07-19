@@ -52,17 +52,17 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/InsertSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/InsertSort.cs)
 
-<pre class="source" title="挿入ソート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 挿入ソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;</span>
-<span class="reserved">public static void</span> InsertSort&lt;T&gt;(T[] a)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+public static void InsertSort<T>(T[] a)
+  where T : IComparable<T>
 {
-  <span class="reserved">int</span> n = a.Length;
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = 1; i &lt; n; i++)
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = i; j &gt;= 1 &amp;&amp; a[j - 1].CompareTo(a[j]) &gt; 0; --j )
-      Swap(<span class="reserved">ref</span> a[j], <span class="reserved">ref</span> a[j - 1]);
+  int n = a.Length;
+  for (int i = 1; i < n; i++)
+    for (int j = i; j >= 1 && a[j - 1].CompareTo(a[j]) > 0; --j )
+      Swap(ref a[j], ref a[j - 1]);
 }
-</code></pre>
+```

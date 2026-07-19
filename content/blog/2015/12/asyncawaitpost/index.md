@@ -61,10 +61,10 @@ Microsoft内部都合的にいっても、[UWP](http://www.atmarkit.co.jp/ait/ar
 
 非同期メソッドの戻り値として使いたい型(`Task`風の型)を作りたい場合は、以下のような型を書けとのこと。
 
-<pre class="source" title="">
-<code>[TaskLike(<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">typeof</span>(FooBuilder))] <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">struct</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">Foo</span> { … }
-<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">struct</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">FooBuilder</span> { … similar to AsyncVoidMethodBuilder … }
+```csharp
+[TaskLike(typeof(FooBuilder))] struct Foo { … }
+struct FooBuilder { … similar to AsyncVoidMethodBuilder … }
 
-[TaskLike(<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">typeof</span>(FooBuilder&lt;T&gt;))] <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">struct</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">Foo</span>&lt;T&gt; { … }
-<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">struct</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">FooBuilder</span>&lt;T&gt; { … similar to AsyncTaskMethodBuilder&lt;T&gt; … }
-</code></pre>
+[TaskLike(typeof(FooBuilder<T>))] struct Foo<T> { … }
+struct FooBuilder<T> { … similar to AsyncTaskMethodBuilder<T> … }
+```

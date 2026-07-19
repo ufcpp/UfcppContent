@@ -26,37 +26,37 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
 
-<pre class="xsource" title="ソース">
-<code><span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="結果"</span> <span class="attribute">id</span><span class="attvalue">="result"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+```xml
+<section title="結果" id="result">
+  <p>
     section タグでセクションを作ります。
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="サブセクション1"</span> <span class="attribute">id</span><span class="attvalue">="sub1"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+  </p>
+  <section title="サブセクション1" id="sub1">
+    <p>
       section タグの中に section タグを入れ子にすると、
       サブセクションになります。
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">section</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="サブセクション2"</span> <span class="attribute">id</span><span class="attvalue">="sub2"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+    </p>
+  </section>
+  <section title="サブセクション2" id="sub2">
+    <p>
       サブセクション2
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+    </p>
+    <p>
       ref タグで、他のセクションを参照することが出来ます。
-      例 → <span class="bracket">&lt;</span><span class="element">ref</span> <span class="attribute">doc</span><span class="attvalue">="section"</span> <span class="attribute">id</span><span class="attvalue">="result"</span> <span class="bracket">/&gt;</span>。
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+      例 → <ref doc="section" id="result" />。
+    </p>
+    <p>
       また、link タグで、他のドキュメントへのリンクを作れます。
-      例 → <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">doc</span><span class="attvalue">="document"</span> <span class="bracket">/&gt;</span>。
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="サブサブセクション"</span> <span class="attribute">id</span><span class="attvalue">="subsub"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+      例 → <link doc="document" />。
+    </p>
+    <section title="サブサブセクション" id="subsub">
+      <p>
         さらに入れ子にすることで、サブサブセクションまで表示できます。
-      <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">section</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">section</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">section</span><span class="bracket">&gt;</span>
-</code></pre>
+      </p>
+    </section>
+  </section>
+</section>
+```
 id 属性を省略すると、ランダムな ID を割り当ててくれる機能もありますが、非推奨です。
 （[XSD](../../../../assets/media/ufcpp2000/xsd/xsd.zip) では id 属性を必須属性にしてあります。）
 

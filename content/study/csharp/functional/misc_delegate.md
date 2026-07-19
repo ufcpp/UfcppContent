@@ -35,16 +35,16 @@ aliases:
 
 例えば、与えられた条件を満たすものの和を求めるメソッドは以下のように書けます。
 
-<pre class="source" title="条件を満たしたものの和を求める" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span>[] a, <span class="type">Predicate</span>&lt;<span class="reserved">int</span>&gt; pred)
+```csharp
+static int Sum(int[] a, Predicate<int> pred)
 {
-    <span class="reserved">int</span> sum = <span class="literal">0</span>;
-    <span class="reserved">foreach</span> (<span class="reserved">int</span> x <span class="reserved">in</span> a)
-        <span class="reserved">if</span> (pred(x))
+    int sum = 0;
+    foreach (int x in a)
+        if (pred(x))
             sum += x;
-    <span class="reserved">return</span> sum;
+    return sum;
 }
-</code></pre>
+```
 
 
 pred が「外から与える条件」です。
@@ -58,11 +58,11 @@ pred が「外から与える条件」です。
 
 「条件を外から与える」っていうのは、例えば以下のようにします。
 
-<pre class="source" title="条件「5 より小さい」を与える" lang="">
-<code><span class="reserved">var</span> sum = Sum(
-    <span class="reserved">new</span>[] { <span class="literal">1</span>, <span class="literal">5</span>, <span class="literal">3</span>, <span class="literal">8</span> },
-    x =&gt; x &lt; <span class="literal">5</span>);
-</code></pre>
+```csharp
+var sum = Sum(
+    new[] { 1, 5, 3, 8 },
+    x => x < 5);
+```
 
 
 この例の場合、「5より小さい」という条件を与えたことになります。
@@ -91,45 +91,45 @@ pred が「外から与える条件」です。
 （<em>注意</em>: .NET 4 で Task クラスが導入されて以降、この例のような、BeginInvoke を使った非同期処理は書かなくなりました。
 ただし、Task クラスを使う場合も、非同期処理や、そのコールバックにはデリゲートを使います。）
 
-<pre class="source" title="非同期処理の例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Threading;
 
-<span class="reserved">public class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 非同期処理を開始。</span>
+        // 非同期処理を開始。
         BeginAsyncWork(Callback);
 
-        <span class="comment">// 同時に別の処理もする。</span>
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = <span class="literal">0</span>; i &lt; <span class="literal">7</span>; i++)
+        // 同時に別の処理もする。
+        for (int i = 0; i < 7; i++)
         {
-            <span class="comment">// 0.8秒おきにメッセージ表示。</span>
-            System.Threading.<span class="type">Thread</span>.Sleep(<span class="literal">800</span>);
-            <span class="type">Console</span>.WriteLine(<span class="literal">"メイン処理 {0}"</span>, i);
+            // 0.8秒おきにメッセージ表示。
+            System.Threading.Thread.Sleep(800);
+            Console.WriteLine("メイン処理 {0}", i);
         }
     }
-    <span class="reserved">static void</span> BeginAsyncWork(<span class="type">AsyncCallback</span> callback)
+    static void BeginAsyncWork(AsyncCallback callback)
     {
-        <span class="type">Action</span> async = AsyncWork;
-        async.BeginInvoke(callback, <span class="reserved">null</span>);
+        Action async = AsyncWork;
+        async.BeginInvoke(callback, null);
     }
-    <span class="reserved">static void</span> AsyncWork()
+    static void AsyncWork()
     {
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = <span class="literal">0</span>; i &lt; <span class="literal">5</span>; i++)
+        for (int i = 0; i < 5; i++)
         {
-            <span class="comment">// 1秒おきにメッセージ表示。</span>
-            System.Threading.<span class="type">Thread</span>.Sleep(<span class="literal">1000</span>);
-            <span class="type">Console</span>.WriteLine(<span class="literal">"非同期処理 {0}"</span>, i);
+            // 1秒おきにメッセージ表示。
+            System.Threading.Thread.Sleep(1000);
+            Console.WriteLine("非同期処理 {0}", i);
         }
     }
-    <span class="reserved">static void</span> Callback(<span class="type">IAsyncResult</span> r)
+    static void Callback(IAsyncResult r)
     {
-        <span class="type">Console</span>.WriteLine(<span class="literal">"終了！"</span>);
+        Console.WriteLine("終了！");
     }
 }
-</code></pre>
+```
 
 
 メインスレッド（Main 内の処理）では0.8秒に1回「メイン処理」の文字列を、
@@ -155,7 +155,7 @@ BeginAsyncWork で、AsyncWork の非同期実行を開始しています。
 
 ということで、出力結果は以下のような感じになります。
 
-<pre class="console" title="実行結果">
+```console
 メイン処理 0
 非同期処理 0
 メイン処理 1
@@ -169,7 +169,7 @@ BeginAsyncWork で、AsyncWork の非同期実行を開始しています。
 非同期処理 4
 終了！
 メイン処理 6
-</pre>
+```
 
 
 
@@ -182,26 +182,26 @@ BeginAsyncWork で、AsyncWork の非同期実行を開始しています。
 ものすごい大雑把に模擬的な書き方をすると、GUI アプリってのは以下のような構造で動いています。
 （メッセージループって言います。）
 
-<pre class="source" title="GUI アプリのメッセージループ" lang="">
-<code><span class="type">Message</span> msg;
-<span class="reserved">while</span> (GetMessage(<span class="reserved">out</span> msg)) <span class="comment">// OS から「マウスクリック」とかのメッセージが来てないか調べる。</span>
+```csharp
+Message msg;
+while (GetMessage(out msg)) // OS から「マウスクリック」とかのメッセージが来てないか調べる。
 {
-    ProcessMessage(msg); <span class="comment">// メッセージを処理。</span>
+    ProcessMessage(msg); // メッセージを処理。
 }
-</code></pre>
+```
 
 
 ProcessMessage の中身も模擬的に書くと、以下のような感じ。
 
-<pre class="source" title="メッセージ処理" lang="">
-<code><span class="reserved">void</span> ProcessMessage(<span class="type">Message</span> msg)
+```csharp
+void ProcessMessage(Message msg)
 {
-    <span class="reserved">if</span> (msg == マウスクリック) MouseClick();
-    <span class="reserved">else if</span> (msg == キーを押した) KeyDown();
-    <span class="reserved">else if</span> (msg == キーを離した) KeyUp();
-    <span class="input">以下略</span>
+    if (msg == マウスクリック) MouseClick();
+    else if (msg == キーを押した) KeyDown();
+    else if (msg == キーを離した) KeyUp();
+    以下略
 }
-</code></pre>
+```
 
 
 ここで出てきた MouseClick とか KeyDown とかはデリゲートです。
@@ -217,10 +217,10 @@ ProcessMessage の中身も模擬的に書くと、以下のような感じ。
 で、例えば、クリックされたときにメッセージボックスを出したいとします。
 Windows Forms を使うなら、以下のようなコードを書きます。
 
-<pre class="source" title="クリックイベントを拾ってメッセージボックスを表示" lang="">
-<code><span class="reserved">var</span> form = <span class="reserved">new</span> <span class="type">Form</span>();
-form.Click += (sender, e) =&gt; { <span class="type">MessageBox</span>.Show(<span class="literal">"Click!"</span>); };
-</code></pre>
+```csharp
+var form = new Form();
+form.Click += (sender, e) => { MessageBox.Show("Click!"); };
+```
 
 
 その結果、メッセージループ内の Click のところで MessageBox.Show が呼び出されるようになります。

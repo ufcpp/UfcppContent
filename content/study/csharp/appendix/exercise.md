@@ -37,17 +37,17 @@ Console.Write を用いて、自分の名前を画面に表示せよ。
 #### 解答例 1
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Sample
+class Sample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"岩永信之"</span>);
+    Console.Write("岩永信之");
   }
 }
-</code></pre>
+```
 
 
 
@@ -63,37 +63,37 @@ Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプ
 #### 解答例 1
 
 
-<pre class="source" title="鸚鵡返し" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Sample
+class Sample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">string</span> line = Console.ReadLine();
+    string line = Console.ReadLine();
     Console.Write(line);
   }
 }
-</code></pre>
+```
 
 
 
 #### 解答例 2
 
 
-<pre class="source" title="鸚鵡返し×2" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Sample
+class Sample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">string</span> line = Console.ReadLine();
+    string line = Console.ReadLine();
     Console.Write(line);
     Console.Write(line);
   }
 }
-</code></pre>
+```
 
 
 
@@ -109,25 +109,25 @@ Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプ
 #### 解答例 1
 
 
-<pre class="source" title="整数の四則演算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"input a: "</span>);
-    <span class="reserved">int</span> a = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"input b: "</span>);
-    <span class="reserved">int</span> b = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    Console.Write("input a: ");
+    int a = int.Parse(Console.ReadLine());
+    Console.Write("input b: ");
+    int b = int.Parse(Console.ReadLine());
 
-    Console.Write(<span class="literal">"{0} + {1} = {2}\n"</span>, a, b, a + b);
-    Console.Write(<span class="literal">"{0} - {1} = {2}\n"</span>, a, b, a - b);
-    Console.Write(<span class="literal">"{0} * {1} = {2}\n"</span>, a, b, a * b);
-    Console.Write(<span class="literal">"{0} / {1} = {2}\n"</span>, a, b, a / b);
+    Console.Write("{0} + {1} = {2}\n", a, b, a + b);
+    Console.Write("{0} - {1} = {2}\n", a, b, a - b);
+    Console.Write("{0} * {1} = {2}\n", a, b, a * b);
+    Console.Write("{0} / {1} = {2}\n", a, b, a / b);
   }
 }
-</code></pre>
+```
 
 
 
@@ -142,25 +142,25 @@ Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプ
 
 例として double 版を掲載。
 
-<pre class="source" title="実数の四則演算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"input a: "</span>);
-    <span class="reserved">double</span> a = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"input b: "</span>);
-    <span class="reserved">double</span> b = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("input a: ");
+    double a = double.Parse(Console.ReadLine());
+    Console.Write("input b: ");
+    double b = double.Parse(Console.ReadLine());
 
-    Console.Write(<span class="literal">"{0} + {1} = {2}\n"</span>, a, b, a + b);
-    Console.Write(<span class="literal">"{0} - {1} = {2}\n"</span>, a, b, a - b);
-    Console.Write(<span class="literal">"{0} * {1} = {2}\n"</span>, a, b, a * b);
-    Console.Write(<span class="literal">"{0} / {1} = {2}\n"</span>, a, b, a / b);
+    Console.Write("{0} + {1} = {2}\n", a, b, a + b);
+    Console.Write("{0} - {1} = {2}\n", a, b, a - b);
+    Console.Write("{0} * {1} = {2}\n", a, b, a * b);
+    Console.Write("{0} / {1} = {2}\n", a, b, a / b);
   }
 }
-</code></pre>
+```
 
 
 
@@ -173,26 +173,26 @@ Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプ
 #### 解答例 1
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"実部を入力してください: "</span>);
-    <span class="reserved">double</span> x = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"虚部を入力してください: "</span>);
-    <span class="reserved">double</span> y = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("実部を入力してください: ");
+    double x = double.Parse(Console.ReadLine());
+    Console.Write("虚部を入力してください: ");
+    double y = double.Parse(Console.ReadLine());
 
-    <span class="reserved">double</span> norm = x * x + y * y;
+    double norm = x * x + y * y;
 
-    Console.Write(<span class="literal">"{0} + i({1}) の逆数は {2} + i({3})\n)"</span>,
+    Console.Write("{0} + i({1}) の逆数は {2} + i({3})\n)",
       x, y,
       x / norm, -y / norm);
   }
 }
-</code></pre>
+```
 
 
 
@@ -205,23 +205,23 @@ Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプ
 #### 解答例 1
 
 
-<pre class="source" title="円の面積を求める" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">double</span> r; <span class="comment">// 半径</span>
+    double r; // 半径
 
-    Console.Write(<span class="literal">"半径を入力してください: "</span>);
-    r = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("半径を入力してください: ");
+    r = double.Parse(Console.ReadLine());
 
-    <span class="reserved">double</span> area = r * r * 3.1415926535897932;
-    Console.Write(<span class="literal">"面積 = {0}\n"</span>, area);
+    double area = r * r * 3.1415926535897932;
+    Console.Write("面積 = {0}\n", area);
   }
 }
-</code></pre>
+```
 
 
 
@@ -270,39 +270,39 @@ BMIの値が22のときに病気になる可能性が最も低く、BMIが26を�
 </blockquote>
 以下にプログラムの実行結果の例を示す。
 
-<pre class="console" title="結果の例">
-身長[cm] = <span class="input">175.5</span>
-体重[kg] = <span class="input">52.4</span>
+```console
+身長[cm] = 175.5
+体重[kg] = 52.4
 BMI = 17.0128489216808
-</pre>
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="BMI 値の計算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">double</span> height; <span class="comment">// 身長[cm]</span>
-    <span class="reserved">double</span> weight; <span class="comment">// 体重[kg]</span>
+    double height; // 身長[cm]
+    double weight; // 体重[kg]
 
-    Console.Write(<span class="literal">"身長[cm]: "</span>);
-    height = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    height *= 0.01; <span class="comment">// cm → m</span>
+    Console.Write("身長[cm]: ");
+    height = double.Parse(Console.ReadLine());
+    height *= 0.01; // cm → m
 
-    Console.Write(<span class="literal">"体重[kg]: "</span>);
-    weight = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("体重[kg]: ");
+    weight = double.Parse(Console.ReadLine());
 
-    <span class="reserved">double</span> bmi = weight / (height * height);
-    Console.Write(<span class="literal">"BMI = {0}\n"</span>, bmi);
+    double bmi = weight / (height * height);
+    Console.Write("BMI = {0}\n", bmi);
   }
 }
-</code></pre>
+```
 
 
 
@@ -318,22 +318,22 @@ BMI = 17.0128489216808
 #### 解答例 1
 
 
-<pre class="source" title="文字コードの表示" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">char</span> c;
+    char c;
 
-    Console.Write(<span class="literal">"文字を入力してください: "</span>);
+    Console.Write("文字を入力してください: ");
     c = Console.ReadLine()[0];
 
-    Console.Write(<span class="literal">"文字 {0} の文字コードは {1}\n"</span>, c, (<span class="reserved">int</span>)c);
+    Console.Write("文字 {0} の文字コードは {1}\n", c, (int)c);
   }
 }
-</code></pre>
+```
 
 
 
@@ -352,23 +352,23 @@ BMI = 17.0128489216808
 #### 解答例 1
 
 
-<pre class="source" title="整数と浮動小数点数の割り算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"input a: "</span>);
-    <span class="reserved">int</span> a = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"input b: "</span>);
-    <span class="reserved">int</span> b = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    Console.Write("input a: ");
+    int a = int.Parse(Console.ReadLine());
+    Console.Write("input b: ");
+    int b = int.Parse(Console.ReadLine());
 
-    Console.Write(<span class="literal">"整数: {0} / {1} = {2} … {3}\n"</span>, a, b, a / b, a % b);
-    Console.Write(<span class="literal">"実数: {0} / {1} = {2}\n"</span>, a, b, a / (<span class="reserved">double</span>)b);
+    Console.Write("整数: {0} / {1} = {2} … {3}\n", a, b, a / b, a % b);
+    Console.Write("実数: {0} / {1} = {2}\n", a, b, a / (double)b);
   }
 }
-</code></pre>
+```
 
 
 
@@ -383,33 +383,33 @@ double → int にキャストすると、値が整数に切り詰められま�
 #### 解答例 1
 
 
-<pre class="source" title="double → int" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// まず、正の数をいくつか確認。</span>
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 3.8, (<span class="reserved">int</span>)3.8);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 3.1, (<span class="reserved">int</span>)3.1);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 2.7, (<span class="reserved">int</span>)2.7);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 2.4, (<span class="reserved">int</span>)2.4);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 1.5, (<span class="reserved">int</span>)1.5);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, 0.5, (<span class="reserved">int</span>)0.5);
-    <span class="comment">// 負の数も。</span>
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -3.8, (<span class="reserved">int</span>)-3.8);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -3.1, (<span class="reserved">int</span>)-3.1);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -2.7, (<span class="reserved">int</span>)-2.7);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -2.4, (<span class="reserved">int</span>)-2.4);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -1.5, (<span class="reserved">int</span>)-1.5);
-    Console.Write(<span class="literal">"{0} → {1}\n"</span>, -0.5, (<span class="reserved">int</span>)-0.5);
+    // まず、正の数をいくつか確認。
+    Console.Write("{0} → {1}\n", 3.8, (int)3.8);
+    Console.Write("{0} → {1}\n", 3.1, (int)3.1);
+    Console.Write("{0} → {1}\n", 2.7, (int)2.7);
+    Console.Write("{0} → {1}\n", 2.4, (int)2.4);
+    Console.Write("{0} → {1}\n", 1.5, (int)1.5);
+    Console.Write("{0} → {1}\n", 0.5, (int)0.5);
+    // 負の数も。
+    Console.Write("{0} → {1}\n", -3.8, (int)-3.8);
+    Console.Write("{0} → {1}\n", -3.1, (int)-3.1);
+    Console.Write("{0} → {1}\n", -2.7, (int)-2.7);
+    Console.Write("{0} → {1}\n", -2.4, (int)-2.4);
+    Console.Write("{0} → {1}\n", -1.5, (int)-1.5);
+    Console.Write("{0} → {1}\n", -0.5, (int)-0.5);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="double → int">
+```console
 3.8 → 3
 3.1 → 3
 2.7 → 2
@@ -422,7 +422,7 @@ double → int にキャストすると、値が整数に切り詰められま�
 -2.4 → -2
 -1.5 → -1
 -0.5 → 0
-</pre>
+```
 
 
 結果を見ての通り、正の数は切り捨て、負の数は切り上げ（0 に向かって丸め）になります。
@@ -443,21 +443,21 @@ double → int にキャストすると、値が整数に切り詰められま�
 #### 解答例 1
 
 
-<pre class="source" title="奇数・偶数の判定" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"整数を入力してください: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    Console.Write("整数を入力してください: ");
+    int n = int.Parse(Console.ReadLine());
 
-    <span class="reserved">if</span> (n % 2 == 0) Console.Write(<span class="literal">"{0} は偶数です\n"</span>, n);
-    <span class="reserved">else</span>            Console.Write(<span class="literal">"{0} は奇数です\n"</span>, n);
+    if (n % 2 == 0) Console.Write("{0} は偶数です\n", n);
+    else            Console.Write("{0} は奇数です\n", n);
   }
 }
-</code></pre>
+```
 
 
 
@@ -472,30 +472,30 @@ BMI 値から体型(やせ型、普通、やや肥満、肥満、高度肥満)�
 #### 解答例 1
 
 
-<pre class="source" title="BMI 値の計算と体型の判定" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"身長[cm]: "</span>);
-    <span class="reserved">double</span> height = <span class="reserved">double</span>.Parse(Console.ReadLine()) * 0.01;
-    Console.Write(<span class="literal">"体重[kg]: "</span>);
-    <span class="reserved">double</span> weight = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("身長[cm]: ");
+    double height = double.Parse(Console.ReadLine()) * 0.01;
+    Console.Write("体重[kg]: ");
+    double weight = double.Parse(Console.ReadLine());
 
-    <span class="reserved">double</span> bmi = weight / (height * height);
-    Console.Write(<span class="literal">"BMI = {0}\n"</span>, bmi);
+    double bmi = weight / (height * height);
+    Console.Write("BMI = {0}\n", bmi);
 
-    <span class="reserved">if</span>(bmi &lt; 19.8)      Console.Write(<span class="literal">"やせ型"</span>);
-    <span class="reserved">else if</span>(bmi &lt; 24.2) Console.Write(<span class="literal">"普通"</span>);
-    <span class="reserved">else if</span>(bmi &lt; 26.4) Console.Write(<span class="literal">"やや肥満（過体重）"</span>);
-    <span class="reserved">else if</span>(bmi &lt; 35.0) Console.Write(<span class="literal">"肥満"</span>);
-    <span class="reserved">else</span>                Console.Write(<span class="literal">"高度肥満（要治療）"</span>);
-    Console.Write(<span class="literal">"です\n"</span>);
+    if(bmi < 19.8)      Console.Write("やせ型");
+    else if(bmi < 24.2) Console.Write("普通");
+    else if(bmi < 26.4) Console.Write("やや肥満（過体重）");
+    else if(bmi < 35.0) Console.Write("肥満");
+    else                Console.Write("高度肥満（要治療）");
+    Console.Write("です\n");
   }
 }
-</code></pre>
+```
 
 
 
@@ -513,39 +513,39 @@ switch 文を使って150以下の平方数(4＝2×2、9＝3×3、16＝4×4と�
 #### 解答例 1
 
 
-<pre class="source" title="平方数の判別" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"整数を入力してください: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    Console.Write("整数を入力してください: ");
+    int n = int.Parse(Console.ReadLine());
 
-    <span class="reserved">switch</span> (n)
+    switch (n)
     {
-      <span class="reserved">case</span> 1:
-        Console.Write(<span class="literal">"{0} は平方数です。\n"</span>, n);
-        <span class="reserved">break</span>;
-      <span class="reserved">case</span> 2 * 2: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 3 * 3: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 4 * 4: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 5 * 5: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 6 * 6: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 7 * 7: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 8 * 8: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 9 * 9: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 10 * 10: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 11 * 11: <span class="reserved">goto case</span> 1;
-      <span class="reserved">case</span> 12 * 12: <span class="reserved">goto case</span> 1;
-      <span class="reserved">default</span>:
-        Console.Write(<span class="literal">"{0} は平方数ではないか、150以上です\n"</span>, n);
-        <span class="reserved">break</span>;
+      case 1:
+        Console.Write("{0} は平方数です。\n", n);
+        break;
+      case 2 * 2: goto case 1;
+      case 3 * 3: goto case 1;
+      case 4 * 4: goto case 1;
+      case 5 * 5: goto case 1;
+      case 6 * 6: goto case 1;
+      case 7 * 7: goto case 1;
+      case 8 * 8: goto case 1;
+      case 9 * 9: goto case 1;
+      case 10 * 10: goto case 1;
+      case 11 * 11: goto case 1;
+      case 12 * 12: goto case 1;
+      default:
+        Console.Write("{0} は平方数ではないか、150以上です\n", n);
+        break;
     }
   }
 }
-</code></pre>
+```
 
 
 
@@ -561,41 +561,41 @@ switch 文を使って150以下の平方数(4＝2×2、9＝3×3、16＝4×4と�
 
 単純な条件分岐による方法。
 
-<pre class="source" title="最大値、最小値" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"値1: "</span>);
-    <span class="reserved">double</span> x = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"値2: "</span>);
-    <span class="reserved">double</span> y = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"値3: "</span>);
-    <span class="reserved">double</span> z = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("値1: ");
+    double x = double.Parse(Console.ReadLine());
+    Console.Write("値2: ");
+    double y = double.Parse(Console.ReadLine());
+    Console.Write("値3: ");
+    double z = double.Parse(Console.ReadLine());
 
-    <span class="reserved">if</span> (x &gt; y)
+    if (x > y)
     {
-      <span class="reserved">if</span> (x &gt; z)
+      if (x > z)
       {
-        <span class="reserved">if</span> (y &gt; z) Console.Write(<span class="literal">"最大 {0}, 中間 {1}, 最小 {2}\n"</span>, x, y, z);
-        <span class="reserved">else</span>       Console.Write(<span class="literal">"最大 {0}, 中間 {1}, 最小 {2}\n"</span>, x, z, y);
+        if (y > z) Console.Write("最大 {0}, 中間 {1}, 最小 {2}\n", x, y, z);
+        else       Console.Write("最大 {0}, 中間 {1}, 最小 {2}\n", x, z, y);
       }
-      <span class="reserved">else</span> Console.Write(<span class="literal">"最大 {0}, 中間 {1}, 最小 {2}\n"</span>, z, x, y);
+      else Console.Write("最大 {0}, 中間 {1}, 最小 {2}\n", z, x, y);
     }
-    <span class="reserved">else</span>
+    else
     {
-      <span class="reserved">if</span> (y &gt; z)
+      if (y > z)
       {
-        <span class="reserved">if</span> (x &gt; z) Console.Write(<span class="literal">"最大 {0}, 中間 {1}, 最小 {2}\n"</span>, y, x, z);
-        <span class="reserved">else</span>       Console.Write(<span class="literal">"最大 {0}, 中間 {1}, 最小 {2}\n"</span>, y, z, x);
+        if (x > z) Console.Write("最大 {0}, 中間 {1}, 最小 {2}\n", y, x, z);
+        else       Console.Write("最大 {0}, 中間 {1}, 最小 {2}\n", y, z, x);
       }
-      <span class="reserved">else</span> Console.Write(<span class="literal">"最大 {0}, 中間 {1}, 最小 {2}\n"</span>, z, y, x);
+      else Console.Write("最大 {0}, 中間 {1}, 最小 {2}\n", z, y, x);
     }
   }
 }
-</code></pre>
+```
 
 
 
@@ -604,29 +604,30 @@ switch 文を使って150以下の平方数(4＝2×2、9＝3×3、16＝4×4と�
 
 3つの数値をあらかじめ整列してしまう方法。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"値1: "</span>);
-    <span class="reserved">double</span> x = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"値2: "</span>);
-    <span class="reserved">double</span> y = <span class="reserved">double</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"値3: "</span>);
-    <span class="reserved">double</span> z = <span class="reserved">double</span>.Parse(Console.ReadLine());
+    Console.Write("値1: ");
+    double x = double.Parse(Console.ReadLine());
+    Console.Write("値2: ");
+    double y = double.Parse(Console.ReadLine());
+    Console.Write("値3: ");
+    double z = double.Parse(Console.ReadLine());
 
-    <span class="reserved">double</span> tmp;
+    double tmp;
 
-    <span class="reserved">if</span> (y &lt; z) { tmp = y; y = z; z = tmp; }
-    <span class="reserved">if</span> (x &lt; y) { tmp = x; x = y; y = tmp; }
-    <span class="reserved">if</span> (y &lt; z) { tmp = y; y = z; z = tmp; }
+    if (y < z) { tmp = y; y = z; z = tmp; }
+    if (x < y) { tmp = x; x = y; y = tmp; }
+    if (y < z) { tmp = y; y = z; z = tmp; }
 
-    Console.Write(<span class="literal">"最大 {0}, 中間{1}, 最小 {2}\n"</span>, x, y, z);
+    Console.Write("最大 {0}, 中間{1}, 最小 {2}\n", x, y, z);
   }
-}</code></pre>
+}
+```
 
 
 
@@ -647,26 +648,26 @@ switch 文を使って150以下の平方数(4＝2×2、9＝3×3、16＝4×4と�
 #### 解答例 1
 
 
-<pre class="source" title="整数の和" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"n: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    <span class="reserved">int</span> sum = 0;
+    Console.Write("n: ");
+    int n = int.Parse(Console.ReadLine());
+    int sum = 0;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 1; i &lt;= n; ++i)
+    for (int i = 1; i <= n; ++i)
     {
       sum += i;
     }
 
-    Console.Write(<span class="literal">"loop {0}, formula {1}\n"</span>, sum, n * (n + 1) / 2);
+    Console.Write("loop {0}, formula {1}\n", sum, n * (n + 1) / 2);
   }
 }
-</code></pre>
+```
 
 
 
@@ -684,27 +685,27 @@ switch 文を使って150以下の平方数(4＝2×2、9＝3×3、16＝4×4と�
 #### 解答例 1
 
 
-<pre class="source" title="平方数の判別" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"整数を入力してください: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    <span class="reserved">int</span> i;
+    Console.Write("整数を入力してください: ");
+    int n = int.Parse(Console.ReadLine());
+    int i;
 
-    <span class="reserved">for</span> (i = 0; i &lt;= n; ++i)
+    for (i = 0; i <= n; ++i)
     {
-      <span class="reserved">if</span> (n == i * i) <span class="reserved">break</span>;
+      if (n == i * i) break;
     }
 
-    <span class="reserved">if</span> (i &lt;= n) Console.Write(<span class="literal">"{0} = {1} × {1} は平方数です\n"</span>, n, i);
-    <span class="reserved">else</span>        Console.Write(<span class="literal">"{0} は平方数ではありません\n"</span>, n);
+    if (i <= n) Console.Write("{0} = {1} × {1} は平方数です\n", n, i);
+    else        Console.Write("{0} は平方数ではありません\n", n);
   }
 }
-</code></pre>
+```
 
 
 ちなみに、この for ループの継続条件の部分は、
@@ -722,24 +723,24 @@ Sqrt は n の平方根を求める関数。
 #### 解答例 1
 
 
-<pre class="source" title="九九表" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 1; i &lt;= 9; ++i)
+    for (int i = 1; i <= 9; ++i)
     {
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 1; j &lt;= 9; ++j)
+      for (int j = 1; j <= 9; ++j)
       {
-        Console.Write(<span class="literal">"{0,3}"</span>, i * j);
+        Console.Write("{0,3}", i * j);
       }
       Console.Write('\n');
     }
   }
 }
-</code></pre>
+```
 
 
 
@@ -764,32 +765,32 @@ for 文を使って以下の漸化式の一般項 <span class="math">
 #### 解答例 1
 
 
-<pre class="source" title="数列計算" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[] a = <span class="reserved">new int</span>[21];
+    int[] a = new int[21];
     a[0] = 3;
     a[1] = 1;
 
-    <span class="comment">// 数列を求める。</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 2; i &lt; a.Length; ++i)
+    // 数列を求める。
+    for (int i = 2; i < a.Length; ++i)
     {
       a[i] = 2 * a[i - 1] - 2 * a[i - 2];
     }
 
-    <span class="comment">// 求めた数列を表示。</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    // 求めた数列を表示。
+    for (int i = 0; i < a.Length; ++i)
     {
-      Console.Write(<span class="literal">"{0} "</span>, a[i]);
+      Console.Write("{0} ", a[i]);
     }
     Console.Write('\n');
   }
 }
-</code></pre>
+```
 
 
 
@@ -803,48 +804,48 @@ int 型の配列に格納されている値の最大値、最小値および平�
 #### 解答例 1
 
 
-<pre class="source" title="配列の最大値、最小値、平均値" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// 配列長の入力</span>
-    Console.Write(<span class="literal">"配列の長さ: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    // 配列長の入力
+    Console.Write("配列の長さ: ");
+    int n = int.Parse(Console.ReadLine());
 
-    <span class="comment">// 配列の値の入力</span>
-    <span class="reserved">int</span>[] a = <span class="reserved">new int</span>[n];
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; ++i)
+    // 配列の値の入力
+    int[] a = new int[n];
+    for (int i = 0; i < n; ++i)
     {
-      Console.Write(<span class="literal">"{0}: "</span>, i);
-      a[i] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+      Console.Write("{0}: ", i);
+      a[i] = int.Parse(Console.ReadLine());
     }
 
-    <span class="comment">// 最大値、最小値、平均値の計算</span>
-    <span class="reserved">int</span> max = <span class="reserved">int</span>.MinValue;
-    <span class="reserved">int</span> min = <span class="reserved">int</span>.MaxValue;
-    <span class="reserved">double</span> average = 0;
+    // 最大値、最小値、平均値の計算
+    int max = int.MinValue;
+    int min = int.MaxValue;
+    double average = 0;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; ++i)
+    for (int i = 0; i < n; ++i)
     {
-      <span class="reserved">if</span> (max &lt; a[i]) max = a[i];
-      <span class="reserved">if</span> (min &gt; a[i]) min = a[i];
+      if (max < a[i]) max = a[i];
+      if (min > a[i]) min = a[i];
       average += a[i];
     }
     average /= n;
 
     Console.Write(
-<span class="literal">@"
+@"
 最大値: {0}
 最小値: {1}
 平均値: {2}
-"</span>
+"
     , max, min, average);
   }
 }
-</code></pre>
+```
 
 
 
@@ -859,62 +860,62 @@ double 型の2次元配列を行列に見立てて、行列の掛け算を行う
 
 行列の次元は任意だけども、例として2×2行列の場合を示す。
 
-<pre class="source" title="行列の積" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">double</span>[,] a = <span class="reserved">new double</span>[,]
+    double[,] a = new double[,]
     {
       {1, 1},
       {1, 0},
     };
-    <span class="reserved">double</span>[,] b = <span class="reserved">new double</span>[,]
+    double[,] b = new double[,]
     {
       {1, 2},
       {3, 4},
     };
 
-    <span class="comment">// ここより下は、a, b のサイズが任意の場合でも正しく動作する。</span>
-    <span class="reserved">double</span>[,] c = <span class="reserved">new double</span>[a.GetLength(0), b.GetLength(1)];
+    // ここより下は、a, b のサイズが任意の場合でも正しく動作する。
+    double[,] c = new double[a.GetLength(0), b.GetLength(1)];
 
-    <span class="comment">// a×b を計算</span>
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.GetLength(0); ++i)
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; b.GetLength(1); ++j)
-        <span class="reserved">for</span> (<span class="reserved">int</span> k = 0; k &lt; a.GetLength(1); ++k)
+    // a×b を計算
+    for (int i = 0; i < a.GetLength(0); ++i)
+      for (int j = 0; j < b.GetLength(1); ++j)
+        for (int k = 0; k < a.GetLength(1); ++k)
           c[i, j] += a[i, k] * b[k, j];
 
-    <span class="comment">// a を表示</span>
-    Console.Write(<span class="literal">"a =\n"</span>);
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.GetLength(0); ++i)
+    // a を表示
+    Console.Write("a =\n");
+    for (int i = 0; i < a.GetLength(0); ++i)
     {
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; a.GetLength(1); ++j)
-        Console.Write(<span class="literal">"{0, 4} "</span>, a[i, j]);
+      for (int j = 0; j < a.GetLength(1); ++j)
+        Console.Write("{0, 4} ", a[i, j]);
       Console.Write('\n');
     }
 
-    <span class="comment">// b を表示</span>
-    Console.Write(<span class="literal">"b =\n"</span>);
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; b.GetLength(0); ++i)
+    // b を表示
+    Console.Write("b =\n");
+    for (int i = 0; i < b.GetLength(0); ++i)
     {
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; b.GetLength(1); ++j)
-        Console.Write(<span class="literal">"{0, 4} "</span>, b[i, j]);
+      for (int j = 0; j < b.GetLength(1); ++j)
+        Console.Write("{0, 4} ", b[i, j]);
       Console.Write('\n');
     }
 
-    <span class="comment">// a×b を表示</span>
-    Console.Write(<span class="literal">"a×b =\n"</span>);
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; c.GetLength(0); ++i)
+    // a×b を表示
+    Console.Write("a×b =\n");
+    for (int i = 0; i < c.GetLength(0); ++i)
     {
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; c.GetLength(1); ++j)
-        Console.Write(<span class="literal">"{0, 4} "</span>, c[i, j]);
+      for (int j = 0; j < c.GetLength(1); ++j)
+        Console.Write("{0, 4} ", c[i, j]);
       Console.Write('\n');
     }
   }
 }
-</code></pre>
+```
 
 
 
@@ -925,114 +926,114 @@ double 型の2次元配列を行列に見立てて、行列の掛け算を行う
 
 int 型の配列に格納されている値の最大値、最小値および平均値を求める関数をそれぞれ作成せよ。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 配列中の値の最大値を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;returns&gt;最大値&lt;/returns&gt;</span>
-<span class="reserved">static int</span> Max(<span class="reserved">int</span>[] a)
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <returns>最大値</returns>
+static int Max(int[] a)
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 配列中の値の最小値を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;returns&gt;最小値&lt;/returns&gt;</span>
-<span class="reserved">static int</span> Min(<span class="reserved">int</span>[] a)
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <returns>最小値</returns>
+static int Min(int[] a)
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 配列中の値の平均値を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;returns&gt;平均値&lt;/returns&gt;</span>
-<span class="reserved">static double</span> Average(<span class="reserved">int</span>[] a)
-</code></pre>
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <returns>平均値</returns>
+static double Average(int[] a)
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// 配列長の入力</span>
-    Console.Write(<span class="literal">"配列の長さ: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    // 配列長の入力
+    Console.Write("配列の長さ: ");
+    int n = int.Parse(Console.ReadLine());
 
-    <span class="comment">// 配列の値の入力</span>
-    <span class="reserved">int</span>[] a = <span class="reserved">new int</span>[n];
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; ++i)
+    // 配列の値の入力
+    int[] a = new int[n];
+    for (int i = 0; i < n; ++i)
     {
-      Console.Write(<span class="literal">"{0}: "</span>, i);
-      a[i] = <span class="reserved">int</span>.Parse(Console.ReadLine());
+      Console.Write("{0}: ", i);
+      a[i] = int.Parse(Console.ReadLine());
     }
 
     Console.Write(
-<span class="literal">@"
+@"
 最大値: {0}
 最小値: {1}
 平均値: {2}
-"</span>
+"
     , Max(a), Min(a), Average(a));
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最大値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;最大値&lt;/returns&gt;</span>
-  <span class="reserved">static int</span> Max(<span class="reserved">int</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>最大値</returns>
+  static int Max(int[] a)
   {
-    <span class="reserved">int</span> max = <span class="reserved">int</span>.MinValue;
+    int max = int.MinValue;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">if</span> (max &lt; a[i]) max = a[i];
+      if (max < a[i]) max = a[i];
     }
 
-    <span class="reserved">return</span> max;
+    return max;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最小値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;最小値&lt;/returns&gt;</span>
-  <span class="reserved">static int</span> Min(<span class="reserved">int</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>最小値</returns>
+  static int Min(int[] a)
   {
-    <span class="reserved">int</span> min = <span class="reserved">int</span>.MaxValue;
+    int min = int.MaxValue;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">if</span> (min &gt; a[i]) min = a[i];
+      if (min > a[i]) min = a[i];
     }
 
-    <span class="reserved">return</span> min;
+    return min;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最大値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;平均値&lt;/returns&gt;</span>
-  <span class="reserved">static double</span> Average(<span class="reserved">int</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>平均値</returns>
+  static double Average(int[] a)
   {
-    <span class="reserved">double</span> average = 0;
+    double average = 0;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    for (int i = 0; i < a.Length; ++i)
     {
       average += a[i];
     }
 
-    <span class="reserved">return</span> average / a.Length;
+    return average / a.Length;
   }
 }
-</code></pre>
+```
 
 
 
@@ -1041,66 +1042,66 @@ int 型の配列に格納されている値の最大値、最小値および平�
 
 double 型の値 x の整数冪を求める関数 Power を作成せよ。
 
-<pre class="source" title="Power の仕様" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// x の整数冪を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="x"&gt;仮数 x&lt;/param&gt;
-/// &lt;param name="n"&gt;指数 n&lt;/param&gt;
-/// &lt;returns&gt;x の n 乗&lt;/returns&gt;</span>
-<span class="reserved">static double</span> Power(
-  <span class="reserved">double</span> x,
-  <span class="reserved">int</span> n)
-</code></pre>
+/// </summary>
+/// <param name="x">仮数 x</param>
+/// <param name="n">指数 n</param>
+/// <returns>x の n 乗</returns>
+static double Power(
+  double x,
+  int n)
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Power の実装とテスト" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">const double</span> x = 3;
-    Console.Write(<span class="literal">"{0}\n"</span>, Power(x, 4));
-    Console.Write(<span class="literal">"{0}\n"</span>, Power(x, -1));
-    Console.Write(<span class="literal">"{0}\n"</span>, Power(x, -2));
-    Console.Write(<span class="literal">"{0}\n"</span>, Power(x, 0));
+    const double x = 3;
+    Console.Write("{0}\n", Power(x, 4));
+    Console.Write("{0}\n", Power(x, -1));
+    Console.Write("{0}\n", Power(x, -2));
+    Console.Write("{0}\n", Power(x, 0));
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x の整数冪を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;仮数 x&lt;/param&gt;
-  /// &lt;param name="n"&gt;指数 n&lt;/param&gt;
-  /// &lt;returns&gt;x の n 乗&lt;/returns&gt;</span>
-  <span class="reserved">static double</span> Power(
-    <span class="reserved">double</span> x,
-    <span class="reserved">int</span> n)
+  /// </summary>
+  /// <param name="x">仮数 x</param>
+  /// <param name="n">指数 n</param>
+  /// <returns>x の n 乗</returns>
+  static double Power(
+    double x,
+    int n)
   {
-    <span class="reserved">if</span> (n == 0)
-      <span class="reserved">return</span> 1;
+    if (n == 0)
+      return 1;
 
-    <span class="reserved">if</span> (n &lt; 0)
+    if (n < 0)
     {
       x = 1.0 / x;
       n = -n;
     }
 
-    <span class="reserved">double</span> y = x;
-    <span class="reserved">while</span> (--n &gt; 0)
+    double y = x;
+    while (--n > 0)
     {
       y *= x;
     }
 
-    <span class="reserved">return</span> y;
+    return y;
   }
 }
-</code></pre>
+```
 
 
 
@@ -1115,50 +1116,50 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 #### 解答例 1
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[]    ai = <span class="reserved">new int</span>[]    { 1, 3, 9, 2, 5, 6, 4 };
-    <span class="reserved">double</span>[] ad = <span class="reserved">new double</span>[] { 1, 3, 9, 2, 5, 6, 4 };
+    int[]    ai = new int[]    { 1, 3, 9, 2, 5, 6, 4 };
+    double[] ad = new double[] { 1, 3, 9, 2, 5, 6, 4 };
 
-    Console.Write(<span class="literal">"{0}, {1}\n"</span>, Max(ai), Max(ad));
+    Console.Write("{0}, {1}\n", Max(ai), Max(ad));
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最大値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;最大値&lt;/returns&gt;</span>
-  <span class="reserved">static int</span> Max(<span class="reserved">int</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>最大値</returns>
+  static int Max(int[] a)
   {
-    <span class="reserved">int</span> max = <span class="reserved">int</span>.MinValue;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    int max = int.MinValue;
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">if</span> (max &lt; a[i]) max = a[i];
+      if (max < a[i]) max = a[i];
     }
-    <span class="reserved">return</span> max;
+    return max;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 配列中の値の最大値を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-  /// &lt;returns&gt;最大値&lt;/returns&gt;</span>
-  <span class="reserved">static double</span> Max(<span class="reserved">double</span>[] a)
+  /// </summary>
+  /// <param name="a">対象の配列</param>
+  /// <returns>最大値</returns>
+  static double Max(double[] a)
   {
-    <span class="reserved">double</span> max = <span class="reserved">int</span>.MinValue;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+    double max = int.MinValue;
+    for (int i = 0; i < a.Length; ++i)
     {
-      <span class="reserved">if</span> (max &lt; a[i]) max = a[i];
+      if (max < a[i]) max = a[i];
     }
-    <span class="reserved">return</span> max;
+    return max;
   }
 }
-</code></pre>
+```
 
 
 見ての通り、型が変わっただけで、処理自体は全く同じものになっています。
@@ -1176,63 +1177,63 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 
 また、作成した構造体に、三角形の面積を求めるメンバー関数 <code>GetArea</code>を追加せよ。
 
-<pre class="source" title="GetArea 仕様" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 三角形の面積を求める。
-/// &lt;/summary&gt;
-/// &lt;returns&gt;面積&lt;/returns&gt;</span>
-<span class="reserved">public double</span> GetArea()
-</code></pre>
+/// </summary>
+/// <returns>面積</returns>
+public double GetArea()
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Triangle 構造体" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">public double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">public double</span> y; <span class="comment">// y 座標</span>
+  public double x; // x 座標
+  public double y; // y 座標
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Triangle
+/// </summary>
+struct Triangle
 {
-  <span class="reserved">public</span> Point a;
-  <span class="reserved">public</span> Point b;
-  <span class="reserved">public</span> Point c;
+  public Point a;
+  public Point b;
+  public Point c;
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">double</span> abx, aby, acx, acy;
+    double abx, aby, acx, acy;
     abx = b.x - a.x;
     aby = b.y - a.y;
     acx = c.x - a.x;
     acy = c.y - a.y;
-    <span class="reserved">return</span> 0.5 * Math.Abs(abx * acy - acx * aby);
+    return 0.5 * Math.Abs(abx * acy - acx * aby);
   }
 }
 
-<span class="reserved">class</span> Test
+class Test
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
     Triangle t;
     t.a.x = 0;
@@ -1241,10 +1242,10 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
     t.b.y = 4;
     t.c.x = 4;
     t.c.y = 3;
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetArea());
+    Console.Write("{0}\n", t.GetArea());
   }
 }
-</code></pre>
+```
 
 
 
@@ -1276,112 +1277,112 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 前節[クラス](../oop/oo_class.md)の[問題 1](../oop/oo_class.md#exercise-str1)の <code>Point</code> 構造体および <code>Triangle</code> クラスに、
 以下のようなコンストラクターを追加せよ。
 
-<pre class="source" title="Point クラスコンストラクター" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 座標値 (x, y) を与えて初期化。
-/// &lt;/summary&gt;
-/// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-/// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-<span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
-</code></pre>
+/// </summary>
+/// <param name="x">x 座標値</param>
+/// <param name="y">y 座標値</param>
+public Point(double x, double y)
+```
 
 
-<pre class="source" title="Triangle クラスコンストラクター" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 3つの頂点の座標を与えて初期化。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-/// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-/// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-<span class="reserved">public</span> Triangle(Point a, Point b, Point c)
-</code></pre>
+/// </summary>
+/// <param name="a">頂点A</param>
+/// <param name="b">頂点B</param>
+/// <param name="c">頂点C</param>
+public Triangle(Point a, Point b, Point c)
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Point/Triangle クラス" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">public double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">public double</span> y; <span class="comment">// y 座標
+  public double x; // x 座標
+  public double y; // y 座標
 
-  /// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle
+/// </summary>
+class Triangle
 {
-  <span class="reserved">public</span> Point a;
-  <span class="reserved">public</span> Point b;
-  <span class="reserved">public</span> Point c;
+  public Point a;
+  public Point b;
+  public Point c;
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">double</span> abx, aby, acx, acy;
+    double abx, aby, acx, acy;
     abx = b.x - a.x;
     aby = b.y - a.y;
     acx = c.x - a.x;
     acy = c.y - a.y;
-    <span class="reserved">return</span> 0.5 * Math.Abs(abx * acy - acx * aby);
+    return 0.5 * Math.Abs(abx * acy - acx * aby);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetArea());
+    Console.Write("{0}\n", t.GetArea());
   }
 }
-</code></pre>
+```
 
 
 
@@ -1397,146 +1398,146 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 #### 解答例 1
 
 
-<pre class="source" title="Point/Triangle" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">double</span> y; <span class="comment">// y 座標</span>
+  double x; // x 座標
+  double y; // y 座標
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> X
+  /// </summary>
+  public double X
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    get { return this.x; }
+    set { this.x = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// y 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Y
+  /// </summary>
+  public double Y
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.y; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.y = value; }
+    get { return this.y; }
+    set { this.y = value; }
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle
+/// </summary>
+class Triangle
 {
   Point a;
   Point b;
   Point c;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点A。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point A
+  /// </summary>
+  public Point A
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> a; }
-    <span class="reserved">set</span> { a = value; }
+    get { return a; }
+    set { a = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点B。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point B
+  /// </summary>
+  public Point B
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> b; }
-    <span class="reserved">set</span> { b = value; }
+    get { return b; }
+    set { b = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点C。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point C
+  /// </summary>
+  public Point C
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> c; }
-    <span class="reserved">set</span> { c = value; }
+    get { return c; }
+    set { c = value; }
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">double</span> abx, aby, acx, acy;
+    double abx, aby, acx, acy;
     abx = b.X - a.X;
     aby = b.Y - a.Y;
     acx = c.X - a.X;
     acy = c.Y - a.Y;
-    <span class="reserved">return</span> 0.5 * Math.Abs(abx * acy - acx * aby);
+    return 0.5 * Math.Abs(abx * acy - acx * aby);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetArea());
+    Console.Write("{0}\n", t.GetArea());
   }
 }
-</code></pre>
+```
 
 
 
@@ -1548,200 +1549,200 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 [クラス](../oop/oo_class.md)の[問題 1](../oop/oo_class.md#exercise-str1)の <code>Point</code> 構造体に、
 2点間の距離を求める static メソッド <code>GetDistance</code> を追加せよ。
 
-<pre class="source" title="GetDistance" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// A-B 間の距離を求める。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;点A&lt;/param&gt;
-/// &lt;param name="b"&gt;点B&lt;/param&gt;
-/// &lt;returns&gt;距離AB&lt;/returns&gt;</span>
-<span class="reserved">public static double</span> GetDistance(Point a, Point b)
-</code></pre>
+/// </summary>
+/// <param name="a">点A</param>
+/// <param name="b">点B</param>
+/// <returns>距離AB</returns>
+public static double GetDistance(Point a, Point b)
+```
 
 
 また、<code>GetDistance</code> を用いて、
 <code>Triangle</code> クラスに三角形の周を求めるメソッド
 <code>GetPerimeter</code> を追加せよ。
 
-<pre class="source" title="GetPerimeter" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 三角形の周の長さを求める。
-/// &lt;/summary&gt;
-/// &lt;returns&gt;周&lt;/returns&gt;</span>
-<span class="reserved">public double</span> GetPerimeter()
-</code></pre>
+/// </summary>
+/// <returns>周</returns>
+public double GetPerimeter()
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Point/Triangle" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">double</span> y; <span class="comment">// y 座標</span>
+  double x; // x 座標
+  double y; // y 座標
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> X
+  /// </summary>
+  public double X
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    get { return this.x; }
+    set { this.x = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// y 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Y
+  /// </summary>
+  public double Y
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.y; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.y = value; }
+    get { return this.y; }
+    set { this.y = value; }
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// A-B 間の距離を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;距離AB&lt;/returns&gt;</span>
-  <span class="reserved">public static double</span> GetDistance(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>距離AB</returns>
+  public static double GetDistance(Point a, Point b)
   {
-    <span class="reserved">double</span> x = a.x - b.x;
-    <span class="reserved">double</span> y = a.y - b.y;
-    <span class="reserved">return</span> Math.Sqrt(x * x + y * y);
+    double x = a.x - b.x;
+    double y = a.y - b.y;
+    return Math.Sqrt(x * x + y * y);
   }
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle
+/// </summary>
+class Triangle
 {
   Point a;
   Point b;
   Point c;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点A。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point A
+  /// </summary>
+  public Point A
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> a; }
-    <span class="reserved">set</span> { a = value; }
+    get { return a; }
+    set { a = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点B。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point B
+  /// </summary>
+  public Point B
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> b; }
-    <span class="reserved">set</span> { b = value; }
+    get { return b; }
+    set { b = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点C。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point C
+  /// </summary>
+  public Point C
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> c; }
-    <span class="reserved">set</span> { c = value; }
+    get { return c; }
+    set { c = value; }
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">double</span> abx, aby, acx, acy;
+    double abx, aby, acx, acy;
     abx = b.X - a.X;
     aby = b.Y - a.Y;
     acx = c.X - a.X;
     acy = c.Y - a.Y;
-    <span class="reserved">return</span> 0.5 * Math.Abs(abx * acy - acx * aby);
+    return 0.5 * Math.Abs(abx * acy - acx * aby);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public double GetPerimeter()
   {
-    <span class="reserved">double</span> l = Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.b);
-    l += Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.c);
-    l += Point.GetDistance(<span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
-    <span class="reserved">return</span> l;
+    double l = Point.GetDistance(this.a, this.b);
+    l += Point.GetDistance(this.a, this.c);
+    l += Point.GetDistance(this.b, this.c);
+    return l;
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetArea());
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetPerimeter());
+    Console.Write("{0}\n", t.GetArea());
+    Console.Write("{0}\n", t.GetPerimeter());
   }
 }
-</code></pre>
+```
 
 
 
@@ -1753,217 +1754,217 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 [クラス](../oop/oo_class.md)の[問題 1](../oop/oo_class.md#exercise-str1)の <code>Point</code> 構造体を2次元ベクトルとみなして、
 ベクトルの和・差を計算する演算子 <code>+</code> および <code>-</code> を追加せよ。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// ベクトル和
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;点A&lt;/param&gt;
-/// &lt;param name="b"&gt;点B&lt;/param&gt;
-/// &lt;returns&gt;和&lt;/returns&gt;</span>
-<span class="reserved">public static</span> Point <span class="reserved">operator</span> +(Point a, Point b)
+/// </summary>
+/// <param name="a">点A</param>
+/// <param name="b">点B</param>
+/// <returns>和</returns>
+public static Point operator +(Point a, Point b)
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// ベクトル差
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;点A&lt;/param&gt;
-/// &lt;param name="b"&gt;点B&lt;/param&gt;
-/// &lt;returns&gt;和&lt;/returns&gt;</span>
-<span class="reserved">public static</span> Point <span class="reserved">operator</span> -(Point a, Point b)
-</code></pre>
+/// </summary>
+/// <param name="a">点A</param>
+/// <param name="b">点B</param>
+/// <returns>和</returns>
+public static Point operator -(Point a, Point b)
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Point/Triangle" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">double</span> y; <span class="comment">// y 座標</span>
+  double x; // x 座標
+  double y; // y 座標
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> X
+  /// </summary>
+  public double X
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    get { return this.x; }
+    set { this.x = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// y 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Y
+  /// </summary>
+  public double Y
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.y; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.y = value; }
+    get { return this.y; }
+    set { this.y = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 演算子
+  #endregion
+  #region 演算子
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ベクトル和
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;和&lt;/returns&gt;</span>
-  <span class="reserved">public static</span> Point <span class="reserved">operator</span> +(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>和</returns>
+  public static Point operator +(Point a, Point b)
   {
-    <span class="reserved">return new</span> Point(a.x + b.x, a.y + b.y);
+    return new Point(a.x + b.x, a.y + b.y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ベクトル差
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;和&lt;/returns&gt;</span>
-  <span class="reserved">public static</span> Point <span class="reserved">operator</span> -(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>和</returns>
+  public static Point operator -(Point a, Point b)
   {
-    <span class="reserved">return new</span> Point(a.x - b.x, a.y - b.y);
+    return new Point(a.x - b.x, a.y - b.y);
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// A-B 間の距離を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;距離AB&lt;/returns&gt;</span>
-  <span class="reserved">public static double</span> GetDistance(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>距離AB</returns>
+  public static double GetDistance(Point a, Point b)
   {
-    <span class="reserved">double</span> x = a.x - b.x;
-    <span class="reserved">double</span> y = a.y - b.y;
-    <span class="reserved">return</span> Math.Sqrt(x * x + y * y);
+    double x = a.x - b.x;
+    double y = a.y - b.y;
+    return Math.Sqrt(x * x + y * y);
   }
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle
+/// </summary>
+class Triangle
 {
   Point a;
   Point b;
   Point c;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点A。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point A
+  /// </summary>
+  public Point A
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> a; }
-    <span class="reserved">set</span> { a = value; }
+    get { return a; }
+    set { a = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点B。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point B
+  /// </summary>
+  public Point B
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> b; }
-    <span class="reserved">set</span> { b = value; }
+    get { return b; }
+    set { b = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点C。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point C
+  /// </summary>
+  public Point C
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> c; }
-    <span class="reserved">set</span> { c = value; }
+    get { return c; }
+    set { c = value; }
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
     Point ab = b - a;
     Point ac = c - a;
-    <span class="reserved">return</span> 0.5 * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
+    return 0.5 * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public double GetPerimeter()
   {
-    <span class="reserved">double</span> l = Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.b);
-    l += Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.c);
-    l += Point.GetDistance(<span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
-    <span class="reserved">return</span> l;
+    double l = Point.GetDistance(this.a, this.b);
+    l += Point.GetDistance(this.a, this.c);
+    l += Point.GetDistance(this.b, this.c);
+    return l;
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetArea());
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetPerimeter());
+    Console.Write("{0}\n", t.GetArea());
+    Console.Write("{0}\n", t.GetPerimeter());
   }
 }
-</code></pre>
+```
 
 
 
@@ -1977,333 +1978,333 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 
 まず、三角形や円等の共通の基底クラスとなる <code>Shape</code> クラスを以下のように作成。
 
-<pre class="source" title="Shape" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の基底クラス。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Shape
+/// </summary>
+class Shape
 {
-  <span class="reserved">virtual public double</span> GetArea() { <span class="reserved">return</span> 0; }
-  <span class="reserved">virtual public double</span> GetPerimeter() { <span class="reserved">return</span> 0; }
+  virtual public double GetArea() { return 0; }
+  virtual public double GetPerimeter() { return 0; }
 }
-</code></pre>
+```
 
 
 そして、<code>Shape</code> クラスを継承して、
 三角形 <code>Triangle</code> クラスと
 円 <code>Circle</code> クラスを作成。
 
-<pre class="source" title="Triangle" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 2次元空間上の三角形をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle : Shape
-</code></pre>
+/// </summary>
+class Triangle : Shape
+```
 
 
-<pre class="source" title="Circle" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 2次元空間上の円をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Circle : Shape
-</code></pre>
+/// </summary>
+class Circle : Shape
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Shape、Triangle、Circle" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">double</span> y; <span class="comment">// y 座標</span>
+  double x; // x 座標
+  double y; // y 座標
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> X
+  /// </summary>
+  public double X
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    get { return this.x; }
+    set { this.x = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// y 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Y
+  /// </summary>
+  public double Y
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.y; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.y = value; }
+    get { return this.y; }
+    set { this.y = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 演算子
+  #endregion
+  #region 演算子
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ベクトル和
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;和&lt;/returns&gt;</span>
-  <span class="reserved">public static</span> Point <span class="reserved">operator</span> +(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>和</returns>
+  public static Point operator +(Point a, Point b)
   {
-    <span class="reserved">return new</span> Point(a.x + b.x, a.y + b.y);
+    return new Point(a.x + b.x, a.y + b.y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ベクトル差
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;和&lt;/returns&gt;</span>
-  <span class="reserved">public static</span> Point <span class="reserved">operator</span> -(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>和</returns>
+  public static Point operator -(Point a, Point b)
   {
-    <span class="reserved">return new</span> Point(a.x - b.x, a.y - b.y);
+    return new Point(a.x - b.x, a.y - b.y);
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// A-B 間の距離を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;距離AB&lt;/returns&gt;</span>
-  <span class="reserved">public static double</span> GetDistance(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>距離AB</returns>
+  public static double GetDistance(Point a, Point b)
   {
-    <span class="reserved">double</span> x = a.x - b.x;
-    <span class="reserved">double</span> y = a.y - b.y;
-    <span class="reserved">return</span> Math.Sqrt(x * x + y * y);
+    double x = a.x - b.x;
+    double y = a.y - b.y;
+    return Math.Sqrt(x * x + y * y);
   }
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の基底クラス。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Shape
+/// </summary>
+class Shape
 {
-  <span class="reserved">virtual public double</span> GetArea() { <span class="reserved">return</span> 0; }
-  <span class="reserved">virtual public double</span> GetPerimeter() { <span class="reserved">return</span> 0; }
+  virtual public double GetArea() { return 0; }
+  virtual public double GetPerimeter() { return 0; }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の円をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Circle : Shape
+/// </summary>
+class Circle : Shape
 {
   Point center;
-  <span class="reserved">double</span> radius;
+  double radius;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 半径を指定して初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="r"&gt;半径。&lt;/param&gt;</span>
-  <span class="reserved">public</span> Circle(Point center, <span class="reserved">double</span> r)
+  /// </summary>
+  /// <param name="r">半径。</param>
+  public Circle(Point center, double r)
   {
-    <span class="reserved">this</span>.center = center;
-    <span class="reserved">this</span>.radius = r;
+    this.center = center;
+    this.radius = r;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の中心。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point Center
+  /// </summary>
+  public Point Center
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.center; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.center = value; }
+    get { return this.center; }
+    set { this.center = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の半径。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Radius
+  /// </summary>
+  public double Radius
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.radius; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.radius = value; }
+    get { return this.radius; }
+    set { this.radius = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 面積・周
+  #endregion
+  #region 面積・周
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public override double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public override double GetArea()
   {
-    <span class="reserved">return</span> Math.PI * <span class="reserved">this</span>.radius * <span class="reserved">this</span>.radius;
+    return Math.PI * this.radius * this.radius;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public override double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public override double GetPerimeter()
   {
-    <span class="reserved">return</span> 2 * Math.PI * <span class="reserved">this</span>.radius;
+    return 2 * Math.PI * this.radius;
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return string</span>.Format(
-      <span class="literal">"Circle (c = {0}, r = {1})"</span>,
-      <span class="reserved">this</span>.center, <span class="reserved">this</span>.radius);
+    return string.Format(
+      "Circle (c = {0}, r = {1})",
+      this.center, this.radius);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle : Shape
+/// </summary>
+class Triangle : Shape
 {
   Point a;
   Point b;
   Point c;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点A。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point A
+  /// </summary>
+  public Point A
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> a; }
-    <span class="reserved">set</span> { a = value; }
+    get { return a; }
+    set { a = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点B。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point B
+  /// </summary>
+  public Point B
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> b; }
-    <span class="reserved">set</span> { b = value; }
+    get { return b; }
+    set { b = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点C。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point C
+  /// </summary>
+  public Point C
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> c; }
-    <span class="reserved">set</span> { c = value; }
+    get { return c; }
+    set { c = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 面積・周
+  #endregion
+  #region 面積・周
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public override double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public override double GetArea()
   {
     Point ab = b - a;
     Point ac = c - a;
-    <span class="reserved">return</span> 0.5 * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
+    return 0.5 * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public override double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public override double GetPerimeter()
   {
-    <span class="reserved">double</span> l = Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.b);
-    l += Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.c);
-    l += Point.GetDistance(<span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
-    <span class="reserved">return</span> l;
+    double l = Point.GetDistance(this.a, this.b);
+    l += Point.GetDistance(this.a, this.c);
+    l += Point.GetDistance(this.b, this.c);
+    return l;
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return string</span>.Format(
-      <span class="literal">"Circle (a = {0}, b = {1}, c = {2})"</span>,
-      <span class="reserved">this</span>.a, <span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
+    return string.Format(
+      "Circle (a = {0}, b = {1}, c = {2})",
+      this.a, this.b, this.c);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Circle c = <span class="reserved">new</span> Circle(
-      <span class="reserved">new</span> Point(0, 0), 3);
+    Circle c = new Circle(
+      new Point(0, 0), 3);
 
     Show(t);
     Show(c);
   }
 
-  <span class="reserved">static void</span> Show(Shape f)
+  static void Show(Shape f)
   {
-    Console.Write(<span class="literal">"{0}\n"</span>, f);
-    Console.Write(<span class="literal">"{0}\n"</span>, f.GetArea());
-    Console.Write(<span class="literal">"{0}\n"</span>, f.GetPerimeter());
+    Console.Write("{0}\n", f);
+    Console.Write("{0}\n", f.GetArea());
+    Console.Write("{0}\n", f.GetPerimeter());
   }
 }
-</code></pre>
+```
 
 
 
@@ -2320,17 +2321,17 @@ double 型の値 x の整数冪を求める関数 Power を作成せよ。
 
 必要な箇所（Shape クラスの部分）だけ抜粋。
 
-<pre class="source" title="Shape" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の抽象基底クラス。
-/// &lt;/summary&gt;</span>
-abstract <span class="reserved">class</span> Shape
+/// </summary>
+abstract class Shape
 {
-  <span class="reserved">public</span> abstract <span class="reserved">double</span> GetArea();
-  <span class="reserved">public</span> abstract <span class="reserved">double</span> GetPerimeter();
+  public abstract double GetArea();
+  public abstract double GetPerimeter();
 }
-</code></pre>
+```
 
 
 
@@ -2352,377 +2353,377 @@ abstract <span class="reserved">class</span> Shape
 
 三角形、円に加え、多角形を実装した物を示します。
 
-<pre class="source" title="さまざまな図形" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">double</span> y; <span class="comment">// y 座標</span>
+  double x; // x 座標
+  double y; // y 座標
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> X
+  /// </summary>
+  public double X
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    get { return this.x; }
+    set { this.x = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// y 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Y
+  /// </summary>
+  public double Y
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.y; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.y = value; }
+    get { return this.y; }
+    set { this.y = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 演算子
+  #endregion
+  #region 演算子
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ベクトル和
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;和&lt;/returns&gt;</span>
-  <span class="reserved">public static</span> Point <span class="reserved">operator</span> +(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>和</returns>
+  public static Point operator +(Point a, Point b)
   {
-    <span class="reserved">return new</span> Point(a.x + b.x, a.y + b.y);
+    return new Point(a.x + b.x, a.y + b.y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ベクトル差
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;和&lt;/returns&gt;</span>
-  <span class="reserved">public static</span> Point <span class="reserved">operator</span> -(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>和</returns>
+  public static Point operator -(Point a, Point b)
   {
-    <span class="reserved">return new</span> Point(a.x - b.x, a.y - b.y);
+    return new Point(a.x - b.x, a.y - b.y);
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// A-B 間の距離を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;距離AB&lt;/returns&gt;</span>
-  <span class="reserved">public static double</span> GetDistance(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>距離AB</returns>
+  public static double GetDistance(Point a, Point b)
   {
-    <span class="reserved">double</span> x = a.x - b.x;
-    <span class="reserved">double</span> y = a.y - b.y;
-    <span class="reserved">return</span> Math.Sqrt(x * x + y * y);
+    double x = a.x - b.x;
+    double y = a.y - b.y;
+    return Math.Sqrt(x * x + y * y);
   }
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の抽象基底クラス。
-/// &lt;/summary&gt;</span>
-<span class="reserved">interface</span> Shape
+/// </summary>
+interface Shape
 {
-  <span class="reserved">double</span> GetArea();
-  <span class="reserved">double</span> GetPerimeter();
+  double GetArea();
+  double GetPerimeter();
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の円をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Circle : Shape
+/// </summary>
+class Circle : Shape
 {
   Point center;
-  <span class="reserved">double</span> radius;
+  double radius;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 半径を指定して初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="r"&gt;半径。&lt;/param&gt;</span>
-  <span class="reserved">public</span> Circle(Point center, <span class="reserved">double</span> r)
+  /// </summary>
+  /// <param name="r">半径。</param>
+  public Circle(Point center, double r)
   {
-    <span class="reserved">this</span>.center = center;
-    <span class="reserved">this</span>.radius = r;
+    this.center = center;
+    this.radius = r;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の中心。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point Center
+  /// </summary>
+  public Point Center
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.center; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.center = value; }
+    get { return this.center; }
+    set { this.center = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の半径。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Radius
+  /// </summary>
+  public double Radius
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.radius; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.radius = value; }
+    get { return this.radius; }
+    set { this.radius = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 面積・周
+  #endregion
+  #region 面積・周
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">return</span> Math.PI * <span class="reserved">this</span>.radius * <span class="reserved">this</span>.radius;
+    return Math.PI * this.radius * this.radius;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public double GetPerimeter()
   {
-    <span class="reserved">return</span> 2 * Math.PI * <span class="reserved">this</span>.radius;
+    return 2 * Math.PI * this.radius;
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return string</span>.Format(
-      <span class="literal">"Circle (c = {0}, r = {1})"</span>,
-      <span class="reserved">this</span>.center, <span class="reserved">this</span>.radius);
+    return string.Format(
+      "Circle (c = {0}, r = {1})",
+      this.center, this.radius);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle : Shape
+/// </summary>
+class Triangle : Shape
 {
   Point a;
   Point b;
   Point c;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点A。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point A
+  /// </summary>
+  public Point A
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> a; }
-    <span class="reserved">set</span> { a = value; }
+    get { return a; }
+    set { a = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点B。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point B
+  /// </summary>
+  public Point B
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> b; }
-    <span class="reserved">set</span> { b = value; }
+    get { return b; }
+    set { b = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点C。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point C
+  /// </summary>
+  public Point C
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> c; }
-    <span class="reserved">set</span> { c = value; }
+    get { return c; }
+    set { c = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 面積・周
+  #endregion
+  #region 面積・周
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
     Point ab = b - a;
     Point ac = c - a;
-    <span class="reserved">return</span> 0.5 * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
+    return 0.5 * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public double GetPerimeter()
   {
-    <span class="reserved">double</span> l = Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.b);
-    l += Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.c);
-    l += Point.GetDistance(<span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
-    <span class="reserved">return</span> l;
+    double l = Point.GetDistance(this.a, this.b);
+    l += Point.GetDistance(this.a, this.c);
+    l += Point.GetDistance(this.b, this.c);
+    return l;
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return string</span>.Format(
-      <span class="literal">"Circle (a = {0}, b = {1}, c = {2})"</span>,
-      <span class="reserved">this</span>.a, <span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
+    return string.Format(
+      "Circle (a = {0}, b = {1}, c = {2})",
+      this.a, this.b, this.c);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 自由多角形をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Polygon : Shape
+/// </summary>
+class Polygon : Shape
 {
-  Point[] verteces; <span class="comment">// 頂点</span>
+  Point[] verteces; // 頂点
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="verteces"&gt;頂点の座標の入った配列&lt;/param&gt;</span>
-  <span class="reserved">public</span> Polygon(<span class="reserved">params</span> Point[] verteces)
+  /// </summary>
+  /// <param name="verteces">頂点の座標の入った配列</param>
+  public Polygon(params Point[] verteces)
   {
-    <span class="reserved">this</span>.verteces = verteces;
+    this.verteces = verteces;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点の集合。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point[] Verteces
+  /// </summary>
+  public Point[] Verteces
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.verteces; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.verteces = value; }
+    get { return this.verteces; }
+    set { this.verteces = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 面積・周
+  #endregion
+  #region 面積・周
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">double</span> area = 0;
-    Point p = <span class="reserved">this</span>.verteces[<span class="reserved">this</span>.verteces.Length - 1];
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; <span class="reserved">this</span>.verteces.Length; ++i)
+    double area = 0;
+    Point p = this.verteces[this.verteces.Length - 1];
+    for (int i = 0; i < this.verteces.Length; ++i)
     {
-      Point q = <span class="reserved">this</span>.verteces[i];
+      Point q = this.verteces[i];
       area += p.X * q.Y - q.X * p.Y;
       p = q;
     }
-    <span class="reserved">return</span> 0.5 * Math.Abs(area);
+    return 0.5 * Math.Abs(area);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public double GetPerimeter()
   {
-    <span class="reserved">double</span> perimeter = 0;
-    Point p = <span class="reserved">this</span>.verteces[<span class="reserved">this</span>.verteces.Length - 1];
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; <span class="reserved">this</span>.verteces.Length; ++i)
+    double perimeter = 0;
+    Point p = this.verteces[this.verteces.Length - 1];
+    for (int i = 0; i < this.verteces.Length; ++i)
     {
-      Point q = <span class="reserved">this</span>.verteces[i];
+      Point q = this.verteces[i];
       perimeter += Point.GetDistance(p, q);
       p = q;
     }
-    <span class="reserved">return</span> perimeter;
+    return perimeter;
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    System.Text.StringBuilder sb = <span class="reserved">new</span> System.Text.StringBuilder();
-    sb.AppendFormat(<span class="literal">"Polygon ({0}"</span>, <span class="reserved">this</span>.verteces[0]);
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 1; i &lt; <span class="reserved">this</span>.verteces.Length; ++i)
+    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+    sb.AppendFormat("Polygon ({0}", this.verteces[0]);
+    for (int i = 1; i < this.verteces.Length; ++i)
     {
-      sb.AppendFormat(<span class="literal">", {0}"</span>, <span class="reserved">this</span>.verteces[i]);
+      sb.AppendFormat(", {0}", this.verteces[i]);
     }
-    sb.Append(<span class="literal">")"</span>);
+    sb.Append(")");
 
-    <span class="reserved">return</span> sb.ToString();
+    return sb.ToString();
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Circle c = <span class="reserved">new</span> Circle(
-      <span class="reserved">new</span> Point(0, 0), 3);
+    Circle c = new Circle(
+      new Point(0, 0), 3);
 
-    Polygon p1 = <span class="reserved">new</span> Polygon(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Polygon p1 = new Polygon(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Polygon p2 = <span class="reserved">new</span> Polygon(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(0, 2),
-      <span class="reserved">new</span> Point(2, 2),
-      <span class="reserved">new</span> Point(2, 0));
+    Polygon p2 = new Polygon(
+      new Point(0, 0),
+      new Point(0, 2),
+      new Point(2, 2),
+      new Point(2, 0));
 
     Show(t);
     Show(c);
@@ -2730,13 +2731,13 @@ abstract <span class="reserved">class</span> Shape
     Show(p2);
   }
 
-  <span class="reserved">static void</span> Show(Shape f)
+  static void Show(Shape f)
   {
-    Console.Write(<span class="literal">"図形 {0}\n"</span>, f);
-    Console.Write(<span class="literal">"面積/周 = {0}\n"</span>, f.GetArea() / f.GetPerimeter());
+    Console.Write("図形 {0}\n", f);
+    Console.Write("面積/周 = {0}\n", f.GetArea() / f.GetPerimeter());
   }
 }
-</code></pre>
+```
 
 
 

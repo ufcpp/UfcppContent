@@ -38,9 +38,9 @@ C# でコマンドライン引数を受け取る方法について説明しま�
 コマンドプロンプト(Win9x の場合は「DOS プロンプト」と呼ばれる)上でファイルのコピーを行う場合、
 copy というコマンドを利用します。copy は以下のようにして、コピー元のファイルとコピー先のディレクトリ(フォルダ)を指定することによってファイルのコピーを行います。
 
-<pre class="console" title="copy コマンド">
-copy <span class="input">コピーするファイル</span> <span class="input">コピー先のディレクトリ</span>
-</pre>
+```console
+copy コピーするファイル コピー先のディレクトリ
+```
 
 
 このように、コマンドやプログラムを起動する際に、プログラム名の後に続けて入力した文字列はパラメータとしてプログラムに渡されます。
@@ -50,9 +50,9 @@ copy <span class="input">コピーするファイル</span> <span class="input">
 例えば、スタートメニューから [プログラム名を指定して実行] を選んで、
 以下のように入力してみてください。
 
-<pre class="source" title="エクスプローラ起動" lang="">
-<code>explorer.exe
-</code></pre>
+```csharp
+explorer.exe
+```
 
 
 以下のようにエクスプローラのウィンドウが開くと思います。
@@ -66,9 +66,9 @@ copy <span class="input">コピーするファイル</span> <span class="input">
 
 同様にスタートメニューから[プログラム名を指定して実行]を選んで、今度は以下のように入力してみてください。
 
-<pre class="source" title="オプション付きでエクスプローラ起動" lang="">
-<code>explorer.exe /e,/root,"C:\Program Files\Internet Explorer"
-</code></pre>
+```csharp
+explorer.exe /e,/root,"C:\Program Files\Internet Explorer"
+```
 
 
 以下のように、先ほどと内容の異なる形式でエクスプローラが起動します。
@@ -87,9 +87,9 @@ copy <span class="input">コピーするファイル</span> <span class="input">
 今まで、<code>Main</code> 関数には引数を書いていませんでしたが、
 コマンドライン引数を受け取りたい場合には、以下のように <code>Main</code> 関数に <code>string[]</code> 型の引数を書きます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
-</code></pre>
+```csharp
+static void Main(string[] args)
+```
 
 
 プログラムに与えた引数はこの <code>args</code> に格納されます。
@@ -98,36 +98,36 @@ copy <span class="input">コピーするファイル</span> <span class="input">
 この際、コマンドライン引数は先に入力されたものから順に <code>args</code> に格納されていきます。
 例えば、以下のようなプログラムを作成し、
 
-<pre class="source" title="コマンドライン引数を受け取るプログラム" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">public class</span> CommandLineSample
+public class CommandLineSample
 {
-  <span class="reserved">public static void</span> Main(<span class="reserved">string</span>[] args)
+  public static void Main(string[] args)
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;args.Length; ++i)
-      Console.Write(<span class="literal">"{0}番目のコマンドライン引数は{1}です。\n"</span>, i, args[i]);
+    for(int i=0; i<args.Length; ++i)
+      Console.Write("{0}番目のコマンドライン引数は{1}です。\n", i, args[i]);
   }
 }
-</code></pre>
+```
 
 
 以下のようにして(ただし、<code>test.exe</code>という名前で作成した実行ファイルを作成したとします)
 実行すると、
 
-<pre class="console" title="">
+```console
 test aaa bbb ccc ddd
-</pre>
+```
 
 
 以下のような結果が得られます。
 
-<pre class="console" title="">
+```console
 0番目のコマンドライン引数はaaaです。
 1番目のコマンドライン引数はbbbです。
 2番目のコマンドライン引数はcccです。
 3番目のコマンドライン引数はdddです。
-</pre>
+```
 
 
 
@@ -141,15 +141,15 @@ C# でプログラムを作る際、自分で終了コードを指定したい�
 <code>Main</code> 関数の戻り値がそのままプログラムの終了コードになります。
 例えば、以下のようなプログラムを書いた場合、終了コードは0になります。
 
-<pre class="source" title="終了コードを返す例" lang="">
-<code><span class="reserved">public class</span> CommandLineSample
+```csharp
+public class CommandLineSample
 {
-  <span class="reserved">public static int</span> Main()
+  public static int Main()
   {
-    <span class="reserved">return</span> 0;
+    return 0;
   }
 }
-</code></pre>
+```
 
 
 習慣的に、正常終了したときに0を返し、それ以外のときには0以外の値(エラーの原因に応じて値を変える)を返すようにします。
@@ -157,56 +157,56 @@ C# でプログラムを作る際、自分で終了コードを指定したい�
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-<pre class="source" title="コマンドライン引数のサンプル" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.IO;
+```csharp
+using System;
+using System.IO;
 
-<span class="reserved">public class</span> CommandLineSample
+public class CommandLineSample
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// コマンドライン引数でファイル名を受け取り、そのファイルの中身を表示する。
   /// コマンドライン引数の数がおかしかった場合や、
   /// ファイルが見つからない場合や、ファイルのアクセス権限がない場合、
   /// 終了コード -1 を返して終了する。
   /// 正常終了した場合には終了コード 0 を返す。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public static int</span> Main(<span class="reserved">string</span>[] args)
+  /// </summary>
+  public static int Main(string[] args)
   {
-    <span class="comment">// 引数チェック</span>
-    <span class="reserved">if</span>(args.Length != 1)
+    // 引数チェック
+    if(args.Length != 1)
     {
-      Console.Write(<span class="literal">"引数の数がおかしいです\n"</span>);
-      <span class="reserved">return</span> -1;
+      Console.Write("引数の数がおかしいです\n");
+      return -1;
     }
 
-    StreamReader reader = <span class="reserved">null</span>;
-    <span class="reserved">try</span>
+    StreamReader reader = null;
+    try
     {
-      <span class="comment">// ファイルを開いて中身を表示</span>
-      reader = <span class="reserved">new</span> StreamReader(args[0]);
-      <span class="reserved">string</span> text = reader.ReadToEnd();
+      // ファイルを開いて中身を表示
+      reader = new StreamReader(args[0]);
+      string text = reader.ReadToEnd();
       Console.Write(text);
     }
-    <span class="reserved">catch</span>(Exception e)
+    catch(Exception e)
     {
-      <span class="comment">// エラー処理
+      // エラー処理
       // 詳しくは「例外処理」で説明します。
-      // ファイルが存在しなかったり、アクセス権限がない場合にここが実行される。</span>
-      Console.Write(e.Message+<span class="literal">"\n"</span>);
-      <span class="reserved">return</span> -1;
+      // ファイルが存在しなかったり、アクセス権限がない場合にここが実行される。
+      Console.Write(e.Message+"\n");
+      return -1;
     }
-    <span class="reserved">finally</span>
+    finally
     {
-      <span class="comment">// 後処理
-      // これも「例外処理」で説明します。</span>
-      <span class="reserved">if</span>(reader != <span class="reserved">null</span>)
+      // 後処理
+      // これも「例外処理」で説明します。
+      if(reader != null)
         reader.Close();
     }
 
-    <span class="reserved">return</span> 0;
+    return 0;
   }
 }
-</code></pre>
+```
 
 
 プログラムの実行ファイル名は<code>test.exe</code>とする。
@@ -214,28 +214,28 @@ C# でプログラムを作る際、自分で終了コードを指定したい�
 同じディレクトリ中に<code>test.txt</code>というファイルがあって、
 その中身が
 
-<pre class="source" title="test.txt の中身" lang="">
-<code> test test test test
+```csharp
+ test test test test
 テスト テスト テスト
-</code></pre>
+```
 
 
 であるとき、実行結果は以下のようになる。
 
-<pre class="console" title="">
-C:\mydoc&gt; <span class="input">test</span>
+```console
+C:\mydoc> test
 引数の数がおかしいです
-</pre>
+```
 
 
-<pre class="console" title="">
-C:\mydoc&gt; <span class="input">test aaa</span>
+```console
+C:\mydoc> test aaa
 Could not find file "C:\mydoc\aaa".
-</pre>
+```
 
 
-<pre class="console" title="">
-C:\mydoc&gt; <span class="input">test test.txt</span>
+```console
+C:\mydoc> test test.txt
  test test test test
 テスト テスト テスト
-</pre>
+```

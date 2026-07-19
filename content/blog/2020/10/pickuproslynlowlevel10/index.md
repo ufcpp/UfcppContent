@@ -50,13 +50,13 @@ C# だと普段あまり意識しなくていいはずのメモリ管理を強�
 
 [`Span<T>`構造体](../../../../study/csharp/resource/span.md)は、<em>論理的には</em>以下のような構造体だと説明されます。
 
-<pre class="source" title="Span の中身">
-<code><span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Span<T>
 {
-    <span class="reserved">ref</span> <span class="type">T</span> <span class="method">_pointer</span>;
-    <span class="reserved">int</span> _length;
+    ref T _pointer;
+    int _length;
 }
-</code></pre>
+```
 
 フィールドとして `T` への参照と長さを持っています。
 この「フィールドとして `T` への参照を持っている」(以下、これを「ref フィールド」と呼びます)というのが `Span<T>` 構造体の肝で、
@@ -64,18 +64,18 @@ C# だと普段あまり意識しなくていいはずのメモリ管理を強�
 
 ただ、「論理的には」と書いたのは、これまでの .NET (.NET 5.0/ C# 9.0 時点でも)にはこの ref フィールド機能がなくて、 .NET Core 2.1 の `Span<T>` 実装当時には、以下のような特殊処理をすることにしました。
 
-<pre class="source" title="ref フィールド代わりに ByReference という特殊な型で特殊対応">
-<code><span class="reserved">struct</span> <span class="type">ByReference</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct ByReference<T>
 {
-    <span class="comment">// .NET ランタイムが特別扱いする前提なので、C# では書けない</span>
+    // .NET ランタイムが特別扱いする前提なので、C# では書けない
 }
  
-<span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt;
+struct Span<T>
 {
-    <span class="type">ByReference</span>&lt;<span class="type">T</span>&gt; _pointer;
-    <span class="reserved">int</span> _length;
+    ByReference<T> _pointer;
+    int _length;
 }
-</code></pre>
+```
 
 `ByReference<T>` がやりたいことはまさに ref フィールドなんですが、
 .NET に本格的に ref フィールドを導入するよりは、この特殊処理で実装した方が楽だったそうです。
@@ -94,53 +94,53 @@ C# コンパイラー的にも escape analysis の改善が必要で、
 当然、ref フィールドが入れば、`ByReference<T>` という特殊な構造体は必要なくなるので、
 `Span<T>` も素直に ref フィールドで実装したいという話にもなります。
 
-<pre class="source" title="Span の本来やりたかった実装方法">
-<code><span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt;
+```csharp
+readonly ref struct Span<T>
 {
-    <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="type">T</span> <span class="method">_field</span>;
-    <span class="reserved">readonly</span> <span class="reserved">int</span> _length;
+    ref readonly T _field;
+    readonly int _length;
  
-    <span class="comment">// 今までありそうでなかったコンストラクター。</span>
-    <span class="comment">// 今回の提案はこれをできるようにするのも目標の1つ。</span>
-    <span class="reserved">public</span> <span class="type">Span</span>(<span class="reserved">ref</span> <span class="type">T</span> <span class="variable">value</span>)
+    // 今までありそうでなかったコンストラクター。
+    // 今回の提案はこれをできるようにするのも目標の1つ。
+    public Span(ref T value)
     {
-        <span class="reserved">ref</span> _field = <span class="reserved">ref</span> <span class="variable">value</span>;
+        ref _field = ref value;
         _length = 1;
     }
 }
-</code></pre>
+```
 
 ## 構造体のフィールドを ref 戻り値で返す
 
 [ref 戻り値](../../../../study/csharp/resource/sp_ref.md#ref-returns)では、構造体のフィールドの参照を返せなかったりします。
 例えば、以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="C# 9.0 時点ではフィールドの参照を ref 戻り値で返せない">
-<code><span class="reserved">struct</span> <span class="type">S</span>
+```csharp
+struct S
 {
-    <span class="reserved">int</span> _field;
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> Prop =&gt; <span class="reserved">ref</span> _field; <span class="comment">// _field の参照を返せない</span>
+    int _field;
+    public ref int Prop => ref _field; // _field の参照を返せない
 }
-</code></pre>
+```
 
 以下のような、インターフェイス実装とジェネリックなメソッド呼び出しをしたときに、
 外に漏れてはいけない参照を漏らしてしまうことがあるので禁止されています。
 
-<pre class="source" title="外に漏れてはいけない参照が漏れる状況">
-<code><span class="reserved">interface</span> <span class="type">I1</span>
+```csharp
+interface I1
 {
-    <span class="reserved">ref</span> <span class="reserved">int</span> Prop { <span class="reserved">get</span>; }
+    ref int Prop { get; }
 }
  
-<span class="reserved">struct</span> <span class="type">S1</span> : <span class="type">I1</span>
+struct S1 : I1
 {
-    <span class="reserved">int</span> _field;
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> Prop =&gt; <span class="reserved">ref</span> _field;
+    int _field;
+    public ref int Prop => ref _field;
  
-    <span class="comment">// p の寿命は M 内で閉じてるはずなものの、その p の中身が ref 戻り値で返ってしまう。</span>
-    <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">p</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">I1</span> =&gt; <span class="reserved">ref</span> <span class="variable">p</span>.Prop;
+    // p の寿命は M 内で閉じてるはずなものの、その p の中身が ref 戻り値で返ってしまう。
+    static ref int M<T>(T p) where T : I1 => ref p.Prop;
 }
-</code></pre>
+```
 
 これに対する対処は、結局、
 
@@ -150,22 +150,22 @@ C# コンパイラー的にも escape analysis の改善が必要で、
   - インターフェイス実装できなくする
   - 以下のようなメソッド呼び出しも制限する
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">S1</span>
+```csharp
+struct S1
 {
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">GetValue</span>() =&gt; ...
+    public ref int GetValue() => ...
 }
  
-<span class="reserved">class</span> <span class="type">Example</span>
+class Example
 {
-    <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">M</span>()
+    ref int M()
     {
-        <span class="comment">// このコードは今現在有効 (破壊的変更したくないので今後も有効)</span>
-        <span class="type">S1</span> <span class="variable">local</span> = <span class="reserved">default</span>;
-        <span class="control">return</span> <span class="reserved">ref</span> <span class="variable">local</span>.<span class="method">GetValue</span>();
+        // このコードは今現在有効 (破壊的変更したくないので今後も有効)
+        S1 local = default;
+        return ref local.GetValue();
     }
 }
-</code></pre>
+```
 
 ## safe な固定長バッファー
 

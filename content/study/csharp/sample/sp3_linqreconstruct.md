@@ -24,19 +24,19 @@ aliases:
 LINQ クエリ式はメソッド（あるいは拡張メソッド）呼び出しに変換されます。
 例えば、以下のような式は、
 
-<pre class="source" title="クエリ式の例" lang="">
-<code><span class="reserved">var</span> q =
-  <span class="reserved">from</span> x <span class="reserved">in</span> list
-  <span class="reserved">where</span> x &gt; 0
-  <span class="reserved">select</span> x;
-</code></pre>
+```csharp
+var q =
+  from x in list
+  where x > 0
+  select x;
+```
 
 
 以下のようなメソッド呼び出しに変換されます。
 
-<pre class="source" title="その変換結果" lang="">
-<code><span class="reserved">var</span> q = list.Where(x =&gt; x &gt; 0);
-</code></pre>
+```csharp
+var q = list.Where(x => x > 0);
+```
 
 
 ここでは、この逆をやってみようという話をします。
@@ -76,42 +76,42 @@ list.Where(...) から from x in list where ... というクエリ式を再構�
 まず、多少なりとも結果の式の見栄えを良くするために、
 以下のような補助関数を用意。
 
-<pre class="source" title="補助関数" lang="">
-<code><span class="comment">// 1～5</span>
-<span class="reserved">static</span> IEnumerable&lt;<span class="reserved">int</span>&gt; five = Enumerable.Range(1, 5);
+```csharp
+// 1～5
+static IEnumerable<int> five = Enumerable.Range(1, 5);
 
-<span class="comment">// x の要素に重複がないとき true</span>
-<span class="reserved">static bool</span> Distinct(<span class="reserved">params int</span>[] x)
+// x の要素に重複がないとき true
+static bool Distinct(params int[] x)
 {
-  <span class="reserved">return</span> x.Distinct().Count() == x.Length;
+  return x.Distinct().Count() == x.Length;
 }
 
-<span class="comment">// x, y が隣り合う数字でないとき true</span>
-<span class="reserved">static bool</span> Discrete(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+// x, y が隣り合う数字でないとき true
+static bool Discrete(int x, int y)
 {
-  <span class="reserved">return</span> Math.Abs(<span class="reserved">checked</span>(x - y)) != 1;
+  return Math.Abs(checked(x - y)) != 1;
 }
-</code></pre>
+```
 
 
 これを使って先ほどの問題を解くクエリ式を書くと、以下のような感じ。
 
-<pre class="source" title="クエリ式で総当たり探索" lang="">
-<code><span class="reserved">var</span> answers1 =
-  <span class="reserved">from</span> baker <span class="reserved">in</span> five
-  <span class="reserved">from</span> cooper <span class="reserved">in</span> five
-  <span class="reserved">from</span> fletcher <span class="reserved">in</span> five
-  <span class="reserved">from</span> miller <span class="reserved">in</span> five
-  <span class="reserved">from</span> smith <span class="reserved">in</span> five
-  <span class="reserved">where</span> Distinct(baker, cooper, fletcher, miller, smith)
-  <span class="reserved">where</span> baker != 5
-  <span class="reserved">where</span> cooper != 1
-  <span class="reserved">where</span> fletcher != 1 &amp;&amp; fletcher != 5
-  <span class="reserved">where</span> miller &gt; cooper
-  <span class="reserved">where</span> Discrete(smith, fletcher)
-  <span class="reserved">where</span> Discrete(fletcher, cooper)
-  <span class="reserved">select new</span> { baker, cooper, fletcher, miller, smith };
-</code></pre>
+```csharp
+var answers1 =
+  from baker in five
+  from cooper in five
+  from fletcher in five
+  from miller in five
+  from smith in five
+  where Distinct(baker, cooper, fletcher, miller, smith)
+  where baker != 5
+  where cooper != 1
+  where fletcher != 1 && fletcher != 5
+  where miller > cooper
+  where Discrete(smith, fletcher)
+  where Discrete(fletcher, cooper)
+  select new { baker, cooper, fletcher, miller, smith };
+```
 
 
 
@@ -120,21 +120,21 @@ list.Where(...) から from x in list where ... というクエリ式を再構�
 ここでちょっと話がそれますが、
 前節で書いたクエリ式は、以下のようなメソッド呼び出しに展開されます。
 
-<pre class="source" title="answers1 のクエリ式と等価なクエリ演算" lang="">
-<code><span class="reserved">var</span> answers0 = five
-  .SelectMany(x =&gt; five, (baker, cooper) =&gt; <span class="reserved">new</span> { baker, cooper })
-  .SelectMany(x =&gt; five, (x, fletcher) =&gt; <span class="reserved">new</span> { x, fletcher })
-  .SelectMany(x =&gt; five, (x, miller) =&gt; <span class="reserved">new</span> { x, miller })
-  .SelectMany(x =&gt; five, (x, smith) =&gt; <span class="reserved">new</span> { x, smith })
-  .Where(x =&gt; Distinct(x.x.x.x.baker, x.x.x.x.cooper, x.x.x.fletcher, x.x.miller, x.smith))
-  .Where(x =&gt; x.x.x.x.baker != 5)
-  .Where(x =&gt; x.x.x.x.cooper != 1)
-  .Where(x =&gt; x.x.x.fletcher != 1 &amp;&amp; x.x.x.fletcher != 5)
-  .Where(x =&gt; x.x.miller &gt; x.x.x.x.cooper)
-  .Where(x =&gt; Discrete(x.smith, x.x.x.fletcher))
-  .Where(x =&gt; Discrete(x.x.x.fletcher, x.x.x.x.cooper))
-  .Select(x =&gt; <span class="reserved">new</span> { x.x.x.x.baker, x.x.x.x.cooper, x.x.x.fletcher, x.x.miller, x.smith });
-</code></pre>
+```csharp
+var answers0 = five
+  .SelectMany(x => five, (baker, cooper) => new { baker, cooper })
+  .SelectMany(x => five, (x, fletcher) => new { x, fletcher })
+  .SelectMany(x => five, (x, miller) => new { x, miller })
+  .SelectMany(x => five, (x, smith) => new { x, smith })
+  .Where(x => Distinct(x.x.x.x.baker, x.x.x.x.cooper, x.x.x.fletcher, x.x.miller, x.smith))
+  .Where(x => x.x.x.x.baker != 5)
+  .Where(x => x.x.x.x.cooper != 1)
+  .Where(x => x.x.x.fletcher != 1 && x.x.x.fletcher != 5)
+  .Where(x => x.x.miller > x.x.x.x.cooper)
+  .Where(x => Discrete(x.smith, x.x.x.fletcher))
+  .Where(x => Discrete(x.x.x.fletcher, x.x.x.x.cooper))
+  .Select(x => new { x.x.x.x.baker, x.x.x.x.cooper, x.x.x.fletcher, x.x.miller, x.smith });
+```
 
 
 .x だらけで泣けてきます。
@@ -146,20 +146,20 @@ list.Where(...) から from x in list where ... というクエリ式を再構�
 
 多少なりとも透過識別子を整理すると以下のような感じ。
 
-<pre class="source" title="answers0 の透過識別子をちょっと整理" lang="">
-<code><span class="reserved">var</span> answers01 = five
-  .SelectMany(x =&gt; five, (baker, cooper) =&gt; <span class="reserved">new</span> { baker, cooper })
-  .SelectMany(x =&gt; five, (x, fletcher) =&gt; <span class="reserved">new</span> { x.baker, x.cooper, fletcher })
-  .SelectMany(x =&gt; five, (x, miller) =&gt; <span class="reserved">new</span> { x.baker, x.cooper, x.fletcher, miller })
-  .SelectMany(x =&gt; five, (x, smith) =&gt; <span class="reserved">new</span> { x.baker, x.cooper, x.fletcher, x.miller, smith })
-  .Where(x =&gt; Distinct(x.baker, x.cooper, x.fletcher, x.miller, x.smith))
-  .Where(x =&gt; x.baker != 5)
-  .Where(x =&gt; x.cooper != 1)
-  .Where(x =&gt; x.fletcher != 1 &amp;&amp; x.fletcher != 5)
-  .Where(x =&gt; x.miller &gt; x.cooper)
-  .Where(x =&gt; Discrete(x.smith, x.fletcher))
-  .Where(x =&gt; Discrete(x.fletcher, x.cooper));
-</code></pre>
+```csharp
+var answers01 = five
+  .SelectMany(x => five, (baker, cooper) => new { baker, cooper })
+  .SelectMany(x => five, (x, fletcher) => new { x.baker, x.cooper, fletcher })
+  .SelectMany(x => five, (x, miller) => new { x.baker, x.cooper, x.fletcher, miller })
+  .SelectMany(x => five, (x, smith) => new { x.baker, x.cooper, x.fletcher, x.miller, smith })
+  .Where(x => Distinct(x.baker, x.cooper, x.fletcher, x.miller, x.smith))
+  .Where(x => x.baker != 5)
+  .Where(x => x.cooper != 1)
+  .Where(x => x.fletcher != 1 && x.fletcher != 5)
+  .Where(x => x.miller > x.cooper)
+  .Where(x => Discrete(x.smith, x.fletcher))
+  .Where(x => Discrete(x.fletcher, x.cooper));
+```
 
 
 幾分かはマシに。
@@ -177,29 +177,29 @@ foreach, if, yield return ですべて置き換え可能なんですよね。
 
 例えば、以下のような単純なクエリ式を考えてみます。
 
-<pre class="source" title="IEnumerable に対するクエリ式" lang="">
-<code><span class="reserved">var</span> points =
-  <span class="reserved">from</span> x <span class="reserved">in</span> Enumerable.Range(0, 100)
-  <span class="reserved">from</span> y <span class="reserved">in</span> Enumerable.Range(0, 100)
-  <span class="reserved">where</span> x % 2 != 0
-  <span class="reserved">where</span> y % 3 != 0
-  <span class="reserved">select new</span> { x, y };
-</code></pre>
+```csharp
+var points =
+  from x in Enumerable.Range(0, 100)
+  from y in Enumerable.Range(0, 100)
+  where x % 2 != 0
+  where y % 3 != 0
+  select new { x, y };
+```
 
 
 このクエリ式は、「[イテレーター](../data/sp2_iterator.md#iterator)」構文を使って、
 以下のように書き換えることができます。
 
-<pre class="source" title="イテレータで置き換え" lang="">
-<code><span class="reserved">static</span> IEnumerable&lt;Point&gt; Points()
+```csharp
+static IEnumerable<Point> Points()
 {
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> Enumerable.Range(0, 100)
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> y <span class="reserved">in</span> Enumerable.Range(0, 100)
-  <span class="reserved">if</span> (x % 2 != 0)
-  <span class="reserved">if</span> (y % 3 != 0)
-  <span class="reserved">yield return new</span> Point(x, y);
+  foreach (var x in Enumerable.Range(0, 100)
+  foreach (var y in Enumerable.Range(0, 100)
+  if (x % 2 != 0)
+  if (y % 3 != 0)
+  yield return new Point(x, y);
 }
-</code></pre>
+```
 
 
 イテレータは匿名メソッドで書けない（＝ クロージャにできないし、匿名型を使えない）っていう欠点はありますが、
@@ -219,30 +219,30 @@ IEnumerable に対する単純なクエリ式が、foreach, if, yield return を
 </blockquote>
 要するに、
 
-<pre class="source" title="if が foreach の内側" lang="">
-<code><span class="reserved">static</span> IEnumerable&lt;Point&gt; Points()
+```csharp
+static IEnumerable<Point> Points()
 {
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> Enumerable.Range(0, 100)
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> y <span class="reserved">in</span> Enumerable.Range(0, 100)
-  <span class="reserved">if</span> (x % 2 != 0)
-  <span class="reserved">if</span> (y % 3 != 0)
-  <span class="reserved">yield return new</span> Point(x, y);
+  foreach (var x in Enumerable.Range(0, 100)
+  foreach (var y in Enumerable.Range(0, 100)
+  if (x % 2 != 0)
+  if (y % 3 != 0)
+  yield return new Point(x, y);
 }
-</code></pre>
+```
 
 
 というコードよりも、
 
-<pre class="source" title="if (x % 2 != 0) を foreach の外側に移動" lang="">
-<code><span class="reserved">static</span> IEnumerable&lt;Point&gt; Points()
+```csharp
+static IEnumerable<Point> Points()
 {
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> Enumerable.Range(0, 100)
-  <span class="reserved">if</span> (x % 2 != 0)
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> y <span class="reserved">in</span> Enumerable.Range(0, 100)
-  <span class="reserved">if</span> (y % 3 != 0)
-  <span class="reserved">yield return new</span> Point(x, y);
+  foreach (var x in Enumerable.Range(0, 100)
+  if (x % 2 != 0)
+  foreach (var y in Enumerable.Range(0, 100)
+  if (y % 3 != 0)
+  yield return new Point(x, y);
 }
-</code></pre>
+```
 
 
 と書く方がパフォーマンスがよくなります。
@@ -253,42 +253,42 @@ IEnumerable に対する単純なクエリ式が、foreach, if, yield return を
 from と where の順序を入れ替えるだけでパフォーマンスがよくなります。
 例えば、
 
-<pre class="source" title="where が from の後ろ" lang="">
-<code><span class="reserved">var</span> answers1 =
-  <span class="reserved">from</span> baker <span class="reserved">in</span> five
-  <span class="reserved">from</span> cooper <span class="reserved">in</span> five
-  <span class="reserved">from</span> fletcher <span class="reserved">in</span> five
-  <span class="reserved">from</span> miller <span class="reserved">in</span> five
-  <span class="reserved">from</span> smith <span class="reserved">in</span> five
-  <span class="reserved">where</span> Distinct(baker, cooper, fletcher, miller, smith)
-  <span class="reserved">where</span> baker != 5
-  <span class="reserved">where</span> cooper != 1
-  <span class="reserved">where</span> fletcher != 1 &amp;&amp; fletcher != 5
-  <span class="reserved">where</span> miller &gt; cooper
-  <span class="reserved">where</span> Discrete(smith, fletcher)
-  <span class="reserved">where</span> Discrete(fletcher, cooper)
-  <span class="reserved">select new</span> { baker, cooper, fletcher, miller, smith };
-</code></pre>
+```csharp
+var answers1 =
+  from baker in five
+  from cooper in five
+  from fletcher in five
+  from miller in five
+  from smith in five
+  where Distinct(baker, cooper, fletcher, miller, smith)
+  where baker != 5
+  where cooper != 1
+  where fletcher != 1 && fletcher != 5
+  where miller > cooper
+  where Discrete(smith, fletcher)
+  where Discrete(fletcher, cooper)
+  select new { baker, cooper, fletcher, miller, smith };
+```
 
 
 と書くよりも、
 
-<pre class="source" title="where を from の前に移動" lang="">
-<code><span class="reserved">var</span> answers2 =
-  <span class="reserved">from</span> baker <span class="reserved">in</span> five
-  <span class="reserved">where</span> baker != 5
-  <span class="reserved">from</span> cooper <span class="reserved">in</span> five
-  <span class="reserved">where</span> cooper != 1
-  <span class="reserved">from</span> fletcher <span class="reserved">in</span> five
-  <span class="reserved">where</span> fletcher != 1 &amp;&amp; fletcher != 5
-  <span class="reserved">where</span> Discrete(fletcher, cooper)
-  <span class="reserved">from</span> miller <span class="reserved">in</span> five
-  <span class="reserved">where</span> miller &gt; cooper
-  <span class="reserved">from</span> smith <span class="reserved">in</span> five
-  <span class="reserved">where</span> Discrete(smith, fletcher)
-  <span class="reserved">where</span> Distinct(baker, cooper, fletcher, miller, smith)
-  <span class="reserved">select new</span> { baker, cooper, fletcher, miller, smith };
-</code></pre>
+```csharp
+var answers2 =
+  from baker in five
+  where baker != 5
+  from cooper in five
+  where cooper != 1
+  from fletcher in five
+  where fletcher != 1 && fletcher != 5
+  where Discrete(fletcher, cooper)
+  from miller in five
+  where miller > cooper
+  from smith in five
+  where Discrete(smith, fletcher)
+  where Distinct(baker, cooper, fletcher, miller, smith)
+  select new { baker, cooper, fletcher, miller, smith };
+```
 
 
 と書く方がパフォーマンスはいいわけです。
@@ -319,19 +319,19 @@ from が前に固まってないだけで思った以上に式が見づらい。
 C# の仕様上、メソッド呼び出しに変換されてしまうわけです。
 要するに、以下のようなクエリ式は、
 
-<pre class="source" title="クエリ式の例" lang="">
-<code><span class="reserved">var</span> q =
-  <span class="reserved">from</span> x <span class="reserved">in</span> list
-  <span class="reserved">where</span> x &gt; 0
-  <span class="reserved">select</span> x;
-</code></pre>
+```csharp
+var q =
+  from x in list
+  where x > 0
+  select x;
+```
 
 
 以下のようなメソッド呼び出しに変換されます。
 
-<pre class="source" title="その変換結果" lang="">
-<code><span class="reserved">var</span> q = list.Where(x =&gt; x &gt; 0);
-</code></pre>
+```csharp
+var q = list.Where(x => x > 0);
+```
 
 
 ということで、メソッド呼び出しの形になっている式木から、
@@ -346,35 +346,35 @@ C# の仕様上、メソッド呼び出しに変換されてしまうわけで�
 
 以下のようなコードで、
 
-<pre class="source" title="式木からクエリ式の再構築" lang="">
-<code><span class="reserved">var</span> q0 = Make.Expression((IEnumerable&lt;<span class="reserved">int</span>&gt; five) =&gt;
-  <span class="reserved">from</span> baker <span class="reserved">in</span> five
-  <span class="reserved">from</span> cooper <span class="reserved">in</span> five
-  <span class="reserved">from</span> fletcher <span class="reserved">in</span> five
-  <span class="reserved">from</span> miller <span class="reserved">in</span> five
-  <span class="reserved">from</span> smith <span class="reserved">in</span> five
-  <span class="reserved">where</span> Distinct(baker, cooper, fletcher, miller, smith)
-  <span class="reserved">where</span> baker != 5
-  <span class="reserved">where</span> cooper != 1
-  <span class="reserved">where</span> fletcher != 1 &amp;&amp; fletcher != 5
-  <span class="reserved">where</span> miller &gt; cooper
-  <span class="reserved">where</span> Discrete(smith, fletcher)
-  <span class="reserved">where</span> Discrete(fletcher, cooper)
-  <span class="reserved">select new</span> { baker, cooper, fletcher, miller, smith }
+```csharp
+var q0 = Make.Expression((IEnumerable<int> five) =>
+  from baker in five
+  from cooper in five
+  from fletcher in five
+  from miller in five
+  from smith in five
+  where Distinct(baker, cooper, fletcher, miller, smith)
+  where baker != 5
+  where cooper != 1
+  where fletcher != 1 && fletcher != 5
+  where miller > cooper
+  where Discrete(smith, fletcher)
+  where Discrete(fletcher, cooper)
+  select new { baker, cooper, fletcher, miller, smith }
   );
 
-<span class="reserved">var</span> q = <span class="reserved">new</span> QueryExpression(q0);
+var q = new QueryExpression(q0);
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> l <span class="reserved">in</span> q.Queries)
+foreach (var l in q.Queries)
 {
-  Console.Write(<span class="literal">"{0}\n"</span>, l);
+  Console.Write("{0}\n", l);
 }
-</code></pre>
+```
 
 
 以下のような出力を得ます。
 
-<pre class="console" title="出力結果">
+```console
 from baker in five
 from cooper in five
 from fletcher in five
@@ -383,9 +383,9 @@ from smith in five
 where Distinct(new [] {baker, cooper, fletcher, miller, smith})
 where (baker != 5)
 where (cooper != 1)
-where ((fletcher != 1) &amp;&amp; (fletcher != 5))
-where (miller &gt; cooper)
+where ((fletcher != 1) && (fletcher != 5))
+where (miller > cooper)
 where Discrete(smith, fletcher)
 where Discrete(fletcher, cooper)
-select new &lt;&gt;f__AnonymousType5`5(baker, cooper, fletcher, miller, smith)
-</pre>
+select new <>f__AnonymousType5`5(baker, cooper, fletcher, miller, smith)
+```

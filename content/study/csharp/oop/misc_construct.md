@@ -28,55 +28,55 @@ aliases:
 派生クラスのインスタンスが生成される際、
 派生クラスのコンストラクターの前に、基底クラスのコンストラクターが呼び出されます。
 
-<pre class="source" title="基底クラスのコンストラクターが呼ばれる">
-<span class="comment">// コンストラクター呼び出し。</span>
-<span class="reserved">new</span> <span class="type">D</span>();
+```csharp
+// コンストラクター呼び出し。
+new D();
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="type">B</span>() <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;base&quot;</span>);
+    public B() => Console.WriteLine("base");
 }
 
-<span class="reserved">class</span> <span class="type">D</span> : <span class="type">B</span>
+class D : B
 {
-    <span class="reserved">public</span> <span class="type">D</span>() <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;derived&quot;</span>);
+    public D() => Console.WriteLine("derived");
 }
-</pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 base
 derived
-</pre>
+```
 
 
 なので、派生クラスのコンストラクター内では、
 基底クラスのメンバーはちゃんと初期化済みだと思って使えます。
 
-<pre class="source" title="コンストラクター内で基底クラスのメンバーを使用">
-<span class="reserved">var</span> <span class="variable">d</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">D</span>();
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">d</span><span class="operator">.</span><span class="field">Y</span>); <span class="comment">// 25</span>
+```csharp
+var d = new D();
+Console.WriteLine(d.Y); // 25
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> <span class="field">X</span>;
-    <span class="reserved">public</span> <span class="type">B</span>() <span class="operator">=&gt;</span> <span class="field">X</span> <span class="operator">=</span> <span class="number">5</span>;
+    public double X;
+    public B() => X = 5;
 }
 
-<span class="reserved">class</span> <span class="type">D</span> : <span class="type">B</span>
+class D : B
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> <span class="field">Y</span>;
+    public double Y;
 
-    <span class="comment">// B() の実行が先。X は 5 になってる。</span>
-    <span class="comment">// ↓ ちゃんと y == 25 になる。</span>
-    <span class="reserved">public</span> <span class="type">D</span>() <span class="operator">=&gt;</span> <span class="field">Y</span> <span class="operator">=</span> <span class="field">X</span> <span class="operator">*</span> <span class="field">X</span>;
+    // B() の実行が先。X は 5 になってる。
+    // ↓ ちゃんと y == 25 になる。
+    public D() => Y = X * X;
 }
-</pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 25
-</pre>
+```
 
 
 
@@ -90,21 +90,21 @@ C++ でも Java でもそういうルールでコンストラクターを呼び�
 コンストラクター中の仮想メソッド呼び出しの扱いに関して。
 例えば、以下のような感じ。
 
-<pre class="source" title="基底クラスのコンストラクターで仮想メソッドを呼ぶ">
-<span class="reserved">new</span> <span class="type">D</span>(); <span class="comment">// C# のルールだと &quot;derived&quot; の方が表示される。</span>
+```csharp
+new D(); // C# のルールだと "derived" の方が表示される。
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="type">B</span>() <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="method">Name</span>());
+    public B() => Console.WriteLine(Name());
 
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">string</span> <span class="method">Name</span>() <span class="operator">=&gt;</span> <span class="string">&quot;base&quot;</span>;
+    public virtual string Name() => "base";
 }
 
-<span class="reserved">class</span> <span class="type">D</span> : <span class="type">B</span>
+class D : B
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">Name</span>() <span class="operator">=&gt;</span> <span class="string">&quot;derived&quot;</span>;
+    public override string Name() => "derived";
 }
-</pre>
+```
 
 
 この類のコードの挙動は C++ と C# で違います。
@@ -113,16 +113,16 @@ base と表示されます。
 派生クラス D のインスタンスを生成しているにもかかわらず、
 基底クラス B の Name メソッドが呼ばれます。
 
-<pre class="console" title="C++ で同様のプログラムを書いて実行させた結果">
+```console
 base
-</pre>
+```
 
 
 一方、C# では、以下のように、派生クラスの Name メソッドが呼ばれます。
 
-<pre class="console" title="C# での実行結果">
+```console
 derived
-</pre>
+```
 
 
 仮想メソッド（あるいは、C++ では仮想関数と呼ぶ）の呼び出しは、
@@ -152,37 +152,37 @@ Name というメソッドが呼ばれたときに、
 という順序になります。
 以下のようなコードを書くと実行順序がはっきりします。
 
-<pre class="source" title="初期化の実行順序">
-<span class="comment">// コンストラクター呼び出し。</span>
-<span class="reserved">new</span> <span class="type">Derived</span>();
+```csharp
+// コンストラクター呼び出し。
+new Derived();
 
-<span class="reserved">class</span> <span class="type">Member</span>
+class Member
 {
-    <span class="reserved">public</span> <span class="type">Member</span>(<span class="reserved">string</span> <span class="variable local">s</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">Member </span>{<span class="variable local">s</span>}<span class="string">&quot;</span>);
+    public Member(string s) => Console.WriteLine($"Member {s}");
 }
 
-<span class="reserved">class</span> <span class="type">Base</span>
+class Base
 {
-    <span class="reserved">public</span> <span class="type">Member</span> <span class="field">X</span> <span class="operator">=</span> <span class="reserved">new</span>(<span class="string">&quot;base&quot;</span>); <span class="comment">// 2.</span>
+    public Member X = new("base"); // 2.
 
-    <span class="reserved">public</span> <span class="type">Base</span>() <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;Base()&quot;</span>); <span class="comment">// 3.</span>
+    public Base() => Console.WriteLine("Base()"); // 3.
 }
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="type">Member</span> <span class="field">Y</span> <span class="operator">=</span> <span class="reserved">new</span>(<span class="string">&quot;derived&quot;</span>); <span class="comment">// 1.</span>
+    public Member Y = new("derived"); // 1.
 
-    <span class="reserved">public</span> <span class="type">Derived</span>() <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;Derived()&quot;</span>); <span class="comment">// 4.</span>
+    public Derived() => Console.WriteLine("Derived()"); // 4.
 }
-</pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 Member derived
 Member base
 Base()
 Derived()
-</pre>
+```
 
 
 で、メンバー変数初期化子を使って値を設定した変数は、
@@ -200,26 +200,26 @@ Derived()
 派生クラスのメンバー変数は初期化されていない（派生クラスのコンストラクターはまだ呼ばれてない）んですよね。
 例えば、以下のコードを見てください。
 
-<pre class="source" title="初期化されるまえにメンバー変数を参照してしまう">
-<span class="comment">// コンストラクター呼び出し。</span>
-<span class="reserved">new</span> <span class="type">D</span>(<span class="string">&quot;derived&quot;</span>);
+```csharp
+// コンストラクター呼び出し。
+new D("derived");
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="type">B</span>() <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="method">Name</span>()); <span class="comment">// D() の中身より先に実行される。</span>
+    public B() => Console.WriteLine(Name()); // D() の中身より先に実行される。
 
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">string</span> <span class="method">Name</span>() <span class="operator">=&gt;</span> <span class="string">&quot;anonymous&quot;</span>;
+    public virtual string Name() => "anonymous";
 }
 
-<span class="reserved">class</span> <span class="type">D</span> : <span class="type">B</span>
+class D : B
 {
-    <span class="reserved">private</span> <span class="reserved">string</span> <span class="field">_name</span>;
+    private string _name;
 
-    <span class="reserved">public</span> <span class="type">D</span>(<span class="reserved">string</span> <span class="variable local">name</span>) <span class="operator">=&gt;</span> <span class="field">_name</span> <span class="operator">=</span> <span class="variable local">name</span>;
+    public D(string name) => _name = name;
 
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">Name</span>() <span class="operator">=&gt;</span> <span class="field">_name</span>; <span class="comment">// D() 実行前に呼ばれるとまだ _name の初期化が終わってない。</span>
+    public override string Name() => _name; // D() 実行前に呼ばれるとまだ _name の初期化が終わってない。
 }
-</pre>
+```
 
 
 前節の内容と比べて何が違うかというと、D.Name メソッド内で派生クラスのメンバー変数である name の値を読み出しています。
@@ -239,29 +239,29 @@ B のコンストラクター内で Name メソッドが呼ばれた時点では
 プライマリ コンストラクターの場合はメンバー初期化子を使うことになるので、
 初期化処理が実行されるタイミングが早くなります。
 
-<pre class="source" title="プライマリ コンストラクターを使うと初期化タイミングが早い">
-<span class="comment">// コンストラクター呼び出し。</span>
-<span class="reserved">new</span> <span class="type">D</span>(<span class="string">&quot;derived&quot;</span>);
+```csharp
+// コンストラクター呼び出し。
+new D("derived");
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="type">B</span>() <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="method">Name</span>()); <span class="comment">// D のメンバー初期化子よりは後に実行される。</span>
+    public B() => Console.WriteLine(Name()); // D のメンバー初期化子よりは後に実行される。
 
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">string</span> <span class="method">Name</span>() <span class="operator">=&gt;</span> <span class="string">&quot;anonymous&quot;</span>;
+    public virtual string Name() => "anonymous";
 }
 
-<span class="comment">// 先ほどのコードのコンストラクターをプライマリ コンストラクター形式に変更。</span>
-<span class="reserved">class</span> <span class="type">D</span>(<span class="reserved">string</span> <span class="variable local">name</span>) : <span class="type">B</span>
+// 先ほどのコードのコンストラクターをプライマリ コンストラクター形式に変更。
+class D(string name) : B
 {
-    <span class="reserved">private</span> <span class="reserved">string</span> <span class="field">_name</span> <span class="operator">=</span> <span class="variable local">name</span>; <span class="comment">// フィールド初期化子になったことで、実行タイミングが早くなる。</span>
+    private string _name = name; // フィールド初期化子になったことで、実行タイミングが早くなる。
 
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">Name</span>() <span class="operator">=&gt;</span> <span class="field">_name</span>; <span class="comment">// B() 実行前に _name = name が呼ばれてて、期待通りの動作になる。</span>
+    public override string Name() => _name; // B() 実行前に _name = name が呼ばれてて、期待通りの動作になる。
 }
-</pre>
+```
 
-<pre class="console" title="実行結果">
+```console
 derived
-</pre>
+```
 
 
 ## <a id="sec-generated-title-7"></a> <a id="summary">まとめ</a>

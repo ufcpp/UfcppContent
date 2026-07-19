@@ -28,17 +28,17 @@ aliases: []
 はい。[レコード型](../../../../study/csharp/datatype/record.md)を[値型](../../../../study/csharp/resource/oo_reference.md#valtype)(構造体)でも作れるようになりました。
 C# 9.0 時点で、単に `record` キーワードを使って型定義すると必ず[参照型](../../../../study/csharp/resource/oo_reference.md#reftype)(クラス)になっていたんですが、C# 10.0 では `record struct` と `record class` で値型・参照型を選べるようになりました。
 
-<pre class="source" title="record struct, record class">
-<code><span class="comment">// こっちは構造体なのでヒープ アロケーション起きない。</span>
-<span class="comment">// あんまりでかいデータを持たせるとコピーのコストが結構でかい。</span>
-<span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">S</span>(1, 2);
+```csharp
+// こっちは構造体なのでヒープ アロケーション起きない。
+// あんまりでかいデータを持たせるとコピーのコストが結構でかい。
+var s = new S(1, 2);
 
-<span class="comment">// こっちはクラスなのでアロケーション発生。</span>
-<span class="reserved">var</span> c = <span class="reserved">new</span> <span class="type">C</span>(1, 2);
+// こっちはクラスなのでアロケーション発生。
+var c = new C(1, 2);
 
-<span class="reserved">record</span> <span class="reserved">struct</span> <span class="type">S</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
-<span class="reserved">record</span> <span class="reserved">class</span> <span class="type">C</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
-</code></pre>
+record struct S(int X, int Y);
+record class C(int X, int Y);
+```
 
 ちなみに、単なる `record` はこれまで通りクラスです。
 `record` と `record class` は完全に同じ意味。
@@ -62,19 +62,19 @@ C# 9.0 時点で、単に `record` キーワードを使って型定義すると
 
 あと、今回一緒に、普通の構造体に対しても [`with` 式](../../../../study/csharp/datatype/record.md#with)が使えるようになっています。
 
-<pre class="source" title="普通の構造体に対して with ">
-<code><span class="reserved">var</span> s1 = <span class="reserved">new</span> S { X = 1, Y = 2 };
-<span class="reserved">var</span> s2 = s1 <span class="reserved">with</span> { X = 3 };
+```csharp
+var s1 = new S { X = 1, Y = 2 };
+var s2 = s1 with { X = 3 };
 
-Console.WriteLine(s2); <span class="comment">// (3, 2)</span>
+Console.WriteLine(s2); // (3, 2)
 
-<span class="reserved">struct</span> <span class="type">S</span>
+struct S
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> ToString() =&gt; (X, Y).ToString();
+    public int X { get; init; }
+    public int Y { get; init; }
+    public override string ToString() => (X, Y).ToString();
 }
-</code></pre>
+```
 
 構造体では、ある変数から別の変数に代入したとき、元から自動的にコピーを作っていたので、それをそのまま使っています。
 
@@ -84,19 +84,19 @@ Console.WriteLine(s2); <span class="comment">// (3, 2)</span>
 
 例えば、ある1ファイルに以下のようなコードを書いたとします。
 
-<pre class="source" title="global using を書いたファイル">
-<code><span class="reserved">global</span> <span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
-<span class="reserved">global</span> <span class="reserved">using</span> System.Linq;
-<span class="reserved">global</span> <span class="reserved">using</span> System.Collections.Generic;
-</code></pre>
+```csharp
+global using static System.Console;
+global using System.Linq;
+global using System.Collections.Generic;
+```
 
 そのプロジェクト内では、以下のようなコードが普通に書けます。
 
-<pre class="source" title="global using の影響下にあるコードの例">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; { 1, 2, 3 };
-<span class="reserved">var</span> y = x.<span class="method">Select</span>(i =&gt; i * i);
-<span class="control">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> y) <span class="method">WriteLine</span>(i);
-</code></pre>
+```csharp
+var x = new List<int> { 1, 2, 3 };
+var y = x.Select(i => i * i);
+foreach (var i in y) WriteLine(i);
+```
 
 [トップ レベル ステートメント](../../../../study/csharp/misc/miscentrypoint.md#top-level-statements)と合わせると、本当にこの3行だけで「コンパイルできて実行できるコード」になります。
 「ネットで見かけたサンプル コードをコピペしたら動かない」というクレームが減るかと思われます。
@@ -104,9 +104,9 @@ Console.WriteLine(s2); <span class="comment">// (3, 2)</span>
 
 あと、「[`DateOnly` なんて名前](https://devblogs.microsoft.com/dotnet/date-time-and-time-zone-enhancements-in-net-6/)嫌だーーー」という方は以下のように書いておけます。一応。(別に推奨はしない。)
 
-<pre class="source" title="">
-<code><span class="reserved">global</span> <span class="reserved">using</span> Date = System.DateOnly;
-</code></pre>
+```csharp
+global using Date = System.DateOnly;
+```
 
 ### 通常 using と同列
 
@@ -116,23 +116,23 @@ Console.WriteLine(s2); <span class="comment">// (3, 2)</span>
 
 例えばどこかのファイルに以下のような `System` への `global using` があったとします。
 
-<pre class="source" title="System への global using">
-<code><span class="reserved">global</span> <span class="reserved">using</span> System;
-</code></pre>
+```csharp
+global using System;
+```
 
 で、これと同じプロジェクト内で通常の `using` を書く場合、以下のような挙動をします。
 
-<pre class="source" title="global using System; 影響下のコード">
-<code><span class="reserved">using</span> <span class="warning">System</span>; <span class="comment">// すでに global using System; があるので「重複」警告あり</span>
+```csharp
+using System; // すでに global using System; があるので「重複」警告あり
 
-<span class="reserved">using</span> X = <span class="error">DateTime</span>; <span class="comment">// この行はコンパイル エラー。ここでは using System; ありきにはならない。</span>
-<span class="reserved">using</span> <span class="type">Y</span> = System.<span class="type">DateTime</span>; <span class="comment">// こっちは OK</span>
+using X = DateTime; // この行はコンパイル エラー。ここでは using System; ありきにはならない。
+using Y = System.DateTime; // こっちは OK
 
-<span class="reserved">namespace</span> A
+namespace A
 {
-    <span class="reserved">using</span> <span class="type">X</span> = <span class="type">DateTime</span>; <span class="comment">// これも OK。A の外に using System; があるので。</span>
+    using X = DateTime; // これも OK。A の外に using System; があるので。
 }
-</code></pre>
+```
 
 ### 知らないところで using されてる問題
 
@@ -145,31 +145,31 @@ Console.WriteLine(s2); <span class="comment">// (3, 2)</span>
 嫌がらせしようと思えばいくらでも嫌がらせができます。
 とりあえず名前被りの例:
 
-<pre class="source" title="同名クラスを持つ別名前空間を global using">
-<code><span class="comment">// JsonSerializer クラスがどれにもあるので、フルネームで書かないと弁別不能になる。</span>
-<span class="reserved">global</span> <span class="reserved">using</span> Newtonsoft.Json;
-<span class="reserved">global</span> <span class="reserved">using</span> Utf8Json;
-<span class="reserved">global</span> <span class="reserved">using</span> System.Text.Json;
-</code></pre>
+```csharp
+// JsonSerializer クラスがどれにもあるので、フルネームで書かないと弁別不能になる。
+global using Newtonsoft.Json;
+global using Utf8Json;
+global using System.Text.Json;
+```
 
 ちなみに、`global using` は複数のファイルに書けます。
 上記嫌がらせの3行を、それぞれ全く別のファイルに書いておくということもできます。
 
 一方で、一応、<em>ファイルの先頭にしか書けない</em>という縛りはあります。
 
-<pre class="source" title="先頭以外に global using を書くとさすがにエラー">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// 超絶長い Main 処理を延々と書いたりもありえなくはない</span>
+        // 超絶長い Main 処理を延々と書いたりもありえなくはない
     }
 }
 
-<span class="error"><span class="reserved">global</span> <span class="reserved">using</span> System.Linq;</span> <span class="comment">// さすがにこの行はコンパイル エラー</span>
-</code></pre>
+global using System.Linq; // さすがにこの行はコンパイル エラー
+```
 
 #### 問題を起こせる範囲
 

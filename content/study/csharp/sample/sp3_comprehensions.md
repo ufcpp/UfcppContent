@@ -93,17 +93,17 @@ C# 3.0 の「[LINQ](../data/sp3_linq.md#linq)」を使うと、リスト内包�
 で、プログラミング言語的には、
 外延記法の方は、C 言語の配列でもできます。
 
-<pre class="source" title="配列の外延記法による初期化" lang="">
-<code>int evens[] = { 0, 2, 4, 6, 8 };
-</code></pre>
+```csharp
+int evens[] = { 0, 2, 4, 6, 8 };
+```
 
 
 でも、内包記号の方は無理です。これと近いことを C 言語でやろうとすると、以下のようになります。
 
-<pre class="source" title="内包記法の真似事" lang="">
-<code>int evens[5];
+```csharp
+int evens[5];
 int i = 0;
-for (int k = 0; k &lt; 10; ++k)
+for (int k = 0; k < 10; ++k)
 {
   if (k % 2 == 0)
   {
@@ -111,20 +111,20 @@ for (int k = 0; k &lt; 10; ++k)
     ++i;
   }
 }
-</code></pre>
+```
 
 
 C# の List を使って書くとほんの少しだけ数学の記法に近づく事ができて、
 以下のようになります。
 
-<pre class="source" title="C# の List で内包記法の真似事" lang="">
-<code><span class="reserved">var</span> _10 = Enumerable.Range(0, 10);
+```csharp
+var _10 = Enumerable.Range(0, 10);
 
-List&lt;<span class="reserved">int</span>&gt; evens = <span class="reserved">new</span> List&lt;<span class="reserved">int</span>&gt;();
-<span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> _10)
-  <span class="reserved">if</span> (n % 2 == 0)
+List<int> evens = new List<int>();
+foreach (var n in _10)
+  if (n % 2 == 0)
     evens.Add(n);
-</code></pre>
+```
 
 
 とはいえ、
@@ -146,38 +146,38 @@ List&lt;<span class="reserved">int</span>&gt; evens = <span class="reserved">new
 特に、関数型言語にそういう機能を持った言語が多いんですが、
 例えば、Erlang では以下のようにしてリストを作れます。
 
-<pre class="source" title="Erlang のリスト内包" lang="">
-<code>Ten = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-Evens = [n || n &lt;- Ten, n rem 2 == 0]
-</code></pre>
+```csharp
+Ten = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Evens = [n || n <- Ten, n rem 2 == 0]
+```
 
 
 関数型言語でも F# の場合、以下のように for とか when が必要。
 
-<pre class="source" title="F# のリスト内包" lang="">
-<code>let evens = { for n in 0 .. 9 when n % 2= 0 -&gt; n }
-</code></pre>
+```fsharp
+let evens = { for n in 0 .. 9 when n % 2= 0 -> n }
+```
 
 
 関数型言語以外でも、例えば、Python はリスト内包構文を持っています。
 F# と同様、数学の集合の内包記法とは違って、for とか if とかいうキーワードが必要になります。
 
-<pre class="source" title="Python のリスト内包" lang="">
-<code>ten = range(0, 10)
+```python
+ten = range(0, 10)
 evens = [n for n in ten if n % 2 == 0]
-</code></pre>
+```
 
 
 これは、以下のように解釈されるようです。
 （Python にはそんなに詳しくないんで、もしかすると間違ってるかも。）
 
-<pre class="source" title="Python のリスト内包" lang="">
-<code>ten = range(0, 10)
+```python
+ten = range(0, 10)
 evens = []
 for n in ten :
   if n % 2 == 0 :
     evens.append(n)
-</code></pre>
+```
 
 
 これは、前節の最後で書いたような C# のコードに近いです。
@@ -187,18 +187,18 @@ for n in ten :
 
 さて、前節の Python コード
 
-<pre class="source" title="Python のリスト内包" lang="">
-<code>ten = range(0, 10)
+```python
+ten = range(0, 10)
 evens = [n for n in ten if n % 2 == 0]
-</code></pre>
+```
 
 
 と、以下の C# コードを比べてみてください。
 
-<pre class="source" title="C# のクエリ式" lang="">
-<code><span class="reserved">var</span> ten = Enumerable.Range(0, 10);
-<span class="reserved">var</span> evens = <span class="reserved">from</span> n <span class="reserved">in</span> ten <span class="reserved">where</span> n % 2 == 0 <span class="reserved">select</span> n;
-</code></pre>
+```csharp
+var ten = Enumerable.Range(0, 10);
+var evens = from n in ten where n % 2 == 0 select n;
+```
 
 
 先頭の n が末尾の select n に、
@@ -275,13 +275,13 @@ if が where に変わっていますが、
 
 まず、3次元上の格子点は C# 3.0 的に書くと以下のような感じ。
 
-<pre class="source" title="3次元上の格子点" lang="">
-<code><span class="reserved">var</span> points3d =
-  <span class="reserved">from</span> x <span class="reserved">in</span> Enumerable.Range(-N, 2 * N)
-  <span class="reserved">from</span> y <span class="reserved">in</span> Enumerable.Range(-N, 2 * N)
-  <span class="reserved">from</span> z <span class="reserved">in</span> Enumerable.Range(-N, 2 * N)
-  <span class="reserved">select new</span> Vector3D(x, y, z);
-</code></pre>
+```csharp
+var points3d =
+  from x in Enumerable.Range(-N, 2 * N)
+  from y in Enumerable.Range(-N, 2 * N)
+  from z in Enumerable.Range(-N, 2 * N)
+  select new Vector3D(x, y, z);
+```
 
 
 N は適当な定数です。
@@ -291,13 +291,13 @@ Enumerable は .NET Framework 3.5 で追加された System.Linq.Enumerable ク�
 
 平面への投影は、平面の基底ベクトル i1, i2 を与えて、以下のようにします。
 
-<pre class="source" title="i1, i2 の張る平面への投影" lang="">
-<code><span class="reserved">var</span> projectedPoints =
-  <span class="reserved">from</span> p <span class="reserved">in</span> points3d
-  <span class="reserved">let</span> x = Vector3D.DotProduct(p, i1)
-  <span class="reserved">let</span> y = Vector3D.DotProduct(p, i2)
-  <span class="reserved">select new</span> Point(x, y);
-</code></pre>
+```csharp
+var projectedPoints =
+  from p in points3d
+  let x = Vector3D.DotProduct(p, i1)
+  let y = Vector3D.DotProduct(p, i2)
+  select new Point(x, y);
+```
 
 
 そこそこ数学のイメージ通りにコーディングできているんじゃないかと。
@@ -306,51 +306,51 @@ Enumerable は .NET Framework 3.5 で追加された System.Linq.Enumerable ク�
 法線ベクトル normal から適当な平面状の基底ベクトル2つを求めるには、
 以下のような関数を使います。
 
-<pre class="source" title="法線から平面上の基底2つを求める" lang="">
-<code><span class="reserved">static void</span> GetOrthogonalBase(
-  Vector3D normal, <span class="reserved">out</span> Vector3D i1, <span class="reserved">out</span> Vector3D i2)
+```csharp
+static void GetOrthogonalBase(
+  Vector3D normal, out Vector3D i1, out Vector3D i2)
 {
   Vector3D temp;
 
-  <span class="reserved">if</span> (normal.X &gt; normal.Y)
-    <span class="reserved">if</span> (normal.X &gt; normal.Z) temp = <span class="reserved">new</span> Vector3D(0, 1, 0);
-    <span class="reserved">else</span> temp = <span class="reserved">new</span> Vector3D(1, 0, 0);
-  <span class="reserved">else
-    if</span> (normal.Y &gt; normal.Z) temp = <span class="reserved">new</span> Vector3D(0, 0, 1);
-    <span class="reserved">else</span> temp = <span class="reserved">new</span> Vector3D(1, 0, 0);
+  if (normal.X > normal.Y)
+    if (normal.X > normal.Z) temp = new Vector3D(0, 1, 0);
+    else temp = new Vector3D(1, 0, 0);
+  else
+    if (normal.Y > normal.Z) temp = new Vector3D(0, 0, 1);
+    else temp = new Vector3D(1, 0, 0);
 
   i1 = Vector3D.CrossProduct(normal, temp); i1.Normalize();
   i2 = Vector3D.CrossProduct(normal, i1); i2.Normalize();
 }
-</code></pre>
+```
 
 
 あと、探索する範囲をもう少し絞って、
 「平面から遠い点」と「表示可能な範囲外」の点を除外するために、
 以下のような条件をつけておきます。
 
-<pre class="source" title="探索範囲の限定" lang="">
-<code><span class="reserved">var</span> points3d = (
-  <span class="reserved">from</span> x <span class="reserved">in</span> Enumerable.Range(-M, 2 * M)
-  <span class="reserved">from</span> y <span class="reserved">in</span> Enumerable.Range(-M, 2 * M)
-  <span class="reserved">from</span> z <span class="reserved">in</span> Enumerable.Range(-M, 2 * M)
-  <span class="reserved">select new</span> Vector3D(x, y, z) <span class="reserved">into</span> p
-  <span class="reserved">let</span> distance = Math.Abs(Vector3D.DotProduct(p, normal))
-  <span class="reserved">where</span> distance &lt; THICKNESS
-  <span class="reserved">select</span> p
+```csharp
+var points3d = (
+  from x in Enumerable.Range(-M, 2 * M)
+  from y in Enumerable.Range(-M, 2 * M)
+  from z in Enumerable.Range(-M, 2 * M)
+  select new Vector3D(x, y, z) into p
+  let distance = Math.Abs(Vector3D.DotProduct(p, normal))
+  where distance < THICKNESS
+  select p
   ).ToArray();
 
 Vector3D i1, i2;
-GetOrthogonalBase(normal, <span class="reserved">out</span> i1, <span class="reserved">out</span> i2);
+GetOrthogonalBase(normal, out i1, out i2);
 
-<span class="reserved">var</span> projectedPoints =
-  <span class="reserved">from</span> p <span class="reserved">in</span> points3d
-  <span class="reserved">let</span> x = Vector3D.DotProduct(p, i1)
-  <span class="reserved">let</span> y = Vector3D.DotProduct(p, i2)
-  <span class="reserved">where</span> -WIDTH &lt;= x &amp;&amp; x &lt;= WIDTH
-    &amp;&amp; -WIDTH &lt;= y &amp;&amp; y &lt;= WIDTH
-  <span class="reserved">select new</span> Point(x, y);
-</code></pre>
+var projectedPoints =
+  from p in points3d
+  let x = Vector3D.DotProduct(p, i1)
+  let y = Vector3D.DotProduct(p, i2)
+  where -WIDTH <= x && x <= WIDTH
+    && -WIDTH <= y && y <= WIDTH
+  select new Point(x, y);
+```
 
 
 THICKNESS が平面からの距離、

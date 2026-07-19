@@ -55,26 +55,26 @@ aliases:
 
 例として、以下のようなクラスに、新メンバー、Norm() （x, y の二乗和を計算）を足してみましょう。
 
-<pre class="source" title="例として使う、拡張したい対象" lang="">
-<code><span class="reserved">class</span> <span class="type">P</span>
+```csharp
+class P
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 }
-</code></pre>
+```
 
 
 単純に、このクラス自身を書き換えます。
 
-<pre class="source" title="Norm を追加" lang="">
-<code><span class="reserved">class</span> <span class="type">P</span>
+```csharp
+class P
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 
-    <span class="reserved">public int</span> Norm() { <span class="reserved">return</span> X * X + Y * Y; }
+    public int Norm() { return X * X + Y * Y; }
 }
-</code></pre>
+```
 
 
 一番シンプルで、まず第一に考えるべき方法です。
@@ -99,36 +99,36 @@ aliases:
 そういうときに使うのが「[パーシャルクラス](../oop/oo_class.md#partial_class)」です。
 まず、自動生成側にも、class キーワードの前に partial 修飾子を付けます。
 
-<pre class="source" title="例として使う、拡張したい対象" lang="">
-<code><span class="reserved">partial class</span> <span class="type">P</span>
+```csharp
+partial class P
 {
-    <span class="reserved">public int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 }
-</code></pre>
+```
 
 
 そして、別ファイルにて、以下のように、同じクラスに新メンバーを追加します。
 
-<pre class="source" title="Norm を追加" lang="">
-<code><span class="reserved">partial class</span> <span class="type">P</span>
+```csharp
+partial class P
 {
-    <span class="reserved">public int</span> Norm() { <span class="reserved">return</span> X * X + Y * Y; }
+    public int Norm() { return X * X + Y * Y; }
 }
-</code></pre>
+```
 
 
 この方法を使うと、（プレーンなオブジェクトして作った）自動生成クラスに対して後からインターフェイスを差し込むというようなこともできます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">interface</span> <span class="type">IP</span>
+```csharp
+interface IP
 {
-    <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    int X { get; }
+    int Y { get; }
 }
 
-<span class="reserved">partial class</span> <span class="type">P</span> : <span class="type">IP</span> { } <span class="comment">// 元の側に X, Y がすでにあるので、こちらでの実装は不要。</span>
-</code></pre>
+partial class P : IP { } // 元の側に X, Y がすでにあるので、こちらでの実装は不要。
+```
 
 
 この方法は、ファイルを分けれるということ以外は、前節の方法を全く同じ扱いを受けます。
@@ -146,12 +146,12 @@ private なものも含めて、全メンバーにアクセスできる代わり
 
 正直なところ、クラスの public なメンバーを参照して何か値を計算するだけなら、静的メソッドで十分です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">static class</span> <span class="type">PUtil</span>
+```csharp
+static class PUtil
 {
-    <span class="reserved">public static int</span> Norm(<span class="type">P</span> x) { <span class="reserved">return</span> x.X * x.X + x.Y * x.Y; }
+    public static int Norm(P x) { return x.X * x.X + x.Y * x.Y; }
 }
-</code></pre>
+```
 
 
 オブジェクト指向関係の論争ではよく槍玉に上がる static ですが…。
@@ -175,12 +175,12 @@ private なものも含めて、全メンバーにアクセスできる代わり
 C# の場合、単なる静的メソッドを、インスタンス メソッドと同じ記法で呼びだせる機能があります。
 すなわち、「[拡張メソッド](sp3_extension.md#exmethod)」。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">static class</span> <span class="type">PExtensions</span>
+```csharp
+static class PExtensions
 {
-    <span class="reserved">public static int</span> Norm(<span class="reserved">this</span> <span class="type">X</span> x) { <span class="reserved">return</span> x.X * x.X + x.Y * x.Y; }
+    public static int Norm(this X x) { return x.X * x.X + x.Y * x.Y; }
 }
-</code></pre>
+```
 
 
 呼びだし方がインスタンス メソッドを同じ記法になる以外は、あくまでも単なる静的メソッドです。
@@ -204,25 +204,25 @@ C# の場合、単なる静的メソッドを、インスタンス メソッド�
 クラスの拡張というと、クラスの継承ですね。
 つまり、派生クラスを作ってそこにメンバーを足す。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">PEx</span> : <span class="type">P</span>
+```csharp
+class PEx : P
 {
-    <span class="reserved">public int</span> Norm() { <span class="reserved">return</span> X * X + Y * Y; }
+    public int Norm() { return X * X + Y * Y; }
 }
-</code></pre>
+```
 
 
 これにはわかりやすい問題があって、別の派生クラスからはこの Norm メソッドを使えません。
 かなり不便です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">PMarkII</span> : <span class="type">P</span>
+```csharp
+class PMarkII : P
 {
-    <span class="reserved">public int</span> Z { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int Z { get; set; }
 	
-	<span class="comment">// この PMarkII からは Norm メソッドを使えない</span>
+	// この PMarkII からは Norm メソッドを使えない
 }
-</code></pre>
+```
 
 
 継承は、以下のような場面で使うものであって、既存の完結したクラスに機能を追加するためのものではありません。
@@ -244,26 +244,26 @@ C# の場合、単なる静的メソッドを、インスタンス メソッド�
 1段階、型変換をはさんでしまうというもの。
 例えば、以下のようなクラスを作ります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">PEx</span>
+```csharp
+class PEx
 {
-    <span class="reserved">private readonly</span> <span class="type">P</span> _x;
-    <span class="reserved">private</span> PEx(<span class="type">P</span> x) { _x = x; }
-    <span class="comment">// P からの型変換を用意</span>
-    <span class="reserved">public static implicit operator</span> <span class="type">PEx</span>(<span class="type">P</span> x) { <span class="reserved">return new</span> <span class="type">PEx</span>(x); }
+    private readonly P _x;
+    private PEx(P x) { _x = x; }
+    // P からの型変換を用意
+    public static implicit operator PEx(P x) { return new PEx(x); }
 
-    <span class="reserved">public int</span> Norm() { <span class="reserved">return</span> _x.X * _x.X + _x.Y * _x.Y; }
+    public int Norm() { return _x.X * _x.X + _x.Y * _x.Y; }
 }
-</code></pre>
+```
 
 
 そして、以下のように使う。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">P</span> { X = 1, Y = 2 };
-<span class="reserved">var</span> norm = ((<span class="type">PEx</span>)x).Norm();
-<span class="type">Console</span>.WriteLine(norm);
-</code></pre>
+```csharp
+var x = new P { X = 1, Y = 2 };
+var norm = ((PEx)x).Norm();
+Console.WriteLine(norm);
+```
 
 
 これをやるくらいなら拡張メソッドでいいじゃないという感じのものです。
@@ -325,34 +325,34 @@ C# の場合、単なる静的メソッドを、インスタンス メソッド�
 
 ### <a id="sec-generated-title-12"></a> <a id="dependency"></a>アセンブリの依存解消
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="type">B</span> ToB() { <span class="comment">/* B への変換処理 */</span> }
+    public B ToB() { /* B への変換処理 */ }
 }
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="type">A</span> ToA() { <span class="comment">/* A への変換処理 */</span> }
+    public A ToA() { /* A への変換処理 */ }
 }
-</code></pre>
+```
 
 
 循環参照あり（絵にする）
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">A</span> { }
+```csharp
+class A { }
 
-<span class="reserved">static class</span> <span class="type">AExtensions</span>
+static class AExtensions
 {
-    <span class="reserved">public static</span> <span class="type">B</span> ToB(<span class="reserved">this</span> <span class="type">A</span> a) { <span class="comment">/* B への変換処理 */</span> }
+    public static B ToB(this A a) { /* B への変換処理 */ }
 }
 
-<span class="reserved">class</span> <span class="type">B</span>
+class B
 {
-    <span class="reserved">public</span> <span class="type">A</span> ToA() { <span class="comment">/* A への変換処理 */</span> }
+    public A ToA() { /* A への変換処理 */ }
 }
-</code></pre>
+```
 
 
 A の B への依存が消えて、循環しなくなる。

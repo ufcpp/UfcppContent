@@ -76,9 +76,9 @@ null 許容参照型(NRT)がらみの話3件と、switch 式の「target-typed�
 
 [switch 式](../../../../study/csharp/datatype/typeswitch.md#switch-expression)に関しては、
 
-<pre class="source" title="terget-typed switch 式">
-<code><span class="reserved">byte</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">b</span>) =&gt; <span class="variable">b</span> <span class="control">switch</span> { <span class="reserved">false</span> =&gt; 0, <span class="reserved">true</span> =&gt; 1 };
-</code></pre>
+```csharp
+byte M(bool b) => b switch { false => 0, true => 1 };
+```
 
 みたいに書いたとき、この 0, 1 をちゃんと `byte` と判定できるようにしたいという話。
 (現在(16.1 Preview 1時点)では、switch の戻り値が `int` になって、`int` から `byte` への暗黙の型変換はダメと怒られる。)
@@ -91,12 +91,12 @@ null 許容参照型(NRT)がらみの話3件と、switch 式の「target-typed�
 [ちょっと前](https://github.com/dotnet/csharplang/issues/2447)からの決定事項なんですが、
 非同期イテレーター(`await`と`yield return`の混在)に対する `CancellationToken` の渡し方は、引数に属性を付けることでやりたい、(属性名は本決定してないけど仮に)以下のような書き方をするという話があります。
 
-<pre class="source" title="非同期イテレーターへの CancellationToken の渡し方">
-<code><span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="type">T</span>&gt; <span class="method">M</span>&lt;<span class="type">T</span>&gt;([<span class="type">DefaultCancellation</span>] <span class="type">CancellationToken</span> <span class="variable">cancellationToken</span>)
+```csharp
+async IAsyncEnumerable<T> M<T>([DefaultCancellation] CancellationToken cancellationToken)
 {
     ...
 }
-</code></pre>
+```
 
 これに関して、
 

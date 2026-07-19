@@ -58,30 +58,30 @@ aliases: []
 
 例えば以下のようなコード。
 
-<pre class="source" title="MabyNull/NotNull 属性">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+using System;
+using System.Diagnostics.CodeAnalysis;
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// MaybeNull が付いているので、string だけど null が返ることがある</span>
-        <span class="reserved">var</span> <span class="variable">a</span> = <span class="method">MaybeNull</span>&lt;<span class="reserved">string</span>&gt;();
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="warning"><span class="variable">a</span></span>.Length); <span class="comment">// 警告</span>
+        // MaybeNull が付いているので、string だけど null が返ることがある
+        var a = MaybeNull<string>();
+        Console.WriteLine(a.Length); // 警告
  
-        <span class="comment">// NotNull が付いているので、string? だけど null は返ってこない</span>
-        <span class="reserved">var</span> <span class="variable">b</span> = <span class="method">NotNull</span>&lt;<span class="reserved">string</span>?&gt;();
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">b</span>.Length);
+        // NotNull が付いているので、string? だけど null は返ってこない
+        var b = NotNull<string?>();
+        Console.WriteLine(b.Length);
     }
  
-    [<span class="reserved">return</span>: <span class="type">MaybeNull</span>]
-    <span class="reserved">static</span> <span class="type">T</span> <span class="method">MaybeNull</span>&lt;<span class="type">T</span>&gt;() =&gt; <span class="warning"><span class="reserved">default</span></span>; <span class="comment">// ただ、ここで警告出ちゃう(出ないのが正しいはず)</span>
+    [return: MaybeNull]
+    static T MaybeNull<T>() => default; // ただ、ここで警告出ちゃう(出ないのが正しいはず)
  
-    [<span class="reserved">return</span>: <span class="type">NotNull</span>]
-    <span class="reserved">static</span> <span class="type">T</span> <span class="method">NotNull</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>? =&gt; <span class="warning"><span class="reserved">default</span></span>;
+    [return: NotNull]
+    static T NotNull<T>() where T : class? => default;
 }
-</code></pre>
+```
 
 `MabyNull`/`NotNull` 属性、使う側は対応しているけど、メソッド定義側が対応していなかったり。
 この辺りは Visual Studio 16.3 Preview 1 でも変化なし。

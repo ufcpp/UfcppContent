@@ -25,78 +25,82 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;Fourier&gt;変換元&lt;/Fourier&gt;
-&lt;Laplace&gt;変換元&lt;/Laplace&gt;
-&lt;Z&gt;変換元&lt;/Z&gt;
-</pre>
+```xml
+<Fourier>変換元</Fourier>
+<Laplace>変換元</Laplace>
+<Z>変換元</Z>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;Fourier&gt;f&lt;paren&gt;t&lt;/paren&gt;&lt;/Fourier&gt;&lt;paren&gt;ω&lt;/paren&gt;, 
-&lt;Laplace&gt;f&lt;paren&gt;t&lt;/paren&gt;&lt;/Laplace&gt;&lt;paren&gt;s&lt;/paren&gt;, 
-&lt;Z&gt;f&lt;paren&gt;t&lt;/paren&gt;&lt;/Z&gt;&lt;paren&gt;z&lt;/paren&gt;
-</pre><div class="math"><span class="normal">ℱ</span><span class="paren" style="font-size:em;">[</span>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>, 
+```xml
+<Fourier>f<paren>t</paren></Fourier><paren>ω</paren>, 
+<Laplace>f<paren>t</paren></Laplace><paren>s</paren>, 
+<Z>f<paren>t</paren></Z><paren>z</paren>
+```
+<div class="math"><span class="normal">ℱ</span><span class="paren" style="font-size:em;">[</span>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="font-size:em;">)</span>,
 <span class="normal">ℒ</span><span class="paren" style="font-size:em;">[</span>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>s<span class="paren" style="font-size:em;">)</span>, 
 <span class="script">Z</span><span class="paren" style="font-size:em;">[</span>f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span><span class="paren" style="font-size:em;">]</span><span class="paren" style="font-size:em;">(</span>z<span class="paren" style="font-size:em;">)</span>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:Fourier"&gt;
-  &lt;span class="normal"&gt;&amp;#x2131;&lt;/span&gt;
-  &lt;xsl:if test="@inv!=''"&gt;
-  &lt;sup&gt;�|1&lt;/sup&gt;
-  &lt;/xsl:if&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+```xml
+<xsl:template match="ufcpp:Fourier">
+  <span class="normal">&#x2131;</span>
+  <xsl:if test="@inv!=''">
+  <sup>�|1</sup>
+  </xsl:if>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     [
-  &lt;/span&gt;
-  &lt;xsl:apply-templates/&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+  </span>
+  <xsl:apply-templates/>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     ]
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
+  </span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:Laplace"&gt;
-  &lt;span class="normal"&gt;&amp;#x2112;&lt;/span&gt;
-  &lt;xsl:if test="@inv!=''"&gt;
-  &lt;sup&gt;�|1&lt;/sup&gt;
-  &lt;/xsl:if&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+<xsl:template match="ufcpp:Laplace">
+  <span class="normal">&#x2112;</span>
+  <xsl:if test="@inv!=''">
+  <sup>�|1</sup>
+  </xsl:if>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     [
-  &lt;/span&gt;
-  &lt;xsl:apply-templates/&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+  </span>
+  <xsl:apply-templates/>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     ]
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
+  </span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:Z"&gt;
-  &lt;span class="script"&gt;
+<xsl:template match="ufcpp:Z">
+  <span class="script">
     Z
-  &lt;/span&gt;
-  &lt;xsl:if test="@inv!=''"&gt;
-  &lt;sup&gt;�|1&lt;/sup&gt;
-  &lt;/xsl:if&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+  </span>
+  <xsl:if test="@inv!=''">
+  <sup>�|1</sup>
+  </xsl:if>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     [
-  &lt;/span&gt;
-  &lt;xsl:apply-templates/&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+  </span>
+  <xsl:apply-templates/>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     ]
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+  </span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.cursive
+```css
+span.cursive
 {
   font-family:cursive;
   font-style:italic;
@@ -108,5 +112,4 @@ span.paren
   font-style:normal;
   vertical-align:middle;
 }
-
-</pre>
+```

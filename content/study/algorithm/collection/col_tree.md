@@ -82,24 +82,24 @@ aliases:
 まず、2分探索木も構造的には2分木なので、
 以下のような左右の子を持つノードを定義します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public class</span> Node
+```csharp
+public class Node
 {
-  <span class="reserved">#region</span> フィールド
+  #region フィールド
 
-  <span class="reserved">internal</span> T val;
-  <span class="reserved">internal</span> Node left, right, parent;
+  internal T val;
+  internal Node left, right, parent;
 
-  <span class="reserved">internal</span> Node() : <span class="reserved">this</span>(<span class="reserved">default</span>(T), <span class="reserved">null</span>) { }
+  internal Node() : this(default(T), null) { }
 
-  <span class="reserved">internal</span> Node(T val, Node parent)
+  internal Node(T val, Node parent)
   {
-    <span class="reserved">this</span>.val = val;
-    <span class="reserved">this</span>.parent = parent;
-    <span class="reserved">this</span>.left = <span class="reserved">this</span>.right = <span class="reserved">null</span>;
+    this.val = val;
+    this.parent = parent;
+    this.left = this.right = null;
   }
 }
-</code></pre>
+```
 
 
 「[連結リスト](col_flist.md#linked)」と同様に、
@@ -107,32 +107,32 @@ aliases:
 
 そして、2分探索木には、木の根に当たるノードを持つための変数を用意します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> BinaryTree&lt;T&gt; : IEnumerable&lt;T&gt;
-  <span class="reserved">where</span> T: IComparable&lt;T&gt;
+```csharp
+class BinaryTree<T> : IEnumerable<T>
+  where T: IComparable<T>
 {
   Node root;
 }
-</code></pre>
+```
 
 
 前節で説明したような条件を満たす2分探索木中の要素を検索するには、以下のようにします。
 要するに、値の大小を見て、左の子を見るか右の子を見るか決めて、
 木を根から葉に向かってたどります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public</span> Node Find(T elem)
+```csharp
+public Node Find(T elem)
 {
-  Node n = <span class="reserved">this</span>.root;
-  <span class="reserved">while</span> (n != <span class="reserved">null</span>)
+  Node n = this.root;
+  while (n != null)
   {
-    <span class="reserved">if</span> (n.val.CompareTo(elem) &gt; 0) n = n.left;
-    <span class="reserved">else if</span> (n.val.CompareTo(elem) &lt; 0) n = n.right;
-    <span class="reserved">else break</span>;
+    if (n.val.CompareTo(elem) > 0) n = n.left;
+    else if (n.val.CompareTo(elem) < 0) n = n.right;
+    else break;
   }
-  <span class="reserved">return</span> n;
+  return n;
 }
-</code></pre>
+```
 
 
 次に、要素の挿入ですが、
@@ -140,29 +140,29 @@ aliases:
 実装方法は簡単で、検索のときと同じ要領で木の中を探索し、
 新しい葉を作ります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public void</span> Insert(T elem)
+```csharp
+public void Insert(T elem)
 {
-  <span class="reserved">if</span> (<span class="reserved">this</span>.root == <span class="reserved">null</span>)
+  if (this.root == null)
   {
-    <span class="reserved">this</span>.root = <span class="reserved">new</span> Node(elem, <span class="reserved">null</span>);
-    <span class="reserved">return</span>;
+    this.root = new Node(elem, null);
+    return;
   }
 
-  Node n = <span class="reserved">this</span>.root;
-  Node p = <span class="reserved">null</span>;
-  <span class="reserved">while</span> (n != <span class="reserved">null</span>)
+  Node n = this.root;
+  Node p = null;
+  while (n != null)
   {
     p = n;
-    <span class="reserved">if</span> (n.val.CompareTo(elem) &gt; 0) n = n.left;
-    <span class="reserved">else</span> n = n.right;
+    if (n.val.CompareTo(elem) > 0) n = n.left;
+    else n = n.right;
   }
 
-  n = <span class="reserved">new</span> Node(elem, p);
-  <span class="reserved">if</span> (p.val.CompareTo(elem) &gt; 0) p.left = n;
-  <span class="reserved">else</span> p.right = n;
+  n = new Node(elem, p);
+  if (p.val.CompareTo(elem) > 0) p.left = n;
+  else p.right = n;
 }
-</code></pre>
+```
 
 
 ノードの削除も、平衡化のことを考えなければ、
@@ -175,52 +175,52 @@ aliases:
 * 両方の子が非 null なら、自身の次に大きな値を持つノード（右の部分木の左端）で自身を置き換える。
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public void</span> Erase(Node n)
+```csharp
+public void Erase(Node n)
 {
-  <span class="reserved">if</span> (n == <span class="reserved">null</span>) <span class="reserved">return</span>;
+  if (n == null) return;
 
-  <span class="reserved">if</span> (n.left == <span class="reserved">null</span>) <span class="reserved">this</span>.Replace(n, n.right);
-  <span class="reserved">else if</span>(n.right == <span class="reserved">null</span>) <span class="reserved">this</span>.Replace(n, n.left);
-  <span class="reserved">else</span>
+  if (n.left == null) this.Replace(n, n.right);
+  else if(n.right == null) this.Replace(n, n.left);
+  else
   {
     Node m = n.right.Min;
     n.Value = m.Value;
-    <span class="reserved">this</span>.Replace(m, m.right);
+    this.Replace(m, m.right);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// n の片方の子は null、もう片方の子は m という前提の元で、
 /// ノード n の位置を子ノード m で置き換える。
-/// &lt;/summary&gt;
-/// &lt;param name="n"&gt;削除するノード&lt;/param&gt;
-/// &lt;param name="m"&gt;置き換える子ノード&lt;/param&gt;</span>
-<span class="reserved">void</span> Replace(Node n, Node m)
+/// </summary>
+/// <param name="n">削除するノード</param>
+/// <param name="m">置き換える子ノード</param>
+void Replace(Node n, Node m)
 {
   Node p = n.parent;
-  <span class="reserved">if</span> (m != <span class="reserved">null</span>) m.parent = p;
-  <span class="reserved">if</span> (n == <span class="reserved">this</span>.root) <span class="reserved">this</span>.root = m;
-  <span class="reserved">else if</span> (p.left == n) p.left = m;
-  <span class="reserved">else</span> p.right = m;
+  if (m != null) m.parent = p;
+  if (n == this.root) this.root = m;
+  else if (p.left == n) p.left = m;
+  else p.right = m;
 }
 
-<span class="reserved">public class</span> Node
+public class Node
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// このノード以下の部分木中で、最小の要素を持つノード（＝左端ノード）を返す。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">internal</span> Node Min
+  /// </summary>
+  internal Node Min
   {
-    <span class="reserved">get</span>
+    get
     {
-      Node n = <span class="reserved">this</span>;
-      <span class="reserved">for</span> (; n.left != <span class="reserved">null</span>; n = n.left) ;
-      <span class="reserved">return</span> n;
+      Node n = this;
+      for (; n.left != null; n = n.left) ;
+      return n;
     }
   }
 }
-</code></pre>
+```
 
 
 

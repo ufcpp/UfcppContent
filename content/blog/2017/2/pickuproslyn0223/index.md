@@ -40,13 +40,13 @@ aliases: []
 数学で「[群](../../../../study/math/group/group.md)」(group)って呼んでるやつです。
 (正確にはこれだと[モノイド](../../../../study/math/group/group.md#monoid)なんですけど)
 
-<pre class="source" title="群を表すShape">
-<code><span class="reserved">public</span> <span class="reserved">shape</span> <span class="type">SGroup</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public shape SGroup<T>
 {
-    <span class="reserved">static</span> <span class="type">T</span> Zero { <span class="reserved">get</span>; }
-    <span class="reserved">static</span> <span class="type">T</span> <span class="reserved">operator</span> +(<span class="type">T</span> t1, <span class="type">T</span> t2);
+    static T Zero { get; }
+    static T operator +(T t1, T t2);
 }
-</code></pre>
+```
 
 概ねインターフェイスと似たような書き方なわけですが、以下の点が異なります。
 
@@ -64,14 +64,14 @@ aliases: []
 
 これらに対して、共通ロジックで「総和」を取ったりできるわけです。
 
-<pre class="source" title="Shapeに対する共通ロジック">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> AddAll&lt;<span class="type">T</span>&gt;(<span class="type">T</span>[] ts) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">SGroup</span>&lt;<span class="type">T</span>&gt; <span class="comment">// shape 制約</span>
+```csharp
+public static T AddAll<T>(T[] ts) where T : SGroup<T> // shape 制約
 {
-    <span class="reserved">var</span> result = <span class="type">T</span>.Zero;                   <span class="comment">// 静的プロパティから零元を取得</span>
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> t <span class="reserved">in</span> ts) { result += t; } <span class="comment">// + 演算子の呼び出し</span>
-    <span class="reserved">return</span> result;
+    var result = T.Zero;                   // 静的プロパティから零元を取得
+    foreach (var t in ts) { result += t; } // + 演算子の呼び出し
+    return result;
 }
-</code></pre>
+```
 
 例えば、
 
@@ -89,33 +89,33 @@ aliases: []
 
 例えば上記1の意味のShape (整数の加法群)であれば、以下のように書けます(構文は「仮」なもの。特に `of` の辺りが今後どうなるか怪しい)。
 
-<pre class="source" title="「群」Shapeに対する「整数の加法群」実装">
-<code><span class="reserved">public</span> <span class="reserved">extension</span> <span class="type">IntGroup</span> <span class="reserved">of</span> <span class="reserved">int</span> : <span class="type">SGroup</span>&lt;<span class="reserved">int</span>&gt;
+```csharp
+public extension IntGroup of int : SGroup<int>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Zero =&gt; 0;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="reserved">operator</span> +(<span class="reserved">int</span> t1, <span class="reserved">int</span> t2) =&gt; t1 + t2;
+    public static int Zero => 0;
+    public static int operator +(int t1, int t2) => t1 + t2;
 }
-</code></pre>
+```
 
 2のやつ(乗法群)であれば以下の通り。
 
-<pre class="source" title="「群」Shapeに対する「整数の乗法群」実装">
-<code><span class="reserved">public</span> <span class="reserved">extension</span> <span class="type">IntMulGroup</span> <span class="reserved">of</span> <span class="reserved">int</span> : <span class="type">SGroup</span>&lt;<span class="reserved">int</span>&gt;
+```csharp
+public extension IntMulGroup of int : SGroup<int>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Zero =&gt; 1;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="reserved">operator</span> +(<span class="reserved">int</span> t1, <span class="reserved">int</span> t2) =&gt; t1 * t2;
+    public static int Zero => 1;
+    public static int operator +(int t1, int t2) => t1 * t2;
 }
-</code></pre>
+```
 
 呼び出し側は以下のように書けます。
 
-<pre class="source" title="共通ロジック呼び出し">
-<code><span class="comment">// 全部を足し算。sum == 10</span>
-<span class="reserved">var</span> sum = AddAll&lt;<span class="type">IntGroup</span>&gt;(<span class="reserved">new</span>[] { 1, 2, 3, 4 });
+```csharp
+// 全部を足し算。sum == 10
+var sum = AddAll<IntGroup>(new[] { 1, 2, 3, 4 });
 
-<span class="comment">// 全部を掛け算。prod == 24</span>
-<span class="reserved">var</span> prod = AddAll&lt;<span class="type">IntMulGroup</span>&gt;(<span class="reserved">new</span>[] { 1, 2, 3, 4 });
-</code></pre>
+// 全部を掛け算。prod == 24
+var prod = AddAll<IntMulGroup>(new[] { 1, 2, 3, 4 });
+```
 
 ## 展開
 
@@ -133,107 +133,107 @@ aliases: []
 
 元:
 
-<pre class="source" title="群を表すShape">
-<code><span class="reserved">public</span> <span class="reserved">shape</span> <span class="type">SGroup</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public shape SGroup<T>
 {
-    <span class="reserved">static</span> <span class="type">T</span> Zero { <span class="reserved">get</span>; }
-    <span class="reserved">static</span> <span class="type">T</span> <span class="reserved">operator</span> +(<span class="type">T</span> t1, <span class="type">T</span> t2);
+    static T Zero { get; }
+    static T operator +(T t1, T t2);
 }
-</code></pre>
+```
 
 展開結果:
 
-<pre class="source" title="SGroup shape の展開結果">
-<code><span class="comment">// shape はべたにインターフェイス化</span>
-<span class="comment">// 静的なものもインスタンス メンバーに変更</span>
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">SGroup</span>&lt;<span class="type">T</span>&gt;
+```csharp
+// shape はべたにインターフェイス化
+// 静的なものもインスタンス メンバーに変更
+public interface SGroup<T>
 {
-    <span class="type">T</span> Zero { <span class="reserved">get</span>; }
-    <span class="type">T</span> op_Addition(<span class="type">T</span> t1, <span class="type">T</span> t2); <span class="comment">// 演算子は所定の命名ルールでメソッド化</span>
+    T Zero { get; }
+    T op_Addition(T t1, T t2); // 演算子は所定の命名ルールでメソッド化
 }
-</code></pre>
+```
 
 ### Extensions
 
 元:
 
-<pre class="source" title="「群」Shapeに対する「整数の加法群」・「整数の乗法群」実装">
-<code><span class="reserved">public</span> <span class="reserved">extension</span> <span class="type">IntGroup</span> <span class="reserved">of</span> <span class="reserved">int</span> : <span class="type">SGroup</span>&lt;<span class="reserved">int</span>&gt;
+```csharp
+public extension IntGroup of int : SGroup<int>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Zero =&gt; 0;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="reserved">operator</span> +(<span class="reserved">int</span> t1, <span class="reserved">int</span> t2) =&gt; t1 + t2;
+    public static int Zero => 0;
+    public static int operator +(int t1, int t2) => t1 + t2;
 }
 
-<span class="reserved">public</span> <span class="reserved">extension</span> <span class="type">IntMulGroup</span> <span class="reserved">of</span> <span class="reserved">int</span> : <span class="type">SGroup</span>&lt;<span class="reserved">int</span>&gt;
+public extension IntMulGroup of int : SGroup<int>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Zero =&gt; 1;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="reserved">operator</span> +(<span class="reserved">int</span> t1, <span class="reserved">int</span> t2) =&gt; t1 * t2;
+    public static int Zero => 1;
+    public static int operator +(int t1, int t2) => t1 * t2;
 }
-</code></pre>
+```
 
 展開結果:
 
-<pre class="source" title="IntGroup/IntMulGroup extensionsの展開結果">
-<code><span class="comment">// extension による shape 実装は、構造体でのインターフェイス実装に</span>
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">IntGroup</span> : <span class="type">SGroup</span>&lt;<span class="reserved">int</span>&gt;
+```csharp
+// extension による shape 実装は、構造体でのインターフェイス実装に
+public struct IntGroup : SGroup<int>
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Zero =&gt; 0;
-    <span class="reserved">public</span> <span class="reserved">int</span> op_Addition(<span class="reserved">int</span> t1, <span class="reserved">int</span> t2) =&gt; t1 + t2;
+    public int Zero => 0;
+    public int op_Addition(int t1, int t2) => t1 + t2;
 }
 
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">IntMulGroup</span> : <span class="type">SGroup</span>&lt;<span class="reserved">int</span>&gt;
+public struct IntMulGroup : SGroup<int>
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Zero =&gt; 1;
-    <span class="reserved">public</span> <span class="reserved">int</span> op_Addition(<span class="reserved">int</span> t1, <span class="reserved">int</span> t2) =&gt; t1 * t2;
+    public int Zero => 1;
+    public int op_Addition(int t1, int t2) => t1 * t2;
 }
-</code></pre>
+```
 
 ### Shapes に対する共通ロジック
 
 元:
 
-<pre class="source" title="Shapeに対する共通ロジック">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> AddAll&lt;<span class="type">T</span>&gt;(<span class="type">T</span>[] ts) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">SGroup</span>&lt;<span class="type">T</span>&gt; <span class="comment">// shape 制約</span>
+```csharp
+public static T AddAll<T>(T[] ts) where T : SGroup<T> // shape 制約
 {
-    <span class="reserved">var</span> result = <span class="type">T</span>.Zero;                   <span class="comment">// 静的プロパティから零元を取得</span>
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> t <span class="reserved">in</span> ts) { result += t; } <span class="comment">// + 演算子の呼び出し</span>
-    <span class="reserved">return</span> result;
+    var result = T.Zero;                   // 静的プロパティから零元を取得
+    foreach (var t in ts) { result += t; } // + 演算子の呼び出し
+    return result;
 }
-</code></pre>
+```
 
 展開結果:
 
-<pre class="source" title="AddAll メソッドの展開結果">
-<code><span class="comment">// 型引数を1個追加。そこに Shape を渡す想定</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> AddAll&lt;<span class="type">T</span>, <span class="type">TShape</span>&gt;(<span class="type">T</span>[] ts)
-    <span class="reserved">where</span> <span class="type">TShape</span> : <span class="type">SGroup</span>&lt;<span class="type">T</span>&gt; <span class="comment">// shape </span>
+```csharp
+// 型引数を1個追加。そこに Shape を渡す想定
+public static T AddAll<T, TShape>(T[] ts)
+    where TShape : SGroup<T> // shape 
 {
-    <span class="reserved">var</span> tShape = <span class="reserved">default</span>(<span class="type">TShape</span>); <span class="comment">// 静的メソッド呼び出しだったものは、構造体の既定値に対するメソッド呼び出しに展開</span>
-    <span class="reserved">var</span> result = tShape.Zero;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> t <span class="reserved">in</span> ts) { result = tShape.op_Addition(result, t); }
-    <span class="reserved">return</span> result;
+    var tShape = default(TShape); // 静的メソッド呼び出しだったものは、構造体の既定値に対するメソッド呼び出しに展開
+    var result = tShape.Zero;
+    foreach (var t in ts) { result = tShape.op_Addition(result, t); }
+    return result;
 }
-</code></pre>
+```
 
 ### メソッド呼び出し
 
 元:
 
-<pre class="source" title="Shape呼び出し">
-<code><span class="comment">// 全部を足し算。sum == 10</span>
-<span class="reserved">var</span> sum = AddAll&lt;<span class="type">IntGroup</span>&gt;(<span class="reserved">new</span>[] { 1, 2, 3, 4 });
+```csharp
+// 全部を足し算。sum == 10
+var sum = AddAll<IntGroup>(new[] { 1, 2, 3, 4 });
 
-<span class="comment">// 全部を掛け算。prod == 24</span>
-<span class="reserved">var</span> prod = AddAll&lt;<span class="type">IntMulGroup</span>&gt;(<span class="reserved">new</span>[] { 1, 2, 3, 4 });
-</code></pre>
+// 全部を掛け算。prod == 24
+var prod = AddAll<IntMulGroup>(new[] { 1, 2, 3, 4 });
+```
 
 展開結果:
 
-<pre class="source" title="AddAll メソッド呼び出しの展開結果">
-<code><span class="comment">// 型引数を1個追加</span>
-<span class="reserved">var</span> sum = AddAll&lt;<span class="reserved">int</span>, <span class="type">IntGroup</span>&gt;(<span class="reserved">new</span>[] { 1, 2, 3, 4 });
-<span class="reserved">var</span> prod = AddAll&lt;<span class="reserved">int</span>, <span class="type">IntMulGroup</span>&gt;(<span class="reserved">new</span>[] { 1, 2, 3, 4 });
-</code></pre>
+```csharp
+// 型引数を1個追加
+var sum = AddAll<int, IntGroup>(new[] { 1, 2, 3, 4 });
+var prod = AddAll<int, IntMulGroup>(new[] { 1, 2, 3, 4 });
+```
 
 ## 展開結果から言えること
 
@@ -270,21 +270,21 @@ aliases: []
 
 結果的に、以下のようなコードとほとんど変わらない状態に最適化されます。
 
-<pre class="source" title="値型ジェネリックの展開 ＋ インライン展開の結果">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> AddAll_IntGroup(<span class="reserved">int</span>[] ts)
+```csharp
+public static int AddAll_IntGroup(int[] ts)
 {
-    <span class="reserved">var</span> result = 0;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> t <span class="reserved">in</span> ts) { result += t; }
-    <span class="reserved">return</span> result;
+    var result = 0;
+    foreach (var t in ts) { result += t; }
+    return result;
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> AddAll_IntMulGroup(<span class="reserved">int</span>[] ts)
+public static int AddAll_IntMulGroup(int[] ts)
 {
-    <span class="reserved">var</span> result = 1;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> t <span class="reserved">in</span> ts) { result *= t; }
-    <span class="reserved">return</span> result;
+    var result = 1;
+    foreach (var t in ts) { result *= t; }
+    return result;
 }
-</code></pre>
+```
 
 ## まとめ
 

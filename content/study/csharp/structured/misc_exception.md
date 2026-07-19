@@ -132,17 +132,17 @@ aliases:
 例えば、File.Open を考えてみましょう。
 以下のようなコードは、一応、ファイルの存在の有無を事前チェックしています。
 
-<pre class="source" title="ファイルの存在を確認してから中身を読み込み" lang="">
-<code><span class="reserved">if</span> (!<span class="type">File</span>.Exists(filename))
+```csharp
+if (!File.Exists(filename))
 {
-    text = <span class="literal">"デフォルトのテキスト"</span>;
+    text = "デフォルトのテキスト";
 }
-<span class="reserved">else</span>
+else
 {
-    <span class="comment">// Exists の後、↓を実行するまでの間にファイルが消される可能性はある。</span>
-    text = <span class="type">File</span>.ReadAllText(filename);
+    // Exists の後、↓を実行するまでの間にファイルが消される可能性はある。
+    text = File.ReadAllText(filename);
 }
-</code></pre>
+```
 
 
 ところが、ファイルというのはこのプログラム以外からも編集されるものなので、
@@ -151,23 +151,23 @@ Exists で確認してから ReadAllText で読み込みを行うわずかな間
 ですが、このコードの場合、ファイルが消えてたら消えてたでデフォルトの値を返すことでプログラムは続行可能なので、
 以下のように対処します。
 
-<pre class="source" title="対処可能な例外" lang="">
-<code><span class="reserved">try</span>
+```csharp
+try
 {
-    <span class="reserved">if</span> (!<span class="type">File</span>.Exists(filename))
+    if (!File.Exists(filename))
     {
-        text = <span class="literal">"デフォルトのテキスト"</span>;
+        text = "デフォルトのテキスト";
     }
-    <span class="reserved">else</span>
+    else
     {
-        text = <span class="type">File</span>.ReadAllText(filename);
+        text = File.ReadAllText(filename);
     }
 }
-<span class="reserved">catch</span>(<span class="type">FileNotFoundException</span>)
+catch(FileNotFoundException)
 {
-    text = <span class="literal">"ファイルがなくてもデフォルトのテキストがあれば OK"</span>;
+    text = "ファイルがなくてもデフォルトのテキストがあれば OK";
 }
-</code></pre>
+```
 
 
 この手の例外に対しては、以下のような方針を取ります。
@@ -260,15 +260,15 @@ int.Parse に対して Tester を作ろうと思うと、結局のところ int.
 * TryParse: 文字列を解析して、変換できるかどうかを調べると同時に、できるならば値を返す。bool の戻り値で変換の可否を、out 引数（「[出力引数](../resource/sp_ref.md#out)」参照）で値を返す。
 
 
-<pre class="source" title="Parse と TryParse" lang="">
-<code><span class="comment">// 通常の Parse。変換できない場合は FormatException が発生。</span>
-<span class="reserved">int</span> x = <span class="reserved">int</span>.Parse(text);
+```csharp
+// 通常の Parse。変換できない場合は FormatException が発生。
+int x = int.Parse(text);
 
-<span class="comment">// TryParse。例外が発生しない代わりに、見てのとおり書き方がちょっとうっとおしい。</span>
-<span class="reserved">int</span> y;
-<span class="reserved">if</span> (!<span class="reserved">int</span>.TryParse(text, <span class="reserved">out</span> y))
-    y = <span class="literal">0</span>;
-</code></pre>
+// TryParse。例外が発生しない代わりに、見てのとおり書き方がちょっとうっとおしい。
+int y;
+if (!int.TryParse(text, out y))
+    y = 0;
+```
 
 
 out 引数も可能な限りは避けたい機能だったりするんで、

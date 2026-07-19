@@ -48,104 +48,104 @@ C# 2.0 以降で追加されたキーワードは、全て文脈キーワード(
 
 ですので、C# 1.0時代に以下のようなコードを書いてた人がいたとしても、C# 2.0 以降でも問題なくコンパイルできます。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Calc(<span class="reserved">decimal</span> dividends, <span class="reserved">decimal</span> price)
+```csharp
+static void Calc(decimal dividends, decimal price)
 {
-    <span class="comment">// yield には歩留まりとか出来高みたいな意味があって、</span>
-    <span class="comment">// こういう変数名を使う人がいてもおかしくはない</span>
-    <span class="reserved">decimal</span> yield = dividends / price;
-    <span class="type">Console</span>.WriteLine(yield);
+    // yield には歩留まりとか出来高みたいな意味があって、
+    // こういう変数名を使う人がいてもおかしくはない
+    decimal yield = dividends / price;
+    Console.WriteLine(yield);
 }
-</code></pre>
+```
 
 極端な話、キーワードの`yield` (`yield return`や`yield break`)と並べて、型名や変数名でも`yield`という識別子を使えます。
 
-<pre class="source" title="yield returnの2単語でキーワード">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="type">IEnumerator</span>&lt;<span class="type">yield</span>&gt; F()
+    static IEnumerator<yield> F()
     {
-        <span class="comment">// 「yield return」の2単語で初めてキーワードになる</span>
-        <span class="comment">// 青いところだけがキーワード。</span>
-        <span class="comment">// 水色が型名、黒が変数名。</span>
+        // 「yield return」の2単語で初めてキーワードになる
+        // 青いところだけがキーワード。
+        // 水色が型名、黒が変数名。
 
-        <span class="type">yield</span> yield = 1;
-        <span class="reserved">yield</span> <span class="reserved">return</span> yield;
+        yield yield = 1;
+        yield return yield;
     }
 
-    <span class="reserved">struct</span> <span class="type">yield</span>
+    struct yield
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> value;
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type">yield</span>(<span class="reserved">int</span> n) =&gt; <span class="reserved">new</span> <span class="type">yield</span> { value = n };
+        public int value;
+        public static implicit operator yield(int n) => new yield { value = n };
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-5"></a> <a id="var"></a>var
 
 もう1つ、C# 3.0で導入された「[型推論](../start/sp3_inference.md#type-inference)」に関する <code>var</code> キーワードは、変数宣言出来る文脈でだけキーワード扱いされます。
 以下のようなコードも C# 3.0 でコンパイルできます。
 
-<pre class="source" title="var 変数" lang="">
-<code><span class="reserved">static</span> <span class="reserved">double</span> Calc(<span class="type">IEnumerable</span>&lt;<span class="reserved">double</span>&gt; data)
+```csharp
+static double Calc(IEnumerable<double> data)
 {
-    <span class="reserved">int</span> count = 0;
-    <span class="reserved">double</span> sum = 0;
-    <span class="reserved">double</span> sqSum = 0;
+    int count = 0;
+    double sum = 0;
+    double sqSum = 0;
  
-    <span class="reserved">foreach</span> (<span class="reserved">double</span> x <span class="reserved">in</span> data)
+    foreach (double x in data)
     {
         ++count;
         sum += x;
         sqSum += x * x;
     }
  
-    <span class="comment">// 分散(variance)。ローカル変数だし略して var って名前つける人はいる</span>
-    <span class="reserved">double</span> <em>var</em> = (sum * sum - sqSum) / count;
-    <span class="reserved">return</span> var;
+    // 分散(variance)。ローカル変数だし略して var って名前つける人はいる
+    double var = (sum * sum - sqSum) / count;
+    return var;
 }
-</code></pre>
+```
 
 また、`var`という名前の型が存在していた場合は、型推論よりも優先的にその`var`型が使われます。
 
-<pre class="source" title="型推論よりも、var型優先">
-<code><span class="reserved">class</span> <span class="type">Inferred</span>
+```csharp
+class Inferred
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> F()
+    static void F()
     {
-        <span class="comment">// この場合は型推論で Int 型の変数 var になる</span>
-        <span class="reserved">var</span> var = 1;
+        // この場合は型推論で Int 型の変数 var になる
+        var var = 1;
     }
 }
 
-<span class="reserved">class</span> <span class="type">SuccessfullyCompiled</span>
+class SuccessfullyCompiled
 {
-    <span class="reserved">struct</span> <span class="type">var</span>
+    struct var
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> value;
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type">var</span>(<span class="reserved">int</span> n) =&gt; <span class="reserved">new</span> <span class="type">var</span> { value = n };
+        public int value;
+        public static implicit operator var(int n) => new var { value = n };
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> F()
+    static void F()
     {
-        <span class="comment">// この場合は ↑ の var 構造体型の変数 var になる</span>
-        <span class="type">var</span> var = 1;
+        // この場合は ↑ の var 構造体型の変数 var になる
+        var var = 1;
     }
 }
 
-<span class="reserved">class</span> <span class="type">Erroneous</span>
+class Erroneous
 {
-    <span class="reserved">struct</span> <span class="type">var</span> { }
+    struct var { }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> F()
+    static void F()
     {
-        <span class="comment">// この場合は ↑ の var 構造体型になるけども、1 を代入できなくてコンパイル エラー</span>
-        <span class="type">var</span> var = 1;
+        // この場合は ↑ の var 構造体型になるけども、1 を代入できなくてコンパイル エラー
+        var var = 1;
     }
 }
-</code></pre>
+```
 
 C#では型名を小文字始まりにする習慣があまりないのでめったなことではこういう状態になりませんが、
 もし万が一、C# 2.0以前に`var`型を作っていた人がいてもちゃんとコンパイルできます。
@@ -158,115 +158,115 @@ C# 5.0 で導入された非同期メソッド用の <code>await</code> キー�
 「<code>async</code> 修飾子がついているメソッドの中でだけキーワード扱いされる」という方法で文脈キーワードになっています
 （<code>async</code> はメソッドの手前でだけキーワード扱い）。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> X()
+```csharp
+static int X()
 {
-    <span class="reserved">var</span> async = 2; <span class="comment">// OK</span>
+    var async = 2; // OK
 
-    <span class="comment">// 匿名関数の中などはまた別文脈</span>
-    <span class="comment">// 匿名関数に async を付けているので、この中では await がキーワード</span>
-    <span class="type">Func</span>&lt;<span class="type">Task</span>&lt;<span class="reserved">int</span>&gt;&gt; f = <span class="reserved">async</span> () =&gt; { <span class="reserved">await</span> <span class="type">Task</span>.Delay(3); <span class="reserved">return</span> async; };
+    // 匿名関数の中などはまた別文脈
+    // 匿名関数に async を付けているので、この中では await がキーワード
+    Func<Task<int>> f = async () => { await Task.Delay(3); return async; };
 
-    <span class="reserved">var</span> await = 5; <span class="comment">// OK</span>
-    <span class="reserved">return</span> await * f().Result;
+    var await = 5; // OK
+    return await * f().Result;
 }
 
-<span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; XAsync()
+static async Task<int> XAsync()
 {
-    <span class="reserved">var</span> async = 2;
-    <span class="type">Func</span>&lt;<span class="type">Task</span>&lt;<span class="reserved">int</span>&gt;&gt; f = <span class="reserved">async</span> () =&gt; { <span class="reserved">await</span> <span class="type">Task</span>.Delay(3); <span class="reserved">return</span> async; };
-    <span class="reserved">var</span> await = 5; <span class="comment">// コンパイル エラー。キーワード扱いなので変数名に使えない。</span>
-    <span class="reserved">return</span> <span class="reserved">await</span> * <span class="reserved">await</span> f();
+    var async = 2;
+    Func<Task<int>> f = async () => { await Task.Delay(3); return async; };
+    var await = 5; // コンパイル エラー。キーワード扱いなので変数名に使えない。
+    return await * await f();
 }
-</code></pre>
+```
 
 非同期メソッドの場合、前述の`yield`や`var`とは違い、もしも`await`という名前の型が存在していても、非同期メソッド内では`await`はキーワードです。むしろ、`await`型の方を使うのにエスケープが必要です。
 
-<pre class="source" title="非同期メソッド内ではawait型を使えない">
-<code><span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">await</span> { }
+    public struct await { }
 
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; XAsync()
+    static async Task<int> XAsync()
     {
-        <span class="comment">// async が付いたメソッド内では ↑ の await 型は使えない</span>
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">await</span>(); <span class="comment">// コンパイル エラー</span>
+        // async が付いたメソッド内では ↑ の await 型は使えない
+        var x = new await(); // コンパイル エラー
 
-        <span class="comment">// どうしても使いたかったら @ を付けてエスケープ</span>
-        <span class="reserved">var</span> y = <span class="reserved">new</span> <span class="type">@await</span>(); <span class="comment">// これならコンパイルできる</span>
+        // どうしても使いたかったら @ を付けてエスケープ
+        var y = new @await(); // これならコンパイルできる
     }
 }
-</code></pre>
+```
 
 ちなみに、C# 4.0以前には非同期メソッド自体がなかったので、これで破壊的変更になるソースコードはこの世に存在しないはずです。
 
 また、`async`に関してもメソッド戻り値の手前でだけキーワード扱いされるので、例えば以下のようなコードでもちゃんとコンパイルできます。
 
-<pre class="source" title="async 型">
-<code><span class="reserved">using</span> <span class="type">async</span> = System.Threading.Tasks.<span class="type">Task</span>;
+```csharp
+using async = System.Threading.Tasks.Task;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 原理的には C# 4.0 時代にあり得るコード</span>
-    <span class="comment">// ちゃんとコンパイル可能</span>
-    <span class="comment">// この async は Task クラスのエイリアス</span>
-    <span class="reserved">static</span> <span class="type">async</span> F()
+    // 原理的には C# 4.0 時代にあり得るコード
+    // ちゃんとコンパイル可能
+    // この async は Task クラスのエイリアス
+    static async F()
     {
-        <span class="reserved">return</span> <span class="type">async</span>.Delay(1);
+        return async.Delay(1);
     }
 
-    <span class="comment">// ちゃんと、1つ目の async がキーワード、2つ目の async は型名</span>
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">async</span> G()
+    // ちゃんと、1つ目の async がキーワード、2つ目の async は型名
+    static async async G()
     {
-        <span class="reserved">await</span> <span class="type">async</span>.Delay(1);
+        await async.Delay(1);
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-7"></a> <a id="nameof"></a>nameof
 
 C# 6で導入された`nameof`演算子は、同名のメソッドがない場合に限ってキーワード扱いされます。
 
-<pre class="source" title="nameofメソッド">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">NoMethod</span>
+class NoMethod
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> F()
+    static void F()
     {
-        <span class="comment">// nameof メソッドが存在しないのでこれはキーワード</span>
-        <span class="reserved">var</span> x = 1;
-        <span class="type">Console</span>.WriteLine(<span class="reserved">nameof</span>(x)); <span class="comment">// x</span>
+        // nameof メソッドが存在しないのでこれはキーワード
+        var x = 1;
+        Console.WriteLine(nameof(x)); // x
     }
 }
 
-<span class="reserved">class</span> <span class="type">SuccessfullyCompiled</span>
+class SuccessfullyCompiled
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> F()
+    static void F()
     {
-        <span class="comment">// nameof メソッドがあるのでそちらが呼ばれてしまう</span>
-        <span class="reserved">var</span> x = 1;
-        <span class="type">Console</span>.WriteLine(nameof(x)); <span class="comment">// abc</span>
+        // nameof メソッドがあるのでそちらが呼ばれてしまう
+        var x = 1;
+        Console.WriteLine(nameof(x)); // abc
     }
 
-    <span class="reserved">static</span> <span class="reserved">string</span> nameof(<span class="reserved">int</span> n) =&gt; <span class="string">"abc"</span>;
+    static string nameof(int n) => "abc";
 }
 
-<span class="reserved">class</span> <span class="type">Erroneous</span>
+class Erroneous
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> F()
+    static void F()
     {
-        <span class="comment">// nameof メソッドがある上に、型が合わない</span>
-        <span class="comment">// コンパイル エラーになる</span>
-        <span class="reserved">var</span> x = 1;
-        <span class="type">Console</span>.WriteLine(nameof(x));
+        // nameof メソッドがある上に、型が合わない
+        // コンパイル エラーになる
+        var x = 1;
+        Console.WriteLine(nameof(x));
     }
 
-    <span class="reserved">static</span> <span class="reserved">string</span> nameof(<span class="reserved">string</span> s) =&gt; <span class="string">""</span>;
+    static string nameof(string s) => "";
 }
-</code></pre>
+```
 
 メソッド名も、C#の習慣では大文字始まりで書くものなので、`nameof`メソッド(小文字始まり)を作って使っていた人はほとんどいないでしょう。
 それでも万が一いたとしても、ちゃんとC# 6でコンパイルできます。
@@ -275,26 +275,26 @@ C# 6で導入された`nameof`演算子は、同名のメソッドがない場�
 互換性的な問題ではないですが、[`using static`](../oop/oo_static.md#using-static)との組み合わせで、
 知らず知らずのうちに`nameof`メソッドが呼ばれる可能性があります。
 
-<pre class="source" title="using staticとnameofの組み合わせ">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> <span class="reserved">static</span> <span class="type">MyExtensions</span>;
+```csharp
+using System;
+using static MyExtensions;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 一見、nameof メソッドはなさそうに見えるけども…</span>
-        <span class="comment">// using static MyExtensions; のせいで、MyExtensions.nameof が参照される</span>
-        <span class="reserved">var</span> x = 1;
-        <span class="type">Console</span>.WriteLine(nameof(x)); <span class="comment">// abc</span>
+        // 一見、nameof メソッドはなさそうに見えるけども…
+        // using static MyExtensions; のせいで、MyExtensions.nameof が参照される
+        var x = 1;
+        Console.WriteLine(nameof(x)); // abc
     }
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">MyExtensions</span>
+static class MyExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span> nameof(<span class="reserved">object</span> x) =&gt; <span class="string">"abc"</span>;
+    public static string nameof(object x) => "abc";
 }
-</code></pre>
+```
 
 悪意を持ってわざとやらない限り書かれることはないであろうコードですが、一応注意してください。
 
@@ -313,20 +313,20 @@ C# 6で導入された`nameof`演算子は、同名のメソッドがない場�
 例えば前述の通り、イテレーター用の <code>yield</code> は、2単語の複合キーワードにすることで文脈キーワードになっています。
 一方で、`await`は`async`修飾子が付いたメソッド内では単独でキーワードになります。
 
-<pre class="source" title="yieldとawaitの方針の差">
-<code><span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Yield()
+```csharp
+static IEnumerable<int> Yield()
 {
-    <span class="reserved">var</span> yield = 1; <span class="comment">// OK</span>
-    <span class="reserved">yield</span> <span class="reserved">return</span> yield;
+    var yield = 1; // OK
+    yield return yield;
 }
 
-<span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; Await()
+static async Task<int> Await()
 {
-    <span class="comment">//var await = 1; // これはコンパイル エラー</span>
-    <span class="reserved">await</span> <span class="type">Task</span>.Delay(1);
-    <span class="reserved">return</span> 1;
+    //var await = 1; // これはコンパイル エラー
+    await Task.Delay(1);
+    return 1;
 }
-</code></pre>
+```
 
 似たような機能にも拘わらず異なる設計になっているのは、C# 2.0の時に導入したイテレーター構文にいくつか不満・不便があったからだそうです。
 
@@ -341,13 +341,13 @@ C# 6で導入された`nameof`演算子は、同名のメソッドがない場�
 
 いまさら変更はできないんですが（もちろん互換性維持のため）、もしかすると、イテレーターも以下のように、別のキーワードで修飾するような文法の方がよかったかもしれません。
 
-<pre class="source" title="イテレーターの、ありえたかもしれない別構文" lang="">
-<code><span class="reserved">static <em>iterator</em></span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Range(<span class="reserved">int</span> from, <span class="reserved">int</span> to)
+```csharp
+static iterator IEnumerable<int> Range(int from, int to)
 {
-    <span class="reserved">for</span> (<span class="reserved">var</span> i = from; i &lt; to; i++)
-        <span class="reserved">yield</span> i;
+    for (var i = from; i < to; i++)
+        yield i;
 }
-</code></pre>
+```
 
 
 
@@ -377,35 +377,35 @@ C# の文法の話をする前に、ライブラリの互換性維持につい�
 そして、「他社ライブラリ」中の親クラス（Base）を継承して、「自社ライブラリ」で子クラス（Derived）を作り、その子クラスを「アプリ」が使うというようなことも考えられます。
 例えば以下のような状況です（わかりやすくするために1つにまとめていますが、Base、Derived、Program はそれぞれ別ファイル・別プロジェクトにあって、別の人が保守しているものと考えてください）。
 
-<pre class="source" title="保守担当" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// X さんが保守</span>
-<span class="reserved">class</span> <span class="type">Base</span>
+// X さんが保守
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Base.A"</span>); }
+    public void A() { Console.WriteLine("Base.A"); }
 }
  
-<span class="comment">// Y さんが保守</span>
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+// Y さんが保守
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> B() { <span class="type">Console</span>.WriteLine(<span class="literal">"Derived.B"</span>); }
+    public void B() { Console.WriteLine("Derived.B"); }
 }
  
-<span class="comment">// Z さんが保守</span>
-<span class="comment">// X さん、Y さん、Z さんは互いに全く面識なし。</span>
-<span class="reserved">class</span> <span class="type">Program</span>
+// Z さんが保守
+// X さん、Y さん、Z さんは互いに全く面識なし。
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Derived</span>();
+        var x = new Derived();
         x.A();
         x.B();
-        <span class="type">Base</span> y = x;
+        Base y = x;
         y.A();
     }
 }
-</code></pre>
+```
 
 
 この状況下で、Base や Derived クラスに対する修正がどういう影響を及ぼすかを考える必要があります。
@@ -426,38 +426,34 @@ C# の文法の話をする前に、ライブラリの互換性維持につい�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Base.A"</span>); }
+    public void A() { Console.WriteLine(&quot;Base.A&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> B() { <span class="type">Console</span>.WriteLine(<span class="literal">"Derived.B"</span>); }
-}
-</code></pre>
+    public void B() { Console.WriteLine(&quot;Derived.B&quot;); }
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Base.A"</span>); }
+    public void A() { Console.WriteLine(&quot;Base.A&quot;); }
  
-    <span class="comment">// 派生クラスに B メソッドがあることなんて知らないから足してしまった</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> B() { <span class="type">Console</span>.WriteLine(<span class="literal">"Base.B"</span>); }
+    // 派生クラスに B メソッドがあることなんて知らないから足してしまった
+    public void B() { Console.WriteLine(&quot;Base.B&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// エラーにはならない。ただし、警告あり。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> B() { <span class="type">Console</span>.WriteLine(<span class="literal">"Derived.B"</span>); }
+    // エラーにはならない。ただし、警告あり。
+    public void B() { Console.WriteLine(&quot;Derived.B&quot;); }
  
-    <span class="comment">// （別に問題ない場合）警告を消すためには public new void B() とする</span>
-    <span class="comment">// （たいていは問題になったりするので早めにメソッド名を変えてしまえる方がいいのだけども）</span>
-}
-</code></pre>
+    // （別に問題ない場合）警告を消すためには public new void B() とする
+    // （たいていは問題になったりするので早めにメソッド名を変えてしまえる方がいいのだけども）
+}</code></pre>
 
 </td>
 	</tr>
@@ -482,34 +478,30 @@ Base 側開発者は Derived 側のことを何も知らないので、悪意な
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Base.A"</span>); }
+    public void A() { Console.WriteLine(&quot;Base.A&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// 意図して Base と同じ名前のメソッドを定義</span>
-    <span class="reserved">public</span> <span class="reserved">new</span> <span class="reserved">void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Derived.B"</span>); }
-}
-</code></pre>
+    // 意図して Base と同じ名前のメソッドを定義
+    public new void A() { Console.WriteLine(&quot;Derived.B&quot;); }
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> ARenamed() { <span class="type">Console</span>.WriteLine(<span class="literal">"Base.A"</span>); }
+    public void ARenamed() { Console.WriteLine(&quot;Base.A&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// 警告が出る。基底クラスに A がないのに new 修飾。</span>
-    <span class="comment">// 少なくとも、Base 側の変更に気づきはする。</span>
-    <span class="reserved">public</span> <span class="reserved">new</span> <span class="reserved">void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Derived.B"</span>); }
-}
-</code></pre>
+    // 警告が出る。基底クラスに A がないのに new 修飾。
+    // 少なくとも、Base 側の変更に気づきはする。
+    public new void A() { Console.WriteLine(&quot;Derived.B&quot;); }
+}</code></pre>
 
 </td>
 	</tr>
@@ -530,32 +522,28 @@ Derived 側で A メソッドをわざわざ再定義（new）しているわけ
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Base
 {
-    <span class="reserved">public</span> <span class="reserved">virtual void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Base.A"</span>); }
+    public virtual void A() { Console.WriteLine(&quot;Base.A&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Derived.B"</span>); }
-}
-</code></pre>
+    public override void A() { Console.WriteLine(&quot;Derived.B&quot;); }
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+<pre class="source" title="" lang=""><code class="language-csharp">class Base
 {
-    <span class="reserved">public</span> <span class="reserved">virtual void</span> ARenamed() { <span class="type">Console</span>.WriteLine(<span class="literal">"Base.A"</span>); }
+    public virtual void ARenamed() { Console.WriteLine(&quot;Base.A&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// この場合はコンパイル エラー。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">void</span> A() { <span class="type">Console</span>.WriteLine(<span class="literal">"Derived.B"</span>); }
-}
-</code></pre>
+    // この場合はコンパイル エラー。
+    public override void A() { Console.WriteLine(&quot;Derived.B&quot;); }
+}</code></pre>
 
 </td>
 	</tr>
@@ -574,24 +562,24 @@ C# では、同じ名前で引数の型だけが違うメソッドを定義で�
 複数の候補がある場合には、もっとも型の一致度の高いものが選ばれます。
 例えば以下のように、型がぴったり一致するオーバーロードがあればそちらが呼ばれます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> A(<span class="reserved">object</span> x) { <span class="type">Console</span>.WriteLine(<span class="literal">"object"</span>); }
-    <span class="reserved">public</span> <span class="reserved">void</span> A(<span class="reserved">string</span> x) { <span class="type">Console</span>.WriteLine(<span class="literal">"string"</span>); }
+    public void A(object x) { Console.WriteLine("object"); }
+    public void A(string x) { Console.WriteLine("string"); }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Sample</span>();
-        x.A(<span class="literal">""</span>); <span class="comment">// A(string x) の方が呼ばれる</span>
+        var x = new Sample();
+        x.A(""); // A(string x) の方が呼ばれる
     }
 }
-</code></pre>
+```
 
 
 ここでまた、基底クラスへのメソッド追加を考えてみましょう。
@@ -604,52 +592,48 @@ C# では、同じ名前で引数の型だけが違うメソッドを定義で�
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+<pre class="source" title="" lang=""><code class="language-csharp">using System;
  
-<span class="reserved">class</span> <span class="type">Base</span>
+class Base
 {
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> A(<span class="reserved">object</span> x) { <span class="type">Console</span>.WriteLine(<span class="literal">"object"</span>); }
+    public void A(object x) { Console.WriteLine(&quot;object&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Derived</span>();
-        x.A(<span class="literal">""</span>); <span class="comment">// 1個しかないので当然 A(object x) が呼ばれる</span>
+        var x = new Derived();
+        x.A(&quot;&quot;); // 1個しかないので当然 A(object x) が呼ばれる
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+<pre class="source" title="" lang=""><code class="language-csharp">using System;
  
-<span class="reserved">class</span> <span class="type">Base</span>
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> A(<span class="reserved">string</span> x) { <span class="type">Console</span>.WriteLine(<span class="literal">"string"</span>); }
+    public void A(string x) { Console.WriteLine(&quot;string&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> A(<span class="reserved">object</span> x) { <span class="type">Console</span>.WriteLine(<span class="literal">"object"</span>); }
+    public void A(object x) { Console.WriteLine(&quot;object&quot;); }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Derived</span>();
-        x.A(<span class="literal">""</span>); <span class="comment">// 型の一致よりも、Derived にあることが優先されて、A(object) が呼ばれる</span>
+        var x = new Derived();
+        x.A(&quot;&quot;); // 型の一致よりも、Derived にあることが優先されて、A(object) が呼ばれる
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 	</tr>
@@ -684,22 +668,22 @@ C# 2.0 で「[ジェネリック](../oop/sp2_generics.md)」が導入されま�
 一応、やろうと思えば 1.0 でしかコンパイルできないようなコードが書けたりします。
 以下のコードは、C# 1.0 でしかコンパイルできません。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">int</span> x = 1;
-        <span class="reserved">int</span> y = 2;
-        <span class="reserved">int</span> z = 3;
-        M(x &lt; y, z &gt; (0));
+        int x = 1;
+        int y = 2;
+        int z = 3;
+        M(x < y, z > (0));
     }
  
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">bool</span> a, <span class="reserved">bool</span> b) { <span class="type">Console</span>.WriteLine(<span class="literal">"{0}, {1}"</span>, a, b); }
+    static void M(bool a, bool b) { Console.WriteLine("{0}, {1}", a, b); }
 }
-</code></pre>
+```
 
 
 C# 1.0 では、このコードは2つの大小比較 <code>x &lt; y</code> と <code>z &gt; (0)</code> を引数に与えるメソッド M 呼び出しとみなされます。
@@ -718,19 +702,19 @@ C# 4.0 で<sup>※</sup>、ジェネリックに「[変性注釈](../oop/sp4_var
 キャストできるかどうかの結果が変わり、場合によっては互換性を失うコードがあります。
 例えば以下のコードは、C# 4.0 以降では True、3.0 以前では False と表示されます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>&gt; x = <span class="reserved">new</span> <span class="reserved">string</span>[0];
-        <span class="type">Console</span>.WriteLine(x <span class="reserved">is</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">object</span>&gt;);
+        IEnumerable<string> x = new string[0];
+        Console.WriteLine(x is IEnumerable<object>);
     }
 }
-</code></pre>
+```
 
 
 <sup>※</sup> 実際に変性注釈を持てるようになったのは、「[CLI](../abstract/ab_dotnet.md#cli)」のレベルでは 2.0 の頃からでした（C# の文法に組み込まれたのが 4.0 から）。
@@ -748,74 +732,74 @@ C# の仕様上、イベントの自動実装はスレッド安全であるこ�
 
 例えば、以下のようなイベントがあったとします。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">EventHandler</span>&lt;<span class="reserved">string</span>&gt; A;
+    public event EventHandler<string> A;
 }
-</code></pre>
+```
 
 
 C# 3.0 以前では、以下のような MethodImpl 属性を使ったコードに展開されていました。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
  
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">EventHandler</span> A
+    public event EventHandler A
     {
-        [<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.Synchronized)]
-        <span class="reserved">add</span> { a = (<span class="type">EventHandler</span>)<span class="type">Delegate</span>.Combine(a, <span class="reserved">value</span>); }
-        [<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.Synchronized)]
-        <span class="reserved">remove</span> { a = (<span class="type">EventHandler</span>)<span class="type">Delegate</span>.Remove(a, <span class="reserved">value</span>); }
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        add { a = (EventHandler)Delegate.Combine(a, value); }
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        remove { a = (EventHandler)Delegate.Remove(a, value); }
     }
-    <span class="reserved">private</span> <span class="reserved">event</span> <span class="type">EventHandler</span> a;
+    private event EventHandler a;
 }
-</code></pre>
+```
 
 
 かつてはこれでよいと思われていたものの、今となっては、MethodImplOptions.Synchronized による同期にはいくつか問題が指摘されています
 （メソッド全体に lock(this) がかかるので、安全性的にもパフォーマンス的にもいまいち）。
 そこで、C# 4.0 から、以下のようなコードが生成されるように変更されました。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Threading;
  
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">EventHandler</span> A
+    public event EventHandler A
     {
-        <span class="reserved">add</span>
+        add
         {
-            <span class="type">EventHandler</span> a1, a2 = a;
-            <span class="reserved">do</span>
+            EventHandler a1, a2 = a;
+            do
             {
                 a1 = a2;
-                <span class="reserved">var</span> a3 = (<span class="type">EventHandler</span>)<span class="type">Delegate</span>.Combine(a1, <span class="reserved">value</span>);
-                a2 = <span class="type">Interlocked</span>.CompareExchange(<span class="reserved">ref</span> a, a3, a1);
+                var a3 = (EventHandler)Delegate.Combine(a1, value);
+                a2 = Interlocked.CompareExchange(ref a, a3, a1);
             }
-            <span class="reserved">while</span> (a2 != a1);
+            while (a2 != a1);
         }
-        <span class="reserved">remove</span>
+        remove
         {
-            <span class="type">EventHandler</span> a1, a2 = a;
-            <span class="reserved">do</span>
+            EventHandler a1, a2 = a;
+            do
             {
                 a1 = a2;
-                <span class="reserved">var</span> a3 = (<span class="type">EventHandler</span>)<span class="type">Delegate</span>.Remove(a1, <span class="reserved">value</span>);
-                a2 = <span class="type">Interlocked</span>.CompareExchange(<span class="reserved">ref</span> a, a3, a1);
+                var a3 = (EventHandler)Delegate.Remove(a1, value);
+                a2 = Interlocked.CompareExchange(ref a, a3, a1);
             }
-            <span class="reserved">while</span> (a2 != a1);
+            while (a2 != a1);
         }
     }
-    <span class="reserved">private</span> <span class="reserved">event</span> <span class="type">EventHandler</span> a;
+    private event EventHandler a;
 }
-</code></pre>
+```
 
 
 これは、lock ステートメント（それなりに負担が大きい機構）を使わずにスレッド安全性を保証する方法として知られているパターンの一種です。
@@ -834,22 +818,22 @@ CompareExchange メソッドが正しく動かないという問題があって�
 C# 5.0 で、foreach の仕様に変更がありました（参考「[foreach の仕様変更](../cheatsheet/ap_ver5.md#foreach)」）。
 以下のコードを実行すると、C# 4.0 以前と 5.0 以降で結果が変わります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Action</span> a = <span class="reserved">null</span>;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 })
+        Action a = null;
+        foreach (var x in new[] { 1, 2, 3, 4, 5 })
         {
-            a += () =&gt; <span class="type">Console</span>.WriteLine(x);
+            a += () => Console.WriteLine(x);
         }
         a();
     }
 }
-</code></pre>
+```
 
 
 <table summary="">
@@ -860,23 +844,19 @@ C# 5.0 で、foreach の仕様に変更がありました（参考「[foreach �
 	</tr>
 	<tr>
 		<td markdown="1">
-<pre class="console" title="">
+<pre class="console" title=""><code class="language-console">5
 5
 5
 5
-5
-5
-</pre>
+5</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="console" title="">
-1
+<pre class="console" title=""><code class="language-console">1
 2
 3
 4
-5
-</pre>
+5</code></pre>
 
 </td>
 	</tr>
@@ -909,53 +889,53 @@ C# 6で、コンパイラーを1から作り直した影響もあって、C#コ�
 C# 7.0で入ったタプルですが、[C# 7.1で少し機能追加がありました](../cheatsheet/ap_ver7_1.md#sec-generated-title-3)。
 タプルの要素名を、タプル構築時に与えた変数名から推論する機能なんですが、この機能のせいで、拡張メソッドが絡んだ時の挙動がちょっと変わりました。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Extensions</span>
+static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> y(<span class="reserved">this</span> (<span class="reserved">int</span>, <span class="type">Action</span>) t) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"拡張メソッド y"</span>);
+    public static void y(this (int, Action) t) => Console.WriteLine("拡張メソッド y");
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">int</span> x = 1;
-        <span class="type">Action</span> y = () =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"変数 y"</span>);
+        int x = 1;
+        Action y = () => Console.WriteLine("変数 y");
 
-        <span class="comment">// C# 7.0 では、(int, Action) 扱い</span>
-        <span class="comment">// C# 7.1 では、(int x, Action y) 扱い</span>
-        <span class="reserved">var</span> t = (x, y);
+        // C# 7.0 では、(int, Action) 扱い
+        // C# 7.1 では、(int x, Action y) 扱い
+        var t = (x, y);
 
-        <span class="comment">// C# 7.0 での挙動: 拡張メソッドの y が呼ばれる</span>
-        <span class="comment">//     ↑ 正確にいうと、昔の C# コンパイラーではこういう挙動だった</span>
-        <span class="comment">//     今の C# コンパイラーでは「その機能を使うには7.1以上を使え」的なコンパイル エラーになる</span>
-        <span class="comment">// C# 7.1 での挙動: タプル要素の y が呼ばれる</span>
+        // C# 7.0 での挙動: 拡張メソッドの y が呼ばれる
+        //     ↑ 正確にいうと、昔の C# コンパイラーではこういう挙動だった
+        //     今の C# コンパイラーでは「その機能を使うには7.1以上を使え」的なコンパイル エラーになる
+        // C# 7.1 での挙動: タプル要素の y が呼ばれる
         t.y();
     }
 }
-</code></pre>
+```
 
 この「要素名の推論」は、[匿名型](../start/sp3_inference.md#anonymous)であれば当初から使えた機能です。
 匿名型と比較されることの多いタプルでも、当然、最初から検討はされていました。
 しかし、匿名型には必ず要素名が必要なのに対して、
 タプルの場合は名前なしのもの(`(int, Action)`)があり得るので、推論のせいで以下のような状況があり得ます。
 
-<pre class="source" title="">
-<code><span class="comment">// 元々こういうコードだったとして、</span>
-<span class="comment">//var t = (1, 2);</span>
+```csharp
+// 元々こういうコードだったとして、
+//var t = (1, 2);
 
-<span class="comment">// リファクタリングでこう書き換えたとする</span>
-<span class="reserved">const</span> <span class="reserved">int</span> M = 1;
-<span class="reserved">const</span> <span class="reserved">int</span> N = 2;
-<span class="reserved">var</span> t = (M, N);
+// リファクタリングでこう書き換えたとする
+const int M = 1;
+const int N = 2;
+var t = (M, N);
 
-<span class="comment">// 元々の書き方だと t.Item1 と書かざるを得ない</span>
-<span class="comment">// それが、書き換えた方だと「M に書き換えませんか？」と提案される</span>
-<span class="comment">// 通常、これは警告にもならないけども、設定変更で警告とかエラーにもできる</span>
-<span class="reserved">var</span> x = t.Item1;
-</code></pre>
+// 元々の書き方だと t.Item1 と書かざるを得ない
+// それが、書き換えた方だと「M に書き換えませんか？」と提案される
+// 通常、これは警告にもならないけども、設定変更で警告とかエラーにもできる
+var x = t.Item1;
+```
 
 そこで、「C# 7.0の時点では先送りして、必要であれば7.1で推論を導入する」ということになっていたんですが、
 その結果、上記の拡張メソッドでの破壊的変更を生んでしまうことに気付いて慌てたようです。

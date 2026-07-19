@@ -45,22 +45,22 @@ twitter で見かけたのを代理で報告出したり、
 
 以下のようなコードで警告が出るという問題。
 
-<pre class="source" title="">
-<code><span class="comment">// Warning CS0282</span>
-<span class="comment">// この警告は、partial で複数の場所にフィールドを書くと出る。</span>
-<span class="comment">// 自動実装プロパティも、自動でフィールドが作られるので partial を分けて書くと警告に。</span>
-<span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">X</span>
+```csharp
+// Warning CS0282
+// この警告は、partial で複数の場所にフィールドを書くと出る。
+// 自動実装プロパティも、自動でフィールドが作られるので partial を分けて書くと警告に。
+partial struct X
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> A { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int A { get; set; }
 }
 
-<span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">X</span>
+partial struct X
 {
-    <span class="comment">// こいつは自動実装じゃないのでフィールド作られないはずなんだけど…</span>
-    <span class="comment">// get =&gt;/set =&gt; 型のプロパティは、自動実装プロパティと誤判定するらしい。</span>
-    <span class="reserved">int</span> B { <span class="reserved">get</span> =&gt; A; <span class="reserved">set</span> =&gt; A = value; }
+    // こいつは自動実装じゃないのでフィールド作られないはずなんだけど…
+    // get =>/set => 型のプロパティは、自動実装プロパティと誤判定するらしい。
+    int B { get => A; set => A = value; }
 }
-</code></pre>
+```
 
 職場のコードでずっと前から消えない警告があって気になってたんですけども…
 

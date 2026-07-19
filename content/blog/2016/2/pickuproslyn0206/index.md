@@ -21,18 +21,18 @@ aliases: []
 
 これだと、今後追加する型(特にレコード型)に対してなら使えるけども、既存の型には全く使えなくて困る。一方で、現状でも、以下のコードみたいに、コンストラクター引数とプロパティに1対1の関係があるようなクラスを書く人は多いわけで、この規約ベースでオブジェクトの分解をできないかという提案。
 
-<pre class="source" title="">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">class</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">Person</span>
+```csharp
+public class Person
 {
-  <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">public</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">Person</span>(<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">string</span> <span class="pl-smi" style="box-sizing: border-box; color: rgb(51, 51, 51);">firstName</span>, <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">string</span> <span class="pl-smi" style="box-sizing: border-box; color: rgb(51, 51, 51);">lastName</span>) 
+  public Person(string firstName, string lastName) 
   { 
     FirstName = firstName; 
     LastName = lastName; 
   }
-  <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">string</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">FirstName</span> { <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">get</span>; }
-  <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">string</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(121, 93, 163);">LastName</span> { <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">get</span>; }
+  public string FirstName { get; }
+  public string LastName { get; }
 }
-</code></pre>
+```
 
 確か自分もこのパターンでクラスを書いていることが多いんで、にこの機能が入れば、それらを1個1個レコード型に置き換えたりしなくてもパターン マッチングが使えて大変便利。
 
@@ -51,15 +51,15 @@ aliases: []
 
 `try { 処理 } finally { 後始末 }` の代わりに `defer { 後始末 } 処理` と書くような構文。
 
-<pre class="source" title="">
-<code>    {
+```csharp
+    {
         SomeType thing = Whatever...;
         defer {
             thing.Free();
         }
-        <span class="pl-c" style="box-sizing: border-box; color: rgb(150, 152, 150);">// some code code using thing</span>
+        // some code code using thing
     }
-</code></pre>
+```
 
 メリットは以下のような感じ。
 

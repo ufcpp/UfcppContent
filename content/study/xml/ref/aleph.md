@@ -25,27 +25,33 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;aleph sub="subscript"/&gt;
-</pre>
+```xml
+<aleph sub="subscript"/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;aleph/&gt;, 
-&lt;aleph sub="1"/&gt; ＝ 2&lt;sup&gt;&lt;aleph sub="0"/&gt;&lt;/sup&gt;
-</pre><div class="math">‭א, 
+```xml
+<aleph/>, 
+<aleph sub="1"/> ＝ 2<sup><aleph sub="0"/></sup>
+```
+<div class="math">‭א,
 ‭א<sub>1</sub> ＝ 2<sup>‭א<sub>0</sub></sup>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:aleph"&gt;
-  &amp;#x202D;&amp;#x05D0;
-  &lt;xsl:if test="@sub!=''"&gt;
-    &lt;sub&gt;&lt;xsl:value-of select="@sub"/&gt;&lt;/sub&gt;
-  &lt;/xsl:if&gt;
-&lt;/xsl:template&gt;
-</pre>
+```xml
+<xsl:template match="ufcpp:aleph">
+  &#x202D;&#x05D0;
+  <xsl:if test="@sub!=''">
+    <sub><xsl:value-of select="@sub"/></sub>
+  </xsl:if>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre></pre>
+```text
+
+```

@@ -39,19 +39,19 @@ C# の Enumerator が順方向アクセスしかできないので、
 
 例ということで、余計な機能は一切省いた以下のような低機能リストを考えます。
 
-<pre class="source" title="低機能リスト" lang="">
-<code><span class="reserved">public class</span> List
+```csharp
+public class List
 {
-  <span class="reserved">int</span>[] items;
+  int[] items;
 
-  <span class="reserved">public</span> List(<span class="reserved">params int</span>[] items)
+  public List(params int[] items)
   {
-    <span class="reserved">this</span>.items = items;
+    this.items = items;
   }
 
-  <span class="input">後略</span>
+  後略
 }
-</code></pre>
+```
 
 
 で、この items の中身を列挙したい場合に、アプローチが2つあると。
@@ -62,42 +62,42 @@ C# の Enumerator が順方向アクセスしかできないので、
 1つ目が内部イテレータ。
 まず、List クラス内に以下のようなメソッドを用意。
 
-<pre class="source" title="内部イテレータ的アプローチ" lang="">
-<code><span class="reserved">public delegate void</span> ForEachAction(<span class="reserved">int</span> x);
+```csharp
+public delegate void ForEachAction(int x);
 
-<span class="reserved">public class</span> List
+public class List
 {
-  <span class="input">前略</span>
+  前略
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 内部イテレータ的に、
   /// リストの各要素にたいして action を適用する。
-  /// &lt;/summary&gt;
-  /// &lt;param name="action"&gt;適用したい動作&lt;/param&gt;</span>
-  <span class="reserved">public void</span> ForEach(ForEachAction action)
+  /// </summary>
+  /// <param name="action">適用したい動作</param>
+  public void ForEach(ForEachAction action)
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; <span class="reserved">this</span>.items.Length; ++i)
+    for (int i = 0; i < this.items.Length; ++i)
     {
-      action(<span class="reserved">this</span>.items[i]);
+      action(this.items[i]);
     }
   }
 }
-</code></pre>
+```
 
 
 で、以下のようにして使います。
 
-<pre class="source" title="内部イテレータで反復処理" lang="">
-<code>List l = <span class="reserved">new</span> List(1, 2, 3, 4, 5);
+```csharp
+List l = new List(1, 2, 3, 4, 5);
 
-<span class="reserved">int</span> sum = 0;
-l.ForEach(<span class="reserved">delegate</span>(<span class="reserved">int</span> x)
+int sum = 0;
+l.ForEach(delegate(int x)
 {
   sum += x;
 }
 );
-Console.Write(<span class="literal">"sum = {0}\n"</span>, sum);
-</code></pre>
+Console.Write("sum = {0}\n", sum);
+```
 
 
 要するに、反復の仕方は List クラスの中の、ForEach メソッドの中に書いて、
@@ -116,74 +116,74 @@ ForEach の実装は簡単なんですけども、
 こちらは、実装がちょっと面倒になります。
 （C# 2.0 からの新機能である「[イテレーター](sp2_iterator.md#iterator)」を使えば簡単に書けるようになりますが、ここでは説明ということで IEnumerator を自前で実装します。）
 
-<pre class="source" title="外部イテレータ的アプローチ" lang="">
-<code><span class="reserved">public class</span> List
+```csharp
+public class List
 {
-  <span class="input">前略</span>
+  前略
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 外部イテレータ用の IEnumerator 実装クラス。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">class</span> Enumerator : IEnumerator&lt;<span class="reserved">int</span>&gt;
+  /// </summary>
+  class Enumerator : IEnumerator<int>
   {
     List l;
-    <span class="reserved">int</span> n;
+    int n;
 
-    <span class="reserved">internal</span> Enumerator(List l)
+    internal Enumerator(List l)
     {
-      <span class="reserved">this</span>.l = l;
-      <span class="reserved">this</span>.n = -1;
+      this.l = l;
+      this.n = -1;
     }
 
-    <span class="reserved">public int</span> Current
+    public int Current
     {
-      <span class="reserved">get</span> { <span class="reserved">return</span> l.items[n]; }
+      get { return l.items[n]; }
     }
 
-    <span class="reserved">void</span> IDisposable.Dispose() { }
+    void IDisposable.Dispose() { }
 
-    <span class="reserved">object</span> System.Collections.IEnumerator.Current
+    object System.Collections.IEnumerator.Current
     {
-      <span class="reserved">get</span> { <span class="reserved">return this</span>.Current; }
+      get { return this.Current; }
     }
 
-    <span class="reserved">bool</span> System.Collections.IEnumerator.MoveNext()
+    bool System.Collections.IEnumerator.MoveNext()
     {
       ++n;
-      <span class="reserved">return</span> n != l.items.Length;
+      return n != l.items.Length;
     }
 
-    <span class="reserved">void</span> System.Collections.IEnumerator.Reset()
+    void System.Collections.IEnumerator.Reset()
     {
       n = -1;
     }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 外部イテレータを返す。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;イテレータ&lt;/returns&gt;</span>
-  <span class="reserved">public</span> IEnumerator&lt;<span class="reserved">int</span>&gt; GetEnumerator()
+  /// </summary>
+  /// <returns>イテレータ</returns>
+  public IEnumerator<int> GetEnumerator()
   {
-    <span class="reserved">return new</span> Enumerator(<span class="reserved">this</span>);
+    return new Enumerator(this);
   }
 }
-</code></pre>
+```
 
 
 で、利用側は以下のような感じ。
 
-<pre class="source" title="外部イテレータで反復処理" lang="">
-<code>List l = <span class="reserved">new</span> List(1, 2, 3, 4, 5);
+```csharp
+List l = new List(1, 2, 3, 4, 5);
 
-<span class="reserved">int</span> sum = 0;
-IEnumerator&lt;<span class="reserved">int</span>&gt; e = l.GetEnumerator();
-<span class="reserved">while</span> (e.MoveNext())
+int sum = 0;
+IEnumerator<int> e = l.GetEnumerator();
+while (e.MoveNext())
 {
   sum += e.Current;
 }
-Console.Write(<span class="literal">"sum = {0}\n"</span>, sum);
-</code></pre>
+Console.Write("sum = {0}\n", sum);
+```
 
 
 要するに、Enumerator という別のクラスを通して items 中の要素を1つずつ取り出します。
@@ -213,37 +213,37 @@ while を使っていて、この方が反復処理らしくはあります。
 実は、前節の時点ですでに、List クラスに foreach 文を使うために必要なコードの大半を書いているので、
 あとは、以下のように、IEnumerable インターフェースを実装するだけです。
 
-<pre class="source" title="IEnumerable を実装" lang="">
-<code><span class="reserved">public class</span> List : IEnumerable&lt;<span class="reserved">int</span>&gt;
+```csharp
+public class List : IEnumerable<int>
 {
-  <span class="input">前略</span>
+  前略
 
-  IEnumerator&lt;<span class="reserved">int</span>&gt; IEnumerable&lt;<span class="reserved">int</span>&gt;.GetEnumerator()
+  IEnumerator<int> IEnumerable<int>.GetEnumerator()
   {
-    <span class="reserved">return this</span>.GetEnumerator();
+    return this.GetEnumerator();
   }
 
   System.Collections.IEnumerator
     System.Collections.IEnumerable.GetEnumerator()
   {
-    <span class="reserved">return this</span>.GetEnumerator();
+    return this.GetEnumerator();
   }
 }
-</code></pre>
+```
 
 
 これで、C# の List クラスの要素を foreach 文で列挙できるようになります。
 
-<pre class="source" title="foreach 文" lang="">
-<code>List l = <span class="reserved">new</span> List(1, 2, 3, 4, 5);
+```csharp
+List l = new List(1, 2, 3, 4, 5);
 
-<span class="reserved">int</span> sum = 0;
-<span class="reserved">foreach</span> (<span class="reserved">int</span> x <span class="reserved">in</span> l)
+int sum = 0;
+foreach (int x in l)
 {
   sum += x;
 }
-Console.Write(<span class="literal">"sum = {0}\n"</span>, sum);
-</code></pre>
+Console.Write("sum = {0}\n", sum);
+```
 
 
 まあ、利用側の見た目をすっきりさせるための構文糖（便法）みたいなもんで、
@@ -262,19 +262,19 @@ C# 2.0 の「[イテレーター](sp2_iterator.md#iterator)」構文です。
 以下のように書き換えることで、
 Enumerator クラスに相当するものを自動的に生成してくれます。
 
-<pre class="source" title="イテレータ構文を使った GetEnumerator" lang="">
-<code>  <span class="comment">/// &lt;summary&gt;
+```csharp
+  /// <summary>
   /// イテレータ構文を使って外部イテレータを自動生成。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;イテレータ&lt;/returns&gt;</span>
-  <span class="reserved">public</span> IEnumerator&lt;<span class="reserved">int</span>&gt; GetEnumerator()
+  /// </summary>
+  /// <returns>イテレータ</returns>
+  public IEnumerator<int> GetEnumerator()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; <span class="reserved">this</span>.items.Length; ++i)
+    for (int i = 0; i < this.items.Length; ++i)
     {
-      <span class="reserved">yield return this</span>.items[i];
+      yield return this.items[i];
     }
   }
-</code></pre>
+```
 
 
 見た目的には、

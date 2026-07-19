@@ -34,8 +34,7 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
 
-<pre>
-
+```text
 ・位相
 「距離が定義できる」というのは実はかなり厳しい条件。
 もっと緩い条件でも連続性の議論が出来ないかという発想の元に生まれたのが位相空間。
@@ -74,4 +73,4 @@ A → B の「[全単写](/study/math/set/map?key=bijection)」 f で、
 f 自身も f の逆関数も連続写像になるようなものがあるとき、
 この写像 f を<strong id="homeomorphism" class="keyword">同相写像</strong>（homeomorphism）と呼び、
 2つの位相空間を同相である（homeomorphic）といいます。
-</pre>
+```

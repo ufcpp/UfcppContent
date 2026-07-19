@@ -159,35 +159,35 @@ Eric Lippert (当時の中の人)のブログ:
 
 元々、2010年のPDCでの最初の発表の時点では yield でした。
 
-<pre class="source" title="初出の時の非同期メソッド">
-<code><span class="type">Task</span> M()
+```csharp
+Task M()
 {
-    <span class="reserved">yield</span> <span class="type">Task</span>.Delay(1);
-    <span class="reserved">var</span> text = <span class="reserved">yield</span> <span class="type">File</span>.ReadAllTextAsync(<span class="string">"a.txt"</span>);
+    yield Task.Delay(1);
+    var text = yield File.ReadAllTextAsync("a.txt");
 }
-</code></pre>
+```
 
 yield と言えば、C# だと[イテレーター構文](../../../../study/csharp/data/sp2_iterator.md)があります。
 
-<pre class="source" title="イテレーター構文">
-<code><span class="type">IEnumerable</span>&lt;<span class="reserved">char</span>&gt; Producer()
+```csharp
+IEnumerable<char> Producer()
 {
-    <span class="reserved">yield</span> <span class="reserved">return</span> <span class="string">'"'</span>;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 3; i++)
+    yield return '"';
+    for (int i = 0; i < 3; i++)
     {
-        <span class="reserved">yield</span> <span class="reserved">return</span> (<span class="reserved">char</span>)(i + <span class="string">'0'</span>);
+        yield return (char)(i + '0');
     }
-    <span class="reserved">yield</span> <span class="reserved">return</span> <span class="string">'"'</span>;
+    yield return '"';
 }
 
-<span class="reserved">void</span> Consumer()
+void Consumer()
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> c <span class="reserved">in</span> Producer())
+    foreach (var c in Producer())
     {
-        <span class="type">Console</span>.WriteLine(c);
+        Console.WriteLine(c);
     }
 }
-</code></pre>
+```
 
 これで以下のような感じの挙動になります。
 
@@ -265,20 +265,20 @@ await 自体が「古めかしい印象」の単語なので、
 ということで、最終的には await になりました。
 前述の通り、await には「待望」(待ちつつも他の事やってる感じ)のニュアンスがちょっとあります。
 
-<pre class="source" title="wait と await">
-<code><span class="reserved">async</span> Task M()
+```csharp
+async Task M()
 {
-    <span class="comment">// wait = 待機</span>
-    <span class="comment">// 止まって待つ</span>
-    <span class="comment">// Thread.Sleep してるのと同じで、スレッド リソースを確保したままスレッドが止まる</span>
+    // wait = 待機
+    // 止まって待つ
+    // Thread.Sleep してるのと同じで、スレッド リソースを確保したままスレッドが止まる
     Task.Delay(1).Wait();
 
-    <span class="comment">// await = 待望</span>
-    <span class="comment">// 気持ち待ってるけど作業は止めない</span>
-    <span class="comment">// スレッド リソースを明け渡すので、OS はそのリソースを他に使える</span>
-    <span class="reserved">await</span> Task.Delay(1);
+    // await = 待望
+    // 気持ち待ってるけど作業は止めない
+    // スレッド リソースを明け渡すので、OS はそのリソースを他に使える
+    await Task.Delay(1);
 }
-</code></pre>
+```
 
 とはいえ、await も割かしぎりぎり採用された感じです。
 「なんか wait の古めかしい言い方」、「wait forと同じ意味」くらいにも思われる単語ですんで。

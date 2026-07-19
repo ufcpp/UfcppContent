@@ -84,11 +84,11 @@ XUnit は昔この手の引数追加での破壊的変更を1度やっている�
 
 例えば、以下のような判定になったりします。
 
-<pre class="source" title="">
-<code><span class="reserved">string</span>? ns = ...
-<span class="reserved">if</span> (ns <span class="reserved">is</span> <span class="reserved">null</span>) <span class="reserved">return</span>; <span class="comment">// null だったらここから下にはいかない</span>
-<span class="reserved">var</span> s = ns; <span class="comment">// なので、s は「非 null」</span>
-</code></pre>
+```csharp
+string? ns = ...
+if (ns is null) return; // null だったらここから下にはいかない
+var s = ns; // なので、s は「非 null」
+```
 
 ここで問題なのは、じゃあ、この `s` は「`string?`だけどnullチェック済み」という判定なのか、
 「`string`型として推論されてる」という状態なのか。
@@ -161,31 +161,31 @@ C# 6.0の頃から案だけはあるものの、気が付けば C# 7.X でも入
 現状、[stackalloc](../../../../study/csharp/resource/span.md#safe-stackalloc)は非同期メソッド内では使えないという制限があります。
 まあ、`await` をまたいで使うことは原理的にできない機能ではあります。
 
-<pre class="source" title="">
-<code><span class="reserved">async</span> Task M()
+```csharp
+async Task M()
 {
-    Span&lt;<span class="reserved">int</span>&gt; span = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[10];
+    Span<int> span = stackalloc int[10];
 
-    <span class="reserved">await</span> Task.Delay(1);
+    await Task.Delay(1);
 
-    span[0] = 1; <span class="comment">// これは本当に不正。原理的に無理</span>
+    span[0] = 1; // これは本当に不正。原理的に無理
 }
-</code></pre>
+```
 
 でも、`await` さえまたがなければ、例えば以下のような書き方であれば安全に使えるはずです。
 
-<pre class="source" title="">
-<code><span class="reserved">async</span> Task M()
+```csharp
+async Task M()
 {
     {
-        Span&lt;<span class="reserved">int</span>&gt; span = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[10];
+        Span<int> span = stackalloc int[10];
         span[0] = 1;
     }
 
-    <span class="comment">// ブロックでくくったので、span がここに漏れることはない</span>
-    <span class="reserved">await</span> Task.Delay(1);
-    <span class="comment">// ここから下で使えなければ span は安全</span>
+    // ブロックでくくったので、span がここに漏れることはない
+    await Task.Delay(1);
+    // ここから下で使えなければ span は安全
 }
-</code></pre>
+```
 
 この、「ブロックで囲った(nested) `stackalloc`」を認めたいという感じになっています。

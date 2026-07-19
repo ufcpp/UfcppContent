@@ -29,11 +29,11 @@ aliases:
 「[基礎知識](basic.md)」でも説明したように、
 $ から始まる単語は変数になります。
 
-<pre class="console" title="変数">
-<span class="prompt">&gt; </span> $a = 1
-<span class="prompt">&gt; </span> $a
+```console
+>  $a = 1
+>  $a
 1
-</pre>
+```
 
 
 「$ ＋ アルファベット」という書き方以外に、
@@ -77,18 +77,18 @@ object a = "test";
 みたいなキャストは必要ありません。
 ）
 
-<pre class="console" title=".NET Framework オブジェクト">
-<span class="prompt">&gt; </span> $a = 1
-<span class="prompt">&gt; </span> $a.GetType().Name
+```console
+>  $a = 1
+>  $a.GetType().Name
 Int32
-<span class="prompt">&gt; </span> $a = "test"
-<span class="prompt">&gt; </span> $a.Length
+>  $a = "test"
+>  $a.Length
 4
-<span class="prompt">&gt; </span> $a.ToUpper()
+>  $a.ToUpper()
 TEST
-<span class="prompt">&gt; </span> $a.GetType().Name
+>  $a.GetType().Name
 String
-</pre>
+```
 
 
 オブジェクトが全部 .NET Framework のものなので、
@@ -101,19 +101,19 @@ String
 値や変数の前に [型名] を付けると、型変換ができます。
 例えば、実数を整数に変換するには以下のようにします。
 
-<pre class="console" title="型変換">
-<span class="prompt">&gt; </span> $a = [int]1.2
-<span class="prompt">&gt; </span> $a
+```console
+>  $a = [int]1.2
+>  $a
 1
-</pre>
+```
 
 
 無理な変換をしようとするとエラーになります。
 
-<pre class="console" title="型変換">
-<span class="prompt">&gt; </span> $a = [int]"test"
+```console
+>  $a = [int]"test"
 値 "test" を型 "System.Int32" に変換できません。
-</pre>
+```
 
 
 でも、結構柔軟に型変換してくれます。
@@ -121,13 +121,13 @@ String
 C# なんかだと int.Parse メソッドを使って整数に変換する必要がありますが、
 PowerShell では [int] で変換できます。
 
-<pre class="console" title="文字列 → 整数">
-<span class="prompt">&gt; </span> $a = [int]"128"
-<span class="prompt">&gt; </span> $a
+```console
+>  $a = [int]"128"
+>  $a
 128
-<span class="prompt">&gt; </span> $a.GetType().Name
+>  $a.GetType().Name
 Int32
-</pre>
+```
 
 
 
@@ -137,23 +137,23 @@ Int32
 指定方法は、例えば以下のような感じで、
 代入時に [型名] を変数の前に付けます。
 
-<pre class="console" title="変数の型を指定">
-<span class="prompt">&gt; </span> [int]$a = 1
-</pre>
+```console
+>  [int]$a = 1
+```
 
 
 型を指定すると、指定した型以外は代入できなくなります。
 
-<pre class="console" title="指定した型のみ代入可能">
-<span class="prompt">&gt; </span> [int]$a = 0
-<span class="prompt">&gt; </span> $a = "test" 
-<span class="comment"># ↓ エラー</span>
+```console
+>  [int]$a = 0
+>  $a = "test" 
+# ↓ エラー
 値 "test" を型 "System.Int32" に変換できません。
-<span class="prompt">&gt; </span> $a = 1.1 
-<span class="comment"># ↓ 整数に型変換される</span>
-<span class="prompt">&gt; </span> $a
+>  $a = 1.1 
+# ↓ 整数に型変換される
+>  $a
 1
-</pre>
+```
 
 
 一度型を指定すると、その変数はもうずっとその型の値しか代入できません。
@@ -184,11 +184,11 @@ UInt32 や Int16 と書く必要あり。）
 （void は C 言語や C# などで、関数の戻り値がないことを示すキーワード。）
 [void] を使うと、値を消してしまうことができるみたい。
 
-<pre class="console" title="void">
-<span class="prompt">&gt; </span> [void]1
-<span class="prompt">&gt; </span> [void]$a
-<span class="prompt">&gt; </span> [void]$a.GetType()
-</pre>
+```console
+>  [void]1
+>  [void]$a
+>  [void]$a.GetType()
+```
 
 
 まあ、この例みたいな使い方にはあまり意味はありませんが、
@@ -244,23 +244,23 @@ $global:a という書き方でアクセスする。）
 スコープと同じような「$env:変数名」という書式で環境変数を取得することもできます。
 例えば、path 環境変数を取得したければ以下のように書きます。
 
-<pre class="console" title="環境変数">
-<span class="prompt">&gt; </span> $env:path
+```console
+>  $env:path
 C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Wind....
-</pre>
+```
 
 
 ↑どうも、env: はファイルシステムのドライブとかと同列の扱いらしい。
 C ドライブを C: とか書くのと同じ。
 で、「${C:\...\ファイル名}」みたいな記法で、ファイルの読み書きもできる模様。
 
-<pre class="console" title="変数">
-<span class="prompt">&gt; </span> ${C:\Users\Public\test.txt} = "test"
-<span class="prompt">&gt; </span> ${C:\Users\Public\test.txt}
+```console
+>  ${C:\Users\Public\test.txt} = "test"
+>  ${C:\Users\Public\test.txt}
 "test"
-<span class="prompt">&gt; </span> Get-Content C:\Users\Public\test.txt
+>  Get-Content C:\Users\Public\test.txt
 "test"
-</pre>
+```
 
 
 ただし、
@@ -287,18 +287,18 @@ C# と同じ
 
 ちなみに、代入演算子は複数並べて書くこともできます。
 
-<pre class="console" title="代入演算子の連結">
-<span class="prompt">&gt; </span> $a = $b = $c = 1
-<span class="prompt">&gt; </span> $a,$b,$c
+```console
+>  $a = $b = $c = 1
+>  $a,$b,$c
 1
 1
 1
-<span class="prompt">&gt; </span> $a += $b += $c += 1
-<span class="prompt">&gt; </span> $a,$b,$c
+>  $a += $b += $c += 1
+>  $a,$b,$c
 4
 3
 2
-</pre>
+```
 
 
 一方、
@@ -319,15 +319,15 @@ C# と同じ
 null というのは変数が空っぽの状態のことで、
 PowerShell では、$null という名前の特殊な変数で表します。
 
-<pre class="console" title="null 比較">
-<span class="prompt">&gt; </span> Remove-Variable a
-<span class="prompt">&gt; </span> $a
-<span class="prompt">&gt; </span> $a -eq $null
+```console
+>  Remove-Variable a
+>  $a
+>  $a -eq $null
 True
-<span class="prompt">&gt; </span> $a = 0
-<span class="prompt">&gt; </span> $a -eq $null
+>  $a = 0
+>  $a -eq $null
 False
-</pre>
+```
 
 
 ちなみに、$() とか [void]0 でも null 値を作ることができたりします。
@@ -335,31 +335,31 @@ False
 それから、-is と -isnot 演算子を使って、変数に格納されている値の型を確かめることができます。
 （左辺に変数、右辺に [型名] を書きます。）
 
-<pre class="console" title="-is 演算子">
-<span class="prompt">&gt; </span> $a = 1
-<span class="prompt">&gt; </span> $a -is [int]
+```console
+>  $a = 1
+>  $a -is [int]
 True
-<span class="prompt">&gt; </span> $a -isnot [int]
+>  $a -isnot [int]
 False
-<span class="prompt">&gt; </span> $a -is [string]
+>  $a -is [string]
 False
-<span class="prompt">&gt; </span> $a -isnot [string]
+>  $a -isnot [string]
 True
-</pre>
+```
 
 
 また、-as で型変換もできます。
 [型名] による型変換とちがって、
 変換できない場合にはエラーを起こすのではなく null 値を返します。
 
-<pre class="console" title="-as 演算子">
-<span class="prompt">&gt; </span> $a = "test" -as [int]
-<span class="prompt">&gt; </span> $a -eq $null
+```console
+>  $a = "test" -as [int]
+>  $a -eq $null
 True
-<span class="prompt">&gt; </span> $a = 1.2 -as [int]
-<span class="prompt">&gt; </span> $a
+>  $a = 1.2 -as [int]
+>  $a
 1
-</pre>
+```
 
 
 

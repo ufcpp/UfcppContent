@@ -87,10 +87,10 @@ Preview 1の実装では、結構ジェネリクス周りの実装が抜けて�
 
 ラムダ式に対して再帰したり、自分自身を参照したりするとき、以下のように、デリゲートをいったん空初期化した上で改めてラムダ式を代入する必要があります。
 
-<pre class="source" title="ラムダ式の再帰">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f = <span class="reserved">null</span>;
-f = x =&gt; x &lt;= 1 ? 1 : f(x - 1);
-</code></pre>
+```csharp
+Func<int, int> f = null;
+f = x => x <= 1 ? 1 : f(x - 1);
+```
 
 この、最初の `= null` がよくない。
 
@@ -123,16 +123,16 @@ f = x =&gt; x &lt;= 1 ? 1 : f(x - 1);
 
 ちなみに、このバグは Visual Studio 自体を落とします。
 
-<pre class="source" title="カリー化デリゲートバグ">
-<code><span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Ex</span>
+```csharp
+static class Ex
 {
-    <span class="comment">// こういう、カリー化デリゲート(拡張メソッドを使ったデリゲート構築)に対する null 検証がバグってる。</span>
-    <span class="comment">// 非 null なインスタンスを渡していても、なぜか null 警告が出る。</span>
-    <span class="comment">// バグを黙殺するために ! を付けようとすると Visual Studio が落ちる。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Action</span> a = <span class="reserved">new</span> <span class="reserved">object</span>().M;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">this</span> <span class="reserved">object</span> x) { }
+    // こういう、カリー化デリゲート(拡張メソッドを使ったデリゲート構築)に対する null 検証がバグってる。
+    // 非 null なインスタンスを渡していても、なぜか null 警告が出る。
+    // バグを黙殺するために ! を付けようとすると Visual Studio が落ちる。
+    public static Action a = new object().M;
+    public static void M(this object x) { }
 }
-</code></pre>
+```
 
 ## デモ都合
 

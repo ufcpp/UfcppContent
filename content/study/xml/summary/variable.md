@@ -38,38 +38,38 @@ use タグを記述した場所には、変数の文字が表示されます。
 
 ## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
 
-<pre class="xsource" title="ソース">
-<code><span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="結果"</span> <span class="attribute">id</span><span class="attvalue">="result"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-    変数の参照→ <span class="bracket">&lt;</span><span class="element">math</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">use</span> <span class="attribute">id</span><span class="attvalue">="freq"</span> <span class="bracket">/&gt;</span><span class="bracket">&lt;/</span><span class="element">math</span><span class="bracket">&gt;</span>、<span class="bracket">&lt;</span><span class="element">math</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">use</span> <span class="attribute">id</span><span class="attvalue">="afreq"</span> <span class="bracket">/&gt;</span><span class="bracket">&lt;/</span><span class="element">math</span><span class="bracket">&gt;</span>。
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">section</span><span class="bracket">&gt;</span>
+```xml
+<section title="結果" id="result">
+  <p>
+    変数の参照→ <math><use id="freq" /></math>、<math><use id="afreq" /></math>。
+  </p>
+</section>
 
-<span class="bracket">&lt;</span><span class="element">var-group</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">variable</span> <span class="attribute">id</span><span class="attvalue">="freq"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">letter</span><span class="bracket">&gt;</span>
+<var-group>
+  <variable id="freq">
+    <letter>
       f
-    <span class="bracket">&lt;/</span><span class="element">letter</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">name</span><span class="bracket">&gt;</span>周波数<span class="bracket">&lt;/</span><span class="element">name</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ename</span><span class="bracket">&gt;</span>frequency<span class="bracket">&lt;/</span><span class="element">ename</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">unit</span><span class="bracket">&gt;</span>Hz<span class="bracket">&lt;/</span><span class="element">unit</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">summary</span><span class="bracket">&gt;</span>周期信号が、1秒間に何回繰り返されるか。<span class="bracket">&lt;/</span><span class="element">summary</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">variable</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">variable</span> <span class="attribute">id</span><span class="attvalue">="afreq"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">letter</span><span class="bracket">&gt;</span>
+    </letter>
+    <name>周波数</name>
+    <ename>frequency</ename>
+    <unit>Hz</unit>
+    <summary>周期信号が、1秒間に何回繰り返されるか。</summary>
+  </variable>
+  <variable id="afreq">
+    <letter>
       ω
-    <span class="bracket">&lt;/</span><span class="element">letter</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">name</span><span class="bracket">&gt;</span>角周波数<span class="bracket">&lt;/</span><span class="element">name</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ename</span><span class="bracket">&gt;</span>angular frequency<span class="bracket">&lt;/</span><span class="element">ename</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">unit</span><span class="bracket">&gt;</span>rad<span class="bracket">&lt;/</span><span class="element">unit</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">summary</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">math</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">use</span> <span class="attribute">id</span><span class="attvalue">="afreq"</span> <span class="bracket">/&gt;</span> ＝ 2 π <span class="bracket">&lt;</span><span class="element">use</span> <span class="attribute">id</span><span class="attvalue">="freq"</span> <span class="bracket">/&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">math</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">summary</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">variable</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">var-group</span><span class="bracket">&gt;</span>
-</code></pre>
+    </letter>
+    <name>角周波数</name>
+    <ename>angular frequency</ename>
+    <unit>rad</unit>
+    <summary>
+      <math>
+        <use id="afreq" /> ＝ 2 π <use id="freq" />
+      </math>
+    </summary>
+  </variable>
+</var-group>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
 

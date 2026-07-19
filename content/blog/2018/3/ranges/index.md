@@ -21,10 +21,10 @@ aliases: []
 
 .NET Core 2.1で、配列などの連続したメモリ領域の一定区間を指し示す[`Span<T>`構造体](../../../../study/csharp/resource/span.md)っていう型が入りました。これに伴い、以下のように、配列の一部分を抜き出すような構文が欲しいという話になっています。
 
-<pre class="source" title="Range を使った区間の切り出し">
-<code><span class="reserved">int</span>[] array = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5, 6, 7 };
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; span = array[1..3];
-</code></pre>
+```csharp
+int[] array = new[] { 1, 2, 3, 4, 5, 6, 7 };
+Span<int> span = array[1..3];
+```
 
 ちなみに、現状、この機能は C# 8.0 での実現を目指しています。
 
@@ -34,14 +34,14 @@ C# チームとしては、前節のような書き方、つまり、`[]` の中
 
 例えば他の用途として、「Range パターン」、要するに、パターン マッチングのパターンの種類として以下のような書き方を認めたいという話もありますが、これはindexingの「次の段階」として考えたい様子。
 
-<pre class="source" title="Range パターン">
-<code><span class="reserved">switch</span> (n)
+```csharp
+switch (n)
 {
-    <span class="reserved">case</span> 1..3:
-    <span class="reserved">case</span> 5..8:
-        <span class="comment">// ...</span>
+    case 1..3:
+    case 5..8:
+        // ...
 }
-</code></pre>
+```
 
 「次の段階」としては、おそらく「ユーザー定義の Range 演算子」を認めて、任意の型に対して `..` なりなんなりの Range を作れるようにすることになると思います。
 しかし、まずは indexing を中心として構文を検討していきたいとのこと。
@@ -66,33 +66,33 @@ C# チームとしては、前節のような書き方、つまり、`[]` の中
 あと、気を付けないといけないのが、言語構文的にinclusive/exclusiveの両方を用意したとして、内部表現はどうすべきか。
 例えば、「どちらの構文で書くにしても、内部的には最小値をinclusive、最大値をexclusiveで持つ」と決めたとしましょう。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Range</span>
+```csharp
+struct Range
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> MinInclusive;
-    <span class="reserved">public</span> <span class="reserved">int</span> MaxExclusive;
+    public int MinInclusive;
+    public int MaxExclusive;
 
-    <span class="reserved">public</span> Range(<span class="reserved">int</span> minInclusive, <span class="reserved">int</span> maxExclusive)
+    public Range(int minInclusive, int maxExclusive)
     {
         MinInclusive = minInclusive;
         MaxExclusive = maxExclusive;
     }
 }
-</code></pre>
+```
 
-<pre class="source" title="">
-<code><span class="comment">構文は仮。C#がこれを採用するとは限らない</span>
-<span class="reserved">var</span> inclusive = 1..=3; <span class="comment">// new Range(1, 3) の意味</span>
-<span class="reserved">var</span> exclusive = 1..&lt;3; <span class="comment">// new Range(1, 2) の意味</span>
-</code></pre>
+```csharp
+構文は仮。C#がこれを採用するとは限らない
+var inclusive = 1..=3; // new Range(1, 3) の意味
+var exclusive = 1..<3; // new Range(1, 2) の意味
+```
 
 このとき、じゃあ、「0～`int`の最大値(inclusive)」は表せなくなります。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> inclusive = 1..=<span class="reserved">int</span>.MaxValue;
-<span class="comment">// new Range(1, int.MaxValue + 1) の意味</span>
-<span class="comment">// = オーバーフローして new Range(1, int.MinValue) になる</span>
-</code></pre>
+```csharp
+var inclusive = 1..=int.MaxValue;
+// new Range(1, int.MaxValue + 1) の意味
+// = オーバーフローして new Range(1, int.MinValue) になる
+```
 
 Swift ではこの問題の対処として、inclusiveなRangesとexclusiveなRangesを別の型にしたんでしたっけ。それも後からの、破壊的変更で。
 
@@ -104,22 +104,22 @@ C# チームが「まずは indexing 用途に絞って検討したい」とし�
 
 まあ、この用途だと大半は「最小値がinclusive、最大値がexclusive」です。
 
-<pre class="source" title="">
-<code><span class="comment">// 配列の列挙でよく書くのは &lt; Length</span>
-<span class="comment">// 要するに最大値は exclusive</span>
-<span class="comment">// inclusive だと Length - 1 になってちょっと面倒</span>
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; array.Length; i++)
+```csharp
+// 配列の列挙でよく書くのは < Length
+// 要するに最大値は exclusive
+// inclusive だと Length - 1 になってちょっと面倒
+for (int i = 0; i < array.Length; i++)
 {
 }
 
-<span class="reserved">var</span> r = <span class="reserved">new</span> Random();
-r.Next(0, 100); <span class="comment">// こう書いた場合 100 は含まない</span>
+var r = new Random();
+r.Next(0, 100); // こう書いた場合 100 は含まない
 
-<span class="comment">// この 100 も exclusive</span>
-Parallel.For(0, 100, i =&gt;
+// この 100 も exclusive
+Parallel.For(0, 100, i =>
 {
 });
-</code></pre>
+```
 
 なので、おそらく、C# で単に`a..b`と書くと、「a～b ただしaは含んでbは含まない」になると思われます。
 最大値もinclusiveな方は、例えば`..:`とか`.:`が使えるかもしれません。
@@ -149,21 +149,21 @@ Parallel.For(0, 100, i =&gt;
 
 配列などの一部分を切り出すとき、両端を指定して切り出す他に、「a番目の要素(starting index)からb要素(length)切り出す」という方法も考えられます。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> sub = <span class="string">"abcdefghijklmn"</span>.Substring(2, 4); <span class="comment">// 2番目から4文字 = cdef</span>
+```csharp
+var sub = "abcdefghijklmn".Substring(2, 4); // 2番目から4文字 = cdef
 
-<span class="reserved">byte</span>[] buffer = <span class="reserved">new</span> <span class="reserved">byte</span>[10];
-Stream s = File.OpenRead(<span class="string">"a.txt"</span>);
-s.Read(buffer, 2, 4); <span class="comment">// buffer の2番目から4バイトに書き込み</span>
-</code></pre>
+byte[] buffer = new byte[10];
+Stream s = File.OpenRead("a.txt");
+s.Read(buffer, 2, 4); // buffer の2番目から4バイトに書き込み
+```
 
 ということで、min/max 版の Range の他に、starting/length 版の Range も欲しいという話になります。
 C# チームが例に挙げたのだと以下のような構文がありました。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> r1 = 2..4; <span class="comment">// min/max (exlusive) = 2, 3 の意味</span>
-<span class="reserved">var</span> r2 = 2..+4; <span class="comment">// stating/length = 2, 3, 4, 5 の意味</span>
-</code></pre>
+```csharp
+var r1 = 2..4; // min/max (exlusive) = 2, 3 の意味
+var r2 = 2..+4; // stating/length = 2, 3, 4, 5 の意味
+```
 
 これだと、ユーザー定義の`..`演算子を認めたときに、「`2`と`4`に対する`..`」と「`2`と`+4`に対する`..`」で意味が違うってことになるのでかなり気持ち悪い構文になりますが…
 まあ、何にしても、何らかの構文は求められています。
@@ -176,25 +176,25 @@ C# チームが例に挙げたのだと以下のような構文がありまし�
 「a 番目から長さ b」という意味では前節の starting/length 版の Range と似たようなものになります。
 これで、長さ0のシーケンスを2つ比較すると、常に一致扱いになります。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> array = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 }; <span class="comment">// 値は何でも</span>
+```csharp
+var array = new[] { 1, 2, 3, 4, 5 }; // 値は何でも
 
-<span class="comment">// 開始地点は違うけども、長さ 0 のシーケンスを作る</span>
-<span class="comment">// それを比較すると、開始地点によらず常に一致扱い</span>
-<span class="reserved">var</span> e = <span class="type">Enumerable</span>.SequenceEqual(
+// 開始地点は違うけども、長さ 0 のシーケンスを作る
+// それを比較すると、開始地点によらず常に一致扱い
+var e = Enumerable.SequenceEqual(
     array.Skip(1).Take(0),
     array.Skip(2).Take(0));
-</code></pre>
+```
 
 であれば、`1..+0`と`2..+0`は同じと思うべきなのかどうか。
 これに対しては、一応以下のように、開始インデックスの範囲チェックは掛かるべきなので、別扱いすべきだろうとのことです。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> array = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 }; <span class="comment">// 値は何でも</span>
+```csharp
+var array = new[] { 1, 2, 3, 4, 5 }; // 値は何でも
 
-<span class="reserved">var</span> r1 = array[1..0]; <span class="comment">// OK</span>
-<span class="reserved">var</span> r2 = array[10..0]; <span class="comment">// OutOfRange</span>
-</code></pre>
+var r1 = array[1..0]; // OK
+var r2 = array[10..0]; // OutOfRange
+```
 
 ## bounded/unbounded
 
@@ -231,39 +231,39 @@ indexing用途で他によくあるのが、「末尾から n 番目」、「配
 
 例えば、C#にはいくつか、「左辺の型によって意味が変わる構文」というものがいくつかあります。
 
-<pre class="source" title="">
-<code><span class="comment">// ラムダ式: デリゲートと式ツリー</span>
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; f = x =&gt; x &gt; 0;
-<span class="type">Predicate</span>&lt;<span class="reserved">int</span>&gt; p = x =&gt; x &gt; 0;  <span class="comment">// シグネチャが同じでも Func とは別の型</span>
-<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt;&gt; ex = x =&gt; x &gt; 0;
+```csharp
+// ラムダ式: デリゲートと式ツリー
+Func<int, bool> f = x => x > 0;
+Predicate<int> p = x => x > 0;  // シグネチャが同じでも Func とは別の型
+Expression<Func<int, bool>> ex = x => x > 0;
 
-<span class="comment">// 文字列補完: string と FormattableString</span>
-<span class="reserved">int</span> a = 1, b = 2;
-<span class="reserved">string</span> s = <span class="string">$"a: </span>{a}<span class="string">, b: </span>{b}<span class="string">"</span>;
-<span class="type">FormattableString</span> fs = <span class="string">$"a: </span>{a}<span class="string">, b: </span>{b}<span class="string">"</span>;
-</code></pre>
+// 文字列補完: string と FormattableString
+int a = 1, b = 2;
+string s = $"a: {a}, b: {b}";
+FormattableString fs = $"a: {a}, b: {b}";
+```
 
 前節で言ったように、indexing用途の Range の場合は、Index 型の組み合わせだと考えた方がいいかもしれません。
 とはいえ、`(Index)1..(Index)3`みたいな書き方はしたくないでしょう。
 ラムダ式のように、左辺から決定するのもありかもしれません。
 
-<pre class="source" title="">
-<code><span class="type">Range</span> indexingRange = 1..3; // indexing用
-<span class="type">IntRange</span> intRange = 1..3; // 「末尾から」とかみたいな妙な仕組みを持ってない単なる整数の範囲
-</code></pre>
+```csharp
+Range indexingRange = 1..3; // indexing用
+IntRange intRange = 1..3; // 「末尾から」とかみたいな妙な仕組みを持ってない単なる整数の範囲
+```
 
 とはいえ、ラムダ式に対してよくある不満として、`var`やジェネリクスでの型推論が効かないという問題もあります。
 
-<pre class="source" title="">
-<code><span class="comment">// エラー。ラムダ式は左辺の型がないと型が決まらない</span>
-<span class="reserved">var</span> f = x =&gt; x &gt; 0;
+```csharp
+// エラー。ラムダ式は左辺の型がないと型が決まらない
+var f = x => x > 0;
 
-<span class="comment">// こっちはOK。特に指定がない場合、自動的に string 扱い</span>
-<span class="reserved">var</span> s = <span class="string">$"a: </span>{a}<span class="string">, b: </span>{b}<span class="string">"</span>;
+// こっちはOK。特に指定がない場合、自動的に string 扱い
+var s = $"a: {a}, b: {b}";
 
-<span class="comment">// Range はどうあるべき？暗黙的に indexing 用の Range 型？</span>
-<span class="reserved">var</span> r = 1..3;
-</code></pre>
+// Range はどうあるべき？暗黙的に indexing 用の Range 型？
+var r = 1..3;
+```
 
 ということで、Range はどうあるべきでしょう。
 ラムダ式の例を見ての通り、自動的に特定の「`Range` 型」に推論される(`1..3` にとって自然な型は`Range`型であるとする)方が使い勝手はいいです。

@@ -28,14 +28,14 @@ aliases: []
 ただ、大き目の構造体の受け渡しは、値渡し(コピーが発生)の負担が大きいです。
 なので、例えば以下のように、参照引数を使ったりします。
 
-<pre class="source" title="大き目の構造体を参照渡し">
-<code><span class="reserved">static</span> <span class="reserved">void</span> AddTo(<span class="reserved">ref</span> <span class="type">Matrix4x4</span> x, <span class="reserved">ref</span> <span class="type">Matrix4x4</span> y)
+```csharp
+static void AddTo(ref Matrix4x4 x, ref Matrix4x4 y)
 {
     x.M11 += x.M12;
-    <span class="comment">// 後略</span>
-    <span class="comment">// 4×4行列なので15行ほど同じようなの</span>
+    // 後略
+    // 4×4行列なので15行ほど同じようなの
 }
-</code></pre>
+```
 
 ここで問題は、このコード、`x`と`y`のどちらが書き換わるのかわからないところ。
 `x`の方は書き換える前提で参照渡しをしていますが、
@@ -49,13 +49,13 @@ C++ならよくやるやつです。`const T&`。
 C#に対するこれまでの提案では`readonly ref`なんかが上がっていたんですが、
 今回`in`キーワードを使うのはどうだろうという話になりました。
 
-<pre class="source" title="in参照渡し">
-<code><span class="reserved">static</span> <span class="reserved">void</span> AddTo(<span class="reserved">ref</span> <span class="type">Matrix4x4</span> x, <span class="reserved"><em>in</em></span> <span class="type">Matrix4x4</span> y)
+```csharp
+static void AddTo(ref Matrix4x4 x, in Matrix4x4 y)
 {
     x.M11 += x.M12;
-    <span class="comment">// 後略</span>
+    // 後略
 }
-</code></pre>
+```
 
 前々から`readonly ref`だと長すぎて嫌だしという話はでていまして。
 要するに、

@@ -19,39 +19,39 @@ aliases: []
 
 唐突ですが問題です。以下の3つのコードはそれぞれどういう意味でしょう。
 
-<pre class="source" title="オブジェクト初期化子パターン1">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>
+```csharp
+var x = new Line
 {
-    A = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 },
-    B = <span class="reserved">new</span> <span class="type">Point</span> { X = 3, Y = 4 },
+    A = new Point { X = 1, Y = 2 },
+    B = new Point { X = 3, Y = 4 },
 };
-</code></pre>
+```
 
-<pre class="source" title="オブジェクト初期化子パターン2">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>
+```csharp
+var x = new Line
 {
     A = { X = 1, Y = 2 },
     B = { X = 3, Y = 4 },
 };
-</code></pre>
+```
 
-<pre class="source" title="オブジェクト初期化子パターン3">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>
+```csharp
+var x = new Line
 {
-    A = <span class="reserved">new</span> { X = 1, Y = 2 },
-    B = <span class="reserved">new</span> { X = 3, Y = 4 },
+    A = new { X = 1, Y = 2 },
+    B = new { X = 3, Y = 4 },
 };
-</code></pre>
+```
 
 ついでに、将来的に認められるようになるかもしれないパターンをもう1つ。
 
-<pre class="source" title="オブジェクト初期化子パターン4 (将来OKになるかも)">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>
+```csharp
+var x = new Line
 {
-    A = <span class="reserved">new</span>() { X = 1, Y = 2 },
-    B = <span class="reserved">new</span>() { X = 3, Y = 4 },
+    A = new() { X = 1, Y = 2 },
+    B = new() { X = 3, Y = 4 },
 };
-</code></pre>
+```
 
 ## 答え合わせの前に
 
@@ -59,36 +59,36 @@ aliases: []
 
 まず、`Point`の方は、どのパターンであっても以下のような感じである必要があります。
 
-<pre class="source" title="Point の例">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 }
-</code></pre>
+```
 
 構造体でもいいんですが、その場合、`Line`側に参照戻り値が必要になります。
 
 `Line`の方は、2パターンあります。
 1つは、プロパティが書き換え可能なもの。
 
-<pre class="source" title="書き換え可能な Line の例">
-<code><span class="reserved">class</span> <span class="type">Line</span>
+```csharp
+class Line
 {
-    <span class="reserved">public</span> <span class="type">Point</span> A { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="type">Point</span> B { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public Point A { get; set; }
+    public Point B { get; set; }
 }
-</code></pre>
+```
 
 もう1つは、getのみのプロパティに対して、コンストラクター、もしくは、プロパティ初期化子で初期値を与えているものです。
 
-<pre class="source" title="get のみな Line の例">
-<code><span class="reserved">class</span> <span class="type">Line</span>
+```csharp
+class Line
 {
-    <span class="reserved">public</span> <span class="type">Point</span> A { <span class="reserved">get</span>; } = <span class="reserved">new</span> <span class="type">Point</span>();
-    <span class="reserved">public</span> <span class="type">Point</span> B { <span class="reserved">get</span>; } = <span class="reserved">new</span> <span class="type">Point</span>();
+    public Point A { get; } = new Point();
+    public Point B { get; } = new Point();
 }
-</code></pre>
+```
 
 ## 答え
 
@@ -96,23 +96,23 @@ aliases: []
 
 パターン1のやつは、一番シンプルというか、多くの方がこれのつもりでオブジェクト初期化子を使っているのではないかと思います。
 
-<pre class="source" title="パターン1の答え">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Q()
+```csharp
+public static void Q()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>
+    var x = new Line
     {
-        A = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 },
-        B = <span class="reserved">new</span> <span class="type">Point</span> { X = 3, Y = 4 },
+        A = new Point { X = 1, Y = 2 },
+        B = new Point { X = 3, Y = 4 },
     };
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> A()
+public static void A()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>();
-    x.A = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-    x.B = <span class="reserved">new</span> <span class="type">Point</span> { X = 3, Y = 4 };
+    var x = new Line();
+    x.A = new Point { X = 1, Y = 2 };
+    x.B = new Point { X = 3, Y = 4 };
 }
-</code></pre>
+```
 
 展開結果を見ての通り、`x.A`や`x.B`に対する代入が発生するので、`A`, `B` は set アクセサーを持つ必要があります。
 
@@ -123,25 +123,25 @@ getのみの方の `Line` 実装には使えません。
 
 意外と知られてないのはこいつですね。
 
-<pre class="source" title="パターン2の答え">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Q()
+```csharp
+public static void Q()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>
+    var x = new Line
     {
         A = { X = 1, Y = 2 },
         B = { X = 3, Y = 4 },
     };
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> A()
+public static void A()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>();
+    var x = new Line();
     x.A.X = 1;
     x.A.Y = 2;
     x.B.X = 3;
     x.B.Y = 4;
 }
-</code></pre>
+```
 
 オブジェクト初期化子は再帰的に書けます。
 その場合、この例の `x.A.X` というように、全部展開されて、そこに代入が行われます。
@@ -159,27 +159,27 @@ getのみの方の `Line` 実装には使えません。
 
 パターン3は、単に匿名型を代入しているだけ。
 
-<pre class="source" title="パターン3の答え">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Q()
+```csharp
+public static void Q()
 {
-    <span class="comment">// 実はコンパイル エラー</span>
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>
+    // 実はコンパイル エラー
+    var x = new Line
     {
-        A = <span class="reserved">new</span> { X = 1, Y = 2 },
-        B = <span class="reserved">new</span> { X = 3, Y = 4 },
+        A = new { X = 1, Y = 2 },
+        B = new { X = 3, Y = 4 },
     };
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> A()
+public static void A()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>();
-    <span class="comment">// この new { } は匿名型。</span>
-    <span class="comment">// A, B は Point 型なので、匿名型だと型があってない。</span>
-    <span class="comment">// つまり、コンパイル エラー: 匿名型を暗黙的に Point に変換できません</span>
-    x.A = <span class="reserved">new</span> { X = 1, Y = 2 };
-    x.B = <span class="reserved">new</span> { X = 3, Y = 4 };
+    var x = new Line();
+    // この new { } は匿名型。
+    // A, B は Point 型なので、匿名型だと型があってない。
+    // つまり、コンパイル エラー: 匿名型を暗黙的に Point に変換できません
+    x.A = new { X = 1, Y = 2 };
+    x.B = new { X = 3, Y = 4 };
 }
-</code></pre>
+```
 
 C#だと、コンパイル時にエラーなことがわかるんでそんなに問題はないと思うんですが。
 もしも実行してみないとこの差がわからないとか言われたらちょっと殺意を覚えますね…
@@ -189,25 +189,25 @@ C#だと、コンパイル時にエラーなことがわかるんでそんなに
 パターン4は将来の話。今現在はコンパイル エラーになります。
 どういう構文が追加されそうかというと、左辺からの型推論です。
 
-<pre class="source" title="パターン4の答え">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Q()
+```csharp
+public static void Q()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>
+    var x = new Line
     {
-        A = <span class="reserved">new</span>() { X = 1, Y = 2 },
-        B = <span class="reserved">new</span>() { X = 3, Y = 4 },
+        A = new() { X = 1, Y = 2 },
+        B = new() { X = 3, Y = 4 },
     };
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> A()
+public static void A()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Line</span>();
-    <span class="comment">// new() って書き方で、左辺から型推論してくれる構文が入りそう。</span>
-    <span class="comment">// この場合、A, B が Point なので、new () は new Point() の意味。</span>
-    x.A = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-    x.B = <span class="reserved">new</span> <span class="type">Point</span> { X = 3, Y = 4 };
+    var x = new Line();
+    // new() って書き方で、左辺から型推論してくれる構文が入りそう。
+    // この場合、A, B が Point なので、new () は new Point() の意味。
+    x.A = new Point { X = 1, Y = 2 };
+    x.B = new Point { X = 3, Y = 4 };
 }
-</code></pre>
+```
 
 ものすごいほしい型推論機能です。早く実装されないかな…
 

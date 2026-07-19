@@ -37,9 +37,17 @@ prefer `sinceSet` and `lastUpdatedSet`; blog publication dates use `firstPublish
 
 ## Body conversion
 
-- Original `bodyText` MarkdownDeep/Extra Markdown and embedded HTML are preserved.
+- Original `bodyText` MarkdownDeep/Extra Markdown and embedded HTML are preserved except for
+  legacy code blocks.
 - ATX headings use a space after the marker and are followed by a blank line; fenced code, HTML
-  code blocks, comments, and front matter are left unchanged.
+  comments, and front matter are otherwise left unchanged.
+- Legacy `<pre>` blocks become fenced Markdown with GitHub Linguist language names. Explicit
+  language metadata, filenames, titles, code syntax, and the page section are considered in that
+  order. Known legacy code blocks default to C#; bare preformatted prose defaults to `text`.
+- Existing fenced code blocks keep their language, or receive one by the same inference when the
+  info string is empty.
+- Code blocks inside HTML tables retain their HTML structure and receive the equivalent standard
+  `language-*` class because fenced Markdown cannot be rendered inside an HTML table.
 - `bodyTextParsed` is not used.
 - HTML tables and MathML remain embedded HTML.
 - Legacy heading anchors are normalized to valid empty HTML anchors for GitHub rendering.

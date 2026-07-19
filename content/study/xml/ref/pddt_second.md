@@ -25,29 +25,33 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;pddt_second/&gt;
-</pre>
+```xml
+<pddt_second/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;pddt_second/&gt;φ = c&lt;sup&gt;2&lt;/sup&gt;&lt;nabra/&gt;&lt;sup&gt;2&lt;/sup&gt;φ
-</pre><div class="math"><table class="frac" summary="differential"><tr><td class="num">∂<sup>2</sup></td></tr><tr><td>∂t<sup>2</sup></td></tr></table>φ = c<sup>2</sup><span class="vector">∇</span><sup>2</sup>φ
+```xml
+<pddt_second/>φ = c<sup>2</sup><nabra/><sup>2</sup>φ
+```
+<div class="math"><table class="frac" summary="differential"><tr><td class="num">∂<sup>2</sup></td></tr><tr><td>∂t<sup>2</sup></td></tr></table>φ = c<sup>2</sup><span class="vector">∇</span><sup>2</sup>φ
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:pddt_second"&gt;
-  &lt;table class="frac" summary="differential"&gt;
-    &lt;tr&gt;&lt;td class="num"&gt;∂&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;∂t&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:pddt_second">
+  <table class="frac" summary="differential">
+    <tr><td class="num">∂<sup>2</sup></td></tr>
+    <tr><td>∂t<sup>2</sup></td></tr>
+  </table>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>table.frac
+```css
+table.frac
 {
   display:inline;
   vertical-align:middle;
@@ -60,5 +64,4 @@ td.num
 {
   border-bottom:#000000 1pt solid;
 }
-
-</pre>
+```

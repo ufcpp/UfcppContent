@@ -33,11 +33,11 @@ Visual Studio 2019 Preview 1 が出て、
 C# のキーワードには、並び順を自由に変えられるものがいくつかあります。
 代表的なのはクラスやメソッドに対する修飾子ですが、例えば以下の3行は全く同じ意味になります。
 
-<pre class="source" title="キーワードの並び順">
-<code><span class="reserved">static</span> <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> x;
-<span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">static</span> <span class="reserved">int</span> x;
-<span class="reserved">readonly</span> <span class="reserved">static</span> <span class="reserved">public</span> <span class="reserved">int</span> x;
-</code></pre>
+```csharp
+static public readonly int x;
+public readonly static int x;
+readonly static public int x;
+```
 
 一見するとこれらと同じように順序不問そうに見えるのに、なぜか順序に厳しいものもあります。
 やむを得ない理由があってそうなっているものもあるんですが、
@@ -66,20 +66,20 @@ C# のキーワードには、並び順を自由に変えられるものがい�
 
 「null だったら何か適当な既定値で上書き」みたいな処理は結構頻出かと思います。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span> x = <span class="reserved">null</span>)
+```csharp
+static void M(string x = null)
 {
-    <span class="reserved">if</span> (x == <span class="reserved">null</span>) x = <span class="string">&quot;default string&quot;</span>;
-    <span class="comment">// x に対して何か処理</span>
+    if (x == null) x = "default string";
+    // x に対して何か処理
 }
-</code></pre>
+```
 
 あるいは、遅延初期化のために、「初期値にnullを入れておいて、初回アクセス時に有効な値で上書き」みたいなことも結構書きます。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">string</span> Name =&gt; _name ?? (_name = GetName());
-<span class="reserved">private</span> <span class="reserved">string</span> _name = <span class="reserved">null</span>;
-</code></pre>
+```csharp
+public string Name => _name ?? (_name = GetName());
+private string _name = null;
+```
 
 後者の例では
 [null 合体演算子](../../../../study/csharp/resource/rm_nullusage.md#key-null-coalesce) `??` と代入 `=` を組み合わせていますが、まあ、まさにやりたいことはこれ。
@@ -87,17 +87,16 @@ C# のキーワードには、並び順を自由に変えられるものがい�
 
 ということで、その`??=`演算子が C# 8.0で入ります。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span> x = <span class="reserved">null</span>)
+```csharp
+static void M(string x = null)
 {
-    x ??= <span class="string">&quot;default string&quot;</span>;
-    <span class="comment">// x に対して何か処理</span>
+    x ??= "default string";
+    // x に対して何か処理
 }
  
-<span class="reserved">public</span> <span class="reserved">string</span> Name =&gt; _name ??= GetName();
-<span class="reserved">private</span> <span class="reserved">string</span> _name = <span class="reserved">null</span>;
-
-</code></pre>
+public string Name => _name ??= GetName();
+private string _name = null;
+```
 
 これ、VS 2019 Preview 1ですでに実装されていますけども、
 取り組むことになったの、そこそこ最近なんですよね。
@@ -115,11 +114,11 @@ C# 7.1 で [`default`式](../../../../study/csharp/cheatsheet/ap_ver7_1.md#defau
 
 この`default`の型推論、C# 7.x までは、以下のような状況では利きませんでした。
 
-<pre class="source" title="">
-<code>(<span class="reserved">int</span> x1, <span class="reserved">int</span> y1) = <span class="reserved">default</span>; <span class="comment">// ダメ</span>
-(<span class="reserved">int</span> x2, <span class="reserved">int</span> y2) = <span class="reserved">default</span>((<span class="reserved">int</span>, <span class="reserved">int</span>)); <span class="comment">// これならOK</span>
-(<span class="reserved">int</span> x3, <span class="reserved">int</span> y3) = (<span class="reserved">default</span>, <span class="reserved">default</span>); <span class="comment">// これでもOK</span>
-</code></pre>
+```csharp
+(int x1, int y1) = default; // ダメ
+(int x2, int y2) = default((int, int)); // これならOK
+(int x3, int y3) = (default, default); // これでもOK
+```
 
 この、1行目の「ダメ」ってなっている方を、C# 8.0からはOKにするみたいです。
 
@@ -133,39 +132,39 @@ C# 7.1 で [`default`式](../../../../study/csharp/cheatsheet/ap_ver7_1.md#defau
 C# 7.2 で[安全に使える `stackalloc`](../../../../study/csharp/resource/span.md#safe-stackalloc)が入りました。
 ですが、[ref構造体](../../../../study/csharp/resource/refstruct.md)の制限から、非同期メソッド内ではこの機能が使えませんでした。
 
-<pre class="source" title="">
-<code><span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[32];
+```csharp
+Span<int> x = stackalloc int[32];
  
-<span class="comment">// ここで x を使うのは安全なはずだけど、今は問答無用でエラー。</span>
+// ここで x を使うのは安全なはずだけど、今は問答無用でエラー。
  
-<span class="reserved">await</span> <span class="type">Task</span>.Delay(1);
+await Task.Delay(1);
  
-<span class="comment">// await をまたいで stackalloc を使おうとするのは明確にまずい。</span>
-<span class="comment">// これは制限されていてもしょうがない。</span>
-</code></pre>
+// await をまたいで stackalloc を使おうとするのは明確にまずい。
+// これは制限されていてもしょうがない。
+```
 
 これに対して、C# 8.0では、以下のように一段`{}`でくくればOKになります。
 要するに、`{}`でくくることによって、絶対に`await`をまたがないことが保証されれば(`{}`内に`await`がなければ)認めても安全ということです。
 
-<pre class="source" title="">
-<code>{
-    <span class="comment">// {} でくくったのでこれが書けるようになる。</span>
-    <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[32];
+```csharp
+{
+    // {} でくくったのでこれが書けるようになる。
+    Span<int> x = stackalloc int[32];
 }
-<span class="reserved">await</span> <span class="type">Task</span>.Delay(1);
-</code></pre>
+await Task.Delay(1);
+```
 
 ## `unmanaged` 制約付きの型引数に、ジェネリックな型を渡す
 
 C# 7.3 で[`unmanaged`制約](../../../../study/csharp/interop/sp_unsafe.md#unmanaged-constraints)が入りましたが、微妙に使いにくい点がありました。
 
-<pre class="source" title="">
-<code><span class="type">Unmanaged</span>&lt;<span class="reserved">int</span>&gt; x; <span class="comment">// int は unmanaged なので OK</span>
+```csharp
+Unmanaged<int> x; // int は unmanaged なので OK
  
-<span class="comment">// 以下のものは C# 7.3 ではダメ</span>
-<span class="type">Unmanaged</span>&lt;(<span class="reserved">int</span>, <span class="reserved">int</span>)&gt; y; <span class="comment">// int しか含まないはずなのに…</span>
-<span class="type">Unmanaged</span>&lt;<span class="type">Unmanaged</span>&lt;<span class="reserved">int</span>&gt;&gt; z; <span class="comment">// 再帰的に unmanaged 制約を満たしてそうなのに…</span>
-</code></pre>
+// 以下のものは C# 7.3 ではダメ
+Unmanaged<(int, int)> y; // int しか含まないはずなのに…
+Unmanaged<Unmanaged<int>> z; // 再帰的に unmanaged 制約を満たしてそうなのに…
+```
 
 要は、「ジェネリック型は問答無用ではじく」という状態です。
 

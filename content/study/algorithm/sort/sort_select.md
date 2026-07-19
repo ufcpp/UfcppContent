@@ -39,21 +39,21 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/SelectSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/SelectSort.cs)
 
-<pre class="source" title="選択ソート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 選択ソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;</span>
-<span class="reserved">public static void</span> SelectSort&lt;T&gt;(T[] a)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+public static void SelectSort<T>(T[] a)
+  where T : IComparable<T>
 {
-  <span class="reserved">int</span> n = a.Length;
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; i++)
+  int n = a.Length;
+  for (int i = 0; i < n; i++)
   {
-    <span class="reserved">int</span> min = i;
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = i + 1; j &lt; n; j++)
-      <span class="reserved">if</span> (a[min].CompareTo(a[j]) &gt; 0)
+    int min = i;
+    for (int j = i + 1; j < n; j++)
+      if (a[min].CompareTo(a[j]) > 0)
         min = j;
-    Swap(<span class="reserved">ref</span> a[i], <span class="reserved">ref</span> a[min]);
+    Swap(ref a[i], ref a[min]);
 }
-</code></pre>
+```

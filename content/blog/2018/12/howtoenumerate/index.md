@@ -33,30 +33,30 @@ aliases: []
 
 とりあえず以下のような型を用意。参考にするために、配列を生列挙するコードも書いておきます。
 
-<pre class="source" title="配列の生列挙">
-<code><span class="reserved">using</span> BenchmarkDotNet.Attributes;
+```csharp
+using BenchmarkDotNet.Attributes;
  
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">ArrayWrapper</span>&lt;<span class="type">T</span>&gt;
+public partial struct ArrayWrapper<T>
 {
-    <span class="comment">// 比較のために生列挙をしたいので public (本来は不要というかむしろダメ)</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="type">T</span>[] Array;
-    <span class="reserved">public</span> ArrayWrapper(<span class="type">T</span>[] array) =&gt; Array = array;
+    // 比較のために生列挙をしたいので public (本来は不要というかむしろダメ)
+    public readonly T[] Array;
+    public ArrayWrapper(T[] array) => Array = array;
 }
  
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">ArrayEnumerationBenchmark</span>
+public partial class ArrayEnumerationBenchmark
 {
-    <span class="reserved">public</span> <span class="type">ArrayWrapper</span>&lt;<span class="reserved">int</span>&gt; _array;
+    public ArrayWrapper<int> _array;
 
-    <span class="comment">// 比較のための生列挙。</span>
-    [<span class="type">Benchmark</span>(Baseline = <span class="reserved">true</span>)]
-    <span class="reserved">public</span> <span class="reserved">int</span> RawEnumeration()
+    // 比較のための生列挙。
+    [Benchmark(Baseline = true)]
+    public int RawEnumeration()
     {
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> _array.Array) sum += x;
-        <span class="reserved">return</span> sum;
+        var sum = 0;
+        foreach (var x in _array.Array) sum += x;
+        return sum;
     }
 }
-</code></pre>
+```
 
 とりあえず、結果:
 
@@ -71,17 +71,17 @@ aliases: []
 とはいえ、インターフェイスを介した `GetEnumerator`/`MoveNext`/`Current` はちょっとオーバーヘッドが掛かるので、以下のような作りにします。
 (`List<T>` なんかはまさにこの作りになっています。)
 
-<pre class="source" title="IEnumerable 化">
-<code><span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">ArrayWrapper</span>&lt;<span class="type">T</span>&gt; : <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public partial struct ArrayWrapper<T> : IEnumerable<T>
 {
-    <span class="comment">// 専用の型を作って、それを具象型のまま公開する</span>
-    <span class="reserved">public</span> <span class="type">Enumerator</span> GetEnumerator() =&gt; <span class="reserved">new</span> <span class="type">Enumerator</span>(Array);
+    // 専用の型を作って、それを具象型のまま公開する
+    public Enumerator GetEnumerator() => new Enumerator(Array);
  
-    <span class="comment">// インターフェイスは明示的実装にして別実装</span>
-    <span class="type">IEnumerator</span>&lt;<span class="type">T</span>&gt; <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt;.GetEnumerator() =&gt; <span class="reserved">new</span> <span class="type">EnumeratorObject</span>(Array);
-    <span class="type">IEnumerator</span> <span class="type">IEnumerable</span>.GetEnumerator() =&gt; <span class="reserved">new</span> <span class="type">EnumeratorObject</span>(Array);
+    // インターフェイスは明示的実装にして別実装
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => new EnumeratorObject(Array);
+    IEnumerator IEnumerable.GetEnumerator() => new EnumeratorObject(Array);
 }
-</code></pre>
+```
 
 ### 専用実装(構造体)
 
@@ -89,40 +89,40 @@ aliases: []
 配列の全要素を列挙するような `IEnumerator<T>` 実装は以下のようになります。
 無駄なアロケーションが発生しないように構造体製。
 
-<pre class="source" title="構造体で専用実装">
-<code><span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">ArrayWrapper</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public partial struct ArrayWrapper<T>
 {
-    <span class="comment">// 「仮想呼び出しは遅い」ということがわかっているわけで、</span>
-    <span class="comment">// こんな感じで具象型を返す GetEnumerator を作った方が高速。</span>
-    <span class="comment">// 構造体にした方が最適化が効く。</span>
-    <span class="reserved">public</span> <span class="type">Enumerator</span> GetEnumerator() =&gt; <span class="reserved">new</span> <span class="type">Enumerator</span>(Array);
+    // 「仮想呼び出しは遅い」ということがわかっているわけで、
+    // こんな感じで具象型を返す GetEnumerator を作った方が高速。
+    // 構造体にした方が最適化が効く。
+    public Enumerator GetEnumerator() => new Enumerator(Array);
  
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Enumerator</span> : <span class="type">IEnumerator</span>&lt;<span class="type">T</span>&gt;
+    public struct Enumerator : IEnumerator<T>
     {
-        <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">T</span>[] _array;
-        <span class="reserved">private</span> <span class="reserved">int</span> _i;
-        <span class="reserved">internal</span> Enumerator(<span class="type">T</span>[] array) =&gt; (_array, _i) = (array, -1);
+        private readonly T[] _array;
+        private int _i;
+        internal Enumerator(T[] array) => (_array, _i) = (array, -1);
  
-        <span class="reserved">public</span> <span class="type">T</span> Current =&gt; _array[_i];
-        <span class="reserved">public</span> <span class="reserved">bool</span> MoveNext() =&gt; ((<span class="reserved">uint</span>)++_i) &lt; (<span class="reserved">uint</span>)_array.Length;
-        <span class="comment">// 残りは省略</span>
+        public T Current => _array[_i];
+        public bool MoveNext() => ((uint)++_i) < (uint)_array.Length;
+        // 残りは省略
     }
 }
  
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">ArrayEnumerationBenchmark</span>
+public partial class ArrayEnumerationBenchmark
 {
-    <span class="comment">// 構造体の Enumerator 越しの列挙</span>
-    <span class="comment">// 構造体で返してるとほんとにきっちり最適化が効くみたいで、</span>
-    <span class="comment">// ほぼ配列生列挙と同じ速度が出る。</span>
-    [<span class="type">Benchmark</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> StructEnumeration()
+    // 構造体の Enumerator 越しの列挙
+    // 構造体で返してるとほんとにきっちり最適化が効くみたいで、
+    // ほぼ配列生列挙と同じ速度が出る。
+    [Benchmark]
+    public int StructEnumeration()
     {
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> _array) sum += x;
-        <span class="reserved">return</span> sum;
+        var sum = 0;
+        foreach (var x in _array) sum += x;
+        return sum;
     }
 }
-</code></pre>
+```
 
 これを使って `foreach (var x in _array)` とすると、
 `MoveNext`も`Current`もインライン展開されて、
@@ -144,43 +144,43 @@ aliases: []
 ただ、構造体をインターフェイス化して使うとかえって遅くて、
 少しでもパフォーマンスを上げたりならクラスで作り直す方がよかったりします。
 
-<pre class="source" title="インターフェイス実装">
-<code><span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">ArrayWrapper</span>&lt;<span class="type">T</span>&gt; : <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public partial struct ArrayWrapper<T> : IEnumerable<T>
 {
-    <span class="type">IEnumerator</span>&lt;<span class="type">T</span>&gt; <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt;.GetEnumerator() =&gt; <span class="reserved">new</span> <span class="type">EnumeratorObject</span>(Array);
-    <span class="type">IEnumerator</span> <span class="type">IEnumerable</span>.GetEnumerator() =&gt; <span class="reserved">new</span> <span class="type">EnumeratorObject</span>(Array);
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => new EnumeratorObject(Array);
+    IEnumerator IEnumerable.GetEnumerator() => new EnumeratorObject(Array);
  
-    <span class="comment">// 構造体の Enumerator と中身は全く同じで、ただクラスになってるだけ。</span>
-    <span class="comment">// 構造体をインターフェイス越しに返すとかえって遅くなるので、こんなクラスが別途必要に…</span>
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">EnumeratorObject</span> : <span class="type">IEnumerator</span>&lt;<span class="type">T</span>&gt;
+    // 構造体の Enumerator と中身は全く同じで、ただクラスになってるだけ。
+    // 構造体をインターフェイス越しに返すとかえって遅くなるので、こんなクラスが別途必要に…
+    public class EnumeratorObject : IEnumerator<T>
     {
-        <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">T</span>[] _array;
-        <span class="reserved">private</span> <span class="reserved">int</span> _i;
-        <span class="reserved">internal</span> EnumeratorObject(<span class="type">T</span>[] array) =&gt; (_array, _i) = (array, -1);
+        private readonly T[] _array;
+        private int _i;
+        internal EnumeratorObject(T[] array) => (_array, _i) = (array, -1);
  
-        <span class="reserved">public</span> <span class="type">T</span> Current =&gt; _array[_i];
-        <span class="reserved">public</span> <span class="reserved">bool</span> MoveNext() =&gt; ((<span class="reserved">uint</span>)++_i) &lt; (<span class="reserved">uint</span>)_array.Length;
+        public T Current => _array[_i];
+        public bool MoveNext() => ((uint)++_i) < (uint)_array.Length;
  
-        <span class="reserved">object</span> <span class="type">IEnumerator</span>.Current =&gt; Current;
-        <span class="reserved">public</span> <span class="reserved">void</span> Dispose() { }
-        <span class="reserved">public</span> <span class="reserved">void</span> Reset() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
+        object IEnumerator.Current => Current;
+        public void Dispose() { }
+        public void Reset() => throw new NotImplementedException();
     }
 }
  
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">ArrayEnumerationBenchmark</span>
+public partial class ArrayEnumerationBenchmark
 {
-    <span class="comment">// インターフェイス越し列挙になるように、IEnumerable&lt;T&gt; にキャストして使ってる。</span>
-    <span class="comment">// びっくりするくらい遅い。</span>
-    <span class="comment">// StructEnumeration とかに比べて10倍遅い。</span>
-    [<span class="type">Benchmark</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> InterfaceEnumeration()
+    // インターフェイス越し列挙になるように、IEnumerable<T> にキャストして使ってる。
+    // びっくりするくらい遅い。
+    // StructEnumeration とかに比べて10倍遅い。
+    [Benchmark]
+    public int InterfaceEnumeration()
     {
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> (<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;)_array) sum += x;
-        <span class="reserved">return</span> sum;
+        var sum = 0;
+        foreach (var x in (IEnumerable<int>)_array) sum += x;
+        return sum;
     }
 }
-</code></pre>
+```
 
 構造体/具象型実装が配列生列挙とそん色ないのに対して、
 こいつは10倍以上遅いです。
@@ -207,26 +207,26 @@ aliases: []
 .NET Framework 2.0 時代からあってパフォーマンスへの考慮はあんまりない型です。
 要するに、遅い…
 
-<pre class="source" title="ReadOnlyCollection 越しの列挙">
-<code><span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">ArrayWrapper</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public partial struct ArrayWrapper<T>
 {
-    <span class="reserved">public</span> <span class="type">ReadOnlyCollection</span>&lt;<span class="type">T</span>&gt; AsReadOnlyCollection() =&gt; <span class="reserved">new</span> <span class="type">ReadOnlyCollection</span>&lt;<span class="type">T</span>&gt;(Array);
+    public ReadOnlyCollection<T> AsReadOnlyCollection() => new ReadOnlyCollection<T>(Array);
 }
  
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">ArrayEnumerationBenchmark</span>
+public partial class ArrayEnumerationBenchmark
 {
-    <span class="comment">// ReadOnlyCollection&lt;T&gt; 列挙。</span>
-    <span class="comment">// InterfaceEnumeration 以上に遅い。とにかく遅い。</span>
-    <span class="comment">// ReadOnlyCollection&lt;T&gt; は内部的に IList&lt;T&gt; 越しに配列アクセスするので、それがほんとに遅い。</span>
-    [<span class="type">Benchmark</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> ReadOnlyCollectionEnumeration()
+    // ReadOnlyCollection<T> 列挙。
+    // InterfaceEnumeration 以上に遅い。とにかく遅い。
+    // ReadOnlyCollection<T> は内部的に IList<T> 越しに配列アクセスするので、それがほんとに遅い。
+    [Benchmark]
+    public int ReadOnlyCollectionEnumeration()
     {
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> _array.AsReadOnlyCollection()) sum += x;
-        <span class="reserved">return</span> sum;
+        var sum = 0;
+        foreach (var x in _array.AsReadOnlyCollection()) sum += x;
+        return sum;
     }
 }
-</code></pre>
+```
 
 |                         Method |       Mean |     Error |     StdDev | Ratio | RatioSD |
 | ------------------------------ |-----------:|----------:|-----------:|------:|--------:|
@@ -242,28 +242,28 @@ aliases: []
 `Span<T>` と同様最適化が掛かるので、
 書き換えを防止しつつ、配列の生列挙とそん色ない速度が出ます。
 
-<pre class="source" title="ReadOnlySpan 越しの列挙">
-<code><span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type">ArrayWrapper</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public partial struct ArrayWrapper<T>
 {
-    <span class="comment">// インデクサーも使いたいとき用、その2。</span>
-    <span class="comment">// Span&lt;T&gt; を介してみる。</span>
-    <span class="comment">// パフォーマンスに焦点が当たってた .NET Core 2.1 世代の型だけあって、かなり速い。</span>
-    <span class="reserved">public</span> <span class="type">ReadOnlySpan</span>&lt;<span class="type">T</span>&gt; AsSpan() =&gt; Array;
+    // インデクサーも使いたいとき用、その2。
+    // Span<T> を介してみる。
+    // パフォーマンスに焦点が当たってた .NET Core 2.1 世代の型だけあって、かなり速い。
+    public ReadOnlySpan<T> AsSpan() => Array;
 }
  
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">ArrayEnumerationBenchmark</span>
+public partial class ArrayEnumerationBenchmark
 {
-    <span class="comment">// Span&lt;T&gt; 列挙</span>
-    <span class="comment">// こいつも配列生列挙とほぼ同じ性能。速い。</span>
-    [<span class="type">Benchmark</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> SpanEnumeration()
+    // Span<T> 列挙
+    // こいつも配列生列挙とほぼ同じ性能。速い。
+    [Benchmark]
+    public int SpanEnumeration()
     {
-        <span class="reserved">var</span> sum = 0;
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> _array.AsSpan()) sum += x;
-        <span class="reserved">return</span> sum;
+        var sum = 0;
+        foreach (var x in _array.AsSpan()) sum += x;
+        return sum;
     }
 }
-</code></pre>
+```
 
 |                         Method |       Mean |     Error |     StdDev | Ratio | RatioSD |
 | ------------------------------ |-----------:|----------:|-----------:|------:|--------:|
@@ -291,39 +291,39 @@ aliases: []
 過渡的な手段とはいえ、結構邪悪です。
 以下のようなコード。
 
-<pre class="source" title="ImmurableArray を無理やり配列に変換">
-<code>[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Sequential)]
-<span class="reserved">private</span> <span class="reserved">struct</span> <span class="type">ImmutableArrayProxy</span>&lt;<span class="type">T</span>&gt;
+```csharp
+[StructLayout(LayoutKind.Sequential)]
+private struct ImmutableArrayProxy<T>
 {
-    <span class="reserved">internal</span> <span class="type">T</span>[] MutableArray;
+    internal T[] MutableArray;
 }
  
-<span class="reserved">internal</span> <span class="reserved">static</span> <span class="type">T</span>[] DangerousGetUnderlyingArray&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">ImmutableArray</span>&lt;<span class="type">T</span>&gt; array)
-     =&gt; <span class="type">Unsafe</span>.As&lt;<span class="type">ImmutableArray</span>&lt;<span class="type">T</span>&gt;, <span class="type">ImmutableArrayProxy</span>&lt;<span class="type">T</span>&gt;&gt;(<span class="reserved">ref</span> array).MutableArray;
-</code></pre>
+internal static T[] DangerousGetUnderlyingArray<T>(this ImmutableArray<T> array)
+     => Unsafe.As<ImmutableArray<T>, ImmutableArrayProxy<T>>(ref array).MutableArray;
+```
 
 また、`Span`を使うと、中身を参照で外に漏らしちゃうことになるので、
 ちょっと変な挙動をすることがあります。
 以下のようなコードには注意を。
 
-<pre class="source" title="Span で中身を返す場合の注意点">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// System.Collections.Generic.List&lt;T&gt; と同じような実装 + AsSpan</span>
-<span class="reserved">class</span> <span class="type">List</span>&lt;<span class="type">T</span>&gt;
+// System.Collections.Generic.List<T> と同じような実装 + AsSpan
+class List<T>
 {
-    <span class="reserved">private</span> <span class="type">T</span>[] _buffer;
-    <span class="reserved">private</span> <span class="reserved">int</span> _count;
-    <span class="reserved">public</span> List(<span class="reserved">int</span> capacity) =&gt; _buffer = <span class="reserved">new</span> <span class="type">T</span>[capacity];
+    private T[] _buffer;
+    private int _count;
+    public List(int capacity) => _buffer = new T[capacity];
  
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] =&gt; <span class="reserved">ref</span> _buffer[index];
-    <span class="reserved">public</span> <span class="type">ReadOnlySpan</span>&lt;<span class="type">T</span>&gt; AsSpan() =&gt; _buffer.AsSpan(0, _count);
+    public ref T this[int index] => ref _buffer[index];
+    public ReadOnlySpan<T> AsSpan() => _buffer.AsSpan(0, _count);
  
-    <span class="reserved">public</span> <span class="reserved">void</span> Add(<span class="type">T</span> item)
+    public void Add(T item)
     {
-        <span class="reserved">if</span>(_count == _buffer.Length)
+        if(_count == _buffer.Length)
         {
-            <span class="reserved">var</span> newBuffer = <span class="reserved">new</span> <span class="type">T</span>[_buffer.Length * 2];
+            var newBuffer = new T[_buffer.Length * 2];
             _buffer.AsSpan().CopyTo(newBuffer);
             _buffer = newBuffer;
         }
@@ -331,26 +331,26 @@ aliases: []
     }
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> list = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;(2);
+        var list = new List<int>(2);
         list.Add(1);
         list.Add(2);
-        <span class="comment">// この時点で容量満杯</span>
+        // この時点で容量満杯
  
-        <span class="comment">// Span 取得してから…</span>
-        <span class="reserved">var</span> span = list.AsSpan();
+        // Span 取得してから…
+        var span = list.AsSpan();
  
-        list.Add(3);  <span class="comment">// Add で内部バッファーの再確保が発生</span>
-        list[0] = 99; <span class="comment">// 新しいバッファーへの書き込み</span>
+        list.Add(3);  // Add で内部バッファーの再確保が発生
+        list[0] = 99; // 新しいバッファーへの書き込み
  
-        <span class="type">Console</span>.WriteLine(span[0]); <span class="comment">// 古いバッファーを参照してるので 1 のまま</span>
-        <span class="type">Console</span>.WriteLine(list[0]); <span class="comment">// 新しいバッファーを参照してるので 99</span>
+        Console.WriteLine(span[0]); // 古いバッファーを参照してるので 1 のまま
+        Console.WriteLine(list[0]); // 新しいバッファーを参照してるので 99
     }
 }
-</code></pre>
+```
 
 ## まとめ
 

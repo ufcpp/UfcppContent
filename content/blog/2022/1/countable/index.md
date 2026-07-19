@@ -53,10 +53,10 @@ C# の文法的に対応しなくても、ライブラリ側で `RemoveAt(Index)
 パターン ベースな構文は無節操にやると結構「意図せずパターンを満たしてしまった」と言うことが起こります。
 今回の場合も、以下のような書き方ができてしまうという懸念あり。
 
-<pre class="source" title="Add(int)">
-<code><span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">list</span> = <span class="reserved">new</span>();
-<span class="variable">list</span>.Add(^1);
-</code></pre>
+```csharp
+List<int> list = new();
+list.Add(^1);
+```
 
 これが `list.Add(list.Count - 1)` と解釈されかねないわけで、それが望まれる挙動にはならないでしょう。
 
@@ -86,13 +86,13 @@ C# の文法的に対応しなくても、ライブラリ側で `RemoveAt(Index)
 
 `Vector<T>` 型(`System.Numerics` 名前空間)はインデクサーを持っているわけですが、以下のような[リスト パターン](../../../2021/12/list-pattern/index.md)を書きたいかどうかという話もあります。
 
-<pre class="source" title="Vector に対するリスト パターン">
-<code><span class="reserved">using</span> System.Numerics;
+```csharp
+using System.Numerics;
 
-<span class="type">Vector</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">v</span> = <span class="reserved">new</span>();
+Vector<byte> v = new();
 
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">v</span> <span class="reserved">is</span> [ 0, .., 0 ]);
-</code></pre>
+Console.WriteLine(v is [ 0, .., 0 ]);
+```
 
 これを書けるようにするには `Vector<T>` を Countable にすればいいんですが…
 `Vector<T>` の文脈的に「`Length` と言われても要素数には見えない」という別問題が発生します。

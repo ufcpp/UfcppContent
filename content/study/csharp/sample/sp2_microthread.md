@@ -48,23 +48,23 @@ C# 2.0 の「[イテレーター](../data/sp2_iterator.md#iterator)」構文を�
 
 例えば、要点だけ抜き出して書くと、以下のような感じ。
 
-<pre class="source" title="Update メソッドでオブジェクトの更新" lang="">
-<code><span class="reserved">class</span> SimpleBullet : UpdatableObject
+```csharp
+class SimpleBullet : UpdatableObject
 {
-  <span class="reserved">double</span> x, y;
-  <span class="reserved">double</span> vx, vy;
+  double x, y;
+  double vx, vy;
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 更新処理。
   /// 毎フレーム呼び出される。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public void</span> Update()
+  /// </summary>
+  public void Update()
   {
-    <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-    <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
+    this.x += this.vx;
+    this.y += this.vy;
   }
 }
-</code></pre>
+```
 
 
 で、オブジェクトマネージャーみたいなクラスを別に作って、
@@ -84,38 +84,38 @@ C# 2.0 の「[イテレーター](../data/sp2_iterator.md#iterator)」構文を�
 
 これを Update メソッドを使って書くと以下のようになります。
 
-<pre class="source" title="ちょっと複雑な Update 処理" lang="">
-<code><span class="reserved">class</span> ComplexBullet : UpdatableObject
+```csharp
+class ComplexBullet : UpdatableObject
 {
-  <span class="reserved">double</span> x, y;
-  <span class="reserved">double</span> vx, vy;
+  double x, y;
+  double vx, vy;
 
-  <span class="reserved">int</span> state = 0;
+  int state = 0;
 
-  <span class="reserved">public void</span> Update()
+  public void Update()
   {
-    <span class="reserved">if</span> (<span class="reserved">this</span>.state &lt; 100)
+    if (this.state < 100)
     {
     }
-    <span class="reserved">else if</span> (<span class="reserved">this</span>.state &lt; 200)
+    else if (this.state < 200)
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
+      this.x += this.vx;
+      this.y += this.vy;
     }
-    <span class="reserved">else if</span> (<span class="reserved">this</span>.state == 200)
+    else if (this.state == 200)
     {
-      <span class="reserved">this</span>.vx = - <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.vy = - <span class="reserved">this</span>.vy;
+      this.vx = - this.vx;
+      this.vy = - this.vy;
     }
-    <span class="reserved">else</span>
+    else
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
+      this.x += this.vx;
+      this.y += this.vy;
     }
-    ++<span class="reserved">this</span>.state;
+    ++this.state;
   }
 }
-</code></pre>
+```
 
 
 state 変数を使って、
@@ -127,37 +127,37 @@ state 変数を使って、
 で、これを、以下のように書けたら便利なんじゃないかなぁというのがマイクロスレッドの目的。
 （このコードは C# でコンパイル不可。あくまで概念説明用。）
 
-<pre class="source" title="マイクロスレッドの概念（コンパイル不可）例" lang="">
-<code><span class="reserved">class</span> ComplexBullet : UpdatableObject
+```csharp
+class ComplexBullet : UpdatableObject
 {
-  <span class="reserved">double</span> x, y;
-  <span class="reserved">double</span> vx, vy;
+  double x, y;
+  double vx, vy;
 
-  <span class="reserved">public void</span> MicroThread()
+  public void MicroThread()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
-      <span class="reserved">yield</span>;
+      yield;
     }
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
-      <span class="reserved">yield</span>;
+      this.x += this.vx;
+      this.y += this.vy;
+      yield;
     }
 
-    <span class="reserved">this</span>.vx = - <span class="reserved">this</span>.vx;
-    <span class="reserved">this</span>.vy = - <span class="reserved">this</span>.vy;
+    this.vx = - this.vx;
+    this.vy = - this.vy;
 
-    <span class="reserved">for</span> (; ; )
+    for (; ; )
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
-      <span class="reserved">yield</span>;
+      this.x += this.vx;
+      this.y += this.vy;
+      yield;
     }
   }
 }
-</code></pre>
+```
 
 
 yield が記述された行に到達するたびに1フレーム時間が進むようなイメージ。
@@ -193,51 +193,51 @@ yield の部分に System.Monitor.Wait とかを書いてスレッドの動作�
 （ここでする説明に必要な部分だけ抜き出して）再掲してみます。
 （とりあえず、100フレームだけ等速直線運動する。）
 
-<pre class="source" title="マイクロスレッドの概念（コンパイル不可）例" lang="">
-<code><span class="reserved">class</span> SimpleBullet : UpdatableObject
+```csharp
+class SimpleBullet : UpdatableObject
 {
-  <span class="reserved">double</span> x, y;
-  <span class="reserved">double</span> vx, vy;
+  double x, y;
+  double vx, vy;
 
-  <span class="reserved">public void</span> MicroThread()
+  public void MicroThread()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
-      <span class="reserved">yield</span>;
+      this.x += this.vx;
+      this.y += this.vy;
+      yield;
     }
   }
 }
-</code></pre>
+```
 
 
 対比のために、普通のメソッドも書いておきます。
 
-<pre class="source" title="対比： 普通のメソッド" lang="">
-<code>  <span class="reserved">public void</span> NormalMethod()
+```csharp
+  public void NormalMethod()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
+      this.x += this.vx;
+      this.y += this.vy;
     }
   }
-</code></pre>
+```
 
 
 普通のメソッドの場合、複数のオブジェクトに対して処理するなら、
 例えば、以下のような書き方をします。
 
-<pre class="source" title="普通のメソッド呼び出し" lang="">
-<code>SimpleBullet o1, o2, o3;
+```csharp
+SimpleBullet o1, o2, o3;
 
-<span class="input">中略。o1～o3 を初期化。</span>
+中略。o1～o3 を初期化。
 
 o1.NormalMethod();
 o2.NormalMethod();
 o3.NormalMethod();
-</code></pre>
+```
 
 
 マイクロスレッドの場合、ここでは、
@@ -245,18 +245,18 @@ o3.NormalMethod();
 1フレームごとに Update が呼ばれるようなモデルを考えているので、
 以下のようになると思います。
 
-<pre class="source" title="普通のメソッド呼び出し" lang="">
-<code>UpdatableObjectManager manager;
+```csharp
+UpdatableObjectManager manager;
 SimpleBullet o1, o2, o3;
 
-<span class="input">中略。初期化処理。</span>
+中略。初期化処理。
 
 manager.Add(o1);
 manager.Add(o2);
 manager.Add(o3);
 
 manager.Run();
-</code></pre>
+```
 
 
 処理の流れのイメージとしては、
@@ -292,33 +292,33 @@ yield の行に到達するたびに、処理を中断して呼び出し元に�
 改めて書くと、
 以下のようなコードから、
 
-<pre class="source" title="マイクロスレッドの概念（コンパイル不可）例" lang="">
-<code>  <span class="reserved">public void</span> MicroThread()
+```csharp
+  public void MicroThread()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
-      <span class="reserved">yield</span>;
+      this.x += this.vx;
+      this.y += this.vy;
+      yield;
     }
   }
-</code></pre>
+```
 
 
 以下の Update メソッドのようなものを自動生成できればいいわけです。
 
-<pre class="source" title="Update メソッド" lang="">
-<code>  <span class="reserved">int</span> i = 0;
-  <span class="reserved">void</span> Update()
+```csharp
+  int i = 0;
+  void Update()
   {
-    <span class="reserved">if</span> (<span class="reserved">this</span>.i &lt; 100)
+    if (this.i < 100)
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
+      this.x += this.vx;
+      this.y += this.vy;
     }
-    ++<span class="reserved">this</span>.i;
+    ++this.i;
   }
-</code></pre>
+```
 
 
 他にも方法はあるかと思いますが、
@@ -329,42 +329,42 @@ C# で実現するとするならこの方法がいいです。
 それを使って実現可能です。
 例えば以下のような感じ。
 
-<pre class="source" title="イテレータでマイクロスレッドもどきを作ってみる" lang="">
-<code><span class="reserved">using</span> System.Collections;
+```csharp
+using System.Collections;
 
-<span class="reserved">class</span> SimpleBullet : UpdatableObject
+class SimpleBullet : UpdatableObject
 {
-  <span class="reserved">double</span> x, y;
-  <span class="reserved">double</span> vx, vy;
+  double x, y;
+  double vx, vy;
   IEnumerator microthread;
 
-  <span class="reserved">public</span> SimpleBullet()
+  public SimpleBullet()
   {
-    <span class="reserved">this</span>.microthread = <span class="reserved">this</span>.GetMicroThread();
+    this.microthread = this.GetMicroThread();
   }
 
   IEnumerator GetMicroThread()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
-      <span class="reserved">this</span>.x += <span class="reserved">this</span>.vx;
-      <span class="reserved">this</span>.y += <span class="reserved">this</span>.vy;
-      <span class="reserved">yield return null</span>;
+      this.x += this.vx;
+      this.y += this.vy;
+      yield return null;
     }
   }
 
-  <span class="reserved">void</span> Update()
+  void Update()
   {
-    <span class="reserved">if</span> (<span class="reserved">this</span>.microthread != <span class="reserved">null</span>)
+    if (this.microthread != null)
     {
-      <span class="reserved">if</span> (!<span class="reserved">this</span>.microthread.MoveNext())
+      if (!this.microthread.MoveNext())
       {
-        <span class="reserved">this</span>.microthread = <span class="reserved">null</span>;
+        this.microthread = null;
       }
     }
   }
 }
-</code></pre>
+```
 
 
 return null みたいな余計な記述がちょっと増えてしまいますが、

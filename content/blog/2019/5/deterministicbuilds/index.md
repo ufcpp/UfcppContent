@@ -64,17 +64,17 @@ dotnet コマンドでのビルド(csproj ファイル中にオプション記�
 ちなみに、`<PathMap>` は [`Directory.Build.props`](../../../2018/12/directorybuild/index.md) に書いておいても動作します。
 プロジェクト1個1個に設定を入れるのも面倒なので、自分はリポジトリのルートに1個、以下のような `Directory.Build.props` を入れています。
 
-<pre class="xsource" title="">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue">&gt;</span>
+```xml
+<Project>
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>latest<span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">RepoRoot</span><span class="attvalue">&gt;</span>$([System.IO.Path]::GetFullPath(&#39;$(MSBuildThisFileDirectory)..\&#39;))<span class="attvalue">&lt;/</span><span class="element">RepoRoot</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">PathMap</span><span class="attvalue">&gt;</span>$(RepoRoot)=.<span class="attvalue">&lt;/</span><span class="element">PathMap</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\'))</RepoRoot>
+    <PathMap>$(RepoRoot)=.</PathMap>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 `$(MSBuildProjectDirectory)` (csproj があるフォルダー)からではなく、
 `$(MSBuildThisFileDirectory)` (props があるフォルダー)を基準にして、

@@ -31,55 +31,55 @@ System.Windows.Controls 名前空間内に、
 ユーザからの入力操作を受け付けるためのコントロール類が定義されています。
 
 
-<pre class="xsource" title="コントロールの例">
-<code><span class="bracket">&lt;</span><span class="element">Grid</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
+```xml
+<Grid
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200">
 
-  <span class="bracket">&lt;</span><span class="element">Grid.RowDefinitions</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="25"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="25"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="25"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="50"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="25"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="25"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="25"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Grid.RowDefinitions</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Grid.ColumnDefinitions</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ColumnDefinition</span> <span class="attribute">Width</span><span class="attvalue">="80"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ColumnDefinition</span> <span class="attribute">Width</span><span class="attvalue">="120"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Grid.ColumnDefinitions</span><span class="bracket">&gt;</span>
+  <Grid.RowDefinitions>
+    <RowDefinition Height="25" />
+    <RowDefinition Height="25" />
+    <RowDefinition Height="25" />
+    <RowDefinition Height="50" />
+    <RowDefinition Height="25" />
+    <RowDefinition Height="25" />
+    <RowDefinition Height="25" />
+  </Grid.RowDefinitions>
+  <Grid.ColumnDefinitions>
+    <ColumnDefinition Width="80" />
+    <ColumnDefinition Width="120" />
+  </Grid.ColumnDefinitions>
 
-  <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Grid.Row</span><span class="attvalue">="0"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="0"</span><span class="bracket">&gt;</span>姓<span class="bracket">&lt;</span>/<span class="element">Label</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Grid.Row</span><span class="attvalue">="0"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span>/<span class="element">TextBox</span><span class="bracket">&gt;</span>
+  <Label Grid.Row="0" Grid.Column="0">姓</Label>
+  <TextBox Grid.Row="0" Grid.Column="1"></TextBox>
 
-  <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Grid.Row</span><span class="attvalue">="1"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="0"</span><span class="bracket">&gt;</span>名<span class="bracket">&lt;</span>/<span class="element">Label</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Grid.Row</span><span class="attvalue">="1"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span>/<span class="element">TextBox</span><span class="bracket">&gt;</span>
+  <Label Grid.Row="1" Grid.Column="0">名</Label>
+  <TextBox Grid.Row="1" Grid.Column="1"></TextBox>
 
-  <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Grid.Row</span><span class="attvalue">="2"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="0"</span><span class="bracket">&gt;</span>年齢<span class="bracket">&lt;</span>/<span class="element">Label</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">ComboBox</span> <span class="attribute">Grid.Row</span><span class="attvalue">="2"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span> <span class="attribute">SelectedIndex</span><span class="attvalue">="0"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ComboBoxItem</span> <span class="bracket">&gt;</span>～19歳<span class="bracket">&lt;</span>/<span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>20代<span class="bracket">&lt;</span>/<span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>30代<span class="bracket">&lt;</span>/<span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>40代<span class="bracket">&lt;</span>/<span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>それ以上<span class="bracket">&lt;</span>/<span class="element">ComboBoxItem</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">ComboBox</span><span class="bracket">&gt;</span>
+  <Label Grid.Row="2" Grid.Column="0">年齢</Label>
+  <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="0">
+    <ComboBoxItem >～19歳</ComboBoxItem>
+    <ComboBoxItem>20代</ComboBoxItem>
+    <ComboBoxItem>30代</ComboBoxItem>
+    <ComboBoxItem>40代</ComboBoxItem>
+    <ComboBoxItem>それ以上</ComboBoxItem>
+  </ComboBox>
 
-  <span class="bracket">&lt;</span><span class="element">Label</span> <span class="attribute">Grid.Row</span><span class="attvalue">="3"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="0"</span><span class="bracket">&gt;</span>性別<span class="bracket">&lt;</span>/<span class="element">Label</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">GroupBox</span> <span class="attribute">Grid.Row</span><span class="attvalue">="3"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">StackPanel</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">RadioButton</span> <span class="attribute">Height</span><span class="attvalue">="18"</span><span class="bracket">&gt;</span>男<span class="bracket">&lt;</span>/<span class="element">RadioButton</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">RadioButton</span> <span class="attribute">Height</span><span class="attvalue">="18"</span><span class="bracket">&gt;</span>女<span class="bracket">&lt;</span>/<span class="element">RadioButton</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">GroupBox</span><span class="bracket">&gt;</span>
+  <Label Grid.Row="3" Grid.Column="0">性別</Label>
+  <GroupBox Grid.Row="3" Grid.Column="1">
+    <StackPanel>
+      <RadioButton Height="18">男</RadioButton>
+      <RadioButton Height="18">女</RadioButton>
+    </StackPanel>
+  </GroupBox>
 
-  <span class="bracket">&lt;</span><span class="element">CheckBox</span> <span class="attribute">Grid.Row</span><span class="attvalue">="4"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span><span class="bracket">&gt;</span>既婚<span class="bracket">&lt;</span>/<span class="element">CheckBox</span><span class="bracket">&gt;</span>
+  <CheckBox Grid.Row="4" Grid.Column="1">既婚</CheckBox>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Grid.Row</span><span class="attvalue">="5"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span><span class="bracket">&gt;</span>OK<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Grid.Row</span><span class="attvalue">="6"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span><span class="bracket">&gt;</span>Cancel<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Grid</span><span class="bracket">&gt;</span>
-</code></pre>
+  <Button Grid.Row="5" Grid.Column="1">OK</Button>
+  <Button Grid.Row="6" Grid.Column="1">Cancel</Button>
+</Grid>
+```
 <figure>
 	[![コントロールの例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_controls.png)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_controls.png)
 	<figcaption>コントロールの例</figcaption>
@@ -95,30 +95,30 @@ System.Windows.Shapes 名前空間内に、
 拡大・縮小してもふちがギザギザになったりしません。
 
 
-<pre class="xsource" title="図形の例">
-<code><span class="bracket">&lt;</span><span class="element">Canvas</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
+```xml
+<Canvas
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200">
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="100"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="10"</span>
-    <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span> <span class="attribute">Fill</span><span class="attvalue">="#ffcccc"</span>/<span class="bracket">&gt;</span>
+  <Rectangle Canvas.Left="100" Canvas.Top="10"
+    Width="90" Height="80" Fill="#ffcccc"/>
 
-  <span class="bracket">&lt;</span><span class="element">Ellipse</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="30"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="120"</span>
-    <span class="attribute">Width</span><span class="attvalue">="60"</span> <span class="attribute">Height</span><span class="attvalue">="60"</span> <span class="attribute">Fill</span><span class="attvalue">="#ccccff"</span>/<span class="bracket">&gt;</span>
+  <Ellipse Canvas.Left="30" Canvas.Top="120"
+    Width="60" Height="60" Fill="#ccccff"/>
     
-  <span class="bracket">&lt;</span><span class="element">Polygon</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="10"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="10"</span>
-    <span class="attribute">Points</span><span class="attvalue">="20 10 70 20 80 40 60 70 10 50 0 30"</span>
-    <span class="attribute">Fill</span><span class="attvalue">="#ccffcc"</span>
-  /<span class="bracket">&gt;</span>
+  <Polygon Canvas.Left="10" Canvas.Top="10"
+    Points="20 10 70 20 80 40 60 70 10 50 0 30"
+    Fill="#ccffcc"
+  />
 
-  <span class="bracket">&lt;</span><span class="element">Line</span> <span class="attribute">Stroke</span><span class="attvalue">="#aaaaaa"</span> <span class="attribute">StrokeThickness</span><span class="attvalue">="3"</span>
-    <span class="attribute">X1</span><span class="attvalue">="120"</span> <span class="attribute">Y1</span><span class="attvalue">="120"</span> <span class="attribute">X2</span><span class="attvalue">="180"</span> <span class="attribute">Y2</span><span class="attvalue">="180"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Line</span> <span class="attribute">Stroke</span><span class="attvalue">="#aaaaaa"</span> <span class="attribute">StrokeThickness</span><span class="attvalue">="3"</span>
-    <span class="attribute">X1</span><span class="attvalue">="180"</span> <span class="attribute">Y1</span><span class="attvalue">="120"</span> <span class="attribute">X2</span><span class="attvalue">="120"</span> <span class="attribute">Y2</span><span class="attvalue">="180"</span>/<span class="bracket">&gt;</span>
+  <Line Stroke="#aaaaaa" StrokeThickness="3"
+    X1="120" Y1="120" X2="180" Y2="180"/>
+  <Line Stroke="#aaaaaa" StrokeThickness="3"
+    X1="180" Y1="120" X2="120" Y2="180"/>
 
-<span class="bracket">&lt;</span>/<span class="element">Canvas</span><span class="bracket">&gt;</span>
-</code></pre>
+</Canvas>
+```
 <figure>
 	[![図形の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_shapes.png)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_shapes.png)
 	<figcaption>図形の例</figcaption>
@@ -140,50 +140,50 @@ System.Windows.Media 名前空間内には多彩な機能が用意されてい�
 さらに、静止画、音声、動画などを再生・表示する機能があります。
 
 
-<pre class="xsource" title="グラデーションの例">
-<code><span class="bracket">&lt;</span><span class="element">Canvas</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#808080"</span><span class="bracket">&gt;</span>
+```xml
+<Canvas
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#808080">
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="5"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="5"</span> <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">LinearGradientBrush</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#aaaaff"</span> <span class="attribute">Offset</span><span class="attvalue">="0"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#aaffff"</span> <span class="attribute">Offset</span><span class="attvalue">="1"</span> /<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">LinearGradientBrush</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <Rectangle Canvas.Left="5" Canvas.Top="5" Width="90" Height="90">
+    <Rectangle.Fill>
+      <LinearGradientBrush>
+        <GradientStop Color="#aaaaff" Offset="0" />
+        <GradientStop Color="#aaffff" Offset="1" />
+      </LinearGradientBrush>
+    </Rectangle.Fill>
+  </Rectangle>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="105"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="5"</span> <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">RadialGradientBrush</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#ffaaaa"</span> <span class="attribute">Offset</span><span class="attvalue">="0"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#ffffaa"</span> <span class="attribute">Offset</span><span class="attvalue">="1"</span> /<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">RadialGradientBrush</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <Rectangle Canvas.Left="105" Canvas.Top="5" Width="90" Height="90">
+    <Rectangle.Fill>
+      <RadialGradientBrush>
+        <GradientStop Color="#ffaaaa" Offset="0" />
+        <GradientStop Color="#ffffaa" Offset="1" />
+      </RadialGradientBrush>
+    </Rectangle.Fill>
+  </Rectangle>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="5"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="105"</span> <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">RadialGradientBrush</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#ffffff"</span> <span class="attribute">Offset</span><span class="attvalue">="0"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#ffaaff"</span> <span class="attribute">Offset</span><span class="attvalue">="1"</span> /<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">RadialGradientBrush</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <Rectangle Canvas.Left="5" Canvas.Top="105" Width="90" Height="90">
+    <Rectangle.Fill>
+      <RadialGradientBrush>
+        <GradientStop Color="#ffffff" Offset="0" />
+        <GradientStop Color="#ffaaff" Offset="1" />
+      </RadialGradientBrush>
+    </Rectangle.Fill>
+  </Rectangle>
 
-  <span class="bracket">&lt;</span><span class="element">Rectangle</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="105"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="105"</span> <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">LinearGradientBrush</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#aaffaa"</span> <span class="attribute">Offset</span><span class="attvalue">="0"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GradientStop</span> <span class="attribute">Color</span><span class="attvalue">="#aaaaaa"</span> <span class="attribute">Offset</span><span class="attvalue">="1"</span> /<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">LinearGradientBrush</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Rectangle.Fill</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Rectangle</span><span class="bracket">&gt;</span>
+  <Rectangle Canvas.Left="105" Canvas.Top="105" Width="90" Height="90">
+    <Rectangle.Fill>
+      <LinearGradientBrush>
+        <GradientStop Color="#aaffaa" Offset="0" />
+        <GradientStop Color="#aaaaaa" Offset="1" />
+      </LinearGradientBrush>
+    </Rectangle.Fill>
+  </Rectangle>
 
-<span class="bracket">&lt;</span>/<span class="element">Canvas</span><span class="bracket">&gt;</span>
-</code></pre>
+</Canvas>
+```
 <figure>
 	[![グラデーションの例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_gradation.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_gradation.jpg)
 	<figcaption>グラデーションの例</figcaption>
@@ -191,45 +191,45 @@ System.Windows.Media 名前空間内には多彩な機能が用意されてい�
 
 
 
-<pre class="xsource" title="回転・拡大・傾斜・平行移動の例">
-<code><span class="bracket">&lt;</span><span class="element">Canvas</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="#808080"</span><span class="bracket">&gt;</span>
+```xml
+<Canvas
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="#808080">
 
-  <span class="bracket">&lt;</span><span class="element">Line</span> <span class="attribute">X1</span><span class="attvalue">="100"</span> <span class="attribute">Y1</span><span class="attvalue">="0"</span> <span class="attribute">X2</span><span class="attvalue">="100"</span> <span class="attribute">Y2</span><span class="attvalue">="200"</span> <span class="attribute">Stroke</span><span class="attvalue">="Black"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Line</span> <span class="attribute">X1</span><span class="attvalue">="0"</span> <span class="attribute">Y1</span><span class="attvalue">="100"</span> <span class="attribute">X2</span><span class="attvalue">="200"</span> <span class="attribute">Y2</span><span class="attvalue">="100"</span> <span class="attribute">Stroke</span><span class="attvalue">="Black"</span>/<span class="bracket">&gt;</span>
+  <Line X1="100" Y1="0" X2="100" Y2="200" Stroke="Black"/>
+  <Line X1="0" Y1="100" X2="200" Y2="100" Stroke="Black"/>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="10"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="10"</span> <span class="attribute">Width</span><span class="attvalue">="80"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button.RenderTransform</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ScaleTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="45"</span> <span class="attribute">CenterY</span><span class="attvalue">="45"</span> <span class="attribute">ScaleX</span><span class="attvalue">="0.5"</span> <span class="attribute">ScaleY</span><span class="attvalue">="0.5"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Button.RenderTransform</span><span class="bracket">&gt;</span>
+  <Button Canvas.Left="10" Canvas.Top="10" Width="80" Height="80">
+    <Button.RenderTransform>
+      <ScaleTransform CenterX="45" CenterY="45" ScaleX="0.5" ScaleY="0.5"/>
+    </Button.RenderTransform>
     button 1
-  <span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
+  </Button>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="110"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="10"</span> <span class="attribute">Width</span><span class="attvalue">="80"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button.RenderTransform</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">TranslateTransform</span> <span class="attribute">X</span><span class="attvalue">="-10"</span> <span class="attribute">Y</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Button.RenderTransform</span><span class="bracket">&gt;</span>
+  <Button Canvas.Left="110" Canvas.Top="10" Width="80" Height="80">
+    <Button.RenderTransform>
+      <TranslateTransform X="-10" Y="10"/>
+    </Button.RenderTransform>
     button 2
-  <span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
+  </Button>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="10"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="110"</span> <span class="attribute">Width</span><span class="attvalue">="80"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button.RenderTransform</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">SkewTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="45"</span> <span class="attribute">CenterY</span><span class="attvalue">="45"</span> <span class="attribute">AngleX</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Button.RenderTransform</span><span class="bracket">&gt;</span>
+  <Button Canvas.Left="10" Canvas.Top="110" Width="80" Height="80">
+    <Button.RenderTransform>
+      <SkewTransform CenterX="45" CenterY="45" AngleX="10"/>
+    </Button.RenderTransform>
     button 3
-  <span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
+  </Button>
 
-  <span class="bracket">&lt;</span><span class="element">Button</span> <span class="attribute">Canvas.Left</span><span class="attvalue">="110"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="110"</span> <span class="attribute">Width</span><span class="attvalue">="80"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Button.RenderTransform</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">RotateTransform</span> <span class="attribute">CenterX</span><span class="attvalue">="45"</span> <span class="attribute">CenterY</span><span class="attvalue">="45"</span> <span class="attribute">Angle</span><span class="attvalue">="10"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Button.RenderTransform</span><span class="bracket">&gt;</span>
+  <Button Canvas.Left="110" Canvas.Top="110" Width="80" Height="80">
+    <Button.RenderTransform>
+      <RotateTransform CenterX="45" CenterY="45" Angle="10"/>
+    </Button.RenderTransform>
     button 4
-  <span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
+  </Button>
 
-<span class="bracket">&lt;</span>/<span class="element">Canvas</span><span class="bracket">&gt;</span>
-</code></pre>
+</Canvas>
+```
 <figure>
 	[![回転・拡大・傾斜・平行移動の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_transform.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_transform.jpg)
 	<figcaption>回転・拡大・傾斜・平行移動の例</figcaption>
@@ -257,55 +257,55 @@ System.Windows.Media.Media3D 名前空間内には、
 （本当は手抜きしてて、8面体の表から見える側だけ作ってる。）
 
 
-<pre class="xsource" title="3次元モデル表示の例">
-<code><span class="bracket">&lt;</span><span class="element">Canvas</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span> <span class="attribute">Background</span><span class="attvalue">="Black"</span><span class="bracket">&gt;</span>
+```xml
+<Canvas
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200" Background="Black">
 
-  <span class="bracket">&lt;</span><span class="element">Viewport3D</span> <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span><span class="bracket">&gt;</span>
-    <span class="comment">&lt;!-- カメラ --&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">Viewport3D.Camera</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">PerspectiveCamera</span> <span class="attribute">Position</span><span class="attvalue">="0,0,15"</span> <span class="attribute">FieldOfView</span><span class="attvalue">="10"</span>
-        <span class="attribute">LookDirection</span><span class="attvalue">="0,0,-1"</span> <span class="attribute">UpDirection</span><span class="attvalue">="0, 1, 0"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">Viewport3D.Camera</span><span class="bracket">&gt;</span>
+  <Viewport3D Width="200" Height="200">
+    <!-- カメラ -->
+    <Viewport3D.Camera>
+      <PerspectiveCamera Position="0,0,15" FieldOfView="10"
+        LookDirection="0,0,-1" UpDirection="0, 1, 0"/>
+    </Viewport3D.Camera>
 
-    <span class="comment">&lt;!-- 物体 --&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ModelVisual3D</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ModelVisual3D.Content</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">GeometryModel3D</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">GeometryModel3D.Geometry</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">MeshGeometry3D</span>
-              <span class="attribute">Positions</span><span class="attvalue">="1 0 0, 0 1 0, -1 0 0, 0 -1 0, 0 0 1"</span>
-              <span class="attribute">TriangleIndices</span><span class="attvalue">="0 1 4, 1 2 4, 2 3 4, 3 0 4"</span>
-              /<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">GeometryModel3D.Geometry</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">GeometryModel3D.Material</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span><span class="element">DiffuseMaterial</span><span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span><span class="element">DiffuseMaterial.Brush</span><span class="bracket">&gt;</span>
-                <span class="bracket">&lt;</span><span class="element">SolidColorBrush</span> <span class="attribute">Color</span><span class="attvalue">="White"</span>/<span class="bracket">&gt;</span>
-              <span class="bracket">&lt;</span>/<span class="element">DiffuseMaterial.Brush</span><span class="bracket">&gt;</span>
-            <span class="bracket">&lt;</span>/<span class="element">DiffuseMaterial</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span>/<span class="element">GeometryModel3D.Material</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">GeometryModel3D</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">ModelVisual3D.Content</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ModelVisual3D</span><span class="bracket">&gt;</span>
+    <!-- 物体 -->
+    <ModelVisual3D>
+      <ModelVisual3D.Content>
+        <GeometryModel3D>
+          <GeometryModel3D.Geometry>
+            <MeshGeometry3D
+              Positions="1 0 0, 0 1 0, -1 0 0, 0 -1 0, 0 0 1"
+              TriangleIndices="0 1 4, 1 2 4, 2 3 4, 3 0 4"
+              />
+          </GeometryModel3D.Geometry>
+          <GeometryModel3D.Material>
+            <DiffuseMaterial>
+              <DiffuseMaterial.Brush>
+                <SolidColorBrush Color="White"/>
+              </DiffuseMaterial.Brush>
+            </DiffuseMaterial>
+          </GeometryModel3D.Material>
+        </GeometryModel3D>
+      </ModelVisual3D.Content>
+    </ModelVisual3D>
 
-    <span class="comment">&lt;!-- 光源 --&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ModelVisual3D</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">ModelVisual3D.Content</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">Model3DGroup</span><span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">AmbientLight</span> <span class="attribute">Color</span><span class="attvalue">="#404040"</span> /<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">DirectionalLight</span> <span class="attribute">Color</span><span class="attvalue">="#ff0000"</span> <span class="attribute">Direction</span><span class="attvalue">="-1,-1,0"</span> /<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">DirectionalLight</span> <span class="attribute">Color</span><span class="attvalue">="#0000ff"</span> <span class="attribute">Direction</span><span class="attvalue">="1,0,0"</span> /<span class="bracket">&gt;</span>
-          <span class="bracket">&lt;</span><span class="element">DirectionalLight</span> <span class="attribute">Color</span><span class="attvalue">="#00ff00"</span> <span class="attribute">Direction</span><span class="attvalue">="1,-1,0"</span> /<span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span>/<span class="element">Model3DGroup</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span>/<span class="element">ModelVisual3D.Content</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span>/<span class="element">ModelVisual3D</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Viewport3D</span><span class="bracket">&gt;</span>
+    <!-- 光源 -->
+    <ModelVisual3D>
+      <ModelVisual3D.Content>
+        <Model3DGroup>
+          <AmbientLight Color="#404040" />
+          <DirectionalLight Color="#ff0000" Direction="-1,-1,0" />
+          <DirectionalLight Color="#0000ff" Direction="1,0,0" />
+          <DirectionalLight Color="#00ff00" Direction="1,-1,0" />
+        </Model3DGroup>
+      </ModelVisual3D.Content>
+    </ModelVisual3D>
+  </Viewport3D>
 
-<span class="bracket">&lt;</span>/<span class="element">Canvas</span><span class="bracket">&gt;</span>
-</code></pre>
+</Canvas>
+```
 <figure>
 	[![3次元モデル表示の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_viewport3d.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_viewport3d.jpg)
 	<figcaption>3次元モデル表示の例</figcaption>

@@ -92,64 +92,64 @@ C# でマルチスレッドプログラムを作成する場合、
 以下にスレッド作成の例を示します。
 
       
-<pre class="source" title="スレッド作成の例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Collections;
+using System.Threading;
 
-<span class="reserved">class</span> Counter
+class Counter
 {
-  <span class="reserved">int</span> id;
+  int id;
 
-  <span class="reserved">public</span> Counter(<span class="reserved">int</span> id){<span class="reserved">this</span>.id = id;}
+  public Counter(int id){this.id = id;}
 
-  <span class="comment">// <em>1.</em>
+  // 1.
   // スレッドの処理内容を記述する。
-  // (この例では、ランダムな時間間隔で文字列を出力する。)</span>
-  <span class="reserved">public void</span> Run()
+  // (この例では、ランダムな時間間隔で文字列を出力する。)
+  public void Run()
   {
-    Random rnd = <span class="reserved">new</span> Random();
+    Random rnd = new Random();
 
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;4; ++i)
+    for(int i=0; i<4; ++i)
     {
-      Thread.Sleep(rnd.Next(50, 100)); <span class="comment">// ランダムな間隔で処理を一時中断</span>
+      Thread.Sleep(rnd.Next(50, 100)); // ランダムな間隔で処理を一時中断
 
-      Console.Write(<span class="literal">"{0} (ID: {1})\n"</span>, i, id);
+      Console.Write("{0} (ID: {1})\n", i, id);
     }
   }
 }
 
-<span class="reserved">class</span> TestThread
+class TestThread
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">const int</span> N = 3;
-    Thread[] threads = <span class="reserved">new</span> Thread[N];
+    const int N = 3;
+    Thread[] threads = new Thread[N];
 
-    <span class="comment">// スレッド開始</span>
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;N; ++i)
+    // スレッド開始
+    for(int i=0; i<N; ++i)
     {
-      Counter counter = <span class="reserved">new</span> Counter(i);
+      Counter counter = new Counter(i);
 
-      <span class="comment">// <em>2.</em>
-      // Thread クラスの構築する</span>
-      threads[i] = <span class="reserved">new</span> Thread(<span class="reserved">new</span> ThreadStart(counter.Run));
+      // 2.
+      // Thread クラスの構築する
+      threads[i] = new Thread(new ThreadStart(counter.Run));
 
-      <span class="comment">// <em>3.</em>
-      // Start を使ってスレッドの開始する</span>
+      // 3.
+      // Start を使ってスレッドの開始する
       threads[i].Start();
     }
 
-    <span class="comment">// スレッド終了待ち</span>
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;N; ++i)
+    // スレッド終了待ち
+    for(int i=0; i<N; ++i)
     {
-      <span class="comment">// <em>4.</em>
-      // Join を使ってスレッドの終了を待つ</span>
+      // 4.
+      // Join を使ってスレッドの終了を待つ
       threads[i].Join();
     }
   }
 }
-</code></pre>
+```
 
 
       
@@ -158,7 +158,7 @@ C# でマルチスレッドプログラムを作成する場合、
 3つのスレッドが平行して動いていることが分かると思います。
 
       
-<pre class="console" title="">
+```console
 0 (ID: 1)
 0 (ID: 2)
 0 (ID: 0)
@@ -171,7 +171,7 @@ C# でマルチスレッドプログラムを作成する場合、
 3 (ID: 2)
 3 (ID: 0)
 3 (ID: 1)
-</pre>
+```
 
 
     
@@ -191,42 +191,42 @@ C# でマルチ スレッド プログラムを作成する際、
 スレッド プールを簡単に利用するための Task クラスというものが追加されています。
 （Task 以外にも、Parallel クラスや ParallelEnumerable クラスなども便利です。）
 
-<pre class="source" title="Parallel クラスを使った並列処理の例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Threading.Tasks;
+using System.Threading;
 
-<span class="reserved">namespace</span> ConsoleApplication1
+namespace ConsoleApplication1
 {
-    <span class="reserved">class</span> <span class="type">TaskSample</span>
+    class TaskSample
     {
-        <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+        static void Main(string[] args)
         {
-            <span class="reserved">const int</span> N = 3;
+            const int N = 3;
 
-            <span class="type">Parallel</span>.For(0, N, id =&gt; <span class="comment">// こう書くだけで、並行して処理が行われる</span>
+            Parallel.For(0, N, id => // こう書くだけで、並行して処理が行われる
             {
-                <span class="type">Random</span> rnd = <span class="reserved">new</span> <span class="type">Random</span>();
+                Random rnd = new Random();
 
-                <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 4; ++i)
+                for (int i = 0; i < 4; ++i)
                 {
-                    <span class="type">Thread</span>.Sleep(rnd.Next(50, 100)); <span class="comment">// ランダムな間隔で処理を一時中断</span>
+                    Thread.Sleep(rnd.Next(50, 100)); // ランダムな間隔で処理を一時中断
 
-                    <span class="type">Console</span>.Write(<span class="literal">"{0} (ID: {1})\n"</span>, i, id);
+                    Console.Write("{0} (ID: {1})\n", i, id);
                 }
             });
-            <span class="comment">// 並行して動かしている処理がすべて終わるまで、自動的に待つ</span>
+            // 並行して動かしている処理がすべて終わるまで、自動的に待つ
         }
     }
 }
-</code></pre>
+```
 
 
 実行結果は以下のようになります。
 (毎回異なる順序で表示されます。)
 3つの処理が平行して動いていることが分かると思います。
 
-<pre class="console" title="">
+```console
 0 (ID: 0)
 0 (ID: 1)
 0 (ID: 2)
@@ -239,7 +239,7 @@ C# でマルチ スレッド プログラムを作成する際、
 3 (ID: 0)
 3 (ID: 1)
 3 (ID: 2)
-</pre>
+```
 
 
 
@@ -249,175 +249,175 @@ C# でマルチ スレッド プログラムを作成する際、
 (値が大きくなると素因数分解は非常に時間がかかります。)
 ユーザからの入力を受け付けるスレッドと計算を行うスレッドの2つのスレッドで処理を行います。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Collections;
+using System.Threading;
 
-<span class="reserved">enum</span> <span class="type">State</span>
+enum State
 {
-    ready,   <span class="comment">// 計算開始前</span>
-    running, <span class="comment">// 計算真っ最中</span>
-    wait,    <span class="comment">// 計算一時停止中</span>
+    ready,   // 計算開始前
+    running, // 計算真っ最中
+    wait,    // 計算一時停止中
 }
 
-<span class="reserved">class</span> <span class="type">TestThread</span>
+class TestThread
 {
-    <span class="reserved">static</span> <span class="reserved">long</span> sNum;
-    <span class="reserved">static</span> <span class="type">State</span> sThreadState;
+    static long sNum;
+    static State sThreadState;
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Thread</span> thread = <span class="reserved">null</span>;
+        Thread thread = null;
 
-        <span class="type">Console</span>.Write(
-          <span class="string">"素因数分解を行います。\n"</span> +
-          <span class="string">"何か数値を入力してください。\n"</span> +
-          <span class="string">"(計算途中で何かキー入力を行うと処理を中断します。)\n"</span> +
-          <span class="string">"(q と入力するとプログラムを終了します。)\n"</span>);
+        Console.Write(
+          "素因数分解を行います。\n" +
+          "何か数値を入力してください。\n" +
+          "(計算途中で何かキー入力を行うと処理を中断します。)\n" +
+          "(q と入力するとプログラムを終了します。)\n");
 
-        sThreadState = <span class="type">State</span>.ready;
+        sThreadState = State.ready;
 
-        <span class="reserved">while</span> (<span class="reserved">true</span>)
+        while (true)
         {
-            <span class="type">Console</span>.Write(<span class="string">"&gt; "</span>);
-            <span class="reserved">string</span> line = <span class="type">Console</span>.ReadLine();
+            Console.Write("> ");
+            string line = Console.ReadLine();
 
-            <span class="reserved">if</span> (sThreadState == <span class="type">State</span>.running) <span class="comment">// 計算中</span>
+            if (sThreadState == State.running) // 計算中
             {
-                sThreadState = <span class="type">State</span>.wait; <span class="comment">// 計算中断</span>
+                sThreadState = State.wait; // 計算中断
 
-                <span class="comment">// 計算を中止するかどうか確認する。</span>
-                <span class="type">Console</span>.Write(
-                  <span class="string">"計算を中断しました。\n"</span> +
-                  <span class="string">"  c     : 計算中止\n"</span> +
-                  <span class="string">"  q     : プログラム終了\n"</span> +
-                  <span class="string">"  その他: 計算続行\n"</span> +
-                  <span class="string">"# "</span>);
-                line = <span class="type">Console</span>.ReadLine();
-                <span class="reserved">if</span> (line.Length != 0)
+                // 計算を中止するかどうか確認する。
+                Console.Write(
+                  "計算を中断しました。\n" +
+                  "  c     : 計算中止\n" +
+                  "  q     : プログラム終了\n" +
+                  "  その他: 計算続行\n" +
+                  "# ");
+                line = Console.ReadLine();
+                if (line.Length != 0)
                 {
-                    <span class="reserved">if</span> (line[0] == <span class="string">'c'</span> || line[0] == <span class="string">'C'</span>)
+                    if (line[0] == 'c' || line[0] == 'C')
                     {
-                        sThreadState = <span class="type">State</span>.ready;
+                        sThreadState = State.ready;
                         thread.Join();
-                        <span class="type">Console</span>.Write(<span class="string">"計算を中止しました。\n"</span>);
-                        <span class="reserved">continue</span>;
+                        Console.Write("計算を中止しました。\n");
+                        continue;
                     }
-                    <span class="reserved">else</span> <span class="reserved">if</span> (line[0] == <span class="string">'q'</span> || line[0] == <span class="string">'Q'</span>)
+                    else if (line[0] == 'q' || line[0] == 'Q')
                     {
-                        <span class="reserved">return</span>;
+                        return;
                     }
                 }
 
-                sThreadState = <span class="type">State</span>.running; <span class="comment">// 計算再開</span>
+                sThreadState = State.running; // 計算再開
             }
-            <span class="reserved">else</span>
+            else
             {
-                <span class="reserved">if</span> (line.Length == 0) <span class="reserved">continue</span>;
+                if (line.Length == 0) continue;
 
-                <span class="comment">// q が入力されたらプログラム終了。</span>
-                <span class="reserved">if</span> (line[0] == <span class="string">'q'</span> || line[0] == <span class="string">'Q'</span>) <span class="reserved">return</span>;
+                // q が入力されたらプログラム終了。
+                if (line[0] == 'q' || line[0] == 'Q') return;
 
-                <span class="comment">// 因数分解を開始する。</span>
-                <span class="reserved">try</span> { sNum = <span class="type">Int64</span>.Parse(line); }
-                <span class="reserved">catch</span> (<span class="type">FormatException</span>)
+                // 因数分解を開始する。
+                try { sNum = Int64.Parse(line); }
+                catch (FormatException)
                 {
-                    <span class="type">Console</span>.Write(<span class="string">"不正な文字列が入力されました。\n"</span>); <span class="reserved">continue</span>;
+                    Console.Write("不正な文字列が入力されました。\n"); continue;
                 }
-                <span class="reserved">catch</span> (<span class="type">OverflowException</span>)
+                catch (OverflowException)
                 {
-                    <span class="type">Console</span>.Write(<span class="string">"値が大きすぎます。\n"</span>); <span class="reserved">continue</span>;
+                    Console.Write("値が大きすぎます。\n"); continue;
                 }
 
-                sThreadState = <span class="type">State</span>.running;
-                thread = <span class="reserved">new</span> <span class="type">Thread</span>(<span class="reserved">new</span> <span class="type">ThreadStart</span>(ThreadFunction));
+                sThreadState = State.running;
+                thread = new Thread(new ThreadStart(ThreadFunction));
                 thread.Start();
             }
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> ThreadFunction()
+    static void ThreadFunction()
     {
-        <span class="type">Console</span>.Write(<span class="string">"素因数分解開始\n"</span>);
-        <span class="type">IList</span> factors = Factorization(sNum);
-        <span class="reserved">if</span> (factors != <span class="reserved">null</span>)
+        Console.Write("素因数分解開始\n");
+        IList factors = Factorization(sNum);
+        if (factors != null)
         {
-            <span class="type">Console</span>.Write(<span class="string">"\n素因数分解終了\n"</span>);
+            Console.Write("\n素因数分解終了\n");
 
-            <span class="reserved">foreach</span> (<span class="reserved">long</span> i <span class="reserved">in</span> factors)
+            foreach (long i in factors)
             {
-                <span class="reserved">if</span> (sThreadState == <span class="type">State</span>.ready) <span class="reserved">break</span>;
-                <span class="reserved">if</span> (sThreadState == <span class="type">State</span>.wait) <span class="reserved">continue</span>;
-                <span class="type">Console</span>.Write(<span class="string">"{0} "</span>, i);
+                if (sThreadState == State.ready) break;
+                if (sThreadState == State.wait) continue;
+                Console.Write("{0} ", i);
             }
-            <span class="type">Console</span>.Write(<span class="string">"\n"</span>);
+            Console.Write("\n");
         }
-        sThreadState = <span class="type">State</span>.ready;
+        sThreadState = State.ready;
     }
 
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> 素因数分解を行う。</span>
-    <span class="inactive">///</span><span class="comment"> (馬鹿でかい数字を素因数分解しようとすると非常に重たい。)</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;param name="</span>n<span class="inactive">"&gt;</span><span class="comment">素因数分解したい数値</span><span class="inactive">&lt;/param&gt;</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;returns&gt;</span><span class="comment">因数のリスト</span><span class="inactive">&lt;/returns&gt;</span>
-    <span class="reserved">static</span> <span class="type">IList</span> Factorization(<span class="reserved">long</span> n)
+    /// <summary>
+    /// 素因数分解を行う。
+    /// (馬鹿でかい数字を素因数分解しようとすると非常に重たい。)
+    /// </summary>
+    /// <param name="n">素因数分解したい数値</param>
+    /// <returns>因数のリスト</returns>
+    static IList Factorization(long n)
     {
-        <span class="type">ArrayList</span> factors = <span class="reserved">new</span> <span class="type">ArrayList</span>();
+        ArrayList factors = new ArrayList();
 
-        <span class="reserved">long</span> sqrtn = (<span class="reserved">long</span>)<span class="type">Math</span>.Ceiling(<span class="type">Math</span>.Sqrt(n) + 1);
-        <span class="reserved">long</span> i = 2;
+        long sqrtn = (long)Math.Ceiling(Math.Sqrt(n) + 1);
+        long i = 2;
 
-        <span class="reserved">while</span> (i &lt; sqrtn)
+        while (i < sqrtn)
         {
-            <span class="reserved">if</span> (sThreadState == <span class="type">State</span>.ready) <span class="reserved">break</span>;
-            <span class="reserved">if</span> (sThreadState == <span class="type">State</span>.wait) <span class="reserved">continue</span>;
+            if (sThreadState == State.ready) break;
+            if (sThreadState == State.wait) continue;
 
-            <span class="reserved">if</span> (n % i == 0)
+            if (n % i == 0)
             {
                 factors.Add(i);
                 n /= i;
-                <span class="type">Console</span>.Write(<span class="string">"{0}"</span>, i);
+                Console.Write("{0}", i);
             }
-            <span class="reserved">else</span>
+            else
             {
                 ++i;
             }
 
-            <span class="type">Console</span>.Write(<span class="string">'.'</span>); <span class="comment">// 途中経過を表示</span>
+            Console.Write('.'); // 途中経過を表示
         }
 
-        <span class="reserved">if</span> (n != 1)
+        if (n != 1)
             factors.Add(n);
 
-        <span class="reserved">return</span> factors;
-    }<span class="comment">//Factorization</span>
+        return factors;
+    }//Factorization
 }
-</code></pre>
+```
 
-<pre class="console" title="">
+```console
 素因数分解を行います。
 何か数値を入力してください。
 (計算途中で何かキー入力を行うと処理を中断します。)
 (q と入力するとプログラムを終了します。)
-&gt;<span class="input">1998</span>
-&gt; 素因数分解開始
+>1998
+> 素因数分解開始
 2..3.3.3...................................37.........
 素因数分解終了
 2 3 3 3 37
-<span class="input">743</span>
-&gt; 素因数分解開始
+743
+> 素因数分解開始
 ...........................
 素因数分解終了
 743
-<span class="input">256</span>
-&gt; 素因数分解開始
+256
+> 素因数分解開始
 2.2.2.2.2.2.2.2................
 素因数分解終了
 2 2 2 2 2 2 2 2
-<span class="input">q</span>
-</pre>
+q
+```
 
 
 
@@ -431,98 +431,98 @@ C# でマルチ スレッド プログラムを作成する際、
 <span class="expand-button" title="展開/折畳">（古いコード（Thread クラスを直接利用））</span>
 <div class="expand-panel" markdown="1" title="（古いコード（Thread クラスを直接利用））">
       
-<pre class="source" title="複数のスレッドが同時に同じデータにアクセス" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Collections;
+using System.Threading;
 
-<span class="reserved">class</span> TestThread
+class TestThread
 {
-  <span class="reserved">static int</span> num; <span class="comment">// <em>複数のスレッドから同時にアクセスされる。</em></span>
+  static int num; // 複数のスレッドから同時にアクセスされる。
 
-  <span class="reserved">const int</span> THREAD_NUM = 20;
-  <span class="reserved">const int</span> ROOP_NUM   = 20;
+  const int THREAD_NUM = 20;
+  const int ROOP_NUM   = 20;
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// THREAD_NUM 個のスレッドを立てる。
   /// それぞれのスレッドの中で num を ROOP_NUM 回インクリメントする。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static void</span> Main()
+  /// </summary>
+  static void Main()
   {
-    Thread[] threads = <span class="reserved">new</span> Thread[THREAD_NUM];
+    Thread[] threads = new Thread[THREAD_NUM];
 
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;THREAD_NUM; ++i)
+    for(int i=0; i<THREAD_NUM; ++i)
     {
-      threads[i] = <span class="reserved">new</span> Thread(<span class="reserved">new</span> ThreadStart(CountUp));
+      threads[i] = new Thread(new ThreadStart(CountUp));
       threads[i].Start();
     }
 
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;THREAD_NUM; ++i)
+    for(int i=0; i<THREAD_NUM; ++i)
     {
       threads[i].Join();
     }
 
-    Console.Write(<span class="literal">"{0} ({1})\n"</span>, num, THREAD_NUM * ROOP_NUM);
-    <span class="comment">// <em>num と THREAD_NUM * ROOP_NUM は一致するはずなんだけど・・・</em></span>
+    Console.Write("{0} ({1})\n", num, THREAD_NUM * ROOP_NUM);
+    // num と THREAD_NUM * ROOP_NUM は一致するはずなんだけど・・・
   }
 
-  <span class="reserved">static void</span> CountUp()
+  static void CountUp()
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;ROOP_NUM; ++i)
+    for(int i=0; i<ROOP_NUM; ++i)
     {
-      <span class="comment">// num をインクリメント。</span>
-      <span class="comment">// 実行結果が顕著に出るように、途中で Sleep をはさむ。</span>
-      <span class="reserved">int</span> tmp = num;
+      // num をインクリメント。
+      // 実行結果が顕著に出るように、途中で Sleep をはさむ。
+      int tmp = num;
       Thread.Sleep(1);
       num = tmp + 1;
     }
   }
 }
-</code></pre>
+```
 
 
     
 </div>
 
-<pre class="source" title="複数のスレッドが同時に同じデータにアクセス" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">TestThread</span>
+class TestThread
 {
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> THREAD_NUM 個のスレッドを立てる。</span>
-    <span class="inactive">///</span><span class="comment"> それぞれのスレッドの中で num を ROOP_NUM 回インクリメントする。</span>
-    <span class="inactive">/// &lt;/summary&gt;</span>
-    <span class="reserved">static void</span> Main()
+    /// <summary>
+    /// THREAD_NUM 個のスレッドを立てる。
+    /// それぞれのスレッドの中で num を ROOP_NUM 回インクリメントする。
+    /// </summary>
+    static void Main()
     {
-        <span class="reserved">const int</span> ThreadNum = 20;
-        <span class="reserved">const int</span> LoopNum = 20;
-        <span class="reserved">int</span> num = 0; <span class="comment">// 複数のスレッドから同時にアクセスされる。</span>
+        const int ThreadNum = 20;
+        const int LoopNum = 20;
+        int num = 0; // 複数のスレッドから同時にアクセスされる。
 
-        <span class="type">Parallel</span>.For(0, ThreadNum, i =&gt;
+        Parallel.For(0, ThreadNum, i =>
         {
-            <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; LoopNum; j++)
+            for (int j = 0; j < LoopNum; j++)
             {
-                <span class="comment">// num をインクリメント。
-                // 実行結果が顕著に出るように、途中で Sleep をはさむ。</span>
-                <span class="reserved">int</span> tmp = num;
-                <span class="type">Thread</span>.Sleep(1);
+                // num をインクリメント。
+                // 実行結果が顕著に出るように、途中で Sleep をはさむ。
+                int tmp = num;
+                Thread.Sleep(1);
                 num = tmp + 1;
             }
         });
 
-        <span class="type">Console</span>.Write(<span class="literal">"{0} ({1})\n"</span>, num, ThreadNum * LoopNum);
-        <span class="comment">// num と THREAD_NUM * ROOP_NUM は一致するはずなんだけど・・・</span>
+        Console.Write("{0} ({1})\n", num, ThreadNum * LoopNum);
+        // num と THREAD_NUM * ROOP_NUM は一致するはずなんだけど・・・
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 21 (400)
-</pre>
+```
 
 
 この例では、20個のスレッドが同時に1つの変数 <code>num</code> を書き換えています。
@@ -608,67 +608,67 @@ Monitor クラスでは、参照型の任意の変数を同期オブジェクト
 <span class="expand-button" title="展開/折畳">（古いコード）</span>
 <div class="expand-panel" markdown="1" title="（古いコード）">
     
-<pre class="source" title="Monitor を用いた排他制御の例" lang="">
-<code>  <em><span class="reserved">static readonly object</span> syncObject = <span class="reserved">new object</span>();</em> <span class="comment">// 同期オブジェクト</span>
+```csharp
+  static readonly object syncObject = new object(); // 同期オブジェクト
 
-  <span class="reserved">static void</span> CountUp()
+  static void CountUp()
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;ROOP_NUM; ++i)
+    for(int i=0; i<ROOP_NUM; ++i)
     {
-      <em>Monitor.Enter(syncObject);</em> <span class="comment">// ロック取得</span>
-      <span class="reserved">try</span>
+      Monitor.Enter(syncObject); // ロック取得
+      try
       {
-        <span class="comment">//↓クリティカルセクション</span>
-        <span class="reserved">int</span> tmp = num;
+        //↓クリティカルセクション
+        int tmp = num;
         Thread.Sleep(1);
         num = tmp + 1;
-        <span class="comment">//↑クリティカルセクション</span>
+        //↑クリティカルセクション
       }
-      <span class="reserved">finally</span>
+      finally
       {
-        <em>Monitor.Exit(syncObject);</em> <span class="comment">// ロック解放</span>
+        Monitor.Exit(syncObject); // ロック解放
       }
     }
   }
-</code></pre>
+```
 
 
     
 </div>
 
-<pre class="source" title="Monitor を用いた排他制御の例" lang="">
-<code><span class="reserved">var</span> syncObject = <span class="reserved">new</span> <span class="reserved">object</span>();
+```csharp
+var syncObject = new object();
 
-<span class="type">Parallel</span>.For(0, ThreadNum, i =&gt;
+Parallel.For(0, ThreadNum, i =>
 {
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; LoopNum; j++)
+    for (int j = 0; j < LoopNum; j++)
     {
-        <span class="reserved">bool</span> lockTaken = <span class="reserved">false</span>;
-        <span class="reserved">try</span>
+        bool lockTaken = false;
+        try
         {
-            <span class="type">Monitor</span>.Enter(syncObject, <span class="reserved">ref</span> lockTaken); <span class="comment">// ロック取得</span>
+            Monitor.Enter(syncObject, ref lockTaken); // ロック取得
 
-            <span class="comment">//↓クリティカルセクション</span>
-            <span class="reserved">int</span> tmp = num;
-            <span class="type">Thread</span>.Sleep(1);
+            //↓クリティカルセクション
+            int tmp = num;
+            Thread.Sleep(1);
             num = tmp + 1;
-            <span class="comment">//↑クリティカルセクション</span>
+            //↑クリティカルセクション
         }
-        <span class="reserved">finally</span>
+        finally
         {
-            <span class="reserved">if</span> (lockTaken)
-                <span class="type">Monitor</span>.Exit(syncObject); <span class="comment">// ロック解放</span>
+            if (lockTaken)
+                Monitor.Exit(syncObject); // ロック解放
         }
     }
 });
-</code></pre>
+```
 
 
 実行結果は以下のように変わります。
 
-<pre class="console" title="">
+```console
 400 (400)
-</pre>
+```
 
 
 この例の場合、try ブロック内がクリティカルセクションになります。
@@ -685,20 +685,20 @@ Monitor クラスでは、参照型の任意の変数を同期オブジェクト
 
 排他制御の手順をまとめると以下のようになります。
 
-<pre class="source" title="排他制御の手順" lang="">
-<code><span class="reserved">object</span> syncObject = <span class="reserved">new object</span>();
+```csharp
+object syncObject = new object();
 
-<span class="reserved">bool</span> taken = <span class="reserved">false</span>;
-<span class="reserved">try</span>
+bool taken = false;
+try
 {
-    <span class="type">Monitor</span>.Enter(syncObject, <span class="reserved">ref</span> taken);
-    <span class="input">クリティカルセクション</span>
+    Monitor.Enter(syncObject, ref taken);
+    クリティカルセクション
 }
-<span class="reserved">finally</span>
+finally
 {
-    <span class="reserved">if</span> (taken) <span class="type">Monitor</span>.Exit(syncObject);
+    if (taken) Monitor.Exit(syncObject);
 }
-</code></pre>
+```
 
 
 「[リソースの破棄](../resource/oo_dispose.md)」で説明した using 文や、
@@ -706,12 +706,12 @@ Monitor クラスでは、参照型の任意の変数を同期オブジェクト
 C# には lock 文と言う排他制御のための専用の構文があります。
 lock 文は以下のようにして用います。
 
-<pre class="source" title="lock 文" lang="">
-<code><span class="reserved">lock</span>(<span class="input">同期オブジェクト</span>)
+```csharp
+lock(同期オブジェクト)
 {
-  <span class="input">クリティカルセクション</span>
+  クリティカルセクション
 }
-</code></pre>
+```
 
 
 lock 文を用いると、コンパイラが自動的に <code>Monitor</code> クラスを用いた排他制御用のコードを生成してくれます。
@@ -721,51 +721,51 @@ lock 文を用いると、コンパイラが自動的に <code>Monitor</code> �
 <span class="expand-button" title="展開/折畳">（古いコード）</span>
 <div class="expand-panel" markdown="1" title="（古いコード）">
     
-<pre class="source" title="lock 文を用いた排他制御の例" lang="">
-<code>  <span class="reserved">static readonly object</span> syncObject = <span class="reserved">new object</span>();
+```csharp
+  static readonly object syncObject = new object();
 
-  <span class="reserved">static void</span> CountUp()
+  static void CountUp()
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;ROOP_NUM; ++i)
+    for(int i=0; i<ROOP_NUM; ++i)
     {
-      <em><span class="reserved">lock</span>(syncObject)</em>
+      lock(syncObject)
       {
-        <span class="reserved">int</span> tmp = num;
+        int tmp = num;
         Thread.Sleep(1);
         num = tmp + 1;
       }
     }
   }
-</code></pre>
+```
 
 
     
 </div>
 
-<pre class="source" title="lock 文を用いた排他制御の例" lang="">
-<code><span class="reserved">var</span> syncObject = <span class="reserved">new</span> <span class="reserved">object</span>();
+```csharp
+var syncObject = new object();
 
-<span class="type">Parallel</span>.For(0, ThreadNum, i =&gt;
+Parallel.For(0, ThreadNum, i =>
 {
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = 0; j &lt; LoopNum; j++)
+    for (int j = 0; j < LoopNum; j++)
     {
-        <span class="reserved">lock</span> (syncObject)
+        lock (syncObject)
         {
-            <span class="comment">//↓クリティカルセクション</span>
-            <span class="reserved">int</span> tmp = num;
-            <span class="type">Thread</span>.Sleep(1);
+            //↓クリティカルセクション
+            int tmp = num;
+            Thread.Sleep(1);
             num = tmp + 1;
-            <span class="comment">//↑クリティカルセクション</span>
+            //↑クリティカルセクション
         }
     }
 });
-</code></pre>
+```
 
 実行結果は先ほどの例と同様に以下のようになります。
 
-<pre class="console" title="">
+```console
 400 (400)
-</pre>
+```
 
 
 
@@ -776,39 +776,39 @@ lock 文を用いると、コンパイラが自動的に <code>Monitor</code> �
 
 それ以前は、以下のようなパターンに展開されていました。
 
-<pre class="source" title="排他制御の手順" lang="">
-<code><span class="reserved">object</span> syncObject = <span class="reserved">new object</span>();
+```csharp
+object syncObject = new object();
 
-<span class="type">Monitor</span>.Enter(syncObject);
-<span class="reserved">try</span>
+Monitor.Enter(syncObject);
+try
 {
-    <span class="input">クリティカルセクション</span>
+    クリティカルセクション
 }
-<span class="reserved">finally</span>
+finally
 {
-    <span class="type">Monitor</span>.Exit(syncObject);
+    Monitor.Exit(syncObject);
 }
-</code></pre>
+```
 
 この書き方だと、`Monitor.Enter` と `try` ブロックに入るまでのわずかな隙間で例外が発生する可能性があり（スレッドが `Abort` されたときとか）、
 実はごくまれに `finally` ブロックでの `Monitor.Exit` が呼ばれない問題がありました。
 
 そこで、.NET Framework 4で以下のように実装が変更されたそうです。
 
-<pre class="source" title="排他制御の手順" lang="">
-<code><span class="reserved">object</span> syncObject = <span class="reserved">new object</span>();
+```csharp
+object syncObject = new object();
 
-<span class="reserved">bool</span> taken = <span class="reserved">false</span>;
-<span class="reserved">try</span>
+bool taken = false;
+try
 {
-    <span class="type">Monitor</span>.Enter(syncObject, <span class="reserved">ref</span> taken);
-    <span class="input">クリティカルセクション</span>
+    Monitor.Enter(syncObject, ref taken);
+    クリティカルセクション
 }
-<span class="reserved">finally</span>
+finally
 {
-    <span class="reserved">if</span> (taken) <span class="type">Monitor</span>.Exit(syncObject);
+    if (taken) Monitor.Exit(syncObject);
 }
-</code></pre>
+```
 
 じゃあ、.NET Framework 3.5以前はバグっていて動作が不安定だったかというと、頑張って特殊対応して問題を回避しています。
 上記コードで、どんな最適化を掛けようとも、どんな実行の仕方をしようとも、`Monitor.Enter`と`try`の隙間に絶対に何の命令も挟まらなくする特殊対応を入れて、この隙間でスレッドの`Abort`が発生しないようにしていたそうです。
@@ -854,56 +854,56 @@ C# の `lock` ステートメントは任意の `object` (参照型のインス�
 
 例えば前述のコードを `Lock` クラスを使ったものに書き換えたとします。
 
-<pre class="source" title="Lock クラスの利用例">
-<span class="reserved">const</span> <span class="reserved">int</span> <span class="static"><span class="constant">ThreadNum</span></span> <span class="operator">=</span> <span class="number">20</span>;
-<span class="reserved">const</span> <span class="reserved">int</span> <span class="static"><span class="constant">LoopNum</span></span> <span class="operator">=</span> <span class="number">20</span>;
+```csharp
+const int ThreadNum = 20;
+const int LoopNum = 20;
 
-<span class="reserved">int</span> <span class="variable">num</span> <span class="operator">=</span> <span class="number">0</span>;
-<span class="reserved">var</span> <span class="variable">syncObject</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">Lock</span>(); <span class="comment">// この行を new object() から new Lock() に変更。</span>
+int num = 0;
+var syncObject = new Lock(); // この行を new object() から new Lock() に変更。
 
-<span class="type"><span class="static">Parallel</span></span><span class="operator">.</span><span class="static"><span class="method">For</span></span>(<span class="number">0</span>, <span class="constant">ThreadNum</span>, <span class="variable local">i</span> <span class="operator">=&gt;</span>
+Parallel.For(0, ThreadNum, i =>
 {
-    <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; <span class="variable">j</span> <span class="operator">&lt;</span> <span class="constant">LoopNum</span>; <span class="variable">j</span><span class="operator">++</span>)
+    for (int j = 0; j < LoopNum; j++)
     {
-        <span class="reserved">lock</span> (<span class="variable">syncObject</span>)
+        lock (syncObject)
         {
-            <span class="reserved">int</span> <span class="variable">tmp</span> <span class="operator">=</span> <span class="variable">num</span>;
-            <span class="type">Thread</span><span class="operator">.</span><span class="method"><span class="static">Sleep</span></span>(<span class="number">1</span>);
-            <span class="variable">num</span> <span class="operator">=</span> <span class="variable">tmp</span> <span class="operator">+</span> <span class="number">1</span>;
+            int tmp = num;
+            Thread.Sleep(1);
+            num = tmp + 1;
         }
     }
 });
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span>{<span class="variable">num</span>}<span class="string"> (</span>{<span class="constant">ThreadNum</span> <span class="operator">*</span>  <span class="constant">LoopNum</span>}<span class="string">)</span><span class="string">&quot;</span>);
-</pre>
+Console.WriteLine($"{num} ({ThreadNum *  LoopNum})");
+```
 
 この時、 `lock (syncObject) { }` の部分は以下のように展開されます。
 
-<pre class="source" title="Lock クラスに対する lock ステートメント の展開結果">
-<span class="type">Lock</span><span class="operator">.</span><span class="type struct">Scope</span> <span class="variable">scope</span> <span class="operator">=</span> <span class="variable">syncObject</span><span class="operator">.</span><span class="method">EnterScope</span>();
+```csharp
+Lock.Scope scope = syncObject.EnterScope();
 
-<span class="control">try</span>
+try
 {
-    <span class="reserved">int</span> <span class="variable">tmp</span> <span class="operator">=</span> <span class="variable">num</span>;
-    <span class="type">Thread</span><span class="operator">.</span><span class="method"><span class="static">Sleep</span></span>(<span class="number">1</span>);
-    <span class="variable">num</span> <span class="operator">=</span> <span class="variable">tmp</span> <span class="operator">+</span> <span class="number">1</span>;
+    int tmp = num;
+    Thread.Sleep(1);
+    num = tmp + 1;
 }
-<span class="control">finally</span>
+finally
 {
-    <span class="variable">scope</span><span class="operator">.</span><span class="method">Dispose</span>();
+    scope.Dispose();
 }
-</pre>
+```
 
 ちなみに、これは以下のコードと全く同じ展開結果です。
 
-<pre class="source" title="要するに、lock (x) は using (x.EnterSceop()) になる">
-<span class="reserved">using</span> (<span class="variable">syncObject</span><span class="operator">.</span><span class="method">EnterScope</span>())
+```csharp
+using (syncObject.EnterScope())
 {
-    <span class="reserved">int</span> <span class="variable">tmp</span> <span class="operator">=</span> <span class="variable">num</span>;
-    <span class="type">Thread</span><span class="operator">.</span><span class="static"><span class="method">Sleep</span></span>(<span class="number">1</span>);
-    <span class="variable">num</span> <span class="operator">=</span> <span class="variable">tmp</span> <span class="operator">+</span> <span class="number">1</span>;
+    int tmp = num;
+    Thread.Sleep(1);
+    num = tmp + 1;
 }
-</pre>
+```
 
 ちなみに、旧来の `lock` (任意の `object` に対する `lock` / `Monitor.Enter`)が遅い理由は以前ブログに書いているのでそちらを参照ください:
 

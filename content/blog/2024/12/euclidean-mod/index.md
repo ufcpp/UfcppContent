@@ -22,75 +22,75 @@ aliases: []
 「配列の範囲内に収めるために `index % array.Length` する」とかがあると思います。
 例えば以下のような感じ。
 
-<pre class="source" title="配列のインデックスを i % Length">
-<span class="reserved">var</span> <span class="variable">table</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">Table</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]);
+```csharp
+var table = new Table([1, 2, 3, 4, 5]);
 
-<span class="control">for</span> (<span class="reserved">var</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; <span class="variable">i</span> <span class="operator">&lt;</span> <span class="number">5</span>; <span class="variable">i</span><span class="operator">++</span>)
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">table</span><span class="operator">.</span><span class="method">Next</span>());
+for (var i = 0; i < 5; i++)
+    Console.WriteLine(table.Next());
 
-<span class="comment">// 引数で受け取った配列の中身を1個ずつ返す。</span>
-<span class="reserved">struct</span> <span class="type struct">Table</span>(<span class="reserved">int</span>[] <span class="variable local">values</span>)
+// 引数で受け取った配列の中身を1個ずつ返す。
+struct Table(int[] values)
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_index</span>;
+    private int _index;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">Next</span>()
+    public int Next()
     {
-        <span class="reserved">var</span> <span class="variable">i</span> <span class="operator">=</span> <span class="field">_index</span>;
-        <span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="variable local">values</span>[<span class="variable">i</span>];
-        <span class="field">_index</span> <span class="operator">=</span> (<span class="variable">i</span> <span class="operator">+</span> <span class="number">1</span>) <span class="operator">%</span> <span class="variable local">values</span><span class="operator">.</span><span class="property">Length</span>; <span class="comment">// % Length することで範囲内に収める。 </span>
-        <span class="control">return</span> <span class="variable">x</span>;
+        var i = _index;
+        var x = values[i];
+        _index = (i + 1) % values.Length; // % Length することで範囲内に収める。 
+        return x;
     }
 }
-</pre>
+```
 
 この状態なら、単純に +1 でやっていて、 `i` が常に0以上なので特に問題は起きません。
 
 で、これにちょこっと、「ステップ幅」みたいなのを足したとします。
 インデックスを何個飛ばしするか。
 
-<pre class="source" title="(i + 1) % Length を (i + step) % Length に変更">
-<span class="reserved">var</span> <span class="variable">table</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">Table</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="number">3</span>);
+```csharp
+var table = new Table([1, 2, 3, 4, 5], 3);
 
-<span class="comment">// 3個飛ばしにしたので 1, 4, 2, 5, 3 と出力される。</span>
-<span class="control">for</span> (<span class="reserved">var</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; <span class="variable">i</span> <span class="operator">&lt;</span> <span class="number">5</span>; <span class="variable">i</span><span class="operator">++</span>)
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">table</span><span class="operator">.</span><span class="method">Next</span>());
+// 3個飛ばしにしたので 1, 4, 2, 5, 3 と出力される。
+for (var i = 0; i < 5; i++)
+    Console.WriteLine(table.Next());
 
-<span class="reserved">struct</span> <span class="type struct">Table</span>(<span class="reserved">int</span>[] <span class="variable local">values</span>, <span class="reserved">int</span> <span class="variable local">step</span>)
+struct Table(int[] values, int step)
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_index</span>;
+    private int _index;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">Next</span>()
+    public int Next()
     {
-        <span class="reserved">var</span> <span class="variable">i</span> <span class="operator">=</span> <span class="field">_index</span>;
-        <span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="variable local">values</span>[<span class="variable">i</span>];
-        <span class="field">_index</span> <span class="operator">=</span> (<span class="variable">i</span> <span class="operator">+</span> <span class="variable local">step</span>) <span class="operator">%</span> <span class="variable local">values</span><span class="operator">.</span><span class="property">Length</span>; <span class="comment">// +1 を +step に変更。 </span>
-        <span class="control">return</span> <span class="variable">x</span>;
+        var i = _index;
+        var x = values[i];
+        _index = (i + step) % values.Length; // +1 を +step に変更。 
+        return x;
     }
 }
-</pre>
+```
 
 そしてうっかり、`step` を負にして `IndexOutOfRange`…
 
-<pre class="source" title="負のステップ">
-<span class="reserved">var</span> <span class="variable">table</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">Table</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="operator">-</span><span class="number">1</span>);
+```csharp
+var table = new Table([1, 2, 3, 4, 5], -1);
 
-<span class="comment">// IndexOutOfRange で止まる。</span>
-<span class="control">for</span> (<span class="reserved">var</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; <span class="variable">i</span> <span class="operator">&lt;</span> <span class="number">5</span>; <span class="variable">i</span><span class="operator">++</span>)
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">table</span><span class="operator">.</span><span class="method">Next</span>());
+// IndexOutOfRange で止まる。
+for (var i = 0; i < 5; i++)
+    Console.WriteLine(table.Next());
 
-<span class="reserved">struct</span> <span class="type struct">Table</span>(<span class="reserved">int</span>[] <span class="variable local">values</span>, <span class="reserved">int</span> <span class="variable local">step</span>)
+struct Table(int[] values, int step)
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_index</span>;
+    private int _index;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">Next</span>()
+    public int Next()
     {
-        <span class="reserved">var</span> <span class="variable">i</span> <span class="operator">=</span> <span class="field">_index</span>;
-        <span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="variable local">values</span>[<span class="variable">i</span>];
-        <span class="field">_index</span> <span class="operator">=</span> (<span class="variable">i</span> <span class="operator">+</span> <span class="variable local">step</span>) <span class="operator">%</span> <span class="variable local">values</span><span class="operator">.</span><span class="property">Length</span>; <span class="comment">// 負 % 正 の結果は負です。 </span>
-        <span class="control">return</span> <span class="variable">x</span>;
+        var i = _index;
+        var x = values[i];
+        _index = (i + step) % values.Length; // 負 % 正 の結果は負です。 
+        return x;
     }
 }
-</pre>
+```
 
 「負 % 正」の結果は負になるので、`values[i]` が例外を起こすようになります。
 
@@ -118,35 +118,35 @@ C# を始めとして、そこそこパフォーマンスを気にするプロ�
 
 例えば、以下のコードで得られる `q` と `r` はどの丸め方でも必ず `a == n * q + r`、`Abs(r) < Abs(n)` の条件を満たします。
 
-<pre class="source" title="丸め方の違いでバリエーションがある商と余り">
-<span class="comment">// 一度 double で計算して、商の丸め方式をいろいろ変えてみる。</span>
-<span class="comment">// 余りは常に r = a - q * n で計算。</span>
-<span class="reserved">static</span> (<span class="reserved">int</span> q, <span class="reserved">int</span> r) <span class="method"><span class="static">DivRem</span></span>(<span class="reserved">int</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">n</span>, <span class="type">MidpointRounding</span> <span class="variable local">mode</span>)
+```csharp
+// 一度 double で計算して、商の丸め方式をいろいろ変えてみる。
+// 余りは常に r = a - q * n で計算。
+static (int q, int r) DivRem(int a, int n, MidpointRounding mode)
 {
-    <span class="reserved">var</span> <span class="variable">q</span> <span class="operator">=</span> (<span class="reserved">int</span>)<span class="static"><span class="type">Math</span></span><span class="operator">.</span><span class="static"><span class="method">Round</span></span>((<span class="reserved">double</span>)<span class="variable local">a</span> <span class="operator">/</span> <span class="variable local">n</span>, <span class="variable local">mode</span>);
-    <span class="reserved">var</span> <span class="variable">r</span> <span class="operator">=</span> <span class="variable local">a</span> <span class="operator">-</span> <span class="variable">q</span> <span class="operator">*</span> <span class="variable local">n</span>;
-    <span class="control">return</span> (<span class="variable">q</span>, <span class="variable">r</span>);
+    var q = (int)Math.Round((double)a / n, mode);
+    var r = a - q * n;
+    return (q, r);
 }
-</pre>
+```
 
 一応、これでどういう結果が得られるかも例示しておきます:
 
-<pre class="source" title="DivRem の実行例">
-<span class="method"><span class="static">ShowDivRem</span></span>(<span class="number">5</span>, <span class="number">3</span>);
-<span class="method"><span class="static">ShowDivRem</span></span>(<span class="operator">-</span><span class="number">5</span>, <span class="number">3</span>);
-<span class="method"><span class="static">ShowDivRem</span></span>(<span class="number">5</span>, <span class="operator">-</span><span class="number">3</span>);
-<span class="method"><span class="static">ShowDivRem</span></span>(<span class="operator">-</span><span class="number">5</span>, <span class="operator">-</span><span class="number">3</span>);
+```csharp
+ShowDivRem(5, 3);
+ShowDivRem(-5, 3);
+ShowDivRem(5, -3);
+ShowDivRem(-5, -3);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">ShowDivRem</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">int</span> <span class="variable local">y</span>)
+static void ShowDivRem(int x, int y)
 {
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">DivRem(</span>{<span class="variable local">x</span>}<span class="string">, </span>{<span class="variable local">y</span>}<span class="string">)</span><span class="string">&quot;</span>);
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">  to 0  </span>{<span class="method"><span class="static">DivRem</span></span>(<span class="variable local">x</span>, <span class="variable local">y</span>, <span class="type">MidpointRounding</span><span class="operator">.</span>ToZero)}<span class="string">&quot;</span>);
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">  floor </span>{<span class="method"><span class="static">DivRem</span></span>(<span class="variable local">x</span>, <span class="variable local">y</span>, <span class="type">MidpointRounding</span><span class="operator">.</span>ToNegativeInfinity)}<span class="string">&quot;</span>);
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">  ceil  </span>{<span class="method"><span class="static">DivRem</span></span>(<span class="variable local">x</span>, <span class="variable local">y</span>, <span class="type">MidpointRounding</span><span class="operator">.</span>ToPositiveInfinity)}<span class="string">&quot;</span>);
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">  away  </span>{<span class="method"><span class="static">DivRem</span></span>(<span class="variable local">x</span>, <span class="variable local">y</span>, <span class="type">MidpointRounding</span><span class="operator">.</span>AwayFromZero)}<span class="string">&quot;</span>);
+    Console.WriteLine($"DivRem({x}, {y})");
+    Console.WriteLine($"  to 0  {DivRem(x, y, MidpointRounding.ToZero)}");
+    Console.WriteLine($"  floor {DivRem(x, y, MidpointRounding.ToNegativeInfinity)}");
+    Console.WriteLine($"  ceil  {DivRem(x, y, MidpointRounding.ToPositiveInfinity)}");
+    Console.WriteLine($"  away  {DivRem(x, y, MidpointRounding.AwayFromZero)}");
 }
-</pre>
-<pre class="console" title="DivRem の実行例">
+```
+```console
 DivRem(5, 3)
   to 0  (1, 2)
   floor (1, 2)
@@ -167,7 +167,7 @@ DivRem(-5, -3)
   floor (1, -2)
   ceil  (2, 1)
   away  (2, 1)
-</pre>
+```
 
 C# の整数の `/` と `%` (= 大体の CPU の剰余命令の結果)は、この例でいうと `ToZero` と同じです。
 例を見ての通り、余り `r`の符号は被除数 `a` と一致します。
@@ -219,25 +219,25 @@ C# の整数の `/` と `%` (= 大体の CPU の剰余命令の結果)は、こ�
 
 現状の案では以下のようなメソッドの追加になります。
 
-<pre class="source" title="丸め方式指定付きの DivRem">
-<span class="reserved">namespace</span> System<span class="operator">.</span>Numerics;
+```csharp
+namespace System.Numerics;
 
-<span class="reserved">public</span> <span class="reserved">enum</span> <span class="type">DivisionRounding</span>
+public enum DivisionRounding
 {
-    Truncate <span class="operator">=</span> <span class="number">0</span>,        <span class="comment">// Towards Zero</span>
-    Floor <span class="operator">=</span> <span class="number">1</span>,           <span class="comment">// Towards -Infinity</span>
-    Ceiling <span class="operator">=</span> <span class="number">2</span>,         <span class="comment">// Towards +Infinity</span>
-    AwayFromZero <span class="operator">=</span> <span class="number">3</span>,    <span class="comment">// Away from Zero</span>
-    Euclidean <span class="operator">=</span> <span class="number">4</span>,       <span class="comment">// floor(x / abs(n)) * sign(n)</span>
+    Truncate = 0,        // Towards Zero
+    Floor = 1,           // Towards -Infinity
+    Ceiling = 2,         // Towards +Infinity
+    AwayFromZero = 3,    // Away from Zero
+    Euclidean = 4,       // floor(x / abs(n)) * sign(n)
 }
 
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">interface</span> <span class="type">IBinaryInteger</span>&lt;<span class="type param">TSelf</span>&gt;
+public partial interface IBinaryInteger<TSelf>
 {
-    <span class="reserved">static</span> <span class="reserved">virtual</span> <span class="type param">TSelf</span> <span class="method"><span class="static">Divide</span></span>(<span class="type param">TSelf</span> <span class="variable local">left</span>, <span class="type param">TSelf</span> <span class="variable local">right</span>, <span class="type">DivisionRounding</span> <span class="variable local">mode</span>);
-    <span class="reserved">static</span> <span class="reserved">virtual</span> (<span class="type param">TSelf</span> Quotient, <span class="type param">TSelf</span> Remainder) <span class="method"><span class="static">DivRem</span></span>(<span class="type param">TSelf</span> <span class="variable local">left</span>, <span class="type param">TSelf</span> <span class="variable local">right</span>, <span class="type">DivisionRounding</span> <span class="variable local">mode</span>);
-    <span class="reserved">static</span> <span class="reserved">virtual</span> <span class="type param">TSelf</span> <span class="static"><span class="method">Remainder</span></span>(<span class="type param">TSelf</span> <span class="variable local">left</span>, <span class="type param">TSelf</span> <span class="variable local">right</span>, <span class="type">DivisionRounding</span> <span class="variable local">mode</span>);
+    static virtual TSelf Divide(TSelf left, TSelf right, DivisionRounding mode);
+    static virtual (TSelf Quotient, TSelf Remainder) DivRem(TSelf left, TSelf right, DivisionRounding mode);
+    static virtual TSelf Remainder(TSelf left, TSelf right, DivisionRounding mode);
 }
-</pre>
+```
 
 おそらくこれらは .NET 10 で入ります。
 (デザイン レビューで承認済みで、すでに[実装作業も始まって Pull Request が出ている](https://github.com/dotnet/runtime/pull/104589)状態。)

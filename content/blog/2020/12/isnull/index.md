@@ -30,29 +30,29 @@ zero も語源をたどるとアラビア語とかサンスクリット語の「
 null 判定というとまずどういうコードを思い浮かべるでしょうか？
 「昔から書けた」という意味で、まず `x == null` が真っ先に思い浮かぶ人が多いと思います。
 
-<pre class="source" title="== null">
-<code><span class="reserved">bool</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> == <span class="reserved">null</span>;
-<span class="reserved">class</span> <span class="type">A</span> { }
-</code></pre>
+```csharp
+bool M(A x) => x == null;
+class A { }
+```
 
 これも、この状態であれば単なる 0 比較になります。
 実際、コンパイル結果を覗いてみればわかるんですが、以下のコードと同じコードが生成されます。
 
-<pre class="source" title="== 0">
-<code><span class="reserved">bool</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> == 0;
-</code></pre>
+```csharp
+bool M(int x) => x == 0;
+```
 
 ただ、ここで問題になるのが[演算子オーバーロード](../../../../study/csharp/oop/oo_operator.md)でして、これをやっちゃってると「単なる 0 比較」ではなくなってしまいます。
 特に以下のように、`==` の中でそこそこ重たい処理をやっちゃっているときが問題になります。
 
-<pre class="source" title="== の中でそこそこ重たい処理をやっちゃってる場合">
-<code><span class="reserved">bool</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="method">==</span> <span class="reserved">null</span>;
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+bool M(A x) => x == null;
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> ==(<span class="type">A</span> <span class="variable">x</span>, <span class="type">A</span> <span class="variable">y</span>) =&gt; そこそこ重たい処理;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> !=(<span class="type">A</span> <span class="variable">x</span>, <span class="type">A</span> <span class="variable">y</span>) =&gt; そこそこ重たい処理;
+    public static bool operator ==(A x, A y) => そこそこ重たい処理;
+    public static bool operator !=(A x, A y) => そこそこ重たい処理;
 }
-</code></pre>
+```
 
 `==` を使っている側、この例でいうと メソッド `M` の中身は最初にあげた「速い」コードと同じ見た目なのが罠で、「本当は 0 比較でいいはずなのにわざわざ重たい `operator ==` が呼ばれてしまう」という状況が往々にして発生します。
 
@@ -66,9 +66,9 @@ null 判定というとまずどういうコードを思い浮かべるでしょ
 
 この問題は昔の C# でも簡単に解消する方法が1つあって、それが、`ReferenceEquals` を使うという案。
 
-<pre class="source" title="ReferenceEquals(null)">
-<code><span class="reserved">bool</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="method">ReferenceEquals</span>(<span class="variable">x</span>, <span class="reserved">null</span>);
-</code></pre>
+```csharp
+bool M(object x) => ReferenceEquals(x, null);
+```
 
 これで、ユーザー定義の `==` オーバーロードは呼ばれることなく、常に 0 比較で null 判定が走ります。
 
@@ -83,14 +83,14 @@ null 判定というとまずどういうコードを思い浮かべるでしょ
 そこに来て、C# 7.0 で[パターン マッチング](../../../../study/csharp/datatype/patterns.md)という文法が入りました。
 この頃には「`== null` の罠」が周知の事実だったので、「`is null` と書いたときにはユーザー定義の `==` を呼ばない。常に 0 比較にする」という判断が下りました。
 
-<pre class="source" title="is null">
-<code><span class="reserved">bool</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span>; <span class="comment">// operator == は呼ばない。常に ReferenceEquals(x, null) と同じ。</span>
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+bool M(object x) => x is null; // operator == は呼ばない。常に ReferenceEquals(x, null) と同じ。
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> ==(<span class="type">A</span> <span class="variable">x</span>, <span class="type">A</span> <span class="variable">y</span>) =&gt; そこそこ重たい処理;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> !=(<span class="type">A</span> <span class="variable">x</span>, <span class="type">A</span> <span class="variable">y</span>) =&gt; そこそこ重たい処理;
+    public static bool operator ==(A x, A y) => そこそこ重たい処理;
+    public static bool operator !=(A x, A y) => そこそこ重たい処理;
 }
-</code></pre>
+```
 
 これに「見栄え的に `ReferenceEquals` は NG」派が飛びつきました。
 `== null` から `is null` への書き換えで救われたコードが結構あったみたいです。
@@ -104,37 +104,37 @@ null 判定というとまずどういうコードを思い浮かべるでしょ
 
 実際に多いのは以下のようなコードだったりします。
 
-<pre class="source" title="null じゃないときだけ処理">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="reserved">var</span> <span class="variable">x</span> = <span class="variable">a</span>.X; // プロパティ参照コストを避けるために変数に受ける。
+    var x = a.X; // プロパティ参照コストを避けるために変数に受ける。
  
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span>) <span class="control">return</span>;
+    if (x is null) return;
  
-    <span class="comment">// x を使って何か処理をする。</span>
+    // x を使って何か処理をする。
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="comment">// virtual がついていたり、いくつかの場面では X プロパティの参照に多少コストがかかる。</span>
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">object</span>? X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // virtual がついていたり、いくつかの場面では X プロパティの参照に多少コストがかかる。
+    public virtual object? X { get; set; }
 }
-</code></pre>
+```
 
 これはいわゆる early return (先頭で検査して不適切なら即 return)な書き方ですが、
 判定を逆転させて同じ結果になるコードを以下のように書きたいこともあります。
 
-<pre class="source" title="!(is null)">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="reserved">var</span> <span class="variable">x</span> = <span class="variable">a</span>.X;
+    var x = a.X;
  
-    <span class="control">if</span> (!(<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span>))
+    if (!(x is null))
     {
-        <span class="comment">// x を使って何か処理をする。</span>
+        // x を使って何か処理をする。
     }
 }
-</code></pre>
+```
 
 何にしてもポイントが2つあって、
 
@@ -151,31 +151,31 @@ null 判定というとまずどういうコードを思い浮かべるでしょ
 C# の場合、「null は型を持っていない」という扱いになるので、すべての型の共通基底クラスである `object` 型にすらマッチしません。
 なので、以下のように、`is object` というパターンを書くと「null じゃない」という判定になります。
 
-<pre class="source" title="is object">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="control">if</span> (<span class="variable">a</span>.X <span class="reserved">is</span> <span class="reserved">object</span> <span class="variable">x</span>)
+    if (a.X is object x)
     {
-        <span class="comment">// ここに来るのは a.X が null じゃなかった時だけ。</span>
-        <span class="comment">// x を使って何か処理をする。</span>
+        // ここに来るのは a.X が null じゃなかった時だけ。
+        // x を使って何か処理をする。
     }
 }
-</code></pre>
+```
 
 ### 注意: x is var (null 判定しない)
 
 ここで注意すべきことが1点。結構な罠なんですが、上記のように `is object` が「null じゃない」判定になるのに対して、`is var` だと null / 非 null に関わらず常にマッチします(`is var` 単体だと常に true)。
 
-<pre class="source" title="is var の場合は null 判定しないので注意">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="control">if</span> (<span class="variable">a</span>.X <span class="reserved">is</span> <span class="reserved">var</span> x)
+    if (a.X is var x)
     {
-        <span class="comment">// ここは常に通る。</span>
-        <span class="comment">// if なしで var x = a.X; と書くのとほぼ同じ意味なので非推奨。</span>
+        // ここは常に通る。
+        // if なしで var x = a.X; と書くのとほぼ同じ意味なので非推奨。
     }
 }
-</code></pre>
+```
 
 `var` パターンは `switch`-`case` の `default` 句みたいなもので、「他のどの条件も満たさないときの最後の受け口」みたいに使うものです。
 なので、今回の主題の null 判定に限らず、`if` 単体で使うものではありません。
@@ -186,30 +186,30 @@ C# の場合、「null は型を持っていない」という扱いになるの
 知らないと何が何だかわからない謎な書き方ですが、
 文法的にいうとこれは「[プロパティ パターン](../../../../study/csharp/datatype/patterns.md#property)」というものになります。
 
-<pre class="source" title="is { } で null じゃない判定">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="control">if</span> (<span class="variable">a</span>.X <span class="reserved">is</span> { } x)
+    if (a.X is { } x)
     {
-        <span class="comment">// ここに来るのは a.X が null じゃなかった時だけ。</span>
-        <span class="comment">// 起こる結果は is object x と同じ。</span>
-        <span class="comment">// x を使って何か処理をする。</span>
+        // ここに来るのは a.X が null じゃなかった時だけ。
+        // 起こる結果は is object x と同じ。
+        // x を使って何か処理をする。
     }
 }
-</code></pre>
+```
 
 本来は以下のように、再帰的にプロパティの中身を確認できる「パターン」です。
 
-<pre class="source" title="{ } の本来の使い方は「再起プロパティ パターン」">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="control">if</span> (<span class="variable">a</span> <span class="reserved">is</span> { X: <span class="reserved">object</span> <span class="variable">x</span> })
+    if (a is { X: object x })
     {
-        <span class="comment">// a の中身の X プロパティの中身をチェック。</span>
-        <span class="comment">// ちなみにこの場合、a 自体の null チェックもかかるので、a != null &amp;&amp; a.X != null と似た処理。</span>
+        // a の中身の X プロパティの中身をチェック。
+        // ちなみにこの場合、a 自体の null チェックもかかるので、a != null && a.X != null と似た処理。
     }
 }
-</code></pre>
+```
 
 ただ、`{}` の中に何もなくても「null じゃない」判定だけはかかるので、その用途に流用できます。
 ちょっと濫用・悪用気味ではありますが、「null じゃない」判定をしつつ変数で受ける手段としては一番短い書き方になります。
@@ -224,15 +224,15 @@ C# の場合、「null は型を持っていない」という扱いになるの
 
 あと、以下のような「書き間違い」をする人が後を絶たないという問題も起こしました。
 
-<pre class="source" title="!is 問題">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="control">if</span> (<span class="variable">a</span>.X !<span class="reserved">is</span> <span class="reserved">null</span>) <span class="comment">// is not のつもりで !is とか書く</span>
+    if (a.X !is null) // is not のつもりで !is とか書く
     {
-        <span class="comment">// ちなみにこの ! は not の意味にならず、このコードは is null (意図と真逆)になる。</span>
+        // ちなみにこの ! は not の意味にならず、このコードは is null (意図と真逆)になる。
     }
 }
-</code></pre>
+```
 
 この `!` は[null 判定の抑止](../../../../study/csharp/resource/nullablereferencetype.md#null-forgiving)、要するに、コンパイラーが正しくフロー解析できなさそうな微妙なコードで、コンパイラーの警告をもみ消すために使う演算子です。
 フロー解析(あくまでコンパイラー内での処理)に使うだけであって、この `!` の有無はコンパイル結果には全く影響を及ぼしません。
@@ -240,16 +240,16 @@ C# の場合、「null は型を持っていない」という扱いになるの
 
 一方、C# 9.0 では `not` パターンというものが導入されて、今度こそ is not の意味のパターンが書けるようになりました。
 
-<pre class="source" title="is not null">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="control">if</span> (<span class="variable">a</span>.X <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span>)
+    if (a.X is not null)
     {
-        <span class="comment">// ちゃんと null じゃないときだけここを通る。</span>
-        <span class="comment">// != null と違ってユーザー定義演算子は呼ばれず、単なる 0 比較。</span>
+        // ちゃんと null じゃないときだけここを通る。
+        // != null と違ってユーザー定義演算子は呼ばれず、単なる 0 比較。
     }
 }
-</code></pre>
+```
 
 ## is not { } (null の時に early return)
 
@@ -261,34 +261,34 @@ Visual Studio 16.8 (C# 9.0 の初期リリース。2020年11月リリース版)�
 単に「null である」判定をしたいだけなら `is null` と書けばいい話なんですが、
 「変数で受けつつ null である判定」という処理をしたいときに `is not { } x` という書き方をします。
 
-<pre class="source" title="is not { } で null 時 early return">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">A</span> <span class="variable">a</span>)
+```csharp
+void M(A a)
 {
-    <span class="control">if</span> (<span class="variable">a</span>.X <span class="reserved">is</span> <span class="reserved">not</span> { } x) <span class="control">return</span>; <span class="comment">// null だったら early return。</span>
+    if (a.X is not { } x) return; // null だったら early return。
  
-    <span class="comment">// x を使って何か処理をする。</span>
-    <span class="comment">// ここでは x に非 null な値が入っているはず。</span>
+    // x を使って何か処理をする。
+    // ここでは x に非 null な値が入っているはず。
 }
-</code></pre>
+```
 
 `is not { } x` や `is not object x` とい書き方はまさにこの「null のときに early return」のためにあって、null じゃなければその値が変数 `x` に入った上で `else` 側に流れます。
 
 ですが、バグで、時々その「null じゃない値を変数 `x` で受ける」という処理が消えてしまうことがあるそうです。
 上記コードはちゃんと動くんですが、例えば以下のコードだと `x` が null のままになっていて実行時例外を起こします。
 
-<pre class="source" title="16.8 時点の is not { } のバグ">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="method">M</span>(<span class="string">&quot;abc&quot;</span>);
+M("abc");
  
-<span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span>? <span class="variable">s</span>)
+void M(string? s)
 {
-    <span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">not</span> { } x) <span class="control">return</span>; <span class="comment">// null だったら early return。</span>
+    if (s is not { } x) return; // null だったら early return。
  
-    <span class="comment">// x には s が代入されていないとおかしいはずなのに…</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>.Length); <span class="comment">// ここでぬるぽ(バグ)。</span>
+    // x には s が代入されていないとおかしいはずなのに…
+    Console.WriteLine(x.Length); // ここでぬるぽ(バグ)。
 }
-</code></pre>
+```
 
 バグです。
 バグ報告済みというか、[報告されて早々に修正・ merge 済み](https://github.com/dotnet/roslyn/pull/49369)で、Visual Studio 16.9 では直る見込みです(16.8.1 とかにもこの修正が取り込まれるかは未定)。

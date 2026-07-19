@@ -31,35 +31,35 @@ aliases:
 
 例えば、以下のようなコードは、
 
-<pre class="source" title="匿名関数の例1" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-      <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f1 = () => 0;
+      Func<int> f1 = () => 0;
       f1();
   }
 }
-</code></pre>
+```
 
 以下のコードと同じ意味になります。
 (※ 古いC#コンパイラーの実装の場合だけです。現在は、静的メソッドの場合もう少し複雑なコード生成にした方がパフォーマンスがいいらしく、変換結果が変わっています。現在の実装については[後述](#static))
 
-<pre class="source" title="例1のコンパイル結果" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static int</span> AnonymousMethod1()
+    static int AnonymousMethod1()
     {
-        <span class="reserved">return</span> 0;
+        return 0;
     }
 
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f1 = AnonymousMethod1;
+        Func<int> f1 = AnonymousMethod1;
         f1();
     }
 }
-</code></pre>
+```
 
 この例の場合は、クラスのフィールドの使わず、ローカル変数の捕獲もしていないので、静的メソッドに変換されます。
 
@@ -76,39 +76,39 @@ C# では通常記述できないような特殊な名前になっていて、
 
 例えば、以下のようなコードは、
 
-<pre class="source" title="匿名関数の例2" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-  <span class="reserved">int</span> member = 0;
+  int member = 0;
 
-  <span class="reserved">void</span> Method()
+  void Method()
   {
-    <span class="comment">// 2. メンバー変数を参照する匿名関数</span>
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f2 = () => <span class="reserved">this</span>.member;
+    // 2. メンバー変数を参照する匿名関数
+    Func<int> f2 = () => this.member;
     f2();
   }
 }
-</code></pre>
+```
 
 以下のように展開されます。
 
-<pre class="source" title="例2のコンパイル結果" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-  <span class="reserved">int</span> AnonymousMethod2()
+  int AnonymousMethod2()
   {
-    <span class="reserved">return this</span>.member;
+    return this.member;
   }
 
-  <span class="reserved">int</span> member = 0;
+  int member = 0;
 
-  <span class="reserved">void</span> Method()
+  void Method()
   {
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f2 = AnonymousMethod2;
+    Func<int> f2 = AnonymousMethod2;
     f2();
   }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="closure"></a>クロージャ(ローカル変数を参照する)の場合
 
@@ -117,92 +117,92 @@ C# では通常記述できないような特殊な名前になっていて、
 
 例えば、以下のようなコードは、
 
-<pre class="source" title="匿名関数の例3" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="comment">// 3. ローカル変数を参照する匿名関数</span>
-    <span class="reserved">int</span> x = 0;
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f3 = () => ++x;
+    // 3. ローカル変数を参照する匿名関数
+    int x = 0;
+    Func<int> f3 = () => ++x;
     f3();
 
-    <span class="type">Console</span>.Write(x);
+    Console.Write(x);
   }
 }
-</code></pre>
+```
 
 コンパイル時に以下のようなクラスを生成したうえで、実行時にそのインスタンスが作られます。
 
-<pre class="source" title="例3のコンパイル結果" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-  <span class="reserved">class</span> <span class="type">AnonymousClass</span>
+  class AnonymousClass
   {
-    <span class="reserved">public int</span> x;
+    public int x;
 
-    <span class="reserved">public int</span> AnonymousMethod()
+    public int AnonymousMethod()
     {
-      <span class="reserved">return</span> ++<span class="reserved">this</span>.x;
+      return ++this.x;
     }
   }
 
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="reserved">var</span> temp = <span class="reserved">new</span> <span class="type">AnonymousClass</span>();
+    var temp = new AnonymousClass();
     temp.x = 0;
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f3 = temp.AnonymousMethod;
+    Func<int> f3 = temp.AnonymousMethod;
     f3();
 
-    <span class="type">Console</span>.Write(temp.x);
+    Console.Write(temp.x);
   }
 }
-</code></pre>
+```
 
 ローカル変数の変わりに、自動生成されたクラスのメンバー変数アクセスになっています。
 
 呼び出し元とクロージャ側とで、ローカル変数`x`の書き換え結果が共有される(実行結果で 1 が表示される)のは、このコード生成のおかげです。
 例えば以下のように、ローカル変数を書き換えるコードを書いたとします。
 
-<pre class="source" title="例4： 匿名関数で参照している変数の書き換え" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="reserved">int</span> x = 0;
-    <span class="type">Action</span> f = () => <span class="type">Console</span>.Write(x);
+    int x = 0;
+    Action f = () => Console.Write(x);
 
     x = 1;
     f();
   }
 }
-</code></pre>
+```
 
 このコードは以下のように展開されます。
 
-<pre class="source" title="例4のコンパイル結果" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-  <span class="reserved">class</span> <span class="type">AnonymousClass</span>
+  class AnonymousClass
   {
-    <span class="reserved">public int</span> x;
+    public int x;
 
-    <span class="reserved">public void</span> AnonymousMethod()
+    public void AnonymousMethod()
     {
-      <span class="type">Console</span>.Write(<span class="reserved">this</span>.x);
+      Console.Write(this.x);
     }
   }
 
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="reserved">var</span> temp = <span class="reserved">new</span> <span class="type">AnonymousClass</span>();
+    var temp = new AnonymousClass();
     temp.x = 0;
-    <span class="type">Action</span> f = temp.AnonymousMethod;
+    Action f = temp.AnonymousMethod;
 
     temp.x = 1;
     f();
   }
-</code></pre>
+```
 
 すなわち、元々のコードでローカル変数だったものは、クラスのフィールドになっています。
 これを、「ローカル変数がフィールドに昇格(elevate)した」と言ったりします。
@@ -218,51 +218,51 @@ C# では通常記述できないような特殊な名前になっていて、
 - ローカル関数でクロージャを作っている(匿名関数ではない)
 - デリゲートに代入したりせず、直接関数呼び出ししている
 
-<pre class="source" title="クロージャが最適かできるかどうかの例">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M1(<span class="reserved">int</span> m, <span class="reserved">int</span> n)
+```csharp
+static void M1(int m, int n)
 {
-    <span class="comment">// <em>最適化できる状況: ローカル関数を直接呼出し</em></span>
-    <span class="reserved">int</span> f(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; m * x + n * y;
-    <span class="reserved">var</span> r = f(3, 4);
+    // 最適化できる状況: ローカル関数を直接呼出し
+    int f(int x, int y) => m * x + n * y;
+    var r = f(3, 4);
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> M2(<span class="reserved">int</span> m, <span class="reserved">int</span> n)
+static void M2(int m, int n)
 {
-    <span class="comment">// できない状況1: デリゲート越しに使っている</span>
-    <span class="reserved">int</span> f(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; m * x + n * y;
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>&gt; func = f;
-    <span class="reserved">var</span> r2 = func(3, 4);
+    // できない状況1: デリゲート越しに使っている
+    int f(int x, int y) => m * x + n * y;
+    Func<int, int, int> func = f;
+    var r2 = func(3, 4);
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> M3(<span class="reserved">int</span> m, <span class="reserved">int</span> n)
+static void M3(int m, int n)
 {
-    <span class="comment">// できない状況2: 匿名関数を使っている</span>
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>&gt; f3 = (x, y) =&gt; m * x + n * y;
-    <span class="reserved">var</span> r3 = f3(3, 4);
+    // できない状況2: 匿名関数を使っている
+    Func<int, int, int> f3 = (x, y) => m * x + n * y;
+    var r3 = f3(3, 4);
 }
-</code></pre>
+```
 
 最適化できる状況、例えばこの例の`M1`の場合、以下のようなコードに展開されます。
 
-<pre class="source" title="クロージャに伴うインスタンス生成を避ける最適化">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">State</span>
+```csharp
+struct State
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> m;
-    <span class="reserved">public</span> <span class="reserved">int</span> n;
+    public int m;
+    public int n;
 }
 
-<span class="reserved">static</span> <span class="reserved">int</span> Anonymous(<span class="reserved">int</span> x, <span class="reserved">int</span> y, <span class="reserved">ref</span> <span class="type">State</span> state)
+static int Anonymous(int x, int y, ref State state)
 {
-    <span class="reserved">return</span> state.m * x + state.n * y;
+    return state.m * x + state.n * y;
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> M1(<span class="reserved">int</span> m, <span class="reserved">int</span> n)
+static void M1(int m, int n)
 {
-    <span class="comment">// 最適化できる状況: ローカル関数を直接呼出し</span>
-    <span class="reserved">var</span> state = <span class="reserved">new</span> <span class="type">State</span> { m = m, n = n };
-    <span class="reserved">var</span> r = Anonymous(3, 4, <span class="reserved">ref</span> state);
+    // 最適化できる状況: ローカル関数を直接呼出し
+    var state = new State { m = m, n = n };
+    var r = Anonymous(3, 4, ref state);
 }
-</code></pre>
+```
 
 この違いは構造体とクラス(値型と参照型)の差によります。
 詳しくは「[値型と参照型](../resource/oo_reference.md)」で説明していますが、
@@ -278,45 +278,45 @@ C# では通常記述できないような特殊な名前になっていて、
 しかし、C# 6.0の頃から、静的メソッドは使わなくなりました。
 例えば、冒頭の例を改めて使いますが、以下の例の場合、
 
-<pre class="source" title="匿名関数の例1" lang="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-      <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f1 = () => 0;
+      Func<int> f1 = () => 0;
       f1();
   }
 }
-</code></pre>
+```
 
 C# 5.0までは静的メソッドが生成されていましたが、
 現在は以下のように展開されます。
 
-<pre class="source" title="例1の現在の展開結果">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">class</span> <span class="type">AnonymousClass</span>
+    class AnonymousClass
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">AnonymousClass</span>Singleton = <span class="reserved">new</span> <span class="type">AnonymousClass</span>();
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; Cache1;
+        public static readonly AnonymousClassSingleton = new AnonymousClass();
+        public static Func<int> Cache1;
 
-        <span class="reserved">internal</span> <span class="reserved">int</span> AnonymousMethod1()
+        internal int AnonymousMethod1()
         {
-            <span class="reserved">return</span> 0;
+            return 0;
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">if</span> (<span class="type">AnonymousClass</span>.Cache1 == <span class="reserved">null</span>)
+        if (AnonymousClass.Cache1 == null)
         {
-            <span class="type">AnonymousClass</span>.Cache1 = <span class="type">AnonymousClass</span>.Singleton.AnonymousMethod1;
+            AnonymousClass.Cache1 = AnonymousClass.Singleton.AnonymousMethod1;
         }
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f1 = <span class="type">AnonymousClass</span>.Cache1;
+        Func<int> f1 = AnonymousClass.Cache1;
         f1();
     }
 }
-</code></pre>
+```
 
 変更の理由は、この方がパフォーマンスがいいからです。
 これでパフォーマンスが改善する理由は主に以下の2つです。
@@ -350,63 +350,63 @@ C# 5.0までは静的メソッドが生成されていましたが、
 同じスコープに複数の匿名関数がある場合、1つのクラスにまとめてメソッドが生成されます。
 例えば以下のコードの場合、
 
-<pre class="source" title="同じスコープに複数の匿名関数がある例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">int</span> m)
+    static void F(int m)
     {
-        <span class="comment">// ローカル関数かラムダ式か匿名デリゲート式かは無関係</span>
-        <span class="reserved">void</span> a(<span class="reserved">int</span> x) =&gt; Console.WriteLine(<span class="string">"A "</span> + m * x);
-        <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; b = x =&gt; Console.WriteLine(<span class="string">"B "</span> + m * x);
-        <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; c = <span class="reserved">delegate</span> (<span class="reserved">int</span> x) { Console.WriteLine(<span class="string">"C "</span> + m * x); };
+        // ローカル関数かラムダ式か匿名デリゲート式かは無関係
+        void a(int x) => Console.WriteLine("A " + m * x);
+        Action<int> b = x => Console.WriteLine("B " + m * x);
+        Action<int> c = delegate (int x) { Console.WriteLine("C " + m * x); };
 
         Invoke(a, b, c);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Invoke(<span class="reserved">params</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt;[] list)
+    static void Invoke(params Action<int>[] list)
     {
-        <span class="reserved">foreach</span> (var item <span class="reserved">in</span> list) item(1);
+        foreach (var item in list) item(1);
     }
 }
-</code></pre>
+```
 
 以下のように展開されます。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// a, b, c いずれも1つの型にまとまる</span>
-<span class="reserved">class</span> <span class="type">AnonymousClass</span>
+// a, b, c いずれも1つの型にまとまる
+class AnonymousClass
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> m;
-    <span class="reserved">internal</span> <span class="reserved">void</span> A(<span class="reserved">int</span> x) =&gt; Console.WriteLine(<span class="string">"A "</span> + x);
-    <span class="reserved">internal</span> <span class="reserved">void</span> B(<span class="reserved">int</span> x) =&gt; Console.WriteLine(<span class="string">"B "</span> + x);
-    <span class="reserved">internal</span> <span class="reserved">void</span> C(<span class="reserved">int</span> x) =&gt; Console.WriteLine(<span class="string">"C "</span> + x);
+    public int m;
+    internal void A(int x) => Console.WriteLine("A " + x);
+    internal void B(int x) => Console.WriteLine("B " + x);
+    internal void C(int x) => Console.WriteLine("C " + x);
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">int</span> m)
+    static void F(int m)
     {
-        <span class="comment">// 作られるインスタンスは1つだけ</span>
-        <span class="reserved">var</span> anonymous = <span class="reserved">new</span> <span class="type">AnonymousClass</span>();
+        // 作られるインスタンスは1つだけ
+        var anonymous = new AnonymousClass();
         anonymous.m = m;
 
-        <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; a = anonymous.A;
-        <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; b = anonymous.B;
-        <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt; c = anonymous.C;
+        Action<int> a = anonymous.A;
+        Action<int> b = anonymous.B;
+        Action<int> c = anonymous.C;
 
         Invoke(a, b, c);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Invoke(<span class="reserved">params</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt;[] list)
+    static void Invoke(params Action<int>[] list)
     {
-        <span class="reserved">foreach</span> (var item <span class="reserved">in</span> list) item(1);
+        foreach (var item in list) item(1);
     }
 }
-</code></pre>
+```
 
 コンパイラーによって作られるインスタンスが1つで済むという意味ではこの作りはお得です。
 
@@ -415,36 +415,36 @@ C# 5.0までは静的メソッドが生成されていましたが、
 例えば以下のようなコードを書いてしまうと、
 短寿命でガベージ コレクションされて欲しい大きなデータがいつまでたっても回収されないという問題が起こります。
 
-<pre class="source" title="寿命が一蓮托生になって困る例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> Main()
+    static async Task Main()
     {
-        <span class="comment">// この2つの配列の寿命は一蓮托生になる</span>
-        <span class="reserved">var</span> smallData = <span class="reserved">new</span> <span class="reserved">int</span>[5];
-        <span class="reserved">var</span> bigData = <span class="reserved">new</span> <span class="reserved">int</span>[10000];
+        // この2つの配列の寿命は一蓮托生になる
+        var smallData = new int[5];
+        var bigData = new int[10000];
 
-        <span class="comment">// 小さいデータしか握っていないので長寿でもそこまで問題のないデリゲート</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f1 = i =&gt; smallData[i];
+        // 小さいデータしか握っていないので長寿でもそこまで問題のないデリゲート
+        Func<int, int> f1 = i => smallData[i];
 
-        <span class="comment">// 大きめのデータを握っていて、長寿だと問題の出るデリゲート</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f2 = i =&gt; bigData[i];
+        // 大きめのデータを握っていて、長寿だと問題の出るデリゲート
+        Func<int, int> f2 = i => bigData[i];
 
-        <span class="comment">// f1, f2 を使う何か</span>
+        // f1, f2 を使う何か
         f1(0);
         f2(0);
 
-        <span class="comment">// f2 の寿命が長いと問題なので用が済み次第消す</span>
-        f2 = <span class="reserved">null</span>;
+        // f2 の寿命が長いと問題なので用が済み次第消す
+        f2 = null;
 
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(<span class="type">TimeSpan</span>.FromHours(10));
+        await Task.Delay(TimeSpan.FromHours(10));
 
-        <span class="comment">// f1 は後で使いたい</span>
-        <span class="comment">// f1 が生きている限り、f2 を消しても結局 bigData は残る</span>
+        // f1 は後で使いたい
+        // f1 が生きている限り、f2 を消しても結局 bigData は残る
         f1(0);
     }
 }
-</code></pre>
+```

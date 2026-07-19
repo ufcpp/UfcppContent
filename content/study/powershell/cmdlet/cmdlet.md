@@ -82,8 +82,8 @@ begin, process, end
 
 パイプラインの挙動
 
-<pre class="console" title="">
-<span class="prompt">&gt; </span>1,2,3,4 |
+```console
+> 1,2,3,4 |
   %{Start-Sleep 0.3; Write-Warning 1; $_ } |
   %{Start-Sleep 0.5; Write-Warning 2; $_ } |
   %{Start-Sleep 0.7; Write-Warning 3; $_ }
@@ -104,7 +104,7 @@ begin, process, end
 警告: 2
 警告: 3
 4
-</pre>
+```
 
 
 ↑きっちりこの順で出るってことは、

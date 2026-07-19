@@ -49,14 +49,14 @@ YouTube 配信前に作ってある[お品書き issue](https://github.com/ufcpp
 
 入ったのは [Constant  Interpolated Strings](https://github.com/dotnet/csharplang/issues/2951)([文字列補間](../../../../study/csharp/start/st_string.md#string-interpolation)の const 扱い)です。
 
-<pre class="source" title="Constant  Interpolated Strings">
-<code><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> A { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> B { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">string</span> S = <span class="string">$&quot;</span>{<span class="reserved">nameof</span>(A)}<span class="string"> </span>{<span class="reserved">nameof</span>(B)}<span class="string">&quot;</span>;
+    public int A { get; }
+    public int B { get; }
+    public const string S = $"{nameof(A)} {nameof(B)}";
 }
-</code></pre>
+```
 
 文字列補間の `$"{}"` の `{}` の中が全部定数の時、`$"{}"` も定数扱いされるという仕様になりました。
 
@@ -64,9 +64,9 @@ YouTube 配信前に作ってある[お品書き issue](https://github.com/ufcpp
 
 ちなみに、`{}` の中には、たとえ [const](../../../../study/csharp/start/sp_const.md#const) であっても数値とかは受け付けず、const string の入れ子だけを受け付けます。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">string</span> S = <span class="error"><span class="string">$&quot;</span>{123}<span class="string">&quot;</span></span>;
-</code></pre>
+```csharp
+public const string S = $"{123}";
+```
 
 [23:00～](https://www.youtube.com/watch?t=1380&v=xS_AlnXMFwo&feature=youtu.be)
 
@@ -75,26 +75,26 @@ YouTube 配信前に作ってある[お品書き issue](https://github.com/ufcpp
 
 カルチャー依存の例:
 
-<pre class="source" title="double のカルチャー依存 ToString/Parse">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Globalization;
+```csharp
+using System;
+using System.Globalization;
  
-<span class="reserved">var</span> <span class="variable">ja</span> = <span class="type">CultureInfo</span>.<span class="method">GetCultureInfo</span>(<span class="string">&quot;ja-jp&quot;</span>);
-<span class="reserved">var</span> <span class="variable">fr</span> = <span class="type">CultureInfo</span>.<span class="method">GetCultureInfo</span>(<span class="string">&quot;fr-fr&quot;</span>);
-<span class="comment">//Console.WriteLine(double.Parse(1.234.ToString(ja), fr)); // 例外</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">double</span>.<span class="method">Parse</span>(1.234.<span class="method">ToString</span>(<span class="variable">fr</span>), <span class="variable">ja</span>)); <span class="comment">// 1234 扱い…</span>
+var ja = CultureInfo.GetCultureInfo("ja-jp");
+var fr = CultureInfo.GetCultureInfo("fr-fr");
+//Console.WriteLine(double.Parse(1.234.ToString(ja), fr)); // 例外
+Console.WriteLine(double.Parse(1.234.ToString(fr), ja)); // 1234 扱い…
  
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">double</span>.<span class="method">Parse</span>(1.234.<span class="method">ToString</span>(<span class="variable">fr</span>))); <span class="comment">// CurrentCulture...</span>
+Console.WriteLine(double.Parse(1.234.ToString(fr))); // CurrentCulture...
  
-System.Threading.<span class="type">Thread</span>.CurrentThread.CurrentCulture = <span class="variable">fr</span>;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">double</span>.<span class="method">Parse</span>(1.234.<span class="method">ToString</span>(<span class="variable">fr</span>))); <span class="comment">// CurrentCulture...</span>
-</code></pre>
+System.Threading.Thread.CurrentThread.CurrentCulture = fr;
+Console.WriteLine(double.Parse(1.234.ToString(fr))); // CurrentCulture...
+```
 
-<pre class="console" title="double のカルチャー依存 ToString/Parse">
-<code>1234
+```console
+1234
 1234
 1,234
-</code></pre>
+```
 
 ## IDE Productivity
 
