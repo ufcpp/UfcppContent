@@ -21,34 +21,34 @@ C# コンパイラーによって、ILのレベルでは結構身に覚えのな
 
 例えば以下のようなコードを書くだけで、自動的に追加されたメンバーがたくさん出てきます。
 
-<pre class="source" title="全メンバーの列挙">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
-<span class="reserved">using</span> <span class="reserved">static</span> System.Reflection.<span class="type">BindingFlags</span>;
+```csharp
+using System;
+using static System.Console;
+using static System.Reflection.BindingFlags;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] { <span class="reserved">get</span> { <span class="reserved">return</span> index; } <span class="reserved">set</span> { } }
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span> E;
+    public int X { get; set; }
+    public int this[int index] { get { return index; } set { } }
+    public event Action E;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> <span class="reserved">typeof</span>(<span class="type">C</span>).GetMembers(Public | NonPublic | Instance | DeclaredOnly))
+        foreach (var x in typeof(C).GetMembers(Public | NonPublic | Instance | DeclaredOnly))
         {
             WriteLine(x.Name);
         }
     }
 }
-</code></pre>
+```
 
 実行結果は以下の通り。
 
-<pre class="console" title="全メンバーの列挙">
-<code>get_X
+```console
+get_X
 set_X
 add_E
 remove_E
@@ -58,9 +58,9 @@ set_Item
 X
 Item
 E
-&lt;X&gt;k__BackingField
+<X>k__BackingField
 E
-</code></pre>
+```
 
 今日はこれらについて説明して行きます。
 
@@ -71,21 +71,21 @@ E
 リフレクション的には、コンストラクターは`.ctor`という名前で見えます。
 ちなみに、生成されるILを覗いてみると以下のような感じ。
 
-<pre class="source" title="コンストラクターの中身">
-<code>.class <span class="reserved">private</span> <span class="reserved">auto</span> <span class="reserved">ansi</span> <span class="reserved">beforefieldinit</span> C
-       <span class="reserved">extends</span> [mscorlib]System.Object
+```cil
+.class private auto ansi beforefieldinit C
+       extends [mscorlib]System.Object
 {
-  .method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">specialname</span> <span class="reserved">rtspecialname</span> 
-          <span class="reserved">instance</span> <span class="reserved">void</span>  <span class="reserved">.ctor</span>() <span class="reserved">cil</span> <span class="reserved">managed</span>
+  .method public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
   {
     .maxstack  8
     IL_0000:  ldarg.0
-    IL_0001:  call       <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Object::<span class="reserved">.ctor</span>()
+    IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
     IL_0006:  nop
     IL_0007:  ret
   }
 }
-</code></pre>
+```
 
 `rtspecialname`とかいう特別そうなフラグが付いているのと、
 名前が変という以外はただのメソッドです。
@@ -97,37 +97,37 @@ E
 自動実装プロパティであればフィールドが1つ作られます。
 今回の例では、`X`は自動実装プロパティで、`get`、`set`共に持っているので以下のようなILが生成されます。
 
-<pre class="source" title="プロパティの中身">
-<code>  .field <span class="reserved">private</span> <span class="reserved">int32</span> '&lt;X&gt;k__BackingField'
-  .custom <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::<span class="reserved">.ctor</span>() = ( 01 00 00 00 ) 
+```cil
+  .field private int32 '<X>k__BackingField'
+  .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
 
-  .property <span class="reserved">instance</span> <span class="reserved">int32</span> X()
+  .property instance int32 X()
   {
-    .get <span class="reserved">instance</span> <span class="reserved">int32</span> C::get_X()
-    .set <span class="reserved">instance</span> <span class="reserved">void</span> C::set_X(<span class="reserved">int32</span>)
+    .get instance int32 C::get_X()
+    .set instance void C::set_X(int32)
   }
 
-  .method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">specialname</span> <span class="reserved">instance</span> <span class="reserved">int32</span> 
-          get_X() <span class="reserved">cil</span> <span class="reserved">managed</span>
+  .method public hidebysig specialname instance int32 
+          get_X() cil managed
   {
-    .custom <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::<span class="reserved">.ctor</span>() = ( 01 00 00 00 ) 
+    .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
     .maxstack  8
     IL_0000:  ldarg.0
-    IL_0001:  ldfld      <span class="reserved">int32</span> C::'&lt;X&gt;k__BackingField'
+    IL_0001:  ldfld      int32 C::'<X>k__BackingField'
     IL_0006:  ret
   }
 
-  .method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">specialname</span> <span class="reserved">instance</span> <span class="reserved">void</span> 
-          set_X(<span class="reserved">int32</span> 'value') <span class="reserved">cil</span> <span class="reserved">managed</span>
+  .method public hidebysig specialname instance void 
+          set_X(int32 'value') cil managed
   {
-    .custom <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::<span class="reserved">.ctor</span>() = ( 01 00 00 00 ) 
+    .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
     .maxstack  8
     IL_0000:  ldarg.0
     IL_0001:  ldarg.1
-    IL_0002:  stfld      <span class="reserved">int32</span> C::'&lt;X&gt;k__BackingField'
+    IL_0002:  stfld      int32 C::'<X>k__BackingField'
     IL_0007:  ret
   }
-</code></pre>
+```
 
 意味的には以下のような感じ。
 
@@ -139,13 +139,13 @@ E
 フィールドは、通常のC#では書けないような記号入りの名前なので特に問題を起こさないんですが、
 メソッドの方は被りがあり得ます。つまり、以下のコードはコンパイル エラーを起こします。
 
-<pre class="source" title="エラーを起こすコード">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="error"><span class="reserved">get</span></span>; }
-    <span class="reserved">int</span> get_X() =&gt; 0;
+    public int X { get; }
+    int get_X() => 0;
 }
-</code></pre>
+```
 
 しかもエラーを起こすのは `get` のところ。
 
@@ -155,21 +155,21 @@ E
 
 C#のインデクサーは、ILのレベルでは`Item`という名前のプロパティになっています。
 
-<pre class="source" title="インデクサーの中身">
-<code>  .custom <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Reflection.DefaultMemberAttribute::<span class="reserved">.ctor</span>(<span class="reserved">string</span>) = ( 01 00 04 49 74 65 6D 00 00 ) <span class="comment">// ...Item..
-</span>
-    .property <span class="reserved">instance</span> <span class="reserved">int32</span> Item(<span class="reserved">int32</span>)
+```cil
+  .custom instance void [mscorlib]System.Reflection.DefaultMemberAttribute::.ctor(string) = ( 01 00 04 49 74 65 6D 00 00 ) // ...Item..
+
+    .property instance int32 Item(int32)
   {
-    .get <span class="reserved">instance</span> <span class="reserved">int32</span> C::get_Item(<span class="reserved">int32</span>)
-    .set <span class="reserved">instance</span> <span class="reserved">void</span> C::set_Item(<span class="reserved">int32</span>,
-                                   <span class="reserved">int32</span>)
+    .get instance int32 C::get_Item(int32)
+    .set instance void C::set_Item(int32,
+                                   int32)
   }
 
-  .method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">specialname</span> <span class="reserved">instance</span> <span class="reserved">int32</span> 
-          get_Item(<span class="reserved">int32</span> index) <span class="reserved">cil</span> <span class="reserved">managed</span>
+  .method public hidebysig specialname instance int32 
+          get_Item(int32 index) cil managed
   {
     .maxstack  1
-    .locals init ([0] <span class="reserved">int32</span> V_0)
+    .locals init ([0] int32 V_0)
     IL_0000:  nop
     IL_0001:  ldarg.1
     IL_0002:  stloc.0
@@ -179,15 +179,15 @@ C#のインデクサーは、ILのレベルでは`Item`という名前のプロ�
     IL_0006:  ret
   }
 
-  .method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">specialname</span> <span class="reserved">instance</span> <span class="reserved">void</span> 
-          set_Item(<span class="reserved">int32</span> index,
-                   <span class="reserved">int32</span> 'value') <span class="reserved">cil</span> <span class="reserved">managed</span>
+  .method public hidebysig specialname instance void 
+          set_Item(int32 index,
+                   int32 'value') cil managed
   {
     .maxstack  8
     IL_0000:  nop
     IL_0001:  ret
   }
-</code></pre>
+```
 
 意味的には以下のような感じ。
 
@@ -200,40 +200,40 @@ C#のインデクサーは、ILのレベルでは`Item`という名前のプロ�
 
 `Item`に展開されるので、もちろん、以下のコードは`this`のところでコンパイル エラー。
 
-<pre class="source" title="エラーを起こすコード">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="error"><span class="reserved">this</span></span>[<span class="reserved">int</span> index] { <span class="reserved">get</span> { <span class="reserved">return</span> index; } }
-    <span class="reserved">int</span> Item { <span class="reserved">get</span>; }
+    public int this[int index] { get { return index; } }
+    int Item { get; }
 }
-</code></pre>
+```
 
 `get_Item`メソッドもダメです。`get`のところでエラー。
 
-<pre class="source" title="エラーを起こすコード">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] { <span class="error"><span class="reserved">get</span></span> { <span class="reserved">return</span> index; } }
-    <span class="reserved">int</span> get_Item(<span class="reserved">int</span> index) =&gt; 0;
+    public int this[int index] { get { return index; } }
+    int get_Item(int index) => 0;
 }
-</code></pre>
+```
 
 `Item`プロパティは普通に使いそうな名前なので、罠を踏むとしたらこれが一番頻出しそうなやつです。
 
 ちなみに、回避方法も、まあ、あって、インデクサーから生成されるプロパティの名前は変更できます。
 
-<pre class="source" title="インデクサーから生成されるプロパティの名前を明示的に指定">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    [System.Runtime.CompilerServices.<span class="type">IndexerName</span>(<span class="string">"Indexer"</span>)]
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] { <span class="reserved">get</span> { <span class="reserved">return</span> index; } }
+    [System.Runtime.CompilerServices.IndexerName("Indexer")]
+    public int this[int index] { get { return index; } }
 
-    <span class="comment">// ↑これで Item は生成されなくなるので、自前のもの↓と被らなくなる</span>
+    // ↑これで Item は生成されなくなるので、自前のもの↓と被らなくなる
 
-    <span class="reserved">int</span> Item { <span class="reserved">get</span>; }
-    <span class="reserved">int</span> get_Item(<span class="reserved">int</span> index) =&gt; 0;
+    int Item { get; }
+    int get_Item(int index) => 0;
 }
-</code></pre>
+```
 
 ちなみに、C#コード上はインデクサーに`IndexerName`属性が付いていますが、
 コンパイル結果的にはクラスに対する`DefaultMember`属性に変換されます。
@@ -247,30 +247,30 @@ C#のインデクサーは、ILのレベルでは`Item`という名前のプロ�
 プロパティに近いんですが、`get`、`set`の代わりに`add`、`remove`です。
 自動実装でフィールドが作れる部分は同じです。
 
-<pre class="source" title="イベントの中身">
-<code>  .event [mscorlib]System.Action E
+```cil
+  .event [mscorlib]System.Action E
   {
-    .addon <span class="reserved">instance</span> <span class="reserved">void</span> C::add_E(<span class="reserved">class</span> [mscorlib]System.Action)
-    .removeon <span class="reserved">instance</span> <span class="reserved">void</span> C::remove_E(<span class="reserved">class</span> [mscorlib]System.Action)
-  } <span class="comment">// end of event C::E
-</span>
-  .field <span class="reserved">private</span> <span class="reserved">class</span> [mscorlib]System.Action E
-  .custom <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::<span class="reserved">.ctor</span>() = ( 01 00 00 00 ) 
+    .addon instance void C::add_E(class [mscorlib]System.Action)
+    .removeon instance void C::remove_E(class [mscorlib]System.Action)
+  } // end of event C::E
 
-    .method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">specialname</span> <span class="reserved">instance</span> <span class="reserved">void</span> 
-          add_E(<span class="reserved">class</span> [mscorlib]System.Action 'value') <span class="reserved">cil</span> <span class="reserved">managed</span>
-  {
-    .custom <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::<span class="reserved">.ctor</span>() = ( 01 00 00 00 ) 
-    <span class="comment">// 結構長いのでさすがに省略
-</span>  }
+  .field private class [mscorlib]System.Action E
+  .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
 
-  .method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">specialname</span> <span class="reserved">instance</span> <span class="reserved">void</span> 
-          remove_E(<span class="reserved">class</span> [mscorlib]System.Action 'value') <span class="reserved">cil</span> <span class="reserved">managed</span>
+    .method public hidebysig specialname instance void 
+          add_E(class [mscorlib]System.Action 'value') cil managed
   {
-    .custom <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::<span class="reserved">.ctor</span>() = ( 01 00 00 00 ) 
-    <span class="comment">// 結構長いのでさすがに省略
-</span>  }
-</code></pre>
+    .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+    // 結構長いのでさすがに省略
+  }
+
+  .method public hidebysig specialname instance void 
+          remove_E(class [mscorlib]System.Action 'value') cil managed
+  {
+    .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 ) 
+    // 結構長いのでさすがに省略
+  }
+```
 
 プロパティと似た感じで、
 
@@ -288,50 +288,50 @@ C#では許されていませんが、ILレベルだと、メンバーの種類�
 
 そして、実は、イベントを触っているように見えて、実は裏で作られたフィールドを触っているという事態に。
 
-<pre class="source" title="Eの参照の仕方">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span> E;
+    public event Action E;
 
-    <span class="comment">// 登録の側は add_E が呼ばれてるんだけど</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Register() =&gt; E += Handler;
-    <span class="reserved">void</span> Handler() { }
+    // 登録の側は add_E が呼ばれてるんだけど
+    public void Register() => E += Handler;
+    void Handler() { }
 
-    <span class="comment">// 呼び出し側では、実はイベントの E じゃなくて、フィールドの E</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Invoke() =&gt; E();
+    // 呼び出し側では、実はイベントの E じゃなくて、フィールドの E
+    public void Invoke() => E();
 }
-</code></pre>
+```
 
 この`Invoke`メソッドの中を見てみると以下のような感じ。`ldfld`命令はフィールド読み込みのための命令です。
 
-<pre class="source" title="Invokeメソッドの中身">
-<code>.method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">instance</span> <span class="reserved">void</span>  Call() <span class="reserved">cil</span> <span class="reserved">managed</span>
+```cil
+.method public hidebysig instance void  Call() cil managed
 {
   .maxstack  8
   IL_0000:  ldarg.0
-  IL_0001:  ldfld      <span class="reserved">class</span> [mscorlib]System.Action C::E
-  IL_0006:  callvirt   <span class="reserved">instance</span> <span class="reserved">void</span> [mscorlib]System.Action::Invoke()
+  IL_0001:  ldfld      class [mscorlib]System.Action C::E
+  IL_0006:  callvirt   instance void [mscorlib]System.Action::Invoke()
   IL_000b:  nop
   IL_000c:  ret
 }
-</code></pre>
+```
 
 つまり、イベントを明示的に実装すると、`E()`みたいな呼び出しはできなくなります。
 
-<pre class="source" title="イベントを明示的実装に変えると、フィールドのEが消える">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">private</span> <span class="type">Action</span> _e;
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span> E
+    private Action _e;
+    public event Action E
     {
-        <span class="reserved">add</span> { _e += <span class="reserved">value</span>; }
-        <span class="reserved">remove</span> { _e -= <span class="reserved">value</span>; }
+        add { _e += value; }
+        remove { _e -= value; }
     }
 
-    <span class="comment">// 明示的に add/remove を実装すると、自動実装なフィールドの E が消える</span>
-    <span class="comment">// ↓このコードが書けなくなる</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Invoke() =&gt; E();
+    // 明示的に add/remove を実装すると、自動実装なフィールドの E が消える
+    // ↓このコードが書けなくなる
+    public void Invoke() => E();
 }
-</code></pre>
+```
 
 イベントの明示的な実装とかめったにするものじゃないのでそんなに踏まないと思いますが、一応注意が必要です。

@@ -25,30 +25,30 @@ aliases:
 すなわち、
 今までなら、
 
-<pre class="source" title="静的メソッド" lang="">
-<code><span class="reserved">int</span> x = <span class="reserved">int</span>.Parse(<span class="literal">"1"</span>);      
-</code></pre>
+```csharp
+int x = int.Parse("1");      
+```
 
 
 と書いていたものを、
 
-<pre class="source" title="拡張メソッドの定義" lang="">
-<code><span class="reserved">static class</span> <span class="type">Extensions</span>
+```csharp
+static class Extensions
 {
-    <span class="reserved">public static int</span> Parse(<span class="reserved">this string</span> str)
+    public static int Parse(this string str)
     {
-        <span class="reserved">return int</span>.Parse(str);
+        return int.Parse(str);
     }
 }
-</code></pre>
+```
 
 
 というような静的メソッドを用意することで、
 以下のような構文で呼び出せるようになります。
 
-<pre class="source" title="拡張メソッドの利用" lang="">
-<code><span class="reserved">int</span> x = <span class="literal">"1"</span>.Parse();
-</code></pre>
+```csharp
+int x = "1".Parse();
+```
 
 
 
@@ -80,71 +80,71 @@ C# 2.0 までの常識で言うと、
 <em>「[静的クラス](../oop/oo_static.md#stclass)」中に、
       第一引数に this キーワードを修飾子として付けた static メソッドを書きます</em>。
 
-<pre class="source" title="拡張メソッドの定義" lang="">
-<code><span class="reserved">static class</span> <span class="type">StringExtensions</span>
+```csharp
+static class StringExtensions
 {
-  <span class="reserved">public static string</span> ToggleCase(<span class="reserved"><em>this</em> string</span> s)
-  <span class="input">中身省略</span>
+  public static string ToggleCase(this string s)
+  中身省略
 }
-</code></pre>
+```
 
 
 このようにして定義したメソッドは、
 通常通り、静的メソッドとして呼び出すこともできますが、
 あたかも string 型のインスタンスメソッドであるかのように呼び出せるようになります。
 
-<pre class="source" title="拡張メソッドの呼び出し" lang="">
-<code><span class="reserved">string</span> s = <span class="literal">"This Is a Test String."</span>;
-<span class="reserved">string</span> s1 = StringExtensions.ToggleCase(s); <span class="comment">// 通常の呼び出し方。</span>
-<span class="reserved">string</span> s1 = <em>s.ToggleCase()</em>;                 <span class="comment">// 拡張メソッド呼び出し。</span>
-</code></pre>
+```csharp
+string s = "This Is a Test String.";
+string s1 = StringExtensions.ToggleCase(s); // 通常の呼び出し方。
+string s1 = s.ToggleCase();                 // 拡張メソッド呼び出し。
+```
 
 
 上述のような拡張メソッドの利用例のソース全てを以下に示します。
 
-<pre class="source" title="拡張メソッドの例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">namespace</span> ConsoleApplication1
+namespace ConsoleApplication1
 {
-  <span class="reserved">static class</span> <span class="type">StringExtensions</span>
+  static class StringExtensions
   {
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> 文字列の大文字と小文字を入れ替える。</span>
-    <span class="inactive">/// &lt;/summary&gt;
-    /// &lt;param name="s"&gt;</span><span class="comment">変換元</span><span class="inactive">&lt;/param&gt;
-    /// &lt;returns&gt;</span><span class="comment">変換結果</span><span class="inactive">&lt;/returns&gt;</span>
-    <span class="reserved">public static string</span> ToggleCase(<span class="reserved">this string</span> s)
+    /// <summary>
+    /// 文字列の大文字と小文字を入れ替える。
+    /// </summary>
+    /// <param name="s">変換元</param>
+    /// <returns>変換結果</returns>
+    public static string ToggleCase(this string s)
     {
-      System.Text.<span class="type">StringBuilder</span> sb = <span class="reserved">new</span> System.Text.<span class="type">StringBuilder</span>();
-      <span class="reserved">foreach</span>(<span class="reserved">char</span> c <span class="reserved">in</span> s)
+      System.Text.StringBuilder sb = new System.Text.StringBuilder();
+      foreach(char c in s)
       {
-        <span class="reserved">if</span>(<span class="reserved">char</span>.IsUpper(c))
-          sb.Append(<span class="reserved">char</span>.ToLower(c));
-        <span class="reserved">else if</span>(<span class="reserved">char</span>.IsLower(c))
-          sb.Append(<span class="reserved">char</span>.ToUpper(c));
-        <span class="reserved">else</span>
+        if(char.IsUpper(c))
+          sb.Append(char.ToLower(c));
+        else if(char.IsLower(c))
+          sb.Append(char.ToUpper(c));
+        else
           sb.Append(c);
       }
-      <span class="reserved">return</span> sb.ToString();
+      return sb.ToString();
     }
   }
 
-  <span class="reserved">class</span> <span class="type">ExtensionMethodTest</span>
+  class ExtensionMethodTest
   {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-      <span class="reserved">string</span> s = <span class="literal">"This Is a Test String."</span>;
-      <span class="type">Console</span>.Write(s.ToggleCase());
+      string s = "This Is a Test String.";
+      Console.Write(s.ToggleCase());
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="拡張メソッドの例">
+```console
 tHIS iS A tEST sTRING.
-</pre>
+```
 
 
 
@@ -158,83 +158,83 @@ tHIS iS A tEST sTRING.
 
 そのため、同じ名前空間内に2つ以上同名の拡張メソッドを定義してはいけません。
 
-<pre class="source" title="同名の拡張メソッドがあるせいでエラーに" lang="">
-<code><span class="reserved">namespace</span> ConsoleApplication1
+```csharp
+namespace ConsoleApplication1
 {
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static void</span> Main()
+        static void Main()
         {
-            <span class="type">Console</span>.Write(<span class="literal">1</span>.Square()); <span class="comment">// エラーになる</span>
+            Console.Write(1.Square()); // エラーになる
         }
     }
 
-    <span class="reserved">static class</span> <span class="type">Extensions1</span>
+    static class Extensions1
     {
-        <span class="reserved">public static int</span> Square(<span class="reserved">this int</span> x)
+        public static int Square(this int x)
         {
-            <span class="reserved">return</span> x * x;
+            return x * x;
         }
     }
 
-    <span class="reserved">static class</span> <span class="type">Extensions2</span>
+    static class Extensions2
     {
-        <span class="reserved">public static int</span> Square(<span class="reserved">this int</span> x) <span class="comment">// エラーの原因</span>
+        public static int Square(this int x) // エラーの原因
         {
-            <span class="reserved">return</span> x * x;
+            return x * x;
         }
     }
 }
-</code></pre>
+```
 
 
 同名の拡張メソッドが定義されている名前空間を同時に using するのもご法度です。
 
-<pre class="source" title="using でどのメソッドが呼ばれるかが決まる" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">namespace</span> ConsoleApplication1
+namespace ConsoleApplication1
 {
-    <span class="reserved">using</span> NamespaceA;
-    <span class="comment">//using NamespaceB;
+    using NamespaceA;
+    //using NamespaceB;
     // ↑
     // ここのコメントを外してもやっぱりエラー。
     // using NamespaceA をコメントアウトして、
-    // 代りに using NamespaceB するなら OK（表示結果が変わる）。</span>
+    // 代りに using NamespaceB するなら OK（表示結果が変わる）。
 
-    <span class="reserved">class</span> <span class="type">Program</span>   
+    class Program   
     {
-        <span class="reserved">static void</span> Main()
+        static void Main()
         {
-            <span class="literal">1</span>.WriteToConsole();
-            <span class="comment">// ↑
-            // NamespaceA.Extensions.WriteToConsole が呼ばれる</span>
+            1.WriteToConsole();
+            // ↑
+            // NamespaceA.Extensions.WriteToConsole が呼ばれる
         }
     }
 }
 
-<span class="reserved">namespace</span> NamespaceA
+namespace NamespaceA
 {
-    <span class="reserved">static class</span> <span class="type">Extensions</span>
+    static class Extensions
     {
-        <span class="reserved">public static void</span> WriteToConsole(<span class="reserved">this int</span> x)
+        public static void WriteToConsole(this int x)
         {
-            <span class="type">Console</span>.Write(<span class="literal">"A {0}"</span>, x);
+            Console.Write("A {0}", x);
         }
     }
 }
 
-<span class="reserved">namespace</span> NamespaceB
+namespace NamespaceB
 {
-    <span class="reserved">static class</span> <span class="type">Extensions</span>
+    static class Extensions
     {
-        <span class="reserved">public static void</span> WriteToConsole(<span class="reserved">this int</span> x)
+        public static void WriteToConsole(this int x)
         {
-            <span class="type">Console</span>.Write(<span class="literal">"B {0}"</span>, x);
+            Console.Write("B {0}", x);
         }
     }
 }
-</code></pre>
+```
 
 
 
@@ -248,91 +248,91 @@ tHIS iS A tEST sTRING.
 
 まず、拡張メソッドよりも通常のインスタンスメソッドの方が優先されます。
 
-<pre class="source" title="インスタンスメソッド優先" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="type">Console</span>.Write(<span class="literal">1</span>.ToString());
-        <span class="comment">// ↑
+        Console.Write(1.ToString());
+        // ↑
         // Extensions.ToString ではなく、
-        // int.ToString が呼ばれる。</span>
+        // int.ToString が呼ばれる。
     }
 }
 
-<span class="reserved">static class</span> <span class="type">Extensions</span>
+static class Extensions
 {
-    <span class="reserved">public static string</span> ToString(<span class="reserved">this int</span> x)
+    public static string ToString(this int x)
     {
-        <span class="reserved">return</span> <span class="literal">"dummy data"</span>;
+        return "dummy data";
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-7"></a> <a id="overload"></a>オーバーロード解決ルールより、インスタンス メソッド優先が強い
 
 通常、オーバーロードが複数ある場合は一番引数の一致度が高いものが呼ばれます。
 例えば、以下のコードの場合は、`object`引数のものより`string`引数のものがまず優先、`string`に合わない場合だけ`object`のものが呼ばれます。
 
-<pre class="source" title="オーバーロード解決">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> F(<span class="reserved">object</span> x) =&gt; WriteLine(<span class="string">$"object </span>{x}<span class="string">"</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> F(<span class="reserved">string</span> x) =&gt; WriteLine(<span class="string">$"string </span>{x}<span class="string">"</span>);
+    public void F(object x) => WriteLine($"object {x}");
+    public void F(string x) => WriteLine($"string {x}");
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">X</span>();
-        x.F(<span class="string">"abc"</span>); <span class="comment">// string のが呼ばれる</span>
-        x.F(10);    <span class="comment">// int のオーバーロードがないので object のが呼ばれる</span>
+        var x = new X();
+        x.F("abc"); // string のが呼ばれる
+        x.F(10);    // int のオーバーロードがないので object のが呼ばれる
     }
 }
-</code></pre>
-<pre class="console" title="実行結果">
-<code>string abc
+```
+```console
+string abc
 object 10
-</code></pre>
+```
 
 ここで、`int`引数の拡張メソッドを足してみましょう。
 しかし、拡張メソッドよりもインスタンス メソッドの方が優先的に呼ばれます。
 引数の一致度が高くても、拡張メソッドの方は呼ばれません。
 
-<pre class="source" title="インスタンス メソッドと拡張メソッドの混在">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> F(<span class="reserved">object</span> x) =&gt; WriteLine(<span class="string">$"object </span>{x}<span class="string">"</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> F(<span class="reserved">string</span> x) =&gt; WriteLine(<span class="string">$"string </span>{x}<span class="string">"</span>);
+    public void F(object x) => WriteLine($"object {x}");
+    public void F(string x) => WriteLine($"string {x}");
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">XExtensions</span>
+static class XExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">this</span> <span class="type">X</span> @this, <span class="reserved">int</span> x) =&gt; WriteLine(<span class="string">$"int </span>{x}<span class="string">"</span>);
+    public static void F(this X @this, int x) => WriteLine($"int {x}");
 
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">X</span>();
-        x.F(<span class="string">"abc"</span>); <span class="comment">// string のが呼ばれる</span>
-        x.F(10);    <span class="comment">// int な拡張が増えたものの、インスタンス メソッド優先で object のが呼ばれる</span>
+        var x = new X();
+        x.F("abc"); // string のが呼ばれる
+        x.F(10);    // int な拡張が増えたものの、インスタンス メソッド優先で object のが呼ばれる
     }
 }
-</code></pre>
-<pre class="console" title="実行結果">
-<code>string abc
+```
+```console
+string abc
 object 10
-</code></pre>
+```
 
 
 ### <a id="sec-generated-title-8"></a> <a id="namespace"></a>名前空間の優先度
@@ -347,52 +347,52 @@ object 10
 以下のように、使う場所に近いほど優先、直接的なものほど優先で呼べます。
 同優先度のものが複数ある場合はコンパイル エラーになります。
 
-<pre class="source" title="複数の名前空間にある拡張メソッドの呼び分け">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
-<span class="reserved">using</span> A;
+```csharp
+using static System.Console;
+using A;
 
-<span class="reserved">using</span> <span class="type">Lib</span> = C.<span class="type">Lib</span>;
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">this</span> <span class="reserved">int</span> x) =&gt; WriteLine(<span class="string">"global"</span>); }
+using Lib = C.Lib;
+static class Lib { public static void F(this int x) => WriteLine("global"); }
 
-<span class="reserved">namespace</span> MyApp
+namespace MyApp
 {
-    <span class="reserved">using</span> B;
+    using B;
 
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">this</span> <span class="reserved">int</span> x) =&gt; WriteLine(<span class="string">"MyApp"</span>); }
+    static class Lib { public static void F(this int x) => WriteLine("MyApp"); }
 
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> Main()
+        static void Main()
         {
-            <span class="comment">// F 拡張メソッドは5つある</span>
-            <span class="comment">// この場合 MyApp.Lib.F が使われる</span>
-            <span class="comment">// 優先度 高 MyApp &gt; B &gt; global = C &gt; A 低</span>
+            // F 拡張メソッドは5つある
+            // この場合 MyApp.Lib.F が使われる
+            // 優先度 高 MyApp > B > global = C > A 低
             10.F();
 
-            <span class="comment">// ちゃんと呼び分けたければ拡張メソッドとして使うことをあきらめる</span>
-            <span class="comment">// 完全修飾名を使って、普通の静的メソッドとして呼ぶ</span>
-            A.<span class="type">Lib</span>.F(10);
-            B.<span class="type">Lib</span>.F(10);
-            C.<span class="type">Lib</span>.F(10);
-            MyApp.<span class="type">Lib</span>.F(10);
-            <span class="reserved">global</span>::<span class="type">Lib</span>.F(10);
+            // ちゃんと呼び分けたければ拡張メソッドとして使うことをあきらめる
+            // 完全修飾名を使って、普通の静的メソッドとして呼ぶ
+            A.Lib.F(10);
+            B.Lib.F(10);
+            C.Lib.F(10);
+            MyApp.Lib.F(10);
+            global::Lib.F(10);
         }
     }
 }
 
-<span class="reserved">namespace</span> A
+namespace A
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">this</span> <span class="reserved">int</span> x) =&gt; WriteLine(<span class="string">"A"</span>); }
+    static class Lib { public static void F(this int x) => WriteLine("A"); }
 }
-<span class="reserved">namespace</span> B
+namespace B
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">this</span> <span class="reserved">int</span> x) =&gt; WriteLine(<span class="string">"B"</span>); }
+    static class Lib { public static void F(this int x) => WriteLine("B"); }
 }
-<span class="reserved">namespace</span> C
+namespace C
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Lib</span> { <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">this</span> <span class="reserved">int</span> x) =&gt; WriteLine(<span class="string">"C"</span>); }
+    static class Lib { public static void F(this int x) => WriteLine("C"); }
 }
-</code></pre>
+```
 
 
 ## <a id="sec-generated-title-9"></a> <a id="interface"></a>インターフェースに拡張メソッドを追加
@@ -406,36 +406,36 @@ object 10
 しかしながら、拡張メソッドを利用することで、
 インスタンスメソッド定義っぽいことが実現できます。
 
-<pre class="source" title="インターフェースに対する拡張メソッド定義" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections;
+```csharp
+using System;
+using System.Collections;
 
-<span class="reserved">static class</span> <span class="type">Extensions</span>
+static class Extensions
 {
-  <span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;T&gt; Duplicate&lt;T&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;T&gt; list)
+  public static IEnumerable<T> Duplicate<T>(this IEnumerable<T> list)
   {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> list)
+    foreach (var x in list)
     {
-      <span class="reserved">yield return</span> x;
-      <span class="reserved">yield return</span> x;
+      yield return x;
+      yield return x;
     }
   }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
-    <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; data = <span class="reserved">new int</span>[]{ <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span> };
+    IEnumerable<int> data = new int[]{ 1, 2, 3 };
 
-    <span class="comment">// ↓インターフェースに対してメソッドを追加できる</span>
+    // ↓インターフェースに対してメソッドを追加できる
     data = data.Duplicate();
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
-      <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, x);
+    foreach (var x in data)
+      Console.Write("{0}\n", x);
   }
 }
-</code></pre>
+```
 
 
 C# 3.0 では、IEnumerable インターフェースなどに、
@@ -490,37 +490,37 @@ using 文1つでどの静的メソッドが呼ばれるのかが切り替わっ�
 
 まず、条件付けや値の加工のために以下のような静的メソッドを用意します。
 
-<pre class="source" title="データ列の選択・加工用のメソッド" lang="">
-<code><span class="reserved">static class</span> <span class="type">Extensions</span>
+```csharp
+static class Extensions
 {
-    <span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Where(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; array, <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; pred)
+    public static IEnumerable<int> Where(this IEnumerable<int> array, Func<int, bool> pred)
     {
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> array)
-            <span class="reserved">if</span> (pred(x))
-                <span class="reserved">yield return</span> x;
+        foreach (var x in array)
+            if (pred(x))
+                yield return x;
     }
 
-    <span class="reserved">public static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Select(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; array, <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; filter)
+    public static IEnumerable<int> Select(this IEnumerable<int> array, Func<int, int> filter)
     {
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> array)
-            <span class="reserved">yield return</span> filter(x);
+        foreach (var x in array)
+            yield return filter(x);
     }
 }
-</code></pre>
+```
 
 
 これを、静的メソッド呼び出しの構文で書くと以下のようになります。
 
-<pre class="source" title="静的メソッドによるデータ列のパイプライン処理" lang="">
-<code><span class="reserved">var</span> input = <span class="reserved">new</span>[] { <span class="literal">8</span>, <span class="literal">9</span>, <span class="literal">10</span>, <span class="literal">11</span>, <span class="literal">12</span>, <span class="literal">13</span> };
+```csharp
+var input = new[] { 8, 9, 10, 11, 12, 13 };
 
-<span class="reserved">var</span> output =
-    <span class="type">Extensions</span>.Select(
-        <span class="type">Extensions</span>.Where(
+var output =
+    Extensions.Select(
+        Extensions.Where(
             input,
-            x =&gt; x &gt; <span class="literal">10</span>),
-        x =&gt; x * x);
-</code></pre>
+            x => x > 10),
+        x => x * x);
+```
 
 
 やりたいパイプライン処理の順序と、語順が逆になります。
@@ -529,13 +529,13 @@ using 文1つでどの静的メソッドが呼ばれるのかが切り替わっ�
 
 これに対して、拡張メソッド構文を使うと、以下のようになります。
 
-<pre class="source" title="拡張メソッドによるデータ列のパイプライン処理" lang="">
-<code><span class="reserved">var</span> input = <span class="reserved">new</span>[] { <span class="literal">8</span>, <span class="literal">9</span>, <span class="literal">10</span>, <span class="literal">11</span>, <span class="literal">12</span>, <span class="literal">13</span> };
+```csharp
+var input = new[] { 8, 9, 10, 11, 12, 13 };
 
-<span class="reserved">var</span> output = input
-    .Where(x =&gt; x &gt; <span class="literal">10</span>)
-    .Select(x =&gt; x * x);
-</code></pre>
+var output = input
+    .Where(x => x > 10)
+    .Select(x => x * x);
+```
 
 
 ただ語順が違うだけなんですが、
@@ -557,34 +557,34 @@ using 文1つでどの静的メソッドが呼ばれるのかが切り替わっ�
 
 すなわち、以下のようなコードは合法です。
 
-<pre class="source" title="拡張メソッドのデリゲートへの代入" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">namespace</span> ConsoleApplication1
+namespace ConsoleApplication1
 {
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static void</span> Main()
+        static void Main()
         {
-            <span class="type">Func</span>&lt;<span class="reserved">string</span>&gt; f = <span class="literal">"test"</span>.Duplicate;
-            <span class="comment">// ↑
+            Func<string> f = "test".Duplicate;
+            // ↑
             // 実行結果的には
-            // Func&lt;string&gt; f = () =&gt; Extensions.Duplicate("test");
+            // Func<string> f = () => Extensions.Duplicate("test");
             // と同じ。
             // コンパイル結果的には、こんな余計な匿名デリゲートはできないらしい。
-            // 直接 f に Extensions.Duplicate("test") が代入されるようなイメージ。</span>
+            // 直接 f に Extensions.Duplicate("test") が代入されるようなイメージ。
         }
     }
 
-    <span class="reserved">static class</span> <span class="type">Extensions</span>
+    static class Extensions
     {
-        <span class="reserved">public static string</span> Duplicate(<span class="reserved">this string</span> x)
+        public static string Duplicate(this string x)
         {
-            <span class="reserved">return</span> x + x;
+            return x + x;
         }
     }
 }
-</code></pre>
+```
 
 こういうように、メソッドの引数を何らかの値で束縛して、新しいデリゲートを作ることをカリー化（currying）といいます。
 また、上述のようなデリゲートの作り方をカリー化デリゲート（curried delegate）というそうです
@@ -603,44 +603,44 @@ C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)�
 
 以下のように書けます。`ref`引数の拡張メソッドで構造体の書き換えができたり、コピー除けのために`in`引数が使えます。
 
-<pre class="source" title="参照渡しの拡張メソッドの例">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">QuaternionExtensions</span>
+```csharp
+public static class QuaternionExtensions
 {
-    <span class="comment">// 構造体の書き換えを拡張メソッドでやりたい場合に ref 引数が使える</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Conjugate(<em><span class="reserved">ref</span> <span class="reserved">this</span></em> <span class="type">Quaternion</span> q)
+    // 構造体の書き換えを拡張メソッドでやりたい場合に ref 引数が使える
+    public static void Conjugate(ref this Quaternion q)
     {
-        <span class="reserved">var</span> norm = q.W * q.W + q.X * q.X + q.Y * q.Y + q.Z * q.Z;
+        var norm = q.W * q.W + q.X * q.X + q.Y * q.Y + q.Z * q.Z;
         q.W = q.W / norm;
         q.X = -q.X / norm;
         q.Y = -q.Y / norm;
         q.Z = -q.Z / norm;
     }
 
-    <span class="comment">// コピーを避けたい場合に in 引数が使える</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Quaternion</span> Rotate(<em><span class="reserved">in</span> <span class="reserved">this</span></em> <span class="type">Quaternion</span> p, <span class="reserved">in</span> <span class="type">Quaternion</span> q)
+    // コピーを避けたい場合に in 引数が使える
+    public static Quaternion Rotate(in this Quaternion p, in Quaternion q)
     {
-        <span class="reserved">var</span> qc = q;
+        var qc = q;
         qc.Conjugate();
-        <span class="reserved">return</span> q * p * qc;
+        return q * p * qc;
     }
 }
 
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Quaternion</span>
+public struct Quaternion
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> W;
-    <span class="reserved">public</span> <span class="reserved">double</span> X;
-    <span class="reserved">public</span> <span class="reserved">double</span> Y;
-    <span class="reserved">public</span> <span class="reserved">double</span> Z;
-    <span class="reserved">public</span> Quaternion(<span class="reserved">double</span> w, <span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z) =&gt; (W, X, Y, Z) = (w, x, y, z);
+    public double W;
+    public double X;
+    public double Y;
+    public double Z;
+    public Quaternion(double w, double x, double y, double z) => (W, X, Y, Z) = (w, x, y, z);
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Quaternion</span> <span class="reserved">operator</span> *(<span class="reserved">in</span> <span class="type">Quaternion</span> a, <span class="reserved">in</span> <span class="type">Quaternion</span> b)
-        =&gt; <span class="reserved">new</span> <span class="type">Quaternion</span>(
+    public static Quaternion operator *(in Quaternion a, in Quaternion b)
+        => new Quaternion(
             a.W * b.W - a.X * b.X - a.Y * b.Y - a.Z * b.Z,
             a.W * b.X + a.X * b.W + a.Y * b.Z - a.Z * b.Y,
             a.W * b.Y + a.Y * b.W + a.Z * b.X - a.X * b.Z,
             a.W * b.Z + a.Z * b.W + a.X * b.Y - a.Y * b.X);
 }
-</code></pre>
+```
 
 ちなみに、
 古いバージョンの[コンパイラー](https://www.nuget.org/packages/Microsoft.Net.Compilers/)(バージョン2.6)では、
@@ -652,26 +652,26 @@ C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)�
 すでに触れてはいますが、参照渡しで拡張メソッドを作れるのは[構造体](../resource/rm_struct.md)(値型)だけです。
 以下のように、クラスではできません。また、ジェネリックな型の場合、[`struct`制約](../oop/sp2_generics.md#where)が必要です(ただし、それでも`in`引数は不可)。
 
-<pre class="source" title="参照渡しの拡張メソッドを作れるのは構造体だけ">
-<code><span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Extensions</span>
+```csharp
+static class Extensions
 {
-    <span class="comment">// 構造体(値型)は OK</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">ref</span> <span class="reserved">this</span> <span class="reserved">int</span> x) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> MI(<span class="reserved">in</span> <span class="reserved">this</span> <span class="reserved">int</span> x) { }
+    // 構造体(値型)は OK
+    public static void M(ref this int x) { }
+    public static void MI(in this int x) { }
 
-    <span class="comment">// クラス(参照型)はダメ。コンパイル エラー</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="error">M</span>(<span class="reserved">ref</span> <span class="reserved">this</span> <span class="reserved">string</span> x) { }
+    // クラス(参照型)はダメ。コンパイル エラー
+    public static void M(ref this string x) { }
 
-    <span class="comment">// 制約が付いていないとダメ。コンパイル エラー</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="error">M1</span>&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="reserved">this</span> T x) { }
+    // 制約が付いていないとダメ。コンパイル エラー
+    public static void M1<T>(ref this T x) { }
 
-    <span class="comment">// ref の場合、struct 制約が付いていれば OK</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M2&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="reserved">this</span> T x) <span class="reserved">where</span> T : <span class="reserved">struct</span> { }
+    // ref の場合、struct 制約が付いていれば OK
+    public static void M2<T>(ref this T x) where T : struct { }
 
-    <span class="comment">// in の場合、struct 制約が付いてもダメ</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="error">M3</span>&lt;<span class="type">T</span>&gt;(<span class="reserved">in</span> <span class="reserved">this</span> T x) <span class="reserved">where</span> T : <span class="reserved">struct</span> { }
+    // in の場合、struct 制約が付いてもダメ
+    public static void M3<T>(in this T x) where T : struct { }
 }
-</code></pre>
+```
 
 こういう仕様になっている理由ですが、
 まず、クラスについては拡張メソッドの中で参照を書き換えられることを心配してのことだそうです。
@@ -679,21 +679,21 @@ C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)�
 `s`が書き換わる可能性があることが呼ぶ側でもわかりやすいです。
 一方で、拡張メソッドの場合は`ref`を付けない仕様なので、知らないうちに書き換わる可能性があり、これを禁止したかったわけです。
 
-<pre class="source" title="クラスの引数を ref this にできない理由">
-<code><span class="comment">// (もしもこれをコンパイル エラーにしなかった場合)</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">ref</span> <span class="reserved">this</span> <span class="reserved">string</span> s)
+```csharp
+// (もしもこれをコンパイル エラーにしなかった場合)
+public static void M(ref this string s)
 {
-    <span class="comment">// 拡張メソッドの中で参照を書き換える</span>
-    s = <span class="reserved">null</span>;
+    // 拡張メソッドの中で参照を書き換える
+    s = null;
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> Main()
+static void Main()
 {
-    <span class="reserved">var</span> s = <span class="string">"abc"</span>;
-    s.M(); <span class="comment">// M の中で s = null される</span>
-    Console.WriteLine(s); <span class="comment">// null になってる</span>
+    var s = "abc";
+    s.M(); // M の中で s = null される
+    Console.WriteLine(s); // null になってる
 }
-</code></pre>
+```
 
 `in`引数では`struct`制約付きのジェネリック型も認めていない理由については、
 コピー発生を避けることができなくて、`in`引数である意味が全くなくなるからだそうです。
@@ -702,19 +702,19 @@ C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)�
 正しく使わないとかえってパフォーマンスを損ねます。
 ジェネリックな構造体に対する`in`引数はまさにパフォーマンスを損ねるため、最初から禁止することにしました。
 
-<pre class="source" title="ジェネリックな構造体を in this にできない理由">
-<code><span class="comment">// (もしもこれをコンパイル エラーにしなかった場合)</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="reserved">in</span> <span class="reserved">this</span> T s)
-    <span class="reserved">where</span> T : IDisposable
+```csharp
+// (もしもこれをコンパイル エラーにしなかった場合)
+public static void M<T>(in this T s)
+    where T : IDisposable
 {
-    <span class="comment">// 結局、この Dispose 呼び出しのところでコピーが起こる</span>
-    <span class="comment">// コピーを避けるためには T が readonly struct でないとダメ</span>
-    <span class="comment">// インターフェイス越しなので readonly struct かどうかの判定が不可能</span>
+    // 結局、この Dispose 呼び出しのところでコピーが起こる
+    // コピーを避けるためには T が readonly struct でないとダメ
+    // インターフェイス越しなので readonly struct かどうかの判定が不可能
     s.Dispose();
-    <span class="comment">// しかも、メソッドを呼ぶたびにコピー</span>
+    // しかも、メソッドを呼ぶたびにコピー
     s.Dispose();
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-17"></a> <a id="struct-field"></a>構造体のフィールドの参照
 
@@ -724,40 +724,40 @@ C# 7.2 から、拡張メソッドの第1引数(`this`が付いている引数)�
 この制約に対する救済策として、`ref`引数の拡張メソッドが使えます。
 例えば以下のように、インスタンス メソッドではコンパイル エラーになる`ref`戻り値が、拡張メソッドではコンパイルできます。
 
-<pre class="source" title="拡張メソッドならフィールドを ref で返せる">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Point</span>
+struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">int</span> Y;
-    <span class="reserved">public</span> <span class="reserved">int</span> Z;
+    public int X;
+    public int Y;
+    public int Z;
 
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> At(<span class="reserved">int</span> index)
+    public ref int At(int index)
     {
-        <span class="reserved">switch</span> (index)
+        switch (index)
         {
-            <span class="comment">// インスタンス メソッド(プロパティ、インデクサー)では以下の ref が認められていない(コンパイル エラー)</span>
-            <span class="reserved">case</span> 0: <span class="reserved">return</span> <span class="reserved">ref</span> <span class="error">X</span>;
-            <span class="reserved">case</span> 1: <span class="reserved">return</span> <span class="reserved">ref</span> <span class="error">Y</span>;
-            <span class="reserved">case</span> 2: <span class="reserved">return</span> <span class="reserved">ref</span> <span class="error">Z</span>;
-            <span class="reserved">default</span>: <span class="reserved">throw</span> <span class="reserved">new</span> IndexOutOfRangeException();
+            // インスタンス メソッド(プロパティ、インデクサー)では以下の ref が認められていない(コンパイル エラー)
+            case 0: return ref X;
+            case 1: return ref Y;
+            case 2: return ref Z;
+            default: throw new IndexOutOfRangeException();
         }
     }
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">PointExtensions</span>
+static class PointExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> At(<span class="reserved">ref</span> <span class="reserved">this</span> Point p, <span class="reserved">int</span> index)
+    public static ref int At(ref this Point p, int index)
     {
-        <span class="reserved">switch</span> (index)
+        switch (index)
         {
-            <span class="comment">// インスタンス メソッド版とやっていることは同じでも、こちらは OK</span>
-            <span class="reserved">case</span> 0: <span class="reserved">return</span> <span class="reserved">ref</span> p.X;
-            <span class="reserved">case</span> 1: <span class="reserved">return</span> <span class="reserved">ref</span> p.Y;
-            <span class="reserved">case</span> 2: <span class="reserved">return</span> <span class="reserved">ref</span> p.Z;
-            <span class="reserved">default</span>: <span class="reserved">throw</span> <span class="reserved">new</span> IndexOutOfRangeException();
+            // インスタンス メソッド版とやっていることは同じでも、こちらは OK
+            case 0: return ref p.X;
+            case 1: return ref p.Y;
+            case 2: return ref p.Z;
+            default: throw new IndexOutOfRangeException();
         }
     }
 }
-</code></pre>
+```

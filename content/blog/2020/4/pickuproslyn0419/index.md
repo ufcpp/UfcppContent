@@ -66,14 +66,14 @@ aliases: []
 `switch` 式でだけ有効なのも変な話なので条件演算子でも同様のことをしたいという案はずっとあったんですが、
 問題は、以下のような場合に既存のコードを壊してしまうこと。
 
-<pre class="source" title="target-typed 条件演算子の悩みどころ">
-<code><span class="comment">// 既存のルールだと long の方が選ばれる。</span>
-<span class="comment">// switch 式と同じルールの target-typed を導入すると short が優先されるようになる。</span>
+```csharp
+// 既存のルールだと long の方が選ばれる。
+// switch 式と同じルールの target-typed を導入すると short が優先されるようになる。
 M(b ? 1 : 2);
 
-<span class="reserved">void</span> M(<span class="reserved">short</span> x) { }
-<span class="reserved">void</span> M(<span class="reserved">long</span> x) { }
-</code></pre>
+void M(short x) { }
+void M(long x) { }
+```
 
 ということで、
 

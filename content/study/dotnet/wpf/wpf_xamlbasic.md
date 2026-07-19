@@ -25,23 +25,23 @@ XAML の基本を説明するために、
 テキストボックスを2つ表示するコードをもう1度見てみましょう。
 
 
-<pre class="xsource" title="XAML でテキストボックス2つを表示">
-<code><span class="bracket">&lt;</span><span class="element">Page</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Background</span><span class="attvalue">="White"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Background="White"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> 
-      <span class="attribute">Width</span> <span class="attvalue">= "100"</span> <span class="attribute">FontSize</span> <span class="attvalue">= "30"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 1"</span>
-      <span class="attribute">Background</span> <span class="attvalue">= "White"</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Blue"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> 
-      <span class="attribute">Width</span> <span class="attvalue">= "100"</span> <span class="attribute">FontSize</span> <span class="attvalue">= "30"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 2"</span>
-      <span class="attribute">Background</span> <span class="attvalue">= "White"</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Green"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Page</span><span class="bracket">&gt;</span>
-</code></pre>
+  <WrapPanel>
+    <TextBox 
+      Width = "100" FontSize = "30" Text = "text 1"
+      Background = "White" Foreground = "Blue" />
+    <TextBox 
+      Width = "100" FontSize = "30" Text = "text 2"
+      Background = "White" Foreground = "Green" />
+  </WrapPanel>
+</Page>
+```
 まず、ルート要素（この例では Page タグ）ですが、
 これは、
 通常、Windows アプリケーションを作りたいなら Window タグ、
@@ -71,37 +71,37 @@ XAML 中で使えるタグ名は、
 ということで、この XAML コードは、C# 的に書き直すなら、以下のようになります。
 （まんまこの通りになるわけではないです。あくまで概念。）
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> Page1 : Page
+```csharp
+class Page1 : Page
 {
-  <span class="reserved">public</span> Page1()
+  public Page1()
   {
-    <span class="reserved">this</span>.Background = Colors.White;
+    this.Background = Colors.White;
 
-    WrapPanel panel1 = <span class="reserved">new</span> WrapPanel();
+    WrapPanel panel1 = new WrapPanel();
 
-    <span class="reserved">this</span>.Content = panel1;
+    this.Content = panel1;
 
-    TextBox textbox1 = <span class="reserved">new</span> TextBox();
+    TextBox textbox1 = new TextBox();
     textbox1.Width = 100;
     textbox1.FontSize = 30;
     textbox1.Background = Colors.White;
     textbox1.Foreground = Colors.Blue;
-    textbox1.Text = <span class="literal">"text 1"</span>;
+    textbox1.Text = "text 1";
 
     panel1.Children.Add(textbox1);
 
-    TextBox textbox2 = <span class="reserved">new</span> TextBox();
+    TextBox textbox2 = new TextBox();
     textbox2.Width = 100;
     textbox2.FontSize = 30;
     textbox2.Background = Colors.White;
     textbox2.Foreground = Colors.Green;
-    textbox2.Text = <span class="literal">"text 2"</span>;
+    textbox2.Text = "text 2";
 
     panel1.Children.Add(textbox2);
   }
 }
-</code></pre>
+```
 
 
 
@@ -111,11 +111,11 @@ XAML 中で使えるタグ名は、
 XAML では、XML の属性として「[プロパティ](../../csharp/oop/oo_property.md#property)」の値を設定できます。
 
 
-<pre class="xsource" title="XML 属性としてプロパティの値を設定">
-<code><span class="bracket">&lt;</span><span class="element">TextBox</span> 
-  <em><span class="attribute">Width</span> <span class="attvalue">= "100"</span> <span class="attribute">FontSize</span> <span class="attvalue">= "30"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 1"</span></em>
-  <em><span class="attribute">Background</span> <span class="attvalue">= "White"</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Blue"</span></em> /<span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<TextBox 
+  Width = "100" FontSize = "30" Text = "text 1"
+  Background = "White" Foreground = "Blue" />
+```
 この書き方は <strong id="attribute" class="keyword">Attribute Syntax</strong> と言って、
 値を文字列で指定できる（文字列そのもの or 文字列から直接変換可能な型）プロパティの場合はこの構文を使うと便利です。
 
@@ -124,30 +124,30 @@ XML 要素の子要素としてプロパティの値を設定する Property Ele
 例えば、上の例を <strong id="property" class="keyword">Property Element Syntax</strong> で書き直すと以下のようになります。
 
 
-<pre class="xsource" title="子要素としてプロパティの値を設定">
-<code><span class="bracket">&lt;</span><span class="element">TextBox</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.Width</span><span class="bracket">&gt;</span>100<span class="bracket">&lt;</span>/<span class="element">TextBox.Width</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.FontSize</span><span class="bracket">&gt;</span>30<span class="bracket">&lt;</span>/<span class="element">TextBox.FontSize</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.Background</span><span class="bracket">&gt;</span>White<span class="bracket">&lt;</span>/<span class="element">TextBox.Background</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.Foreground</span><span class="bracket">&gt;</span>Blue<span class="bracket">&lt;</span>/<span class="element">TextBox.Foreground</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.Text</span><span class="bracket">&gt;</span>text 1<span class="bracket">&lt;</span>/<span class="element">TextBox.Text</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">TextBox</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<TextBox>
+  <TextBox.Width>100</TextBox.Width>
+  <TextBox.FontSize>30</TextBox.FontSize>
+  <TextBox.Background>White</TextBox.Background>
+  <TextBox.Foreground>Blue</TextBox.Foreground>
+  <TextBox.Text>text 1</TextBox.Text>
+</TextBox>
+```
 この例では、Background / Foreground の中身は相変わらず文字列からの自動型変換
 （文字列 → SolidColorBrush への変換）
 に頼っているわけですが、
 これも省略せずに書くなら以下のようになります。
 
 
-<pre class="xsource" title="子要素としてプロパティの値を設定">
-<code><span class="bracket">&lt;</span><span class="element">TextBox</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.Width</span><span class="bracket">&gt;</span>100<span class="bracket">&lt;</span>/<span class="element">TextBox.Width</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.FontSize</span><span class="bracket">&gt;</span>30<span class="bracket">&lt;</span>/<span class="element">TextBox.FontSize</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.Background</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">SolidColorBrush</span> <span class="attribute">Color</span><span class="attvalue">="White"</span>/<span class="bracket">&gt;</span><span class="bracket">&lt;</span>/<span class="element">TextBox.Background</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.Foreground</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">SolidColorBrush</span> <span class="attribute">Color</span><span class="attvalue">="Blue"</span>/<span class="bracket">&gt;</span><span class="bracket">&lt;</span>/<span class="element">TextBox.Foreground</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox.Text</span><span class="bracket">&gt;</span>text 1<span class="bracket">&lt;</span>/<span class="element">TextBox.Text</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">TextBox</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<TextBox>
+  <TextBox.Width>100</TextBox.Width>
+  <TextBox.FontSize>30</TextBox.FontSize>
+  <TextBox.Background><SolidColorBrush Color="White"/></TextBox.Background>
+  <TextBox.Foreground><SolidColorBrush Color="Blue"/></TextBox.Foreground>
+  <TextBox.Text>text 1</TextBox.Text>
+</TextBox>
+```
 文字列からの自動変換に頼らず、ちゃんとブラシを指定するなら、
 グラデーションの掛かった柄（LinearGradientBrush、RadialGradientBrush）や、
 画像（ImageBrush）などを背景・前景色に指定する事もできます。
@@ -162,26 +162,26 @@ XML 要素の子要素としてプロパティの値を設定する Property Ele
 その要素に対応するクラス（&lt;Button&gt; の場合、Button クラス）のプロパティになります。
 
 
-<pre class="xsource" title="子要素は全部 Property Element Syntax">
-<code><span class="bracket">&lt;</span><span class="element">Button</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button.Background</span><span class="bracket">&gt;</span>Gray<span class="bracket">&lt;</span>/<span class="element">Button.Background</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button.Foreground</span><span class="bracket">&gt;</span>White<span class="bracket">&lt;</span>/<span class="element">Button.Foreground</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button.Content</span><span class="bracket">&gt;</span>ここを押して<span class="bracket">&lt;</span>/<span class="element">Button.Content</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-</code></pre>
+```html
+<Button>
+  <Button.Background>Gray</Button.Background>
+  <Button.Foreground>White</Button.Foreground>
+  <Button.Content>ここを押して</Button.Content>
+</Button>
+```
 ただ、
 <strong id="content" class="keyword">コンテントプロパティ</strong>（content property）という物に指定されているプロパティに限っては省略が可能になっています。
 Button クラスでは、Content がコンテントプロパティに指定されていて、
 上の例の &lt;Button.Content&gt; タグは省略可能になり、以下のように書けます。
 
 
-<pre class="xsource" title="コンテントプロパティはタグを省略可能">
-<code><span class="bracket">&lt;</span><span class="element">Button</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button.Background</span><span class="bracket">&gt;</span>Gray<span class="bracket">&lt;</span>/<span class="element">Button.Background</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button.Foreground</span><span class="bracket">&gt;</span>White<span class="bracket">&lt;</span>/<span class="element">Button.Foreground</span><span class="bracket">&gt;</span>
-  <em>ここを押して</em>
-<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-</code></pre>
+```html
+<Button>
+  <Button.Background>Gray</Button.Background>
+  <Button.Foreground>White</Button.Foreground>
+  ここを押して
+</Button>
+```
 どのプロパティがコンテントプロパティかは、
 ContentProperty 「[属性](../../csharp/dynamic/sp_attribute.md#attribute)」で指定されています。
 例えば、ContentControl クラスには、
@@ -200,14 +200,14 @@ TextBox の場合、Text がコンテントプロパティです。
 例えば、以下のような書き方はエラーになります。
 
 
-<pre class="xsource" title="コンテントプロパティを分断（エラーになる）">
-<code><span class="bracket">&lt;</span><span class="element">Button</span><span class="bracket">&gt;</span>
-  <em>他の要素よりも前にテキスト</em>
-  <span class="bracket">&lt;</span><span class="element">Button.Background</span><span class="bracket">&gt;</span>Gray<span class="bracket">&lt;</span>/<span class="element">Button.Background</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Button.Foreground</span><span class="bracket">&gt;</span>White<span class="bracket">&lt;</span>/<span class="element">Button.Foreground</span><span class="bracket">&gt;</span>
-  <em>かつ、後ろにもテキスト</em>
-<span class="bracket">&lt;</span>/<span class="element">Button</span><span class="bracket">&gt;</span>
-</code></pre>
+```html
+<Button>
+  他の要素よりも前にテキスト
+  <Button.Background>Gray</Button.Background>
+  <Button.Foreground>White</Button.Foreground>
+  かつ、後ろにもテキスト
+</Button>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="collection"></a>プロパティがコレクションの場合
 
@@ -215,23 +215,23 @@ TextBox の場合、Text がコンテントプロパティです。
 WrapPanel の直下に TextBox タグが書けるのも実はコンテントプロパティによる省略です。
 
 
-<pre class="xsource" title="XAML でテキストボックス2つを表示">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Blue"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 1"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Green"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 2"</span> /<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<WrapPanel>
+  <TextBox Foreground = "Blue" Text = "text 1" />
+  <TextBox Foreground = "Green" Text = "text 2" />
+</WrapPanel>
+```
 これも、コンテントプロパティを省略せずに書くと以下のようになります。
 
 
-<pre class="xsource" title="コンテントプロパティを省略せずに表記">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Children</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Blue"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 1"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Green"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 2"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Children</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<WrapPanel>
+  <WrapPanel.Children>
+    <TextBox Foreground = "Blue" Text = "text 1" />
+    <TextBox Foreground = "Green" Text = "text 2" />
+  <WrapPanel.Children>
+</WrapPanel>
+```
 この例では、実はもう1つ省略しているものがあります。
 WrapPanel の「[コンテントプロパティ](#content)」は Children なんですが、
 この Children の型は UIElementCollection です。
@@ -239,16 +239,16 @@ WrapPanel の「[コンテントプロパティ](#content)」は Children なん
 上の例は以下のようになります。
 
 
-<pre class="xsource" title="コレクションを省略せずに表記">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">WrapPanel.Children</span><span class="bracket">&gt;</span>
-    <em><span class="bracket">&lt;</span><span class="element">UIElementCollection</span><span class="bracket">&gt;</span></em>
-      <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Blue"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 1"</span> /<span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Foreground</span> <span class="attvalue">= "Green"</span> <span class="attribute">Text</span> <span class="attvalue">= "text 2"</span> /<span class="bracket">&gt;</span>
-    <em><span class="bracket">&lt;</span><span class="element">/UIElementCollection</span><span class="bracket">&gt;</span></em>
-  <span class="bracket">&lt;</span>/<span class="element">WrapPanel.Children</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<WrapPanel>
+  <WrapPanel.Children>
+    <UIElementCollection>
+      <TextBox Foreground = "Blue" Text = "text 1" />
+      <TextBox Foreground = "Green" Text = "text 2" />
+    </UIElementCollection>
+  </WrapPanel.Children>
+</WrapPanel>
+```
 要するに、コレクション（IList、IDictionary を実装するクラスか、配列）の場合、タグを1レベル省略することが可能です。
 
 
@@ -268,12 +268,12 @@ XAML は、XML タグと .NET Framework クラスを結びつけるための機�
 最上位のタグに以下のような xmlns 属性が付いていました。
 
 
-<pre class="xsource" title="XAML でテキストボックス2つを表示">
-<code><span class="bracket">&lt;</span><span class="element">Page</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+```
 このうち、
 http://schemas.microsoft.com/winfx/2006/xaml/presentation の方が WPF で定義されたタグ（クラス群）、
 http://schemas.microsoft.com/winfx/2006/xaml の方が XAML の仕様自体に含まれるタグをあらわす XML 名前空間です。
@@ -285,26 +285,26 @@ My.Namespace 名前空間中のクラス名を XML タグとして利用可能�
 （コンパイル必須。「[Loose XAML](wpf_xaml.md#loose)」では無理。）
 
 
-<pre class="xsource" title="System 名前空間内のクラスを利用">
-<code><span class="bracket">&lt;</span><span class="element">Page</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">xmlns:sys</span><span class="attvalue">="clr-namespace:System"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Page.Resources</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">sys:DateTime</span> <span class="attribute">x:Key</span><span class="attvalue">="date"</span><span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">Page.Resources</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">Page</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:sys="clr-namespace:System"
+  >
+  <Page.Resources>
+    <sys:DateTime x:Key="date"/>
+  </Page.Resources>
+</Page>
+```
 ちなみに、WPF と同様に、Silverlight も XAML を利用するわけですが、
 Silverlight の場合には、
 以下のような XML 名前空間を使います。
 
 
-<pre class="xsource" title="Silverlight の場合">
-<code><span class="bracket">&lt;</span><span class="element">Canvas</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/client/2007"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  >
+```
 http://schemas.microsoft.com/winfx/2006/xaml の方は XAML の仕様自体のものなので、WPF でも Silverlight でも共通です。

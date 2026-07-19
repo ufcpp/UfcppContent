@@ -162,17 +162,17 @@ xy <table class="frac" summary="differential"><tr><td class="num">∂</td></tr><
 ＋
 x <table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂</td></tr></table></div>
 という例からも分かるように、積の微分法則が複雑なため、特に高階の座標変換が困難です。
-<pre>
+```text
 追記予定
 
 微分演算子が座標変換に弱い、というのは、
 ベクトル解析で使う、勾配・発散・回転を見てみるもはっきり分かる。
 例を挙げて説明。
-</pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="d80e446"></a>座標変換の有効性
 
-<pre>
+```text
 執筆予定
 
 ・座標変換
@@ -204,7 +204,7 @@ x <table class="frac" summary="differential"><tr><td class="num">∂</td></tr><t
 3次元で定式化しているつもりが、
 未定乗数で1次元増えたり、
 正準変数の導入で6次元になったり。
-</pre>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="total"></a>全微分
 

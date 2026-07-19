@@ -36,35 +36,35 @@ aliases:
 要するに、これらはいずれもセットと呼ぶに値する機能を持っています。
 そこで、セットは、以下のような「[インターフェース](../../csharp/oop/oo_interface.md#interface)」として定義します。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// セット。
 /// 数学で「集合」と呼ぶ奴。
 /// 要素の順序には意味がなくて、要素が含まれているかどうかだけが問題。
-/// &lt;/summary&gt;
-/// &lt;typeparam name="T"&gt;要素の型&lt;/typeparam&gt;</span>
-<span class="reserved">interface</span> ISet&lt;T&gt; : IEnumerable&lt;T&gt;
+/// </summary>
+/// <typeparam name="T">要素の型</typeparam>
+interface ISet<T> : IEnumerable<T>
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 新しい要素の挿入。
-  /// &lt;/summary&gt;
-  /// &lt;param name="elem"&gt;新しい要素&lt;/param&gt;</span>
-  <span class="reserved">void</span> Insert(T elem);
+  /// </summary>
+  /// <param name="elem">新しい要素</param>
+  void Insert(T elem);
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 要素の削除。
-  /// &lt;/summary&gt;
-  /// &lt;param name="elem"&gt;削除したい要素&lt;/param&gt;</span>
-  <span class="reserved">void</span> Erase(T elem);
+  /// </summary>
+  /// <param name="elem">削除したい要素</param>
+  void Erase(T elem);
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 要素を含むかどうか。
-  /// &lt;/summary&gt;
-  /// &lt;param name="elem"&gt;検索したい要素&lt;/param&gt;
-  /// &lt;returns&gt;見つかった場合 true&lt;/returns&gt;</span>
-  <span class="reserved">bool</span> Contains(T elem);
+  /// </summary>
+  /// <param name="elem">検索したい要素</param>
+  /// <returns>見つかった場合 true</returns>
+  bool Contains(T elem);
 }
-</code></pre>
+```
 
 
 「[ソート済み配列](col_sorted.md#sorted)」、

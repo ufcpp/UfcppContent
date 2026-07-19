@@ -41,17 +41,17 @@ System.Management.Automation.dll を参照する必要があります。
 
 .NET 言語から PowerShell スクリプトを実行するには System.Management.Automation.RunspaceInvoke クラスを使います。
 
-<pre class="source" title="RunspaceInvoke" lang="">
-<code><span class="reserved">using</span> (<span class="reserved">var</span> invoker = <span class="reserved">new</span> RunspaceInvoke())
+```csharp
+using (var invoker = new RunspaceInvoke())
 {
-    <span class="reserved">var</span> results = invoker.Invoke(source, <span class="reserved">new object</span>[] { });
+    var results = invoker.Invoke(source, new object[] { });
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> result <span class="reserved">in</span> results)
+    foreach (var result in results)
     {
         Console.Write(result);
     }
 }
-</code></pre>
+```
 
 
 Invoke メソッドの第2引数は、パイプライン入力としてスクリプトに渡されます。
@@ -65,66 +65,66 @@ PowerShell 側では $input 「[自動変数](../syntax/variable.md#auto_var)」
 
 例えば、以下のコードでは、パイプラインで与えられた入力を二乗して出力します。
 
-<pre class="source" title="$input を使って入力を受け取る" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Management.Automation;
+```csharp
+using System;
+using System.Management.Automation;
 
-<span class="reserved">static void</span> Main()
+static void Main()
 {
-    <span class="reserved">string</span> source = <span class="literal">@"foreach($x in $input) { $x * $x }"</span>;
+    string source = @"foreach($x in $input) { $x * $x }";
 
-    <span class="reserved">using</span> (<span class="reserved">var</span> invoker = <span class="reserved">new</span> RunspaceInvoke())
+    using (var invoker = new RunspaceInvoke())
     {
-        <span class="reserved">var</span> result = invoker.Invoke(source, <span class="reserved">new</span>[] { 1, 2, 3, 4 });
+        var result = invoker.Invoke(source, new[] { 1, 2, 3, 4 });
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> r <span class="reserved">in</span> result)
+        foreach (var r in result)
         {
             Console.WriteLine(r);
         }
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="出力結果">
+```console
 1
 4
 9
 16
-</pre>
+```
 
 
 要するに、これで以下のような PowerShell コマンドと同じような実行結果になります。
 
-<pre class="console" title="上記と同様のことをする PowerShell コマンド">
-<span class="prompt">&gt; </span>$source = { foreach($x in $input) { $x * $x } }
-<span class="prompt">&gt; </span>$results = 1, 2, 3, 4 | &amp; $source
-<span class="prompt">&gt; </span>$results
+```console
+> $source = { foreach($x in $input) { $x * $x } }
+> $results = 1, 2, 3, 4 | & $source
+> $results
 1
 4
 9
 16
-</pre>
+```
 
 
 ちなみに、$input は列挙子(IEnumerator) であって、リストや配列ではないので、
 以下のような値の受け取り方はできません。
 
-<pre class="source" title="$input " lang="">
-<code>$arg1 = $input[0]   # エラー。[] が使えない。
+```powershell
+$arg1 = $input[0]   # エラー。[] が使えない。
 $arg2 = $input[1]   # 同上。
-</code></pre>
+```
 
 
-<pre class="source" title="$input " lang="">
-<code>$arg1, $arg2 = $input   # エラー。この構文も、右辺がリストでないと使えない。
-</code></pre>
+```powershell
+$arg1, $arg2 = $input   # エラー。この構文も、右辺がリストでないと使えない。
+```
 
 
 ちょっとうざったいですが、以下のいずれかのような受け取り方をするのがてっとり早いと思います。
 
-<pre class="source" title="$input " lang="">
-<code>$count = 0
+```powershell
+$count = 0
 foreach($x in $input)
 {
   switch ($count)
@@ -134,12 +134,12 @@ foreach($x in $input)
   }
   $count++
 }
-</code></pre>
+```
 
-<pre class="source" title="$input " lang="">
-<code>if ($input.MoveNext()) { $arg1 = $input.Current }
+```csharp
+if ($input.MoveNext()) { $arg1 = $input.Current }
 if ($input.MoveNext()) { $arg2 = $input.Current }
-</code></pre>
+```
 
 LINQ の ToList を PowerShell からも使いたい・・・
 
@@ -148,13 +148,13 @@ LINQ の ToList を PowerShell からも使いたい・・・
 
 2つの配列の要素ごとの積を求めます。
 
-<pre class="source" title="要素ごとの積" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Management.Automation;
+```powershell
+using System;
+using System.Management.Automation;
 
-<span class="reserved">static void</span> Main()
+static void Main()
 {
-    <span class="reserved">string</span> source = <span class="literal">@"
+    string source = @"
 $count = 0
 foreach($a in $input)
 {
@@ -172,28 +172,28 @@ for($i = 0; $i -lt $len; $i++)
 {
   $lhs[$i] * $rhs[$i]
 }
-"</span>;
+";
 
-    <span class="reserved">using</span> (<span class="reserved">var</span> invoker = <span class="reserved">new</span> RunspaceInvoke())
+    using (var invoker = new RunspaceInvoke())
     {
-        <span class="reserved">var</span> lhs = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-        <span class="reserved">var</span> rhs = <span class="reserved">new</span>[] { 2, 3, 4, 5, 6 };
+        var lhs = new[] { 1, 2, 3, 4, 5 };
+        var rhs = new[] { 2, 3, 4, 5, 6 };
 
-        <span class="reserved">var</span> result = invoker.Invoke(source, <span class="reserved">new</span>[] { lhs, rhs });
+        var result = invoker.Invoke(source, new[] { lhs, rhs });
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> r <span class="reserved">in</span> result)
+        foreach (var r in result)
         {
             Console.WriteLine(r);
         }
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="出力結果">
+```console
 2
 6
 12
 20
 30
-</pre>
+```

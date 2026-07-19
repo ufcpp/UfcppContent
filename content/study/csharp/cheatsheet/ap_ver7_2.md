@@ -58,16 +58,16 @@ C# 7.2で追加された機能の多くは「構造体と参照の活用によ�
 
 `0b`、`0x`の直後に区切り文字の `_` を入れることができるようになりました。
 
-<pre class="source" title="">
-<code><span class="comment">// C# 7.0 から書ける</span>
-<span class="reserved">var</span> b1 = 0b1111_0000;
-<span class="reserved">var</span> x1 = 0x0001_F408;
+```csharp
+// C# 7.0 から書ける
+var b1 = 0b1111_0000;
+var x1 = 0x0001_F408;
 
-<span class="comment">// C# 7.2 から書ける</span>
-<span class="comment">// b, x の直後に _ 入れてもOKに</span>
-<span class="reserved">var</span> b2 = 0b_1111_0000;
-<span class="reserved">var</span> x2 = 0x_0001_F408;
-</code></pre>
+// C# 7.2 から書ける
+// b, x の直後に _ 入れてもOKに
+var b2 = 0b_1111_0000;
+var x2 = 0x_0001_F408;
+```
 
 区切り文字に関しては「[数字区切り文字](../start/stnumber.md#digit-separator)」を参照してください。
 
@@ -79,11 +79,11 @@ C# 7.2で追加された機能の多くは「構造体と参照の活用によ�
 前の方の引数を名前付きにできるようになりました。
 例えば、以下のような書き方が許されるようになりました。
 
-<pre class="source" title="1つ目の引数だけを名前付きにする">
-<code><span class="comment">// C# 7.2</span>
-<span class="comment">// 末尾以外でも名前を書けるように</span>
+```csharp
+// C# 7.2
+// 末尾以外でも名前を書けるように
 Sum(x: 1, 2, 3);
-</code></pre>
+```
 
 詳しくは「[オプション引数・名前付き引数](../structured/sp4_optional.md#non-trailing-named)」で説明します。
 
@@ -106,9 +106,9 @@ Sum(x: 1, 2, 3);
 [条件演算子](../start/st_operator.md#condition)の2項目、3項目を参照にできるようになりました。
 以下のような書き方ができます。
 
-<pre class="source" title="条件演算子の中で ref を利用">
-<code>x &gt; y ? <span class="reserved">ref</span> x : <span class="reserved">ref</span> y
-</code></pre>
+```csharp
+x > y ? ref x : ref y
+```
 
 詳しくは「[条件演算子での ref 利用](../resource/sp_ref.md#conditional-ref)」で説明します。
 
@@ -119,23 +119,23 @@ Sum(x: 1, 2, 3);
 
 引数の場合には`in`修飾子を使って以下のように書きます。
 
-<pre class="source" title="in 引数でコピーを避ける">
-<code><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Quaternion</span>
+```csharp
+public struct Quaternion
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> W;
-    <span class="reserved">public</span> <span class="reserved">double</span> X;
-    <span class="reserved">public</span> <span class="reserved">double</span> Y;
-    <span class="reserved">public</span> <span class="reserved">double</span> Z;
-    <span class="reserved">public</span> Quaternion(<span class="reserved">double</span> w, <span class="reserved">double</span> x, <span class="reserved">double</span> y, <span class="reserved">double</span> z) =&gt; (W, X, Y, Z) = (w, x, y, z);
+    public double W;
+    public double X;
+    public double Y;
+    public double Z;
+    public Quaternion(double w, double x, double y, double z) => (W, X, Y, Z) = (w, x, y, z);
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Quaternion</span> <span class="reserved">operator</span> *(<span class="reserved"><em>in</em></span> Quaternion a, <span class="reserved"><em>in</em></span> Quaternion b)
-        =&gt; <span class="reserved">new</span> Quaternion(
+    public static Quaternion operator *(in Quaternion a, in Quaternion b)
+        => new Quaternion(
             a.W * b.W - a.X * b.X - a.Y * b.Y - a.Z * b.Z,
             a.W * b.X + a.X * b.W + a.Y * b.Z - a.Z * b.Y,
             a.W * b.Y + a.Y * b.W + a.Z * b.X - a.X * b.Z,
             a.W * b.Z + a.Z * b.W + a.X * b.Y - a.Y * b.X);
 }
-</code></pre>
+```
 
 `ref`引数や`out`引数とは異なり、`in`引数は以下のような呼び出し方ができます。
 
@@ -145,16 +145,16 @@ Sum(x: 1, 2, 3);
 
 また、ローカル変数と戻り値の場合は`ref readonly`修飾子を使います。
 
-<pre class="source" title="ref readonly な戻り値、ローカル変数">
-<code><span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> Max(<span class="reserved">in</span> <span class="reserved">int</span> x, <span class="reserved">in</span> <span class="reserved">int</span> y)
+```csharp
+static ref readonly int Max(in int x, in int y)
 {
-    <span class="reserved">ref</span> <span class="reserved">readonly</span> var t = <span class="reserved">ref</span> x;
-    <span class="reserved">ref</span> <span class="reserved">readonly</span> var u = <span class="reserved">ref</span> y;
+    ref readonly var t = ref x;
+    ref readonly var u = ref y;
 
-    <span class="reserved">if</span> (t &lt; u) <span class="reserved">return</span> <span class="reserved">ref</span> u;
-    <span class="reserved">else</span> <span class="reserved">return</span> <span class="reserved">ref</span> t;
+    if (t < u) return ref u;
+    else return ref t;
 }
-</code></pre>
+```
 
 詳しくは「[入力参照引数 (in 引数)](../resource/sp_ref.md#in)」、「[ref readonly](../resource/sp_ref.md#ref-readonly)」で説明します。
 
@@ -163,53 +163,53 @@ Sum(x: 1, 2, 3);
 これまで、[演算子オーバーロード](../oop/oo_operator.md)の引数は値渡しである必要がありました。
 C# 7.2では、`in`引数も演算子の引数にできるようになりました。
 
-<pre class="source" title="演算子の in 引数">
-<code><span class="reserved">struct</span> <span class="type">Complex</span>
+```csharp
+struct Complex
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> X;
-    <span class="reserved">public</span> <span class="reserved">double</span> Y;
-    <span class="reserved">public</span> Complex(<span class="reserved">double</span> x, <span class="reserved">double</span> y) =&gt; (X, Y) = (x, y);
+    public double X;
+    public double Y;
+    public Complex(double x, double y) => (X, Y) = (x, y);
 
-    <span class="comment">// これは OK</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> Complex <span class="reserved">operator</span> +(Complex a, Complex b)
-        =&gt; <span class="reserved">new</span> Complex(a.X + b.X, a.Y + b.Y);
+    // これは OK
+    public static Complex operator +(Complex a, Complex b)
+        => new Complex(a.X + b.X, a.Y + b.Y);
 
-    <span class="comment">// これはコンパイル エラーになる</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> Complex <span class="reserved">operator</span> <span class="error">+</span>(<span class="reserved">ref</span> Complex a, <span class="reserved">ref</span> Complex b)
-        =&gt; <span class="reserved">new</span> Complex(a.X + b.X, a.Y + b.Y);
+    // これはコンパイル エラーになる
+    public static Complex operator +(ref Complex a, ref Complex b)
+        => new Complex(a.X + b.X, a.Y + b.Y);
 
-    <span class="comment">// これなら OK</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> Complex <span class="reserved">operator</span> +(<span class="reserved"><em>in</em></span> Complex a, <span class="reserved"><em>in</em></span> Complex b)
-        =&gt; <span class="reserved">new</span> Complex(a.X + b.X, a.Y + b.Y);
+    // これなら OK
+    public static Complex operator +(in Complex a, in Complex b)
+        => new Complex(a.X + b.X, a.Y + b.Y);
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="ref-extensions"></a>参照渡しの拡張メソッド
 
 拡張メソッドの第1引数(`this`が付いている引数)を参照渡し([`ref`](../resource/sp_ref.md#sec-byref)もしくは[`in`](../resource/sp_ref.md#in))で渡せるようになりました。
 
-<pre class="source" title="参照渡しの拡張メソッドの例">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">QuaternionExtensions</span>
+```csharp
+public static class QuaternionExtensions
 {
-    <span class="comment">// 構造体の書き換えを拡張メソッドでやりたい場合に ref 引数が使える</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Conjugate(<em><span class="reserved">ref</span> <span class="reserved">this</span></em> Quaternion q)
+    // 構造体の書き換えを拡張メソッドでやりたい場合に ref 引数が使える
+    public static void Conjugate(ref this Quaternion q)
     {
-        <span class="reserved">var</span> norm = q.W * q.W + q.X * q.X + q.Y * q.Y + q.Z * q.Z;
+        var norm = q.W * q.W + q.X * q.X + q.Y * q.Y + q.Z * q.Z;
         q.W = q.W / norm;
         q.X = -q.X / norm;
         q.Y = -q.Y / norm;
         q.Z = -q.Z / norm;
     }
 
-    <span class="comment">// コピーを避けたい場合に in 引数が使える</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> Quaternion Rotate(<em><span class="reserved">in</span> <span class="reserved">this</span></em> Quaternion p, <span class="reserved">in</span> Quaternion q)
+    // コピーを避けたい場合に in 引数が使える
+    public static Quaternion Rotate(in this Quaternion p, in Quaternion q)
     {
-        <span class="reserved">var</span> qc = q;
+        var qc = q;
         qc.Conjugate();
-        <span class="reserved">return</span> q * p * qc;
+        return q * p * qc;
     }
 }
-</code></pre>
+```
 
 詳しくは「[参照渡しの拡張メソッド](../functional/sp3_extension.md#ref-extensions)」で説明します。
 
@@ -220,20 +220,20 @@ C# 7.2では、`in`引数も演算子の引数にできるようになりまし�
 - すべてのフィールドに`readonly`を付けることが必須
 - `this`参照も`readonly`扱いされて、構造体の書き換えが完全にできなくなる
 
-<pre class="source" title="readonly struct の例">
-<code><span class="comment">// 構造体自体に readonly を付ける</span>
-<span class="reserved"><em>readonly</em></span> <span class="reserved">struct</span> <span class="type">Point</span>
+```csharp
+// 構造体自体に readonly を付ける
+readonly struct Point
 {
-    <span class="comment">// フィールドには readonly が必須</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> Y;
+    // フィールドには readonly が必須
+    public readonly int X;
+    public readonly int Y;
 
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; (X, Y) = (x, y);
+    public Point(int x, int y) => (X, Y) = (x, y);
 
-    <span class="comment">// readonly を付けない場合と違って、以下のような this 書き換えも不可</span>
-    <span class="comment">//public void Set(int x, int y) =&gt; this = new Point(x, y);</span>
+    // readonly を付けない場合と違って、以下のような this 書き換えも不可
+    //public void Set(int x, int y) => this = new Point(x, y);
 }
-</code></pre>
+```
 
 詳細は「[readonly struct](../resource/readonlyness.md#readonly-struct)」で説明します。
 
@@ -243,26 +243,26 @@ C# 7.2では、`in`引数も演算子の引数にできるようになりまし�
 
 `Span<T>`構造体と併用することで、unsafe なしで [`stackalloc`](../interop/sp_unsafe.md#stackalloc) を使えるようになりました。
 
-<pre class="source" title="ファイル読み込みの一時バッファーに stackalloc を使う例">
-<code><span class="reserved">const</span> <span class="reserved">int</span> BufferSize = 128;
+```csharp
+const int BufferSize = 128;
 
-<span class="reserved">using</span> (<span class="reserved">var</span> f = <span class="type">File</span>.OpenRead(<span class="string">"test.data"</span>))
+using (var f = File.OpenRead("test.data"))
 {
-    <span class="reserved">var</span> rest = (<span class="reserved">int</span>)f.Length;
-    <span class="comment">// Span&lt;byte&gt; で受け取ることで、new (配列)を stackalloc (スタック確保)に変更できる</span>
-    <em><span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; buffer = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[BufferSize];</em>
+    var rest = (int)f.Length;
+    // Span<byte> で受け取ることで、new (配列)を stackalloc (スタック確保)に変更できる
+    Span<byte> buffer = stackalloc byte[BufferSize];
 
-    <span class="reserved">while</span> (<span class="reserved">true</span>)
+    while (true)
     {
-        <span class="comment">// Read(Span&lt;byte&gt;) が追加された</span>
-        <span class="reserved">var</span> read = f.Read(buffer);
+        // Read(Span<byte>) が追加された
+        var read = f.Read(buffer);
         rest -= read;
-        <span class="reserved">if</span> (rest == 0) <span class="reserved">break</span>;
+        if (rest == 0) break;
 
-        <span class="comment">// buffer に対して何か処理する</span>
+        // buffer に対して何か処理する
     }
 }
-</code></pre>
+```
 
 `stackalloc`を使っていますがポインターは不要で、ちゃんと範囲チェックも掛かって安全に扱えます。
 
@@ -275,66 +275,66 @@ C# 7.2 と深く関連する型に[`Span<T>`](../resource/span.md)という構�
 
 この型を安全に使うためにはいくつが制限が必要で、そのために`ref`構造体という構文と、それに対するフロー解析が実装されました。
 
-<pre class="source" title="ref構造体を持てるのはref構造体だけ">
-<code><span class="comment">// Span&lt;T&gt; は ref 構造体になっている</span>
-<span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt; { ... }
+```csharp
+// Span<T> は ref 構造体になっている
+public readonly ref struct Span<T> { ... }
 
 まず、`Span<T>`を持てるのは`ref`修飾子がついた構造体(`ref`構造体)だけです。
 
-<span class="comment">// ref 構造体を持てるのは ref 構造体だけ</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">RefStruct</span>
+// ref 構造体を持てるのは ref 構造体だけ
+ref struct RefStruct
 {
-    <span class="reserved">private</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; _span; <span class="comment">//OK</span>
+    private Span<int> _span; //OK
 }
-</code></pre>
+```
 
 `ref`構造体には参照ローカル変数・参照戻りと同じ制限がかかります。
 
 
-<pre class="source" title="戻り値に返せるかどうか">
-<code><span class="comment">// 引数で受け取ったものは戻り値で返せる</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; Success(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x) =&gt; x;
+```csharp
+// 引数で受け取ったものは戻り値で返せる
+private static Span<int> Success(Span<int> x) => x;
 
-<span class="comment">// ローカルで確保したもの変数はダメ</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; Error()
+// ローカルで確保したもの変数はダメ
+private static Span<int> Error()
 {
-    <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[1];
-    <span class="reserved">return</span> <span class="error">x</span>;
+    Span<int> x = stackalloc int[1];
+    return x;
 }
-</code></pre>
+```
 
 その他、`ref`構造体には「スタック上になければならない(stack-only)」という制限があり、
 その結果、例えば以下のような制限がかかります(一部抜粋)。
 
-<pre class="source" title="ref構造体は stack-only">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
 
-<span class="comment">//❌ インターフェイス実装</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">RefStruct</span> : <span class="type"><span class="error">IDisposable</span></span> { <span class="reserved">public</span> <span class="reserved">void</span> Dispose() { } }
+//❌ インターフェイス実装
+ref struct RefStruct : IDisposable { public void Dispose() { } }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">//❌ 非同期メソッドの引数</span>
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> Async(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="error">x</span>)
+    //❌ 非同期メソッドの引数
+    static async Task Async(Span<int> x)
     {
-        <span class="comment">//❌ 非同期メソッドのローカル変数</span>
-        <span class="error"><span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;</span> local = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[10];
+        //❌ 非同期メソッドのローカル変数
+        Span<int> local = stackalloc int[10];
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; local = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[1];
+        Span<int> local = stackalloc int[1];
 
-        <span class="comment">//❌ クロージャ</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; a1 = () =&gt; <span class="error">local</span>[0];
-        <span class="reserved">int</span> F() =&gt; <span class="error">local</span>[0];
+        //❌ クロージャ
+        Func<int> a1 = () => local[0];
+        int F() => local[0];
 
-        <span class="comment">//❌ 型引数にも渡せない</span>
-        <span class="type">List</span>&lt;<span class="error"><span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;</span>&gt; list;
+        //❌ 型引数にも渡せない
+        List<Span<int>> list;
     }
 }
-</code></pre>
+```
 
 詳しくは「[ref構造体](../resource/refstruct.md)」で説明します。
 

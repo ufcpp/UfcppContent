@@ -248,7 +248,7 @@ UML は主にこの用途に使われるものです。
 
 ## <a id="sec-generated-title-13"></a> <a id="plan"></a>予定
 
-<pre>
+```text
       モデル駆動開発（MDD: Model Driven Development）
       - モデリング言語を使って開発
       - 上述の通り、モデリング言語のほとんどはビジュアル言語なので、
@@ -274,7 +274,8 @@ UML は主にこの用途に使われるものです。
       ↓
       DSL ベース開発
       - ドメイン（開発対象の領域）に特化したモデルを立てて開発
-    </pre>
+    
+```
 
 ## <a id="sec-generated-title-14"></a> <a id="summary"></a>まとめ
 

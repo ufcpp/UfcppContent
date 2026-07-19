@@ -53,13 +53,13 @@ C# 7.0 からあるパターンは1層限り、8.0 で追加されたパター�
 C# 6.0以前から元々あった [`is` 演算子](../oop/oo_polymorphism.md#is-operator)の自然な拡張になっているのが型パターン(type pattern)です。
 以下のように、型の後ろに続けて、マッチした結果を変数で受け取れます。
 
-<pre class="source" title="型パターンの例">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+```csharp
+static void M(object x)
 {
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <em><span class="reserved">int</span> <span class="variable">i</span></em>) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;int &quot;</span> + <span class="variable">i</span>);
-    <span class="control">else</span> <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <em><span class="reserved">string</span> <span class="variable">s</span></em>) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;string &quot;</span> + <span class="variable">s</span>);
+    if (x is int i) Console.WriteLine("int " + i);
+    else if (x is string s) Console.WriteLine("string " + s);
 }
-</code></pre>
+```
 
 `is` や `case` の後ろで変数宣言をしているような形なので、宣言パターン(declaration pattern)とも呼びます。
 (というか、C# 8.0以降は宣言パターンの方が正式な呼び方に変わっていそうです。)
@@ -67,38 +67,38 @@ C# 6.0以前から元々あった [`is` 演算子](../oop/oo_polymorphism.md#is-
 型パターンは、旧来からある `is` 演算子や `as` 演算子とほぼ同じ挙動です。
 上記の例は、概ね以下のコードと同じ動作になります。
 
-<pre class="source" title="型パターンの挙動">
-<code><span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">int</span>)
+```csharp
+if (x is int)
 {
-    <span class="reserved">var</span> <span class="variable">i</span> = (<span class="reserved">int</span>)<span class="variable">x</span>;
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;int &quot;</span> + <span class="variable">i</span>);
+    var i = (int)x;
+    Console.WriteLine("int " + i);
 }
-<span class="control">else</span>
+else
 {
-    <span class="reserved">string</span> <span class="variable">s</span> = <span class="variable">x</span> <span class="reserved">as</span> <span class="reserved">string</span>;
-    <span class="control">if</span> (<span class="variable">s</span> != <span class="reserved">null</span>)
+    string s = x as string;
+    if (s != null)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;string &quot;</span> + <span class="variable">s</span>);
+        Console.WriteLine("string " + s);
     }
 }
-</code></pre>
+```
 
 `as` + `!= null` になっていることからわかる通り、
 型パターンは null にはマッチしません。
 (以下のように、たとえ変数の型が一致していたとしても、null にはマッチしません。)
 
-<pre class="source" title="型パターンは null にはマッチしない">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+```csharp
+static void Main()
 {
-    <span class="method">M</span>(<span class="string">&quot;abc&quot;</span>); <span class="comment">// matched abc</span>
-    <span class="method">M</span>(<span class="reserved">null</span>);  <span class="comment">// 何も表示されない</span>
+    M("abc"); // matched abc
+    M(null);  // 何も表示されない
 }
  
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">x</span>)
+static void M(string x)
 {
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">string</span> <span class="variable">s</span>) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;matched &quot;</span> + <span class="variable">s</span>);
+    if (x is string s) Console.WriteLine("matched " + s);
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-4"></a> <a id="simplified-type-pattern"></a>型パターンの簡単化
 
@@ -110,63 +110,63 @@ C# 9.0 で型パターンがちょっとだけシンプルになりました。
 ところが、`is` の場合は `x is T` と書けるのに、`switch` では `T _` のように変数宣言か `_` (破棄) を伴う必要がありました。
 これが C# 9.0 で改善されています。
 
-<pre class="source" title="型パターンの簡単化">
-<code><span class="reserved">int</span> <span class="method">Is</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+```csharp
+int Is(object x)
 {
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">string</span>)
+    if (x is string)
     {
-        <span class="control">return</span> 1;
+        return 1;
     }
-    <span class="control">return</span> 0;
+    return 0;
 }
  
-<span class="reserved">int</span> <span class="method">Switch</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+int Switch(object x)
 {
-    <span class="control">switch</span> (<span class="variable">x</span>)
+    switch (x)
     {
-        <span class="comment">// C# 8.0 までは string _ と書く必要あり</span>
-        <span class="control">case</span> <span class="reserved">string</span>: <span class="control">return</span> 1;
+        // C# 8.0 までは string _ と書く必要あり
+        case string: return 1;
     }
-    <span class="control">return</span> 0;
+    return 0;
 }
  
-<span class="reserved">int</span> <span class="method">SwitchExpr</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+int SwitchExpr(object x) => x switch
 {
-    <span class="comment">// C# 8.0 までは string _ と書く必要あり</span>
-    <span class="reserved">string</span> =&gt; 1,
-    <span class="reserved">_</span> =&gt; 0,
+    // C# 8.0 までは string _ と書く必要あり
+    string => 1,
+    _ => 0,
 };
-</code></pre>
+```
 
 C# 9.0 時点でこれが書けたなかったのは次節の[定数パターン](#constant)との混同を避けるためです。
 例えば C# 9.0 では以下のようなコードが書けます。
 こんなコードを書くこと自体少ないと思いますが、`is`の場合と`switch`の場合で、型と定数、どちらが優先されるかが違うので注意が必要です。
 
-<pre class="source" title="型パターンと定数パターンの区別">
-<code><span class="reserved">class</span> <span class="type">X</span> { }
+```csharp
+class X { }
  
-<span class="reserved">class</span> <span class="type">Program1</span>
+class Program1
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+    static int M(object x) => x switch
     {
-        <span class="type">X</span> =&gt; 1, <span class="comment">// これは x の型がクラス X</span>
-        <span class="reserved">_</span> =&gt; 0,
+        X => 1, // これは x の型がクラス X
+        _ => 0,
     };
 }
  
-<span class="reserved">class</span> <span class="type">Program2</span>
+class Program2
 {
-    <span class="reserved">const</span> <span class="reserved">int</span> X = 1;
+    const int X = 1;
  
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M1</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+    static int M1(object x) => x switch
     {
-        X =&gt; 1, <span class="comment">// これは定数 1</span>
-        <span class="reserved">_</span> =&gt; 0,
+        X => 1, // これは定数 1
+        _ => 0,
     };
  
-    <span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">M2</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="type">X</span>; <span class="comment">// でもこれはクラス X (C# 8.0 以前との互換性のため)</span>
+    static bool M2(object x) => x is X; // でもこれはクラス X (C# 8.0 以前との互換性のため)
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-5"></a> <a id="constant"></a>定数パターン
 
@@ -174,61 +174,61 @@ C# 9.0 時点でこれが書けたなかったのは次節の[定数パターン
 単体で見ると普通に `==` を使えば済むことも多いわけですが、
 定数パターンであれば他のパターンとの混在ができます。
 
-<pre class="source" title="定数パターンの例">
-<code><span class="control">switch</span> (<span class="variable">x</span>)
+```csharp
+switch (x)
 {
-    <span class="comment">// 定数パターン</span>
-    <span class="control">case</span> 0: <span class="control">return</span> 0;
-    <span class="comment">// 型パターン</span>
-    <span class="control">case</span> <span class="reserved">string</span> <span class="variable">s</span>: <span class="control">return</span> <span class="variable">s</span>.Length;
-    <span class="control">default</span>: <span class="control">return</span> -1;
+    // 定数パターン
+    case 0: return 0;
+    // 型パターン
+    case string s: return s.Length;
+    default: return -1;
 }
-</code></pre>
+```
 
 名前通り定数しか使えません。
 変数との値比較がしたければ、`when`句を使うなどが必要です。
 
-<pre class="source" title="文字通り、定数パターンは定数のみ受け付ける">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">comparand</span>)
+```csharp
+static int M(object x, int comparand)
 {
-    <span class="control">switch</span> (<span class="variable">x</span>)
+    switch (x)
     {
-        <span class="comment">// case comparand: とは書けない。</span>
-        <span class="comment">// 型パターン + when 句を使う。</span>
-        <span class="control">case</span> <span class="reserved">int</span> <span class="variable">i</span> <span class="reserved">when</span> <span class="variable">i</span> == <span class="variable">comparand</span>: <span class="control">return</span> 0;
-        <span class="control">default</span>: <span class="control">return</span> -1;
+        // case comparand: とは書けない。
+        // 型パターン + when 句を使う。
+        case int i when i == comparand: return 0;
+        default: return -1;
     }
 }
-</code></pre>
+```
 
 ちなみに、定数パターンでは、[ユーザー定義演算子](../oop/oo_operator.md#udo)を見ません。
 以下のように、`==`と`is`で挙動が違う場合があります。
 
-<pre class="source" title="定数パターンはユーザー定義の演算子を見ない">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="comment">// 全てのインスタンスが等しいという挙動。</span>
-    <span class="comment">// 当然、x == null も常に true。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> ==(<span class="type">X</span> <span class="variable">a</span>, <span class="type">X</span> <span class="variable">b</span>) =&gt; <span class="reserved">true</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> !=(<span class="type">X</span> <span class="variable">a</span>, <span class="type">X</span> <span class="variable">b</span>) =&gt; <span class="reserved">false</span>;
+    // 全てのインスタンスが等しいという挙動。
+    // 当然、x == null も常に true。
+    public static bool operator ==(X a, X b) => true;
+    public static bool operator !=(X a, X b) => false;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">X</span>();
+        var x = new X();
  
-        <span class="comment">// なんでも true なので、== null も true</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span> <span class="method">==</span> <span class="reserved">null</span>);
+        // なんでも true なので、== null も true
+        Console.WriteLine(x == null);
  
-        <span class="comment">// ユーザー定義の == は見ない。x が本当に null かどうかを見て、false になる</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">null</span>);
+        // ユーザー定義の == は見ない。x が本当に null かどうかを見て、false になる
+        Console.WriteLine(x is null);
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-6"></a> <a id="pointer-null"></a>ポインターの null 比較
 
@@ -237,16 +237,16 @@ C# 9.0 時点でこれが書けたなかったのは次節の[定数パターン
 細かい修正ですが、C# 8.0 からポインターに対してもパターン マッチングが使えるようになりました。
 といってもプロパティや `Deconstruct` メソッドを持っているわけではないので、実質的には `is null` チェック用です。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span>* <span class="variable">p</span>)
+```csharp
+static unsafe void M(int* p)
 {
-    <span class="comment">// 元々 OK。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">p</span> == <span class="reserved">null</span>);
+    // 元々 OK。
+    Console.WriteLine(p == null);
  
-    <span class="comment">// C# 8.0 から OK。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">p</span> <span class="reserved">is</span> <span class="reserved">null</span>);
+    // C# 8.0 から OK。
+    Console.WriteLine(p is null);
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-7"></a> <a id="span">ReadOnlySpan に対するパターンマッチ</a>
 
@@ -254,27 +254,27 @@ C# 9.0 時点でこれが書けたなかったのは次節の[定数パターン
 
 C# 11 で、`ReadOnlySpan<char>` に対して文字列リテラルによる定数パターンが使えるようになりました。
 
-<pre class="source" title="">
-<span class="comment">// string を渡せたところには ReadOnlySpan&lt;char&gt; を渡せるように。</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; <span class="variable">s</span> <span class="operator">=</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">ReadLine</span></span>();
+```csharp
+// string を渡せたところには ReadOnlySpan<char> を渡せるように。
+ReadOnlySpan<char> s = Console.ReadLine();
 
-<span class="comment">// is も</span>
-<span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="string">&quot;a&quot;</span>) { }
+// is も
+if (s is "a") { }
 
-<span class="comment">// switch ステートメントも</span>
-<span class="control">switch</span> (<span class="variable">s</span>)
+// switch ステートメントも
+switch (s)
 {
-    <span class="control">case</span> <span class="string">&quot;b&quot;</span>:
-        <span class="control">break</span>;
+    case "b":
+        break;
 }
 
-<span class="comment">// switch 式も OK。</span>
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="variable">s</span> <span class="control">switch</span>
+// switch 式も OK。
+var x = s switch
 {
-    <span class="string">&quot;c&quot;</span> <span class="operator">=&gt;</span> <span class="number">1</span>,
-    <span class="reserved">_</span> <span class="operator">=&gt;</span> <span class="number">2</span>,
+    "c" => 1,
+    _ => 2,
 };
-</pre>
+```
 
 文字列処理に対して `ReadOnlySpan<char>` を使う機会が多くなってきたので特殊対応したそうです。
 
@@ -290,36 +290,36 @@ C# チーム自身はそれほど実装に乗り気ではなく、外部から�
 
 `switch` の最後に書いて「その他全部」な分岐に使ったりします。
 
-<pre class="source" title="var パターンを「その他全部」の意味で使う例">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+```csharp
+static int M(object x)
 {
-    <span class="control">switch</span>(<span class="variable">x</span>)
+    switch(x)
     {
-        <span class="control">case</span> 0: <span class="control">return</span> 0;
-        <span class="control">case</span> <span class="reserved">string</span> <span class="variable">s</span>: <span class="control">return</span> <span class="variable">s</span>.Length;
-        <span class="control">case</span> <em><span class="reserved">var</span> other</em>: <span class="control">return</span> <span class="variable">other</span>.<span class="method">GetHashCode</span>();
-        <span class="comment">// あるいは、変数で受け取る必要がないときは _ にしておけば破棄の意味なる</span>
-        <span class="comment">// case var _:</span>
+        case 0: return 0;
+        case string s: return s.Length;
+        case var other: return other.GetHashCode();
+        // あるいは、変数で受け取る必要がないときは _ にしておけば破棄の意味なる
+        // case var _:
     }
 }
-</code></pre>
+```
 
 あと、少し悪用気味ではありますが、式中での変数宣言に使えたりします。
 
-<pre class="source" title="式中での変数宣言代わりに var パターンを利用">
-<code><span class="control">while</span> (<span class="type">Console</span>.<span class="method">ReadLine</span>() <span class="reserved">is</span> <em><span class="reserved">var</span> line</em> &amp;&amp; !<span class="reserved">string</span>.<span class="method">IsNullOrEmpty</span>(<span class="variable">line</span>))
+```csharp
+while (Console.ReadLine() is var line && !string.IsNullOrEmpty(line))
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">line</span>);
+    Console.WriteLine(line);
 }
-</code></pre>
+```
 
 1つ注意が必要な点として、var パターンは型パターンと違って、null にもマッチします。
 
-<pre class="source" title="var パターンは null にもマッチ">
-<code><span class="reserved">string</span> <span class="variable">s</span> = <span class="reserved">null</span>;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">string</span> <span class="variable">x</span>); <span class="comment">// false</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">var</span> y);    <span class="comment">// true</span>
-</code></pre>
+```csharp
+string s = null;
+Console.WriteLine(s is string x); // false
+Console.WriteLine(s is var y);    // true
+```
 
 null をはじきたい場合は、var ではなく、後述するプロパティ パターンを使って`x is {} nonNull`と書いたりします。
 
@@ -332,48 +332,48 @@ null をはじきたい場合は、var ではなく、後述するプロパテ�
 再帰はしないんですが、`switch`式の中と、再帰パターン内でしか使えないので C# 8.0 での実装になります。
 `is`やステートメントの方の`switch`の`case`の後ろでは`var _`と書く必要がありますが、`switch`式の場合は`_`だけで値を破棄します。
 
-<pre class="source" title="switch 式中では、_ だけで値を破棄できる">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>)
-    =&gt; <span class="variable">x</span> <span class="reserved">switch</span>
+```csharp
+static int M(object x)
+    => x switch
     {
-        0 =&gt; 0,
-        <span class="reserved">string</span> <span class="variable">s</span> =&gt; <span class="variable">s</span>.Length,
-        <em><span class="reserved">_</span></em> =&gt; -1
+        0 => 0,
+        string s => s.Length,
+        _ => -1
     };
-</code></pre>
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="breaking-change-in-discard"></a>余談: 破棄パターンが C# 8.0 からな理由
 
 ちなみに、`is` や `switch`ステートメント内で `_` だけでの値の破棄ができないのは既存コードとの互換性のためです。
 普通書かないようなコードですが、一応、以下のようなコードが元々合法なため、意味を変えることができませんでした。
 
-<pre class="source" title="_ クラス、 _ 定数">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">_Type</span>
+class _Type
 {
-    <span class="reserved">class</span> <span class="type">_</span> { }
+    class _ { }
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+    static void M(object x)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span> <span class="reserved">is</span> <span class="type">_</span>); <span class="comment">// class _ とのマッチ</span>
+        Console.WriteLine(x is _); // class _ とのマッチ
     }
 }
  
-<span class="reserved">class</span> <span class="type">_Constant</span>
+class _Constant
 {
-    <span class="reserved">const</span> <span class="reserved">int</span> _ = 0;
+    const int _ = 0;
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+    static void M(object x)
     {
-        <span class="control">switch</span> (<span class="variable">x</span>)
+        switch (x)
         {
-            <span class="control">case</span> _: <span class="comment">// 定数 _ とのマッチ</span>
-                <span class="control">break</span>;
+            case _: // 定数 _ とのマッチ
+                break;
         }
     }
 }
-</code></pre>
+```
 
 (あまりにも紛らわしいので、このコードを C# 8.0 でコンパイルすると警告が出ます。)
 
@@ -388,28 +388,28 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 
 例えば以下のような感じです。
 
-<pre class="source" title="再帰パターンの例">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+public class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="method">Point</span>(<span class="reserved">int</span> <span class="variable">x</span> = 0, <span class="reserved">int</span> <span class="variable">y</span> = 0) =&gt; (X, Y) = (<span class="variable">x</span>, <span class="variable">y</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">y</span>) =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) = (X, Y);
+    public int X { get; set; }
+    public int Y { get; set; }
+    public Point(int x = 0, int y = 0) => (X, Y) = (x, y);
+    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>)
-        =&gt; <span class="variable">obj</span> <span class="reserved">switch</span>
+    static int M(object obj)
+        => obj switch
     {
-        0 =&gt; 1,
-        <span class="reserved">int</span> <span class="variable">i</span> =&gt; 2,
-        <em><span class="type">Point</span> (1, <span class="reserved">_</span>)</em> =&gt; 4, <span class="comment">// new!</span>
-        <em><span class="type">Point</span> { X: 2, Y: <span class="reserved">var</span> y }</em> =&gt; <span class="variable">y</span>, <span class="comment">// new!</span>
-        <span class="reserved">_</span> =&gt; 0
+        0 => 1,
+        int i => 2,
+        Point (1, _) => 4, // new!
+        Point { X: 2, Y: var y } => y, // new!
+        _ => 0
     };
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="positional"></a>位置パターン
 
@@ -420,86 +420,86 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 それぞれのメンバーの値に対してマッチングを行います。
 例えば、先ほど例として使った`Point`クラスを引き続き使うとして、以下のように書けます。
 
-<pre class="source" title="位置パターンの例">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="type">Point</span> <span class="variable">p</span>)
-    =&gt; <span class="variable">p</span> <span class="reserved">switch</span>
+```csharp
+static int M(Point p)
+    => p switch
 {
-    (1, 2) =&gt; 0,
-    (<span class="reserved">var</span> x, <span class="reserved">_</span>) <span class="reserved">when</span> x &gt; 0 =&gt; <span class="variable">x</span>,
-    <span class="reserved">_</span> =&gt; -1
+    (1, 2) => 0,
+    (var x, _) when x > 0 => x,
+    _ => -1
 };
-</code></pre>
+```
 
 このコードは概ね以下のような意味になります。
 
-<pre class="source" title="位置パターンの展開結果">
-<code><span class="variable">p</span>.<span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">x</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">y</span>);
-<span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> 1 &amp;&amp; <span class="variable">y</span> <span class="reserved">is</span> 2) <span class="control">return</span> 0;
-<span class="control">if</span> (<span class="variable">x</span> &gt; 0) <span class="control">return</span> <span class="variable">x</span>;
-<span class="control">return</span> -1;
-</code></pre>
+```csharp
+p.Deconstruct(out var x, out var y);
+if (x is 1 && y is 2) return 0;
+if (x > 0) return x;
+return -1;
+```
 
 サブパターンの順序に意味があるため「位置」パターンという呼び名になっています。
 
 上記の例では元々型が`Point`だとわかっているので型名を省略していますが、
 型の明示もできます。
 
-<pre class="source" title="位置パターンでの型の明示">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>)
-    =&gt; <span class="variable">obj</span> <span class="reserved">switch</span>
+```csharp
+static int M(object obj)
+    => obj switch
 {
-    <span class="reserved">int</span> <span class="variable">i</span> =&gt; <span class="variable">i</span>,
-    <span class="reserved">string</span> <span class="variable">s</span> =&gt; <span class="variable">s</span>.Length,
-    <em><span class="type">Point</span>(<span class="reserved">var</span> x, <span class="reserved">var</span> y)</em> =&gt; 0,
-    <span class="reserved">_</span> =&gt; -1
+    int i => i,
+    string s => s.Length,
+    Point(var x, var y) => 0,
+    _ => -1
 };
-</code></pre>
+```
 
 また、後述しますが、プロパティ パターンとの混在や、
 型パターンのように変数を付け足すこともできます。
 
-<pre class="source" title="位置パターン、プロパティ パターン、型パターンの組み合わせ">
-<code><span class="variable">obj</span> <span class="reserved">switch</span>
+```csharp
+obj switch
 {
-    <span class="type">Point</span> (<span class="reserved">var</span> x, <span class="reserved">_</span>) { Y: <span class="reserved">var</span> y } p =&gt; <span class="variable">x</span> * <span class="variable">y</span>
+    Point (var x, _) { Y: var y } p => x * y
 };
-</code></pre>
+```
 
 位置パターンとか言いつつ、名前付き引数のノリで、名前付きなパターン マッチングもできます。
 
-<pre class="source" title="名前付き位置パターン">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">NamedPattern</span>(<span class="type">Point</span> <span class="variable">p</span>)
-    =&gt; <span class="variable">p</span> <span class="reserved">switch</span>
+```csharp
+static int NamedPattern(Point p)
+    => p switch
 {
-    (<em><span class="variable">x</span>:</em> 1, <em><span class="variable">y</span>:</em> 2) =&gt; 0,
-    (<em><span class="variable">x</span>:</em> <span class="reserved">var</span> x, <em><span class="variable">y</span>:</em> <span class="reserved">_</span>) <span class="reserved">when</span> <span class="variable">x</span> &gt; 0 =&gt; <span class="variable">x</span>,
-    <span class="reserved">_</span> =&gt; -1
+    (x: 1, y: 2) => 0,
+    (x: var x, y: _) when x > 0 => x,
+    _ => -1
 };
-</code></pre>
+```
 
 #### <a id="sec-generated-title-13"></a> <a id="constructor-vs-positional"></a>補足: コンストラクター呼び出しの逆
 
 位置パターンは、コンストラクター呼び出し(`new`)の逆に当たる構文です。
 書き方も、コンストラクターと対になっています。
 
-<pre class="source" title="コンストラクター呼び出しと位置パターン">
-<code><span class="comment">// 位置指定で構築できるんなら、位置指定でマッチングできるべき</span>
-<span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
-<span class="reserved">var</span> <span class="variable">r1</span> = <span class="variable">p1</span> <span class="reserved">is</span> <span class="type">Point</span> (1, 2);
+```csharp
+// 位置指定で構築できるんなら、位置指定でマッチングできるべき
+var p1 = new Point(1, 2);
+var r1 = p1 is Point (1, 2);
  
-<span class="comment">// 名前指定で構築できるんなら、名前指定でマッチングできるべき</span>
-<span class="reserved">var</span> <span class="variable">p2</span> = <span class="reserved">new</span> <span class="type">Point</span>(<span class="variable">x</span>: 1, <span class="variable">y</span>: 2);
-<span class="reserved">var</span> <span class="variable">r2</span> = <span class="variable">p2</span> <span class="reserved">is</span> <span class="type">Point</span> (<span class="variable">x</span>: 1, <span class="variable">y</span>: 2);
+// 名前指定で構築できるんなら、名前指定でマッチングできるべき
+var p2 = new Point(x: 1, y: 2);
+var r2 = p2 is Point (x: 1, y: 2);
  
-<span class="comment">// 型推論が効く場合に new の後ろの型名は省略可能(になる予定)なら</span>
-<span class="comment">// 型が既知なら型名を省略してマッチングできるべき</span>
-<span class="type">Point</span> <span class="variable">p3</span> = <span class="reserved">new</span> (1, 2);
-<span class="reserved">var</span> <span class="variable">r3</span> = <span class="variable">p3</span> <span class="reserved">is</span> (1, 2);
+// 型推論が効く場合に new の後ろの型名は省略可能(になる予定)なら
+// 型が既知なら型名を省略してマッチングできるべき
+Point p3 = new (1, 2);
+var r3 = p3 is (1, 2);
  
-<span class="comment">// 階層的に new できるんなら、階層的にマッチングできるべき</span>
-<span class="reserved">var</span> <span class="variable">line</span> = <span class="reserved">new</span> <span class="type">Line</span>(<span class="reserved">new</span> <span class="type">Point</span>(1, 2), <span class="reserved">new</span> <span class="type">Point</span>(3, 4));
-<span class="reserved">var</span> <span class="variable">r4</span> = <span class="variable">line</span> <span class="reserved">is</span> ((1, 2), (3, 4));
-</code></pre>
+// 階層的に new できるんなら、階層的にマッチングできるべき
+var line = new Line(new Point(1, 2), new Point(3, 4));
+var r4 = line is ((1, 2), (3, 4));
+```
 
 #### <a id="sec-generated-title-14"></a> <a id="how-to-deconstruct"></a>分解方法
 
@@ -509,91 +509,91 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 まず、タプルの場合、コンパイラーの最適化によって、タプルのフィールドを直接参照するようなコードが生成されます。
 例えば以下のようなコードを書いた場合、
 
-<pre class="source" title="タプルに対する位置パターン">
-<code><span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">TupleSyntax</span>((<span class="reserved">int</span> a, <span class="reserved">int</span> b) <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> (1, 2);
-</code></pre>
+```csharp
+public bool TupleSyntax((int a, int b) x) => x is (1, 2);
+```
 
 以下のようなコードと同じような挙動をします。
 
-<pre class="source" title="タプルに対する位置パターンの展開結果">
-<code><span class="comment">// ValueTuple の場合は直接フィールドを参照する。</span>
-<span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">TupleSyntax</span>((<span class="reserved">int</span> a, <span class="reserved">int</span> b) <span class="variable">x</span>)
+```csharp
+// ValueTuple の場合は直接フィールドを参照する。
+public bool TupleSyntax((int a, int b) x)
 {
-    <span class="control">return</span> <span class="variable">x</span>.a == 1 &amp;&amp; <span class="variable">x</span>.b == 2;
+    return x.a == 1 && x.b == 2;
 }
-</code></pre>
+```
 
 そうでない場合、まずはコンパイル時に `Deconstruct` メソッドを探します。
 見つかった場合は、それを使うコードが生成されます。
 例として以下のようなクラスを用意します。
 
-<pre class="source" title="分解可能なクラス">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">class</span> <span class="type">X</span> : <span class="type">ITuple</span>
+class X : ITuple
 {
-    <span class="reserved">public</span> <span class="reserved">object</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable">index</span>] =&gt; <span class="variable">index</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> Length =&gt; 2;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">a</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">b</span>) =&gt; (<span class="variable">a</span>, <span class="variable">b</span>) = (0, 1);
+    public object this[int index] => index;
+    public int Length => 2;
+    public void Deconstruct(out int a, out int b) => (a, b) = (0, 1);
 }
-</code></pre>
+```
 
 この型に対して以下のようなコードを書いた場合、
 
-<pre class="source" title="コンパイル時に Deconstruct メソッドが見つかる場合">
-<code><span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Deconstruct</span>(<span class="type">X</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> (1, 2);
-</code></pre>
+```csharp
+public bool Deconstruct(X x) => x is (1, 2);
+```
 
 以下のようなコードと同じような挙動をします。
 
-<pre class="source" title="コンパイル時に Deconstruct メソッドが見つかる場合の展開結果">
-<code><span class="comment">// コンパイル時に Deconstruct メソッドが見つかる場合はそれを使って分解。</span>
-<span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Deconstruct</span>(<span class="type">X</span> <span class="variable">x</span>)
+```csharp
+// コンパイル時に Deconstruct メソッドが見つかる場合はそれを使って分解。
+public bool Deconstruct(X x)
 {
-    <span class="variable">x</span>.<span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">a</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">b</span>);
-    <span class="control">return</span> <span class="variable">a</span> == 1 &amp;&amp; <span class="variable">b</span> == 2;
+    x.Deconstruct(out var a, out var b);
+    return a == 1 && b == 2;
 }
-</code></pre>
+```
 
 分解代入や分解変数宣言とは違って、位置パターンの場合はコンパイル時に `Deconstruct` メソッドが見つからない場合があります。
 この場合、`ITuple`インターフェイス(`System.Runtime.CompilerServices`名前空間)を使って分解を試みます。
 例えば以下のように`object`で値を渡すコードを書いた場合、
 
-<pre class="source" title="コンパイル時に Deconstruct メソッドが見つからない場合">
-<code><span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Object</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> (1, 2);
-</code></pre>
+```csharp
+public bool Object(object x) => x is (1, 2);
+```
 
 以下のようなコードと同じような挙動をします。
 
-<pre class="source" title="コンパイル時に Deconstruct メソッドが見つからない場合の展開結果">
-<code><span class="comment">// コンパイル時の解決ができない場合、ITuple を実装しているかどうかを見る。</span>
-<span class="comment">// Length とインデクサーを使ってマッチング。</span>
-<span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Object</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+```csharp
+// コンパイル時の解決ができない場合、ITuple を実装しているかどうかを見る。
+// Length とインデクサーを使ってマッチング。
+public bool Object(object x)
 {
-    <span class="control">return</span> <span class="variable">x</span> <span class="reserved">is</span> <span class="type">ITuple</span> <span class="variable">t</span>
-        &amp;&amp; <span class="variable">t</span>.Length == 2
-        &amp;&amp; <span class="variable">t</span>[0] <span class="reserved">is</span> <span class="reserved">int</span> <span class="variable">a</span> &amp;&amp; <span class="variable">a</span> == 1
-        &amp;&amp; <span class="variable">t</span>[1] <span class="reserved">is</span> <span class="reserved">int</span> <span class="variable">b</span> &amp;&amp; <span class="variable">b</span> == 1
+    return x is ITuple t
+        && t.Length == 2
+        && t[0] is int a && a == 1
+        && t[1] is int b && b == 1
         ;
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-15"></a> <a id="tuple-switch"></a>タプル switch
 
 位置パターンに伴って、`switch`ステートメントの `()` の中に、複数の値を `,` 区切りで書けるようになりました。
 
-<pre class="source" title="複数の値に対する switch">
-<code><span class="reserved">int</span> <span class="method">Compare</span>(<span class="reserved">int</span>? <span class="variable">a</span>, <span class="reserved">int</span>? <span class="variable">b</span>)
+```csharp
+int Compare(int? a, int? b)
 {
-    <em><span class="control">switch</span> (<span class="variable">a</span>, <span class="variable">b</span>)</em>
+    switch (a, b)
     {
-        <span class="control">case</span> (<span class="reserved">null</span>, <span class="reserved">null</span>): <span class="control">return</span> 0;
-        <span class="control">case</span> (<span class="reserved">int</span> <span class="reserved">_</span>, <span class="reserved">null</span>): <span class="control">return</span> -1;
-        <span class="control">case</span> (<span class="reserved">null</span>, <span class="reserved">int</span> <span class="reserved">_</span>): <span class="control">return</span> -1;
-        <span class="control">case</span> (<span class="reserved">int</span> <span class="variable">a1</span>, <span class="reserved">int</span> <span class="variable">b1</span>): <span class="control">return</span> <span class="variable">a1</span>.<span class="method">CompareTo</span>(<span class="variable">b1</span>);
+        case (null, null): return 0;
+        case (int _, null): return -1;
+        case (null, int _): return -1;
+        case (int a1, int b1): return a1.CompareTo(b1);
     }
 }
-</code></pre>
+```
 
 このコードは、まず `(a, b)` というタプルを作って、それを `switch` ステートメントに掛ける挙動になります。`case` の後ろに書かれているのは位置パターンです。
 
@@ -606,33 +606,33 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 位置パターンでは認められるようになりました。
 それぞれ、0、1引数の`Deconstruct`メソッドが調べられます。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>() { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">a</span>) =&gt; <span class="variable">a</span> = 0;
+    public void Deconstruct() { }
+    public void Deconstruct(out int a) => a = 0;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>() =&gt; <span class="method">M</span>(<span class="reserved">new</span> <span class="type">X</span>());
+    static void Main() => M(new X());
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">X</span> <span class="variable">x</span>)
+    static void M(X x)
     {
-        <span class="comment">// 0 引数の位置パターン。</span>
-        <span class="comment">// Deconstruct() を持っていることが使える条件。</span>
-        <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> ()) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Deconstruct()&quot;</span>);
+        // 0 引数の位置パターン。
+        // Deconstruct() を持っていることが使える条件。
+        if (x is ()) Console.WriteLine("Deconstruct()");
  
-        <span class="comment">// 1 引数の位置パターン。</span>
-        <span class="comment">// Deconstruct(out T) を持っていることが使える条件。</span>
-        <span class="comment">// ただ、キャストの () との区別が難しいらしく、素直に x is (int a) とは書けない。</span>
-        <span class="comment">// 前後に余計な var や _ を付ける必要あり。</span>
-        <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> (<span class="reserved">int</span> <span class="variable">a</span>) <span class="reserved">_</span>) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">$&quot;Deconstruct(</span>{<span class="variable">a</span>}<span class="string">)&quot;</span>);
+        // 1 引数の位置パターン。
+        // Deconstruct(out T) を持っていることが使える条件。
+        // ただ、キャストの () との区別が難しいらしく、素直に x is (int a) とは書けない。
+        // 前後に余計な var や _ を付ける必要あり。
+        if (x is (int a) _) Console.WriteLine($"Deconstruct({a})");
     }
 }
-</code></pre>
+```
 
 0引数のものは単に `()` で OK です。
 
@@ -646,70 +646,70 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 以下のように、すべて `_` で値を破棄してしまう場合には `Deconstruct` メソッドを呼び出す必要がなく、
 実際、呼び出しが消えてなくなります。
 
-<pre class="source" title="Deconstruct が常に呼ばれる保証はない">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="comment">// Deconstruct に副作用を持たせる</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Deconstruct()&quot;</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">a</span>)
+    // Deconstruct に副作用を持たせる
+    public void Deconstruct() => Console.WriteLine("Deconstruct()");
+    public void Deconstruct(out int a)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Deconstruct(out int a)&quot;</span>);
-        <span class="variable">a</span> = 0;
+        Console.WriteLine("Deconstruct(out int a)");
+        a = 0;
     }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">a</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">b</span>)
+    public void Deconstruct(out int a, out int b)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Deconstruct(out int a, out int b)&quot;</span>);
-        (<span class="variable">a</span>, <span class="variable">b</span>) = (0, 0);
+        Console.WriteLine("Deconstruct(out int a, out int b)");
+        (a, b) = (0, 0);
     }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">X</span>();
+        var x = new X();
  
-        <span class="comment">// Deconstruct() がないとコンパイル エラーになるけど、</span>
-        <span class="comment">// Deconstruct() は呼ばれない。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span> <span class="reserved">is</span> ());
+        // Deconstruct() がないとコンパイル エラーになるけど、
+        // Deconstruct() は呼ばれない。
+        Console.WriteLine(x is ());
  
-        <span class="comment">// Deconstruct(out int) がないとコンパイル エラーになるけど、</span>
-        <span class="comment">// Deconstruct(out int) は呼ばれない。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">var</span> (<span class="reserved">_</span>));
+        // Deconstruct(out int) がないとコンパイル エラーになるけど、
+        // Deconstruct(out int) は呼ばれない。
+        Console.WriteLine(x is var (_));
  
-        <span class="comment">// Deconstruct(out int, out int) がないとコンパイル エラーになるけど、</span>
-        <span class="comment">// Deconstruct(out int, out int) は呼ばれない。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span> <span class="reserved">is</span> (<span class="reserved">_</span>, <span class="reserved">_</span>));
+        // Deconstruct(out int, out int) がないとコンパイル エラーになるけど、
+        // Deconstruct(out int, out int) は呼ばれない。
+        Console.WriteLine(x is (_, _));
     }
 }
-</code></pre>
+```
 
 また、引数の数が同じ位置パターンをいくつか並べた際にも、`Deconstruct` メソッドの呼び出しは1回にまとめられます。
 
-<pre class="source" title="引数の数が同じ位置パターンを並べる例">
-<code><span class="reserved">class</span> <span class="type">X</span>
+```csharp
+class X
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="method">X</span>(<span class="reserved">int</span> <span class="variable">value</span>) =&gt; Value = <span class="variable">value</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">value</span>) =&gt; <span class="variable">value</span> = Value;
+    public int Value { get; }
+    public X(int value) => Value = value;
+    public void Deconstruct(out int value) => value = Value;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="type">X</span> <span class="variable">x</span>)
-        =&gt; <span class="variable">x</span> <span class="reserved">switch</span>
+    static int M(X x)
+        => x switch
     {
-        <span class="comment">// 引数の数が同じ位置パターンを3回。</span>
-        <span class="comment">// この場合、Deconstruct(out int) の呼び出しは1回にまとめられる。</span>
-        (0) <span class="reserved">_</span> =&gt; 1,
-        (1) <span class="reserved">_</span> =&gt; 2,
-        (2) <span class="reserved">_</span> =&gt; 0,
-        <span class="reserved">_</span> =&gt; <span class="variable">x</span>.Value
+        // 引数の数が同じ位置パターンを3回。
+        // この場合、Deconstruct(out int) の呼び出しは1回にまとめられる。
+        (0) _ => 1,
+        (1) _ => 2,
+        (2) _ => 0,
+        _ => x.Value
     };
 }
-</code></pre>
+```
 
 ちなみに、仕様上は「必ず消える」という保証もないです(「消えることがある」という仕様)。
 なので、`Deconstruct` メソッドは副作用を起こさないように作ることが推奨されます。
@@ -727,87 +727,87 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 再び `Point` クラス(`int` 型の2つのプロパティ `X`、`Y` を持つ)を例に挙げます。
 以下のような書き方ができます。
 
-<pre class="source" title="プロパティ パターンの例">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="type">Point</span> <span class="variable">p</span>)
-    =&gt; <span class="variable">p</span> <span class="reserved">switch</span>
+```csharp
+static int M(Point p)
+    => p switch
 {
-    { X: 1, Y: 2 } =&gt; 0,
-    { X: <span class="reserved">var</span> x, Y: <span class="reserved">_</span> } <span class="reserved">when</span> <span class="variable">x</span> &gt; 0 =&gt; <span class="variable">x</span>,
-    <span class="reserved">_</span> =&gt; -1
+    { X: 1, Y: 2 } => 0,
+    { X: var x, Y: _ } when x > 0 => x,
+    _ => -1
 };
-</code></pre>
+```
 
 このコードは概ね以下のような意味になります。
 
-<pre class="source" title="プロパティ パターンの展開結果">
-<code><span class="reserved">var</span> <span class="variable">x</span> = <span class="variable">p</span>.X;
-<span class="reserved">var</span> <span class="variable">y</span> = <span class="variable">p</span>.Y;
-<span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> 1 &amp;&amp; <span class="variable">y</span> <span class="reserved">is</span> 2) <span class="control">return</span> 0;
-<span class="control">if</span> (<span class="variable">x</span> &gt; 0) <span class="control">return</span> <span class="variable">x</span>;
-<span class="control">return</span> -1;
-</code></pre>
+```csharp
+var x = p.X;
+var y = p.Y;
+if (x is 1 && y is 2) return 0;
+if (x > 0) return x;
+return -1;
+```
 
 位置パターンと同様、型の明示もできます。
 
-<pre class="source" title="プロパティ パターンでの型の明示">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>)
-    =&gt; <span class="variable">obj</span> <span class="reserved">switch</span>
+```csharp
+static int M(object obj)
+    => obj switch
 {
-    <span class="reserved">int</span> <span class="variable">i</span> =&gt; <span class="variable">i</span>,
-    <span class="reserved">string</span> <span class="variable">s</span> =&gt; <span class="variable">s</span>.Length,
-    <em><span class="type">Point</span> { X: 0, Y: 0 }</em> =&gt; 0,
-    <span class="type">Point</span> (<span class="reserved">_</span>, <span class="reserved">_</span>) =&gt; 1,
-    <span class="reserved">_</span> =&gt; -1
+    int i => i,
+    string s => s.Length,
+    Point { X: 0, Y: 0 } => 0,
+    Point (_, _) => 1,
+    _ => -1
 };
-</code></pre>
+```
 
 ちなみに、プロパティ パターンと言いつつ、フィールドも参照できます。
 
-<pre class="source" title="プロパティ パターンでフィールドを参照する例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="comment">// (外から見て) get-only なプロパティ</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> GetOnly { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
+    // (外から見て) get-only なプロパティ
+    public int GetOnly { get; private set; }
  
-    <span class="comment">// get/set 可能なプロパティ</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> GetSet { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // get/set 可能なプロパティ
+    public int GetSet { get; set; }
  
-    <span class="comment">// フィールド</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Field;
+    // フィールド
+    public int Field;
  
-    <span class="comment">// set-only なプロパティ</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> SetOnly { <span class="reserved">set</span> =&gt; GetOnly = <span class="reserved">value</span>; }
+    // set-only なプロパティ
+    public int SetOnly { set => GetOnly = value; }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    public static void Main()
     {
-        <span class="comment">// オブジェクト初期化子では、set が public なプロパティか readonly ではないフィールドを指定可能</span>
-        <span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">X</span> { GetSet = 1, Field = 2, SetOnly = 3 };
+        // オブジェクト初期化子では、set が public なプロパティか readonly ではないフィールドを指定可能
+        var x = new X { GetSet = 1, Field = 2, SetOnly = 3 };
  
-        <span class="comment">// プロパティ パターンでは、get が public なプロパティかフィールドを指定可能</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span> <span class="reserved">is</span> { GetOnly: 3, GetSet: 1, Field: 2 });
+        // プロパティ パターンでは、get が public なプロパティかフィールドを指定可能
+        Console.WriteLine(x is { GetOnly: 3, GetSet: 1, Field: 2 });
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-19"></a> <a id="initializer-vs-property"></a>オブジェクト初期化子の逆
 
 「位置パターンはコンストラクター呼び出しの逆」という話をしましたが、
 同様に、プロパティ パターンは[オブジェクト初期化子](../oop/oo_construct.md#member_initializer)と対になるものです。
 
-<pre class="source" title="オブジェクト初期化子とプロパティ パターン">
-<code><span class="comment">// 初期化子でプロパティ指定できるんなら、プロパティ指定でマッチングできるべき</span>
-<span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-<span class="reserved">var</span> <span class="variable">r1</span> = <span class="variable">p1</span> <span class="reserved">is</span> { X: 1, Y: 2 };
+```csharp
+// 初期化子でプロパティ指定できるんなら、プロパティ指定でマッチングできるべき
+var p1 = new Point { X = 1, Y = 2 };
+var r1 = p1 is { X: 1, Y: 2 };
  
-<span class="comment">// 混在で構築できるんなら、混在でマッチングできるべき</span>
-<span class="reserved">var</span> <span class="variable">p2</span> = <span class="reserved">new</span> <span class="type">Point</span>(<span class="variable">x</span>: 1) { Y = 2 };
-<span class="reserved">var</span> <span class="variable">r2</span> = <span class="variable">p2</span> <span class="reserved">is</span> (1, <span class="reserved">_</span>) { Y: 2 };
-</code></pre>
+// 混在で構築できるんなら、混在でマッチングできるべき
+var p2 = new Point(x: 1) { Y = 2 };
+var r2 = p2 is (1, _) { Y: 2 };
+```
 
 ただ、`=` は代入の意味なのでパターンとしては使えず、代わりに `:` になっています。
 `:` を使っているのは、位置パターンと構文を共通化できて実装が楽だからだそうです。
@@ -819,42 +819,42 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 
 残念ながら、以下のようなコードには動作保証がないそうです。
 
-<pre class="source" title="順序保障がないとまずいコードの例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">enum</span> <span class="type">Type</span> { A, B }
+enum Type { A, B }
  
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="reserved">public</span> <span class="type">Type</span> Type { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="method">X</span>(<span class="type">Type</span> <span class="variable">type</span>) =&gt; Type = <span class="variable">type</span>;
+    public Type Type { get; }
+    public X(Type type) => Type = type;
  
-    <span class="comment">// それぞれ Type が一致しているときだけ値を取り出せ、そうでなければ例外</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> A =&gt; Type == <span class="type">Type</span>.A ? 1 : <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
-    <span class="reserved">public</span> <span class="reserved">int</span> B =&gt; Type == <span class="type">Type</span>.B ? 2 : <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
+    // それぞれ Type が一致しているときだけ値を取り出せ、そうでなければ例外
+    public int A => Type == Type.A ? 1 : throw new InvalidOperationException();
+    public int B => Type == Type.B ? 2 : throw new InvalidOperationException();
  
-    <span class="comment">// 分解でタイプ判定</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="type">Type</span> <span class="variable">t</span>) =&gt; <span class="variable">t</span> = Type;
+    // 分解でタイプ判定
+    public void Deconstruct(out Type t) => t = Type;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">M</span>(<span class="reserved">new</span> <span class="type">X</span>(<span class="type">Type</span>.A)));
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">M</span>(<span class="reserved">new</span> <span class="type">X</span>(<span class="type">Type</span>.B)));
+        Console.WriteLine(M(new X(Type.A)));
+        Console.WriteLine(M(new X(Type.B)));
     }
  
-    <span class="comment">// 以下のコードはたまたま動く可能性はあるものの、C# の言語使用としては保証がない。</span>
-    <span class="comment">// Deconstruct よりも先にプロパティのアクセスがあると例外が出ることがある。</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="type">X</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">switch</span>
+    // 以下のコードはたまたま動く可能性はあるものの、C# の言語使用としては保証がない。
+    // Deconstruct よりも先にプロパティのアクセスがあると例外が出ることがある。
+    static int M(X x) => x switch
     {
-        (<span class="type">Type</span>.A) { A: <span class="reserved">var</span> a } =&gt; <span class="variable">a</span>,
-        (<span class="type">Type</span>.B) { B: <span class="reserved">var</span> b } =&gt; <span class="variable">b</span>,
-        <span class="reserved">_</span> =&gt; 0
+        (Type.A) { A: var a } => a,
+        (Type.B) { B: var b } => b,
+        _ => 0
     };
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-21"></a> <a id="non-null"></a>非 null マッチング
 
@@ -863,45 +863,45 @@ C# 8.0 で、再帰的に使えるパターンが追加されて、ようやく�
 
 C# 7.0 までのパターンだと、null チェックを楽に書く手段がなかったです。
 
-<pre class="source" title="C# 7.0 時点のパターンでの非 null パターン">
-<code><span class="reserved">struct</span> <span class="type">LongLongNamedStruct</span> { }
+```csharp
+struct LongLongNamedStruct { }
  
-<span class="reserved">void</span> <span class="method">M1</span>(<span class="type">LongLongNamedStruct</span>? <span class="variable">x</span>)
+void M1(LongLongNamedStruct? x)
 {
-    <span class="comment">// こういう書き方だと null チェックになる。</span>
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="type">LongLongNamedStruct</span> <span class="variable">nonNull</span>)
+    // こういう書き方だと null チェックになる。
+    if (x is LongLongNamedStruct nonNull)
     {
-        <span class="comment">// obj が null じゃない時だけここが実行される。</span>
-        <span class="comment">// でも、x の型が既知なのに、長いクラス名をわざわざ書くのはしんどい…</span>
+        // obj が null じゃない時だけここが実行される。
+        // でも、x の型が既知なのに、長いクラス名をわざわざ書くのはしんどい…
     }
 }
  
-<span class="reserved">void</span> <span class="method">M2</span>(<span class="type">LongLongNamedStruct</span>? <span class="variable">x</span>)
+void M2(LongLongNamedStruct? x)
 {
-    <span class="comment">// が、var パターンは null にもマッチしちゃう。</span>
-    <span class="comment">// (var は「何にでもマッチ」。null でも true になっちゃう。)</span>
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">var</span> nullable)
+    // が、var パターンは null にもマッチしちゃう。
+    // (var は「何にでもマッチ」。null でも true になっちゃう。)
+    if (x is var nullable)
     {
-        <span class="comment">// obj が null でもここが実行される。</span>
+        // obj が null でもここが実行される。
     }
 }
-</code></pre>
+```
 
 単に null チェックだけなら `!(x is null)` とか `x.HasValue` だけでいいんですけども、 値を使いたければその後ろで `var nonNull = x.GetValueOrDefault();` とかが必要で、何を使うにしても微妙に長くなりがちでした。
 
 そこで先ほどの `x is { }` を使います。
 以下のような書き方で、null 許容型の null チェックをしつつ、値を変数に受け取れます。
 
-<pre class="source" title="C# 8.0 での非 null パターン">
-<code><span class="reserved">void</span> <span class="method">M3</span>(<span class="type">LongLongNamedStruct</span>? <span class="variable">x</span>)
+```csharp
+void M3(LongLongNamedStruct? x)
 {
-    <span class="comment">// (C# 8.0) プロパティ パターンであれば、null チェックを含む。</span>
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> { } nonNull)
+    // (C# 8.0) プロパティ パターンであれば、null チェックを含む。
+    if (x is { } nonNull)
     {
-        <span class="comment">// obj が null じゃない時だけここが実行される。</span>
+        // obj が null じゃない時だけここが実行される。
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-22"></a> <a id="sub-pattern-name"></a>プロパティ パターンの拡張(入れ子のメンバー参照)
 
@@ -909,25 +909,25 @@ C# 7.0 までのパターンだと、null チェックを楽に書く手段が�
 
 C# 10.0 で、以下のように、入れ子のプロパティ・フィールド参照でプロパティ パターンを書けるようになりました。
 
-<pre class="source" title="入れ子のプロパティ参照">
-<code><span class="method">m</span>(<span class="reserved">null</span>);
-<span class="method">m</span>(<span class="reserved">new</span> <span class="type">X</span> { Name = <span class="string">""</span> });
-<span class="method">m</span>(<span class="reserved">new</span> <span class="type">X</span> { Name = <span class="string">"a"</span> });
-<span class="method">m</span>(<span class="reserved">new</span> <span class="type">X</span> { Name = <span class="string">"abc"</span> });
+```csharp
+m(null);
+m(new X { Name = "" });
+m(new X { Name = "a" });
+m(new X { Name = "abc" });
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m</span>(<span class="type">X</span>? x)
+static void m(X? x)
 {
-    <span class="control">if</span> (x <span class="reserved">is</span> { <em>Name.Length: 1</em> })
+    if (x is { Name.Length: 1 })
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"single-char Name"</span>);
+        Console.WriteLine("single-char Name");
     }
 }
 
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="reserved">public</span> <span class="reserved">string</span>? Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public string? Name { get; set; }
 }
-</code></pre>
+```
 
 この例でいう `{ Name.Length: 1 }` の部分は、`{ Name: { Length: 1 } }` と全く同じ意味になります。
 
@@ -935,20 +935,20 @@ C# 10.0 で、以下のように、入れ子のプロパティ・フィールド
 `Name.Length` と言う書き方でも `Name` の null チェックを含んでいます。
 `{ Name: { Length: 1 } }` をさらに展開すると、以下のようなコードとほぼ同じ意味になります。
 
-<pre class="source" title="入れ子のプロパティ パターンは null チェックを含む">
-<code>    <span class="control">if</span> (x <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span>)
+```csharp
+    if (x is not null)
     {
-        <span class="reserved">var</span> name = x.Name;
-        <span class="control">if</span> (name <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span>)
+        var name = x.Name;
+        if (name is not null)
         {
-            <span class="reserved">var</span> length = name.Length;
-            <span class="control">if</span> (length == 1)
+            var length = name.Length;
+            if (length == 1)
             {
-                <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"single-char Name"</span>);
+                Console.WriteLine("single-char Name");
             }
         }
     }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-23"></a> <a id="list">リスト パターン</a>
 
@@ -957,18 +957,18 @@ C# 10.0 で、以下のように、入れ子のプロパティ・フィールド
 C# 11で、`[]` を使ってリスト(配列や `List<T>` など)に対するパターン マッチングができるようになりました。
 例えば以下のような `switch` を書けます。
 
-<pre class="source" title="リストパターンの例">
-<code><span class="reserved">var</span> <span class="variable">array</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span> };
+```csharp
+var array = new[] { 1, 2 };
 
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">array</span> <span class="control">switch</span>
+Console.WriteLine(array switch
 {
-    [] <span class="operator">=&gt;</span> <span class="string">&quot;空の配列&quot;</span>,
-    [<span class="number">1</span>] <span class="operator">=&gt;</span> <span class="string">&quot;長さ1で、1要素目が1&quot;</span>,
-    [<span class="reserved">_</span>] <span class="operator">=&gt;</span> <span class="string">&quot;長さ1の配列&quot;</span>,
-    [<span class="number">1</span>, <span class="number">2</span>] <span class="operator">=&gt;</span> <span class="string">&quot;長さ2で、1要素目が1、2要素目が2&quot;</span>,
-    [<span class="number">1</span>, <span class="reserved">_</span>] <span class="operator">=&gt;</span> <span class="string">&quot;長さ2で、1要素目が1&quot;</span>,
+    [] => "空の配列",
+    [1] => "長さ1で、1要素目が1",
+    [_] => "長さ1の配列",
+    [1, 2] => "長さ2で、1要素目が1、2要素目が2",
+    [1, _] => "長さ2で、1要素目が1",
 });
-</code></pre>
+```
 
 このような `[]` を使ったパターンを<strong id="key-list-pattern" class="keyword">リスト パターン</strong>(list pattern)と言います。
 
@@ -986,16 +986,16 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 
 これに対して、(C# 11 では入らなかったんですが、将来) 「コレクション リテラル」みたいな文法で `[]` を使う事を考えたりもしているようです。
 
-<pre class="source" title="[] でコレクション初期化">
-<code><span class="comment">// (C# 11 時点で提案段階)</span>
-<span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+// (C# 11 時点で提案段階)
+using System.Collections.Immutable;
 
-<span class="reserved">int</span>[] <span class="variable">array</span> = [ 1, 2 ];
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> = [ 1, 2 ];
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">ros</span> = [ 1, 2 ];
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">list</span> = [ 1, 2 ];
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">immutable</span> = [1, 2];
-</code></pre>
+int[] array = [ 1, 2 ];
+Span<int> span = [ 1, 2 ];
+ReadOnlySpan<int> ros = [ 1, 2 ];
+List<int> list = [ 1, 2 ];
+ImmutableArray<int> immutable = [1, 2];
+```
 
 これが入れば、初期化・生成側と、パターン マッチ・分解側の間の違和感が緩和されるかと思います。
 
@@ -1003,27 +1003,27 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 
 パターンに対して `[a, b]` と書く場合、2要素ピッタリのリスト出ないとマッチしません。
 
-<pre class="source" title="個数がピッタリでないとマッチしない">
-<code><span class="reserved">var</span> <span class="variable">array</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span> };
+```csharp
+var array = new[] { 1, 2 };
 
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">array</span> <span class="reserved">is</span> [<span class="number">1</span>, <span class="number">2</span>]); <span class="comment">// true</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">array</span> <span class="reserved">is</span> [<span class="number">1</span>]);    <span class="comment">// false。部分一致ではダメ。</span>
-</code></pre>
+Console.WriteLine(array is [1, 2]); // true
+Console.WriteLine(array is [1]);    // false。部分一致ではダメ。
+```
 
 部分一致させたい場合、余る部分に `..` を置けばマッチさせることができます。
 例えば、以下のようなコードで、「1, 2 で始まって、長さ2以上のリスト」にマッチできます。
 
-<pre class="source" title="「1, 2 で始まって、長さ2以上のリスト」にマッチ">
-<code><span class="reserved">var</span> <span class="variable">array</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span> };
+```csharp
+var array = new[] { 1, 2 };
 
-<span class="method">match</span>(<span class="reserved">new</span>[] { <span class="number">1</span> }); <span class="comment">// false</span>
-<span class="method">match</span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span> }); <span class="comment">// true (ちょうどでもOK)</span>
-<span class="method">match</span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> }); <span class="comment">// true (過剰でもOK)</span>
-<span class="method">match</span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> }); <span class="comment">// true</span>
+match(new[] { 1 }); // false
+match(new[] { 1, 2 }); // true (ちょうどでもOK)
+match(new[] { 1, 2, 3 }); // true (過剰でもOK)
+match(new[] { 1, 2, 3, 4, 5 }); // true
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">match</span>(<span class="reserved">int</span>[] <span class="variable local">array</span>)
-    <span class="operator">=&gt;</span> <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable local">array</span> <span class="reserved">is</span> [<span class="number">1</span>, <span class="number">2</span>, ..]);
-</code></pre>
+static void match(int[] array)
+    => Console.WriteLine(array is [1, 2, ..]);
+```
 
 このような `..` を<strong id="key-slice-pattern" class="keyword">スライス パターン</strong>(slice pattern)と言います。
 
@@ -1032,83 +1032,83 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 
 `..` は先頭や中間にも書けます。
 
-<pre class="source" title="先頭、中間の ..">
-<code><span class="reserved">var</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span> };
-<span class="reserved">var</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span> };
-<span class="reserved">var</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span> };
+```csharp
+var a1 = new[] { 1, 2 };
+var a2 = new[] { 1, 2, 2 };
+var a3 = new[] { 1, 2, 1, 2 };
 
-<span class="comment">// 1で始まって2で終わる(長さは任意)。</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a1</span> <span class="reserved">is</span> [<span class="number">1</span>, .., <span class="number">2</span>]); <span class="comment">// true</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a2</span> <span class="reserved">is</span> [<span class="number">1</span>, .., <span class="number">2</span>]); <span class="comment">// true</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a3</span> <span class="reserved">is</span> [<span class="number">1</span>, .., <span class="number">2</span>]); <span class="comment">// true</span>
+// 1で始まって2で終わる(長さは任意)。
+Console.WriteLine(a1 is [1, .., 2]); // true
+Console.WriteLine(a2 is [1, .., 2]); // true
+Console.WriteLine(a3 is [1, .., 2]); // true
 
-<span class="comment">// 末尾が 1, 2で終わる(長さは任意)。</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a1</span> <span class="reserved">is</span> [.., <span class="number">1</span>, <span class="number">2</span>]); <span class="comment">// true</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a2</span> <span class="reserved">is</span> [.., <span class="number">1</span>, <span class="number">2</span>]); <span class="comment">// false</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a3</span> <span class="reserved">is</span> [.., <span class="number">1</span>, <span class="number">2</span>]); <span class="comment">// true</span>
-</code></pre>
+// 末尾が 1, 2で終わる(長さは任意)。
+Console.WriteLine(a1 is [.., 1, 2]); // true
+Console.WriteLine(a2 is [.., 1, 2]); // false
+Console.WriteLine(a3 is [.., 1, 2]); // true
+```
 
 ちなみに、2か所以上に `..` を置いてしまうとコンパイル エラーになります。
 
-<pre class="source" title="2か所以上に .. を置くとコンパイル エラー">
-<code><span class="reserved">var</span> <span class="variable">array</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span> };
+```csharp
+var array = new[] { 1, 2 };
 
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">array</span> <span class="reserved">is</span> [.., <span class="error">..</span>]);
-</code></pre>
+Console.WriteLine(array is [.., ..]);
+```
 
 #### <a id="sec-generated-title-26"></a> <a id="sub-pattern">リスト パターンの再帰</a>
 
 [リスト パターン](#list)はカテゴライズするなら[再帰パターン](#recursive)の一種です。
 `[]` の中の各要素には任意のパターンを書くことができます。
 
-<pre class="source" title="リスト パターン中の再帰パターン">
-<code><span class="reserved">using</span> System<span class="operator">.</span>Numerics;
+```csharp
+using System.Numerics;
 
-<span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">match1</span>(<span class="reserved">int</span>[] <span class="variable local">array</span>)
-    <span class="operator">=&gt;</span> <span class="variable local">array</span> <span class="reserved">is</span> [<span class="number">0</span>, <span class="reserved">_</span>, <span class="operator">&gt;</span> <span class="number">0</span>, <span class="operator">&lt;</span> <span class="number">0</span>, <span class="reserved">var</span> x, ..] <span class="operator">&amp;&amp;</span> (<span class="variable">x</span> <span class="operator">%</span> <span class="number">2</span>) <span class="operator">==</span> <span class="number">1</span>;
-<span class="comment">// 前から順に、</span>
-<span class="comment">// 0 だけにマッチ(定数パターン)</span>
-<span class="comment">// 任意 (破棄パターン)</span>
-<span class="comment">// 0 より大きい(関係演算パターン)</span>
-<span class="comment">// 0 より小さい(関係演算パターン)</span>
-<span class="comment">// 任意 (var パターン)</span>
-<span class="comment">// 残り読み飛ばし (スライス パターン)</span>
+static bool match1(int[] array)
+    => array is [0, _, > 0, < 0, var x, ..] && (x % 2) == 1;
+// 前から順に、
+// 0 だけにマッチ(定数パターン)
+// 任意 (破棄パターン)
+// 0 より大きい(関係演算パターン)
+// 0 より小さい(関係演算パターン)
+// 任意 (var パターン)
+// 残り読み飛ばし (スライス パターン)
 
-<span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">match2</span>((<span class="reserved">int</span> x, <span class="reserved">int</span> y)[] <span class="variable local">points</span>)
-    <span class="operator">=&gt;</span> <span class="variable local">points</span> <span class="reserved">is</span> [(<span class="number">1</span>, <span class="number">2</span>), (<span class="field">x</span>: <span class="number">3</span>, <span class="field">y</span>: <span class="number">4</span>), { <span class="field">x</span>: <span class="number">5</span>, <span class="field">y</span>: <span class="number">6</span> }];
-<span class="comment">// 前から順に</span>
-<span class="comment">// 位置パターン</span>
-<span class="comment">// 位置パターン(名前付き)</span>
-<span class="comment">// プロパティ パターン</span>
-</code></pre>
+static bool match2((int x, int y)[] points)
+    => points is [(1, 2), (x: 3, y: 4), { x: 5, y: 6 }];
+// 前から順に
+// 位置パターン
+// 位置パターン(名前付き)
+// プロパティ パターン
+```
 
 また、スライス パターンも、`..` の後ろに続けてパターンを書くことができます。
 
-<pre class="source" title=".. に再帰でパターンを付ける">
-<code><span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">match1</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">span</span>) <span class="operator">=&gt;</span> <span class="variable local">span</span> <span class="control">switch</span>
+```csharp
+static bool match1(ReadOnlySpan<int> span) => span switch
 {
-    [<span class="operator">&gt;</span> <span class="number">0</span>, .. <span class="reserved">var</span> rest] <span class="operator">=&gt;</span> <span class="method">match1</span>(<span class="variable">rest</span>), <span class="comment">// 先頭が正の数で、残りを再帰的に判定</span>
-    [] <span class="operator">=&gt;</span> <span class="reserved">true</span>,
-    <span class="reserved">_</span> <span class="operator">=&gt;</span> <span class="reserved">false</span>,
+    [> 0, .. var rest] => match1(rest), // 先頭が正の数で、残りを再帰的に判定
+    [] => true,
+    _ => false,
 };
 
-<span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">match2</span>(<span class="reserved">int</span>[] <span class="variable local">array</span>)
-    <span class="operator">=&gt;</span> <span class="variable local">array</span> <span class="reserved">is</span> [<span class="number">1</span>, ..[<span class="number">2</span>, <span class="number">3</span>]]; <span class="comment">// あまり意味はなくて、[1, 2, 3] と同じ結果にしかならない</span>
-</code></pre>
+static bool match2(int[] array)
+    => array is [1, ..[2, 3]]; // あまり意味はなくて、[1, 2, 3] と同じ結果にしかならない
+```
 
 よく使いそうな例でいうと、「先頭数バイトが特定のパターンの時に読み飛ばし」みたいなことができます。
 
-<pre class="source" title="UTF-8 の BOM 読み飛ばし">
-<code><span class="reserved">var</span> <span class="variable">utf8</span> <span class="operator">=</span> <span class="type">File</span><span class="operator">.</span><span class="method">ReadAllBytes</span>(<span class="string">&quot;a.txt&quot;</span>);
+```csharp
+var utf8 = File.ReadAllBytes("a.txt");
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">b</span> <span class="control">in</span> <span class="method">removeBom</span>(<span class="variable">utf8</span>))
+foreach (var b in removeBom(utf8))
 {
-    <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">$&quot;</span>{<span class="variable">b</span>:<span class="string">X</span>}<span class="string">&quot;</span>);
+    Console.WriteLine($"{b:X}");
 }
 
-<span class="reserved">static</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="method">removeBom</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable local">utf8</span>)
-    <span class="operator">=&gt;</span> <span class="variable local">utf8</span> <span class="reserved">is</span> [<span class="number">0xEF</span>, <span class="number">0xBB</span>, <span class="number">0xBF</span>, .. <span class="reserved">var</span> noBom] <span class="operator">?</span> <span class="variable">noBom</span> <span class="operator">:</span> <span class="variable local">utf8</span>;
-</code></pre>
+static ReadOnlySpan<byte> removeBom(ReadOnlySpan<byte> utf8)
+    => utf8 is [0xEF, 0xBB, 0xBF, .. var noBom] ? noBom : utf8;
+```
 
 #### <a id="sec-generated-title-27"></a> <a id="list-pattern-lowering">リスト パターンの展開結果</a>
 
@@ -1116,31 +1116,31 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 割かしべたに長さ (`Length` もしくは `Count` プロパティ)、インデックス (`a[i]`) やスライス (`a[..]`) に展開されます。
 例えば以下のようなリスト パターンを書いた場合、
 
-<pre class="source" title="リスト パターンを使った回文判定の例">
-<code><span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="method">palindrome</span>(<span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">0</span>]));              <span class="comment">// true</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="method">palindrome</span>(<span class="reserved">new</span>[] { <span class="number">1</span> }));             <span class="comment">// true</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="method">palindrome</span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span> }));          <span class="comment">// false</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="method">palindrome</span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span> }));       <span class="comment">// false</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="method">palindrome</span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span> }));       <span class="comment">// true</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="method">palindrome</span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span> })); <span class="comment">// true</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="method">palindrome</span>(<span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span> })); <span class="comment">// false</span>
+```csharp
+Console.WriteLine(palindrome(new int[0]));              // true
+Console.WriteLine(palindrome(new[] { 1 }));             // true
+Console.WriteLine(palindrome(new[] { 1, 2 }));          // false
+Console.WriteLine(palindrome(new[] { 1, 2, 2 }));       // false
+Console.WriteLine(palindrome(new[] { 1, 2, 1 }));       // true
+Console.WriteLine(palindrome(new[] { 1, 2, 1, 2, 1 })); // true
+Console.WriteLine(palindrome(new[] { 1, 2, 1, 2, 2 })); // false
 
-<span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">palindrome</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">list</span>) <span class="operator">=&gt;</span> <span class="variable local">list</span> <span class="control">switch</span>
+static bool palindrome(ReadOnlySpan<int> list) => list switch
 {
-    [] <span class="reserved">or</span> [<span class="reserved">_</span>] <span class="operator">=&gt;</span> <span class="reserved">true</span>,
-    [<span class="reserved">var</span> first, .. <span class="reserved">var</span> rest, <span class="reserved">var</span> last] <span class="operator">=&gt;</span> <span class="variable">first</span> <span class="operator">==</span> <span class="variable">last</span> <span class="operator">&amp;&amp;</span> <span class="method">palindrome</span>(<span class="variable">rest</span>),
+    [] or [_] => true,
+    [var first, .. var rest, var last] => first == last && palindrome(rest),
 };
-</code></pre>
+```
 
 以下のようなコードとほぼ同じ意味になります。
 
-<pre class="source" title="palindrome の展開結果">
-<code><span class="reserved">static</span> <span class="reserved">bool</span> <span class="method">palindrome</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">list</span>) <span class="operator">=&gt;</span> <span class="variable local">list</span><span class="operator">.</span><span class="property">Length</span> <span class="control">switch</span>
+```csharp
+static bool palindrome(ReadOnlySpan<int> list) => list.Length switch
 {
-    <span class="number">0</span> <span class="reserved">or</span> <span class="number">1</span> <span class="operator">=&gt;</span> <span class="reserved">true</span>,
-    <span class="operator">&gt;=</span> <span class="number">2</span> <span class="operator">=&gt;</span> <span class="variable local">list</span>[<span class="number">0</span>] <span class="operator">==</span> <span class="variable local">list</span>[<span class="operator">^</span><span class="number">1</span>] <span class="operator">&amp;&amp;</span> <span class="method">palindrome</span>(<span class="variable local">list</span>[<span class="number">1</span>..<span class="operator">^</span><span class="number">1</span>]),
+    0 or 1 => true,
+    >= 2 => list[0] == list[^1] && palindrome(list[1..^1]),
 };
-</code></pre>
+```
 
 `a[^i]` や `a[i..j]` が使えることが、そのままリスト パターンを使える条件になります。
 (詳しい条件に付いては「[インデックス/範囲](../data/dataranges.md)」を参照。)
@@ -1149,27 +1149,27 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 `list[i..j]` がパフォーマンス的にいまいちなコードになっている場合、
 リスト パターンも非効率になります。
 
-<pre class="source" title="スライス パターンは文字通りスライスを作る">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m1</span>(<span class="reserved">int</span>[] <span class="variable local">array</span>)
+```csharp
+static void m1(int[] array)
 {
-    <span class="comment">// 配列に対するスライスは新しい配列を作っちゃう(= 遅い)。</span>
-    <span class="reserved">var</span> <span class="variable">slice</span> <span class="operator">=</span> <span class="variable local">array</span>[<span class="number">1</span>..<span class="operator">^</span><span class="number">1</span>];
+    // 配列に対するスライスは新しい配列を作っちゃう(= 遅い)。
+    var slice = array[1..^1];
 
-    <span class="comment">// その影響で、以下のコードも新しい配列がいちいち作られて遅い。</span>
-    <span class="comment">// (string でも同じようなことが起きる)。</span>
-    <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable local">array</span> <span class="reserved">is</span> [<span class="reserved">_</span>, ..<span class="reserved">var</span> rest, <span class="reserved">_</span>]);
+    // その影響で、以下のコードも新しい配列がいちいち作られて遅い。
+    // (string でも同じようなことが起きる)。
+    Console.WriteLine(array is [_, ..var rest, _]);
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m2</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">span</span>)
+static void m2(ReadOnlySpan<int> span)
 {
-    <span class="comment">// Span の場合はそんな非効率な事は起きないので、</span>
-    <span class="reserved">var</span> <span class="variable">slice</span> <span class="operator">=</span> <span class="variable local">span</span>[<span class="number">1</span>..<span class="operator">^</span><span class="number">1</span>];
+    // Span の場合はそんな非効率な事は起きないので、
+    var slice = span[1..^1];
 
-    <span class="comment">// 以下のコードも遅くはならない。</span>
-    <span class="comment">// (string に対しては ReadOnlySpan&lt;char&gt; にすると速い)。</span>
-    <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable local">span</span> <span class="reserved">is</span> [<span class="reserved">_</span>, .. <span class="reserved">var</span> rest, <span class="reserved">_</span>]);
+    // 以下のコードも遅くはならない。
+    // (string に対しては ReadOnlySpan<char> にすると速い)。
+    Console.WriteLine(span is [_, .. var rest, _]);
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-28"></a> <a id="usage"></a>再帰パターンの利用例
 
@@ -1178,43 +1178,43 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 使った題材は、数式を扱うようなクラスです。
 要するに、例えば、「<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><mo>×</mo><mi>x</mi><mo>+</mo><mn>1</mn></math>」というような式を、以下のようなクラスで表します。
 
-<pre class="source" title="数式を表す Node クラス">
-<code><span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Node</span>
+```csharp
+public abstract class Node
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">Node</span> X = <span class="reserved">new</span> <span class="type">Var</span>();
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type">Node</span>(<span class="reserved">int</span> <span class="variable">value</span>) =&gt; <span class="reserved">new</span> <span class="type">Const</span>(<span class="variable">value</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Node</span> <span class="reserved">operator</span> +(<span class="type">Node</span> <span class="variable">left</span>, <span class="type">Node</span> <span class="variable">right</span>) =&gt; <span class="reserved">new</span> <span class="type">Add</span>(<span class="variable">left</span>, <span class="variable">right</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Node</span> <span class="reserved">operator</span> *(<span class="type">Node</span> <span class="variable">left</span>, <span class="type">Node</span> <span class="variable">right</span>) =&gt; <span class="reserved">new</span> <span class="type">Mul</span>(<span class="variable">left</span>, <span class="variable">right</span>);
+    public static readonly Node X = new Var();
+    public static implicit operator Node(int value) => new Const(value);
+    public static Node operator +(Node left, Node right) => new Add(left, right);
+    public static Node operator *(Node left, Node right) => new Mul(left, right);
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Var</span> : <span class="type">Node</span> { <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() =&gt; <span class="string">&quot;x&quot;</span>; }
+public class Var : Node { public override string ToString() => "x"; }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Const</span> : <span class="type">Node</span>
+public class Const : Node
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="method">Const</span>(<span class="reserved">int</span> <span class="variable">value</span>) { Value = <span class="variable">value</span>; }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">value</span>) =&gt; <span class="variable">value</span> = Value;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() =&gt; Value.<span class="method">ToString</span>();
+    public int Value { get; }
+    public Const(int value) { Value = value; }
+    public void Deconstruct(out int value) => value = Value;
+    public override string ToString() => Value.ToString();
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Add</span> : <span class="type">Node</span>
+public class Add : Node
 {
-    <span class="reserved">public</span> <span class="type">Node</span> Left { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Node</span> Right { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="method">Add</span>(<span class="type">Node</span> <span class="variable">left</span>, <span class="type">Node</span> <span class="variable">right</span>) =&gt; (Left, Right) = (<span class="variable">left</span>, <span class="variable">right</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="type">Node</span> <span class="variable">left</span>, <span class="reserved">out</span> <span class="type">Node</span> <span class="variable">right</span>) =&gt; (<span class="variable">left</span>, <span class="variable">right</span>) = (Left, Right);
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() =&gt; <span class="string">$&quot;(</span>{Left.<span class="method">ToString</span>()}<span class="string"> + </span>{Right.<span class="method">ToString</span>()}<span class="string">)&quot;</span>;
+    public Node Left { get; }
+    public Node Right { get; }
+    public Add(Node left, Node right) => (Left, Right) = (left, right);
+    public void Deconstruct(out Node left, out Node right) => (left, right) = (Left, Right);
+    public override string ToString() => $"({Left.ToString()} + {Right.ToString()})";
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Mul</span> : <span class="type">Node</span>
+public class Mul : Node
 {
-    <span class="reserved">public</span> <span class="type">Node</span> Left { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Node</span> Right { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="method">Mul</span>(<span class="type">Node</span> <span class="variable">left</span>, <span class="type">Node</span> <span class="variable">right</span>) =&gt; (Left, Right) = (<span class="variable">left</span>, <span class="variable">right</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="type">Node</span> <span class="variable">left</span>, <span class="reserved">out</span> <span class="type">Node</span> <span class="variable">right</span>) =&gt; (<span class="variable">left</span>, <span class="variable">right</span>) = (Left, Right);
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() =&gt; <span class="string">$&quot;</span>{Left.<span class="method">ToString</span>()}<span class="string"> * </span>{Right.<span class="method">ToString</span>()}<span class="string">&quot;</span>;
+    public Node Left { get; }
+    public Node Right { get; }
+    public Mul(Node left, Node right) => (Left, Right) = (left, right);
+    public void Deconstruct(out Node left, out Node right) => (left, right) = (Left, Right);
+    public override string ToString() => $"{Left.ToString()} * {Right.ToString()}";
 }
-</code></pre>
+```
 
 こいつに対して「式の簡約化」をやってみます。
 要は、
@@ -1225,73 +1225,73 @@ C# で新文法を追加する際には、既存の文法と比べて違和感�
 こういう処理は、`switch`式と位置パターンを使って以下のように書けます。
 (コード全体: [Expressions/Program.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Data/Patterns/Expressions/Program.cs))
 
-<pre class="source" title="switch 式と位置パターンを使って式の簡約化">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Node</span> <span class="method">Simplify</span>(<span class="reserved">this</span> <span class="type">Node</span> <span class="variable">n</span>)
-    =&gt; <span class="variable">n</span> <span class="reserved">switch</span>
+```csharp
+public static Node Simplify(this Node n)
+    => n switch
 {
-    <span class="type">Add</span> (<span class="reserved">var</span> l, <span class="reserved">var</span> r) =&gt; (<span class="variable">l</span>.<span class="method">Simplify</span>(), <span class="variable">r</span>.<span class="method">Simplify</span>()) <span class="reserved">switch</span>
+    Add (var l, var r) => (l.Simplify(), r.Simplify()) switch
     {
-        <span class="comment">// 0 を足しても変わらない</span>
-        (<span class="type">Const</span>(0), <span class="reserved">var</span> r1) =&gt; <span class="variable">r1</span>,
-        (<span class="reserved">var</span> l1, <span class="type">Const</span>(0)) =&gt; <span class="variable">l1</span>,
-        <span class="comment">// 他</span>
-        (<span class="reserved">var</span> l1, <span class="reserved">var</span> r1) =&gt; <span class="reserved">new</span> <span class="type">Add</span>(<span class="variable">l1</span>, <span class="variable">r1</span>)
+        // 0 を足しても変わらない
+        (Const(0), var r1) => r1,
+        (var l1, Const(0)) => l1,
+        // 他
+        (var l1, var r1) => new Add(l1, r1)
     },
-    <span class="type">Mul</span> (<span class="reserved">var</span> l, <span class="reserved">var</span> r) =&gt; (<span class="variable">l</span>.<span class="method">Simplify</span>(), <span class="variable">r</span>.<span class="method">Simplify</span>()) <span class="reserved">switch</span>
+    Mul (var l, var r) => (l.Simplify(), r.Simplify()) switch
     {
-        <span class="comment">// 0 を掛けたら 0</span>
-        (<span class="type">Const</span>(0) c, <span class="reserved">_</span>) =&gt; <span class="variable">c</span>,
-        (<span class="reserved">_</span>, <span class="type">Const</span>(0) c) =&gt; <span class="variable">c</span>,
-        <span class="comment">// 1 を掛けても変わらない</span>
-        (<span class="type">Const</span>(1), <span class="reserved">var</span> r1) =&gt; <span class="variable">r1</span>,
-        (<span class="reserved">var</span> l1, <span class="type">Const</span>(1)) =&gt; <span class="variable">l1</span>,
-        <span class="comment">// 他</span>
-        (<span class="reserved">var</span> l1, <span class="reserved">var</span> r1) =&gt; <span class="reserved">new</span> <span class="type">Mul</span>(<span class="variable">l1</span>, <span class="variable">r1</span>)
+        // 0 を掛けたら 0
+        (Const(0) c, _) => c,
+        (_, Const(0) c) => c,
+        // 1 を掛けても変わらない
+        (Const(1), var r1) => r1,
+        (var l1, Const(1)) => l1,
+        // 他
+        (var l1, var r1) => new Mul(l1, r1)
     },
-    <span class="reserved">_</span> =&gt; <span class="variable">n</span>
+    _ => n
 };
-</code></pre>
+```
 
 C# 7.3 までだと、この処理は以下のように書くことになります。
 
-<pre class="source" title="C# 7.3 以前での書き方">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Node</span> <span class="method">ClassicSimplify</span>(<span class="reserved">this</span> <span class="type">Node</span> <span class="variable">n</span>)
+```csharp
+public static Node ClassicSimplify(this Node n)
 {
-    <span class="control">if</span> (<span class="variable">n</span> <span class="reserved">is</span> <span class="type">Add</span> <span class="variable">a</span>)
+    if (n is Add a)
     {
-        <span class="reserved">var</span> (<span class="variable">l</span>, <span class="variable">r</span>) = <span class="variable">a</span>;
-        <span class="reserved">var</span> <span class="variable">l1</span> = <span class="variable">l</span>.<span class="method">Simplify</span>();
-        <span class="reserved">var</span> <span class="variable">r1</span> = <span class="variable">r</span>.<span class="method">Simplify</span>();
+        var (l, r) = a;
+        var l1 = l.Simplify();
+        var r1 = r.Simplify();
  
-        { <span class="control">if</span> (<span class="variable">l1</span> <span class="reserved">is</span> <span class="type">Const</span> <span class="variable">c</span> &amp;&amp; <span class="variable">c</span>.Value == 0) <span class="control">return</span> <span class="variable">r1</span>; }
-        { <span class="control">if</span> (<span class="variable">r1</span> <span class="reserved">is</span> <span class="type">Const</span> <span class="variable">c</span> &amp;&amp; <span class="variable">c</span>.Value == 0) <span class="control">return</span> <span class="variable">l1</span>; }
-        <span class="control">return</span> <span class="reserved">new</span> <span class="type">Add</span>(<span class="variable">l1</span>, <span class="variable">r1</span>);
+        { if (l1 is Const c && c.Value == 0) return r1; }
+        { if (r1 is Const c && c.Value == 0) return l1; }
+        return new Add(l1, r1);
     }
-    <span class="control">if</span> (<span class="variable">n</span> <span class="reserved">is</span> <span class="type">Mul</span> <span class="variable">m</span>)
+    if (n is Mul m)
     {
-        <span class="reserved">var</span> (<span class="variable">l</span>, <span class="variable">r</span>) = <span class="variable">m</span>;
-        <span class="reserved">var</span> <span class="variable">l1</span> = <span class="variable">l</span>.<span class="method">Simplify</span>();
-        <span class="reserved">var</span> <span class="variable">r1</span> = <span class="variable">r</span>.<span class="method">Simplify</span>();
+        var (l, r) = m;
+        var l1 = l.Simplify();
+        var r1 = r.Simplify();
  
         {
-            <span class="control">if</span> (<span class="variable">l1</span> <span class="reserved">is</span> <span class="type">Const</span> <span class="variable">c</span>)
+            if (l1 is Const c)
             {
-                <span class="control">if</span> (<span class="variable">c</span>.Value == 0) <span class="control">return</span> <span class="variable">c</span>;
-                <span class="control">if</span> (<span class="variable">c</span>.Value == 1) <span class="control">return</span> <span class="variable">r1</span>;
+                if (c.Value == 0) return c;
+                if (c.Value == 1) return r1;
             }
         }
         {
-            <span class="control">if</span> (<span class="variable">r1</span> <span class="reserved">is</span> <span class="type">Const</span> <span class="variable">c</span>)
+            if (r1 is Const c)
             {
-                <span class="control">if</span> (<span class="variable">c</span>.Value == 0) <span class="control">return</span> <span class="variable">c</span>;
-                <span class="control">if</span> (<span class="variable">c</span>.Value == 1) <span class="control">return</span> <span class="variable">l1</span>;
+                if (c.Value == 0) return c;
+                if (c.Value == 1) return l1;
             }
         }
-        <span class="control">return</span> <span class="reserved">new</span> <span class="type">Mul</span>(<span class="variable">l1</span>, <span class="variable">r1</span>);
+        return new Mul(l1, r1);
     }
-    <span class="control">return</span> <span class="variable">n</span>;
+    return n;
 }
-</code></pre>
+```
 
 <!-- original-page-break -->
 
@@ -1313,29 +1313,29 @@ C# 9.0 で `and` や `or` などのキーワードを使ってパターンの組
 
 例えば、複数のインターフェイスをすべて実装しているかを判定するとかに使えます。
 
-<pre class="source" title="and パターンで複数のインターフェイスを実装しているか判定">
-<code><span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+int M(object x) => x switch
 {
-    <span class="comment">// 2つのインターフェイスを両方実装している場合にマッチ。</span>
-    <span class="comment">// この時、パターン中で宣言した a, b にはちゃんと両方「初期化済み」判定を受ける。</span>
-    <span class="type">IA</span> <span class="variable">a</span> <span class="reserved">and</span> <span class="type">IB</span> <span class="variable">b</span> =&gt; <span class="variable">a</span>.A * <span class="variable">b</span>.B,
-    <span class="reserved">_</span> =&gt; 0,
+    // 2つのインターフェイスを両方実装している場合にマッチ。
+    // この時、パターン中で宣言した a, b にはちゃんと両方「初期化済み」判定を受ける。
+    IA a and IB b => a.A * b.B,
+    _ => 0,
 };
  
-<span class="reserved">interface</span> <span class="type">IA</span> { <span class="reserved">int</span> A { <span class="reserved">get</span>; } }
-<span class="reserved">interface</span> <span class="type">IB</span> { <span class="reserved">int</span> B { <span class="reserved">get</span>; } }
-</code></pre>
+interface IA { int A { get; } }
+interface IB { int B { get; } }
+```
 
 その他、後述する関係演算パターンと組み合わせて、「0～10まで」みたいな数値の範囲を表すことができます。
 
-<pre class="source" title="数値の範囲指定パターン">
-<code><span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">byte</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+int M(byte x) => x switch
 {
-    &gt;= 0 <span class="reserved">and</span> &lt; 10 =&gt; 0,
-    &gt;= 10 <span class="reserved">and</span> &lt; 100 =&gt; 1,
-    &gt;= 100 =&gt; 2,
+    >= 0 and < 10 => 0,
+    >= 10 and < 100 => 1,
+    >= 100 => 2,
 };
-</code></pre>
+```
 
 ### <a id="sec-generated-title-31"></a> <a id="or-pattern"></a>or パターン
 
@@ -1344,33 +1344,33 @@ C# 9.0 で `and` や `or` などのキーワードを使ってパターンの組
 
 単純に複数の値にマッチさせたり、複数の型にマッチさせることができます。
 
-<pre class="source" title="複数の値にマッチ">
-<code><span class="reserved">bool</span> <span class="method">IsSmallPrime</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> 2 <span class="reserved">or</span> 3 <span class="reserved">or</span> 5 <span class="reserved">or</span> 7;
+```csharp
+bool IsSmallPrime(int x) => x is 2 or 3 or 5 or 7;
  
-<span class="reserved">bool</span> <span class="method">IsTrue</span>(<span class="reserved">bool</span>? <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+bool IsTrue(bool? x) => x switch
 {
-    <span class="reserved">true</span> =&gt; <span class="reserved">true</span>,
-    <span class="comment">// _ (true 以外)と差はないものの、あり得る値を網羅していることがチェックできるという点で</span>
-    <span class="comment">// true, false, null の3つの値を並べる意味はなくはない。</span>
-    <span class="reserved">false</span> <span class="reserved">or</span> <span class="reserved">null</span> =&gt; <span class="reserved">false</span>,
+    true => true,
+    // _ (true 以外)と差はないものの、あり得る値を網羅していることがチェックできるという点で
+    // true, false, null の3つの値を並べる意味はなくはない。
+    false or null => false,
 };
-</code></pre>
+```
 
 また、複数の型にマッチさせたりもできます。
 
-<pre class="source" title="複数の型にマッチ">
-<code><span class="reserved">bool</span> <span class="method">IsByte</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">byte</span> <span class="reserved">or</span> <span class="reserved">sbyte</span>;
-</code></pre>
+```csharp
+bool IsByte(object x) => x is byte or sbyte;
+```
 
 `and` と同様、後述する関係演算パターンとの組み合わせでも使えます。
 
-<pre class="source" title="関係演算と or パターンの組み合わせ">
-<code><span class="reserved">int</span> <span class="method">Triangular</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+int Triangular(int x) => x switch
 {
-    &lt; -1 <span class="reserved">or</span> &gt; 1 =&gt; 0,
-    <span class="reserved">_</span> =&gt; 1 - <span class="type">Math</span>.<span class="method">Abs</span>(<span class="variable">x</span>),
+    < -1 or > 1 => 0,
+    _ => 1 - Math.Abs(x),
 };
-</code></pre>
+```
 
 #### <a id="sec-generated-title-32"></a> <a id="conditional-keyward-and-or"></a>文脈キーワードの and, or
 
@@ -1379,13 +1379,13 @@ C# のキーワード追加では恒例行事ですが、
 
 例えば、あまり意味のあるコードではないものの以下のようなコードは有効な C# コードになります。
 
-<pre class="source" title="and, or は文脈キーワード">
-<code><span class="comment">// 水色の部分は型名の or, and。青色の部分はキーワードの or, and。</span>
-<span class="reserved">bool</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="type">or</span> <span class="reserved">or</span> <span class="type">and</span> <span class="reserved">and</span> <span class="type">and</span>;
+```csharp
+// 水色の部分は型名の or, and。青色の部分はキーワードの or, and。
+bool M(object x) => x is or or and and and;
  
-<span class="reserved">class</span> <span class="type">and</span> { }
-<span class="reserved">class</span> <span class="type">or</span> { }
-</code></pre>
+class and { }
+class or { }
+```
 
 ### <a id="sec-generated-title-33"></a> <a id="not-pattern"></a>not パターン
 
@@ -1394,19 +1394,19 @@ C# のキーワード追加では恒例行事ですが、
 
 おそらく一番使い道があるのは `not null` だと思います。
 
-<pre class="source" title="not null">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="inactive">#nullable</span> <span class="inactive">enable</span>
+#nullable enable
  
-<span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span>? <span class="variable">s</span>)
+void M(string? s)
 {
-    <span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span>)
+    if (s is not null)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span>.Length);
+        Console.WriteLine(s.Length);
     }
 }
-</code></pre>
+```
 
 `string` 相手だと `x != null` と大差ないですが、[場合によってはパフォーマンスがよくなることもあります](../../../blog/2020/12/isnull/index.md)。
 また、`!` の視認性があまりよくないので `!=` よりも `is not` の方を好む人もいるようです。
@@ -1414,29 +1414,29 @@ C# のキーワード追加では恒例行事ですが、
 あと、いわゆる early return に使えます。
 以下のように、特定条件を満たさないときに早々に `return` ステートメントで関数を抜けてしまうときに `not` パターンが使えます。
 
-<pre class="source" title="not パターンで early return">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">void</span> <span class="method">PositivePattern</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+void PositivePattern(object x)
 {
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">string</span> <span class="variable">s</span>)
+    if (x is string s)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span>.Length);
+        Console.WriteLine(s.Length);
     }
 }
 
-<span class="comment">// ↑のメソッドを early return で書き直したもの。</span>
-<span class="reserved">void</span> <span class="method">EarlyReturn</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+// ↑のメソッドを early return で書き直したもの。
+void EarlyReturn(object x)
 {
-    <span class="comment">// if の中に限り、not + 型パターンで変数宣言可能。</span>
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">string</span> <span class="variable">s</span>) <span class="control">return</span>;
+    // if の中に限り、not + 型パターンで変数宣言可能。
+    if (x is not string s) return;
  
-    <span class="comment">// この場合、if 中(not string の時) には s が使えず、</span>
-    <span class="comment">// その後ろ(string の時)でだけ s が使える。</span>
+    // この場合、if 中(not string の時) には s が使えず、
+    // その後ろ(string の時)でだけ s が使える。
  
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span>.Length);
+    Console.WriteLine(s.Length);
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-34"></a> <a id="parenthesized-patterns"></a>括弧付きパターン
 
@@ -1444,9 +1444,9 @@ C# のキーワード追加では恒例行事ですが、
 
 例えば以下のような書き方をすると、`and` の結合が優先されます。
 
-<pre class="source" title="and が優先">
-<code><span class="reserved">bool</span> <span class="method">IsAsciiLetter</span>(<span class="reserved">char</span> <span class="variable">c</span>) =&gt; <span class="variable">c</span> <span class="reserved">is</span> &gt;= <span class="string">&#39;a&#39;</span> <span class="reserved">and</span> &lt;= <span class="string">&#39;z&#39;</span> <span class="reserved">or</span> &gt;= <span class="string">&#39;A&#39;</span> <span class="reserved">and</span> &lt;= <span class="string">&#39;Z&#39;</span>;
-</code></pre>
+```csharp
+bool IsAsciiLetter(char c) => c is >= 'a' and <= 'z' or >= 'A' and <= 'Z';
+```
 
 `&&` と `||` でもよくある話ですが、優先度がわかりにくくて読むときにつらかったりします。
 また、`or` の方を優先したいことも当然あります。
@@ -1455,27 +1455,27 @@ C# のキーワード追加では恒例行事ですが、
 (括弧付きパターン(parenthesized patterns)と言ったりもします。)
 先ほどの `IsAsciiLetter` の例は以下のようにも書けます。
 
-<pre class="source" title="() を付けて優先度を明示">
-<code><span class="comment">// () を付けて優先度を明示。</span>
-<span class="reserved">bool</span> <span class="method">IsAsciiLetter</span>(<span class="reserved">char</span> <span class="variable">c</span>) =&gt; <span class="variable">c</span> <span class="reserved">is</span> (&gt;= <span class="string">&#39;a&#39;</span> <span class="reserved">and</span> &lt;= <span class="string">&#39;z&#39;</span>) <span class="reserved">or</span> (&gt;= <span class="string">&#39;A&#39;</span> <span class="reserved">and</span> &lt;= <span class="string">&#39;Z&#39;</span>);
-</code></pre>
+```csharp
+// () を付けて優先度を明示。
+bool IsAsciiLetter(char c) => c is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z');
+```
 
 前述の「複数のインターフェイスをすべて実装しているかを判定」と「`not` パターンを使った early return」の組み合わせもできます。
 
-<pre class="source" title="not (and)">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+void M(object x)
 {
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">not</span> (<span class="type">IA</span> <span class="variable">a</span> <span class="reserved">and</span> <span class="type">IB</span> <span class="variable">b</span>)) <span class="control">return</span>;
+    if (x is not (IA a and IB b)) return;
  
-    <span class="comment">// a, b ともに使える。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span>.A * <span class="variable">b</span>.B);
+    // a, b ともに使える。
+    Console.WriteLine(a.A * b.B);
 }
  
-<span class="reserved">interface</span> <span class="type">IA</span> { <span class="reserved">int</span> A { <span class="reserved">get</span>; } }
-<span class="reserved">interface</span> <span class="type">IB</span> { <span class="reserved">int</span> B { <span class="reserved">get</span>; } }
-</code></pre>
+interface IA { int A { get; } }
+interface IB { int B { get; } }
+```
 
 ## <a id="sec-generated-title-35"></a> <a id="relational-patterns"></a>関係演算パターン
 
@@ -1484,14 +1484,14 @@ C# のキーワード追加では恒例行事ですが、
 `<`, `<=`, `>`, `>=` の4つの関係演算子を使って数値の大小をパターンの中に書けます。
 (関係演算パターン(relational patterns)と言ったりします。)
 
-<pre class="source" title="">
-<code><span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">byte</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+int M(byte x) => x switch
 {
-    &lt; 10 =&gt; 1, <span class="comment">// 0～9</span>
-    &gt;= 10 <span class="reserved">and</span> &lt;= 99 =&gt; 2, <span class="comment">// 10～99</span>
-    &gt; 99 =&gt; 3, <span class="comment">// 100～255</span>
+    < 10 => 1, // 0～9
+    >= 10 and <= 99 => 2, // 10～99
+    > 99 => 3, // 100～255
 };
-</code></pre>
+```
 
 初期の案では、C# 8.0 で[範囲アクセス用に `..` 演算子を導入](../cheatsheet/ap_ver8.md#range)したのに対して、「範囲パターン」も用意したいというものでした。
 ただ、`x..y` みたいな範囲パターンだと、両端(この場合 `x`と`y`)を含むかどうかがわかりにくくて困るだろうということで不採用になっていました。
@@ -1513,67 +1513,67 @@ C# のキーワード追加では恒例行事ですが、
 `byte` も高々256個の値しか持ちません。
 [型スイッチのページにも書いていますが](typeswitch.md#exhaustive)、パターン マッチングではこれらの値をすべて網羅しているかどうか(exhaustiveness: 網羅性)の検査をしてくれます。
 
-<pre class="source" title="bool, bool? の網羅性検査">
-<code><span class="comment">// 無警告</span>
-<span class="reserved">int</span> <span class="method">A</span>(<span class="reserved">bool</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+// 無警告
+int A(bool x) => x switch
 {
-    <span class="reserved">true</span> =&gt; 1,
-    <span class="reserved">false</span> =&gt; 0,
+    true => 1,
+    false => 0,
 };
  
-<span class="comment">// 警告あり(CS8655: 条件に null が足りていない)</span>
-<span class="reserved">int</span> <span class="method">B</span>(<span class="reserved">bool</span>? <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="warning"><span class="control">switch</span></span>
+// 警告あり(CS8655: 条件に null が足りていない)
+int B(bool? x) => x switch
 {
-    <span class="reserved">true</span> =&gt; 1,
-    <span class="reserved">false</span> =&gt; 0,
+    true => 1,
+    false => 0,
 };
  
-<span class="comment">// 無警告</span>
-<span class="reserved">int</span> <span class="method">C</span>(<span class="reserved">bool</span>? <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+// 無警告
+int C(bool? x) => x switch
 {
-    <span class="reserved">true</span> =&gt; 1,
-    <span class="reserved">false</span> <span class="reserved">or</span> <span class="reserved">null</span> =&gt; 0,
+    true => 1,
+    false or null => 0,
 };
-</code></pre>
+```
 
 また、数値型に対しては、[関係演算パターン](#relational-patterns)を使って「100未満」と「100以上」というように相補的に値を網羅しているかを検査できます。
 例えば以下のコードには条件漏れがあって警告を起こします。
 
-<pre class="source" title="実は条件漏れがあるコード">
-<code><span class="comment">// 警告を起こす</span>
-<span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">byte</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+// 警告を起こす
+int M(byte x) => x switch
 {
-    &lt; 10 =&gt; 1,
-    &gt;= 10 <span class="reserved">and</span> &lt; 100 =&gt; 2,
-    <span class="comment">// &lt; 100 と &gt; 100 (どちらも 100 は含まない)しかないので、実は 100 が漏れてる</span>
-    &gt; 100 =&gt; 3,
+    < 10 => 1,
+    >= 10 and < 100 => 2,
+    // < 100 と > 100 (どちらも 100 は含まない)しかないので、実は 100 が漏れてる
+    > 100 => 3,
 };
-</code></pre>
+```
 
 値パターンや `or` パターンとの組み合わせでも網羅性の検査がかかります。
 
-<pre class="source" title="値パターンや or パターンとの組み合わせでの網羅性検査">
-<code><span class="comment">// 整数の場合は値パターンとかその or パターン、関係演算パターンの組み合わせでも網羅性検査がかかる</span>
-<span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">uint</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+// 整数の場合は値パターンとかその or パターン、関係演算パターンの組み合わせでも網羅性検査がかかる
+int M(uint x) => x switch
 {
-    0 <span class="reserved">or</span> 2 <span class="reserved">or</span> 4 <span class="reserved">or</span> 6 <span class="reserved">or</span> 8 =&gt; 0,
-    1 <span class="reserved">or</span> 3 <span class="reserved">or</span> 5 <span class="reserved">or</span> 7 <span class="reserved">or</span> 9 =&gt; 1,
-    &gt;= 10 =&gt; -1, <span class="comment">// この行がなかったり、条件が &gt; 10 とかだったりすると警告</span>
+    0 or 2 or 4 or 6 or 8 => 0,
+    1 or 3 or 5 or 7 or 9 => 1,
+    >= 10 => -1, // この行がなかったり、条件が > 10 とかだったりすると警告
 };
-</code></pre>
+```
 
 一般の型に対しても、「null か非 null か」みたいな条件が相補的で、これに対しても網羅性の検査がかかります。
 
-<pre class="source" title="null か非 null かの網羅性">
-<code><span class="comment">// null か非 null かで網羅性検査がかかっていて、どれか1行でも欠けていると警告</span>
-<span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">int</span>? <span class="variable">x</span>, <span class="reserved">int</span>? <span class="variable">y</span>) =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) <span class="control">switch</span>
+```csharp
+// null か非 null かで網羅性検査がかかっていて、どれか1行でも欠けていると警告
+int M(int? x, int? y) => (x, y) switch
 {
-    (<span class="reserved">null</span>, <span class="reserved">null</span>) =&gt; 0,
-    ({ }, <span class="reserved">null</span>) =&gt; -1,
-    (<span class="reserved">null</span>, { }) =&gt; 1,
-    ({ } x1, { } y1) =&gt; <span class="variable">x1</span>.<span class="method">CompareTo</span>(<span class="variable">y1</span>),
+    (null, null) => 0,
+    ({ }, null) => -1,
+    (null, { }) => 1,
+    ({ } x1, { } y1) => x1.CompareTo(y1),
 };
-</code></pre>
+```
 
 ### <a id="sec-generated-title-38"></a> <a id="case-duplicate"></a>条件の重複チェック
 
@@ -1584,57 +1584,57 @@ C# のキーワード追加では恒例行事ですが、
 
 一番わかりやすいのは[破棄パターン](#discard)で、これは「何にでも一致するパターン」なので、その下に何かを書くとエラーになります。
 
-<pre class="source" title="破棄パターンの下に別条件を書いても絶対に到達できない">
-<code><span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="control">switch</span>
+```csharp
+int M(object obj) => obj switch
 {
-    <span class="reserved">_</span> =&gt; 0,
-    <span class="error"><span class="reserved">string</span> <span class="reserved">_</span></span> =&gt; 1,
+    _ => 0,
+    string _ => 1,
 };
-</code></pre>
+```
 
 当然ですが、全く同じ条件が2つ以上ある場合にも、1つ目以外には絶対に到達しないのでエラーになります。
 
-<pre class="source" title="同じ条件が並ぶとエラー">
-<code><span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="control">switch</span>
+```csharp
+int M(object obj) => obj switch
 {
-    <span class="reserved">string</span> <span class="variable">s</span> =&gt; <span class="variable">s</span>.Length,
-    <span class="error"><span class="reserved">string</span> <span class="reserved">_</span></span> =&gt; 1,
+    string s => s.Length,
+    string _ => 1,
 };
-</code></pre>
+```
 
 ちなみに、[`when`句](typeswitch.md#switch)だと重複チェックが漏れることがあります。
 一方、同じような条件でも、[再帰パターン](#recursive)を使うとチェックが働きやすいです。
 
-<pre class="source" title="再帰パターンの方が重複チェックが正確">
-<code><span class="reserved">int</span> <span class="method">M1</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="control">switch</span>
+```csharp
+int M1(object obj) => obj switch
 {
-    <span class="comment">// when 句を使うと「同じ条件」判定ができなくなる。コンパイルできてしまう。</span>
-    <span class="reserved">string</span> <span class="variable">s</span> <span class="control">when</span> <span class="variable">s</span>.Length == 0 =&gt; 0,
-    <span class="reserved">string</span> <span class="variable">s</span> <span class="control">when</span> <span class="variable">s</span>.Length == 0 =&gt; 1,
-    <span class="reserved">_</span> =&gt; -1,
+    // when 句を使うと「同じ条件」判定ができなくなる。コンパイルできてしまう。
+    string s when s.Length == 0 => 0,
+    string s when s.Length == 0 => 1,
+    _ => -1,
 };
  
-<span class="reserved">int</span> <span class="method">M2</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="control">switch</span>
+int M2(object obj) => obj switch
 {
-    <span class="comment">// 同じことを再帰パターンでやるとちゃんと重複チェックが掛かる。2つ目でコンパイル エラーに。</span>
-    <span class="reserved">string</span> { Length: 0 } =&gt; 0,
-    <span class="error"><span class="reserved">string</span> { Length: 0 }</span> =&gt; 1,
-    <span class="reserved">_</span> =&gt; -1,
+    // 同じことを再帰パターンでやるとちゃんと重複チェックが掛かる。2つ目でコンパイル エラーに。
+    string { Length: 0 } => 0,
+    string { Length: 0 } => 1,
+    _ => -1,
 };
-</code></pre>
+```
 
 また、前節の[網羅性](#exhaustive)とも関連して、
 全ての値を網羅済みのところの後ろに条件を足しても、その行には絶対に来ないのでエラーにできます。
 例えば以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="網羅済みのところの後ろに追加の条件を足すとエラー">
-<code><span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">a</span>, <span class="reserved">bool</span> <span class="variable">b</span>) =&gt; (<span class="variable">a</span>, <span class="variable">b</span>) <span class="control">switch</span>
+```csharp
+int M(bool a, bool b) => (a, b) switch
 {
-    (<span class="reserved">false</span>, <span class="reserved">false</span>) =&gt; 0,
-    (<span class="reserved">true</span>, <span class="reserved">false</span>) =&gt; 1,
-    (<span class="reserved">false</span>, <span class="reserved">true</span>) =&gt; 2,
-    (<span class="reserved">true</span>, <span class="reserved">true</span>) =&gt; 3,
-    <span class="comment">// bool の場合上記4つ以外は絶対にないことがわかるので、この行でコンパイル エラーになる。</span>
-    <span class="error"><span class="reserved">_</span></span> =&gt; 4,
+    (false, false) => 0,
+    (true, false) => 1,
+    (false, true) => 2,
+    (true, true) => 3,
+    // bool の場合上記4つ以外は絶対にないことがわかるので、この行でコンパイル エラーになる。
+    _ => 4,
 };
-</code></pre>
+```

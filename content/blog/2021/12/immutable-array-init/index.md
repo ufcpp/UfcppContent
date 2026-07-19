@@ -20,16 +20,16 @@ Immutable コレクションは現状いろんな使いにくさがあって悪�
 
 以下のようなコード。
 
-<pre class="source" title="ImmutableArray にコレクション初期化子">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span> = <span class="reserved">new</span>() { 1, 2 };
+ImmutableArray<int> a = new() { 1, 2 };
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">a</span>)
+foreach (var x in a)
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 どういう結果になるでしょう？
 
@@ -46,78 +46,78 @@ Immutable コレクションは現状いろんな使いにくさがあって悪�
 `new` のところで例外です。
 しかもぬるぽ。
 
-<pre>
+```console
 Unhandled exception. System.NullReferenceException: Object reference not set to an instance of an object.
    at System.Collections.Immutable.ImmutableArray`1.get_Length()
    at System.Collections.Immutable.ImmutableArray`1.Add(T item)
    at Program.<Main>$(String[] args) in C:\source\repos\ConsoleApp1\ConsoleApp1\Program.cs:line 4
-</pre>
+```
 
 そして、どうしてこうなるかの説明にも何段階かの変形が必要という…
 
 とりあえず、`foreach` のところは無罪というか、その行までたどり着かないのでいったん削除。
 (ちなみに、もしたどり着けた場合、`foreach` でも例外が出ます。)
 
-<pre class="source" title="問題のコード">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span> = <span class="reserved">new</span>() { 1, 2 };
-</code></pre>
+ImmutableArray<int> a = new() { 1, 2 };
+```
 
 コレクション初期化子は、以下のように、`new()` の後に `Add` メソッドを呼ぶという展開のされ方になります。
 
-<pre class="source" title="コレクション初期化子を展開">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span> = <span class="reserved">new</span>();
-<span class="variable">a</span>.<span class="method">Add</span>(1); <span class="comment">// ぬるぽるのはこの行になる。</span>
-<span class="variable">a</span>.<span class="method">Add</span>(2);
-</code></pre>
+ImmutableArray<int> a = new();
+a.Add(1); // ぬるぽるのはこの行になる。
+a.Add(2);
+```
 
 まあ、この時点ですでに問題の原因が分かってくる頃かと思いますが、一応もう1段。
 `ImmutableArray` は構造体で、C# 10.0 より前には構造体に引数なしコンストラクターがなかったので、これは以下のコードと同じ意味になります。
 
-<pre class="source" title="new() の顛末">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span> = <span class="reserved"><em>default</em></span>;
-<span class="variable">a</span>.<span class="method">Add</span>(1); <span class="comment">// ぬるぽるのはこの行。</span>
-<span class="variable">a</span>.<span class="method">Add</span>(2);
-</code></pre>
+ImmutableArray<int> a = default;
+a.Add(1); // ぬるぽるのはこの行。
+a.Add(2);
+```
 
 [構造体の `default`](../../../../study/csharp/resource/rm_default.md#sec-default-value) は「全ビットを0にする」みたいな扱いで、
 参照型の場合には `null` が入ります。
 
 要するに、実質以下のコードと同じような挙動になります。
 
-<pre class="source" title="説明用: 実質同じ挙動のコード">
-<code><span class="comment">// 実質これと同じ結果</span>
-<span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+// 実質これと同じ結果
+using System.Collections.Immutable;
 
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span> = <span class="type">ImmutableArray</span>.<span class="method">Create</span>&lt;<span class="reserved">int</span>&gt;(<span class="variable">items</span>: <span class="reserved">null</span>);
-<span class="variable">a</span>.<span class="method">Add</span>(1); <span class="comment">// ぬるぽる原因は items: null なせい。</span>
-<span class="variable">a</span>.<span class="method">Add</span>(2);
-</code></pre>
+ImmutableArray<int> a = ImmutableArray.Create<int>(items: null);
+a.Add(1); // ぬるぽる原因は items: null なせい。
+a.Add(2);
+```
 
 ちなみに、「既存の構造体に引数なしコンストラクターを足すのは破壊的変更」なので、破壊的変更を極力割けて通っている .NET 的に、追加されることはないと思います。なのでたぶん、`ImmutableArray<T>` がこんな変な挙動から解放される未来もないと思われます。
 
 また、以下のようにぬるぽ回避コードを入れても、おそらくほとんどの人にとって所望の結果にはならないと思います。
 
-<pre class="source" title="ぬるぽ回避">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="comment">// ぬるぽ回避</span>
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span> = <span class="type">ImmutableArray</span>.<span class="method">Create</span>(<span class="type">Array</span>.<span class="method">Empty</span>&lt;<span class="reserved">int</span>&gt;());
-<span class="variable">a</span>.<span class="method">Add</span>(1); <span class="comment">// 無事通過。</span>
-<span class="variable">a</span>.<span class="method">Add</span>(2);
+// ぬるぽ回避
+ImmutableArray<int> a = ImmutableArray.Create(Array.Empty<int>());
+a.Add(1); // 無事通過。
+a.Add(2);
 
-<span class="comment">// ただし、a の中身は Empty のまま。</span>
-<span class="comment">// まあ、immutable ですからね。初期状態から変わるはずないですよね。</span>
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">a</span>)
+// ただし、a の中身は Empty のまま。
+// まあ、immutable ですからね。初期状態から変わるはずないですよね。
+foreach (var x in a)
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 ええ、immutable ですから。
 `Add` は「元の配列に1要素 append した新しい配列を作って返す」という仕様。

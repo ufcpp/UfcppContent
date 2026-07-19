@@ -412,10 +412,10 @@ aliases:
 value は set/get アクセサ中でのみキーワード扱いされます。
 それ以外の文脈では、普通に変数名として使うことができます。
 
-<pre class="source" title="文脈キーワードは変数名にも使える" lang="">
-<code><span class="reserved">int</span> value = 5;
+```csharp
+int value = 5;
 Console.Write(value);
-</code></pre>
+```
 
 
 <h5 class="version version3">Ver. 3.0</h5>～

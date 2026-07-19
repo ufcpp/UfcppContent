@@ -36,29 +36,29 @@ C# 1.0 当時の情勢から言うと C 言語の `switch` を意識するのは
 
 例えばこれまでだと、以下のような書き方を時々見ると思います。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">void</span> M(<span class="type">年号</span> e)
+```csharp
+public void M(年号 e)
 {
-    <span class="reserved">int</span> y;
-    <span class="reserved">switch</span> (e)
+    int y;
+    switch (e)
     {
-        <span class="reserved">case</span> 明治:
+        case 明治:
             y = 45;
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> 大正:
+            break;
+        case 大正:
             y = 15;
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> 昭和:
+            break;
+        case 昭和:
             y = 64;
-            <span class="reserved">break</span>;
-        <span class="reserved">case</span> 平成:
+            break;
+        case 平成:
             y = 31;
-            <span class="reserved">break</span>;
-        <span class="reserved">default</span>: <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
+            break;
+        default: throw new InvalidOperationException();
     }
-    <span class="comment">// y を使って何か</span>
+    // y を使って何か
 }
-</code></pre>
+```
 
 しんどい理由は、
 
@@ -69,42 +69,42 @@ C# 1.0 当時の情勢から言うと C 言語の `switch` を意識するのは
 という辺り。
 以下のように別メソッドを1段挟めば多少緩和するようなそうでもないような…
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">void</span> M(<span class="type">年号</span> e)
+```csharp
+public void M(年号 e)
 {
-    <span class="reserved">int</span> lastYear()
+    int lastYear()
     {
-        <span class="reserved">switch</span> (e)
+        switch (e)
         {
-            <span class="reserved">case</span> 明治: <span class="reserved">return</span> 45;
-            <span class="reserved">case</span> 大正: <span class="reserved">return</span> 15;
-            <span class="reserved">case</span> 昭和: <span class="reserved">return</span> 64;
-            <span class="reserved">case</span> 平成: <span class="reserved">return</span> 31;
-            <span class="reserved">default</span>: <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>();
+            case 明治: return 45;
+            case 大正: return 15;
+            case 昭和: return 64;
+            case 平成: return 31;
+            default: throw new InvalidOperationException();
         }
     }
  
-    <span class="reserved">var</span> y = lastYear();
-    <span class="comment">// y を使って何か</span>
+    var y = lastYear();
+    // y を使って何か
 }
-</code></pre>
+```
 
 一方、C# 8.0 で、`switch` に式として使えるバージョンが追加されます。
 この「`switch` 式」を使えば、以下のように書き直せます。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">void</span> M(<span class="type">年号</span> e)
+```csharp
+public void M(年号 e)
 {
-    <span class="reserved">var</span> y = e <span class="reserved">switch</span>
+    var y = e switch
     {
-        明治 =&gt; 45,
-        大正 =&gt; 15,
-        昭和 =&gt; 64,
-        平成 =&gt; 31,
-        _ =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>()
+        明治 => 45,
+        大正 => 15,
+        昭和 => 64,
+        平成 => 31,
+        _ => throw new InvalidOperationException()
     };
 }
-</code></pre>
+```
 
 `case`や`break`が消えてちょっとすっきり。
 
@@ -159,13 +159,13 @@ csharplangのissueでも、「後置きキャスト文法が欲しい」とい�
 以下のように、`when`句に条件演算子`?:`を書いたり、
 返す値にラムダ式を書いたりできるので、`:`とか`=>`とかも案外弁別に悩む選択肢です。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> i = x <span class="reserved">switch</span>
+```csharp
+var i = x switch
 {
-    <span class="reserved">string</span> s <span class="reserved">when</span> (s.Length &gt;= 1 ? s[0] &lt;= 0x7F : <span class="reserved">true</span>) =&gt; () =&gt; <span class="reserved">true</span>,
-    _ =&gt; (<span class="type">Func</span>&lt;<span class="reserved">bool</span>&gt;)(() =&gt; <span class="reserved">false</span>)
+    string s when (s.Length >= 1 ? s[0] <= 0x7F : true) => () => true,
+    _ => (Func<bool>)(() => false)
 };
-</code></pre>
+```
 
 (ちなみにこのコード、`()`がないとコンパイルが通りません。
 `()`の入れ子弁別している模様。)

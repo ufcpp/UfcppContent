@@ -25,26 +25,26 @@ C# 8.0 で、配列などに対して以下のような書き方をできるよ�
 
 例えば、以下のような書き方で配列の前後1要素ずつを削ったものを得ることができます。
 
-<pre class="source" title=".. 構文">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">a</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
+        var a = new[] { 1, 2, 3, 4, 5 };
  
-        <span class="comment">// 前後1要素ずつ削ったもの</span>
-        <span class="reserved">var</span> <span class="variable">middle</span> = <span class="variable">a</span>[1..^1];
+        // 前後1要素ずつ削ったもの
+        var middle = a[1..^1];
  
-        <span class="comment">// 2, 3, 4 が表示される</span>
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">middle</span>)
+        // 2, 3, 4 が表示される
+        foreach (var x in middle)
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+            Console.WriteLine(x);
         }
     }
 }
-</code></pre>
+```
 
 ちなみに、`i..j` は「iは含んでjは含まない」という範囲になります。
 `for (var x = i; x < j; ++x)` のイメージ。
@@ -73,26 +73,26 @@ C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)が導入されました�
 `Span<T>` 構造体は特別な最適化の対象になっていて、非常に高速です。
 例えば以下の2つのメソッドでは、`Span<T>` を使った `Sum2` の方が高速です。
 
-<pre class="source" title="Span を使うと速い">
-<code><span class="comment">// i番目からj番目までの和。</span>
-[<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.NoInlining)]
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">Sum1</span>(<span class="reserved">int</span>[] <span class="variable">array</span>, <span class="reserved">int</span> <span class="variable">i</span>, <span class="reserved">int</span> <span class="variable">j</span>)
+```csharp
+// i番目からj番目までの和。
+[MethodImpl(MethodImplOptions.NoInlining)]
+static int Sum1(int[] array, int i, int j)
 {
-    <span class="reserved">var</span> <span class="variable">sum</span> = 0;
-    <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">x</span> = <span class="variable">i</span>; <span class="variable">x</span> &lt; <span class="variable">j</span>; <span class="variable">x</span>++) <span class="variable">sum</span> += <span class="variable">array</span>[<span class="variable">x</span>];
-    <span class="control">return</span> <span class="variable">sum</span>;
+    var sum = 0;
+    for (int x = i; x < j; x++) sum += array[x];
+    return sum;
 }
  
-<span class="comment">// Sum1 と同じ処理を Span を使って書く。</span>
-<span class="comment">// Sum1 よりこっちの方が速い。</span>
-[<span class="type">MethodImpl</span>(<span class="type">MethodImplOptions</span>.NoInlining)]
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">Sum2</span>(<span class="reserved">int</span>[] <span class="variable">array</span>, <span class="reserved">int</span> <span class="variable">i</span>, <span class="reserved">int</span> <span class="variable">j</span>)
+// Sum1 と同じ処理を Span を使って書く。
+// Sum1 よりこっちの方が速い。
+[MethodImpl(MethodImplOptions.NoInlining)]
+static int Sum2(int[] array, int i, int j)
 {
-    <span class="reserved">var</span> <span class="variable">sum</span> = 0;
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">array</span>.<span class="method">AsSpan</span>()[<span class="variable">i</span>..<span class="variable">j</span>]) <span class="variable">sum</span> += <span class="variable">x</span>;
-    <span class="control">return</span> <span class="variable">sum</span>;
+    var sum = 0;
+    foreach (var x in array.AsSpan()[i..j]) sum += x;
+    return sum;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="unification"></a>範囲のルール統一
 
@@ -108,33 +108,33 @@ C# 7.2 で、[`Span<T>` 構造体](../resource/span.md)が導入されました�
 実際、 .NET の標準ライブラリ中でもぶれています。
 例えば、[Parallel.For](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.tasks.parallel.for?view=netstandard-2.1#System_Threading_Tasks_Parallel_For_System_Int32_System_Int32_System_Action_System_Int32__)や[`Random.Next`](https://docs.microsoft.com/ja-jp/dotnet/api/system.random.next?view=netframework-4.8#System_Random_Next_System_Int32_System_Int32_) は (2) の意味ですが、[`Substring`](https://docs.microsoft.com/ja-jp/dotnet/api/system.string.substring?view=netstandard-2.1#System_String_Substring_System_Int32_System_Int32_)や[`AsSpan`](https://docs.microsoft.com/ja-jp/dotnet/api/system.memoryextensions.asspan?view=netstandard-2.1#System_MemoryExtensions_AsSpan__1___0___System_Int32_System_Int32_)は (3) の意味です。
 
-<pre class="source" title="範囲指定の引数のぶれ">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// この2つは 1から3 (3は含まない) = 1, 2の意味</span>
-        <span class="type">Parallel</span>.<span class="method">For</span>(1, 3, <span class="variable">i</span> =&gt; { });
-        <span class="reserved">var</span> <span class="variable">v</span> = <span class="reserved">new</span> <span class="type">Random</span>().<span class="method">Next</span>(1, 3);
+        // この2つは 1から3 (3は含まない) = 1, 2の意味
+        Parallel.For(1, 3, i => { });
+        var v = new Random().Next(1, 3);
  
-        <span class="comment">// この2つは 1から3要素 = 1, 2, 3 の意味</span>
-        <span class="reserved">var</span> <span class="variable">span</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 }.<span class="method">AsSpan</span>(1, 3);
-        <span class="reserved">var</span> <span class="variable">substr</span> = <span class="string">&quot;abcde&quot;</span>.<span class="method">Substring</span>(1, 3);
+        // この2つは 1から3要素 = 1, 2, 3 の意味
+        var span = new[] { 1, 2, 3, 4, 5 }.AsSpan(1, 3);
+        var substr = "abcde".Substring(1, 3);
     }
 }
-</code></pre>
+```
 
 名前付き引数を使えば、多少混乱を予防することはできます。
 
-<pre class="source" title="名前付き引数で混乱を予防">
-<code><span class="type">Parallel</span>.<span class="method">For</span>(<span class="variable">fromInclusive</span>: 1, <span class="variable">toExclusive</span>: 3, <span class="variable">i</span> =&gt; { });
-<span class="reserved">var</span> <span class="variable">v</span> = <span class="reserved">new</span> <span class="type">Random</span>().<span class="method">Next</span>(<span class="variable">minValue</span>: 1, <span class="variable">maxValue</span>: 3);
-<span class="reserved">var</span> <span class="variable">span</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 }.<span class="method">AsSpan</span>(<span class="variable">start</span>: 1, <span class="variable">length</span>: 3);
-<span class="reserved">var</span> <span class="variable">substr</span> = <span class="string">&quot;abcde&quot;</span>.<span class="method">Substring</span>(<span class="variable">startIndex</span>: 1, <span class="variable">length</span>: 3);
-</code></pre>
+```csharp
+Parallel.For(fromInclusive: 1, toExclusive: 3, i => { });
+var v = new Random().Next(minValue: 1, maxValue: 3);
+var span = new[] { 1, 2, 3, 4, 5 }.AsSpan(start: 1, length: 3);
+var substr = "abcde".Substring(startIndex: 1, length: 3);
+```
 
 ただ、名前付き引数を使っても以下の問題があります。
 
@@ -173,27 +173,27 @@ C# の `i..j` で「j は含まない」の方を採用したのは、明確に�
 配列や文字列からの一定範囲の抜き出しではよく「末尾から i 番目」という場所を取りたいことがあります。
 C# 8.0 では、そのために単項 `^` 演算子を使います。
 
-<pre class="source" title="^ 演算子">
-<code><span class="reserved">var</span> <span class="variable">i</span> = ^1; <span class="comment">// Length - 1 の場所</span>
+```csharp
+var i = ^1; // Length - 1 の場所
  
-<span class="reserved">var</span> <span class="variable">value</span> = 1;
-<span class="reserved">var</span> <span class="variable">j</span> = ^<span class="variable">value</span>; <span class="comment">// 変数に対しても ^ を使える</span>
-</code></pre>
+var value = 1;
+var j = ^value; // 変数に対しても ^ を使える
+```
 
 単項 `^` 演算子はオペランドに `int` (か `int` に暗黙に変換できる型)しか受け付けません。
 また、戻り値は `Index` 構造体(`System` 名前空間)になります。
 `Index` は、以下のようなプロパティ・メソッドを持つ構造体です。
 
-<pre class="source" title="Index 構造体">
-<code><span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Index</span>
+```csharp
+public readonly struct Index
 {
-    <span class="reserved">public</span> <span class="type">Index</span>(<span class="reserved">int</span> <span class="variable">value</span>, <span class="reserved">bool</span> <span class="variable">fromEnd</span> = <span class="reserved">false</span>);
-    <span class="reserved">public</span> <span class="reserved">bool</span> IsFromEnd { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">GetOffset</span>(<span class="reserved">int</span> <span class="variable">length</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type">Index</span>(<span class="reserved">int</span> <span class="variable">value</span>)
+    public Index(int value, bool fromEnd = false);
+    public bool IsFromEnd { get; }
+    public int Value { get; }
+    public int GetOffset(int length);
+    public static implicit operator Index(int value)
 }
-</code></pre>
+```
 
 `^i` は `new Index(i, true)` に展開されます
 (第2引数の `true` が「末尾から」の意味です)。
@@ -213,31 +213,31 @@ C# では、[配列のインデックスは0以上(非負)という前提](../..
 
 C# 8.0 で `..` という新しい構文が追加されました。
 
-<pre class="source" title=".. 構文">
-<code><span class="reserved">var</span> <span class="variable">r1</span> = 1..^1;
-<span class="reserved">var</span> <span class="variable">r2</span> = 1..;
-<span class="reserved">var</span> <span class="variable">r3</span> = ..^1;
-<span class="reserved">var</span> <span class="variable">r4</span> = ..;
+```csharp
+var r1 = 1..^1;
+var r2 = 1..;
+var r3 = ..^1;
+var r4 = ..;
  
-<span class="reserved">var</span> <span class="variable">i</span> = 1;
-<span class="reserved">var</span> <span class="variable">j</span> = ^1;
-<span class="reserved">var</span> <span class="variable">r</span> = <span class="variable">i</span>..<span class="variable">j</span>;
-</code></pre>
+var i = 1;
+var j = ^1;
+var r = i..j;
+```
 
 他の2項演算子と違って、`i..` や `..j`、`..` というようにオペランドを省略できます。
 オペランドは `Index` 型か、(`int` を含む) `Index` 型に暗黙的に変換できる型である必要があります。
 戻り値は `Range` 型(`System` 名前空間)になります。
 `Range` は、以下のようなプロパティ・メソッドを持つ構造体です。
 
-<pre class="source" title="Range 構造体">
-<code><span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Range</span>
+```csharp
+public readonly struct Range
 {
-    <span class="reserved">public</span> <span class="type">Range</span>(<span class="type">Index</span> <span class="variable">start</span>, <span class="type">Index</span> <span class="variable">end</span>);
-    <span class="reserved">public</span> <span class="type">Index</span> Start { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Index</span> End { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> (<span class="reserved">int</span> Offset, <span class="reserved">int</span> Length) <span class="method">GetOffsetAndLength</span>(<span class="reserved">int</span> <span class="variable">length</span>);
+    public Range(Index start, Index end);
+    public Index Start { get; }
+    public Index End { get; }
+    public (int Offset, int Length) GetOffsetAndLength(int length);
 }
-</code></pre>
+```
 
 左オペランドの省略時は先頭から、右オペランドの省略時は末尾までの意味になります。
 すなわち、`i..` は `i..^0` と、`..j` は `0..j` と、`..` は `0..^0` と同じ意味です。
@@ -256,14 +256,14 @@ C# 8.0 で `..` という新しい構文が追加されました。
 ちなみに、演算子の優先順位は結構高いです。
 2項演算(乗除算含む)や [`switch` 式](../datatype/typeswitch.md#switch-expression)よりも上になります。
 
-<pre class="source" title=".. の優先順位">
-<code>_ = <span class="error">2 * 3..4</span>; <span class="comment">// 2 * (3..4) の意味。そんな掛け算はできないのでコンパイル エラーに。</span>
-_ = 2..3 <span class="control">switch</span> <span class="comment">// 2..3 という Range が switch 式の引数になる</span>
+```csharp
+_ = 2 * 3..4; // 2 * (3..4) の意味。そんな掛け算はできないのでコンパイル エラーに。
+_ = 2..3 switch // 2..3 という Range が switch 式の引数になる
 {
-    <span class="type">Range</span> <span class="reserved">_</span> =&gt; 4,
+    Range _ => 4,
 };
-_ = (1 + 2)..(3 + 4); <span class="comment">// 足し算とかを優先したければ () 必須</span>
-</code></pre>
+_ = (1 + 2)..(3 + 4); // 足し算とかを優先したければ () 必須
+```
 
 ## <a id="sec-generated-title-9"></a> <a id="indexer"></a>Index/Range とインデクサー
 
@@ -276,34 +276,34 @@ _ = (1 + 2)..(3 + 4); <span class="comment">// 足し算とかを優先したけ
 
 `Index`型の `i` に対するインデクサー `a[i]` は基本的に以下のように展開されます。
 
-<pre class="source" title="Index 型インデクサーの展開結果">
-<code><span class="reserved">int</span> <span class="variable">offset</span> = <span class="variable">i</span>.<span class="method">GetOffset</span>(<span class="variable">a</span>.Length);
-<span class="variable">a</span>[<span class="variable">offset</span>];
-</code></pre>
+```csharp
+int offset = i.GetOffset(a.Length);
+a[offset];
+```
 
 また、`Range` 型の `r` に対するインデクサー `a[r]` は基本的に以下のように展開されます。
 
-<pre class="source" title="Range 型インデクサーの展開結果">
-<code><span class="reserved">var</span> <span class="variable">offset1</span> = <span class="variable">r</span>.Start.<span class="method">GetOffset</span>(<span class="variable">a</span>.Length);
-<span class="reserved">var</span> <span class="variable">offset2</span> = <span class="variable">r</span>.End.<span class="method">GetOffset</span>(<span class="variable">a</span>.Length);
-<span class="variable">a</span>.Slice(<span class="variable">offset1</span>, <span class="variable">offset2</span> - <span class="variable">offset1</span>);
-</code></pre>
+```csharp
+var offset1 = r.Start.GetOffset(a.Length);
+var offset2 = r.End.GetOffset(a.Length);
+a.Slice(offset1, offset2 - offset1);
+```
 
 `a` の型によって多少バリエーションがあります。
 C# のコレクションは長さを `Length` で取るものと `Count` で取るものの両方あるので、
 そのどちらにも対応しています。`Length` がなくて `Count` がある場合それを使います
 (`Length` があるならそっちが優先)。
 
-<pre class="source" title="Index 型インデクサーの展開結果(Count)">
-<code><span class="reserved">int</span> <span class="variable">offset</span> = <span class="variable">i</span>.<span class="method">GetOffset</span>(<span class="variable">a</span>.<em>Count</em>);
-<span class="variable">a</span>[<span class="variable">offset</span>];
-</code></pre>
+```csharp
+int offset = i.GetOffset(a.Count);
+a[offset];
+```
 
-<pre class="source" title="Range 型インデクサーの展開結果(Count)">
-<code><span class="reserved">var</span> <span class="variable">offset1</span> = <span class="variable">r</span>.Start.<span class="method">GetOffset</span>(<span class="variable">a</span>.<em>Count</em>);
-<span class="reserved">var</span> <span class="variable">offset2</span> = <span class="variable">r</span>.End.<span class="method">GetOffset</span>(<span class="variable">a</span>.<em>Count</em>);
-<span class="variable">a</span>.Slice(<span class="variable">offset1</span>, <span class="variable">offset2</span> - <span class="variable">offset1</span>);
-</code></pre>
+```csharp
+var offset1 = r.Start.GetOffset(a.Count);
+var offset2 = r.End.GetOffset(a.Count);
+a.Slice(offset1, offset2 - offset1);
+```
 
 また、`Range` 型インデクサーには、配列と文字列の場合だけ特別扱いがあります。
 `Slice` メソッドではなく、それぞれ `GetSubArray`、`Substring` メソッドが呼ばれます
@@ -316,36 +316,36 @@ C# のコレクションは長さを `Length` で取るものと `Count` で取�
 それぞれ配列、文字列を返します。
 この際、新しい配列・文字列を確保してコピーするコストが発生します。
 
-<pre class="source" title="Range型インデクサーでコピー発生">
-<code><span class="reserved">var</span> <span class="variable">array</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-<span class="reserved">var</span> <span class="variable">str</span> = <span class="string">&quot;abcde&quot;</span>;
+```csharp
+var array = new[] { 1, 2, 3, 4, 5 };
+var str = "abcde";
  
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; <span class="variable">i</span> &lt; 100; <span class="variable">i</span>++)
+for (int i = 0; i < 100; i++)
 {
-    <span class="comment">// こういう書き方をすると、ループのたびに new int[], new string が発生。</span>
-    <span class="comment">// だいぶ重たい。</span>
-    <span class="reserved">var</span> <span class="variable">subarray</span> = <span class="variable">array</span>[1..^1];
-    <span class="reserved">var</span> <span class="variable">substr</span> = <span class="variable">str</span>[1..^1];
+    // こういう書き方をすると、ループのたびに new int[], new string が発生。
+    // だいぶ重たい。
+    var subarray = array[1..^1];
+    var substr = str[1..^1];
 }
-</code></pre>
+```
 
 これらはそれなりに重たい処理なので、パフォーマンスにシビアな状況での利用には注意が必要です。
 
 コピーを発生させたくない場合、[`Span<T>`](../resource/span.md)を経由します。
 要するに、`AsSpan()` や `AsMemory()` を挟めばコピーを回避できます。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">array</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-<span class="reserved">var</span> <span class="variable">str</span> = <span class="string">&quot;abcde&quot;</span>;
+```csharp
+var array = new[] { 1, 2, 3, 4, 5 };
+var str = "abcde";
  
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; <span class="variable">i</span> &lt; 100; <span class="variable">i</span>++)
+for (int i = 0; i < 100; i++)
 {
-    <span class="comment">// 以下の書き方をすれば Span&lt;int&gt;/ReadOnlySpan&lt;char&gt; の Slice が呼ばれるようになる。</span>
-    <span class="comment">// これならコピーは発生せず、軽い。</span>
-    <span class="reserved">var</span> <span class="variable">subarray</span> = <span class="variable">array</span><em>.<span class="method">AsSpan</span>()</em>[1..^1];
-    <span class="reserved">var</span> <span class="variable">substr</span> = <span class="variable">str</span><em>.<span class="method">AsSpan</span>()</em>[1..^1];
+    // 以下の書き方をすれば Span<int>/ReadOnlySpan<char> の Slice が呼ばれるようになる。
+    // これならコピーは発生せず、軽い。
+    var subarray = array.AsSpan()[1..^1];
+    var substr = str.AsSpan()[1..^1];
 }
-</code></pre>
+```
 
 ##### <a id="sec-generated-title-11"></a>サンプル
 
@@ -355,48 +355,48 @@ C# のコレクションは長さを `Length` で取るものと `Count` で取�
 今回は「1行1項目で、`:` 区切りでキーと値が並んでいる」というような書式を考えます。
 この書式のテキストの中からキーだけを取り出すようなコードを以下のように書けます。
 
-<pre class="source" title="書式が決まったテキストから一部分を抜き出す例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">testData</span> = <span class="string">@&quot;longitude: 139.8803943
+        var testData = @"longitude: 139.8803943
 latitude: 35.6328964
 postal code: 279-0031
-&quot;</span>;
+";
  
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">key</span> <span class="control">in</span> <span class="method">GetKeys</span>(<span class="variable">testData</span>))
+        foreach (var key in GetKeys(testData))
         {
-            <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">key</span>);
+            Console.WriteLine(key);
         }
     }
  
-    <span class="comment">// 行頭から : までの間の文字列だけを抜き出す</span>
-    <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="type">ReadOnlyMemory</span>&lt;<span class="reserved">char</span>&gt;&gt; <span class="method">GetKeys</span>(<span class="reserved">string</span> <span class="variable">content</span>)
+    // 行頭から : までの間の文字列だけを抜き出す
+    static IEnumerable<ReadOnlyMemory<char>> GetKeys(string content)
     {
-        <span class="reserved">var</span> <span class="variable">start</span> = 0;
-        <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; <span class="variable">i</span> &lt; <span class="variable">content</span>.Length; <span class="variable">i</span>++)
+        var start = 0;
+        for (int i = 0; i < content.Length; i++)
         {
-            <span class="reserved">var</span> <span class="variable">c</span> = <span class="variable">content</span>[<span class="variable">i</span>];
-            <span class="control">if</span> (<span class="variable">c</span> == <span class="string">&#39;:&#39;</span>)
+            var c = content[i];
+            if (c == ':')
             {
-                <span class="control">yield</span> <span class="control">return</span> <span class="variable">content</span>.<span class="method">AsMemory</span>()[<span class="variable">start</span>..<span class="variable">i</span>];
+                yield return content.AsMemory()[start..i];
             }
-            <span class="control">else</span> <span class="control">if</span> (<span class="variable">c</span> == <span class="string">&#39;\n&#39;</span>)
+            else if (c == '\n')
             {
-                <span class="variable">start</span> = <span class="variable">i</span> + 1;
+                start = i + 1;
             }
         }
     }
 }
-</code></pre>
-<pre class="console" title="書式が決まったテキストから一部分を抜き出す例">
-<code>longitude
+```
+```console
+longitude
 latitude
 postal code
-</code></pre>
+```
 
 例なのでシンプルな書式にしましたが、もうちょっと実用的な、例えば JSON 形式からのキーの取り出しなども、こういうコードの延長線上になります。

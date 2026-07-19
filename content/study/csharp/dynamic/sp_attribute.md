@@ -59,22 +59,22 @@ C++ などの既存の言語では、このような追加情報を定義する�
 属性は以下のように <code>[]</code> でくくり、
 クラスやメンバーの前に付けて使います。
 
-<pre class="source" title="属性の使用方法" lang="">
-<code>[<span class="input">属性名</span>(<span class="input">属性パラメータ</span>)]
-<span class="input">メンバーの定義</span>
-</code></pre>
+```csharp
+[属性名(属性パラメータ)]
+メンバーの定義
+```
 
 
 たとえば以下のような感じ。
 
-<pre class="source" title="属性の例" lang="">
-<code><span class="type">[DataContract</span>]
-<span class="reserved">class</span> <span class="type">User</span>
+```csharp
+[DataContract]
+class User
 {
-    <span class="reserved">public int</span> Id { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int Id { get; set; }
+    public string Name { get; set; }
 }
-</code></pre>
+```
 
 
 属性名は語尾に <code>Attribute</code> を付けることになっています。
@@ -89,72 +89,72 @@ C++ などの既存の言語では、このような追加情報を定義する�
 特定の条件下でのみ実行されるメソッドを定義するために使用する属性です。
 例えば、以下のようにして使用します。
 
-<pre class="source" title="Conditional 属性" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Diagnostics;
+```csharp
+using System;
+using System.Diagnostics;
 
-<span class="reserved">class</span> <span class="type">AttributeTest</span>
+class AttributeTest
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">double</span>[] array = <span class="reserved">new double</span>[] { 9, 4, 5, 2, 7, 1, 6, 3, 8 };
+        double[] array = new double[] { 9, 4, 5, 2, 7, 1, 6, 3, 8 };
         BubbleSort(array);
         Output(array);
     }
 
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> バブルソートを行う。</span>
-    <span class="inactive">/// &lt;/summary&gt;</span>
-    <span class="reserved">static void</span> BubbleSort(<span class="reserved">double</span>[] array)
+    /// <summary>
+    /// バブルソートを行う。
+    /// </summary>
+    static void BubbleSort(double[] array)
     {
-        <span class="reserved">int</span> n = array.Length - 1;
+        int n = array.Length - 1;
 
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; ++i)
+        for (int i = 0; i < n; ++i)
         {
-            <span class="reserved">for</span> (<span class="reserved">int</span> j = n; j &gt; i; --j)
-                <span class="reserved">if</span> (array[j - 1] &gt; array[j])
-                    Swap(<span class="reserved">ref</span> array[j - 1], <span class="reserved">ref</span> array[j]);
+            for (int j = n; j > i; --j)
+                if (array[j - 1] > array[j])
+                    Swap(ref array[j - 1], ref array[j]);
 
-            <em>IntermediateOutput(array);</em> <span class="comment">// ソートの途中段階のデータを表示。</span>
+            IntermediateOutput(array); // ソートの途中段階のデータを表示。
         }
     }
 
-    <span class="reserved">static void</span> Swap(<span class="reserved">ref double</span> x, <span class="reserved">ref double</span> y)
+    static void Swap(ref double x, ref double y)
     {
-        <span class="reserved">double</span> tmp = x;
+        double tmp = x;
         x = y;
         y = tmp;
     }
 
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> 配列の内容をコンソールに表示する。</span>
-    <span class="inactive">/// &lt;/summary&gt;</span>
-    <span class="reserved">static void</span> Output(<span class="reserved">double</span>[] array)
+    /// <summary>
+    /// 配列の内容をコンソールに表示する。
+    /// </summary>
+    static void Output(double[] array)
     {
-        <span class="reserved">foreach</span> (<span class="reserved">double</span> x <span class="reserved">in</span> array)
+        foreach (double x in array)
         {
-            <span class="type">Console</span>.Write(<span class="literal">"{0} "</span>, x);
+            Console.Write("{0} ", x);
         }
-        <span class="type">Console</span>.Write(<span class="literal">"\n"</span>);
+        Console.Write("\n");
     }
 
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> SHOW_INTERMEDIATE というシンボルが定義されているときのみ</span>
-    <span class="inactive">///</span><span class="comment"> 配列の内容をコンソールに表示する。</span>
-    <span class="inactive">/// &lt;/summary&gt;</span>
-    <em>[<span class="type">Conditional</span>(<span class="literal">"SHOW_INTERMEDIATE"</span>)]</em>
-    <span class="reserved">static void</span> IntermediateOutput(<span class="reserved">double</span>[] array)
+    /// <summary>
+    /// SHOW_INTERMEDIATE というシンボルが定義されているときのみ
+    /// 配列の内容をコンソールに表示する。
+    /// </summary>
+    [Conditional("SHOW_INTERMEDIATE")]
+    static void IntermediateOutput(double[] array)
     {
         Output(array);
     }
 }
-</code></pre>
+```
 
 
 <code>SHOW_INTERMEDIATE</code> という名前のシンボルが定義されている場合、
 以下のように、ソートの途中段階のデータが表示されます。
 
-<pre class="console" title="">
+```console
 1 9 4 5 2 7 3 6 8
 1 2 9 4 5 3 7 6 8
 1 2 3 9 4 5 6 7 8
@@ -164,30 +164,30 @@ C++ などの既存の言語では、このような追加情報を定義する�
 1 2 3 4 5 6 7 9 8
 1 2 3 4 5 6 7 8 9
 1 2 3 4 5 6 7 8 9
-</pre>
+```
 
 
 一方、<code>SHOW_INTERMEDIATE</code> という名前のシンボルが定義されていない場合、
 以下のように、結果のみが表示されます。
 
-<pre class="console" title="">
+```console
 1 2 3 4 5 6 7 8 9
-</pre>
+```
 
 
 ちなみに、以下のように <code>,</code> で区切るか、複数の <code>[]</code> を並べることで複数の属性を指定することが出来ます。
 
-<pre class="source" title="複数の属性を指定 その1" lang="">
-<code>[<span class="type">Conditional</span>(<span class="literal">"DEBUG"</span>), <span class="type">Conditional</span>(<span class="literal">"TEST"</span>)]
-<span class="reserved">void</span> DebugOutput(<span class="reserved">string</span> message)
-</code></pre>
+```csharp
+[Conditional("DEBUG"), Conditional("TEST")]
+void DebugOutput(string message)
+```
 
 
-<pre class="source" title="複数の属性を指定 その2" lang="">
-<code>[<span class="type">Conditional</span>(<span class="literal">"DEBUG"</span>)]
-[<span class="type">Conditional</span>(<span class="literal">"TEST"</span>)]
-<span class="reserved">void</span> DebugOutput(<span class="reserved">string</span> message)
-</code></pre>
+```csharp
+[Conditional("DEBUG")]
+[Conditional("TEST")]
+void DebugOutput(string message)
+```
 
 
 
@@ -367,19 +367,19 @@ Visual Studio 組み込みの単体テスト機能で利用します。
 例えば、以下のようなプログラムにより、
 AssemblyDescription という属性をアセンブリに付けたとします。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System.Reflection;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
-[assembly: AssemblyDescription(<span class="literal">"assembly 属性のサンプルコードです。"</span>)]
+[assembly: AssemblyDescription("assembly 属性のサンプルコードです。")]
 
-<span class="reserved">class</span> TestAttribute
+class TestAttribute
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
   }
 }
-</code></pre>
+```
 
 
 AssemblyDescription に与えた文字列は、このプログラムのコメントとして、
@@ -401,53 +401,51 @@ explorer から参照することができます。
 メソッド定義の直前に属性を付ければメソッドに属性が適用されます。
 以下にその例を挙げます。
 
-<pre class="source" title="属性の対象の例" lang="">
-<code><em>[<span class="reserved">assembly</span>: <span class="type">AssemblyTitle</span>(<span class="literal">"Test Attribute"</span>)]</em> <span class="comment">// プログラムそのものが対象</span>
+```csharp
+[assembly: AssemblyTitle("Test Attribute")] // プログラムそのものが対象
  
-<em>[<span class="type">Serializable</span>]</em> <span class="comment">// クラスが対象</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">SampleClass</span>
+[Serializable] // クラスが対象
+public class SampleClass
 {
-    [<span class="type">Obsolete</span>(<span class="literal">"時期版で削除します。使わないでください。"</span>)] <span class="comment">// メソッドが対象</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Test([<span class="type">In</span>, <span class="type">Out</span>] <span class="reserved">ref</span> <span class="reserved">int</span> n) <span class="comment">// 引数が対象</span>
+    [Obsolete("時期版で削除します。使わないでください。")] // メソッドが対象
+    public void Test([In, Out] ref int n) // 引数が対象
     {
         n *= 2;
     }
 }
-
-</code></pre>
+```
 
 
 しかし、属性を付ける位置によっては属性の対象が曖昧になることがあります。
 メソッドそのものとメソッドの戻り値に属性を適用したい場合がその典型例です。
 以下にその例を挙げます。
 
-<pre class="source" title="メソッドの戻り値に属性を適用 (悪い例)" lang="">
-<code>[<span class="type">DllImport</span>(<span class="literal">"msvcrt.dll"</span>)]
-[<span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span>.I4)] <span class="comment">// メソッドの戻り値に属性を適用したいんだけど、</span>
-<span class="comment">// コンパイラはそう解釈してくれない。</span>
-<span class="comment">// 戻り値ではなく、メソッド自体に適用していると解釈される。</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">int</span> puts(
-    [<span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span>.LPStr)] <span class="reserved">string</span> m);
-</code></pre>
+```csharp
+[DllImport("msvcrt.dll")]
+[MarshalAs(UnmanagedType.I4)] // メソッドの戻り値に属性を適用したいんだけど、
+// コンパイラはそう解釈してくれない。
+// 戻り値ではなく、メソッド自体に適用していると解釈される。
+public static extern int puts(
+    [MarshalAs(UnmanagedType.LPStr)] string m);
+```
 
 
 このような曖昧さを解決するため、
 明示的に属性の対象を指定する構文があります。
 
-<pre class="source" title="属性の対象の指定" lang="">
-<code>[<span class="input">属性の対象</span> : <span class="input">属性名</span>(<span class="input">属性のオプション</span>)]
-</code></pre>
+```csharp
+[属性の対象 : 属性名(属性のオプション)]
+```
 
 
 先ほどの例を属性の対象を明示的に指定して書き直すと以下のようになります。
 
-<pre class="source" title="メソッドの戻り値に属性を適用" lang="">
-<code>[<em><span class="reserved">method</span></em>: <span class="type">DllImport</span>(<span class="literal">"msvcrt.dll"</span>)]
-[<em><span class="reserved">return</span></em>: <span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span>.I4)]
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">int</span> puts(
-    [<em><span class="reserved">param</span></em>: <span class="type">MarshalAs</span>(<span class="type">UnmanagedType</span>.LPStr)] <span class="reserved">string</span> m);
-
-</code></pre>
+```csharp
+[method: DllImport("msvcrt.dll")]
+[return: MarshalAs(UnmanagedType.I4)]
+public static extern int puts(
+    [param: MarshalAs(UnmanagedType.LPStr)] string m);
+```
 
 
 属性の対象には以下のようなものがあります。
@@ -514,43 +512,43 @@ explorer から参照することができます。
 
 これらに対して、以下のような書き方で属性を付けることができます。
 
-<pre class="source" title="プロパティ、イベントが内部的に生成しているフィールドやメソッドへの属性付け">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">XAttribute</span> : <span class="type">Attribute</span> { }
+class XAttribute : Attribute { }
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    [<span class="type">X</span>] <span class="comment">// プロパティ自体</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Property
+    [X] // プロパティ自体
+    public int Property
     {
-        [<span class="reserved">method</span>:<span class="type">X</span>] <span class="comment">// get に対応するメソッド</span>
-        <span class="reserved">get</span> =&gt; 0;
+        [method:X] // get に対応するメソッド
+        get => 0;
 
-        [<span class="reserved">method</span>: <span class="type">X</span>] <span class="comment">// set に対応するメソッド</span>
-        [<span class="reserved">param</span>: <span class="type">X</span>]  <span class="comment">// set が受け取っている value 引数</span>
-        <span class="reserved">set</span> { }
+        [method: X] // set に対応するメソッド
+        [param: X]  // set が受け取っている value 引数
+        set { }
     }
 
-    [<span class="reserved">field</span>:<span class="type">X</span>] <span class="comment">// (C# 7.3 から) 自動で生成されるフィールド</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> AutoProperty { <span class="reserved">get</span>; }
+    [field:X] // (C# 7.3 から) 自動で生成されるフィールド
+    public int AutoProperty { get; }
 
-    [<span class="type">X</span>] <span class="comment">// イベント自体</span>
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span> Event
+    [X] // イベント自体
+    public event Action Event
     {
-        [<span class="reserved">method</span>: <span class="type">X</span>] <span class="comment">// add に対応するメソッド</span>
-        [<span class="reserved">param</span>: <span class="type">X</span>]  <span class="comment">// add が受け取っている value 引数</span>
-        <span class="reserved">add</span> { }
+        [method: X] // add に対応するメソッド
+        [param: X]  // add が受け取っている value 引数
+        add { }
 
-        [<span class="reserved">method</span>: <span class="type">X</span>] <span class="comment">// remove に対応するメソッド</span>
-        [<span class="reserved">param</span>: <span class="type">X</span>]  <span class="comment">// remove が受け取っている value 引数</span>
-        <span class="reserved">remove</span> { }
+        [method: X] // remove に対応するメソッド
+        [param: X]  // remove が受け取っている value 引数
+        remove { }
     }
 
-    [<span class="reserved">field</span>: <span class="type">X</span>] <span class="comment">// 自動で生成されるフィールド</span>
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span> AutoEvent;
+    [field: X] // 自動で生成されるフィールド
+    public event Action AutoEvent;
 }
-</code></pre>
+```
 
 <h5 class="version version7">Ver. 7.3</h5>
 
@@ -562,27 +560,27 @@ C# 7.2 以前では自動プロパティでフィールドに対して属性指�
 ちなみに、この「修正」は一応、破壊的変更になります。
 この問題を踏むことはほとんどないとは思いますが、以下のコードは、C# 7.2まではコンパイルできて、7.3ではコンパイルできなくなります。
 
-<pre class="source" title="field 指定属性による破壊的変更">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 本来フィールドには付けれない属性</span>
+// 本来フィールドには付けれない属性
 [AttributeUsage(AttributeTargets.Class)]
-<span class="reserved">class</span> <span class="type">XAttribute</span> : Attribute { }
+class XAttribute : Attribute { }
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="comment">// C# 7.2 の挙動:</span>
-    <span class="comment">// そもそもこの field 指定が無効。</span>
-    <span class="comment">// 無効なので警告は出しているけども、エラーにはしていなかった。</span>
-    <span class="comment">// 一方で、「フィールドに付けれる属性かどうか」のチェックはしていなかった。</span>
-    <span class="comment">//</span>
-    <span class="comment">// C# 7.3 の挙動:</span>
-    <span class="comment">// field 指定が有効になったことで、チェックが働くように。</span>
-    <span class="comment">// フィールドに付けれる属性ではないのでエラーになる。</span>
-    [<span class="reserved">field</span>:<span class="type">X</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> AutoProperty { <span class="reserved">get</span>; }
+    // C# 7.2 の挙動:
+    // そもそもこの field 指定が無効。
+    // 無効なので警告は出しているけども、エラーにはしていなかった。
+    // 一方で、「フィールドに付けれる属性かどうか」のチェックはしていなかった。
+    //
+    // C# 7.3 の挙動:
+    // field 指定が有効になったことで、チェックが働くように。
+    // フィールドに付けれる属性ではないのでエラーになる。
+    [field:X]
+    public int AutoProperty { get; }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-16"></a> <a id="primary-constructor">プライマリ コンストラクター</a>
 
@@ -593,38 +591,38 @@ C# 12 からは普通のクラスや構造体にも使えるようになった[�
 (ただし、[レコード型](../cheatsheet/ap_ver9.md#record)では、
 C# 9 で導入された当初から先行してプライマリ コンストラクターを使えました。)
 
-<pre class="source" title="プライマリ コンストラクターの例">
-<span class="comment">// クラスの直後に () や引数リストを書ける。</span>
-<span class="reserved">class</span> <span class="type">A</span>();
-<span class="reserved">class</span> <span class="type">B</span>(<span class="reserved">int</span> <span class="variable local">x</span>);
-</pre>
+```csharp
+// クラスの直後に () や引数リストを書ける。
+class A();
+class B(int x);
+```
 
 通常、クラスの直前に書く属性はクラス自体に対して付与されますが、
 `method` 指定を付けることでプライマリ コンストラクターに対する属性にできます。
 (ただし、レコード型が対象であっても、この機能が使えるのは C# 12 からです。)
 
-<pre class="source" title="プライマリ コンストラクターに対する属性指定">
-[<span class="type">X</span>]         <span class="comment">// これはクラスに対する属性。</span>
-[<span class="reserved">method</span>: <span class="type">X</span>] <span class="comment">// これはプライマリ コンストラクターに対する属性。</span>
-<span class="reserved">class</span> <span class="type">A</span>();
+```csharp
+[X]         // これはクラスに対する属性。
+[method: X] // これはプライマリ コンストラクターに対する属性。
+class A();
 
-<span class="reserved">class</span> <span class="type">XAttribute</span> : <span class="type">Attribute</span>;
-</pre>
+class XAttribute : Attribute;
+```
 
 また、レコード型の場合はプライマリ コンストラクターの引数からプロパティが自動生成されることになりますが、
 以下のように、`property` や `field` を付けることで属性の指定先を選べます。
 
-<pre class="source" title="">
-<span class="reserved">record</span> <span class="type">A</span>(
-    [<span class="type">X</span>]           <span class="comment">// これはプライマリ コンストラクターの引数に付く。</span>
-    <span class="comment">// [param: X]    省略せずに書くならこう。</span>
-    [<span class="reserved">property</span>: <span class="type">X</span>] <span class="comment">// これは生成されるプロパティに付く。</span>
-    [<span class="reserved">field</span>: <span class="type">X</span>]    <span class="comment">// これは生成されるプロパティのバッキング フィールドに付く。</span>
-    <span class="reserved">int</span> <span class="variable local">X</span>
+```csharp
+record A(
+    [X]           // これはプライマリ コンストラクターの引数に付く。
+    // [param: X]    省略せずに書くならこう。
+    [property: X] // これは生成されるプロパティに付く。
+    [field: X]    // これは生成されるプロパティのバッキング フィールドに付く。
+    int X
     );
 
-<span class="reserved">class</span> <span class="type">XAttribute</span> : <span class="type">Attribute</span>;
-</pre>
+class XAttribute : Attribute;
+```
 
 
 ## <a id="sec-generated-title-17"></a> <a id="userdefine"></a>属性の自作
@@ -638,16 +636,15 @@ C# 9 で導入された当初から先行してプライマリ コンストラ�
 ここでは例として、クラスの作者を記録しておくための属性 <code>Author</code> を作成します。
 まずは最も基本的な部分を作成します。
 
-<pre class="source" title="AuthorAttribute" lang="">
-<code>[<span class="type">AttributeUsage</span>(<span class="type">AttributeTargets</span>.Class | <span class="type">AttributeTargets</span>.Struct)]
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">AuthorAttribute</span> : <span class="type">Attribute</span>
+```csharp
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+public class AuthorAttribute : Attribute
 {
-    <span class="reserved">private</span> <span class="reserved">string</span> Name;       <span class="comment">// 作者名</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> Affiliation; <span class="comment">// 作者所属</span>
-    <span class="reserved">public</span> AuthorAttribute(<span class="reserved">string</span> name) { <span class="reserved">this</span>.Name = name; }
+    private string Name;       // 作者名
+    public string Affiliation; // 作者所属
+    public AuthorAttribute(string name) { this.Name = name; }
 }
-
-</code></pre>
+```
 
 
 見てのとおり、何の変哲もないクラスです。
@@ -659,13 +656,13 @@ C# 9 で導入された当初から先行してプライマリ コンストラ�
 
 次に使用する側の例を挙げます。
 
-<pre class="source" title="Author 属性の使用" lang="">
-<code>[<span class="type">Author</span>(<span class="literal">"Andrei Hejilsberg"</span>)]
-<span class="reserved">class</span> Test
+```csharp
+[Author("Andrei Hejilsberg")]
+class Test
 {
-  <span class="comment">// 中身は省略</span>
+  // 中身は省略
 }
-</code></pre>
+```
 
 
 属性パラメータで指定した引数は属性クラスのコンストラクタに渡されます。
@@ -675,13 +672,13 @@ C# 9 で導入された当初から先行してプライマリ コンストラ�
 また、属性クラスの public なフィールドやプロパティは<em>名前付きパラメータ</em>と呼ばれる方法で設定することが出来ます。
 例として、先ほど作成した <code>Author</code> 属性の <code>affiliation</code> フィールドを設定してみましょう。
 
-<pre class="source" title="Author 属性の名前付きパラメータ" lang="">
-<code>[<span class="type">Author</span>(<span class="literal">"Andrei Hejilsberg"</span>, Affiliation=<span class="literal">"Microsoft"</span>)]
-<span class="reserved">class</span> Test
+```csharp
+[Author("Andrei Hejilsberg", Affiliation="Microsoft")]
+class Test
 {
-  <span class="comment">// 中身は省略</span>
+  // 中身は省略
 }
-</code></pre>
+```
 
 
 この例の <code>Affiliation="Microsoft"</code> の部分が名前付きパラメータです。
@@ -690,13 +687,13 @@ C# 9 で導入された当初から先行してプライマリ コンストラ�
 
 <code>Attribute</code> にも <code>AllowMultiple</code> と <code>Inherited</code> という2つの名前付きパラメータがあります。
 
-<pre class="source" title="AttributeUsage の名前付きパラメータ" lang="">
-<code>[<span class="type">AttributeUsage</span>(
-   <span class="input">属性の対象</span>,
-   AllowMultiple=<span class="input">複数回適用の可否</span>,
-   Inherited=<span class="input">継承の有無</span>
+```csharp
+[AttributeUsage(
+   属性の対象,
+   AllowMultiple=複数回適用の可否,
+   Inherited=継承の有無
 )]
-</code></pre>
+```
 
 
 <code>AllowMultiple</code> には同じ属性を同じ対象に複数回適用できるかどうかを指定します。
@@ -712,18 +709,18 @@ false の場合には属性は継承されません。
 <code>Inherited</code> は false とすべきです。
 以上のことを踏まえ、<code>Author</code> 属性を書き直すと以下のようになります。
 
-<pre class="source" title="AuthorAttribute その2" lang="">
-<code>[<span class="type">AttributeUsage</span>(
-  <span class="type">AttributeTargets</span>.Class | <span class="type">AttributeTargets</span>.Struct,
-  AllowMultiple = <span class="reserved">true</span>,
-  Inherited = <span class="reserved">false</span>)]
-<span class="reserved">public class</span> AuthorAttribute : Attribute
+```csharp
+[AttributeUsage(
+  AttributeTargets.Class | AttributeTargets.Struct,
+  AllowMultiple = true,
+  Inherited = false)]
+public class AuthorAttribute : Attribute
 {
-  <span class="reserved">private string</span> name;       <span class="comment">// 作者名</span>
-  <span class="reserved">public string</span> affiliation; <span class="comment">// 作者所属</span>
-  <span class="reserved">public</span> AuthorAttribute(<span class="reserved">string</span> name){<span class="reserved">this</span>.name = name;}
+  private string name;       // 作者名
+  public string affiliation; // 作者所属
+  public AuthorAttribute(string name){this.name = name;}
 }
-</code></pre>
+```
 
 
 
@@ -737,93 +734,92 @@ false の場合には属性は継承されません。
 
 例として、クラス及びそのクラス中の public メソッドに適用された全ての <code>Author</code> 属性を取得するプログラムを以下に示します。
 
-<pre class="source" title="属性の取得の例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reflection;
+```csharp
+using System;
+using System.Reflection;
   
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-<span class="inactive">///</span><span class="comment"> 作者情報を残すための属性。</span>
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-[<span class="type">AttributeUsage</span>(
-    <span class="type">AttributeTargets</span>.Class | <span class="type">AttributeTargets</span>.Struct | <span class="type">AttributeTargets</span>.Method,
-    AllowMultiple = <span class="reserved">true</span>,
-    Inherited = <span class="reserved">false</span>)]
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">AuthorAttribute</span> : <span class="type">Attribute</span>
+/// <summary>
+/// 作者情報を残すための属性。
+/// </summary>
+[AttributeUsage(
+    AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method,
+    AllowMultiple = true,
+    Inherited = false)]
+public class AuthorAttribute : Attribute
 {
-    <span class="reserved">private</span> <span class="reserved">string</span> name;
-    <span class="reserved">public</span> AuthorAttribute(<span class="reserved">string</span> name) { <span class="reserved">this</span>.name = name; }
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span> { <span class="reserved">return</span> <span class="reserved">this</span>.name; } }
+    private string name;
+    public AuthorAttribute(string name) { this.name = name; }
+    public string Name { get { return this.name; } }
 }
  
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-<span class="inactive">///</span><span class="comment"> テスト用のクラス。</span>
-<span class="inactive">///</span><span class="comment"> メソッドごとに違う人が開発するなんてほとんどありえないけど、</span>
-<span class="inactive">///</span><span class="comment"> その辺は目をつぶってください。</span>
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-[<span class="type">Author</span>(<span class="literal">"Stephanie McMahon"</span>)]
-[<span class="type">Author</span>(<span class="literal">"Hunter Herst Helmsly"</span>)]
-<span class="reserved">class</span> <span class="type">AuthorTest</span>
+/// <summary>
+/// テスト用のクラス。
+/// メソッドごとに違う人が開発するなんてほとんどありえないけど、
+/// その辺は目をつぶってください。
+/// </summary>
+[Author("Stephanie McMahon")]
+[Author("Hunter Herst Helmsly")]
+class AuthorTest
 {
-    [<span class="type">Author</span>(<span class="literal">"Kurt Angle"</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> A() { }
-    [<span class="type">Author</span>(<span class="literal">"Rocky Mavia"</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> B() { }
-    [<span class="type">Author</span>(<span class="literal">"Chris Jericho"</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> C() { }
-    [<span class="type">Author</span>(<span class="literal">"Glen Jacobs"</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> D() { }
+    [Author("Kurt Angle")]
+    public static void A() { }
+    [Author("Rocky Mavia")]
+    public static void B() { }
+    [Author("Chris Jericho")]
+    public static void C() { }
+    [Author("Glen Jacobs")]
+    public static void D() { }
 }
  
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
+/// <summary>
  
-<span class="inactive">///</span><span class="comment"> テストプログラム。</span>
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-<span class="reserved">class</span> <span class="type">AttributeTest</span>
+/// テストプログラム。
+/// </summary>
+class AttributeTest
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        GetAllAuthors(<span class="reserved">typeof</span>(<span class="type">AuthorTest</span>));
+        GetAllAuthors(typeof(AuthorTest));
     }
  
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> クラス自体とクラス中の public メソッドの作者情報を取得する。</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;param name=</span><span class="inactive">"t"</span><span class="inactive">&gt;</span><span class="comment">クラスの Type</span><span class="inactive">&lt;/param&gt;</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> GetAllAuthors(<span class="type">Type</span> t)
+    /// <summary>
+    /// クラス自体とクラス中の public メソッドの作者情報を取得する。
+    /// </summary>
+    /// <param name="t">クラスの Type</param>
+    static void GetAllAuthors(Type t)
     {
-        <span class="type">Console</span>.Write(<span class="literal">"type name: {0}\n"</span>, t.Name);
+        Console.Write("type name: {0}\n", t.Name);
         GetAuthors(t);
  
-        <span class="reserved">foreach</span> (<span class="type">MethodInfo</span> info <span class="reserved">in</span> t.GetMethods())
+        foreach (MethodInfo info in t.GetMethods())
         {
-            <span class="type">Console</span>.Write(<span class="literal">"  method name: {0}\n"</span>, info.Name);
+            Console.Write("  method name: {0}\n", info.Name);
             GetAuthors(info);
         }
     }
  
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> クラスやメソッドの作者情報を取得する。</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;param name=</span><span class="inactive">"info"</span><span class="inactive">&gt;</span><span class="comment">クラスやメソッドの MemberInfo</span><span class="inactive">&lt;/param&gt;</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> GetAuthors(<span class="type">MemberInfo</span> info)
+    /// <summary>
+    /// クラスやメソッドの作者情報を取得する。
+    /// </summary>
+    /// <param name="info">クラスやメソッドの MemberInfo</param>
+    static void GetAuthors(MemberInfo info)
     {
-        <span class="type">Attribute</span>[] authors = <span class="type">Attribute</span>.GetCustomAttributes(
-            info, <span class="reserved">typeof</span>(<span class="type">AuthorAttribute</span>));
-        <span class="reserved">foreach</span> (<span class="type">Attribute</span> att <span class="reserved">in</span> authors)
+        Attribute[] authors = Attribute.GetCustomAttributes(
+            info, typeof(AuthorAttribute));
+        foreach (Attribute att in authors)
         {
-            <span class="type">AuthorAttribute</span> author = att <span class="reserved">as</span> <span class="type">AuthorAttribute</span>;
-            <span class="reserved">if</span> (author != <span class="reserved">null</span>)
+            AuthorAttribute author = att as AuthorAttribute;
+            if (author != null)
             {
-                <span class="type">Console</span>.Write(<span class="literal">"    author name: {0}\n"</span>, author.Name);
+                Console.Write("    author name: {0}\n", author.Name);
             }
         }
     }
 }
+```
 
-</code></pre>
 
-
-<pre class="console" title="">
+```console
 type name: AuthorTest
     author name: Hunter Herst Helmsly
     author name: Stephanie McMahon
@@ -839,7 +835,7 @@ type name: AuthorTest
   method name: D
     author name: Glen Jacobs
   method name: GetType
-</pre>
+```
 
 ## <a id="sec-generated-title-19"></a> <a id="generic-attribute">ジェネリックな属性</a>
 
@@ -848,35 +844,35 @@ type name: AuthorTest
 C# 11.0 で、属性をジェネリック クラスにできるようになりました。
 これまでだと、以下のように引数で `typeof` を使って型を渡すことになっていました。
 
-<pre class="source" title="C# 10まで">
-<code><span class="comment">// 属性は非ジェネリックでないとダメ。</span>
-<span class="reserved">class</span> <span class="type">TypeConverter</span> : <span class="type">Attribute</span>
+```csharp
+// 属性は非ジェネリックでないとダメ。
+class TypeConverter : Attribute
 {
-    <span class="reserved">public</span> <span class="type">TypeConverter</span>(<span class="type">Type</span> <span class="variable">type</span>) { }
+    public TypeConverter(Type type) { }
 }
 
-<span class="comment">// これまでだとこんな感じで引数で typeof を指定する。</span>
-[<span class="type">TypeConverter</span>(<span class="reserved">typeof</span>(<span class="type">MyConverter</span>))]
-<span class="reserved">class</span> <span class="type">MyClass</span> { }
-</code></pre>
+// これまでだとこんな感じで引数で typeof を指定する。
+[TypeConverter(typeof(MyConverter))]
+class MyClass { }
+```
 
 C# 11.0 以降は以下のようにも書けます。
 
-<pre class="source" title="C# 11 以降">
-<code><span class="comment">// ジェネリックにできるように。</span>
-<span class="reserved">class</span> <span class="type">TypeConverter</span>&lt;<span class="type">T</span>&gt; : <span class="type">Attribute</span> { }
+```csharp
+// ジェネリックにできるように。
+class TypeConverter<T> : Attribute { }
 
-<span class="comment">// &lt;&gt; で型引数を指定できる。</span>
-[<span class="type">TypeConverter</span>&lt;<span class="type">MyConverter</span>&gt;]
-<span class="reserved">class</span> <span class="type">MyClass</span> { }
-</code></pre>
+// <> で型引数を指定できる。
+[TypeConverter<MyConverter>]
+class MyClass { }
+```
 
 ただし、型引数は具象型(仮引数が残っていない状態)でなければなりません。
 
-<pre class="source" title="仮引数が残っているとダメ">
-<code><span class="comment">// ただし、型引数は具象型出ないとダメ。</span>
-<span class="comment">// 型仮引数を仮引数のままにはできない。</span>
-<span class="comment">// CS8968 エラーになる。</span>
-[<span class="error"><span class="type">TypeConverter</span>&lt;<span class="type">T</span>&gt;</span>]
-<span class="reserved">class</span> <span class="type">MyClass</span>&lt;<span class="type">T</span>&gt; { }
-</code></pre>
+```csharp
+// ただし、型引数は具象型出ないとダメ。
+// 型仮引数を仮引数のままにはできない。
+// CS8968 エラーになる。
+[TypeConverter<T>]
+class MyClass<T> { }
+```

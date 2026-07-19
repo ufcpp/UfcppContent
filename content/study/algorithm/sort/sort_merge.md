@@ -50,93 +50,93 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/MergeSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/MergeSort.cs)
 
-<pre class="source" title="ソート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// マージソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;</span>
-<span class="reserved">public static void</span> MergeSort&lt;T&gt;(T[] a)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+public static void MergeSort<T>(T[] a)
+  where T : IComparable<T>
 {
-  T[] work = <span class="reserved">new</span> T[a.Length / 2];
+  T[] work = new T[a.Length / 2];
   MergeSort(a, 0, a.Length, work);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// マージソート → 挿入ソートに切り替える配列長の閾値。
-/// &lt;/summary&gt;</span>
-<span class="reserved">const int</span> THREASHOLD = 64;
+/// </summary>
+const int THREASHOLD = 64;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 挿入ソート。
 /// 配列のどこからどこまでをソートするかを指定するバージョン。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="first"&gt;ソート対象の先頭インデックス&lt;/param&gt;
-/// &lt;param name="last"&gt;ソート対象の末尾インデックス&lt;/param&gt;</span>
-<span class="reserved">static void</span> InsertSort&lt;T&gt;(T[] a, <span class="reserved">int</span> first, <span class="reserved">int</span> last)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="first">ソート対象の先頭インデックス</param>
+/// <param name="last">ソート対象の末尾インデックス</param>
+static void InsertSort<T>(T[] a, int first, int last)
+  where T : IComparable<T>
 {
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = first + 1; i &lt;= last; i++)
-    <span class="reserved">for</span> (<span class="reserved">int</span> j = i; j &gt; first &amp;&amp; a[j - 1].CompareTo(a[j]) &gt; 0; --j)
-      Swap(<span class="reserved">ref</span> a[j], <span class="reserved">ref</span> a[j - 1]);
+  for (int i = first + 1; i <= last; i++)
+    for (int j = i; j > first && a[j - 1].CompareTo(a[j]) > 0; --j)
+      Swap(ref a[j], ref a[j - 1]);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// マージソート。
 /// 配列のどこからどこまでをソートするかを指定するバージョン。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="begin"&gt;ソート対象部分の先頭&lt;/param&gt;
-/// &lt;param name="end"&gt;ソート対象部分の末尾＋1&lt;/param&gt;
-/// &lt;param name="work"&gt;作業領域。a の 1/2 のサイズが必要。&lt;/param&gt;</span>
-<span class="reserved">static void</span> MergeSort&lt;T&gt;(T[] a, <span class="reserved">int</span> begin, <span class="reserved">int</span> end, T[] work)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="begin">ソート対象部分の先頭</param>
+/// <param name="end">ソート対象部分の末尾＋1</param>
+/// <param name="work">作業領域。a の 1/2 のサイズが必要。</param>
+static void MergeSort<T>(T[] a, int begin, int end, T[] work)
+  where T : IComparable<T>
 {
-  <span class="reserved">if</span> (end - begin &lt; THREASHOLD)
+  if (end - begin < THREASHOLD)
   {
     InsertSort(a, begin, end - 1);
-    <span class="reserved">return</span>;
+    return;
   }
 
-  <span class="reserved">int</span> mid = (begin + end) / 2;
+  int mid = (begin + end) / 2;
   MergeSort(a, begin, mid, work);
   MergeSort(a, mid, end, work);
   Merge(a, begin, mid, end, work);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 配列 a の、[begin, mid) の部分と [mid, end) の部分をマージ。
-/// &lt;/summary&gt;
-/// &lt;typeparam name="T"&gt;&lt;/typeparam&gt;
-/// &lt;param name="a"&gt;マージ対象の配列&lt;/param&gt;
-/// &lt;param name="begin1"&gt;aの先頭&lt;/param&gt;
-/// &lt;param name="mid"&gt;aの分割点&lt;/param&gt;
-/// &lt;param name="end"&gt;aの末尾＋1&lt;/param&gt;
-/// &lt;param name="work"&gt;作業領域&lt;/param&gt;</span>
-<span class="reserved">static void</span> Merge&lt;T&gt;(T[] a, <span class="reserved">int</span> begin, <span class="reserved">int</span> mid, <span class="reserved">int</span> end, T[] work)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="a">マージ対象の配列</param>
+/// <param name="begin1">aの先頭</param>
+/// <param name="mid">aの分割点</param>
+/// <param name="end">aの末尾＋1</param>
+/// <param name="work">作業領域</param>
+static void Merge<T>(T[] a, int begin, int mid, int end, T[] work)
+  where T : IComparable<T>
 {
-  <span class="reserved">int</span> i, j, k;
+  int i, j, k;
 
-  <span class="reserved">for</span> (i = begin, j = 0; i != mid; ++i, ++j) work[j] = a[i];
+  for (i = begin, j = 0; i != mid; ++i, ++j) work[j] = a[i];
 
   mid -= begin;
-  <span class="reserved">for</span> (j = 0, k = begin; i != end &amp;&amp; j != mid; ++k)
+  for (j = 0, k = begin; i != end && j != mid; ++k)
   {
-    <span class="reserved">if</span> (a[i].CompareTo(work[j]) &lt; 0)
+    if (a[i].CompareTo(work[j]) < 0)
     {
       a[k] = a[i];
       ++i;
     }
-    <span class="reserved">else</span>
+    else
     {
       a[k] = work[j];
       ++j;
     }
   }
 
-  <span class="reserved">for</span> (; i &lt; end; ++i, ++k) a[k] = a[i];
-  <span class="reserved">for</span> (; j &lt; mid; ++j, ++k) a[k] = work[j];
+  for (; i < end; ++i, ++k) a[k] = a[i];
+  for (; j < mid; ++j, ++k) a[k] = work[j];
 }
-</code></pre>
+```

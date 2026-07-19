@@ -48,30 +48,30 @@ $$contents$$ の部分を置換して表示したりすることがあります�
 ASP.NET では、そういう仕組みが標準で用意されているわけです。
 
 
-<pre class="xsource" title="CGI アプリでたまに使う HTML テンプレート">
-<code><span class="bracket">&lt;</span><span class="element">html</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">head</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">type</span><span class="attvalue">="text/css"</span> <span class="attribute">href</span><span class="attvalue">="main.css"</span> <span class="bracket">/&gt;</span>
+```html
+<html>
+<head>
+ <link rel="stylesheet" type="text/css" href="main.css" />
 
- <span class="bracket">&lt;</span><span class="element">title</span><span class="bracket">&gt;</span>$$title$$<span class="bracket">&lt;/</span><span class="element">title</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">head</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="head"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">img</span> <span class="attribute">src</span><span class="attvalue">="logo.jpg"</span> <span class="attribute">width</span><span class="attvalue">="320"</span> <span class="attribute">height</span><span class="attvalue">="80"</span> <span class="attribute">alt</span><span class="attvalue">="site logo"</span> <span class="bracket">/&gt;</span>
- <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+ <title>$$title$$</title>
+</head>
+<body>
+ <div class="head">
+  <img src="logo.jpg" width="320" height="80" alt="site logo" />
+ </div>
 
- <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="content"</span><span class="bracket">&gt;</span>
+ <div class="content">
   $$contents$$
- <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+ </div>
 
- <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="foot"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+ <div class="foot">
+  <p>
   このサイトへのリンクはご自由にどうぞ
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
- <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+  </p>
+ </div>
+</body>
+</html>
+```
 ASP.NET のマスタページを作るには、
 Visual Studio を使う場合、
 ソリューションエクスプローラから [追加]→[新しい項目]→[マスタ ページ] を選びます。
@@ -84,55 +84,55 @@ Visual Studio を使う場合、
 ファイル名は仮に、Site.Master としておきます。
 
 
-<pre class="xsource" title="Site.Master">
-<code><span class="bracket">&lt;%@ </span><span class="element">Master</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="attribute">AutoEventWireup</span><span class="attvalue">="true"</span>
-  <span class="attribute">CodeBehind</span><span class="attvalue">="Site.master.cs"</span> <span class="attribute">Inherits</span><span class="attvalue">="WebsiteSample.Site"</span> <span class="bracket">%&gt;</span>
+```xml
+<%@ Master Language="C#" AutoEventWireup="true"
+  CodeBehind="Site.master.cs" Inherits="WebsiteSample.Site" %>
 
-&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<span class="bracket">&lt;</span><span class="element">html</span> <span class="attribute">xmlns</span><span class="attvalue">="http://www.w3.org/1999/xhtml"</span> <span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">head</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
 
-<span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">type</span><span class="attvalue">="text/css"</span> <span class="attribute">href</span><span class="attvalue">="main.css"</span> <span class="bracket">/&gt;</span>
+<link rel="stylesheet" type="text/css" href="main.css" />
 
-    <span class="bracket">&lt;</span><span class="element">title</span><span class="bracket">&gt;</span>無題のページ<span class="bracket">&lt;/</span><span class="element">title</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">head</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
+    <title>無題のページ</title>
+</head>
+<body>
 
-<span class="bracket">&lt;</span><span class="element">form</span> <span class="attribute">id</span><span class="attvalue">="form1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<form id="form1" runat="server">
 
-  <span class="bracket">&lt;</span><span class="element">p</span> <span class="attribute">class</span><span class="attvalue">="head"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">img</span> <span class="attribute">src</span><span class="attvalue">="logo.jpg"</span> <span class="attribute">width</span><span class="attvalue">="320"</span> <span class="attribute">height</span><span class="attvalue">="80"</span> <span class="attribute">alt</span><span class="attvalue">="site logo"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="menu"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="menuItem"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="Default.aspx"</span><span class="bracket">&gt;</span>TOP<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="menuItem"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="Mail.aspx"</span><span class="bracket">&gt;</span>メール<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+  <p class="head">
+  <img src="logo.jpg" width="320" height="80" alt="site logo" />
+  </p>
+  <div class="menu">
+    <span class="menuItem">
+      <a href="Default.aspx">TOP</a>
+    </span>
+    <span class="menuItem">
+      <a href="Mail.aspx">メール</a>
+    </span>
+  </div>
 
-  <span class="bracket">&lt;</span><span class="element">p</span> <span class="attribute">class</span><span class="attvalue">="counter"</span><span class="bracket">&gt;</span>
-    総アクセス数: <span class="bracket">&lt;%</span>= Session["count"] <span class="bracket">%&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
+  <p class="counter">
+    総アクセス数: <%= Session["count"] %>
+  </p>
 
-  <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="content"</span><span class="bracket">&gt;</span>
-<em>    <span class="bracket">&lt;</span><span class="element">asp:ContentPlaceHolder</span> <span class="attribute">ID</span><span class="attvalue">="ContentPlaceHolder1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">asp:ContentPlaceHolder</span><span class="bracket">&gt;</span></em>
-  <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+  <div class="content">
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+    </asp:ContentPlaceHolder>
+  </div>
 
-  <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="foot"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+  <div class="foot">
+  <p>
     このサイトへのリンクはご自由にどうぞ
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">form</span><span class="bracket">&gt;</span>
+  </p>
+  </div>
+</form>
 
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+</body>
+</html>
+```
 &lt;asp:ContentPlaceHolder&gt; の部分に、ページごとのコンテンツが表示され、
 残りの部分はこのマスタを適用する全ページに共通になります。
 
@@ -144,23 +144,23 @@ Visual Studio を使う場合、
 MasterPageFile のところに、上述のマスタページファイルの名前を書きます。
 
 
-<pre class="xsource" title="Default.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span>
-  <span class="attribute">MasterPageFile</span><span class="attvalue">="~/Site.Master"</span> <span class="attribute">AutoEventWireup</span><span class="attvalue">="true"</span>
-  <span class="attribute">CodeBehind</span><span class="attvalue">="Default.aspx.cs"</span> <span class="attribute">Inherits</span><span class="attvalue">="WebsiteSample.Default"</span>
-  <span class="attribute">Title</span><span class="attvalue">="My Website トップページ"</span> <span class="bracket">%&gt;</span>
-<span class="bracket">&lt;</span><span class="element">asp:Content</span> <span class="attribute">ID</span><span class="attvalue">="Content1"</span>
-  <span class="attribute">ContentPlaceHolderID</span><span class="attvalue">="ContentPlaceHolder1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+```html
+<%@ Page Language="C#"
+  MasterPageFile="~/Site.Master" AutoEventWireup="true"
+  CodeBehind="Default.aspx.cs" Inherits="WebsiteSample.Default"
+  Title="My Website トップページ" %>
+<asp:Content ID="Content1"
+  ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-<span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+<p>
 Welcome to my website.
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+</p>
+<p>
 ASP.NET を使ったサイト構築の一例。
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
+</p>
 
-<span class="bracket">&lt;/</span><span class="element">asp:Content</span><span class="bracket">&gt;</span>
-</code></pre>
+</asp:Content>
+```
 &lt;asp:Content&gt; の中身が、マスタページの &lt;asp:ContentPlaceHolder&gt; のところに展開されます。
 
 ロゴとか CSS ファイルを用意して
@@ -182,51 +182,51 @@ ASP.NET を使ったサイト構築の一例。
 テキストボックスやボタンを適当に配置。
 
 
-<pre class="xsource" title="Mail.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span>
-  <span class="attribute">MasterPageFile</span><span class="attvalue">="~/Site.Master"</span> <span class="attribute">AutoEventWireup</span><span class="attvalue">="true"</span>
-  <span class="attribute">CodeBehind</span><span class="attvalue">="Mail.aspx.cs"</span> <span class="attribute">Inherits</span><span class="attvalue">="WebsiteSample.Mail"</span>
-  <span class="attribute">Title</span><span class="attvalue">="メールフォーム"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page Language="C#"
+  MasterPageFile="~/Site.Master" AutoEventWireup="true"
+  CodeBehind="Mail.aspx.cs" Inherits="WebsiteSample.Mail"
+  Title="メールフォーム" %>
 
-<span class="bracket">&lt;</span><span class="element">asp:Content</span> <span class="attribute">ID</span><span class="attvalue">="Content1"</span>
-  <span class="attribute">ContentPlaceHolderID</span><span class="attvalue">="ContentPlaceHolder1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">h2</span><span class="bracket">&gt;</span>メール送信フォーム<span class="bracket">&lt;/</span><span class="element">h2</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">table</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>お名前<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">asp:TextBox</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="textName"</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">asp:TextBox</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>メールアドレス<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">asp:TextBox</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="textAddress"</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">asp:TextBox</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span>ホームページ(お持ちであれば)<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">asp:TextBox</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="textSiteUrl"</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">asp:TextBox</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span> <span class="attribute">colspan</span><span class="attvalue">="2"</span><span class="bracket">&gt;</span>メッセージ<span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span> <span class="attribute">colspan</span><span class="attvalue">="2"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">asp:TextBox</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="textMessage"</span>
-      <span class="attribute">TextMode</span><span class="attvalue">="MultiLine"</span> <span class="attribute">Rows</span><span class="attvalue">="6"</span> <span class="attribute">Columns</span><span class="attvalue">="80"</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">asp:TextBox</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">tr</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">td</span> <span class="attribute">colspan</span><span class="attvalue">="2"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">asp:Button</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="buttonOk"</span> <span class="attribute">Text</span><span class="attvalue">="送信"</span>
-      <span class="attribute">OnClick</span><span class="attvalue">="buttonOk_Click"</span> <span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">asp:Button</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="buttonCancel"</span> <span class="attribute">Text</span><span class="attvalue">="取消"</span>
-      <span class="attribute">OnClick</span><span class="attvalue">="buttonCancel_Click"</span> <span class="bracket">/&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">td</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">tr</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">table</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">div</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:Label</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="labelResult"</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">asp:Label</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">asp:Content</span><span class="bracket">&gt;</span>
-</code></pre>
+<asp:Content ID="Content1"
+  ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+  <h2>メール送信フォーム</h2>
+  <table>
+    <tr>
+    <td>お名前</td>
+    <td><asp:TextBox runat="server" ID="textName"></asp:TextBox></td>
+    </tr>
+    <tr>
+    <td>メールアドレス</td>
+    <td><asp:TextBox runat="server" ID="textAddress"></asp:TextBox></td>
+    </tr>
+    <tr>
+    <td>ホームページ(お持ちであれば)</td>
+    <td><asp:TextBox runat="server" ID="textSiteUrl"></asp:TextBox></td>
+    </tr>
+    <tr>
+    <td colspan="2">メッセージ</td>
+    </tr>
+    <tr>
+    <td colspan="2">
+    <asp:TextBox runat="server" ID="textMessage"
+      TextMode="MultiLine" Rows="6" Columns="80"></asp:TextBox>
+    </td>
+    </tr>
+    <tr>
+    <td colspan="2">
+    <asp:Button runat="server" ID="buttonOk" Text="送信"
+      OnClick="buttonOk_Click" />
+    <asp:Button runat="server" ID="buttonCancel" Text="取消"
+      OnClick="buttonCancel_Click" />
+    </td>
+    </tr>
+  </table>
+  <div>
+  <asp:Label runat="server" ID="labelResult"></asp:Label>
+  </div>
+</asp:Content>
+```
 で、コードビハインド側に、[送信]・[取消]ボタンが押されたときのイベントハンドラを書きます。
 .NET Framework では、
 メールの送受信機能は System.Web.Mail 名前空間にまとまっています。
@@ -235,69 +235,69 @@ ASP.NET を使ったサイト構築の一例。
 設定ファイルとかに書いておくのがいいんですが、
 ちょっと手抜き。）
 
-<pre class="source" title="Mail.aspx.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Web;
-<span class="reserved">using</span> System.Net.Mail;
-<span class="reserved">using</span> System.Text.RegularExpressions;
+```html
+using System;
+using System.Web;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
 
-<span class="reserved">namespace</span> WebsiteSample
+namespace WebsiteSample
 {
-  <span class="reserved">public partial class</span> Mail : System.Web.UI.Page
+  public partial class Mail : System.Web.UI.Page
   {
-    Regex regex = <span class="reserved">new</span> Regex(<span class="literal">@"^[-_\.a-zA-Z0-9]+\@[-_\.a-zA-Z0-9]+$"</span>);
+    Regex regex = new Regex(@"^[-_\.a-zA-Z0-9]+\@[-_\.a-zA-Z0-9]+$");
 
-    <span class="reserved">protected void</span> buttonOk_Click(<span class="reserved">object</span> sender, EventArgs e)
+    protected void buttonOk_Click(object sender, EventArgs e)
     {
-      Match m = regex.Match(<span class="reserved">this</span>.textAddress.Text);
-      <span class="reserved">if</span> (!m.Success)
+      Match m = regex.Match(this.textAddress.Text);
+      if (!m.Success)
       {
-        <span class="reserved">this</span>.labelResult.Text = <span class="literal">"エラー: メールアドレスが不正です"</span>;
-        <span class="reserved">return</span>;
+        this.labelResult.Text = "エラー: メールアドレスが不正です";
+        return;
       }
 
-      <span class="reserved">if</span> (<span class="reserved">string</span>.IsNullOrEmpty(<span class="reserved">this</span>.textName.Text))
+      if (string.IsNullOrEmpty(this.textName.Text))
       {
-        <span class="reserved">this</span>.labelResult.Text = <span class="literal">"エラー: お名前が入力されていまません"</span>;
-        <span class="reserved">return</span>;
+        this.labelResult.Text = "エラー: お名前が入力されていまません";
+        return;
       }
 
-      <span class="reserved">try</span>
+      try
       {
-        MailAddress addrFrom = <span class="reserved">new</span> MailAddress(
-          <span class="reserved">this</span>.textAddress.Text, <span class="reserved">this</span>.textName.Text);
-        MailAddress addrTo = <span class="reserved">new</span> MailAddress(
-          <span class="literal">"webmaster@xxx.aaa.jp"</span>);
-        MailMessage msg = <span class="reserved">new</span> MailMessage(addrFrom, addrTo);
+        MailAddress addrFrom = new MailAddress(
+          this.textAddress.Text, this.textName.Text);
+        MailAddress addrTo = new MailAddress(
+          "webmaster@xxx.aaa.jp");
+        MailMessage msg = new MailMessage(addrFrom, addrTo);
 
-        msg.Subject = <span class="literal">"Chaos Dimension メールフォームからのメール"</span>;
+        msg.Subject = "Chaos Dimension メールフォームからのメール";
         msg.Body =
-          <span class="literal">"名前: "</span> + <span class="reserved">this</span>.textName.Text + <span class="literal">"\n"</span> +
-          <span class="literal">"メールアドレス: "</span> + <span class="reserved">this</span>.textAddress.Text + <span class="literal">"\n"</span> +
-          <span class="literal">"ウェブサイト: "</span> + <span class="reserved">this</span>.textSiteUrl.Text + <span class="literal">"\n\n"</span> +
-          <span class="reserved">this</span>.textMessage.Text;
+          "名前: " + this.textName.Text + "\n" +
+          "メールアドレス: " + this.textAddress.Text + "\n" +
+          "ウェブサイト: " + this.textSiteUrl.Text + "\n\n" +
+          this.textMessage.Text;
 
-        SmtpClient client = <span class="reserved">new</span> SmtpClient(<span class="literal">"mail.xxx.aaa.jp"</span>);
+        SmtpClient client = new SmtpClient("mail.xxx.aaa.jp");
         client.Send(msg);
 
-        <span class="reserved">this</span>.labelResult.Text = <span class="literal">"送信完了"</span>;
+        this.labelResult.Text = "送信完了";
       }
-      <span class="reserved">catch</span> (Exception exc)
+      catch (Exception exc)
       {
-        <span class="reserved">this</span>.labelResult.Text = <span class="literal">"送信エラー: "</span> + exc.Message;
+        this.labelResult.Text = "送信エラー: " + exc.Message;
       }
     }
 
-    <span class="reserved">protected void</span> buttonCancel_Click(<span class="reserved">object</span> sender, EventArgs e)
+    protected void buttonCancel_Click(object sender, EventArgs e)
     {
-      <span class="reserved">this</span>.textName.Text = <span class="reserved">string</span>.Empty;
-      <span class="reserved">this</span>.textAddress.Text = <span class="reserved">string</span>.Empty;
-      <span class="reserved">this</span>.textSiteUrl.Text = <span class="reserved">string</span>.Empty;
-      <span class="reserved">this</span>.textMessage.Text = <span class="reserved">string</span>.Empty;
+      this.textName.Text = string.Empty;
+      this.textAddress.Text = string.Empty;
+      this.textSiteUrl.Text = string.Empty;
+      this.textMessage.Text = string.Empty;
     }
   }
 }
-</code></pre>
+```
 
 
 これで、以下のようなページができあがるはずです。

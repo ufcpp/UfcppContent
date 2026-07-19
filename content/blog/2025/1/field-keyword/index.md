@@ -35,36 +35,36 @@ Language Feature Status に並んでいるもののうち、いくつかは prev
 「プロパティのバッキング フィールドを表す変数」にしようという案があって、
 今は機能名としても「field キーワード」と呼ばれています。
 
-<pre class="source" title="field キーワード">
-<span class="reserved">class</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">x</span>)
+```csharp
+class A(int x)
 {
-    <span class="comment">// (既存の)自動プロパティ。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X1</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // (既存の)自動プロパティ。
+    public int X1 { get; set; }
 
-    <span class="comment">// X1 と同じ意味になる「field キーワード持ち」のプロパティ。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X2</span>
+    // X1 と同じ意味になる「field キーワード持ち」のプロパティ。
+    public int X2
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span>;
+        get => field;
+        set => field = value;
     }
 
-    <span class="comment">// 片方を自動、片方を field 持ちにもできる。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X3</span>
+    // 片方を自動、片方を field 持ちにもできる。
+    public int X3
     {
-        <span class="reserved">get</span>; <span class="comment">// 自動。</span>
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span>; <span class="comment">// field 持ち。</span>
+        get; // 自動。
+        set => field = value; // field 持ち。
     }
 
-    <span class="comment">// 自動プロパティでできたことは一通りこっちでもできる。</span>
-    <span class="comment">// (イニシャライザーも持てたり、get-only とか init とかも。)</span>
-    <span class="comment">// (というか、扱いは完全に自動プロパティと同じ。)</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X4</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>; } <span class="operator">=</span> <span class="variable local">x</span>;
+    // 自動プロパティでできたことは一通りこっちでもできる。
+    // (イニシャライザーも持てたり、get-only とか init とかも。)
+    // (というか、扱いは完全に自動プロパティと同じ。)
+    public int X4 { get => field; } = x;
 
-    <span class="comment">// get 省略形の =&gt; 内でも field が使える。</span>
-    <span class="comment">// int X5 { get; } と全く同じ。(コンストラクターで初期化可能。)</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X5</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>;
+    // get 省略形の => 内でも field が使える。
+    // int X5 { get; } と全く同じ。(コンストラクターで初期化可能。)
+    public int X5 => field;
 }
-</pre>
+```
 
 [2年前にすでに「場合によっては C# 11 に入っていたかも」と言っていたもの](../../../2023/1/semi-auto-property/index.md)がようやく C# 14 で入ります。
 当時は「半自動プロパティ」(semi-auto properties)とか呼んでいましたが、
@@ -80,22 +80,22 @@ Visual Studio 17.12 Preview 3 / .NET 9 RC 2 の頃にはすでに merge され�
 「`field` という名前のフィールドがあって、`this.` は付けずに、プロパティの中で参照している」という状況が破壊的変更になります。
 (「そこまで多くはないけど、まあそういう人も一定数いる」レベル。)
 
-<pre class="source" title="field キーワードにはそこそこありえる破壊的変更">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">int</span> <span class="field">field</span>;
+    int field;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Field</span>
+    public int Field
     {
-        <span class="comment">// C# 13 まで: field フィールドの参照。</span>
-        <span class="comment">// C# 14 から: field キーワード。</span>
-        <span class="comment">//             field フィールドはノータッチになる。</span>
-        <span class="comment">//             field フィールドを参照したければ @field とか this.field にする。</span>
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">field</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">field</span> <span class="operator">=</span> <span class="reserved">value</span>;
+        // C# 13 まで: field フィールドの参照。
+        // C# 14 から: field キーワード。
+        //             field フィールドはノータッチになる。
+        //             field フィールドを参照したければ @field とか this.field にする。
+        get => field;
+        set => field = value;
     }
 }
-</pre>
+```
 
 このコードは一応、C# 14 では警告になる予定です。
 「`field` キーワードが `field` フィールドを隠してるけども意図通りか？」と怒られて、`@field` への書き換えを推奨されます。
@@ -105,76 +105,76 @@ Visual Studio 17.12 Preview 3 / .NET 9 RC 2 の頃にはすでに merge され�
 当初は「既存のコードを壊さない限りにキーワード扱いする」みたいな努力をするかどうかという話もあったんですが、複雑すぎるので断念しています。
 例えば、`field` という名前のローカル変数があったとしてもキーワード扱いです。
 
-<pre class="source" title="ローカル変数があっても field はキーワード扱い">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">var</span> <span class="variable"><span class="warning" title="CS0219">field</span></span> <span class="operator">=</span> <span class="number">1</span>;
-            <span class="control">return</span> <span class="reserved"><span class="warning" title="CS9258">field</span></span>; <span class="comment">// これは field キーワード。フィールドの場合と同じく警告あり。</span>
+            var field = 1;
+            return field; // これは field キーワード。フィールドの場合と同じく警告あり。
         }
     }
 }
-</pre>
+```
 
 `nameof(field)` もエラーになります。
 `nameof(int)` とかがエラーなのと同じ。
 
-<pre class="source" title="nameof(field) はダメ">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property"><span class="warning" title="CS9264">X</span></span>
+    public string X
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">nameof</span>(<span class="reserved"><span class="error" title="CS8081">field</span></span>); <span class="comment">// ダメ。</span>
+        get => nameof(field); // ダメ。
     }
 }
-</pre>
+```
 
 (余談で、[`value` もキーワードに変えちゃうか](../../../2024/2/value-as-context-keyword/index.md)という話もあったんですが、これは没になりました。)
 
 これと関連して、以下のようなコードを書くと、タプル要素名のやつだけエラーを起こします。
 
-<pre class="source" title="タプル要素名とか、匿名型のプロパティとか">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> (<span class="reserved">field</span><span class="error" title="CS1002"><span class="error" title="CS1513"><span class="error" title="CS1026">:</span></span></span> <span class="number">1</span><span class="error" title="CS1002"><span class="error" title="CS1513">,</span></span> <span class="number">2</span><span class="error" title="CS1002"><span class="error" title="CS1513">)</span></span>; <span class="comment">// タプル要素名 (これだけコンパイル エラー)</span>
-            <span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="reserved">new</span> { <span class="property">field</span> <span class="operator">=</span> <span class="number">1</span> }; <span class="comment">// 匿名型のプロパティ</span>
-            <span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">Foo</span>() { <span class="field">field</span> <span class="operator">=</span> <span class="number">1</span> }; <span class="comment">// オブジェクト初期化子でのフィールド/プロパティ参照</span>
-            <span class="control">if</span> (<span class="variable">y</span> <span class="reserved">is</span> { <span class="property">field</span>: <span class="number">1</span> }) { } <span class="comment">// プロパティ パターンでのフィールド/プロパティ参照</span>
+            var x = (field: 1, 2); // タプル要素名 (これだけコンパイル エラー)
+            var y = new { field = 1 }; // 匿名型のプロパティ
+            var z = new Foo() { field = 1 }; // オブジェクト初期化子でのフィールド/プロパティ参照
+            if (y is { field: 1 }) { } // プロパティ パターンでのフィールド/プロパティ参照
 
-            <span class="control">return</span> <span class="reserved">field</span>;
+            return field;
         }
     }
 
-    <span class="reserved">class</span> <span class="type">Foo</span>
+    class Foo
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">field</span>;
+        public int field;
     }
 }
-</pre>
+```
 
 最後にもう1つ、[null 許容参照型](../../../../study/csharp/resource/nullablereferencetype.md)のフロー解析の問題があります。
 プロパティが `T` のとき、そのバッキング フィールド(`field` キーワードの実体)は `T` であるべきか、`T?` であるべきか。
 
 例えば以下のような `??=` を使った遅延初期化コードはよく書くと思います。
 
-<pre class="source" title="??= で遅延初期化">
-<span class="reserved">class</span> <span class="type">A</span>(<span class="type">Type</span> <span class="variable local">type</span>)
+```csharp
+class A(Type type)
 {
-    <span class="comment">// Type.Name のキャッシュ。</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property"><span class="warning" title="CS9264">Name</span></span>
+    // Type.Name のキャッシュ。
+    public string Name
     {
-        <span class="comment">// 遅延初期化にしたいので field ??= で代入。</span>
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??=</span> <span class="variable local">type</span><span class="operator">.</span><span class="property">Name</span>;
+        // 遅延初期化にしたいので field ??= で代入。
+        get => field ??= type.Name;
     }
 }
-</pre>
+```
 
 現状(Visual Studio 17.13.0 Preview 2.1 時点)、「プロパティが `T` なら `field` も `T`」です。
 この例の場合、`string` (not null)。
@@ -182,18 +182,18 @@ Visual Studio 17.12 Preview 3 / .NET 9 RC 2 の頃にはすでに merge され�
 
 [解決策](https://github.com/dotnet/csharplang/blob/main/proposals/field-keyword.md#nullability)は検討さいれているんですが、短期的には `MaybeNull` 属性を使って回避してくれと言われています。
 
-<pre class="source" title="当面、MaybeNull で回避">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">class</span> <span class="type">A</span>(<span class="type">Type</span> <span class="variable local">type</span>)
+class A(Type type)
 {
-    [<span class="reserved">field</span>: <span class="type">MaybeNull</span>] <span class="comment">// この属性によって、field が string? 扱いになる。</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="property">Name</span>
+    [field: MaybeNull] // この属性によって、field が string? 扱いになる。
+    public string Name
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??=</span> <span class="variable local">type</span><span class="operator">.</span><span class="property">Name</span>;
+        get => field ??= type.Name;
     }
 }
-</pre>
+```
 
 上記[解決策](https://github.com/dotnet/csharplang/blob/main/proposals/field-keyword.md#nullability)が間に合うなら、
 「いったん `field` が `T?` と仮定してフロー解析して nullable 警告を起こすかどうか」をみてバッキング フィールドが `T` か `T?` かを決定するとのこと。

@@ -25,23 +25,23 @@ aliases:
 "" の場合、中に $a などの変数が出てくると中身を展開します。
 '' の方は $ もそのまま文字として扱います。
 
-<pre class="console" title="文字列リテラル">
-<span class="prompt">&gt; </span> $a = 1
-<span class="prompt">&gt; </span> "test $a"
+```console
+>  $a = 1
+>  "test $a"
 test 1
-<span class="prompt">&gt; </span> 'test $a'
+>  'test $a'
 test $a
-</pre>
+```
 
 
 ちなみに、"" の中に " を、
 '' の中に ' を書きたければ、
 後述するエスケープ文字 ` （バッククオート）を使います。
 
-<pre class="console" title="文字列中にクオートマーク">
-<span class="prompt">&gt; </span>"`"test`""
+```console
+> "`"test`""
 "test"
-</pre>
+```
 
 
 
@@ -55,36 +55,36 @@ test $a
 @" "@ と @' '@ の違いは、"", '' と同様、変数を展開するかどうかです。
 また、@" "@ と @' '@ の中には " や ' を書くこともできます。
 
-<pre class="console" title="hear string（１）">
-<span class="prompt">&gt; </span> $a = @"
-<span class="prompt">&gt; </span> this is example of here string
-<span class="prompt">&gt; </span> $a
-<span class="prompt">&gt; </span> "test"
-<span class="prompt">&gt; </span> 'test'
-<span class="prompt">&gt; </span> "@
-<span class="prompt">&gt; </span> 
-<span class="prompt">&gt; </span> $a
+```console
+>  $a = @"
+>  this is example of here string
+>  $a
+>  "test"
+>  'test'
+>  "@
+>  
+>  $a
 this is example of here string
 1
 "test"
 'test'
-</pre>
+```
 
 
-<pre class="console" title="hear string（２）">
-<span class="prompt">&gt; </span> $a = @'
-<span class="prompt">&gt; </span> this is example of here string
-<span class="prompt">&gt; </span> $a
-<span class="prompt">&gt; </span> "test"
-<span class="prompt">&gt; </span> 'test'
-<span class="prompt">&gt; </span> '@
-<span class="prompt">&gt; </span> 
-<span class="prompt">&gt; </span> $a
+```console
+>  $a = @'
+>  this is example of here string
+>  $a
+>  "test"
+>  'test'
+>  '@
+>  
+>  $a
 this is example of here string
 $a
 "test"
 'test'
-</pre>
+```
 
 
 
@@ -154,22 +154,22 @@ C 言語とかみたいにエスケープに \ 記号を使わないのは、
 
 文字列は、+ 演算子で結合、* 演算子で反復ができます。
 
-<pre class="console" title="2つの文字列を結合">
-<span class="prompt">&gt; </span> $a = "string 1" + "string 2"
-<span class="prompt">&gt; </span> $a.length
+```console
+>  $a = "string 1" + "string 2"
+>  $a.length
 16
-<span class="prompt">&gt; </span> $a
+>  $a
 string 1string 2
-</pre>
+```
 
 
-<pre class="console" title="文字列を指定回数繰り返す">
-<span class="prompt">&gt; </span> $a = "string" * 3
-<span class="prompt">&gt; </span> $a.length
+```console
+>  $a = "string" * 3
+>  $a.length
 18
-<span class="prompt">&gt; </span> $a
+>  $a
 stringstringstring
-</pre>
+```
 
 
 
@@ -253,14 +253,14 @@ stringstringstring
 例えば、Get-Location で取得したファイル一覧の中から特定の名前のファイルを探したければ、
 以下のようにします。
 
-<pre class="console" title="文字列比較">
-<span class="prompt">&gt; </span> ls C:\Windows | %{$_.Name} | ?{$_ -eq "web"}
+```console
+>  ls C:\Windows | %{$_.Name} | ?{$_ -eq "web"}
 Web
-<span class="prompt">&gt; </span> ls C:\Windows | %{$_.Name} | ?{$_ -like "we*"}
+>  ls C:\Windows | %{$_.Name} | ?{$_ -like "we*"}
 Web
-<span class="prompt">&gt; </span> ls C:\Windows | %{$_.Name} | ?{$_ -match "^we.*"}
+>  ls C:\Windows | %{$_.Name} | ?{$_ -match "^we.*"}
 Web
-</pre>
+```
 
 
 置換は、
@@ -269,11 +269,11 @@ Web
 （3項演算に見えなくもないですが、
 -replace の右オペランドが配列なだけ。）
 
-<pre class="console" title="文字列置換">
-<span class="prompt">&gt; </span> $a = "Windows の新しいコマンドライン シェルです。"
-<span class="prompt">&gt; </span> $a -replace "です。", "なのですよ。"
+```console
+>  $a = "Windows の新しいコマンドライン シェルです。"
+>  $a -replace "です。", "なのですよ。"
 Windows の新しいコマンドライン シェルなのですよ。
-</pre>
+```
 
 
 正規表現の書き方は、
@@ -289,14 +289,14 @@ Windows の新しいコマンドライン シェルなのですよ。
 頭に i を付ければ case insensitive、
 c を付ければ case sensitive になります。
 
-<pre class="console" title="アルファベットの大文字・小文字">
-<span class="prompt">&gt; </span> "test" -eq "Test"
+```console
+>  "test" -eq "Test"
 True
-<span class="prompt">&gt; </span> "test" -ieq "Test"
+>  "test" -ieq "Test"
 True
-<span class="prompt">&gt; </span> "test" -ceq "Test"
+>  "test" -ceq "Test"
 False
-</pre>
+```
 
 
 （文字列以外に対しても使えるみたい。
@@ -311,12 +311,12 @@ False
 System.String.Format メソッドのものと同じです。
 （詳しくは .NET Framework のヘルプを参照。）
 
-<pre class="console" title="フォーマット演算子">
-<span class="prompt">&gt; </span> "{0:00}:{1:00}:{2:00}" -f 1,3,12
+```console
+>  "{0:00}:{1:00}:{2:00}" -f 1,3,12
 01:03:12
-<span class="prompt">&gt; </span> "|{0,8}|" -f 128
+>  "|{0,8}|" -f 128
 |     128|
-</pre>
+```
 
 
 
@@ -332,12 +332,12 @@ $(式) と書くと () の中身を式として計算します。
 まあ、たいていの文脈では、$ を付けなくても () だけで中身を式扱いするので、
 そんなに使う必要もありません。
 
-<pre class="console" title="式評価演算子 $">
-<span class="prompt">&gt; </span> echo (1 + 1)
+```console
+>  echo (1 + 1)
 2
-<span class="prompt">&gt; </span> echo $(1 + 1)
+>  echo $(1 + 1)
 2
-</pre>
+```
 
 
 まあ、使えそうな場面は2つ。
@@ -346,10 +346,10 @@ $() というように () の中身を空っぽにすると null 値が得られ
 () だけだと「括弧の中身がない」って言って怒られますが、
 $() なら OK。
 
-<pre class="console" title="$()">
-<span class="prompt">&gt; </span> $() -eq $null
+```console
+>  $() -eq $null
 True
-</pre>
+```
 
 
 で、もう1つは、"" の中でも式を使えること。
@@ -357,7 +357,7 @@ True
 変数を展開するわけですが、
 変数同様、$() の中身も式の計算結果に展開されます。
 
-<pre class="console" title="文字列中の式の展開">
-<span class="prompt">&gt; </span> "1 + 1 = $(1 + 1)"
+```console
+>  "1 + 1 = $(1 + 1)"
 1 + 1 = 2
-</pre>
+```

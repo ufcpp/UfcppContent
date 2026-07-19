@@ -37,18 +37,18 @@ C# vNext (12 候補)紹介シリーズ。
 以下の例ではリスト パターンとその展開結果をコメントに書いていますが、
 見ての通り、 `Length` や `[]` を使ったコードと等価です。
 
-<pre class="source" title="リスト パターンの展開例">
-<span class="reserved">using</span> <span class="reserved">static</span> System<span class="operator">.</span><span class="type"><span class="static">Console</span></span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">m</span></span>(<span class="reserved">int</span>[] <span class="variable local">x</span>)
+static void m(int[] x)
 {
-    <span class="method"><span class="static">WriteLine</span></span>(<span class="variable local">x</span> <span class="reserved">is</span> []); <span class="comment">// x.Length == 0</span>
-    <span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">x</span> <span class="reserved">is</span> [<span class="number">1</span>]); <span class="comment">// x.Length == 1 &amp;&amp; x[0] == 1</span>
-    <span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">x</span> <span class="reserved">is</span> [<span class="number">1</span>, ..]); <span class="comment">// x.Length &gt;= 1 &amp;&amp; x[0] == 1</span>
-    <span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">x</span> <span class="reserved">is</span> [<span class="reserved">_</span>, .. <span class="reserved">var</span> y]); <span class="comment">// y = x[1..]</span>
-    <span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">x</span> <span class="reserved">is</span> [<span class="reserved">_</span>, .. <span class="reserved">var</span> z, <span class="reserved">_</span>, <span class="reserved">_</span>]); <span class="comment">// y = x[1..^2]</span>
+    WriteLine(x is []); // x.Length == 0
+    WriteLine(x is [1]); // x.Length == 1 && x[0] == 1
+    WriteLine(x is [1, ..]); // x.Length >= 1 && x[0] == 1
+    WriteLine(x is [_, .. var y]); // y = x[1..]
+    WriteLine(x is [_, .. var z, _, _]); // y = x[1..^2]
 }
-</pre>
+```
 
 ## 対 IEnumerable
 
@@ -60,12 +60,12 @@ C# vNext (12 候補)紹介シリーズ。
 元々の提案では、何らかのヘルパー クラスを間に挟んで、
 `x is [0, 1, ..]` みたいなコードを以下のような感じで展開することを考えています。
 
-<pre class="source" title="IEnumerable に対するリスト パターンの展開例">
-<span class="reserved">var</span> <span class="variable">helper</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">ListPatternHelper</span>(<span class="variable">x</span>, <span class="number">2</span>, <span class="number">0</span>);
+```csharp
+var helper = new ListPatternHelper(x, 2, 0);
 
-<span class="variable">helper</span><span class="operator">.</span><span class="method">TryGetStartElement</span>(<span class="variable local">index</span>: <span class="number">0</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">element0</span>) <span class="operator">&amp;&amp;</span> <span class="variable">element0</span> <span class="reserved">is</span> <span class="number">0</span> <span class="operator">&amp;&amp;</span>
-<span class="variable">helper</span><span class="operator">.</span><span class="method">TryGetStartElement</span>(<span class="number">1</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">element1</span>) <span class="operator">&amp;&amp;</span> <span class="variable">element1</span> <span class="reserved">is</span> <span class="number">1</span>
-</pre>
+helper.TryGetStartElement(index: 0, out var element0) && element0 is 0 &&
+helper.TryGetStartElement(1, out var element1) && element1 is 1
+```
 
 ## 課題
 
@@ -75,19 +75,19 @@ C# vNext (12 候補)紹介シリーズ。
 一方で `x is [.., 1]` だと、 LINQ でいうところの `Last` になるわけで、
 LINQ でもそうなんですけども、無限シーケンスで困ります。
 
-<pre class="source" title="">
-<span class="comment">// 普通、無限シーケンスは Take(有限の値) とかで一部分だけ取り出して使う。</span>
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="method"><span class="static">m</span></span>()<span class="operator">.</span><span class="method">Take</span>(<span class="number">100</span>);
+```csharp
+// 普通、無限シーケンスは Take(有限の値) とかで一部分だけ取り出して使う。
+var x = m().Take(100);
 
-<span class="comment">// 無限なものの Last があるわけなく、永久ループになる。まずい。</span>
-<span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="static"><span class="method">m</span></span>()<span class="operator">.</span><span class="method">Last</span>();
+// 無限なものの Last があるわけなく、永久ループになる。まずい。
+var y = m().Last();
 
-<span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method"><span class="static">m</span></span>()
+static IEnumerable<int> m()
 {
-    <span class="reserved">var</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;
-    <span class="control">while</span> (<span class="reserved">true</span>) <span class="control">yield</span> <span class="control">return</span> <span class="variable">i</span><span class="operator">++</span>; <span class="comment">// whiel(true) なので永久に途切れない</span>
+    var i = 0;
+    while (true) yield return i++; // whiel(true) なので永久に途切れない
 }
-</pre>
+```
 
 この辺りを中心に、[LDM](https://github.com/dotnet/csharplang/blob/main/meetings/2022/LDM-2022-10-19.md)で検討:
 

@@ -30,17 +30,17 @@ aliases: []
 [C# 10 のときにラムダ式の改善](../../../../study/csharp/cheatsheet/ap_ver10.md#lambda-improvement)がいくつか入りました。
 以下のように、Web アプリがシンプルに書けるようになります。
 
-<pre class="source" title="C# 10 のラムダ式の改善">
-<span class="reserved">var</span> <span class="variable">builder</span> <span class="operator">=</span> <span class="type">WebApplication</span><span class="operator">.</span><span class="static"><span class="method">CreateBuilder</span></span>(<span class="reserved">args</span>);
-<span class="reserved">var</span> <span class="variable">app</span> <span class="operator">=</span> <span class="variable">builder</span><span class="operator">.</span><span class="method">Build</span>();
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
 
-<span class="comment">// MapGet の引数は System.Delegate 型。</span>
-<span class="comment">// Delegate に対してラムダ式が使える。</span>
-<span class="comment">// 自然な型決定が働いて、この場合は Func&lt;string&gt; になる。</span>
-<span class="variable">app</span><span class="operator">.</span><span class="method">MapGet</span>(<span class="string">&quot;/&quot;</span>, () <span class="operator">=&gt;</span> <span class="string">&quot;Hello World!&quot;</span>);
+// MapGet の引数は System.Delegate 型。
+// Delegate に対してラムダ式が使える。
+// 自然な型決定が働いて、この場合は Func<string> になる。
+app.MapGet("/", () => "Hello World!");
 
-<span class="variable">app</span><span class="operator">.</span><span class="method">Run</span>();
-</pre>
+app.Run();
+```
 
 この機能の延長で、
 
@@ -57,20 +57,20 @@ C# 9 までの状態だと、
 メソッドを使った例で説明すると、
 以下のように、デフォルト引数/params 引数はデリゲート化する際に一切紛失します。
 
-<pre class="source" title="デフォルト引数/params 引数はデリゲート化すると紛失">
-<span class="static"><span class="method">m</span></span>();
+```csharp
+m();
 
-<span class="comment">// m() と呼べるのに、 Action には代入できない。</span>
-<span class="type">Action</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="static"><span class="error" title="CS0123"><span class="method">m</span></span></span>;
+// m() と呼べるのに、 Action には代入できない。
+Action a1 = m;
 
-<span class="comment">// Action&lt;int, int[]&gt; には代入できるけど、</span>
-<span class="type">Action</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>[]&gt; <span class="variable">a2</span> <span class="operator">=</span> <span class="method"><span class="static">m</span></span>;
+// Action<int, int[]> には代入できるけど、
+Action<int, int[]> a2 = m;
 
-<span class="comment">// Action&lt;int, int[]&gt; 越しには () では呼べない。</span>
-<span class="variable"><span class="error" title="CS7036">a2</span></span>();
+// Action<int, int[]> 越しには () では呼べない。
+a2();
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">m</span></span>(<span class="reserved">int</span> <span class="variable local">x</span> <span class="operator">=</span> <span class="number">1</span>, <span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">y</span>) { }
-</pre>
+static void m(int x = 1, params int[] y) { }
+```
 
 デリゲートに代入して使うことが前提のラムダ式では、
 そもそもデフォルト引数/params 引数を書けても全く役に立たないということになります。
@@ -79,45 +79,44 @@ C# 9 までの状態だと、
 ただ、属性は、静的な情報としては紛失したとしても、
 リフレクションを使って属性を取る前提であれば意味があります。
 
-<pre class="source" title="リフレクションで取る情報としては意味があり、ラムダ式に属性を付ける意義はある">
-<span class="reserved">using</span> System<span class="operator">.</span>Reflection;
-<span class="reserved">using</span> Microsoft<span class="operator">.</span>AspNetCore<span class="operator">.</span>Mvc;
+```csharp
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 
-<span class="comment">// f の型 (Func&lt;string, string&gt;) に FromBody 属性が反映されるわけではな。</span>
-<span class="type">Func</span>&lt;<span class="reserved">string</span>, <span class="reserved">string</span>&gt; <span class="variable">f</span> <span class="operator">=</span> ([<span class="type">FromBody</span>] <span class="reserved">string</span> <span class="variable local">name</span>) <span class="operator">=&gt;</span> <span class="string">&quot;Hello World!&quot;</span>;
+// f の型 (Func<string, string>) に FromBody 属性が反映されるわけではな。
+Func<string, string> f = ([FromBody] string name) => "Hello World!";
 
-<span class="comment">// リフレクションで MethodInfo から引数や戻り値を取れば、それについてる属性を調べられる。</span>
-<span class="reserved">var</span> <span class="variable">p</span> <span class="operator">=</span> <span class="variable">f</span><span class="operator">.</span><span class="property">Method</span><span class="operator">.</span><span class="method">GetParameters</span>()[<span class="number">0</span>];
+// リフレクションで MethodInfo から引数や戻り値を取れば、それについてる属性を調べられる。
+var p = f.Method.GetParameters()[0];
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">a</span> <span class="control">in</span> <span class="variable">p</span><span class="operator">.</span><span class="method">GetCustomAttributes</span>())
+foreach (var a in p.GetCustomAttributes())
 {
-    <span class="comment">// FromBodyAttribute</span>
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span><span class="operator">.</span><span class="method">GetType</span>()<span class="operator">.</span><span class="property">Name</span>);
+    // FromBodyAttribute
+    Console.WriteLine(a.GetType().Name);
 }
-
-</pre>
+```
 
 「リフレクションで」というのであれば、
 デフォルト引数と params 引数も同様のはずです。
 
-<pre class="source" title="リフレクションでデフォルト引数/params 引数を調べる例">
-<span class="reserved">using</span> System<span class="operator">.</span>Reflection;
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Reflection;
+using System.Runtime.InteropServices;
 
-<span class="type">Delegate</span> <span class="variable">f</span> <span class="operator">=</span> <span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>;
+Delegate f = C.M;
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">p</span> <span class="control">in</span> <span class="variable">f</span><span class="operator">.</span><span class="property">Method</span><span class="operator">.</span><span class="method">GetParameters</span>())
+foreach (var p in f.Method.GetParameters())
 {
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">p</span><span class="operator">.</span><span class="property">Name</span>);
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">p</span><span class="operator">.</span><span class="method">GetCustomAttribute</span>&lt;<span class="type">OptionalAttribute</span>&gt;());   <span class="comment">// x のときに取れる</span>
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">p</span><span class="operator">.</span><span class="method">GetCustomAttribute</span>&lt;<span class="type">ParamArrayAttribute</span>&gt;()); <span class="comment">// y のときに取れる</span>
+    Console.WriteLine(p.Name);
+    Console.WriteLine(p.GetCustomAttribute<OptionalAttribute>());   // x のときに取れる
+    Console.WriteLine(p.GetCustomAttribute<ParamArrayAttribute>()); // y のときに取れる
 }
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">int</span> <span class="variable local">x</span> <span class="operator">=</span> <span class="number">1</span>, <span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">y</span>) { }
+    public static void M(int x = 1, params int[] y) { }
 }
-</pre>
+```
 
 ## ラムダ式のデフォルト引数/params 引数を認める
 
@@ -127,26 +126,26 @@ C# 9 までの状態だと、
 そこから、もう1歩進めた提案もあって、
 自然な型決定で、デフォルト引数/params 引数付きのデリゲートを作るという話もあります。
 
-<pre class="source" title="ラムダ式のデフォルト引数/params 引数">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">m</span></span>(<span class="reserved">int</span> <span class="variable local">x</span> <span class="operator">=</span> <span class="number">1</span>, <span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">y</span>) { }
+```csharp
+static void m(int x = 1, params int[] y) { }
 
-<span class="comment">// 今までだったら Action&lt;int, int[]&gt; になってた。</span>
-<span class="comment">// これを、 delegate void Anonymous(int x = 1, params int[] y) で生成したい。</span>
-<span class="reserved">var</span> <span class="variable">f</span> <span class="operator">=</span> <span class="static"><span class="method">m</span></span>;
+// 今までだったら Action<int, int[]> になってた。
+// これを、 delegate void Anonymous(int x = 1, params int[] y) で生成したい。
+var f = m;
 
-<span class="comment">// 今まででも、↓なら呼べる。</span>
-<span class="variable">f</span>(<span class="number">1</span>, <span class="reserved">new</span>[] { <span class="number">2</span> });
+// 今まででも、↓なら呼べる。
+f(1, new[] { 2 });
 
-<span class="method"><span class="static">m</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="method"><span class="static">m</span></span>(<span class="variable local">x</span>: <span class="number">1</span>);
-<span class="method"><span class="static">m</span></span>(<span class="variable local">y</span>: <span class="number">2</span>);
+m(1, 2);
+m(x: 1);
+m(y: 2);
 
-<span class="comment">// ↓はこれまではダメで、C# 12 でできるようにしたい。</span>
-<span class="variable">f</span>(<span class="number">1</span>, <span class="number"><span class="error" title="CS1503">2</span></span>);
-<span class="variable">f</span>(<span class="error" title="CS1746">x</span>: <span class="number">1</span>);
-<span class="variable">f</span>(<span class="error" title="CS1746">y</span>: <span class="number">2</span>);
+// ↓はこれまではダメで、C# 12 でできるようにしたい。
+f(1, 2);
+f(x: 1);
+f(y: 2);
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">f</span><span class="operator">.</span><span class="method">GetType</span>());
-</pre>
+Console.WriteLine(f.GetType());
+```
 
 割かし実装も進んでいるはずなので、これは近いうちにプレビューが来ると思われます。

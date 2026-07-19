@@ -25,40 +25,40 @@ aliases: []
 
 要はこんなやつ。
 
-<pre class="source" title="">
-<code><span class="comment">// 今まで</span>
-M(<span class="reserved">new</span> <span class="type">A</span>(1));
+```csharp
+// 今まで
+M(new A(1));
 
-<span class="comment">// 提案: 左辺から推測できる場合、型名を省略可能</span>
-M(<span class="reserved">new</span> (1));
-</code></pre>
+// 提案: 左辺から推測できる場合、型名を省略可能
+M(new (1));
+```
 
 プロトタイプ実装のプルリクが出ていて、いつでも通せる状態ではあるんですが、
 ちょっと懸念事項が出てきたとのこと。
 
 今回懸念しているのは以下のような状況。
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> A(<span class="reserved">int</span> value) { }
+    public A(int value) { }
 }
 
-<span class="reserved">class</span> <span class="type">B</span> { }
+class B { }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">A</span> x) { }
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">B</span> x) { }
+    static void M(A x) { }
+    static void M(B x) { }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 今は、1引数コンストラクターを持っているのが A だけなので、A で推論すべき？</span>
-        <span class="comment">// その場合、後から B に1引数コンストラクターを足してしまった場合どうあるべき？</span>
-        M(<span class="reserved">new</span> (1));
+        // 今は、1引数コンストラクターを持っているのが A だけなので、A で推論すべき？
+        // その場合、後から B に1引数コンストラクターを足してしまった場合どうあるべき？
+        M(new (1));
     }
 }
-</code></pre>
+```
 
 厳しくいくなら、「target typed new が使えるのは初期化子でのみ」みたいな制限にしてしまうという案もあり。
 なんせ、「フィールドに対して `var` を使えないのがしんどい。`Dictionary<SomeLongNamedType, AnotherLongNamedType>` みたいな長い型を2度書きたくない」というのが最大の要件なので、「初期化子のみ」であってもこの最大要件だけは満たせる。
@@ -82,9 +82,9 @@ M(<span class="reserved">new</span> (1));
 例えば、「ブロック式」みたいなのも将来入れる可能性はあって、
 以下のような書き方ができるようになったとして、この `return` はブロックを抜ける(`x` に 1 もしくは 2 が入る)ために使われることになる。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> x = { <span class="reserved">if</span> (condition) <span class="reserved">return</span> 1; <span class="reserved">else</span> <span class="reserved">return</span> 2; };
-</code></pre>
+```csharp
+var x = { if (condition) return 1; else return 2; };
+```
 
 今、「`return`式」を入れたとして、こういう将来考えうる文法との整合性がちゃんと保てるかという心配が強く、「現時点では保留」としておいた方がよさそう。
 

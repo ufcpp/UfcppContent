@@ -71,7 +71,7 @@ aliases:
 	<figcaption>ディジタル信号</figcaption>
 </figure>
 
-<pre>
+```text
 連続信号と離散信号の関係
 周波数特性
 サンプル
@@ -83,11 +83,11 @@ D … 遅延
 
 現在の時刻を k としたとき、
 x[k-N] ＝ D^n x[k] を「N サンプル前の値」という。
-</pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 電子計算機などを使って信号処理
 ↓
 離散信号
@@ -116,4 +116,4 @@ Z変換の z<sup>－1</sup> は遅延を表す。
 
 
 サンプルプログラムも出す？
-</pre>
+```

@@ -47,22 +47,22 @@ C# 4.0 でオプション引数と名前付き引数が追加されました。
 まず、C++ 同様、
 以下のように規定値(default value)を持ったメソッドを定義します。
 
-<pre class="source" title="規定値付きのメソッド定義" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x = <span class="literal">0</span>, <span class="reserved">int</span> y = <span class="literal">0</span>, <span class="reserved">int</span> z = <span class="literal">0</span>)
+```csharp
+static int Sum(int x = 0, int y = 0, int z = 0)
 {
-  <span class="reserved">return</span> x + y + z;
+  return x + y + z;
 }
-</code></pre>
+```
 
 
 すると、以下のように、引数の一部もしくは全てを省略可能になります。
 省略可能ということで、オプション引数（optional parameter）と呼びます。
 
-<pre class="source" title="オプション引数" lang="">
-<code><span class="reserved">int</span> s1 = Sum();     <span class="comment">// Sum(0, 0, 0); と同じ意味。</span>
-<span class="reserved">int</span> s2 = Sum(<span class="literal">1</span>);    <span class="comment">// Sum(1, 0, 0); と同じ意味。</span>
-<span class="reserved">int</span> s3 = Sum(<span class="literal">1</span>, <span class="literal">2</span>); <span class="comment">// Sum(1, 2, 0); と同じ意味。</span>
-</code></pre>
+```csharp
+int s1 = Sum();     // Sum(0, 0, 0); と同じ意味。
+int s2 = Sum(1);    // Sum(1, 0, 0); と同じ意味。
+int s3 = Sum(1, 2); // Sum(1, 2, 0); と同じ意味。
+```
 
 
 この記法で省略可能になるのは、後ろの引数のみです。
@@ -70,67 +70,67 @@ C# 4.0 でオプション引数と名前付き引数が追加されました。
 定義側でも、以下のようなコードはコンパイルエラーになります。
 （z のところで「オプション引数の後ろに必須引数を置いちゃダメ」みたいなエラーが出ます。）
 
-<pre class="source" title="こういう真似は無理" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x = <span class="literal">0</span>, <span class="reserved">int</span> y = <span class="literal">0</span>,
-  <em><span class="reserved">int</span> z</em>) <span class="comment">// コンパイル エラー。後ろの引数に既定値がない</span>
+```csharp
+static int Sum(int x = 0, int y = 0,
+  int z) // コンパイル エラー。後ろの引数に既定値がない
 {
-  <span class="reserved">return</span> x + y + z;
+  return x + y + z;
 }
-</code></pre>
+```
 
 
 ただし、オプション引数の後ろに params（「[可変長引数](sp_params.md)」参照）を続けることは可能です。
 
-<pre class="source" title="オプション引数の後ろに可変長引数" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x, <span class="reserved">int</span> y, <span class="reserved">int</span> z = <span class="literal">0</span>, <em><span class="reserved">params int</span>[] rest</em>)
+```csharp
+static int Sum(int x, int y, int z = 0, params int[] rest)
 {
-    <span class="reserved">var</span> sum = x + y + z;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> v <span class="reserved">in</span> rest) sum += v;
-    <span class="reserved">return</span> sum;
+    var sum = x + y + z;
+    foreach (var v in rest) sum += v;
+    return sum;
 }
-</code></pre>
+```
 
 
 オプション引数や可変長引数を使った場合の「[オーバーロード](st_function.md#overload)」の優先順位ですが、
 オプションなし ＞ オプションあり ＞ 可変長引数 の順で優先されます。
 
-<pre class="source" title="オーバーロードの優先順位" lang="">
-<code><span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+```csharp
+static void Main(string[] args)
 {
-    Sum(<span class="literal">1</span>);
-    Sum(<span class="literal">1</span>, <span class="literal">2</span>);
-    Sum(<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>);
-    Sum(<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span>);
+    Sum(1);
+    Sum(1, 2);
+    Sum(1, 2, 3);
+    Sum(1, 2, 3, 4);
 }
 
-<span class="reserved">static int</span> Sum(<span class="reserved">int</span> x)
+static int Sum(int x)
 {
-    <span class="type">Console</span>.WriteLine(<span class="literal">"Sum(x)"</span>);
-    <span class="reserved">return</span> x;
+    Console.WriteLine("Sum(x)");
+    return x;
 }
 
-<span class="reserved">static int</span> Sum(<span class="reserved">int</span> x, <span class="reserved">int</span> y = <span class="literal">0</span>, <span class="reserved">int</span> z = <span class="literal">0</span>) <span class="comment">// 引数2つ以上でないと呼ばれない</span>
+static int Sum(int x, int y = 0, int z = 0) // 引数2つ以上でないと呼ばれない
 {
-    <span class="type">Console</span>.WriteLine(<span class="literal">"Sum(x, y, z)"</span>);
-    <span class="reserved">return</span> x + y + z;
+    Console.WriteLine("Sum(x, y, z)");
+    return x + y + z;
 }
 
-<span class="reserved">static int</span> Sum(<span class="reserved">params int</span>[] rest) <span class="comment">// 引数4つ以上でないと呼ばれない</span>
+static int Sum(params int[] rest) // 引数4つ以上でないと呼ばれない
 {
-    <span class="type">Console</span>.WriteLine(<span class="literal">"Sum(rest)"</span>);
-    <span class="reserved">var</span> sum = <span class="literal">0</span>;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> v <span class="reserved">in</span> rest) sum += v;
-    <span class="reserved">return</span> sum;
+    Console.WriteLine("Sum(rest)");
+    var sum = 0;
+    foreach (var v in rest) sum += v;
+    return sum;
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 Sum(x)
 Sum(x, y, z)
 Sum(x, y, z)
 Sum(rest)
-</pre>
+```
 
 
 
@@ -142,11 +142,11 @@ Sum(rest)
 
 先ほど定義した引数の規定値付きのメソッドを、以下のような構文で呼び出せます。
 
-<pre class="source" title="名前付きオプション引数" lang="">
-<code><span class="reserved">int</span> s1 = Sum(x: <span class="literal">1</span>, y: <span class="literal">2</span>, z: <span class="literal">3</span>); <span class="comment">// Sum(1, 2, 3); と同じ意味。</span>
-<span class="reserved">int</span> s2 = Sum(y: <span class="literal">1</span>, z: <span class="literal">2</span>, x: <span class="literal">3</span>); <span class="comment">// Sum(3, 1, 2); と同じ意味。</span>
-<span class="reserved">int</span> s3 = Sum(y: <span class="literal">1</span>);             <span class="comment">// Sum(0, 1, 0); と同じ意味。</span>
-</code></pre>
+```csharp
+int s1 = Sum(x: 1, y: 2, z: 3); // Sum(1, 2, 3); と同じ意味。
+int s2 = Sum(y: 1, z: 2, x: 3); // Sum(3, 1, 2); と同じ意味。
+int s3 = Sum(y: 1);             // Sum(0, 1, 0); と同じ意味。
+```
 
 
 名前付き引数の場合、引数の順序は自由に書けます。
@@ -155,36 +155,36 @@ Sum(rest)
 1つ気をつけないといけないのは、引数の名前を指定するのに = じゃなくて : を使うところです。
 C# の場合、以下のような構文が許されているので、間違えて = と書いてしまわないよう気をつけましょう。
 
-<pre class="source" title="= じゃないよ、: だよ" lang="">
-<code><span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+```csharp
+static void Main(string[] args)
 {
-    <span class="reserved">int</span> x = <span class="literal">0</span>;
-    <span class="type">Console</span>.WriteLine(Square(x = <span class="literal">2</span>)); <span class="comment">// 単なる代入。名前付き引数ではない</span>
-    <span class="comment">// ↑これは↓と同じ意味。
+    int x = 0;
+    Console.WriteLine(Square(x = 2)); // 単なる代入。名前付き引数ではない
+    // ↑これは↓と同じ意味。
     // x = 2;
-    // Console.WriteLine(Square(x));</span>
+    // Console.WriteLine(Square(x));
 }
 
-<span class="reserved">static int</span> Square(<span class="reserved">int</span> x)
+static int Square(int x)
 {
-    <span class="reserved">return</span> x * x;
+    return x * x;
 }
-</code></pre>
+```
 
 また、C# 7.1 以前では、通常の(位置指定の)引数と名前付き引数を混在させる場合、名前付きにできるのは後ろの方の引数だけです。
 
-<pre class="source" title="混在時、名前付き引数を使えるのは後ろの方の引数だけ">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Order()
+```csharp
+static void Order()
 {
-    <span class="comment">// OK: 前の方は位置指定、後ろの方は名前指定</span>
+    // OK: 前の方は位置指定、後ろの方は名前指定
     Sum(1, z: 2, y: 3);
 
-    <span class="comment">// コンパイル エラー: 前の方の引数を名前指定するのはダメ</span>
-    Sum(1, <span class="error">x</span>: 2, y: 3);
+    // コンパイル エラー: 前の方の引数を名前指定するのはダメ
+    Sum(1, x: 2, y: 3);
 }
 
-<span class="reserved">static</span> <span class="reserved">int</span> Sum(<span class="reserved">int</span> x = 0, <span class="reserved">int</span> y = 0, <span class="reserved">int</span> z = 0) =&gt; x + y + z;
-</code></pre>
+static int Sum(int x = 0, int y = 0, int z = 0) => x + y + z;
+```
 
 ### <a id="sec-generated-title-5"></a> <a id="non-trailing-named"></a>非末尾名前付き引数 (前の方の引数を名前付きに)
 
@@ -193,19 +193,19 @@ C# の場合、以下のような構文が許されているので、間違え�
 C# 7.2で、前の方の引数を名前付きにできるようになりました。
 例えば、以下のような書き方が許されるようになりました。
 
-<pre class="source" title="1つ目の引数だけを名前付きにする">
-<code><span class="comment">// C# 7.2</span>
-<span class="comment">// 末尾以外でも名前を書けるように</span>
+```csharp
+// C# 7.2
+// 末尾以外でも名前を書けるように
 Sum(x: 1, 2, 3);
-</code></pre>
+```
 
 ただし、この場合、順序の変更は認められておらず、通常(位置指定)と同じ順で引数を書く必要があります。
 
-<pre class="source" title="前の方の引数を名前付きにする場合、順序厳守">
-<code><span class="comment">// C# 7.2 でもダメなやつ</span>
-<span class="comment">// 末尾以外の引数を名前付きにしたい場合、順序は厳守する必要あり</span>
-Sum(2, 3, <span class="error">x</span>: 1);
-</code></pre>
+```csharp
+// C# 7.2 でもダメなやつ
+// 末尾以外の引数を名前付きにしたい場合、順序は厳守する必要あり
+Sum(2, 3, x: 1);
+```
 
 要するに、引数の省略や順序変更を目的としているのではなく、
 単に「どの実引数が何の意味か」が名前からわかるようにしたいときに使うものです。
@@ -213,11 +213,11 @@ Sum(2, 3, <span class="error">x</span>: 1);
 例えば、よくある話だと、「`Copy(a, b, length)`では、`a`と`b`のどちらがコピー元でどちらがコピー先かがわからなくて困る」といった問題があったりします。
 この際に、以下のように書ければ便利だろうということで名前付き引数の制限が緩和されました。
 
-<pre class="source" title="非末尾名前付き引数の用途の例">
-<code><span class="reserved">var</span> a = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-<span class="reserved">var</span> b = <span class="reserved">new</span> <span class="reserved">int</span>[3];
-<span class="type">Array</span>.Copy(sourceArray: a, destinationArray: b, 3);
-</code></pre>
+```csharp
+var a = new[] { 1, 2, 3, 4, 5 };
+var b = new int[3];
+Array.Copy(sourceArray: a, destinationArray: b, 3);
+```
 
 ## <a id="sec-generated-title-6"></a> <a id="implementation"></a>内部実装
 
@@ -227,26 +227,26 @@ Sum(2, 3, <span class="error">x</span>: 1);
 実体は Optional 属性と DefaultParameterValue 属性になっています。
 例えば、以下のようなコードを書くと、
 
-<pre class="source" title="オプション引数" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x = <span class="literal">0</span>, <span class="reserved">int</span> y = <span class="literal">0</span>, <span class="reserved">int</span> z = <span class="literal">0</span>)
+```csharp
+static int Sum(int x = 0, int y = 0, int z = 0)
 {
-    <span class="reserved">return</span> x + y + z;
+    return x + y + z;
 }
-</code></pre>
+```
 
 
 以下のようなコードと同じコンパイル結果になります。
 （Optional, DefaultParameterValue はいずれも System.Runtime.InteropServices 名前空間内に定義されている属性です。）
 
-<pre class="source" title="等価なコード" lang="">
-<code><span class="reserved">static int</span> Sum(
-    [<span class="type">Optional</span>, <span class="type">DefaultParameterValue</span>(<span class="literal">0</span>)] <span class="reserved">int</span> x,
-    [<span class="type">Optional</span>, <span class="type">DefaultParameterValue</span>(<span class="literal">0</span>)] <span class="reserved">int</span> y,
-    [<span class="type">Optional</span>, <span class="type">DefaultParameterValue</span>(<span class="literal">0</span>)] <span class="reserved">int</span> z)
+```csharp
+static int Sum(
+    [Optional, DefaultParameterValue(0)] int x,
+    [Optional, DefaultParameterValue(0)] int y,
+    [Optional, DefaultParameterValue(0)] int z)
 {
-    <span class="reserved">return</span> ((x + y) + z);
+    return ((x + y) + z);
 }
-</code></pre>
+```
 
 
 
@@ -263,24 +263,24 @@ C# （や、VB など、.NET 上の言語）では、元々、コンパイル結
 
 例えば、先ほどの Sum メソッドに対して、以下のようなコードは、
 
-<pre class="source" title="オプション引数・名前付き引数を使ったメソッド呼び出し" lang="">
-<code>Sum();
-Sum(<span class="literal">1</span>);
-Sum(<span class="literal">1</span>, <span class="literal">2</span>);
-Sum(x: <span class="literal">1</span>, y: <span class="literal">2</span>, z: <span class="literal">3</span>);
-Sum(y: <span class="literal">1</span>, z: <span class="literal">2</span>, x: <span class="literal">3</span>);
-</code></pre>
+```csharp
+Sum();
+Sum(1);
+Sum(1, 2);
+Sum(x: 1, y: 2, z: 3);
+Sum(y: 1, z: 2, x: 3);
+```
 
 
 以下のようなコードと完全に同じコンパイル結果になります。
 
-<pre class="source" title="等価なコード" lang="">
-<code>Sum(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>); <span class="comment">// 元々 0 を渡していたのか、オプション引数で 0 になったのかはわからない</span>
-Sum(<span class="literal">1</span>, <span class="literal">0</span>, <span class="literal">0</span>);
-Sum(<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">0</span>);
-Sum(<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>); <span class="comment">// x, y, z 等の引数名に関する情報は残らない</span>
-Sum(<span class="literal">3</span>, <span class="literal">1</span>, <span class="literal">2</span>);
-</code></pre>
+```csharp
+Sum(0, 0, 0); // 元々 0 を渡していたのか、オプション引数で 0 になったのかはわからない
+Sum(1, 0, 0);
+Sum(1, 2, 0);
+Sum(1, 2, 3); // x, y, z 等の引数名に関する情報は残らない
+Sum(3, 1, 2);
+```
 
 
 
@@ -304,31 +304,31 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 
 例えば、ライブラリ内で以下のようなコードを書いたとして、
 
-<pre class="source" title="ライブラリ内にて" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x = <span class="literal">0</span>, <span class="reserved">int</span> y = <span class="literal">0</span>, <span class="reserved">int</span> z = <span class="literal">0</span>)
+```csharp
+static int Sum(int x = 0, int y = 0, int z = 0)
 {
-    <span class="reserved">return</span> x + y + z;
+    return x + y + z;
 }
-</code></pre>
+```
 
 
 このライブラリを使う以下のようなコードを書いたとしてます。
 
-<pre class="source" title="ライブラリ利用側" lang="">
-<code>Sum();
-</code></pre>
+```csharp
+Sum();
+```
 
 
 この <code>Sum()</code> は <code>Sum(0, 0, 0)</code> と解釈されます。
 
 この後、ライブラリを以下のように更新したとします。
 
-<pre class="source" title="ライブラリを修正" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x = <span class="literal">1</span>, <span class="reserved">int</span> y = <span class="literal">2</span>, <span class="reserved">int</span> z = <span class="literal">3</span>)
+```csharp
+static int Sum(int x = 1, int y = 2, int z = 3)
 {
-    <span class="reserved">return</span> x + y + z;
+    return x + y + z;
 }
-</code></pre>
+```
 
 
 当然、<code>Sum()</code> の部分は <code>Sum(1, 2, 3)</code> になって欲しいわけですが、
@@ -339,16 +339,16 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 メソッドのオーバーロードを使った以下のような実装方法を推奨していました。
 この場合は、利用側の再コンパイルは必要なくなります。
 
-<pre class="source" title="オーバーロードで引数の規定値相当の機能を実現" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x, <span class="reserved">int</span> y, <span class="reserved">int</span> z)
+```csharp
+static int Sum(int x, int y, int z)
 {
-    <span class="reserved">return</span> x + y + z;
+    return x + y + z;
 }
-<span class="reserved">static int</span> Sum()
+static int Sum()
 {
-    <span class="reserved">return</span> Sum(<span class="literal">0</span>, <span class="literal">0</span>, <span class="literal">0</span>);
+    return Sum(0, 0, 0);
 }
-</code></pre>
+```
 
 
 
@@ -361,29 +361,29 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 
 例のごとく、以下のような Sum メソッドがあって、
 
-<pre class="source" title="例のごとく Sum" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> x, <span class="reserved">int</span> y, <span class="reserved">int</span> z)
+```csharp
+static int Sum(int x, int y, int z)
 {
-    <span class="reserved">return</span> x + y + z;
+    return x + y + z;
 }
-</code></pre>
+```
 
 
 これを以下のような名前付き引数を使って呼び出しているとします。
 
-<pre class="source" title="Sum メソッド呼び出し" lang="">
-<code>Sum(x: <span class="literal">0</span>, y: <span class="literal">1</span>, z: <span class="literal">2</span>);
-</code></pre>
+```csharp
+Sum(x: 0, y: 1, z: 2);
+```
 
 
 この時、Sum の定義側を以下のように変更すると、
 
-<pre class="source" title="Sum の引数名変更" lang="">
-<code><span class="reserved">static int</span> Sum(<span class="reserved">int</span> a, <span class="reserved">int</span> b, <span class="reserved">int</span> c)
+```csharp
+static int Sum(int a, int b, int c)
 {
-    <span class="reserved">return</span> a + b + c;
+    return a + b + c;
 }
-</code></pre>
+```
 
 
 呼び出している側で、「そんな名前の引数はないよ」というエラーになります。
@@ -404,27 +404,27 @@ C# でも、かなり初期の頃からずっと、オプション引数・名�
 仮想メソッドの場合は(変数の型ではなく、その中身の)インスタンスの型に基づいて呼び出し先が変わるにも関わらず、
 規定値だけは変数の型の方を見て決まるので、多少わかりづらい挙動になります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Base</span> { <span class="reserved">public virtual void</span> X(<span class="reserved">string</span> s = <span class="literal">"base"</span>) =&gt; <span class="type">Console</span>.WriteLine(s + <span class="literal">" in base"</span>); }
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span> { <span class="reserved">public override void</span> X(<span class="reserved">string</span> s = <span class="literal">"derived"</span>) =&gt; <span class="type">Console</span>.WriteLine(s + <span class="literal">" in derived"</span>); }
+class Base { public virtual void X(string s = "base") => Console.WriteLine(s + " in base"); }
+class Derived : Base { public override void X(string s = "derived") => Console.WriteLine(s + " in derived"); }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="type">Base</span> x = <span class="reserved">new</span> <span class="type">Base</span>();
-        x.X(); <span class="comment">// base in base</span>
+        Base x = new Base();
+        x.X(); // base in base
 
-        <span class="type">Derived</span> y = <span class="reserved">new</span> <span class="type">Derived</span>();
-        y.X(); <span class="comment">// derived in derived</span>
+        Derived y = new Derived();
+        y.X(); // derived in derived
 
-        <span class="type">Base</span> z = <span class="reserved">new</span> <span class="type">Derived</span>();
-        z.X(); <span class="comment">// base in derived</span>
+        Base z = new Derived();
+        z.X(); // base in derived
     }
 }
-</code></pre>
+```
 
 
 
@@ -445,12 +445,12 @@ COM (詰まるところ90年代からあるレガシー資産)では、オプシ
 
 実際、C# 3.0 以前では、例えば C# から Excel の機能を（COM 経由で）呼び出そうとすると、以下のような悲惨なコードになることがありました。
 
-<pre class="source" title="C#（3.0 以前）で Excel ワークブックを開こうとするとこんなのになるよ(笑)" lang="">
-<code><span class="type">Workbook</span> workbook = excelApp.<span class="type">Workbooks</span>.Open(
-    <span class="literal">"sample.xsl"</span>, <span class="type">Type</span>.Missing, <span class="reserved">true</span>, <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing,
-    <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing,
-    <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing, <span class="type">Type</span>.Missing);
-</code></pre>
+```csharp
+Workbook workbook = excelApp.Workbooks.Open(
+    "sample.xsl", Type.Missing, true, Type.Missing, Type.Missing,
+    Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+    Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+```
 
 
 Type.Missing というのは、
@@ -462,6 +462,6 @@ Type.Missing というのは、
 
 で、これが C# 4.0 なら以下のようにシンプルに書けるようになります。
 
-<pre class="source" title="C# 4.0 からは　Excel 呼びやすくなる" lang="">
-<code><span class="type">Workbook</span> workbook = excelApp.<span class="type">Workbooks</span>.Open(<span class="literal">"sample.xsl"</span>, ReadOnly: <span class="reserved">true</span>);
-</code></pre>
+```csharp
+Workbook workbook = excelApp.Workbooks.Open("sample.xsl", ReadOnly: true);
+```

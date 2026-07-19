@@ -20,7 +20,7 @@ aliases:
 
 ## <a id="sec-generated-title-1"></a> <a id="schedule"></a>執筆予定
 
-<pre>
+```text
 概要、IIRフィルタの特徴
  フィードバックあり
  IRが無限に続く
@@ -43,7 +43,7 @@ aliases:
 設計
  アナログで設計(アナログプロトタイプ)。
  s→z変換でディジタルに。
-</pre>
+```
 
 ## <a id="sec-generated-title-2"></a> <a id="abstract"></a>概要
 

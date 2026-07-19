@@ -15,13 +15,13 @@ aliases: []
 
 以下の `~Class1` のこと、（C# の言語機能名として)なんと呼びますか？
 
-<pre class="source" title="~Class1">
-<span class="reserved">class</span> <span class="type">Class1</span>
+```csharp
+class Class1
 {
-    <span class="reserved">public</span> <span class="type">Class1</span>() { }
-    <span class="operator">~</span><span class="type">Class1</span>() { }
+    public Class1() { }
+    ~Class1() { }
 }
-</pre>
+```
 
 すごく今更ながら、8年くらい前からこれの呼び名が変わってたらしいというのを最近気づいたという話になります。
 

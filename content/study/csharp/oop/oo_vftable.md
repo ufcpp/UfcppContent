@@ -57,75 +57,75 @@ aliases:
 
 まず、元となる C++ のソースを示すと以下のような感じ。
 
-<pre class="source" title="ShapeCpp.h" lang="">
-<code><span class="reserved">#pragma</span> once
+```cpp
+#pragma once
 
-<span class="reserved">class</span> Shape
+class Shape
 {
-<span class="reserved">public</span>:
-  <span class="reserved">virtual double</span> GetArea() = 0;
-  <span class="reserved">virtual double</span> GetPerimeter() = 0;
+public:
+  virtual double GetArea() = 0;
+  virtual double GetPerimeter() = 0;
 };
 
-<span class="reserved">class</span> Rectangle : <span class="reserved">public</span> Shape
+class Rectangle : public Shape
 {
-<span class="reserved">public</span>:
-  Rectangle(<span class="reserved">double</span> w, <span class="reserved">double</span> h);
-  <span class="reserved">virtual double</span> GetArea();
-  <span class="reserved">virtual double</span> GetPerimeter();
+public:
+  Rectangle(double w, double h);
+  virtual double GetArea();
+  virtual double GetPerimeter();
 
-<span class="reserved">private</span>:
-  <span class="reserved">double</span> width;
-  <span class="reserved">double</span> height;
+private:
+  double width;
+  double height;
 };
 
-<span class="reserved">class</span> Circle : <span class="reserved">public</span> Shape
+class Circle : public Shape
 {
-<span class="reserved">public</span>:
-  Circle(<span class="reserved">double</span> r);
-  <span class="reserved">virtual double</span> GetArea();
-  <span class="reserved">virtual double</span> GetPerimeter();
+public:
+  Circle(double r);
+  virtual double GetArea();
+  virtual double GetPerimeter();
 
-<span class="reserved">private</span>:
-  <span class="reserved">double</span> radius;
+private:
+  double radius;
 };
-</code></pre>
+```
 
 
-<pre class="source" title="ShapeCpp.cpp" lang="">
-<code><span class="reserved">#include</span> <span class="literal">"ShapeCpp.h"</span>
+```cpp
+#include "ShapeCpp.h"
 
-Rectangle::Rectangle(<span class="reserved">double</span> w, <span class="reserved">double</span> h)
+Rectangle::Rectangle(double w, double h)
 {
-  <span class="reserved">this</span>-&gt;width = w;
-  <span class="reserved">this</span>-&gt;height = h;
+  this->width = w;
+  this->height = h;
 }
 
-<span class="reserved">double</span> Rectangle::GetArea()
+double Rectangle::GetArea()
 {
-  <span class="reserved">return this</span>-&gt;width * <span class="reserved">this</span>-&gt;height;
+  return this->width * this->height;
 }
 
-<span class="reserved">double</span> Rectangle::GetPerimeter()
+double Rectangle::GetPerimeter()
 {
-  <span class="reserved">return</span> 2 * (<span class="reserved">this</span>-&gt;width + <span class="reserved">this</span>-&gt;height);
+  return 2 * (this->width + this->height);
 }
 
-Circle::Circle(<span class="reserved">double</span> r)
+Circle::Circle(double r)
 {
-  <span class="reserved">this</span>-&gt;radius = r;
+  this->radius = r;
 }
 
-<span class="reserved">double</span> Circle::GetArea()
+double Circle::GetArea()
 {
-  <span class="reserved">return</span> 3.14159265358979 * <span class="reserved">this</span>-&gt;radius * <span class="reserved">this</span>-&gt;radius;
+  return 3.14159265358979 * this->radius * this->radius;
 }
 
-<span class="reserved">double</span> Circle::GetPerimeter()
+double Circle::GetPerimeter()
 {
-  <span class="reserved">return</span> 2 * 3.14159265358979 * <span class="reserved">this</span>-&gt;radius;
+  return 2 * 3.14159265358979 * this->radius;
 }
-</code></pre>
+```
 
 
 要するに、Shape クラスは図形を表していて、面積と周囲を求めるメソッドを持っています。
@@ -136,55 +136,55 @@ Rectangle、Circle はそれぞれ、矩形・円を表すクラスです。
 
 まず、Shape クラスの宣言に相当する C 言語コードを作ってみます。
 
-<pre class="source" title="Shape クラスの宣言に相当する C 言語コード" lang="">
-<code><span class="comment">//----------------------------------------------------------------
+```csharp
+//----------------------------------------------------------------
 // class Shape に相当
-</span>
-<span class="reserved">typedef struct</span> TagShape
+
+typedef struct TagShape
 {
-  <span class="reserved">void</span>** vftable;
+  void** vftable;
 } Shape;
 
-<span class="reserved">#define</span> VF_GetArea 1
-<span class="reserved">#define</span> VF_GetPerimeter 2
+#define VF_GetArea 1
+#define VF_GetPerimeter 2
 
-<span class="reserved">typedef double</span> TypeGetArea(Shape* this);
-<span class="reserved">typedef double</span> TypeGetPerimeter(Shape* this);
+typedef double TypeGetArea(Shape* this);
+typedef double TypeGetPerimeter(Shape* this);
 
-<span class="reserved">extern void</span>* ShapeVftable[];
-<span class="reserved">void</span> ShapeCtor(Shape* this);
-<span class="reserved">void</span> ShapeDtor(Shape* this);
-</code></pre>
+extern void* ShapeVftable[];
+void ShapeCtor(Shape* this);
+void ShapeDtor(Shape* this);
+```
 
 
 まず、非 OOP 言語にはメンバー関数（メソッド）なんてものはありません。
 C++ で、
 
-<pre class="source" title="メンバー関数" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-<span class="reserved">public</span>:
-  <span class="reserved">int</span> GetAge();
+public:
+  int GetAge();
 };
 
 Person p;
 p.GetAge();
-</code></pre>
+```
 
 
 と言うように書いていたものは、
 C 言語では、
 
-<pre class="source" title="メンバー関数" lang="">
-<code><span class="reserved">typedef struct</span> TagPerson
+```csharp
+typedef struct TagPerson
 {
 } Person;
 
-<span class="reserved">int</span> PersonGetAge(Person* p);
+int PersonGetAge(Person* p);
 
 Person p;
-PersonGetAge(&amp;p);
-</code></pre>
+PersonGetAge(&p);
+```
 
 
 と書く必要があります。
@@ -194,14 +194,14 @@ PersonGetAge(&amp;p);
 で、ShapeVftable というのが、仮想関数を実現するためのキモである仮想関数テーブルというやつです。
 実体は以下のようになっています。
 
-<pre class="source" title="Shape クラスの仮想関数テーブル" lang="">
-<code><span class="reserved">void</span>* ShapeVftable[] = 
+```csharp
+void* ShapeVftable[] = 
 {
-  <span class="literal">"class Shape"</span>,
+  "class Shape",
   0,
   0
 };
-</code></pre>
+```
 
 
 void* の配列になっていて、
@@ -220,24 +220,24 @@ C++ とは違って、これらを自動的に読んでくれる仕組みは持�
 自分で呼び出してやる必要があります。
 例えば、C++ の、
 
-<pre class="source" title="Shape を new" lang="">
-<code><span class="comment">// 実際には、Shape は抽象クラスなので new できないけども。
-</span>
-s = <span class="reserved">new</span> Shape();
+```csharp
+// 実際には、Shape は抽象クラスなので new できないけども。
 
-<span class="reserved">delete</span> s;
-</code></pre>
+s = new Shape();
+
+delete s;
+```
 
 
 と同じ事をしようと思うと、以下のような書き方が必要になります。
 
-<pre class="source" title="C 言語で new, delete 相当のコード" lang="">
-<code>s = (Shape*)malloc(<span class="reserved">sizeof</span>(Shape));
+```csharp
+s = (Shape*)malloc(sizeof(Shape));
 ShapeCtor(s);
 
 ShapeDtor(s);
 free(s);
-</code></pre>
+```
 
 
 ちなみに、元の Shape クラスがコンストラクタ・デストラクタで特に何もしていないので、
@@ -246,16 +246,16 @@ ShapeCtor, ShapeDtor の中身もほぼ空っぽになります。
 前節で説明した仮想関数テーブルの実体 ShapeVftable を、
 Shape の vftable メンバー変数に代入します。
 
-<pre class="source" title="ShapeCtor, ShapeDtor の実体" lang="">
-<code><span class="reserved">void</span> ShapeCtor(Shape* this)
+```csharp
+void ShapeCtor(Shape* this)
 {
-  this-&gt;vftable = ShapeVftable;
+  this->vftable = ShapeVftable;
 }
 
-<span class="reserved">void</span> ShapeDtor(Shape* this)
+void ShapeDtor(Shape* this)
 {
 }
-</code></pre>
+```
 
 
 この vftable は、仮想関数呼び出しの際に利用します。
@@ -265,24 +265,24 @@ Shape の vftable メンバー変数に代入します。
 
 続いて、Rectangle クラスの宣言に相当する C 言語コードを示します。
 
-<pre class="source" title="Rectangle クラスの宣言に相当する C 言語コード" lang="">
-<code><span class="comment">//----------------------------------------------------------------
+```csharp
+//----------------------------------------------------------------
 // class Rectangle に相当
-</span>
-<span class="reserved">typedef struct</span> TagRectangle
+
+typedef struct TagRectangle
 {
   Shape base;
 
-  <span class="reserved">double</span> width;
-  <span class="reserved">double</span> height;
+  double width;
+  double height;
 } Rectangle;
 
-<span class="reserved">extern void</span>* RectangleVftable[];
-<span class="reserved">void</span> RectangleCtor(Rectangle* this, <span class="reserved">double</span> w, <span class="reserved">double</span> h);
-<span class="reserved">void</span> RectangleDtor(Rectangle* this);
-<span class="reserved">double</span> RectangleGetArea(Rectangle* this);
-<span class="reserved">double</span> RectangleGetPerimeter(Rectangle* this);
-</code></pre>
+extern void* RectangleVftable[];
+void RectangleCtor(Rectangle* this, double w, double h);
+void RectangleDtor(Rectangle* this);
+double RectangleGetArea(Rectangle* this);
+double RectangleGetPerimeter(Rectangle* this);
+```
 
 
 Shape のときと同じく、
@@ -300,13 +300,13 @@ RectangleGetArea, RectangleGetPerimeter があります。
 これは、単に、親クラスを1つ目のメンバー変数として持つことによって実現します。
 例えば、
 
-<pre class="source" title="基底クラスのポインター変数に代入" lang="">
-<code>Rectangle* r = (Rectangle*)malloc(<span class="reserved">sizeof</span>(Rectangle));
+```csharp
+Rectangle* r = (Rectangle*)malloc(sizeof(Rectangle));
 Shape* s = (Shape*)r;
 
-<span class="reserved">if</span> (s-&gt;vftable == r-&gt;base.vftable)
-  printf(<span class="literal">"true"</span>);
-</code></pre>
+if (s->vftable == r->base.vftable)
+  printf("true");
+```
 
 
 というようなコードを書いた場合、
@@ -318,14 +318,14 @@ Shape* s = (Shape*)r;
 
 Rectangle クラスの仮想関数テーブルの実体 RectangleVftable は以下のようになります。
 
-<pre class="source" title="Rectangle クラスの仮想関数テーブル" lang="">
-<code><span class="reserved">void</span>* RectangleVftable[] =
+```csharp
+void* RectangleVftable[] =
 {
-  <span class="literal">"class Rectangle"</span>,
+  "class Rectangle",
   RectangleGetArea,
   RectangleGetPerimeter
 };
-</code></pre>
+```
 
 
 Shape のときと同じく、
@@ -341,39 +341,39 @@ C++ と違って基底クラスのコンストラクタを自動的に呼んで�
 プログラマが明示的に ShapeCtor を呼び出す必要があります。
 （デストラクタも同様。）
 
-<pre class="source" title="Rectangle のコンストラクタ・デストラクタ" lang="">
-<code><span class="reserved">void</span> RectangleCtor(Rectangle* this, <span class="reserved">double</span> w, <span class="reserved">double</span> h)
+```csharp
+void RectangleCtor(Rectangle* this, double w, double h)
 {
-  ShapeCtor(&amp;this-&gt;base);
+  ShapeCtor(&this->base);
 
-  this-&gt;base.vftable = RectangleVftable;
+  this->base.vftable = RectangleVftable;
 
-  this-&gt;width = w;
-  this-&gt;height = h;
+  this->width = w;
+  this->height = h;
 }
 
-<span class="reserved">void</span> RectangleDtor(Rectangle* this)
+void RectangleDtor(Rectangle* this)
 {
-  ShapeDtor(&amp;this-&gt;base);
+  ShapeDtor(&this->base);
 }
-</code></pre>
+```
 
 
 ちなみに、RectangleGetArea, RectangleGetPerimeter の実体は以下のような感じ。
 元の C++ の Rectangle クラスの GetArea, GetPerimeter とほぼ同じです。
 （関数の引数に Rectangle* this が増えているだけ。）
 
-<pre class="source" title="RectangleGetArea, RectangleGetPerimeter" lang="">
-<code><span class="reserved">double</span> RectangleGetArea(Rectangle* this)
+```csharp
+double RectangleGetArea(Rectangle* this)
 {
-  <span class="reserved">return</span> this-&gt;width * this-&gt;height;
+  return this->width * this->height;
 }
 
-<span class="reserved">double</span> RectangleGetPerimeter(Rectangle* this)
+double RectangleGetPerimeter(Rectangle* this)
 {
-  <span class="reserved">return</span> 2 * (this-&gt;width + this-&gt;height);
+  return 2 * (this->width + this->height);
 }
-</code></pre>
+```
 
 
 
@@ -384,28 +384,28 @@ Circle クラスの実装は Rectangle とほぼ同様なので説明は省略�
 
 C++ で、以下のようなコードを考えます。
 
-<pre class="source" title="仮想関数呼び出し" lang="">
-<code><span class="reserved">void</span> print(Shape* s)
+```csharp
+void print(Shape* s)
 {
-  printf(<span class="literal">"%s\n%f\n%f\n\n"</span>,
-    <span class="reserved">typeid</span>(*s).name(),
-    s-&gt;GetArea(),
-    s-&gt;GetPerimeter());
+  printf("%s\n%f\n%f\n\n",
+    typeid(*s).name(),
+    s->GetArea(),
+    s->GetPerimeter());
 }
 
-<span class="reserved">void</span> TestCpp()
+void TestCpp()
 {
   Shape* s;
   
-  s = <span class="reserved">new</span> Rectangle(2, 3);
+  s = new Rectangle(2, 3);
   print(s);
-  <span class="reserved">delete</span> s;
+  delete s;
 
-  s = <span class="reserved">new</span> Circle(1.41421356);
+  s = new Circle(1.41421356);
   print(s);
-  <span class="reserved">delete</span> s;
+  delete s;
 }
-</code></pre>
+```
 
 
 Rectangle, Circle のインスタンスそれぞれについて、
@@ -413,32 +413,32 @@ Rectangle, Circle のインスタンスそれぞれについて、
 
 これに相当する C 言語コードは以下のようになります。
 
-<pre class="source" title="仮想関数呼び出しに相当する C 言語コード" lang="">
-<code><span class="reserved">void</span> print(Shape* s)
+```csharp
+void print(Shape* s)
 {
-  printf(<span class="literal">"%s\n%f\n%f\n\n"</span>,
-    (<span class="reserved">char</span>*)s-&gt;vftable[0],
-    ((TypeGetArea*)s-&gt;vftable[VF_GetArea])(s),
-    ((TypeGetPerimeter*)s-&gt;vftable[VF_GetPerimeter])(s));
+  printf("%s\n%f\n%f\n\n",
+    (char*)s->vftable[0],
+    ((TypeGetArea*)s->vftable[VF_GetArea])(s),
+    ((TypeGetPerimeter*)s->vftable[VF_GetPerimeter])(s));
 }
 
-<span class="reserved">void</span> TestC(<span class="reserved">void</span>)
+void TestC(void)
 {
   Shape* s;
 
-  s = (Shape*)malloc(<span class="reserved">sizeof</span>(Rectangle));
+  s = (Shape*)malloc(sizeof(Rectangle));
   RectangleCtor((Rectangle*)s, 2, 3);
   print(s);
   RectangleDtor((Rectangle*)s);
   free(s);
 
-  s = (Shape*)malloc(<span class="reserved">sizeof</span>(Circle));
+  s = (Shape*)malloc(sizeof(Circle));
   CircleCtor((Circle*)s, 1.41421356);
   CircleDtor((Circle*)s);
   print(s);
   free(s);
 }
-</code></pre>
+```
 
 
 これで、先ほどの C++ コードと同じ出力が得られます。
@@ -447,20 +447,20 @@ Rectangle, Circle のインスタンスそれぞれについて、
 仮想関数呼び出しと、型情報の取得の部分だけを取り出してみましょう。
 まずは C++。
 
-<pre class="source" title="仮想関数呼び出し" lang="">
-<code><span class="reserved">typeid</span>(*s).name(),
-s-&gt;GetArea(),
-s-&gt;GetPerimeter());
-</code></pre>
+```csharp
+typeid(*s).name(),
+s->GetArea(),
+s->GetPerimeter());
+```
 
 
 続いて C 言語版。
 
-<pre class="source" title="仮想関数呼び出しに相当する C 言語コード" lang="">
-<code>(<span class="reserved">char</span>*)s-&gt;vftable[0],
-((TypeGetArea*)s-&gt;vftable[VF_GetArea])(s),
-((TypeGetPerimeter*)s-&gt;vftable[VF_GetPerimeter])(s));
-</code></pre>
+```csharp
+(char*)s->vftable[0],
+((TypeGetArea*)s->vftable[VF_GetArea])(s),
+((TypeGetPerimeter*)s->vftable[VF_GetPerimeter])(s));
+```
 
 
 型情報の取得は簡単ですね。
@@ -481,12 +481,12 @@ ShapeCtor, RectangleCtor, CircleCtor の中で、
 それぞれ ShapeVftable, RectangleVftable, CircleVftable に初期化されています。
 なので、
 
-<pre class="source" title="仮想関数呼び出しに相当する C 言語コード" lang="">
-<code>Shape* s = (Shape*)malloc(<span class="reserved">sizeof</span>(Rectangle));
+```csharp
+Shape* s = (Shape*)malloc(sizeof(Rectangle));
 RectangleCtor((Rectangle*)s, 2, 3);
 
-((TypeGetArea*)s-&gt;vftable[VF_GetArea])(s),
-</code></pre>
+((TypeGetArea*)s->vftable[VF_GetArea])(s),
+```
 
 
 というコードでは、
@@ -503,22 +503,22 @@ s は Shape のポインター型の変数ですが、
 もし、GetArea が仮想関数ではなかった場合、
 （C 言語版の）RectangleGetArea の呼び出しは以下のようになります。
 
-<pre class="source" title="通常のメンバー関数の C 言語化" lang="">
-<code>Shape* s = (Shape*)malloc(<span class="reserved">sizeof</span>(Rectangle));
+```csharp
+Shape* s = (Shape*)malloc(sizeof(Rectangle));
 RectangleCtor((Rectangle*)s, 2, 3);
 
 RectangleGetArea((Rectangle*)s);
-</code></pre>
+```
 
 
 一方、仮想関数呼び出しは以下のようになります。
 
-<pre class="source" title="仮想関数呼び出しの C 言語化" lang="">
-<code>Shape* s = (Shape*)malloc(<span class="reserved">sizeof</span>(Rectangle));
+```csharp
+Shape* s = (Shape*)malloc(sizeof(Rectangle));
 RectangleCtor((Rectangle*)s, 2, 3);
 
-((TypeGetArea*)s-&gt;vftable[VF_GetArea])(s),
-</code></pre>
+((TypeGetArea*)s->vftable[VF_GetArea])(s),
+```
 
 
 その差は、仮想関数テーブル vftable の参照を行うかどうかということになります。
@@ -537,10 +537,10 @@ RectangleCtor((Rectangle*)s, 2, 3);
 コンパイル時にどのメンバー関数を呼び出せばいいのかが確定するので、
 通常のメンバー関数呼び出しになります。
 
-<pre class="source" title="仮想関数呼び出し" lang="">
-<code>Rectangle r(2, 3);
+```csharp
+Rectangle r(2, 3);
 r.GetArea();
-</code></pre>
+```
 
 
 当然、仮想関数であることのメリットも一切受けないことになるので、

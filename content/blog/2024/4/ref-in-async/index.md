@@ -15,33 +15,33 @@ aliases: []
 
 [前回の `Lock` クラスの話](../lock-class/index.md)を見てから、とりあえず以下のコードを見てほしい。
 
-<pre class="source" title="非同期メソッド中でエラーに">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>Versioning;
+```csharp
+using System.Runtime.Versioning;
 
-[<span class="reserved">module</span>: <span class="type">RequiresPreviewFeatures</span>]
+[module: RequiresPreviewFeatures]
 
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+class MultiThreadCode
 {
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="reserved">object</span> <span class="field"><span class="static">_syncObj</span></span> <span class="operator">=</span> <span class="reserved">new</span>();
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">Lock</span> <span class="field"><span class="static">_syncLock</span></span> <span class="operator">=</span> <span class="reserved">new</span>();
+    private static readonly object _syncObj = new();
+    private static readonly Lock _syncLock = new();
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">object</span><span class="operator">?</span>&gt; <span class="method"><span class="static">MIterator</span></span>()
+    public static IEnumerable<object?> MIterator()
     {
-        <span class="reserved">lock</span> (<span class="field"><span class="static">_syncObj</span></span>) { } <span class="comment">// 旧来 lock。</span>
-        <span class="reserved">lock</span> (<span class="field"><span class="static">_syncLock</span></span>) { } <span class="comment">// 新しい lock (VS 17.10p2 以降)。</span>
+        lock (_syncObj) { } // 旧来 lock。
+        lock (_syncLock) { } // 新しい lock (VS 17.10p2 以降)。
 
-        <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+        yield return null;
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type struct">ValueTask</span> <span class="method"><span class="static">MAsync</span></span>()
+    public static async ValueTask MAsync()
     {
-        <span class="reserved">lock</span> (<span class="static"><span class="field">_syncObj</span></span>) { }
-        <span class="reserved">lock</span> (<span class="static"><span class="error" title="CS9217"><span class="field">_syncLock</span></span></span>) { } <span class="comment">// これだけダメ(VS 17.10p2 以降)。</span>
+        lock (_syncObj) { }
+        lock (_syncLock) { } // これだけダメ(VS 17.10p2 以降)。
 
-        <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>();
+        await Task.Yield();
     }
 }
-</pre>
+```
 
 おそらく C# 13 正式リリースまでには直ると思うんですが、
 どうしてこうなるのかと、どう対処する予定なのかという話になります。
@@ -55,63 +55,63 @@ aliases: []
 [前回の話]で、今回関係するのは、`Lock` インスタンスに対する `lock` ステートメントが `using (x.EnterScope())` み化けるという点。
 で、さらにいうと、`using` は以下のように展開されます。
 
-<pre class="source" title="lock → using → try-finally">
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+```csharp
+class MultiThreadCode
 {
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">Lock</span> <span class="field"><span class="static">_syncLock</span></span> <span class="operator">=</span> <span class="reserved">new</span>();
+    private static readonly Lock _syncLock = new();
 
-    <span class="comment">// 元コード。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">A</span></span>()
+    // 元コード。
+    public static void A()
     {
-        <span class="reserved">lock</span> (<span class="field"><span class="static">_syncLock</span></span>) { }
+        lock (_syncLock) { }
     }
 
-    <span class="comment">// lock → using。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">B</span></span>()
+    // lock → using。
+    public static void B()
     {
-        <span class="reserved">using</span> (<span class="static"><span class="field">_syncLock</span></span><span class="operator">.</span><span class="method">EnterScope</span>()) { }
+        using (_syncLock.EnterScope()) { }
     }
 
-    <span class="comment">// using → try-finally。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">C</span></span>()
+    // using → try-finally。
+    public static void C()
     {
-        <span class="type">Lock</span><span class="operator">.</span><span class="type struct">Scope</span> <span class="variable">scope</span> <span class="operator">=</span> <span class="field"><span class="static">_syncLock</span></span><span class="operator">.</span><span class="method">EnterScope</span>();
-        <span class="control">try</span>
+        Lock.Scope scope = _syncLock.EnterScope();
+        try
         {
         }
-        <span class="control">finally</span>
+        finally
         {
-            <span class="variable">scope</span><span class="operator">.</span><span class="method">Dispose</span>();
+            scope.Dispose();
         }
     }
 }
-</pre>
+```
 
 ここで、`Lock.Scope` は [ref struct](../../../../study/csharp/resource/refstruct.md) になっています。
 これが先ほどのコードで非同期メソッド中の `lock (_syncLock)` がエラーになる原因です。
 問題の本質としては以下のようなコードと同じ。
 
-<pre class="source" title="非同期メソッド中では ref struct を使えない">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">object</span><span class="operator">?</span>&gt; <span class="method"><span class="static">MIterator</span></span>()
+    public static IEnumerable<object?> MIterator()
     {
-        <span class="comment">// イテレーター中では ref strcut を使える。</span>
-        <span class="comment">// (ただし、yield をまたがない場合のみ。)</span>
-        <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">1</span>];
+        // イテレーター中では ref strcut を使える。
+        // (ただし、yield をまたがない場合のみ。)
+        Span<int> span = stackalloc int[1];
 
-        <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+        yield return null;
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type struct">ValueTask</span> <span class="method"><span class="static">MAsync</span></span>()
+    public static async ValueTask MAsync()
     {
-        <span class="comment">// こちらはダメ。</span>
-        <span class="error" title="CS4012"><span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;</span> <span class="variable">span</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[<span class="number">1</span>];
+        // こちらはダメ。
+        Span<int> span = stackalloc int[1];
 
-        <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>();
+        await Task.Yield();
     }
 }
-</pre>
+```
 
 イテレーターと非同期メソッドって、仕組みがかなり似ていて、「イテレーターでできて非同期メソッドでできない」ということは原理的にはあまりないんですが。
 実際、上記の挙動は単に実装都合で、コストさえかければ「非同期メソッド中でも ref struct のローカル変数を書けるようにする」というのは可能です。
@@ -123,77 +123,77 @@ aliases: []
 
 例えば以下のようなコードを書いたとき、
 
-<pre class="source" title="イテレーターの例">
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="method">M</span>())
+```csharp
+foreach (var x in M())
 {
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">x</span>);
+    Console.WriteLine(x);
 }
 
-<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">M</span>()
+IEnumerable<int> M()
 {
-    <span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
-    <span class="control">yield</span> <span class="control">return</span> <span class="variable">x</span> <span class="operator">*</span> <span class="variable">x</span>;
+    var x = 1;
+    yield return x * x;
 
-    <span class="comment">// 式は適当。</span>
-    <span class="comment">// ここで重要なのは、y は yield をまたがないということ。</span>
-    <span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="operator">++</span><span class="variable">x</span> <span class="operator">*</span> <span class="variable">x</span>;
-    <span class="variable">y</span> <span class="operator">*=</span> <span class="variable">y</span>;
+    // 式は適当。
+    // ここで重要なのは、y は yield をまたがないということ。
+    var y = ++x * x;
+    y *= y;
 
-    <span class="control">yield</span> <span class="control">return</span> <span class="variable">y</span>;
+    yield return y;
 
-    <span class="comment">// 同、z は yield をまたがない。</span>
-    <span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> <span class="operator">++</span><span class="variable">x</span>;
-    <span class="variable">z</span> <span class="operator">*=</span> (<span class="number">2</span> <span class="operator">*</span> <span class="variable">x</span> <span class="operator">+</span> <span class="number">1</span>);
+    // 同、z は yield をまたがない。
+    var z = ++x;
+    z *= (2 * x + 1);
 
-    <span class="control">yield</span> <span class="control">return</span> <span class="variable">z</span>;
+    yield return z;
 }
-</pre>
+```
 
 おおむね、以下のようなクラスが生成されます。
 (簡単化のためちょこっとさぼっています。要点のみ。)
 
-<pre class="source" title="上記イテレーターの解釈結果">
-<span class="reserved">var</span> <span class="variable">e</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">MImpl</span>();
-<span class="control">while</span> (<span class="variable">e</span><span class="operator">.</span><span class="method">MoveNext</span>())
+```csharp
+var e = new MImpl();
+while (e.MoveNext())
 {
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">e</span><span class="operator">.</span><span class="property">Current</span>);
+    Console.WriteLine(e.Current);
 }
 
-<span class="reserved">class</span> <span class="type">MImpl</span>
+class MImpl
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_i</span> <span class="operator">=</span> <span class="number">0</span>;
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_x</span> <span class="operator">=</span> <span class="number">1</span>;
+    private int _i = 0;
+    private int _x = 1;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Current</span> { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
+    public int Current { get; private set; }
 
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">MoveNext</span>()
+    public bool MoveNext()
     {
-        <span class="control">if</span> (<span class="field">_i</span> <span class="operator">==</span> <span class="number">0</span>)
+        if (_i == 0)
         {
-            <span class="property">Current</span> <span class="operator">=</span> <span class="field">_x</span> <span class="operator">*</span> <span class="field">_x</span>;
+            Current = _x * _x;
         }
-        <span class="control">else</span> <span class="control">if</span> (<span class="field">_i</span> <span class="operator">==</span> <span class="number">1</span>)
+        else if (_i == 1)
         {
-            <span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="operator">++</span><span class="field">_x</span> <span class="operator">*</span> <span class="field">_x</span>;
-            <span class="variable">y</span> <span class="operator">*=</span> <span class="variable">y</span>;
-            <span class="property">Current</span> <span class="operator">=</span> <span class="variable">y</span>;
+            var y = ++_x * _x;
+            y *= y;
+            Current = y;
         }
-        <span class="control">else</span> <span class="control">if</span> (<span class="field">_i</span> <span class="operator">==</span> <span class="number">2</span>)
+        else if (_i == 2)
         {
-            <span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> <span class="operator">++</span><span class="field">_x</span>;
-            <span class="variable">z</span> <span class="operator">*=</span> (<span class="number">2</span> <span class="operator">*</span> <span class="field">_x</span> <span class="operator">+</span> <span class="number">1</span>);
-            <span class="property">Current</span> <span class="operator">=</span> <span class="variable">z</span>;
+            var z = ++_x;
+            z *= (2 * _x + 1);
+            Current = z;
         }
-        <span class="control">else</span>
+        else
         {
-            <span class="control">return</span> <span class="reserved">false</span>;
+            return false;
         }
 
-        <span class="field">_i</span><span class="operator">++</span>;
-        <span class="control">return</span> <span class="reserved">true</span>;
+        _i++;
+        return true;
     }
 }
-</pre>
+```
 
 ここで重要なのは以下の点。
 
@@ -207,56 +207,56 @@ aliases: []
 ただまあ、これはあくまで「原理的には」という話であって、じゃあ、現在の実装がどうなっているかというと…
 C# 12 時点では以下のような感じ。
 
-<pre class="source" title="C# 12 時点での、ref/ref struct のイテレーター/非同期メソッド中での挙動">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>()
+    public static void M()
     {
-        <span class="type struct">RefStruct</span> <span class="variable">rs</span> <span class="operator">=</span> <span class="reserved">new</span>();
+        RefStruct rs = new();
 
-        <span class="reserved">using</span> (<span class="variable">rs</span>) { }
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">_</span> <span class="control">in</span> <span class="variable">rs</span>) ;
+        using (rs) { }
+        foreach (var _ in rs) ;
 
-        <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
-        <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>;
+        int x = 1;
+        ref int r = ref x;
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">object</span><span class="operator">?</span>&gt; <span class="method"><span class="static">MIterator</span></span>()
+    public static IEnumerable<object?> MIterator()
     {
-        <span class="type struct">RefStruct</span> <span class="variable">rs</span> <span class="operator">=</span> <span class="reserved">new</span>();
+        RefStruct rs = new();
 
-        <span class="reserved">using</span> (<span class="variable">rs</span>) { }
-        <span class="error" title="CS8344"><span class="control">foreach</span></span> (<span class="reserved">var</span> <span class="variable">_</span> <span class="control">in</span> <span class="variable">rs</span>) ; <span class="comment">// ダメ。</span>
+        using (rs) { }
+        foreach (var _ in rs) ; // ダメ。
 
-        <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
-        <span class="reserved">ref</span> <span class="reserved">int</span> <span class="error" title="CS8176"><span class="variable">r</span></span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>; <span class="comment">// ダメ。</span>
+        int x = 1;
+        ref int r = ref x; // ダメ。
 
-        <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+        yield return null;
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type struct">ValueTask</span> <span class="static"><span class="method">MAsync</span></span>()
+    public static async ValueTask MAsync()
     {
-        <span class="type struct"><span class="error" title="CS4012">RefStruct</span></span> <span class="variable">rs</span> <span class="operator">=</span> <span class="reserved">new</span>(); <span class="comment">// 非同期メソッドだとこの時点でダメ。</span>
+        RefStruct rs = new(); // 非同期メソッドだとこの時点でダメ。
 
-        <span class="reserved">using</span> (<span class="variable"><span class="error" title="CS9104">rs</span></span>) { } <span class="comment">// ダメ。</span>
-        <span class="control"><span class="error" title="CS8344">foreach</span></span> (<span class="reserved">var</span> <span class="variable">_</span> <span class="control">in</span> <span class="variable">rs</span>) ; <span class="comment">// ダメ。</span>
+        using (rs) { } // ダメ。
+        foreach (var _ in rs) ; // ダメ。
 
-        <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
-        <span class="reserved">ref</span> <span class="reserved">int</span> <span class="error" title="CS8177"><span class="variable">r</span></span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>; <span class="comment">// ダメ。</span>
+        int x = 1;
+        ref int r = ref x; // ダメ。
 
-        <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="static"><span class="method">Yield</span></span>();
+        await Task.Yield();
     }
 }
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">RefStruct</span>
+ref struct RefStruct
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() { }
+    public void Dispose() { }
 
-    <span class="reserved">public</span> <span class="type struct">RefStruct</span> <span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="reserved">this</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Current</span> <span class="operator">=&gt;</span> <span class="number">0</span>;
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">MoveNext</span>() <span class="operator">=&gt;</span> <span class="reserved">false</span>;
+    public RefStruct GetEnumerator() => this;
+    public int Current => 0;
+    public bool MoveNext() => false;
 }
-</pre>
+```
 
 どれも、「ref struct のローカル変数が認められるのであれば書けてもいいはずのコード」になります。
 ところが、大丈夫なものとコンパイル エラーになるものがまちまち。
@@ -271,15 +271,15 @@ C# 12 時点では以下のような感じ。
 
 先ほどの、以下のようなコード、すべて「`yield`/`await` さえまたがなければ認める」ということになりそうです。
 
-<pre class="source" title="C# 12 時点での、ref/ref struct のイテレーター/非同期メソッド中での挙動">
-<span class="type struct">RefStruct</span> <span class="variable">rs</span> <span class="operator">=</span> <span class="reserved">new</span>();
+```csharp
+RefStruct rs = new();
 
-<span class="reserved">using</span> (<span class="variable">rs</span>) { }
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">_</span> <span class="control">in</span> <span class="variable">rs</span>) ;
+using (rs) { }
+foreach (var _ in rs) ;
 
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
-<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>;
-</pre>
+int x = 1;
+ref int r = ref x;
+```
 
 * ref ローカル変数
 * ref struct のローカル変数
@@ -294,30 +294,30 @@ C# 12 時点では以下のような感じ。
 逆に、「これまで書けちゃっていたけども、実はまずかった」というものに警告を出そうという話もあります。
 それが「`lock` ステートメント中の `yield`」です。
 
-<pre class="source" title="まずそうなコード: lock 中の yield">
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+```csharp
+class MultiThreadCode
 {
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="reserved">object</span> <span class="static"><span class="field">_syncObj</span></span> <span class="operator">=</span> <span class="reserved">new</span>();
+    private static readonly object _syncObj = new();
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">object</span><span class="operator">?</span>&gt; <span class="method"><span class="static">MIterator</span></span>()
+    public static IEnumerable<object?> MIterator()
     {
-        <span class="reserved">lock</span> (<span class="field"><span class="static">_syncObj</span></span>)
+        lock (_syncObj)
         {
-            <span class="comment">// これが書けちゃう。使い方によってはまずい。</span>
-            <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+            // これが書けちゃう。使い方によってはまずい。
+            yield return null;
         }
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type struct">ValueTask</span> <span class="method"><span class="static">MAsync</span></span>()
+    public static async ValueTask MAsync()
     {
-        <span class="reserved">lock</span> (<span class="field"><span class="static">_syncObj</span></span>)
+        lock (_syncObj)
         {
-            <span class="comment">// 非同期メソッドの場合、コンパイル エラーになるので大丈夫。</span>
-            <span class="error" title="CS1996"><span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>()</span>;
+            // 非同期メソッドの場合、コンパイル エラーになるので大丈夫。
+            await Task.Yield();
         }
     }
 }
-</pre>
+```
 
 .NET の実装では、
 「ロックの開始と終了(内部的には `Monitor.Enter` と `Monitor.Exit`)は同じスレッドでやらないといけない」という制限がありまして。
@@ -326,24 +326,24 @@ C# 12 時点では以下のような感じ。
 で、イテレーターの方も使い方によっては「`yield` をまたぐと別スレッドになることがある」という意味では危険で、
 例えば、以下のようなコードを書くと実行時に `SynchronizationLockException` 例外が出ます。
 
-<pre class="source" title="lock 中 yield で例外を起こす例">
-<span class="reserved">object</span> <span class="variable">syncObj</span> <span class="operator">=</span> <span class="reserved">new</span>();
+```csharp
+object syncObj = new();
 
-<span class="type">IEnumerable</span>&lt;<span class="reserved">object</span><span class="operator">?</span>&gt; <span class="method">M</span>()
+IEnumerable<object?> M()
 {
-    <span class="reserved">lock</span> (<span class="variable">syncObj</span>)
+    lock (syncObj)
     {
-        <span class="comment">// これが書けちゃう。使い方によってはまずい。</span>
-        <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+        // これが書けちゃう。使い方によってはまずい。
+        yield return null;
     }
 }
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">_</span> <span class="control">in</span> <span class="method">M</span>())
+foreach (var _ in M())
 {
-    <span class="comment">// M 内に非同期コードがなくても、利用側が非同期だった時点でアウト。</span>
-    <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>();
+    // M 内に非同期コードがなくても、利用側が非同期だった時点でアウト。
+    await Task.Yield();
 }
-</pre>
+```
 
 ということで、この「`lock` 中での `yield`」も警告を足すことになりそうです。
 (いきなりエラーにすると破壊的変更になるのでとりあえず警告。

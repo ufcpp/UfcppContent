@@ -22,21 +22,21 @@ C# ライブ配信をしていて、「[括弧用の記号の種類が少なす�
 例えば以下のコードはコンパイルして実行できます。
 (1から5の和で、15が出力されます。)
 
-<pre class="source" title="Swift の Unicode 演算子">
-<code><span class="reserved">prefix operator</span> <span class="method">∑</span>
+```swift
+prefix operator ∑
 
-<span class="reserved">prefix func</span> <span class="method">∑</span> (<span class="variable">x</span>: [<span class="type">Int</span>]) -> <span class="type">Int</span> {
-  <span class="reserved">var</span> <span class="variable">sum</span> = 0
-  <span class="reserved">for</span> <span class="variable">i</span> <span class="reserved">in</span> <span class="variable">x</span> {
-    <span class="variable">sum</span> += <span class="variable">i</span>
+prefix func ∑ (x: [Int]) -> Int {
+  var sum = 0
+  for i in x {
+    sum += i
   }
-  <span class="reserved">return</span> <span class="variable">sum</span>
+  return sum
 }
 
-<span class="reserved">let</span> <span class="variable">Σ</span> = [ 1, 2, 3, 4, 5 ]
+let Σ = [ 1, 2, 3, 4, 5 ]
 
-<span class="method">print</span>(<span class="method">∑</span><span class="variable">Σ</span>)
-</code></pre>
+print(∑Σ)
+```
 
 `∑Σ`。
 

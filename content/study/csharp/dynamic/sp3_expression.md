@@ -27,18 +27,18 @@ aliases:
 匿名デリゲート（実行可能なコード）ではなく<strong id="expressiontree" class="keyword">式木</strong>（式の意味を表す木構造データ）としてコンパイルされます。 
 例えば、以下の2つのコードは同じ意味になります。
 
-<pre class="source" title="ラムダ式から式木を作る" lang="">
-<code><span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt; e = x =&gt; x + <span class="literal">5</span>
-</code></pre>
+```csharp
+Expression<Func<int, int>> e = x => x + 5
+```
 
 
-<pre class="source" title="直接式木を作る" lang="">
-<code><span class="reserved">var</span> x = <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">int</span>), <span class="literal">"x"</span>);
-<span class="reserved">var</span> e = 
-  <span class="type">Expression</span>.Lambda&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt;(
-    <span class="type">Expression</span>.Add(x, <span class="type">Expression</span>.Constant(<span class="literal">5</span>)),
+```csharp
+var x = Expression.Parameter(typeof(int), "x");
+var e = 
+  Expression.Lambda<Func<int, int>>(
+    Expression.Add(x, Expression.Constant(5)),
     x);
-</code></pre>
+```
 
 
 ここでは、
@@ -61,20 +61,20 @@ aliases:
 ラムダ式には、以下に例示するような2つの記法、
 1文だけのタイプとブロックを持つタイプがあります。
 
-<pre class="source" title="1文だけのラムダ式（式木にできる）" lang="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f = x =&gt; x + <span class="literal">5</span>
-</code></pre>
+```csharp
+Func<int, int> f = x => x + 5
+```
 
 
-<pre class="source" title="ブロックタイプのラムダ式（式木にできない）" lang="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f = x =&gt;
+```csharp
+Func<int, int> f = x =>
   {
-    <span class="reserved">int</span> p = <span class="literal">1</span>;
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = <span class="literal">0</span>; i &lt; x; ++i)
+    int p = 1;
+    for (int i = 0; i < x; ++i)
       p *= x;
-    <span class="reserved">return</span> p;
+    return p;
   }
-</code></pre>
+```
 
 
 前者は、ただ1つだけの式からなっていて、 {} や return を省略できます。
@@ -90,14 +90,14 @@ aliases:
 一方、C# 3.0 で導入されたオブジェクト初期化子（object initializer）（参考：「[初期化子](../functional/sp3_lambda.md#init)」）を使えば、結構複雑な式も書けたりします。
 例えば以下のような感じ。
 
-<pre class="source" title="初期化子を使ったラムダ式" lang="">
-<code><span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="type">LineSegment</span>&gt;&gt; e = () =&gt; 
-  <span class="reserved">new</span> <span class="type">LineSegment</span>
+```csharp
+Expression<Func<LineSegment>> e = () => 
+  new LineSegment
   {
-    Start = { X = <span class="literal">0</span>, Y = <span class="literal">0</span> },
-    End   = { X = <span class="literal">1</span>, Y = <span class="literal">1</span> },
+    Start = { X = 0, Y = 0 },
+    End   = { X = 1, Y = 1 },
   };
-</code></pre>
+```
 
 
 
@@ -165,63 +165,64 @@ NodeType がそれぞればらばらで、少し複雑なんですが、
 （型推論が働きやすくするために）、
 以下のような補助関数を用意します。
 
-<pre class="source" title="Expression&lt;T&gt; 型の型推論のための補助関数" lang="">
-<code><span class="reserved">static partial class</span> <span class="type">Make</span>
+```csharp
+static partial class Make
 {
-    <span class="reserved">public static</span> <span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;TR&gt;&gt; Expression&lt;TR&gt;(<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;TR&gt;&gt; e)
+    public static Expression<Func<TR>> Expression<TR>(Expression<Func<TR>> e)
     {
-        <span class="reserved">return</span> e;
+        return e;
     }
 
-    <span class="reserved">public static</span> <span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;T1, TR&gt;&gt; Expression&lt;T1, TR&gt;(<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;T1, TR&gt;&gt; e)
+    public static Expression<Func<T1, TR>> Expression<T1, TR>(Expression<Func<T1, TR>> e)
     {
-        <span class="reserved">return</span> e;
+        return e;
     }
 
-    <span class="reserved">public static</span> <span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;T1, T2, TR&gt;&gt; Expression&lt;T1, T2, TR&gt;(<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;T1, T2, TR&gt;&gt; e)
+    public static Expression<Func<T1, T2, TR>> Expression<T1, T2, TR>(Expression<Func<T1, T2, TR>> e)
     {
-        <span class="reserved">return</span> e;
+        return e;
     }
 
-    <span class="reserved">public static</span> <span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;T1, T2, T3, TR&gt;&gt; Expression&lt;T1, T2, T3, TR&gt;(<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;T1, T2, T3, TR&gt;&gt; e)
+    public static Expression<Func<T1, T2, T3, TR>> Expression<T1, T2, T3, TR>(Expression<Func<T1, T2, T3, TR>> e)
     {
-        <span class="reserved">return</span> e;
+        return e;
     }
 
-    <span class="reserved">public static</span> <span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;T1, T2, T3, T4, TR&gt;&gt; Expression&lt;T1, T2, T3, T4, TR&gt;(<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;T1, T2, T3, T4, TR&gt;&gt; e)
+    public static Expression<Func<T1, T2, T3, T4, TR>> Expression<T1, T2, T3, T4, TR>(Expression<Func<T1, T2, T3, T4, TR>> e)
     {
-        <span class="reserved">return</span> e;
+        return e;
     }
-}</code></pre>
+}
+```
 
 
 また、（簡易的にではありますが、）
 2つの式木が一致するかどうかを判定する関数を用意します。
 
-<pre class="source" title="2つの式木が一致性判定" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 式木の構造が一致してれば、少なくとも ToString の結果は一致するので、
 /// それで2つの式木の一致性を判定。
-/// &lt;/summary&gt;</span>
-<span class="reserved">static void</span> SimpleCheck(<span class="type">Expression</span> e1, <span class="type">Expression</span> e2)
+/// </summary>
+static void SimpleCheck(Expression e1, Expression e2)
 {
-    <span class="reserved">if</span> (e1.ToString() != e2.ToString())
+    if (e1.ToString() != e2.ToString())
     {
-        <span class="type">Console</span>.Write(<span class="literal">"not match: {0}, {1}\n"</span>, e1, e2);
+        Console.Write("not match: {0}, {1}\n", e1, e2);
     }
 }
-</code></pre>
+```
 
 
 さらに、Expression.Parameter は頻繁に出てくるものなので、
 あらかじめ Parameter を作って変数に代入しておきます。
 
-<pre class="source" title="ParameterExpression を事前に準備" lang="">
-<code><span class="reserved">static</span> <span class="type">ParameterExpression</span> intX = <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">int</span>), <span class="literal">"x"</span>);
-<span class="reserved">static</span> <span class="type">ParameterExpression</span> intY = <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">int</span>), <span class="literal">"y"</span>);
-<span class="reserved">static</span> <span class="type">ParameterExpression</span> boolX = <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">bool</span>), <span class="literal">"x"</span>);
-<span class="reserved">static</span> <span class="type">ParameterExpression</span> boolY = <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">bool</span>), <span class="literal">"y"</span>);
-</code></pre>
+```csharp
+static ParameterExpression intX = Expression.Parameter(typeof(int), "x");
+static ParameterExpression intY = Expression.Parameter(typeof(int), "y");
+static ParameterExpression boolX = Expression.Parameter(typeof(bool), "x");
+static ParameterExpression boolY = Expression.Parameter(typeof(bool), "y");
+```
 
 
 それから、テスト用に、Point, LineSegment, Polyline などの型を定義します →
@@ -245,30 +246,30 @@ Lambda メソッドに、ラムダ式の本体（Body）とパラメータリス
 （以後、サンプルコード中では、
 SimpleCheck メソッドの1つ目の引数と2つ目の引数が同じ式木になっています。）
 
-<pre class="source" title="Lambda" lang="">
-<code><span class="type">SimpleCheck(
-  Make</span>.Expression((<span class="reserved">int</span> x) =&gt; <span class="literal">0</span>),
-  <span class="type">Expression</span>.Lambda&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt;(
-    <span class="type">Expression</span>.Constant(<span class="literal">0</span>), <span class="comment">// Body</span>
-    intX) <span class="comment">// Paremters[0]</span>
+```csharp
+SimpleCheck(
+  Make.Expression((int x) => 0),
+  Expression.Lambda<Func<int, int>>(
+    Expression.Constant(0), // Body
+    intX) // Paremters[0]
   );
-</code></pre>
+```
 
 
 ちなみに、ラムダ式中にさらに式木が含まれていた場合、
 その式木は Quote で囲まれます。
 
-<pre class="source" title="Quote" lang="">
-<code><span class="type">SimpleCheck(
-  Make</span>.Expression(() =&gt;
-    (<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt;&gt;)(() =&gt; <span class="literal">0</span>)
+```csharp
+SimpleCheck(
+  Make.Expression(() =>
+    (Expression<Func<int>>)(() => 0)
   ).Body,
-  <span class="type">Expression</span>.Convert(
-    <span class="type">Expression</span>.Quote(
-      (<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt;&gt;)(() =&gt; <span class="literal">0</span>)),
-  <span class="reserved">typeof</span>(<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt;&gt;))
+  Expression.Convert(
+    Expression.Quote(
+      (Expression<Func<int>>)(() => 0)),
+  typeof(Expression<Func<int>>))
 );
-</code></pre>
+```
 
 
 <table summary="Lambda, Paramter, Constant, Quote">
@@ -317,32 +318,32 @@ SimpleCheck メソッドの1つ目の引数と2つ目の引数が同じ式木に
 
 算術演算には、オーバーフローのチェックを行うかどうかで2つのバージョンがあります。
 
-<pre class="source" title="checked/unchecked" lang="">
-<code><span class="type">SimpleCheck(
-  Make</span>.Expression((<span class="reserved">int</span> x) =&gt; -x).Body,
-  <span class="type">Expression</span>.Negate(intX)
+```csharp
+SimpleCheck(
+  Make.Expression((int x) => -x).Body,
+  Expression.Negate(intX)
 );
 SimpleCheck(
-  <span class="type">Make</span>.Expression((<span class="reserved">int</span> x) =&gt; <span class="reserved">checked</span>(-x)).Body,
-  <span class="type">Expression</span>.NegateChecked(intX)
+  Make.Expression((int x) => checked(-x)).Body,
+  Expression.NegateChecked(intX)
 );
-</code></pre>
+```
 
 
 int などに単項 + を適用すると、最適化されて + が消えてしまうので注意。
 ユーザ定義型の + の場合はちゃんと + が残ります。
 
-<pre class="source" title="単項 +" lang="">
-<code><span class="comment">// ↓これは最適化がかかって +x が x になる。</span>
-<span class="type">SimpleCheck(
-  Make</span>.Expression((<span class="reserved">int</span> x) =&gt; +x).Body,
+```csharp
+// ↓これは最適化がかかって +x が x になる。
+SimpleCheck(
+  Make.Expression((int x) => +x).Body,
   intX
 );
 SimpleCheck(
-  <span class="type">Make</span>.Expression((CustomUnaryPlus x) =&gt; +x).Body,
-  <span class="type">Expression</span>.UnaryPlus(<span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(CustomUnaryPlus), <span class="literal">"x"</span>))
+  Make.Expression((CustomUnaryPlus x) => +x).Body,
+  Expression.UnaryPlus(Expression.Parameter(typeof(CustomUnaryPlus), "x"))
 );
-</code></pre>
+```
 
 
 <table summary="単項算術演算">
@@ -384,16 +385,16 @@ SimpleCheck(
 ちなみに、C# の言語仕様では、オーバーフローのチェックを行うのは整数に対してのみです。
 double などの浮動小数点数では、たとえ checked がついていても、オーバーフローのチェックは行われません。
 
-<pre class="source" title="浮動小数点数は checked にならない" lang="">
-<code><span class="comment">// たとえ checked がついていても、
-// double 同士の演算はオーバーフローをチェックしない</span>
+```csharp
+// たとえ checked がついていても、
+// double 同士の演算はオーバーフローをチェックしない
 SimpleCheck(
-  <span class="type">Make</span>.Expression((<span class="reserved">double</span> x, <span class="reserved">double</span> y) =&gt; <span class="reserved">checked</span>(x + y)).Body,
-  <span class="type">Expression</span>.Add(
-    <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">double</span>), <span class="literal">"x"</span>),
-    <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">double</span>), <span class="literal">"y"</span>))
+  Make.Expression((double x, double y) => checked(x + y)).Body,
+  Expression.Add(
+    Expression.Parameter(typeof(double), "x"),
+    Expression.Parameter(typeof(double), "y"))
 );
-</code></pre>
+```
 
 
 あと、C# には、べき乗算子はありませんが、
@@ -764,33 +765,33 @@ New がコンストラクタ呼び出し、Bindings が初期化子ーによる�
 MemberInit の Bindings は、
 以下のような単純なものは MemberAssingment（Expressin.Bind メソッドで生成）、
 
-<pre class="source" title="MemberAssingment" lang="">
-<code><span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">2</span> }
-</code></pre>
+```csharp
+new Point { X = 1, Y = 2 }
+```
 
 
 以下のような、再帰構造を持つものは MemberMemberBinding（Expression.MemberBind で生成）、
 
-<pre class="source" title="MemberMemberBinding" lang="">
-<code><span class="reserved">new</span> <span class="type">LineSegment</span>
+```csharp
+new LineSegment
 {
-  Start = { X = <span class="literal">1</span>, Y = <span class="literal">1</span> },
-  End = { X = <span class="literal">2</span>, Y = <span class="literal">2</span> }
+  Start = { X = 1, Y = 1 },
+  End = { X = 2, Y = 2 }
 }
-</code></pre>
+```
 
 
 以下のようなリスト形式のものは ListBinding（Expression.ListBind で生成）
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">new</span> Polyline
+```csharp
+new Polyline
 {
   Vertices = {
-    <span class="reserved">new</span> <span class="type">Point</span>{ X = <span class="literal">1</span>, Y = <span class="literal">1</span> },
-    <span class="reserved">new</span> <span class="type">Point</span>{ X = <span class="literal">2</span>, Y = <span class="literal">2</span> },
+    new Point{ X = 1, Y = 1 },
+    new Point{ X = 2, Y = 2 },
   }
 }
-</code></pre>
+```
 
 
 になります。
@@ -841,59 +842,59 @@ MemberInit の Bindings は、
 
 以下に、.NET 4 の式木の例を示します。
 
-<pre class="source" title=".NET Framework 4 での式木の例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Linq.Expressions;
+```csharp
+using System;
+using System.Linq.Expressions;
 
-<span class="reserved">public class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public static void</span> Main()
+    public static void Main()
     {
-        <span class="reserved">var</span> x = <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">int</span>), <span class="literal">"x"</span>);
-        <span class="reserved">var</span> i = <span class="type">Expression</span>.Parameter(<span class="reserved">typeof</span>(<span class="reserved">int</span>), <span class="literal">"i"</span>);
-        <span class="reserved">var</span> endLoop = <span class="type">Expression</span>.Label(<span class="literal">"EndLoop"</span>);
+        var x = Expression.Parameter(typeof(int), "x");
+        var i = Expression.Parameter(typeof(int), "i");
+        var endLoop = Expression.Label("EndLoop");
 
-        <span class="reserved">var</span> body = <span class="type">Expression</span>.Block(
-            <span class="reserved">typeof</span>(<span class="reserved">int</span>),
-            <span class="reserved">new</span>[] { x },
-            <span class="type">Expression</span>.Assign(x, <span class="type">Expression</span>.Constant(<span class="literal">0</span>)),
-            <span class="type">Expression</span>.Loop(
-                <span class="type">Expression</span>.Block(
-                    <span class="type">Expression</span>.AddAssign(x, i),
-                    <span class="type">Expression</span>.SubtractAssign(i, <span class="type">Expression</span>.Constant(<span class="literal">1</span>)),
-                    <span class="type">Expression</span>.IfThen(
-                        <span class="type">Expression</span>.LessThan(i, <span class="type">Expression</span>.Constant(<span class="literal">0</span>)),
-                        <span class="type">Expression</span>.Break(endLoop))),
+        var body = Expression.Block(
+            typeof(int),
+            new[] { x },
+            Expression.Assign(x, Expression.Constant(0)),
+            Expression.Loop(
+                Expression.Block(
+                    Expression.AddAssign(x, i),
+                    Expression.SubtractAssign(i, Expression.Constant(1)),
+                    Expression.IfThen(
+                        Expression.LessThan(i, Expression.Constant(0)),
+                        Expression.Break(endLoop))),
                 endLoop),
             x);
 
-        <span class="reserved">var</span> e = <span class="type">Expression</span>.Lambda&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt;(body, i);
+        var e = Expression.Lambda<Func<int, int>>(body, i);
 
-        <span class="reserved">var</span> f = e.Compile();
+        var f = e.Compile();
 
-        <span class="type">Console</span>.WriteLine(f(<span class="literal">2</span>));
-        <span class="type">Console</span>.WriteLine(f(<span class="literal">4</span>));
-        <span class="type">Console</span>.WriteLine(f(<span class="literal">6</span>));
+        Console.WriteLine(f(2));
+        Console.WriteLine(f(4));
+        Console.WriteLine(f(6));
     }
 }
-</code></pre>
+```
 
 
 これで、以下のコードに相当する式木が作れます。
 
-<pre class="source" title="ループ持ちのラムダ式" lang="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f = i =&gt;
+```csharp
+Func<int, int> f = i =>
     {
-        <span class="reserved">int</span> x = <span class="literal">0</span>;
-        <span class="reserved">for</span> (; ;)
+        int x = 0;
+        for (; ;)
         {
             x += i;
-            i -= <span class="literal">1</span>;
-            <span class="reserved">if</span> (i &lt;= <span class="literal">0</span>) <span class="reserved">break</span>;
+            i -= 1;
+            if (i <= 0) break;
         }
-        <span class="reserved">return</span> x;
+        return x;
     };
-</code></pre>
+```
 
 
 （ループは永久ループに相当する LoopExpression しかなくて、for や while 相当のコードを書くには、上記のように if と break を使います。）

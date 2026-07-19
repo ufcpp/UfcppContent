@@ -50,23 +50,23 @@ C# は後方互換性をものすごく大事にする言語で、
 ということで、`record` キーワードの追加にあっては破壊的変更(過去に `record` という名前の型を作って運用しているコードは C# 9.0 にするとコンパイルが通らなくなる)を認めることになりました。
 例えば以下のコードは C# 8.0 と 9.0 で意味が変わります。
 
-<pre class="source" title="C# 9.0 での破壊的変更">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">record</span> <span class="type">record</span>;
+    record record;
 }
-</code></pre>
+```
 
 * C# 8.0: `record` と言う名前の型の、`record` という名前のフィールドになる
 * C# 9.0: `record` という名前のレコード型を定義
 
 この破壊的変更に際して、そもそもとして、「`record` という名前の型自体に警告」というのも追加しています。
 
-<pre class="source" title="">
-<code><span class="comment">// C# 8.0 までは無警告。</span>
-<span class="comment">// C# 9.0 で CS8860 警告を追加。</span>
-<span class="reserved">class</span> <span class="type"><span class="warning">record</span></span> { }
-</code></pre>
+```csharp
+// C# 8.0 までは無警告。
+// C# 9.0 で CS8860 警告を追加。
+class record { }
+```
 
 ## lowerCase 型名要る？
 
@@ -102,15 +102,15 @@ Visual Studio 17.1 で導入される予定です。
 
 ちなみに、どうしても小文字アルファベットな型名が必要な場合、`@` を付けておけば警告は出ないそうです。
 
-<pre class="source" title="CS8981 警告の追加">
-<code><span class="comment">// class record だと CS8860 警告。</span>
-<span class="comment">// class @record だと IDE1006 suggest だけ。</span>
-<span class="reserved">class</span> <span class="type">@record</span> { }
+```csharp
+// class record だと CS8860 警告。
+// class @record だと IDE1006 suggest だけ。
+class @record { }
 
-<span class="comment">// class abc だと今後 CS8981 警告が出る予定。</span>
-<span class="comment">// class @abc だと IDE1006 suggest だけ。</span>
-<span class="reserved">class</span> <span class="type">@abc</span> { }
-</code></pre>
+// class abc だと今後 CS8981 警告が出る予定。
+// class @abc だと IDE1006 suggest だけ。
+class @abc { }
+```
 
 ## 小文字型名警告に備える
 

@@ -15,14 +15,14 @@ aliases: []
 
 今日は C# 配信をやっててちょくちょく話題になるやつの話。
 
-<pre class="source" title="Utf8? UTF8?">
-<span class="reserved">using</span> System<span class="operator">.</span>Text;
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>Unicode;
+```csharp
+using System.Text;
+using System.Text.Unicode;
 
-<span class="reserved">var</span> <span class="variable">buffer</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="number">3</span>]);
-<span class="static"><span class="type">Utf8</span></span><span class="operator">.</span><span class="method"><span class="static">FromUtf16</span></span>(<span class="string">&quot;abc&quot;</span>, <span class="variable">buffer</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">r</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">w</span>);
-<span class="type">Encoding</span><span class="operator">.</span><span class="static"><span class="property">UTF8</span></span><span class="operator">.</span><span class="method">GetString</span>(<span class="variable">buffer</span>[..<span class="variable">w</span>]);
-</pre>
+var buffer = (stackalloc byte[3]);
+Utf8.FromUtf16("abc", buffer, out var r, out var w);
+Encoding.UTF8.GetString(buffer[..w]);
+```
 
 `Utf8` なの？
 `UTF8` なの？

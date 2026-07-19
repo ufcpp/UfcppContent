@@ -86,39 +86,39 @@ ASP.NET 系ではプロジェクト中のソースコードとかパッケージ
 
 例えば、[Rx-Main](https://www.nuget.org/packages/Rx-Main/)を参照したとします。まず、`packages.config`っていうXMLファイルができて、以下のような状態に。
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;?</span><span class="element">xml</span><span class="attvalue"> </span><span class="attribute">version</span><span class="attvalue">=</span>"<span class="attvalue">1.0</span>"<span class="attvalue"> </span><span class="attribute">encoding</span><span class="attvalue">=</span>"<span class="attvalue">utf-8</span>"<span class="attvalue">?&gt;</span>
-<span class="attvalue">&lt;</span><span class="element">packages</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">package</span><span class="attvalue"> </span><span class="attribute">id</span><span class="attvalue">=</span>"<span class="attvalue">Rx-Core</span>"<span class="attvalue"> </span><span class="attribute">version</span><span class="attvalue">=</span>"<span class="attvalue">2.2.5</span>"<span class="attvalue"> </span><span class="attribute">targetFramework</span><span class="attvalue">=</span>"<span class="attvalue">net46</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">package</span><span class="attvalue"> </span><span class="attribute">id</span><span class="attvalue">=</span>"<span class="attvalue">Rx-Interfaces</span>"<span class="attvalue"> </span><span class="attribute">version</span><span class="attvalue">=</span>"<span class="attvalue">2.2.5</span>"<span class="attvalue"> </span><span class="attribute">targetFramework</span><span class="attvalue">=</span>"<span class="attvalue">net46</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">package</span><span class="attvalue"> </span><span class="attribute">id</span><span class="attvalue">=</span>"<span class="attvalue">Rx-Linq</span>"<span class="attvalue"> </span><span class="attribute">version</span><span class="attvalue">=</span>"<span class="attvalue">2.2.5</span>"<span class="attvalue"> </span><span class="attribute">targetFramework</span><span class="attvalue">=</span>"<span class="attvalue">net46</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">package</span><span class="attvalue"> </span><span class="attribute">id</span><span class="attvalue">=</span>"<span class="attvalue">Rx-Main</span>"<span class="attvalue"> </span><span class="attribute">version</span><span class="attvalue">=</span>"<span class="attvalue">2.2.5</span>"<span class="attvalue"> </span><span class="attribute">targetFramework</span><span class="attvalue">=</span>"<span class="attvalue">net46</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">package</span><span class="attvalue"> </span><span class="attribute">id</span><span class="attvalue">=</span>"<span class="attvalue">Rx-PlatformServices</span>"<span class="attvalue"> </span><span class="attribute">version</span><span class="attvalue">=</span>"<span class="attvalue">2.2.5</span>"<span class="attvalue"> </span><span class="attribute">targetFramework</span><span class="attvalue">=</span>"<span class="attvalue">net46</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">&lt;/</span><span class="element">packages</span><span class="attvalue">&gt;
-</code></pre>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<packages>
+  <package id="Rx-Core" version="2.2.5" targetFramework="net46" />
+  <package id="Rx-Interfaces" version="2.2.5" targetFramework="net46" />
+  <package id="Rx-Linq" version="2.2.5" targetFramework="net46" />
+  <package id="Rx-Main" version="2.2.5" targetFramework="net46" />
+  <package id="Rx-PlatformServices" version="2.2.5" targetFramework="net46" />
+</packages>
+```
 
 Rx-InterfacesとかRx-Linqは、Rx-Mainの依存先です。芋ずる式に全部。
 
 そして、このファイルだけじゃなくて、`.csproj`ファイルにも以下のような行が追加されます。
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">    &lt;</span><span class="element">Reference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL</span>"<span class="attvalue">&gt;</span>
-<span class="attvalue">      &lt;</span><span class="element">HintPath</span><span class="attvalue">&gt;</span>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll<span class="attvalue">&lt;/</span><span class="element">HintPath</span><span class="attvalue">&gt;</span>
-<span class="attvalue">      &lt;</span><span class="element">Private</span><span class="attvalue">&gt;</span>True<span class="attvalue">&lt;/</span><span class="element">Private</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;/</span><span class="element">Reference</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Reference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL</span>"<span class="attvalue">&gt;</span>
-<span class="attvalue">      &lt;</span><span class="element">HintPath</span><span class="attvalue">&gt;</span>..\packages\Rx-Interfaces.2.2.5\lib\net45\System.Reactive.Interfaces.dll<span class="attvalue">&lt;/</span><span class="element">HintPath</span><span class="attvalue">&gt;</span>
-<span class="attvalue">      &lt;</span><span class="element">Private</span><span class="attvalue">&gt;</span>True<span class="attvalue">&lt;/</span><span class="element">Private</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;/</span><span class="element">Reference</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Reference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">System.Reactive.Linq, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL</span>"<span class="attvalue">&gt;</span>
-<span class="attvalue">      &lt;</span><span class="element">HintPath</span><span class="attvalue">&gt;</span>..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll<span class="attvalue">&lt;/</span><span class="element">HintPath</span><span class="attvalue">&gt;</span>
-<span class="attvalue">      &lt;</span><span class="element">Private</span><span class="attvalue">&gt;</span>True<span class="attvalue">&lt;/</span><span class="element">Private</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;/</span><span class="element">Reference</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Reference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">System.Reactive.PlatformServices, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL</span>"<span class="attvalue">&gt;</span>
-<span class="attvalue">      &lt;</span><span class="element">HintPath</span><span class="attvalue">&gt;</span>..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll<span class="attvalue">&lt;/</span><span class="element">HintPath</span><span class="attvalue">&gt;</span>
-<span class="attvalue">      &lt;</span><span class="element">Private</span><span class="attvalue">&gt;</span>True<span class="attvalue">&lt;/</span><span class="element">Private</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;/</span><span class="element">Reference</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+    <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+```
 
 そこで、NuGet 3系(7月のVS 2015リリースの頃に3.0、今は3.3)では、パッケージの管理方式を変えました。
 
@@ -128,8 +128,8 @@ Rx-InterfacesとかRx-Linqは、Rx-Mainの依存先です。芋ずる式に全�
 
 例えば、同じくRx-Mainを参照すると、`project.json`ファイルが以下のような状態になります。
 
-<pre class="source" title="">
-<code>{
+```json
+{
   "frameworks": {
     "net46": {}
   },
@@ -138,10 +138,10 @@ Rx-InterfacesとかRx-Linqは、Rx-Mainの依存先です。芋ずる式に全�
     "win-anycpu": {}
   },
   "dependencies": {
-    "Rx-Main": <span class="string">"2.2.5"</span>
+    "Rx-Main": "2.2.5"
   }
 }
-</code></pre>
+```
 
 だいぶすっきりして、管理が楽になりました。
 
@@ -201,21 +201,21 @@ NuGet 3系は`project.json`を前提にしています。ASP.NET 5系は最初�
 
 その1つが`.xproj`から既存の`.csproj`で作ったライブラリをプロジェクト参照する方法。以下のようなラッパーとなる`project.json`を書いてやる必要があります。
 
-<pre class="source" title="">
-<code>{
-  "version": <span class="string">"1.0.0-*"</span>,
+```json
+{
+  "version": "1.0.0-*",
   "frameworks": {
     "net35": {
-      "wrappedProject": <span class="string">"../../ClassLibraryNet35/ClassLibraryNet35.csproj"</span>,
+      "wrappedProject": "../../ClassLibraryNet35/ClassLibraryNet35.csproj",
       "bin": {
-        "assembly": <span class="string">"../../ClassLibraryNet35/obj/{configuration}/ClassLibraryNet35.dll"</span>,
-        "pdb": <span class="string">"../../ClassLibraryNet35/obj/{configuration}/ClassLibraryNet35.pdb"</span>
+        "assembly": "../../ClassLibraryNet35/obj/{configuration}/ClassLibraryNet35.dll",
+        "pdb": "../../ClassLibraryNet35/obj/{configuration}/ClassLibraryNet35.pdb"
       }
     }
   },
   "dependencies": { }
 }
-</code></pre>
+```
 
 `.xproj`が出た当初はこいつの手書きが必須でした。Visual Studio 2015がRTMしたころには、一応Visual Studioがこいつを生成してくれるようにはなっています。
 

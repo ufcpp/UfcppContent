@@ -153,58 +153,58 @@ aliases:
 「[配列リスト](col_array.md#array)」に対して、以下のような操作を行うことで、
 「[配列リスト](col_array.md#array)」をヒープ化できます。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// ヒープ化されている配列リストに新しい要素を追加する。
-/// &lt;/summary&gt;
-/// &lt;param name="array"&gt;対象の配列リスト&lt;/param&gt;</span>
-<span class="reserved">static void</span> PushHeap(ArrayList&lt;T&gt; array, T elem)
+/// </summary>
+/// <param name="array">対象の配列リスト</param>
+static void PushHeap(ArrayList<T> array, T elem)
 {
-  <span class="reserved">int</span> n = array.Count;
+  int n = array.Count;
   array.InsertLast(elem);
 
-  <span class="reserved">while</span> (n != 0)
+  while (n != 0)
   {
-    <span class="reserved">int</span> i = (n - 1) / 2;
-    <span class="comment">// 親と値を入れ替え</span>
-    <span class="reserved">if</span> (array[n].CompareTo(array[i]) &gt; 0)
+    int i = (n - 1) / 2;
+    // 親と値を入れ替え
+    if (array[n].CompareTo(array[i]) > 0)
     {
       T tmp = array[n]; array[n] = array[i]; array[i] = tmp;
     }
     n = i;
   }
 }
-</code></pre>
+```
 
 
 また、ヒープ化した「[配列リスト](col_array.md#array)」から、
 最大の値を持つ要素を削除するには以下のようにします。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// ヒープから最大値を削除する。
-/// &lt;/summary&gt;
-/// &lt;param name="array"&gt;対象の配列リスト&lt;/param&gt;</span>
-<span class="reserved">static void</span> PopHeap(ArrayList&lt;T&gt; array)
+/// </summary>
+/// <param name="array">対象の配列リスト</param>
+static void PopHeap(ArrayList<T> array)
 {
-  <span class="reserved">int</span> n = array.Count - 1;
+  int n = array.Count - 1;
   array[0] = array[n];
   array.EraseLast();
 
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = 0, j; (j = 2 * i + 1) &lt; n; )
+  for (int i = 0, j; (j = 2 * i + 1) < n; )
   {
-    <span class="comment">// 値の大きい方の子を選ぶ</span>
-    <span class="reserved">if</span> ((j != n - 1) &amp;&amp; (array[j].CompareTo(array[j + 1]) &lt; 0))
+    // 値の大きい方の子を選ぶ
+    if ((j != n - 1) && (array[j].CompareTo(array[j + 1]) < 0))
       j++;
-    <span class="comment">// 子と値を入れ替え</span>
-    <span class="reserved">if</span> (array[i].CompareTo(array[j]) &lt; 0)
+    // 子と値を入れ替え
+    if (array[i].CompareTo(array[j]) < 0)
     {
       T tmp = array[j]; array[j] = array[i]; array[i] = tmp;
     }
     i = j;
   }
 }
-</code></pre>
+```
 
 
 
@@ -214,35 +214,35 @@ aliases:
 優先度付き待ち行列の実装は簡単です。
 まず、ヒープ本体となる「[配列リスト](col_array.md#array)」を用意します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> PriorityQueue&lt;T&gt;
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+```csharp
+class PriorityQueue<T>
+  where T : IComparable<T>
 {
-  ArrayList&lt;T&gt; buffer;
+  ArrayList<T> buffer;
 }
-</code></pre>
+```
 
 
 そして、要素の挿入・削除は以下のように行います。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 要素のプッシュ。
-/// &lt;/summary&gt;
-/// &lt;param name="elem"&gt;挿入したい要素&lt;/param&gt;</span>
-<span class="reserved">public void</span> Push(T elem)
+/// </summary>
+/// <param name="elem">挿入したい要素</param>
+public void Push(T elem)
 {
-  PushHeap(<span class="reserved">this</span>.buffer, elem);
+  PushHeap(this.buffer, elem);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 要素を1つポップ。
-/// &lt;/summary&gt;</span>
-<span class="reserved">public void</span> Pop()
+/// </summary>
+public void Pop()
 {
-  PopHeap(<span class="reserved">this</span>.buffer);
+  PopHeap(this.buffer);
 }
-</code></pre>
+```
 
 
 

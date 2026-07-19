@@ -17,8 +17,8 @@ aliases: []
 
 [https://paiza.io/projects/WMu7W_PPTqkZRV5iGztJtg](https://paiza.io/projects/WMu7W_PPTqkZRV5iGztJtg)
 
-<pre class="source" title="見た目で区別できない変数">
-<code>import java.util.*;
+```java
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -43,7 +43,7 @@ public class Main {
         System.out.println(a + a︀ + a︁ + a︂ + a︃ + a︄ + a︅ + a︆ + a︇ + a︈ + a︉ + a︊ + a︋ + a︌ + a︍ + a︎ + a️);
     }
 }
-</code></pre>
+```
 
 ぱっと見は同じ「`a`」という名前の変数が17個並んでいますが、これ、全部別変数です。
 名前被りでコンパイル エラーになったりもしません。
@@ -69,24 +69,24 @@ Unicode ではこれらの文字を別文字扱いしています。
 
 こいつらを使えば、割と簡単に「ぱっと見で区別がつかない変数」を作れます。
 
-<pre class="source" title="ラテン文字、ギリシャ文字、キリル文字な変数">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">A</span> = 1;
-        <span class="reserved">var</span> <span class="variable">Α</span> = 2;
-        <span class="reserved">var</span> <span class="variable">А</span> = 4;
+        var A = 1;
+        var Α = 2;
+        var А = 4;
  
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">A</span> + <span class="variable">Α</span> + <span class="variable">А</span>); <span class="comment">// 7</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((<span class="reserved">int</span>)<span class="reserved">nameof</span>(<span class="variable">A</span>)[0]); <span class="comment">// U+0041 (10進 65)</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((<span class="reserved">int</span>)<span class="reserved">nameof</span>(<span class="variable">Α</span>)[0]); <span class="comment">// U+0391 (10進 913)</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((<span class="reserved">int</span>)<span class="reserved">nameof</span>(<span class="variable">А</span>)[0]); <span class="comment">// U+0410 (10進 1040)</span>
+        Console.WriteLine(A + Α + А); // 7
+        Console.WriteLine((int)nameof(A)[0]); // U+0041 (10進 65)
+        Console.WriteLine((int)nameof(Α)[0]); // U+0391 (10進 913)
+        Console.WriteLine((int)nameof(А)[0]); // U+0410 (10進 1040)
     }
 }
-</code></pre>
+```
 
 今時、意図的に排除<sup>※</sup>でもしていない限り non-ASCII な文字も変数名に使えるので、たいていの言語で同じことができると思います。
 まあ、わざわざ non-ASCII な文字でソースコードを書く人も少ないので、悪意を持ってやらない限りは起きないと思いますが。
@@ -110,23 +110,23 @@ Unicode にはこの手の「同じ文字の別表現」を互いに変換する
 
 結果的に、この手の文字も「ぱっと見で区別がつかない変数」に使えます。
 
-<pre class="source" title="アクセント記号を含む変数">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">á</span> = 1;
-        <span class="reserved">var</span> <span class="variable">á</span> = 2;
+        var á = 1;
+        var á = 2;
  
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">á</span> + <span class="variable">á</span>); <span class="comment">// 3</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((<span class="reserved">int</span>)<span class="reserved">nameof</span>(<span class="variable">á</span>)[0]); <span class="comment">// U+00E1 (10進 225)</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>((<span class="reserved">int</span>)<span class="reserved">nameof</span>(<span class="variable">á</span>)[0]); <span class="comment">// [0] は `a` が拾える。U+0061 (10進 97)</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">nameof</span>(<span class="variable">á</span>).Length); <span class="comment">// 実は2文字なので Length が 2</span>
+        Console.WriteLine(á + á); // 3
+        Console.WriteLine((int)nameof(á)[0]); // U+00E1 (10進 225)
+        Console.WriteLine((int)nameof(á)[0]); // [0] は `a` が拾える。U+0061 (10進 97)
+        Console.WriteLine(nameof(á).Length); // 実は2文字なので Length が 2
     }
 }
-</code></pre>
+```
 
 アクセント記号(この例で言うと U+0301)を変数名に使えるかどうかはプログラミング言語によります。
 例えば [Go は letter (a とかの可読文字)しか受け付けません](https://golang.org/ref/spec#Identifiers)。

@@ -26,23 +26,23 @@ Perlを勉強したことある人ならmapは連想配列に似ていると言�
  
 普通の配列では、
 
-<pre class="source" title="" lang="">
-<code>phoneNumber[0] = <span class="literal">"06-633-****"</span>;
-phoneNumber[1] = <span class="literal">"079-341-****"</span>;
-phoneNumber[2] = <span class="literal">"078-852-****"</span>;
-</code></pre>
+```csharp
+phoneNumber[0] = "06-633-****";
+phoneNumber[1] = "079-341-****";
+phoneNumber[2] = "078-852-****";
+```
 
 
 というように添字には整数値しか使えません。
  
 一方、連想配列では(C言語風に書くと)
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">char</span> name[] = <span class="literal">"山田"</span>;
-phoneNumber[name] = <span class="literal">"06-633-****"</span>;
-phoneNumber[<span class="literal">"田中"</span>] = <span class="literal">"079-341-****"</span>;
-phoneNumber[<span class="literal">"鈴木"</span>] = <span class="literal">"078-852-****"</span>;
-</code></pre>
+```csharp
+char name[] = "山田";
+phoneNumber[name] = "06-633-****";
+phoneNumber["田中"] = "079-341-****";
+phoneNumber["鈴木"] = "078-852-****";
+```
 
 
 と言うように数値以外の添字を使うことができます。
@@ -55,9 +55,9 @@ mapはキーの重複が許されず、multimapはキーの重複が許されま
  
 STLでは、キーと値を組にするために<code>pair</code>というクラスが用意されています。
 
-<pre class="source" title="" lang="">
-<code>pair&lt;Key, Value&gt; <span class="comment">//Keyという型とValueという型を組にした型</span>
-</code></pre>
+```csharp
+pair<Key, Value> //Keyという型とValueという型を組にした型
+```
 
 
 そしてmapやmultimapはこのpair型を要素とする2分探索木で実装されています。
@@ -65,10 +65,10 @@ STLでは、キーと値を組にするために<code>pair</code>というクラ
 mapには<code>operator[]</code>が用意されていて、
 連想配列と同じように操作することができます。例をあげると、
 
-<pre class="source" title="" lang="">
-<code>map&lt;string, string&gt; phoneNumber;
-phoneNumber[<span class="literal">"山田"</span>] = <span class="literal">"06-633-****"</span>;
-</code></pre>
+```csharp
+map<string, string> phoneNumber;
+phoneNumber["山田"] = "06-633-****";
+```
 
 
 と言うような操作ができます。

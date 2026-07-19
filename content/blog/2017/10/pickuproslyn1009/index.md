@@ -26,26 +26,26 @@ aliases: []
 [C# 7.0](../../../../study/csharp/cheatsheet/ap_ver7.md#ref-returns) で、参照ローカル変数が使えるようになっていましたが、
 参照ローカル変数の再代入はできませんでした。
 
-<pre class="source" title="参照ローカル変数の再代入">
-<code><span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> Max(<span class="reserved">int</span>[] array)
+```csharp
+static ref int Max(int[] array)
 {
-    <span class="reserved">if</span> (array.Length == 0) <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentException</span>();
+    if (array.Length == 0) throw new ArgumentException();
 
-    <span class="reserved">ref</span> <span class="reserved">var</span> max = <span class="reserved">ref</span> array[0];
+    ref var max = ref array[0];
 
-    <span class="reserved">for</span> (<span class="reserved">var</span> i = 0; i &lt; array.Length; ++i)
+    for (var i = 0; i < array.Length; ++i)
     {
-        <span class="reserved">if</span> (max &lt; array[i])
+        if (max < array[i])
         {
-            <span class="comment">// max = x; だと、array[0] の内容を上書きしちゃうのでダメ</span>
-            <span class="comment">// こう書きたい(C# 7.0 では無理)</span>
-            <span class="reserved">ref</span> max = <span class="reserved">ref</span> array[i];
+            // max = x; だと、array[0] の内容を上書きしちゃうのでダメ
+            // こう書きたい(C# 7.0 では無理)
+            ref max = ref array[i];
         }
     }
 
-    <span class="reserved">return</span> <span class="reserved">ref</span> max;
+    return ref max;
 }
-</code></pre>
+```
 
 一方、C# 7.2でつかされる機能として前々から決まっていたものとして、[ref-like 型](https://github.com/dotnet/csharplang/blob/master/proposals/csharp-7.2/span-safety.md)というものがあります。
 これまでの .NET では認められていなかった「フィールドとして参照を持てる構造体」を認めるための仕様です。
@@ -63,9 +63,9 @@ aliases: []
 こちらは C# 6.0 の頃から提案に上がっていたもの。
 以下のように、式の途中で変数宣言ができるという機能。
 
-<pre class="source" title="宣言式">
-<code><span class="reserved">var</span> square = (var x = <span class="reserved">int</span>.Parse(<span class="type">Console</span>.ReadLine()) * x;
-</code></pre>
+```csharp
+var square = (var x = int.Parse(Console.ReadLine()) * x;
+```
 
 「パターンマッチと併せて練り直したい」、「パターンマッチ同様、変数`x`のスコープをどうするかちょっと迷う」、「大変な割には需要は低め(やらないとは言わないけど優先度低)」みたいな状態だったものに、ついに「Chanpion」タグが付きました。
 
@@ -77,14 +77,14 @@ aliases: []
 
 今の仕様だと、[イテレーター](../../../../study/csharp/data/sp2_iterator.md)を以下のように書きます。
 
-<pre class="source" title="現在のイテレーター構文">
-<code><span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; X()
+```csharp
+static IEnumerable<int> X()
 {
-    <span class="reserved">yield</span> <span class="reserved">return</span> 1;
-    <span class="reserved">yield</span> <span class="reserved">return</span> 2;
-    <span class="reserved">yield</span> <span class="reserved">return</span> 3;
+    yield return 1;
+    yield return 2;
+    yield return 3;
 }
-</code></pre>
+```
 
 これで何が問題かというと、必ずインターフェイスを介して列挙子を返すことになるので、
 [ヒープ](../../../../study/csharp/resource/misc_heap.md)確保が避けれないという点です。

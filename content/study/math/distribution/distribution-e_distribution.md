@@ -135,7 +135,7 @@ D<span class="paren" style="font-size:em;">(</span>f<span class="paren" style="f
 
 ## <a id="sec-generated-title-5"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 ・δ関数
 関数の極限として作れたりも。
 
@@ -222,4 +222,4 @@ C は孤立特異点を1つだけ囲んでいるという条件さえ満たせ�
 この発想から出発して、個々の点における個性も持ちつつ、
 無限大の値を持つ微分可能な関数の上位概念が作れるんじゃないか
 というのが佐藤の超関数。
-</pre>
+```

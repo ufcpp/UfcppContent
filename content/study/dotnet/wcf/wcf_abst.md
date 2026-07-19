@@ -131,31 +131,31 @@ WCF では
 * そのインターフェースを実装したクラスがサービスの実体になる。
 
 
-<pre class="source" title="Contract の例" lang="">
-<code>[ServiceContract(
-    CallbackContract = <span class="reserved">typeof</span>(IGameCharacterCallback),
+```csharp
+[ServiceContract(
+    CallbackContract = typeof(IGameCharacterCallback),
     SessionMode = SessionMode.Required)]
-<span class="reserved">public interface</span> IGameCharacter
+public interface IGameCharacter
 {
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// キャラを動かします。
-    /// &lt;/summary&gt;
-    /// &lt;param name="movement"&gt;移動量。&lt;/param&gt;</span>
-    [OperationContract(IsOneWay = <span class="reserved">true</span>)]
-    <span class="reserved">void</span> Move(System.Windows.Vector movement);
+    /// </summary>
+    /// <param name="movement">移動量。</param>
+    [OperationContract(IsOneWay = true)]
+    void Move(System.Windows.Vector movement);
 }
 
 [ServiceContract]
-<span class="reserved">public interface</span> IGameCharacterCallback
+public interface IGameCharacterCallback
 {
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// キャラの現在位置を設定します。
-    /// &lt;/summary&gt;
-    /// &lt;param name="location"&gt;キャラの現在位置。&lt;/param&gt;</span>
-    [OperationContract(IsOneWay = <span class="reserved">true</span>)]
-    <span class="reserved">void</span> SetLocation(System.Windows.Point location);
+    /// </summary>
+    /// <param name="location">キャラの現在位置。</param>
+    [OperationContract(IsOneWay = true)]
+    void SetLocation(System.Windows.Point location);
 }
-</code></pre>
+```
 
 
 サンプル： 
@@ -177,7 +177,7 @@ WCF では
 
 ## <a id="sec-generated-title-6"></a> <a id="plan"></a>予定
 
-<pre>
+```text
 クライアント側
   - Contract は単なるクラスライブラリなので、
     WCF を通さず、スタンドアローンでも使える
@@ -190,5 +190,4 @@ WCF では
  
 
 [要約資料（pptx）](/media/ufcpp2000/csharp/slide/WcfDemo.pptx)
-
-</pre>
+```

@@ -66,13 +66,13 @@ aliases: []
 
 - [Remove char[] allocation in CheckIriUnicodeRange #33641](https://github.com/dotnet/corefx/pull/33641)
 
-<pre class="source" title="配列を stackalloc に置き換え">
-<code><span class="comment">//before</span>
-<span class="reserved">char</span>[] chars = <span class="reserved">new</span> <span class="reserved">char</span>[2] { highSurr, lowSurr };
+```csharp
+//before
+char[] chars = new char[2] { highSurr, lowSurr };
  
-<span class="comment">//after</span>
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; chars = <span class="reserved">stackalloc</span> <span class="reserved">char</span>[2] { highSurr, lowSurr };
-</code></pre>
+//after
+ReadOnlySpan<char> chars = stackalloc char[2] { highSurr, lowSurr };
+```
 
 ただし、.NET の実装では、メモリのスタック領域は固定長で 1MB くらい(確か)なので、
 あんまり大きなデータをスタックに置こうとすると簡単に stack overflow を起こしたりします。
@@ -86,9 +86,9 @@ aliases: []
 
 以下のような条件演算子は結構頻出です。
 
-<pre class="source" title="データが短い時だけ stackalloc">
-<code><span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; datetimeBuffer = ((<span class="reserved">uint</span>)length &lt;= 16) ? <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[16] : <span class="reserved">new</span> <span class="reserved">byte</span>[length];
-</code></pre>
+```csharp
+Span<byte> datetimeBuffer = ((uint)length <= 16) ? stackalloc byte[16] : new byte[length];
+```
 
 ちなみに、以下のような型もあります(今のところ internal ですが)。
 [`StringBuilder`](https://source.dot.net/#System.Private.CoreLib/shared/System/Text/StringBuilder.cs,adf60ee46ebd299f)相当の処理を、

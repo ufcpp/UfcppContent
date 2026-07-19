@@ -44,22 +44,22 @@ aliases:
 例えば、配列中の要素を検索しようと思うと、
 普通は以下のようになります。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 要素を検索する。
-/// &lt;/summary&gt;
-/// &lt;param name="array"&gt;検索対象&lt;/param&gt;
-/// &lt;param name="elem"&gt;検索したい要素&lt;/param&gt;
-/// &lt;returns&gt;要素の位置（見つからなかった場合は配列長）&lt;/returns&gt;</span>
-<span class="reserved">static int</span> Search(<span class="reserved">int</span>[] array, <span class="reserved">int</span> elem)
+/// </summary>
+/// <param name="array">検索対象</param>
+/// <param name="elem">検索したい要素</param>
+/// <returns>要素の位置（見つからなかった場合は配列長）</returns>
+static int Search(int[] array, int elem)
 {
-  <span class="reserved">int</span> i;
-  <span class="reserved">for</span> (i = 0; i &lt; array.Length; ++i)
-    <span class="reserved">if</span> (array[i] == elem)
-      <span class="reserved">break</span>;
-  <span class="reserved">return</span> i;
+  int i;
+  for (i = 0; i < array.Length; ++i)
+    if (array[i] == elem)
+      break;
+  return i;
 }
-</code></pre>
+```
 
 
 見ての通り、前から順に調べていって、見つかった所で処理を打ち切っています。
@@ -70,30 +70,30 @@ aliases:
 配列がソートされた状態にある場合に限り、
 以下のようなアルゴリズムで高速な検索が可能です。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 要素を2分検索する。
-/// &lt;/summary&gt;
-/// &lt;param name="array"&gt;検索対象（ソートされている必要あり）&lt;/param&gt;
-/// &lt;param name="elem"&gt;検索したい要素&lt;/param&gt;
-/// &lt;returns&gt;要素の位置（見つからなかった場合は配列長）&lt;/returns&gt;</span>
-<span class="reserved">static int</span> BinarySearch(<span class="reserved">int</span>[] array, <span class="reserved">int</span> elem)
+/// </summary>
+/// <param name="array">検索対象（ソートされている必要あり）</param>
+/// <param name="elem">検索したい要素</param>
+/// <returns>要素の位置（見つからなかった場合は配列長）</returns>
+static int BinarySearch(int[] array, int elem)
 {
-  <span class="reserved">if</span> (array.Length == 0) <span class="reserved">return</span> 0;
+  if (array.Length == 0) return 0;
 
-  <span class="reserved">int</span> l = 0;
-  <span class="reserved">int</span> r = array.Length - 1;
-  <span class="reserved">while</span> (l &lt; r)
+  int l = 0;
+  int r = array.Length - 1;
+  while (l < r)
   {
-    <span class="reserved">int</span> m = (l + r) / 2;
-    <span class="reserved">if</span> (array[m] &lt; elem) l = m + 1;
-    <span class="reserved">else if</span> (array[m] &gt; elem) r = m - 1;
-    <span class="reserved">else return</span> m;
+    int m = (l + r) / 2;
+    if (array[m] < elem) l = m + 1;
+    else if (array[m] > elem) r = m - 1;
+    else return m;
   }
-  <span class="reserved">if</span> (array[l] == elem) <span class="reserved">return</span> l;
-  <span class="reserved">return</span> array.Length;
+  if (array[l] == elem) return l;
+  return array.Length;
 }
-</code></pre>
+```
 
 
 検索対象の配列がソートされた状態にあるんだから、
@@ -142,85 +142,85 @@ aliases:
 要素の挿入・削除もありますし、
 内部実装には「[配列リスト](col_array.md#array)」を使いましょう。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> SortedArray&lt;T&gt; : IEnumerable&lt;T&gt;
-  <span class="reserved">where</span> T: IComparable&lt;T&gt;
+```csharp
+class SortedArray<T> : IEnumerable<T>
+  where T: IComparable<T>
 {
-  ArrayList&lt;T&gt; buffer;
+  ArrayList<T> buffer;
 }
-</code></pre>
+```
 
 
 要素の検索には「[2分検索法](#binary)」を使います。
 ここでは、要素が含まれている位置を返すメソッド IndexOf を例示します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public int</span> IndexOf(T elem)
+```csharp
+public int IndexOf(T elem)
 {
-  <span class="reserved">if</span> (<span class="reserved">this</span>.buffer.Count == 0)
-    <span class="reserved">return</span> 0;
+  if (this.buffer.Count == 0)
+    return 0;
 
-  <span class="reserved">int</span> r = <span class="reserved">this</span>.buffer.Count - 1;
-  <span class="reserved">int</span> l = 0;
-  <span class="reserved">while</span> (l &lt; r)
+  int r = this.buffer.Count - 1;
+  int l = 0;
+  while (l < r)
   {
-    <span class="reserved">int</span> m = (r + l) &gt;&gt; 1;
-    <span class="reserved">int</span> comp = <span class="reserved">this</span>.buffer[m].CompareTo(elem);
-    <span class="reserved">if</span> (comp &gt; 0) r = m - 1;
-    <span class="reserved">else if</span> (comp &lt; 0) l = m + 1;
-    <span class="reserved">else return</span> m;
+    int m = (r + l) >> 1;
+    int comp = this.buffer[m].CompareTo(elem);
+    if (comp > 0) r = m - 1;
+    else if (comp < 0) l = m + 1;
+    else return m;
   }
 
-  <span class="reserved">if</span>(<span class="reserved">this</span>.buffer[l].CompareTo(elem) == 0)
-    <span class="reserved">return</span> l;
-  <span class="reserved">return this</span>.buffer.Count;
+  if(this.buffer[l].CompareTo(elem) == 0)
+    return l;
+  return this.buffer.Count;
 }
-</code></pre>
+```
 
 
 要素の挿入時にも、2分検索を使って要素の挿入位置を探します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public void</span> Insert(T elem)
+```csharp
+public void Insert(T elem)
 {
-  <span class="reserved">if</span> (<span class="reserved">this</span>.buffer.Count == 0)
+  if (this.buffer.Count == 0)
   {
-    <span class="reserved">this</span>.buffer.InsertLast(elem);
-    <span class="reserved">return</span>;
+    this.buffer.InsertLast(elem);
+    return;
   }
 
-  <span class="reserved">int</span> r = <span class="reserved">this</span>.buffer.Count - 1;
-  <span class="reserved">int</span> l = 0;
-  <span class="reserved">int</span> comp;
-  <span class="reserved">while</span> (l &lt; r)
+  int r = this.buffer.Count - 1;
+  int l = 0;
+  int comp;
+  while (l < r)
   {
-    <span class="reserved">int</span> m = (r + l) &gt;&gt; 1;
-    comp = <span class="reserved">this</span>.buffer[m].CompareTo(elem);
-    <span class="reserved">if</span> (comp &gt; 0) r = m - 1;
-    <span class="reserved">else if</span> (comp &lt; 0) l = m + 1;
-    <span class="reserved">else return</span>; <span class="comment">// 重複不可</span>
+    int m = (r + l) >> 1;
+    comp = this.buffer[m].CompareTo(elem);
+    if (comp > 0) r = m - 1;
+    else if (comp < 0) l = m + 1;
+    else return; // 重複不可
   }
 
-  comp = <span class="reserved">this</span>.buffer[l].CompareTo(elem);
-  <span class="reserved">if</span>(comp &lt; 0)
-    <span class="reserved">this</span>.buffer.Insert(l + 1, elem);
-  <span class="reserved">else if</span>(comp &gt; 0)
-    <span class="reserved">this</span>.buffer.Insert(l, elem);
+  comp = this.buffer[l].CompareTo(elem);
+  if(comp < 0)
+    this.buffer.Insert(l + 1, elem);
+  else if(comp > 0)
+    this.buffer.Insert(l, elem);
 }
-</code></pre>
+```
 
 
 削除も同様です。
 2分検索を使って要素の位置を探して、その要素を削除します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public void</span> Erase(T elem)
+```csharp
+public void Erase(T elem)
 {
-  <span class="reserved">int</span> i = <span class="reserved">this</span>.IndexOf(elem);
-  <span class="reserved">if</span> (i &lt; <span class="reserved">this</span>.buffer.Count)
-    <span class="reserved">this</span>.buffer.Erase(i);
+  int i = this.IndexOf(elem);
+  if (i < this.buffer.Count)
+    this.buffer.Erase(i);
 }
-</code></pre>
+```
 
 
 挿入・削除するさい、要素の位置を探すのは2分検索法が使えて高速ですが、

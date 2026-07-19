@@ -34,22 +34,22 @@ C# 10.0 から補間文字列がどのように展開されるかについて説
 
 例えば以下のようなコードがあったとします。
 
-<pre class="source" title="補間文字列の例">
-<code><span class="reserved">static</span> <span class="reserved">string</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b, <span class="reserved">int</span> c, <span class="reserved">int</span> d) =&gt; <span class="string">$"</span>{a}<span class="string">.</span>{b}<span class="string">.</span>{c}<span class="string">.</span>{d}<span class="string">"</span>;
-</code></pre>
+```csharp
+static string m(int a, int b, int c, int d) => $"{a}.{b}.{c}.{d}";
+```
 
 C# 9.0 までは、このコードは以下のように展開されていました。
 
-<pre class="source" title="string.Format への展開">
-<code><span class="reserved">static</span> <span class="reserved">string</span> m(<span class="reserved">int</span> a, <span class="reserved">int</span> b, <span class="reserved">int</span> c, <span class="reserved">int</span> d) =&gt; <span class="reserved">string</span>.<span class="method">Format</span>(<span class="string">"{0}.{1}.{2}.{3}"</span>, a, b, c, d);
-</code></pre>
+```csharp
+static string m(int a, int b, int c, int d) => string.Format("{0}.{1}.{2}.{3}", a, b, c, d);
+```
 
 要は `string.Format` メソッド呼び出しへの展開でした。
 ちなみに、ここで呼ばれている `Format` メソッドは以下のようなオーバーロードです。
 
-<pre class="source" title="Format(format, args)">
-<code><span class="reserved">public static string</span> <span class="method">Format</span>(<span class="reserved">string</span> format, <span class="reserved">params</span> <span class="reserved">object</span>?[] args)
-</code></pre>
+```csharp
+public static string Format(string format, params object?[] args)
+```
 
 この展開方法では以下のようなコストがどうしても避けられず、用途によっては使うのがためらわれていました。
 
@@ -60,17 +60,17 @@ C# 9.0 までは、このコードは以下のように展開されていまし�
 
 そこで、C# 10.0 では以下のように、`AppendLiteral`, `AppendFormatted` メソッドを何度も呼び出す方針に変更されました。
 
-<pre class="source" title="C# 10.0 での文字列補間の展開結果の例">
-<code><span class="type">DefaultInterpolatedStringHandler</span> handler = <span class="reserved">new</span> <span class="type">DefaultInterpolatedStringHandler</span>(3, 4);
-handler.<span class="method">AppendFormatted</span>(a);
-handler.<span class="method">AppendLiteral</span>(<span class="string">"."</span>);
-handler.<span class="method">AppendFormatted</span>(b);
-handler.<span class="method">AppendLiteral</span>(<span class="string">"."</span>);
-handler.<span class="method">AppendFormatted</span>(c);
-handler.<span class="method">AppendLiteral</span>(<span class="string">"."</span>);
-handler.<span class="method">AppendFormatted</span>(d);
-<span class="reserved">string</span> s = handler.<span class="method">ToStringAndClear</span>();
-</code></pre>
+```csharp
+DefaultInterpolatedStringHandler handler = new DefaultInterpolatedStringHandler(3, 4);
+handler.AppendFormatted(a);
+handler.AppendLiteral(".");
+handler.AppendFormatted(b);
+handler.AppendLiteral(".");
+handler.AppendFormatted(c);
+handler.AppendLiteral(".");
+handler.AppendFormatted(d);
+string s = handler.ToStringAndClear();
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="handler-pattern"></a>ハンドラー パターン
 
@@ -97,16 +97,15 @@ handler.<span class="method">AppendFormatted</span>(d);
 最低ライン必要なメンバーをそろえた型を作ると以下のようになります。
 (本当に「コンパイルが通る」レベルで、中身が何もないので `Dummy` という名前にしてあります。)
 
-<pre class="source" title="補間文字列ハンドラーに必要な最低限だけ持った型の例">
-<code>
-[System.Runtime.CompilerServices.<span class="type">InterpolatedStringHandler</span>]
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">DummyHandler</span>
+```csharp
+[System.Runtime.CompilerServices.InterpolatedStringHandler]
+public struct DummyHandler
 {
-    <span class="reserved">public</span> <span class="type">DummyHandler</span>(<span class="reserved">int</span> literalLength, <span class="reserved">int</span> formattedCount) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendLiteral</span>(<span class="reserved">string</span> s) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) { }
+    public DummyHandler(int literalLength, int formattedCount) { }
+    public void AppendLiteral(string s) { }
+    public void AppendFormatted<T>(T x) { }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="assign-to-handler"></a>ハンドラー型への直接代入
 
@@ -115,25 +114,25 @@ handler.<span class="method">AppendFormatted</span>(d);
 
 例えば以下のようなコードがあるとき、
 
-<pre class="source" title="補間文字列をハンドラー型に直接渡す例">
-<code><span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b)
+```csharp
+void m(int a, int b)
 {
-    <span class="type">DummyHandler</span> h = <span class="string">$"</span>{a}<span class="string"> / </span>{b}"</span>;
+    DummyHandler h = $"{a} / {b}";
 }
-</code></pre>
+```
 
 以下のように展開されます。
 
-<pre class="source" title="補間文字列をハンドラー型に直接渡す例の展開結果">
-<code><span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b)
+```csharp
+void m(int a, int b)
 {
-    <span class="type">DummyHandler</span> temp = <span class="reserved">new</span>(3, 2);
-    temp.<span class="method">AppendFormatted</span>(a);
-    temp.<span class="method">AppendLiteral</span>(<span class="string">" / "</span>);
-    temp.<span class="method">AppendFormatted</span>(b);
-    <span class="type">DummyHandler</span> h = temp;
+    DummyHandler temp = new(3, 2);
+    temp.AppendFormatted(a);
+    temp.AppendLiteral(" / ");
+    temp.AppendFormatted(b);
+    DummyHandler h = temp;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-5"></a> <a id="assign-to-string"></a>string への代入
 
@@ -149,32 +148,32 @@ handler.<span class="method">AppendFormatted</span>(d);
 そして、この型は .NET 6.0 からは標準ライブラリに入っています。
 例えば以下のようなコードを書いて .NET 6.0 向けにコンパイルした場合、
 
-<pre class="source" title="補間文字列を string 型に渡す例">
-<code><span class="reserved">string</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b) =&gt; <span class="string">$"</span>{a}<span class="string"> / </span>{b}<span class="string">"</span>;
-</code></pre>
+```csharp
+string m(int a, int b) => $"{a} / {b}";
+```
 
 以下のように展開されます。
 (`DefaultInterpolatedStringHandler` 型への代入の展開結果 + `ToStringAndClear` 呼び出しみたいなコードになります。)
 
-<pre class="source" title="補間文字列を string 型に渡す例の展開結果">
-<code><span class="reserved">string</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b)
+```csharp
+string m(int a, int b)
 {
-    <span class="type">DefaultInterpolatedStringHandler</span> h = <span class="reserved">new</span>(3, 2);
-    h.<span class="method">AppendFormatted</span>(a);
-    h.<span class="method">AppendLiteral</span>(<span class="string">" / "</span>);
-    h.<span class="method">AppendFormatted</span>(b);
-    <span class="reserved">return</span> <em>h.<span class="method">ToStringAndClear</span>()</em>;
+    DefaultInterpolatedStringHandler h = new(3, 2);
+    h.AppendFormatted(a);
+    h.AppendLiteral(" / ");
+    h.AppendFormatted(b);
+    return h.ToStringAndClear();
 }
-</code></pre>
+```
 
 `DefaultInterpolatedStringHandler` 型自体は存在するのに補間文字列として利用できない状況は、
 補間穴(`{}`)の中に [`await`](../async/sp5_async.md#async) を含む場合などです。
 `DefaultInterpolatedStringHandler` 型は [ref 構造体](../resource/refstruct.md)なので、`await` と共存できません。
 例えば以下のようなコードを書くと `string.Format` に展開されます。
 
-<pre class="source" title="DefaultInterpolatedStringHandler に展開できない補間文字列の例">
-<code><span class="reserved">async</span> <span class="type">Task</span>&lt;<span class="reserved">string</span>&gt; <span class="method">m</span>(<span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; a) =&gt; <span class="string">$"result: </span>{<em><span class="reserved">await</span> a</em>}<span class="string">"</span>;
-</code></pre>
+```csharp
+async Task<string> m(Task<int> a) => $"result: {await a}";
+```
 
 ちなみに、`DefaultInterpolatedStringHandler` 型は標準ライブラリ中のものでなくても構いません。
 もし .NET 5.0 以前をターゲットにした場合でも同様の最適化が掛かって欲しいなら、
@@ -187,27 +186,27 @@ handler.<span class="method">AppendFormatted</span>(d);
 よく使いそうなのは、ジェネリック型引数として使えない `ReadOnlySpan<char>` や、
 その他最適化のために具象型を直接受け取りたい場合(`string` など)用のオーバーロードなどです。
 
-<pre class="source" title="AppendFormatted のオーバーロードを増やす例">
-<code><span class="type">DummyHandler</span> h = <span class="string">$"</span>{123}<span class="string">, </span>{<span class="string">"abc"</span>}<span class="string">, </span>{<span class="reserved">stackalloc</span> <span class="reserved">char</span>[1]}<span class="string">"</span>;
+```csharp
+DummyHandler h = $"{123}, {"abc"}, {stackalloc char[1]}";
 
-[System.Runtime.CompilerServices.<span class="type">InterpolatedStringHandler</span>]
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">DummyHandler</span>
+[System.Runtime.CompilerServices.InterpolatedStringHandler]
+public struct DummyHandler
 {
-    <span class="reserved">public</span> <span class="type">DummyHandler</span>(<span class="reserved">int</span> literalLength, <span class="reserved">int</span> formattedCount) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendLiteral</span>(<span class="reserved">string</span> s) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"(literal)"</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"ジェネリック版"</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>(<span class="reserved">string</span> x) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"string 版"</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>(<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; x) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"ReadOnlySpan 版"</span>);
+    public DummyHandler(int literalLength, int formattedCount) { }
+    public void AppendLiteral(string s) => Console.WriteLine("(literal)");
+    public void AppendFormatted<T>(T x) => Console.WriteLine("ジェネリック版");
+    public void AppendFormatted(string x) => Console.WriteLine("string 版");
+    public void AppendFormatted(ReadOnlySpan<char> x) => Console.WriteLine("ReadOnlySpan 版");
 }
-</code></pre>
+```
 
-<pre class="console" title="AppendFormatted のオーバーロードを増やす例">
-<code>ジェネリック版
+```console
+ジェネリック版
 (literal)
 string 版
 (literal)
 ReadOnlySpan 版
-</code></pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="formatting"></a>書式指定
 
@@ -215,42 +214,42 @@ ReadOnlySpan 版
 (ハンドラー型が使える状況下で)書式指定した場合、`AppendFormatted` メソッドの第2、第3引数に書式が渡ります。
 例えば以下のようなコードを書いた場合、
 
-<pre class="source" title="書式指定付きの補間文字列の例">
-<code><span class="reserved">string</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b, <span class="reserved">int</span> c) =&gt; <span class="string">$"(</span>{a<em>, 8:<span class="string">X</span></em>}<span class="string">) (</span>{b<em>:<span class="string">X</span></em>}<span class="string">) (</span>{c<em>,4</em>}<span class="string">)"</span>;
-</code></pre>
+```csharp
+string m(int a, int b, int c) => $"({a, 8:X}) ({b:X}) ({c,4})";
+```
 
 以下のように展開されます。
 
-<pre class="source" title="書式指定付きの補間文字列の例の展開結果">
-<code><span class="reserved">string</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b, <span class="reserved">int</span> c)
+```csharp
+string m(int a, int b, int c)
 {
-    <span class="type">DefaultInterpolatedStringHandler</span> h = <span class="reserved">new</span>(8, 3);
-    h.<span class="method">AppendLiteral</span>(<span class="string">"("</span>);
-    h.<span class="method">AppendFormatted</span>(a, <em>8, <span class="string">"X"</span></em>);
-    h.<span class="method">AppendLiteral</span>(<span class="string">") ("</span>);
-    h.<span class="method">AppendFormatted</span>(b, <em><span class="string">"X"</span></em>);
-    h.<span class="method">AppendLiteral</span>(<span class="string">") ("</span>);
-    h.<span class="method">AppendFormatted</span>(c, <em>4</em>);
-    h.<span class="method">AppendLiteral</span>(<span class="string">")"</span>);
-    <span class="reserved">return</span> h.ToStringAndClear();
+    DefaultInterpolatedStringHandler h = new(8, 3);
+    h.AppendLiteral("(");
+    h.AppendFormatted(a, 8, "X");
+    h.AppendLiteral(") (");
+    h.AppendFormatted(b, "X");
+    h.AppendLiteral(") (");
+    h.AppendFormatted(c, 4);
+    h.AppendLiteral(")");
+    return h.ToStringAndClear();
 }
-</code></pre>
+```
 
 ハンドラー型を自作する場合、`AppendFormatted` メソッドの引数は、
 以下のようにオーバーロードをいくつか用意しても構いませんし、
 
-<pre class="source" title="AppendFormatted メソッドの引数の例(オーバーロードをいくつか用意)">
-<code>    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="reserved">int</span> alignment) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="reserved">string</span> format) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="reserved">int</span> alignment, <span class="reserved">string</span> format) { }
-</code></pre>
+```csharp
+    public void AppendFormatted<T>(T x) { }
+    public void AppendFormatted<T>(T x, int alignment) { }
+    public void AppendFormatted<T>(T x, string format) { }
+    public void AppendFormatted<T>(T x, int alignment, string format) { }
+```
 
 以下のようにオプション引数で1つのメソッドにまとめても構いません。
 
-<pre class="source" title="AppendFormatted メソッドの引数の例(オプション引数)">
-<code>    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="reserved">int</span>? alignment = <span class="reserved">null</span>, <span class="reserved">string</span>? format = <span class="reserved">null</span>) { }
-</code></pre>
+```csharp
+    public void AppendFormatted<T>(T x, int? alignment = null, string? format = null) { }
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="bool-return"></a>bool 戻り値
 
@@ -259,39 +258,39 @@ ReadOnlySpan 版
 この場合、false が返ってきたら処理を途中で打ち切るようなコードに展開されます。
 例えば以下のようなハンドラー型があったとします。
 
-<pre class="source" title="bool 戻り値を持つ補間文字列ハンドラー型の例">
-<code>[<span class="type">InterpolatedStringHandler</span>]
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">DummyHandler</span>
+```csharp
+[InterpolatedStringHandler]
+public struct DummyHandler
 {
-    <span class="reserved">public</span> <span class="type">DummyHandler</span>(<span class="reserved">int</span> literalLength, <span class="reserved">int</span> formattedCount, <span class="reserved">out</span> <span class="reserved">bool</span> result) =&gt; result = <span class="reserved">true</span>;
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">AppendLiteral</span>(<span class="reserved">string</span> s) =&gt; <span class="reserved">true</span>;
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">AppendFormatted</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) =&gt; <span class="reserved">true</span>;
+    public DummyHandler(int literalLength, int formattedCount, out bool result) => result = true;
+    public bool AppendLiteral(string s) => true;
+    public bool AppendFormatted<T>(T x) => true;
 }
-</code></pre>
+```
 
 このハンドラー型に対して、例えば以下のように補間文字列を渡した場合、
 
-<pre class="source" title="bool 戻り値を持つ補間文字列ハンドラー型の利用例">
-<code><span class="type">DummyHandler</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b, <span class="reserved">int</span> c, <span class="reserved">int</span> d) =&gt; <span class="string">$"</span>{a}<span class="string">.</span>{b}<span class="string">.</span>{c}<span class="string">.</span>{d}<span class="string">"</span>;
-</code></pre>
+```csharp
+DummyHandler m(int a, int b, int c, int d) => $"{a}.{b}.{c}.{d}";
+```
 
 以下のような展開結果になります。
 
-<pre class="source" title="bool 戻り値を持つ補間文字列ハンドラー型の利用例の展開結果">
-<code><span class="type">DummyHandler</span> <span class="method">m</span>(<span class="reserved">int</span> a, <span class="reserved">int</span> b, <span class="reserved">int</span> c, <span class="reserved">int</span> d)
+```csharp
+DummyHandler m(int a, int b, int c, int d)
 {
-    <span class="type">DummyHandler</span> h = <span class="reserved">new</span>(3, 4, <span class="reserved">out</span> <span class="reserved">var</span> result);
-    <span class="reserved">if</span> (result
-        &amp;&amp; h.<span class="method">AppendFormatted</span>(a)
-        &amp;&amp; h.<span class="method">AppendLiteral</span>(<span class="string">"."</span>)
-        &amp;&amp; h.<span class="method">AppendFormatted</span>(b)
-        &amp;&amp; h.<span class="method">AppendLiteral</span>(<span class="string">"."</span>)
-        &amp;&amp; h.<span class="method">AppendFormatted</span>(c)
-        &amp;&amp; h.<span class="method">AppendLiteral</span>(<span class="string">"."</span>))
-        h.<span class="method">AppendFormatted</span>(d);
-    <span class="reserved">return</span> h;
+    DummyHandler h = new(3, 4, out var result);
+    if (result
+        && h.AppendFormatted(a)
+        && h.AppendLiteral(".")
+        && h.AppendFormatted(b)
+        && h.AppendLiteral(".")
+        && h.AppendFormatted(c)
+        && h.AppendLiteral("."))
+        h.AppendFormatted(d);
+    return h;
 }
-</code></pre>
+```
 
 これを使って、例えば、「一定文字数を超えたらそこで処理を打ち切り」とか、
 「ログ レベル的に全く文字列化処理が必要ない場合、 `AppendLiteral`/`AppendFormatted` を一切呼ばない」とかができます。
@@ -308,63 +307,63 @@ ReadOnlySpan 版
 
 これを使うためにはまず、以下のようにコンストラクターに追加の引数を持ったハンドラー型を作ります。
 
-<pre class="source" title="コンストラクターに追加の引数を持ったハンドラー型">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-[<span class="type">InterpolatedStringHandler</span>]
-<span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">DummyHandler</span>
+[InterpolatedStringHandler]
+public ref struct DummyHandler
 {
-    <span class="reserved">public</span> <span class="type">DummyHandler</span>(<span class="reserved">int</span> literalLength, <span class="reserved">int</span> formattedCount) : <span class="reserved">this</span>(literalLength, formattedCount, <span class="reserved">null</span>, <span class="reserved">default</span>) { }
+    public DummyHandler(int literalLength, int formattedCount) : this(literalLength, formattedCount, null, default) { }
 
-    <span class="comment">// 追加の引数持ち</span>
-    <span class="reserved">public</span> <span class="type">DummyHandler</span>(<span class="reserved">int</span> literalLength, <span class="reserved">int</span> formattedCount, <span class="type">IFormatProvider</span>? provider)
-        : <span class="reserved">this</span>(literalLength, formattedCount, provider, <span class="reserved">default</span>) { }
+    // 追加の引数持ち
+    public DummyHandler(int literalLength, int formattedCount, IFormatProvider? provider)
+        : this(literalLength, formattedCount, provider, default) { }
 
-    <span class="reserved">public</span> <span class="type">DummyHandler</span>(<span class="reserved">int</span> literalLength, <span class="reserved">int</span> formattedCount, <span class="type">IFormatProvider</span>? provider, <span class="type">Span</span>&lt;<span class="reserved">char</span>&gt; initialBuffer)
-    <span class="comment">// 以下略</span>
+    public DummyHandler(int literalLength, int formattedCount, IFormatProvider? provider, Span<char> initialBuffer)
+    // 以下略
 }
-</code></pre>
+```
 
 次に、以下のように、`InterpolatedStringHandlerArgument` 属性を使って、メソッドの引数とハンドラー型のコンストラクター引数の結び付けるメソッドを書きます。
 
-<pre class="source" title="InterpolatedStringHandlerArgument 属性を使った引数の結び付け">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Formatter</span>
+```csharp
+public class Formatter
 {
-    <span class="comment">// 追加の引数なし。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Format</span>(<span class="type">DummyHandler</span> handler)
-    <span class="comment">// 省略</span>
+    // 追加の引数なし。
+    public static void Format(DummyHandler handler)
+    // 省略
 
-    <span class="comment">// provider を追加。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Format</span>(
-        <span class="type">IFormatProvider</span> provider,
-        [<span class="type">InterpolatedStringHandlerArgument</span>(<span class="string">"provider"</span>)] <span class="type">DummyHandler</span> handler)
-        =&gt; <span class="method">Format</span>(handler);
+    // provider を追加。
+    public static void Format(
+        IFormatProvider provider,
+        [InterpolatedStringHandlerArgument("provider")] DummyHandler handler)
+        => Format(handler);
 
-    <span class="comment">// provider と initialBuffer を追加。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Format</span>(
-        <span class="type">IFormatProvider</span> provider, <span class="type">Span</span>&lt;<span class="reserved">char</span>&gt; initialBuffer,
-        [<span class="type">InterpolatedStringHandlerArgument</span>(<span class="string">"provider"</span>, <span class="string">"initialBuffer"</span>)] <span class="type">DummyHandler</span> handler)
-        =&gt; <span class="method">Format</span>(handler);
+    // provider と initialBuffer を追加。
+    public static void Format(
+        IFormatProvider provider, Span<char> initialBuffer,
+        [InterpolatedStringHandlerArgument("provider", "initialBuffer")] DummyHandler handler)
+        => Format(handler);
 }
-</code></pre>
+```
 
 そしてこれらのメソッドを呼ぶと、ハンドラー型に追加の引数が渡るようになります。
 
-<pre class="source" title="ハンドラー型に引数を渡す例">
-<code><span class="reserved">using</span> System.Globalization;
+```csharp
+using System.Globalization;
 
-<span class="comment">// Format(DummyHandler) を呼んでて、</span>
-<span class="comment">// new DummyHandler(5, 2) が作られる。</span>
-<span class="type">Formatter</span>.<span class="method">Format</span>(<span class="string">$"abc </span>{1}<span class="string"> </span>{2}<span class="string">"</span>);
+// Format(DummyHandler) を呼んでて、
+// new DummyHandler(5, 2) が作られる。
+Formatter.Format($"abc {1} {2}");
 
-<span class="comment">// Format(IFormatProvider, DummyHandler) を呼んでて、</span>
-<span class="comment">// new DummyHandler(5, 2, CultureInfo.InvariantCulture) が作られる。</span>
-<span class="type">Formatter</span>.<span class="method">Format</span>(<span class="type">CultureInfo</span>.InvariantCulture, <span class="string">$"abc </span>{1}<span class="string"> </span>{2}<span class="string">"</span>);
+// Format(IFormatProvider, DummyHandler) を呼んでて、
+// new DummyHandler(5, 2, CultureInfo.InvariantCulture) が作られる。
+Formatter.Format(CultureInfo.InvariantCulture, $"abc {1} {2}");
 
-<span class="comment">// Format(IFormatProvider, Span&lt;char&gt;, DummyHandler) を呼んでて、</span>
-<span class="comment">// new DummyHandler(5, 2, CultureInfo.InvariantCulture, stackalloc char[128]) が作られる。</span>
-<span class="type">Formatter</span>.<span class="method">Format</span>(<span class="type">CultureInfo</span>.InvariantCulture, <span class="reserved">stackalloc</span> <span class="reserved">char</span>[128], <span class="string">$"abc </span>{1}<span class="string"> </span>{2}<span class="string">"</span>);
-</code></pre>
+// Format(IFormatProvider, Span<char>, DummyHandler) を呼んでて、
+// new DummyHandler(5, 2, CultureInfo.InvariantCulture, stackalloc char[128]) が作られる。
+Formatter.Format(CultureInfo.InvariantCulture, stackalloc char[128], $"abc {1} {2}");
+```
 
 ## <a id="sec-generated-title-10"></a> <a id="overload-resolution"></a>オーバーロード解決
 
@@ -372,31 +371,31 @@ C# 10.0 でハンドラー型の仕様が追加され、
 C# 9.0 まででも [FormattableString](st_string.md#FormattableString) の仕様があるので、
 補間文字列を受け取る候補となるメソッドを3つ同時に定義できます。
 
-<pre class="source" title="補間文字列を受け取る候補となる3つのメソッド">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">DefaultInterpolatedStringHandler</span> _) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"handler"</span>);
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> _) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"string"</span>);
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">IFormattable</span> _) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"formattable"</span>);
-</code></pre>
+```csharp
+public static void M(DefaultInterpolatedStringHandler _) => Console.WriteLine("handler");
+public static void M(string _) => Console.WriteLine("string");
+public static void M(IFormattable _) => Console.WriteLine("formattable");
+```
 
 こういう状況では、ハンドラー型 > `string` 型 > FormattableString 
 (ハンドラー型が一番呼ばれやすい) という優先順位になります。
 
-<pre class="source" title="ハンドラー型 &gt; string &gt; FormattableString">
-<code><span class="comment">// ハンドラー型最優先。</span>
-<span class="method">M</span>(<span class="string">$"</span>{1}<span class="string">"</span>); <span class="comment">// handler</span>
+```csharp
+// ハンドラー型最優先。
+M($"{1}"); // handler
 
-<span class="comment">// ただの文字列の場合は string に行く。</span>
-<span class="method">M</span>(<span class="string">"abc"</span>); <span class="comment">// string</span>
+// ただの文字列の場合は string に行く。
+M("abc"); // string
 
-<span class="comment">// ちょっと混乱しそうなのが、const になる場合に限り、 $ がついてても string 行き。</span>
-<span class="method">M</span>(<span class="string">$""</span>); <span class="comment">// string</span>
-<span class="method">M</span>(<span class="string">$"abc </span>{<span class="string">"abc"</span>}<span class="string"> abc"</span>); <span class="comment">// string</span>
+// ちょっと混乱しそうなのが、const になる場合に限り、 $ がついてても string 行き。
+M($""); // string
+M($"abc {"abc"} abc"); // string
 
-<span class="comment">// もちろん、キャストしてしまえば任意に呼び分け可能。</span>
-<span class="method">M</span>(<span class="string">$"</span>{1}<span class="string">"</span>); <span class="comment">// handler</span>
-<span class="method">M</span>((<span class="reserved">string</span>)<span class="string">$"</span>{1}<span class="string">"</span>); <span class="comment">// string</span>
-<span class="method">M</span>((<span class="type">IFormattable</span>)<span class="string">$"</span>{1}<span class="string">"</span>); <span class="comment">// formattable</span>
-</code></pre>
+// もちろん、キャストしてしまえば任意に呼び分け可能。
+M($"{1}"); // handler
+M((string)$"{1}"); // string
+M((IFormattable)$"{1}"); // formattable
+```
 
 `string` 型が真ん中なのがちょっと不思議な仕様ですが、
 これは FormattableString のときの反省からです。
@@ -407,20 +406,20 @@ FormattableString を優先してほしいのに優先してもらえなくて�
 ちなみに、ハンドラーの条件を満たす型が複数あって、
 それでオーバーロードした場合、オーバーロード解決できません。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Caller()
+```csharp
+public static void Caller()
 {
-    <span class="comment">// 優先度は付かないので不明瞭エラーを起こす。</span>
-    <span class="error">M</span>(<span class="string">$""</span>);
+    // 優先度は付かないので不明瞭エラーを起こす。
+    M($"");
 
-    <span class="comment">// 明示的にキャストすれば呼び分け可能。</span>
-    <span class="method">M</span>((<span class="type">Handler1</span>)<span class="string">$""</span>);
-    <span class="method">M</span>((<span class="type">Handler2</span>)<span class="string">$""</span>);
+    // 明示的にキャストすれば呼び分け可能。
+    M((Handler1)$"");
+    M((Handler2)$"");
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">Handler1</span> _) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"Handler1"</span>);
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="type">Handler2</span> _) =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"Handler2"</span>);
-</code></pre>
+public static void M(Handler1 _) => Console.WriteLine("Handler1");
+public static void M(Handler2 _) => Console.WriteLine("Handler2");
+```
 
 ## <a id="sec-generated-title-11"></a> <a id="api-in-net6"></a>.NET 6.0 で追加された API
 
@@ -447,50 +446,50 @@ C# の補間文字列はカルチャー依存で、何も指定しないと [`Cu
 その結果、手元の環境で実行すると日本式のフォーマットになるけど、
 サーバー上で実行すると米国式のフォーマットになったりすることがあります。
 
-<pre class="source" title="カルチャー依存で文字列補間の結果が変わる例">
-<code><span class="reserved">using</span> System.Globalization;
+```csharp
+using System.Globalization;
 
-<span class="comment">// サンプルなので明示的に指定。</span>
-<span class="comment">// 手元の環境が ja-jp カルチャーだとして…</span>
-<span class="type">Thread</span>.CurrentThread.CurrentCulture = <span class="type">CultureInfo</span>.<span class="method">GetCultureInfo</span>(<span class="string">"ja-jp"</span>);
+// サンプルなので明示的に指定。
+// 手元の環境が ja-jp カルチャーだとして…
+Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("ja-jp");
 
-<span class="comment">// 日本式。</span>
-<span class="comment">// yyyy/MM/dd hh:mm:ss</span>
-<span class="type">Console</span>.WriteLine(<span class="string">$"</span>{<span class="type">DateTime</span>.Now}<span class="string">"</span>);
+// 日本式。
+// yyyy/MM/dd hh:mm:ss
+Console.WriteLine($"{DateTime.Now}");
 
-<span class="comment">// 一方、サーバーとかで別カルチャーだったりすると…</span>
-<span class="comment">// (最近、データ量削減のために「CurrentCulture が常に InvariantCulture」みたいなモードがあったりする。)</span>
-<span class="type">Thread</span>.CurrentThread.CurrentCulture = <span class="type">CultureInfo</span>.InvariantCulture;
+// 一方、サーバーとかで別カルチャーだったりすると…
+// (最近、データ量削減のために「CurrentCulture が常に InvariantCulture」みたいなモードがあったりする。)
+Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-<span class="comment">// .NET の InvariantCulture は Invariant (不変)と言いつつ、米国基準。</span>
-<span class="comment">// MM/dd/yyyy hh:mm:ss</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">$"</span>{<span class="type">DateTime</span>.Now}<span class="string">"</span>);
-</code></pre>
+// .NET の InvariantCulture は Invariant (不変)と言いつつ、米国基準。
+// MM/dd/yyyy hh:mm:ss
+Console.WriteLine($"{DateTime.Now}");
+```
 
-<pre class="console" title="カルチャー依存で文字列補間の結果が変わる例">
-<code>2021/09/23 22:39:39
+```console
+2021/09/23 22:39:39
 09/23/2021 22:39:39
-</code></pre>
+```
 
 `CurrentCulture` 依存が怖いなら、`string.Create` メソッドを使ってカルチャーを明示します。
 
-<pre class="source" title="string.Create でカルチャーを明示する例">
-<code><span class="reserved">using</span> System.Globalization;
+```csharp
+using System.Globalization;
 
-<span class="comment">// どこか日本でも Invariant でもない適当なカルチャー。</span>
-<span class="type">Thread</span>.CurrentThread.CurrentCulture = <span class="type">CultureInfo</span>.GetCultureInfo(<span class="string">"fr-fr"</span>);
+// どこか日本でも Invariant でもない適当なカルチャー。
+Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-fr");
 
-<span class="comment">// これは CurrentCulture 依存。</span>
-<span class="type">Console</span>.WriteLine(<span class="string">$"</span>{<span class="type">DateTime</span>.Now}<span class="string">"</span>);
+// これは CurrentCulture 依存。
+Console.WriteLine($"{DateTime.Now}");
 
-<span class="comment">// string.Create を使ってカルチャーを明示すれば CurrentCulture 依存はなくなる。</span>
-<span class="type">Console</span>.WriteLine(<span class="reserved">string</span>.Create(<span class="type">CultureInfo</span>.InvariantCulture, <span class="string">$"</span>{<span class="type">DateTime</span>.Now}<span class="string">"</span>));
-</code></pre>
+// string.Create を使ってカルチャーを明示すれば CurrentCulture 依存はなくなる。
+Console.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{DateTime.Now}"));
+```
 
-<pre class="console" title="string.Create でカルチャーを明示する例">
-<code>23/09/2021 22:39:39
+```console
+23/09/2021 22:39:39
 09/23/2021 22:39:39
-</code></pre>
+```
 
 ちなみに[サンプル コード](https://github.com/ufcpp/UfcppSample/tree/master/Demo/2021/Csharp10/InterpolatedStrings/InvariantGlobalization)では、以下のようなハンドラー型を提供していたりします。
 
@@ -528,13 +527,13 @@ C# の補間文字列はカルチャー依存で、何も指定しないと [`Cu
 このオーバーロードを呼ぶと、
 `builder.Append($"{1} {2} {3}");` を、以下のようなコードとそん色ないパフォーマンスで呼ぶことができます。
 
-<pre class="source" title="$&quot;{1} {2} {3}&quot; 相当コード">
-<code>builder.<span class="method">Append</span>(1);
-builder.<span class="method">Append</span>(<span class="string">" "</span>);
-builder.<span class="method">Append</span>(2);
-builder.<span class="method">Append</span>(<span class="string">" "</span>);
-builder.<span class="method">Append</span>(3);
-</code></pre>
+```csharp
+builder.Append(1);
+builder.Append(" ");
+builder.Append(2);
+builder.Append(" ");
+builder.Append(3);
+```
 
 ### <a id="sec-generated-title-16"></a> <a id="MemoryExtensions.TryWrite"></a>MemoryExtensions.TryWrite
 
@@ -544,17 +543,17 @@ builder.<span class="method">Append</span>(3);
 `MemoryExtensions.TryWrite` なら完全にアロケーションなしで文字列補間ができます。
 バッファー管理がちょっと大変ですが、一応、最速を目指すならこのメソッドを使うことになります。
 
-<pre class="source" title="TryWrite">
-<code><span class="reserved">void</span> m(<span class="reserved">int</span> a,<span class="reserved">int</span> b,<span class="reserved">int</span> c,<span class="reserved">int</span> d)
+```csharp
+void m(int a,int b,int c,int d)
 {
-    <span class="type">Span</span>&lt;<span class="reserved">char</span>&gt; buffer = <span class="reserved">stackalloc</span> <span class="reserved">char</span>[128];
-    buffer.<span class="method">TryWrite</span>(<span class="string">$"</span>{a}<span class="string">.</span>{b}<span class="string">.</span>{c}<span class="string">.</span>{d}<span class="string">"</span>, <span class="reserved">out</span> <span class="reserved">var</span> charsWritten);
+    Span<char> buffer = stackalloc char[128];
+    buffer.TryWrite($"{a}.{b}.{c}.{d}", out var charsWritten);
 
-    <span class="comment">// デモ用なので ToString しちゃってるけども…</span>
-    <span class="comment">// 工夫次第ではこの ToString 負担も避けれる。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(buffer[..charsWritten].ToString());
+    // デモ用なので ToString しちゃってるけども…
+    // 工夫次第ではこの ToString 負担も避けれる。
+    Console.WriteLine(buffer[..charsWritten].ToString());
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-17"></a> <a id="Debug.Assert"></a>Debug.Assert
 
@@ -562,14 +561,14 @@ builder.<span class="method">Append</span>(3);
 
 このオーバーロードを使うと、`condition` 引数が `false` の時だけ `AppendLiteral`/`AppendFormatted` を呼び出します。
 
-<pre class="source" title="Debug.Assert">
-<code><span class="reserved">using</span> System.Diagnostics;
+```csharp
+using System.Diagnostics;
 
-<span class="type">Debug</span>.<span class="method">Assert</span>(<span class="reserved">true</span>, <span class="string">$@"condition が true な限り、Append は全く呼ばれない。
+Debug.Assert(true, $@"condition が true な限り、Append は全く呼ばれない。
 (Assert の condition はバグがない限り true になっている想定でコードを書く物なので、めったに通らない。)
-なので重たい処理を書いても割かし平気。</span>
-{<span class="type">DateTime</span>.Now}
-{<span class="type">Environment</span>.StackTrace}
-{<span class="type">Environment</span>.UserName}
-<span class="string">"</span>);
-</code></pre>
+なので重たい処理を書いても割かし平気。
+{DateTime.Now}
+{Environment.StackTrace}
+{Environment.UserName}
+");
+```

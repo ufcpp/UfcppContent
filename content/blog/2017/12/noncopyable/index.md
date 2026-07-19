@@ -56,16 +56,16 @@ mutable 構造体で問題が起きるのはコピーが発生するせいです
 自分が作った NonCopyableAnalyzer も完璧なものではないです。
 例えば、ジェネリクスが絡むと誤判定あり。
 
-<pre class="source" title="non-copyable 誤判定">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> NonCopyableStruct();
-    <span class="reserved">var</span> illegal = x; <span class="comment">// ちゃんと禁止</span>
-    <span class="reserved">var</span> misjudged = Copy(x); <span class="comment">// 本来禁止すべき。でも現実装だと通っちゃう</span>
+    var x = new NonCopyableStruct();
+    var illegal = x; // ちゃんと禁止
+    var misjudged = Copy(x); // 本来禁止すべき。でも現実装だと通っちゃう
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> T Copy&lt;<span class="type">T</span>&gt;(<span class="reserved">in</span> T x) =&gt; x;
-</code></pre>
+public static T Copy<T>(in T x) => x;
+```
 
 [「Non-cobyable 構造体」を言語機能として入れてほしい](https://github.com/dotnet/csharplang/issues/859)っていう要望とかも出てたりはするんですけども。
 言語に組み込むには上記のような誤判定がつらいかなぁという感じ…

@@ -28,20 +28,20 @@ aliases: []
 
 ちなみに、その、予定されている全機能で言うと、以下のような書き方とかもできます。
 
-<pre class="source" title="全機能版パターン マッチング">
-<code><reserved></span><span class="reserved">static</span> <span class="reserved">int</span> Calculate(<span class="type">Node</span> n, <span class="reserved">int</span> x)
+```csharp
+static int Calculate(Node n, int x)
 {
-    <span class="reserved">switch</span> (n)
+    switch (n)
     {
-        <span class="comment">// この2行はC# 7の時点で書ける</span>
-        <span class="reserved">case</span> <span class="type">Variable</span> v: <span class="reserved">return</span> x;
-        <span class="reserved">case</span> <span class="type">Constant</span> c: <span class="reserved">return</span> c.Value;
-        <span class="comment">// この2行は先送り</span>
-        <span class="reserved">case</span> <span class="type">Add</span> { <span class="type">Le</span> <span class="reserved">is</span> <span class="reserved">var</span> l, Right <span class="reserved">is</span> <span class="reserved">var</span> r }: <span class="reserved">return</span> Calculate(l, x) + Calculate(r, x);
-        <span class="reserved">case</span> <span class="type">Mul</span>(<span class="reserved">var</span> l, <span class="reserved">var</span> r): <span class="reserved">return</span> Calculate(l, x) * Calculate(r, x);
+        // この2行はC# 7の時点で書ける
+        case Variable v: return x;
+        case Constant c: return c.Value;
+        // この2行は先送り
+        case Add { Le is var l, Right is var r }: return Calculate(l, x) + Calculate(r, x);
+        case Mul(var l, var r): return Calculate(l, x) * Calculate(r, x);
     }
 }
-</code></pre>
+```
 
 一方で、どこまでをC# 7に入れるかは、徐々に、スケジュールと相談しつつ決めていたみたいで最近まで全然確定していません。
 
@@ -60,17 +60,17 @@ aliases: []
 
 まあ、それぞれを見ると、細かく「先送り」になっているものもあるんですが。例えば以下のコードは、計画上はできることになっているんですが、現状ではコンパイルエラーになります。
 
-<pre class="source" title="VS 2017 RCの12月更新ではまだ使えない機能">
-<code><comment></span><span class="comment">// 計画上は、クエリ式の let での分解も予定あり</span>
-<span class="reserved">var</span> q = <span class="reserved">from</span> x <span class="reserved">in</span> <span class="reserved">new</span> [] { 1, 2, 3, 4, 5 }.Select((x, i) =&gt; (x, i))
-        <span class="reserved">let</span> (y, z) = x
-        <span class="reserved">select</span> y * z;
+```csharp
+// 計画上は、クエリ式の let での分解も予定あり
+var q = from x in new [] { 1, 2, 3, 4, 5 }.Select((x, i) => (x, i))
+        let (y, z) = x
+        select y * z;
 
-<span class="comment">// 計画上は、ラムダ式とかの既存の文法にも discards 導入の予定あり</span>
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>&gt; f = (_, _) =&gt; 1;
+// 計画上は、ラムダ式とかの既存の文法にも discards 導入の予定あり
+Func<int, int, int> f = (_, _) => 1;
 
-<span class="comment">// 計画上は、ラムダ式でも throw 式を書ける予定あり</span>
-<span class="type">Action</span> a = () =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
-</code></pre>
+// 計画上は、ラムダ式でも throw 式を書ける予定あり
+Action a = () => throw new Exception();
+```
 
 もしかしたら、まだリリースまでにこれらの構文も対応するかもしれませんが、断定はできなさそう。

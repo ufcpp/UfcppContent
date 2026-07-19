@@ -30,24 +30,24 @@ aliases:
 <strong id="key_future" class="keyword">先物</strong>（future）
 
 <strong id="key_continuation" class="keyword">継続</strong>（continuation）
-<pre>
+```text
 ・先物
 
 「待ち時間を無駄にしない」という意味での非同期処理では、
 いったん非同期に処理したうえで、処理結果の値を使って次の処理を始めたいことが多々ある
 
-Task の場合、ジェネリック引数付きの Task&lt;T&gt; を使って、
+Task の場合、ジェネリック引数付きの Task<T> を使って、
 非同期処理の結果を受け取ることができる
 
 
-Task&lt;T&gt; みたいな、
+Task<T> みたいな、
 「非同期に処理して、処理が終わったら値を取りたい」
 みたいなものを先物（future: 将来的に受け取る物）って読んだりする。
 
 （実際、他の言語だと Future って名前のクラスになってたりする
-.NET 4 の Task でも、プレビュー版のころは Future&lt;T&gt; って名前になってた）
+.NET 4 の Task でも、プレビュー版のころは Future<T> って名前になってた）
 
-var t = Task.Factory.StartNew(() =&gt;
+var t = Task.Factory.StartNew(() =>
 {
     Thread.Sleep(3000);
     return 10;
@@ -72,12 +72,12 @@ main    別スレッド
 
 実際には、「その処理終わったら引き続きこういう処理して」というようなデリゲートを渡す。
 
-Task.Factory.StartNew(() =&gt;
+Task.Factory.StartNew(() =>
 {
     Thread.Sleep(3000);
     return 10;
 })
-.ContinueWith(t =&gt;
+.ContinueWith(t =>
 {
 Console.WriteLine(t.Result);
 });
@@ -107,7 +107,7 @@ main    別スレッド
 
 継続渡し
 受け渡し側: continuation(x);
-受け取り側: Method(x =&gt; ...);
+受け取り側: Method(x => ...);
 ------------------------------
 戻り値を受け取る代わりに、継続処理をデリゲートで渡す
 return で戻り値を返す代わりに、継続処理を呼び出す
@@ -136,4 +136,5 @@ F# とかではこの Tail 命令入るし、
 Tail 命令が吐いてなくても、.NET 4の64ビット版では自動的に末尾呼び出しの最適化してくれる。
 （Release ビルド時のみ）
 
-    </pre>
+    
+```

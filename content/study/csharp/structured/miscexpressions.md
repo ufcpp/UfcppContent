@@ -108,36 +108,28 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </tr>
 <tr>
 <td><a href="../resource/rm_nullusage.md#key-null-coalesce">null 合体演算子</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">y</span> = <span class="variable">x</span> ?? <span class="string">&quot;&quot;</span>;
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">y</span> = <span class="variable">x</span>;
-<span class="control">if</span> (<span class="variable">y</span> == <span class="reserved">null</span>) <span class="variable">y</span> = <span class="string">&quot;&quot;</span>;
-</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">var y = x ?? &quot;&quot;;</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">var y = x;
+if (y == null) y = &quot;&quot;;</code></pre></td>
 </tr>
 <tr>
 <td><a href="../functional/sp_delegate.md#anonymous">匿名メソッド式</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+<td><pre class="source" title=""><code class="language-csharp">static void Main()
 {
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">f</span> = <span class="reserved">delegate</span> (<span class="reserved">int</span> <span class="variable">x</span>)
+    Func&lt;int, int&gt; f = delegate (int x)
     {
-        <span class="control">return</span> <span class="variable">x</span> * <span class="variable">x</span>;
+        return x * x;
     };
-}
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+}</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">static void Main()
 {
-    <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">f</span> = <span class="method">M</span>;
+    Func&lt;int, int&gt; f = M;
 }
  
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">x</span>)
+static int M(int x)
 {
-    <span class="control">return</span> <span class="variable">x</span> * <span class="variable">x</span>;
-}
-</code></pre></td>
+    return x * x;
+}</code></pre></td>
 </tr>
 </table>
 
@@ -151,34 +143,22 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </tr>
 <tr>
 <td><a href="../cheatsheet/ap_ver3.md#functional">オブジェクト初期化子</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span>();
-<span class="variable">p</span>.X = 1;
-<span class="variable">p</span>.Y = 2;
-</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">var p = new Point { X = 1, Y = 2 };</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">var p = new Point();
+p.X = 1;
+p.Y = 2;</code></pre></td>
 </tr>
 <tr>
 <td><a href="../cheatsheet/ap_ver3.md#functional">コレクション初期化子</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">list</span> = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; { 1, 2 };
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">list</span> = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-<span class="variable">list</span>.<span class="method">Add</span>(1);
-<span class="variable">list</span>.<span class="method">Add</span>(2);
-</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">var list = new List&lt;int&gt; { 1, 2 };</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">var list = new List&lt;int&gt;();
+list.Add(1);
+list.Add(2);</code></pre></td>
 </tr>
 <tr>
 <td><a href="../functional/sp3_lambda.md">ラムダ式</a></td>
-<td><pre class="source" title="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">f</span> = <span class="variable">x</span> =&gt; <span class="variable">x</span> * <span class="variable">x</span>;
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">f</span> = <span class="reserved">delegate</span> (<span class="reserved">int</span> <span class="variable">x</span>) { <span class="control">return</span> <span class="variable">x</span>; };
-</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">Func&lt;int, int&gt; f = x =&gt; x * x;</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">Func&lt;int, int&gt; f = delegate (int x) { return x; };</code></pre></td>
 </tr>
 <tr>
 </table>
@@ -194,41 +174,29 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </tr>
 <tr>
 <td><a href="../resource/rm_nullusage.md#key-null-conditional">null条件演算子</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">y</span> = <span class="variable">x</span>?.Length;
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">int</span>? <span class="variable">y</span>;
-<span class="control">if</span> (<span class="variable">x</span> == <span class="reserved">null</span>) <span class="variable">y</span> = <span class="reserved">null</span>;
-<span class="control">else</span> <span class="variable">y</span> = <span class="variable">x</span>.Length;
-</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">var y = x?.Length;</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">int? y;
+if (x == null) y = null;
+else y = x.Length;</code></pre></td>
 </tr>
 <tr>
 <td><a href="../cheatsheet/ap_ver6.md#index-initializer">インデックス初期化子</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">dic</span> = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;
+<td><pre class="source" title=""><code class="language-csharp">var dic = new Dictionary&lt;string, int&gt;
 {
-    [<span class="string">&quot;one&quot;</span>] = 1,
-    [<span class="string">&quot;two&quot;</span>] = 2
-};
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">dic</span> = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;();
-<span class="variable">dic</span>[<span class="string">&quot;one&quot;</span>] = 1;
-<span class="variable">dic</span>[<span class="string">&quot;two&quot;</span>] = 2;
-</code></pre></td>
+    [&quot;one&quot;] = 1,
+    [&quot;two&quot;] = 2
+};</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">var dic = new Dictionary&lt;string, int&gt;();
+dic[&quot;one&quot;] = 1;
+dic[&quot;two&quot;] = 2;</code></pre></td>
 </tr>
 <tr>
 <td><a href="../cheatsheet/ap_ver6.md#sec-expression-bodied">式形式メンバー</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> * <span class="variable">x</span>;
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">x</span>)
+<td><pre class="source" title=""><code class="language-csharp">static int M(int x) =&gt; x * x;</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">static int M(int x)
 {
-    <span class="control">return</span> <span class="variable">x</span> * <span class="variable">x</span>;
-}
-</code></pre></td>
+    return x * x;
+}</code></pre></td>
 </tr>
 </table>
 
@@ -242,69 +210,53 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </tr>
 <tr>
 <td><a href="st_function.md#sec-expression-bodied">式形式メンバー(追加)</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Point</span>
+<td><pre class="source" title=""><code class="language-csharp">struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X, Y;
-    <span class="reserved">public</span> <span class="method">Point</span>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">y</span>)
-        =&gt; (X, Y) = (<span class="variable">x</span>, <span class="variable">y</span>);
-}
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Point</span>
+    public int X, Y;
+    public Point(int x, int y)
+        =&gt; (X, Y) = (x, y);
+}</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X, Y;
-    <span class="reserved">public</span> <span class="method">Point</span>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">y</span>)
+    public int X, Y;
+    public Point(int x, int y)
     {
-        X = <span class="variable">x</span>;
-        Y = <span class="variable">y</span>;
+        X = x;
+        Y = y;
     }
-}
-</code></pre></td>
+}</code></pre></td>
 </tr>
 <tr>
 <td><a href="oo_exception.md#throwexpr">throw 式</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">string</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">s</span>)
-        =&gt; <span class="variable">s</span> ?? <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">string</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">s</span>)
+<td><pre class="source" title=""><code class="language-csharp">static string M(string s)
+        =&gt; s ?? throw new Exception();</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">static string M(string s)
 {
-    <span class="control">if</span> (<span class="variable">s</span> == <span class="reserved">null</span>) <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
-    <span class="control">return</span> <span class="variable">s</span>;
-}
-</code></pre></td>
+    if (s == null) throw new Exception();
+    return s;
+}</code></pre></td>
 </tr>
 <tr>
 <td><a href="../resource/sp_ref.md#out-var">出力変数宣言</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">s</span>)
-         =&gt; <span class="reserved">int</span>.<span class="method">TryParse</span>(<span class="variable">s</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">x</span>) ? <span class="variable">x</span> : -1;
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">s</span>)
+<td><pre class="source" title=""><code class="language-csharp">static int M(string s)
+         =&gt; int.TryParse(s, out var x) ? x : -1;</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">static int M(string s)
 {
-    <span class="reserved">int</span> <span class="variable">x</span>;
-    <span class="control">if</span> (<span class="reserved">int</span>.<span class="method">TryParse</span>(<span class="variable">s</span>, <span class="reserved">out</span> <span class="variable">x</span>)) <span class="control">return</span> <span class="variable">x</span>;
-    <span class="control">else</span> <span class="control">return</span> -1;
-}
-</code></pre></td>
+    int x;
+    if (int.TryParse(s, out x)) return x;
+    else return -1;
+}</code></pre></td>
 </tr>
 <tr>
 <td><a href="../datatype/patterns.md#declaration">宣言パターン</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>)
-        =&gt; <span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">string</span> <span class="variable">s</span> ? <span class="variable">s</span>.Length : 0;
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">object</span> <span class="variable">x</span>)
+<td><pre class="source" title=""><code class="language-csharp">static int M(object x)
+        =&gt; x is string s ? s.Length : 0;</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">static int M(object x)
 {
-    <span class="reserved">var</span> <span class="variable">s</span> = <span class="variable">x</span> <span class="reserved">as</span> <span class="reserved">string</span>;
-    <span class="control">if</span> (<span class="variable">s</span> != <span class="reserved">null</span>) <span class="control">return</span> <span class="variable">s</span>.Length;
-    <span class="control">return</span> 0;
-}
-</code></pre></td>
+    var s = x as string;
+    if (s != null) return s.Length;
+    return 0;
+}</code></pre></td>
 </tr>
 </table>
 
@@ -318,30 +270,26 @@ C# でも、バージョンアップを重ねるたびに、式の比率が増�
 </tr>
 <tr>
 <td><a href="#abstract">switch 式</a></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">int</span>? <span class="variable">x</span>, <span class="reserved">int</span>? <span class="variable">y</span>)
-    =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) <span class="reserved">switch</span>
+<td><pre class="source" title=""><code class="language-csharp">static int M(int? x, int? y)
+    =&gt; (x, y) switch
     {
-        (<span class="reserved">null</span>, <span class="reserved">null</span>) =&gt; 0,
-        (<span class="reserved">null</span>, { }) =&gt; 1,
-        ({ }, <span class="reserved">null</span>) =&gt; -1,
-        (<span class="reserved">int</span> <span class="variable">i</span>, <span class="reserved">int</span> <span class="variable">j</span>) =&gt; <span class="variable">i</span>.<span class="method">CompareTo</span>(<span class="variable">j</span>),
-    };
-</code></pre></td>
-<td><pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">int</span>? <span class="variable">x</span>, <span class="reserved">int</span>? <span class="variable">y</span>)
+        (null, null) =&gt; 0,
+        (null, { }) =&gt; 1,
+        ({ }, null) =&gt; -1,
+        (int i, int j) =&gt; i.CompareTo(j),
+    };</code></pre></td>
+<td><pre class="source" title=""><code class="language-csharp">static int M(int? x, int? y)
 {
-    <span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> <span class="reserved">int</span> <span class="variable">i</span>)
+    if (x is int i)
     {
-        <span class="control">if</span> (<span class="variable">y</span> <span class="reserved">is</span> <span class="reserved">int</span> <span class="variable">j</span>) <span class="control">return</span> <span class="variable">i</span>.<span class="method">CompareTo</span>(<span class="variable">j</span>);
-        <span class="control">else</span> <span class="control">return</span> -1;
+        if (y is int j) return i.CompareTo(j);
+        else return -1;
     }
-    <span class="control">else</span>
+    else
     {
-        <span class="control">if</span> (<span class="variable">y</span> <span class="reserved">is</span> <span class="reserved">int</span>) <span class="control">return</span> 1;
-        <span class="control">else</span> <span class="control">return</span> 0;
+        if (y is int) return 1;
+        else return 0;
     }
-}
-</code></pre></td>
+}</code></pre></td>
 </tr>
 </table>

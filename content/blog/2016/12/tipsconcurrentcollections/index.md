@@ -34,43 +34,43 @@ Concurrent、英単語の意味としては「同時に起こる」という意�
 
 話を簡単にするために、まずちょっと、同時実行が必要ない状況で例を出しますが、以下のような挙動になります。
 
-<pre class="source" title="GetOrAdd: 同時実行がない場合">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Concurrent;
+```csharp
+using System;
+using System.Collections.Concurrent;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">const</span> <span class="reserved">int</span> theKey = 1;
-        <span class="reserved">var</span> d = <span class="reserved">new</span> <span class="type">ConcurrentDictionary</span>&lt;<span class="reserved">int</span>, <span class="reserved">string</span>&gt;();
+        const int theKey = 1;
+        var d = new ConcurrentDictionary<int, string>();
 
-        <span class="comment">// まず、GetOrAdd の同時実行が起こらない場合を見てみる</span>
-        <span class="comment">// 普通の逐次実行なので、同時実行にはならない</span>
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 4; i++)
+        // まず、GetOrAdd の同時実行が起こらない場合を見てみる
+        // 普通の逐次実行なので、同時実行にはならない
+        for (int i = 0; i < 4; i++)
         {
-            <span class="reserved">var</span> item = d.GetOrAdd(theKey, key =&gt;
+            var item = d.GetOrAdd(theKey, key =>
             {
-                <span class="comment">// インスタンス新規作成</span>
-                <span class="comment">// 単一のキーでアクセスしているので1回限り</span>
-                <span class="type">Console</span>.WriteLine(<span class="string">$"Add: </span>{i}<span class="string">"</span>);
-                <span class="reserved">return</span> i.ToString();
+                // インスタンス新規作成
+                // 単一のキーでアクセスしているので1回限り
+                Console.WriteLine($"Add: {i}");
+                return i.ToString();
             });
 
-            <span class="comment">// 同じインスタンスが返ってきているか確認</span>
-            <span class="type">Console</span>.WriteLine(<span class="string">$"Get: </span>{item}<span class="string">"</span>);
+            // 同じインスタンスが返ってきているか確認
+            Console.WriteLine($"Get: {item}");
         }
     }
 }
-</code></pre>
+```
 
-<pre class="source" title="実行結果">
-<code>Add: 0
+```csharp
+Add: 0
 Get: 0
 Get: 0
 Get: 0
 Get: 0
-</code></pre>
+```
 
 この例では、同じキーで何度も `GetOrAdd` を呼んでいます。
 値の生成(`$"Add: {i}"`と表示される部分)は最初の1回でしか通りません。
@@ -87,24 +87,24 @@ Get: 0
 Concurrentを名乗らない普通の`Dictionary`を使って、
 自前で`lock`を掛けるのであれば、例えば以下のように書けばいいでしょう。
 
-<pre class="source" title="Dictionaryに対して自前でlockを掛ける GetOrAdd 実装">
-<code><span class="reserved">static</span> <span class="reserved">class</span> <span class="type">DictionaryExtensions</span>
+```csharp
+static class DictionaryExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">TValue</span> GetOrAdd&lt;<span class="type">TKey</span>, <span class="type">TValue</span>&gt;(<span class="reserved">this</span> <span class="type">IDictionary</span>&lt;<span class="type">TKey</span>, <span class="type">TValue</span>&gt; d, <span class="type">TKey</span> key, <span class="type">Func</span>&lt;<span class="type">TKey</span>, <span class="type">TValue</span>&gt; valueFactory)
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> d, TKey key, Func<TKey, TValue> valueFactory)
     {
-        <span class="reserved">lock</span> (d)
+        lock (d)
         {
-            <span class="type">TValue</span> value;
-            <span class="reserved">if</span> (!d.TryGetValue(key, <span class="reserved">out</span> value))
+            TValue value;
+            if (!d.TryGetValue(key, out value))
             {
                 value = valueFactory(key);
                 d[key] = value;
             }
-            <span class="reserved">return</span> value;
+            return value;
         }
     }
 }
-</code></pre>
+```
 
 このコードの何が嫌かというと、`lock`範囲が広すぎること。
 
@@ -128,40 +128,40 @@ Concurrentを名乗らない普通の`Dictionary`を使って、
 
 その結果、最初にあげた例で、`for`ループを`Parallel.For`に変えて並列化すると、以下のような挙動をします。
 
-<pre class="source" title="GetOrAdd: 同時実行する場合">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Concurrent;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">const</span> <span class="reserved">int</span> theKey = 1;
-        <span class="reserved">var</span> d = <span class="reserved">new</span> <span class="type">ConcurrentDictionary</span>&lt;<span class="reserved">int</span>, <span class="reserved">string</span>&gt;();
+        const int theKey = 1;
+        var d = new ConcurrentDictionary<int, string>();
 
-        <span class="comment">// 並列動作</span>
-        <span class="comment">// 並列なので、ループの中身が複数のスレッドで同時に動くことがある</span>
-        <span class="type">Parallel</span>.For(0, 4, i =&gt;
+        // 並列動作
+        // 並列なので、ループの中身が複数のスレッドで同時に動くことがある
+        Parallel.For(0, 4, i =>
         {
-            <span class="reserved">var</span> item = d.GetOrAdd(theKey, key =&gt;
+            var item = d.GetOrAdd(theKey, key =>
             {
-                <span class="comment">// 同時に来られると、ここは複数回動く可能性がある</span>
-                <span class="type">Console</span>.WriteLine(<span class="string">$"Add: </span>{i}<span class="string">"</span>);
-                <span class="reserved">return</span> i.ToString();
+                // 同時に来られると、ここは複数回動く可能性がある
+                Console.WriteLine($"Add: {i}");
+                return i.ToString();
             });
 
-            <span class="comment">// Add が複数回動いても、Get で帰ってくる値は必ず単一の保証あり</span>
-            <span class="type">Console</span>.WriteLine(<span class="string">$"Get: </span>{item}<span class="string">"</span>);
+            // Add が複数回動いても、Get で帰ってくる値は必ず単一の保証あり
+            Console.WriteLine($"Get: {item}");
         });
     }
 }
-</code></pre>
+```
 
 実行する環境によって/実行するたびに結果は異なりますが、一例としては以下のような実行結果になります。
 
-<pre class="source" title="実行結果">
-<code>Add: 0
+```csharp
+Add: 0
 Add: 3
 Get: 0
 Add: 1
@@ -169,7 +169,7 @@ Get: 0
 Add: 2
 Get: 0
 Get: 0
-</code></pre>
+```
 
 (この環境では)Addは4回動いています。
 しかし、戻り値として返っているのはそのうち1つだけで、Getのところに表示されている値は全部同じです。
@@ -181,51 +181,51 @@ Get: 0
 
 以下のような書き方をします。
 
-<pre class="source" title="ConcurrentDictionary と Lazy の併用">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Concurrent;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">const</span> <span class="reserved">int</span> theKey = 1;
-        <span class="reserved">var</span> d = <span class="reserved">new</span> <span class="type">ConcurrentDictionary</span>&lt;<span class="reserved">int</span>, <span class="type">Lazy</span>&lt;<span class="reserved">string</span>&gt;&gt;(); <span class="comment">// 値を Lazy&lt;string&gt; に変える</span>
+        const int theKey = 1;
+        var d = new ConcurrentDictionary<int, Lazy<string>>(); // 値を Lazy<string> に変える
 
-        <span class="comment">// 並列動作</span>
-        <span class="comment">// 並列なので、ループの中身が複数のスレッドで同時に動くことがある</span>
-        <span class="type">Parallel</span>.For(0, 4, i =&gt;
+        // 並列動作
+        // 並列なので、ループの中身が複数のスレッドで同時に動くことがある
+        Parallel.For(0, 4, i =>
         {
-            <span class="reserved">var</span> lazy = d.GetOrAdd(theKey, key =&gt; <span class="reserved">new</span> <span class="type">Lazy</span>&lt;<span class="reserved">string</span>&gt;(() =&gt;
+            var lazy = d.GetOrAdd(theKey, key => new Lazy<string>(() =>
             {
-                <span class="comment">// 複数個の Lazy インスタンスが作られることはあるけども、</span>
-                <span class="comment">// Lazy が作られただけでは valueFactory は呼ばれない</span>
-                <span class="type">Console</span>.WriteLine(<span class="string">$"Add: </span>{i}<span class="string">"</span>);
-                <span class="reserved">return</span> i.ToString();
+                // 複数個の Lazy インスタンスが作られることはあるけども、
+                // Lazy が作られただけでは valueFactory は呼ばれない
+                Console.WriteLine($"Add: {i}");
+                return i.ToString();
             }));
 
-            <span class="comment">// lazy 自体は単一のインスタンスが返る保証あり</span>
+            // lazy 自体は単一のインスタンスが返る保証あり
 
-            <span class="comment">// この時点で初めて Add: の行が呼ばれる</span>
-            <span class="comment">// Lazy のデフォルトの挙動では、valueFactory が呼ばれるのは1回限りの保証あり</span>
-            <span class="reserved">var</span> item = lazy.Value;
+            // この時点で初めて Add: の行が呼ばれる
+            // Lazy のデフォルトの挙動では、valueFactory が呼ばれるのは1回限りの保証あり
+            var item = lazy.Value;
 
-            <span class="type">Console</span>.WriteLine(<span class="string">$"Get: </span>{item}<span class="string">"</span>);
+            Console.WriteLine($"Get: {item}");
         });
     }
 }
-</code></pre>
+```
 
 結果は以下のようになります。
 
-<pre class="source" title="実行結果">
-<code>Add: 0
+```csharp
+Add: 0
 Get: 0
 Get: 0
 Get: 0
 Get: 0
-</code></pre>
+```
 
 値は0である保証はなくて、`Add: 1`とか`Add: 2`が表示されることもありますが、少なくとも
 

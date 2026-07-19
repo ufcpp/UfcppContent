@@ -32,27 +32,27 @@ Visual Studio 2019 (16.0)が RC までいってちょっと落ち着いたのか
 
 `base` 呼び出しって言うのは以下のようなやつのこと。
 
-<pre class="source" title="base 呼び出し">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">protected</span> <span class="reserved">virtual</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;A&quot;</span>);
+    protected virtual void M() => Console.WriteLine("A");
 }
  
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">A</span>
+class B : A
 {
-    <span class="comment">// この、B の M は後から足したり消したり</span>
-    <span class="comment">//protected override void M() =&gt; Console.WriteLine(&quot;B&quot;);</span>
+    // この、B の M は後から足したり消したり
+    //protected override void M() => Console.WriteLine("B");
 }
  
-<span class="comment">// A, B とは別アセンブリにあるとして</span>
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">B</span>
+// A, B とは別アセンブリにあるとして
+class C : B
 {
-    <span class="comment">// C から基底クラスの M() を呼ぶ</span>
-    <span class="reserved">protected</span> <span class="reserved">override</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="reserved">base</span>.<span class="method">M</span>();
+    // C から基底クラスの M() を呼ぶ
+    protected override void M() => base.M();
 }
-</code></pre>
+```
 
 この書き方で、`C.M` から基底クラスの `M` を呼び出せるわけですが、
 
@@ -86,17 +86,17 @@ C# 7.3 までのインターフェイスは無条件に全部のメンバーが 
 
 あと、インターフェイスの[明示的実装](../../../../study/csharp/oop/oo_interface.md#explicit-impl)、↓みたいなやつもあるわけですが。
 
-<pre class="source" title="インターフェイスの明示的実装">
-<code><span class="reserved">interface</span> <span class="type">I</span>
+```csharp
+interface I
 {
-    <span class="reserved">void</span> <span class="method">M</span>();
+    void M();
 }
  
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">I</span>
+class A : I
 {
-    <span class="reserved">void</span> <span class="type">I</span>.<span class="method">M</span>() { }
+    void I.M() { }
 }
-</code></pre>
+```
 
 デフォルト実装が入ることで、「インターフェイスが基底のメンバーを明示的実装」という状況が発生します。
 この場合、その明示的実装は `protected` 扱いにするそうです。

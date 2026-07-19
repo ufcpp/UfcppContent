@@ -19,24 +19,24 @@ aliases: []
 
 C# 6.0 から以下のようなコードで `string.Format` 相当のことができるようになったわけですが。
 
-<pre class="source" title="string interpolation の例">
-<code><span class="reserved">var</span> <span class="variable">s</span> = <span class="string">$&quot;(</span>{<span class="variable">a</span>}<span class="string">, </span>{<span class="variable">b</span>}<span class="string">)&quot;</span>;
-</code></pre>
+```csharp
+var s = $"({a}, {b})";
+```
 
 これは、以下のように展開されます。
 
-<pre class="source" title="上記コードの展開結果">
-<code><span class="reserved">var</span> <span class="variable">s</span> = <span class="reserved">string</span>.<span class="method">Format</span>(<span class="string">&quot;({0}, {1})&quot;</span>, <span class="variable">a</span>, <span class="variable">b</span>);
-</code></pre>
+```csharp
+var s = string.Format("({0}, {1})", a, b);
+```
 
 これがパフォーマンス的にあんまりよろしくなくて…
 
 特に、[冒頭の提案ドキュメント](../../../../study/csharp/start/st_string.md#string-interpolation)にもある通り、ロギング用途との相性が最悪で、
 [`ILogger`](https://docs.microsoft.com/ja-jp/dotnet/api/microsoft.extensions.logging.ilogger.log?WT.mc_id=DT-MVP-4028921&view=dotnet-plat-ext-5.0)のメソッドがなかなか使いにくそうな感じの引数になっています。
 
-<pre class="source" title="ILogger.Log メソッドの引数が意味不明な件">
-<code><span class="reserved">void</span> <span class="method">Log</span>&lt;<span class="type">TState</span>&gt;(<span class="type">LogLevel</span> <span class="variable">logLevel</span>, <span class="type">EventId</span> <span class="variable">eventId</span>, <span class="type">TState</span> <span class="variable">state</span>, <span class="type">Exception</span> <span class="variable">exception</span>, <span class="type">Func</span>&lt;<span class="type">TState</span>, <span class="type">Exception</span>, <span class="reserved">string</span>&gt; <span class="variable">formatter</span>);
-</code></pre>
+```csharp
+void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter);
+```
 
 「`formatter` でラムダ式を渡して、その中で文字列化」みたいなことをしないといけなくて、結構面倒です。
 
@@ -52,49 +52,49 @@ C# 6.0 から以下のようなコードで `string.Format` 相当のことが�
 
 例えば以下のようなコード(一部仮想コードですが)があった場合、
 
-<pre class="source" title="呼ばれ方としてまずいロギング処理">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="method">Log</span>(<span class="string">$&quot;</span>{<span class="method">DiagnosticMetric</span>()}<span class="string">, </span>{<span class="method">DiagnosticMetric</span>()}<span class="string">, </span>{<span class="method">DiagnosticMetric</span>()}<span class="string">, </span>{<span class="method">DiagnosticMetric</span>()}<span class="string">&quot;</span>);
+Log($"{DiagnosticMetric()}, {DiagnosticMetric()}, {DiagnosticMetric()}, {DiagnosticMetric()}");
  
-<span class="reserved">string</span> <span class="method">DiagnosticMetric</span>()
+string DiagnosticMetric()
 {
-    <span class="comment">// 診断専用で、日常的に読むには少々重たい値がなにかあるとして</span>
-    <span class="control">return</span> その値を返す;
+    // 診断専用で、日常的に読むには少々重たい値がなにかあるとして
+    return その値を返す;
 }
  
-<span class="reserved">void</span> <span class="method">Log</span>(<span class="reserved">string</span> <span class="variable">message</span>)
+void Log(string message)
 {
-    <span class="comment">// LogLevel はコンパイル時に確定しない設定ファイルとかから読んだりする想定で</span>
-    <span class="control">if</span> (LogLevel &lt; 1) <span class="control">return</span>;
+    // LogLevel はコンパイル時に確定しない設定ファイルとかから読んだりする想定で
+    if (LogLevel < 1) return;
  
-    <span class="comment">// もし、たいていの場面では LogLevel 0 で運用してるとここにはほとんど来ない。</span>
-    <span class="comment">// 実際には message を読む必要がない。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">message</span>);
+    // もし、たいていの場面では LogLevel 0 で運用してるとここにはほとんど来ない。
+    // 実際には message を読む必要がない。
+    Console.WriteLine(message);
 }
-</code></pre>
+```
 
 以下のように展開されて処理されます。
 
-<pre class="source" title="string interpolation の展開結果">
-<code><span class="comment">// ただでさえ「必要な時にだけ呼びたい」というつもりのメソッドが無条件に呼ばれる。</span>
-<span class="reserved">object</span> <span class="variable">tmp1</span> = <span class="method">DiagnosticMetric</span>(); <span class="comment">// int → object に代入しててボックス化。</span>
-<span class="reserved">object</span> <span class="variable">tmp2</span> = <span class="method">DiagnosticMetric</span>();
-<span class="reserved">object</span> <span class="variable">tmp3</span> = <span class="method">DiagnosticMetric</span>();
-<span class="reserved">object</span> <span class="variable">tmp4</span> = <span class="method">DiagnosticMetric</span>();
+```csharp
+// ただでさえ「必要な時にだけ呼びたい」というつもりのメソッドが無条件に呼ばれる。
+object tmp1 = DiagnosticMetric(); // int → object に代入しててボックス化。
+object tmp2 = DiagnosticMetric();
+object tmp3 = DiagnosticMetric();
+object tmp4 = DiagnosticMetric();
  
-<span class="comment">// params 用の配列が作られる。</span>
-<span class="reserved">var</span> <span class="variable">paramsArray</span> = <span class="reserved">new</span> <span class="reserved">object</span>[] { <span class="variable">tmp1</span>, <span class="variable">tmp2</span>, <span class="variable">tmp3</span>, <span class="variable">tmp4</span> };
+// params 用の配列が作られる。
+var paramsArray = new object[] { tmp1, tmp2, tmp3, tmp4 };
  
-<span class="comment">// こういう文字列リテラルもプログラム中に埋め込まれて {0} とかの部分が無駄と言えば無駄。</span>
-<span class="reserved">var</span> <span class="variable">format</span> = <span class="string">&quot;{0}, {1}, {3}, {4}&quot;</span>;
+// こういう文字列リテラルもプログラム中に埋め込まれて {0} とかの部分が無駄と言えば無駄。
+var format = "{0}, {1}, {3}, {4}";
  
-<span class="comment">// これも必要性の有無にかかわらず必ず string 生成。</span>
-<span class="reserved">var</span> <span class="variable">message</span> = <span class="reserved">string</span>.<span class="method">Format</span>(<span class="variable">format</span>, <span class="variable">paramsArray</span>);
+// これも必要性の有無にかかわらず必ず string 生成。
+var message = string.Format(format, paramsArray);
  
-<span class="comment">// 作ったはいいけど、 Log の中で、LogLevel 的に使われない。</span>
-<span class="method">Log</span>(<span class="variable">message</span>);
-</code></pre>
+// 作ったはいいけど、 Log の中で、LogLevel 的に使われない。
+Log(message);
+```
 
 [`IFormattable` で受け取ると `string` 生成は遅らせれる](../../../../study/csharp/start/st_string.md#FormattableString)仕様はあるんですが、
 あんまりカスタマイズ性もなくて、ボックス化とか `params` 同様の配列の生成は避けれません。
@@ -103,17 +103,17 @@ C# 6.0 から以下のようなコードで `string.Format` 相当のことが�
 
 ということで、以下のように「特定パターンを満たす builder を作って、それの `TryFormat` メソッドを1個1個呼ぶ」みたいな形に展開できるようにしたいそうです。
 
-<pre class="source" title="builder.TryFormat に展開">
-<code><span class="type">Builder</span>.<span class="method">GetInterpolatedStringBuilder</span>(<span class="variable">baseLength</span>: 6, <span class="variable">formatHoleCount</span>: 4, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">builder</span>);
-<span class="reserved">_</span> = <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="method">DiagnosticMetric</span>())
-    &amp;&amp; <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="string">&quot;, &quot;</span>)
-    &amp;&amp; <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="method">DiagnosticMetric</span>())
-    &amp;&amp; <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="string">&quot;, &quot;</span>)
-    &amp;&amp; <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="method">DiagnosticMetric</span>())
-    &amp;&amp; <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="string">&quot;, &quot;</span>)
-    &amp;&amp; <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="method">DiagnosticMetric</span>())
+```csharp
+Builder.GetInterpolatedStringBuilder(baseLength: 6, formatHoleCount: 4, out var builder);
+_ = builder.TryFormat(DiagnosticMetric())
+    && builder.TryFormat(", ")
+    && builder.TryFormat(DiagnosticMetric())
+    && builder.TryFormat(", ")
+    && builder.TryFormat(DiagnosticMetric())
+    && builder.TryFormat(", ")
+    && builder.TryFormat(DiagnosticMetric())
     ;
-</code></pre>
+```
 
 `&&` でつないでいるので、1個目で `false` を返せばもう2個目以降は呼ばれないという実装。
 `TryFormat` にちゃんとしたオーバーロードを増やせば「`object` を介するせいでボックス化」も避けれます。
@@ -123,62 +123,62 @@ C# 6.0 から以下のようなコードで `string.Format` 相当のことが�
 まず、`Logger` 自体の定義。
 `LogTrace` メソッドの引数を「特定パターンを満たす builder」にします(この例の場合 `TraceLoggerParamsBuilder` 型)。
 
-<pre class="source" title="想定している Logger の作り方">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Logger</span>
+```csharp
+public class Logger
 {
-    <span class="comment">// どこかで設定</span>
-    <span class="reserved">public</span> <span class="type">LogLevel</span> EnabledLevel;
+    // どこかで設定
+    public LogLevel EnabledLevel;
  
-    <span class="comment">// TraceLoggerParamsBuilder の作りは後述。TryFormat とかを持ってる型</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">LogTrace</span>(<span class="type">TraceLoggerParamsBuilder</span> <span class="variable">builder</span>)
+    // TraceLoggerParamsBuilder の作りは後述。TryFormat とかを持ってる型
+    public void LogTrace(TraceLoggerParamsBuilder builder)
     {
-        <span class="comment">// TraceLoggerParamsBuilder から文字列を取り出してログ取りする。</span>
+        // TraceLoggerParamsBuilder から文字列を取り出してログ取りする。
     }
 }
-</code></pre>
+```
 
 これで、以下のようなコードを書いたとして、
 
-<pre class="source" title="logger.LogTrace 利用例">
-<code><span class="type">Logger</span> <span class="variable">logger</span> = GetLogger(<span class="type">LogLevel</span>.Info);
-<span class="variable">logger</span>.LogTrace(<span class="string">$&quot;</span>{<span class="string">&quot;this&quot;</span>}<span class="string"> will never be printed because info is &lt; trace!&quot;</span>);
-</code></pre>
+```csharp
+Logger logger = GetLogger(LogLevel.Info);
+logger.LogTrace($"{"this"} will never be printed because info is < trace!");
+```
 
 `logger.LogTrace` の行は以下のように展開するそうです。
 
-<pre class="source" title="logger.LogTrace の展開結果">
-<code><span class="reserved">var</span> <span class="variable">receiverTemp</span> = <span class="variable">logger</span>;
-<span class="type">TraceLoggerParamsBuilder</span>.<span class="method">GetInterpolatedStringBuilder</span>(<span class="variable">baseLength</span>: 47, <span class="variable">formatHoleCount</span>: 1, <span class="variable">receiverTemp</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">builder</span>);
-<span class="reserved">_</span> = <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="string">&quot;this&quot;</span>) &amp;&amp; <span class="variable">builder</span>.<span class="method">TryFormat</span>(<span class="string">&quot; will never be printed because info is &lt; trace!&quot;</span>);
-<span class="variable">receiverTemp</span>.<span class="method">LogTrace</span>(<span class="variable">builder</span>);
-</code></pre>
+```csharp
+var receiverTemp = logger;
+TraceLoggerParamsBuilder.GetInterpolatedStringBuilder(baseLength: 47, formatHoleCount: 1, receiverTemp, out var builder);
+_ = builder.TryFormat("this") && builder.TryFormat(" will never be printed because info is < trace!");
+receiverTemp.LogTrace(builder);
+```
 
 ログレベルを伝搬できるように、`Logger` のインスタンスも `GetInterpolatedStringBuilder` メソッド(builder のファクトリメソッド)に渡せるようにするとのこと。
 
 `TraceLoggerParamsBuilder` 型は最低ライン以下のように作ります。
 
-<pre class="source" title="ログレベルに応じて必要な時だけ文字列書き込みする builder の例">
-<code><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">TraceLoggerParamsBuilder</span>
+```csharp
+public struct TraceLoggerParamsBuilder
 {
-    <span class="reserved">bool</span> _logLevelEnabled;
+    bool _logLevelEnabled;
  
-    <span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">GetInterpolatedStringBuilder</span>(<span class="reserved">int</span> <span class="variable">baseLength</span>, <span class="reserved">int</span> <span class="variable">formatHoleCount</span>, <span class="type">Logger</span> <span class="variable">logger</span>, <span class="reserved">out</span> <span class="type">TraceLoggerParamsBuilder</span> <span class="variable">builder</span>)
+    internal static void GetInterpolatedStringBuilder(int baseLength, int formatHoleCount, Logger logger, out TraceLoggerParamsBuilder builder)
     {
-        <span class="comment">// 実際は baseLength, formatHoleCount とかも使って初期サイズを決定したバッファーとかも作る想定。</span>
-        <span class="comment">// とりあえず「レベルが合わないログは無視」のためのコードのみ例示。</span>
-        <span class="variable">builder</span> = <span class="reserved">new</span> <span class="type">TraceLoggerParamsBuilder</span> { _logLevelEnabled = <span class="variable">logger</span>.EnabledLevel &lt;= <span class="type">LogLevel</span>.Trace };
+        // 実際は baseLength, formatHoleCount とかも使って初期サイズを決定したバッファーとかも作る想定。
+        // とりあえず「レベルが合わないログは無視」のためのコードのみ例示。
+        builder = new TraceLoggerParamsBuilder { _logLevelEnabled = logger.EnabledLevel <= LogLevel.Trace };
     }
  
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">TryFormat</span>(<span class="reserved">string</span> <span class="variable">message</span>)
+    public bool TryFormat(string message)
     {
-        <span class="control">if</span> (!_logLevelEnabled) <span class="control">return</span> <span class="reserved">false</span>;
+        if (!_logLevelEnabled) return false;
  
-        <span class="comment">// バッファーへの文字列書き込み</span>
+        // バッファーへの文字列書き込み
  
-        <span class="control">return</span> <span class="reserved">true</span>;
+        return true;
     }
 }
-</code></pre>
+```
 
 ### <a id="overload">オーバーロード解決</a>
 
@@ -186,14 +186,14 @@ C# 6.0 から以下のようなコードで `string.Format` 相当のことが�
 しかも、`$""` がリテラルに展開されい場合だけ。
 以下のような挙動になります。
 
-<pre class="source" title="オーバーロード解決">
-<code><span class="reserved">void</span> <span class="method">Log</span>(<span class="reserved">string</span> <span class="variable">s</span>) { ... }
-<span class="reserved">void</span> <span class="method">Log</span>(<span class="type">TraceLoggerParamsBuilder</span> <span class="variable">p</span>) { ... }
+```csharp
+void Log(string s) { ... }
+void Log(TraceLoggerParamsBuilder p) { ... }
  
-<span class="method">Log</span>(<span class="string">$&quot;test&quot;</span>); <span class="comment">// {} を含んでないので $ が付かない &quot;test&quot;と同じ扱い → Log(string) の方が呼ばれる</span>
-<span class="method">Log</span>(<span class="string">$&quot;</span>{<span class="string">&quot;test&quot;</span>}<span class="string">&quot;</span>); <span class="comment">// {} の中身が文字列定数なのでコンパイル時に &quot;test&quot; に展開される → Log(string)</span>
-<span class="method">Log</span>(<span class="string">$&quot;</span>{1}<span class="string">&quot;</span>); <span class="comment">// コンパイル時の展開が利かない文字列補間 → Log(TraceLoggerParamsBuilder) 扱いで TryFormat に展開</span>
-</code></pre>
+Log($"test"); // {} を含んでないので $ が付かない "test"と同じ扱い → Log(string) の方が呼ばれる
+Log($"{"test"}"); // {} の中身が文字列定数なのでコンパイル時に "test" に展開される → Log(string)
+Log($"{1}"); // コンパイル時の展開が利かない文字列補間 → Log(TraceLoggerParamsBuilder) 扱いで TryFormat に展開
+```
 
 ### <a id="InterpolatedStringBuilder">InterpolatedStringBuilder</a>
 
@@ -203,12 +203,12 @@ C# 6.0 から以下のようなコードで `string.Format` 相当のことが�
 
 で、`string.Format` にも以下のオーバーロードを追加。
 
-<pre class="source" title="string.Format(InterpolatedStringBuilder)">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">String</span>
+```csharp
+public class String
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span> <span class="method">Format</span>(<span class="type">InterpolatedStringBuilder</span> <span class="variable">builder</span>) =&gt; <span class="variable">builder</span>.<span class="method">ToString</span>();
+    public static string Format(InterpolatedStringBuilder builder) => builder.ToString();
 }
-</code></pre>
+```
 
 これで、通常の `var s = $"{x}, {y}";` みたいな string interpolation も `InterpolatedStringBuilder` に対する `TryFormat` に展開されるようになるとのこと。
 

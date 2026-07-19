@@ -330,7 +330,7 @@ d<sub>B</sub><span class="paren" style="font-size:em;">(</span>f<span class="par
 
 ## <a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 ε近傍
 ε近傍を使った連続性の定義
 
@@ -338,4 +338,4 @@ d<sub>B</sub><span class="paren" style="font-size:em;">(</span>f<span class="par
 p 進付値
 p 進付値による極限
 p 進体
-</pre>
+```

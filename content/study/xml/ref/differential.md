@@ -25,19 +25,22 @@ d/dx や ∂/∂x 等を表示する
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;dd var="x" func="y"/&gt; &lt;pdd var="x" func="y/&gt;
-</pre>
+```xml
+<dd var="x" func="y"/> <pdd var="x" func="y/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;dd var="s"/&gt;f
+```xml
+<dd var="s"/>f
 ＝
-&lt;pdd var="x" func="f"/&gt;&lt;d/&gt;x
+<pdd var="x" func="f"/><d/>x
 ＋
-&lt;pdd var="y" func="f"/&gt;&lt;d/&gt;y
+<pdd var="y" func="f"/><d/>y
 ＋
-&lt;pdd var="y" func="f"/&gt;&lt;d/&gt;x
-</pre><div class="math"><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span></td></tr></table>f
+<pdd var="y" func="f"/><d/>x
+```
+<div class="math"><table class="frac" summary="differential"><tr><td class="num"><span class="normal">d</span></td></tr><tr><td><span class="normal">d</span></td></tr></table>f
 ＝
 <table class="frac" summary="differential"><tr><td class="num">∂</td></tr><tr><td>∂</td></tr></table><span class="normal">d</span>x
 ＋
@@ -48,42 +51,43 @@ d/dx や ∂/∂x 等を表示する
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:dd"&gt;
-  &lt;table class="frac" summary="differential"&gt;
-    &lt;tr&gt;&lt;td class="num"&gt;&lt;span class="normal"&gt;d&lt;/span&gt;&lt;xsl:value-of select="@func"/&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;&lt;span class="normal"&gt;d&lt;/span&gt;
-    &lt;xsl:choose&gt;
-      &lt;xsl:when test="@var != ''"&gt;
-        &lt;xsl:value-of select="@var"/&gt;
-      &lt;/xsl:when&gt;
-      &lt;xsl:otherwise&gt;
-        &lt;xsl:apply-templates/&gt;
-      &lt;/xsl:otherwise&gt;
-    &lt;/xsl:choose&gt;
-    &lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
-&lt;xsl:template match="ufcpp:pdd"&gt;
-  &lt;table class="frac" summary="differential"&gt;
-    &lt;tr&gt;&lt;td class="num"&gt;��&lt;xsl:value-of select="@func"/&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;��
-    &lt;xsl:choose&gt;
-      &lt;xsl:when test="@var != ''"&gt;
-        &lt;xsl:value-of select="@var"/&gt;
-      &lt;/xsl:when&gt;
-      &lt;xsl:otherwise&gt;
-        &lt;xsl:apply-templates/&gt;
-      &lt;/xsl:otherwise&gt;
-    &lt;/xsl:choose&gt;
-    &lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:dd">
+  <table class="frac" summary="differential">
+    <tr><td class="num"><span class="normal">d</span><xsl:value-of select="@func"/></td></tr>
+    <tr><td><span class="normal">d</span>
+    <xsl:choose>
+      <xsl:when test="@var != ''">
+        <xsl:value-of select="@var"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+    </td></tr>
+  </table>
+</xsl:template>
+<xsl:template match="ufcpp:pdd">
+  <table class="frac" summary="differential">
+    <tr><td class="num">��<xsl:value-of select="@func"/></td></tr>
+    <tr><td>��
+    <xsl:choose>
+      <xsl:when test="@var != ''">
+        <xsl:value-of select="@var"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+    </td></tr>
+  </table>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>table.frac
+```css
+table.frac
 {
   display:inline;
   vertical-align:middle;
@@ -102,5 +106,4 @@ span.normal
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

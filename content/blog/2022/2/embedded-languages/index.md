@@ -61,13 +61,13 @@ C# 中に JSON を埋め込む需要ってそんなにあったっけ？とい�
 
 ちなみに、この2個目の仕様があるので、以下のようなコードにも構文ハイライトが掛かります。
 
-<pre class="source" title="lang= 隠し仕様">
-<code><span class="comment">//lang=regex</span>
-<span class="reserved">var</span> <span class="variable">regex</span> = <span class="string">@&quot;(?&lt;name&gt;\w+?\d{3}).txt&quot;</span>;
+```csharp
+//lang=regex
+var regex = @"(?<name>\w+?\d{3}).txt";
 
-<span class="comment">//lang=json</span>
-<span class="reserved">var</span> <span class="variable">json</span> = <span class="string">@&quot;{ 'value': 123 }&quot;</span>;
-</code></pre>
+//lang=json
+var json = @"{ 'value': 123 }";
+```
 
 ほぼ「隠し仕様」みたいになってますが。
 
@@ -76,12 +76,12 @@ C# 中に JSON を埋め込む需要ってそんなにあったっけ？とい�
 それが `StringSyntax` 属性。
 `Regex` クラスのコンストラクターや `Match` メソッドにもこの属性が追加されています。
 
-<pre class="source" title="Regex クラスに StringSyntax 属性追加">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Regex</span>
+```csharp
+public class Regex
 {
-    <span class="reserved">public</span> <span class="type">Regex</span>([<span class="type">StringSyntax</span>(<span class="type">StringSyntaxAttribute</span>.Regex, <span class="string">&quot;options&quot;</span>)] <span class="reserved">string</span> <span class="variable">pattern</span>) { }
+    public Regex([StringSyntax(StringSyntaxAttribute.Regex, "options")] string pattern) { }
 }
-</code></pre>
+```
 
 ## raw string literal
 
@@ -94,18 +94,18 @@ C# の文字列リテラル中にコードを埋め込みやすくなったの�
 Visual Studio 17.2 Preview 1 で、以下のようなコードが書けるようになりました。
 (C# 11 候補。現状は LangVersion preview が必要。)
 
-<pre class="source" title="raw string literal の例">
-<code><span class="reserved">const</span> <span class="reserved">string</span> regex = <span class="string">@&quot;(?&lt;name&gt;\w+?\d{3}).txt&quot;</span>;
-<span class="reserved">var</span> <span class="variable">json</span> = <span class="string">@&quot;{ 'value': 123 }&quot;</span>;
+```csharp
+const string regex = @"(?<name>\w+?\d{3}).txt";
+var json = @"{ 'value': 123 }";
 
-<span class="reserved">var</span> <span class="variable">raw</span> = $$&quot;&quot;<span class="string">&quot;</span>
-<span class="reserved">class</span> <span class="type">A</span>
+var raw = $$"""
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">string</span> R = <span class="string">@&quot;{{regex}}&quot;</span>
-    <span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">string</span> J = <span class="string">@&quot;{{json}}&quot;</span>
+    public const string R = @"{{regex}}"
+    public const string J = @"{{json}}"
 }
-<span class="string">&quot;&quot;</span><span class="string">&quot;;</span>
-</code></pre>
+""";
+```
 
 ## EmbeddedLanguages
 

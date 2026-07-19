@@ -43,42 +43,42 @@ C#以前からある良いとされる習慣の1つに、「クラスの持つ�
 
 そこで、例えば`X`というデータを読み書きする際には、`GetX`, `SetX`というメソッドを介する習慣ができました。これらのメソッドをそれぞれgetter/setterといい、2つ合わせてアクセサー(accessor)と呼びます。単純なデータの読み書きであっても以下のように`Get`/`Set`メソッドを書くべきということです。
 
-<pre class="source" title="Get/Setメソッド">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> <em>GetX</em>() { <span class="reserved">return</span> _x; }
-    <span class="reserved">public</span> <span class="reserved">void</span> <em>SetX</em>(<span class="reserved">int</span> x) { _x = x; }
+    private int _x;
+    public int GetX() { return _x; }
+    public void SetX(int x) { _x = x; }
 }
-</code></pre>
+```
 
 このような書き方には前述のようなメリットがある一方で、クラス利用側のコードが煩雑になるという問題があります。例えば、`X`の値に1加えるだけでも以下のような書き方が必要になります。
 
-<pre class="source" title="クラス利用側のGet/Setメソッド参照">
-<code><reserved></span><span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>();
+```csharp
+var s = new Sample();
 s.SetX(s.GetX() + 1);
-</code></pre>
+```
 
 そこで、C#では、プロパティという構文を用意しました。以下のように書きます。
 
-<pre class="source" title="C# 1.0のプロパティ">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
-<em>    <span class="reserved">public</span> <span class="reserved">int</span> X
+    private int _x;
+    public int X
     {
-        <span class="reserved">get</span> { <span class="reserved">return</span> _x; }
-        <span class="reserved">set</span> { _x = <span class="reserved">value</span>; }
-    }</em>
+        get { return _x; }
+        set { _x = value; }
+    }
 }
-</code></pre>
+```
 
 `get`, `set`に続けて、メソッド的に振る舞いを書けます。一方で、利用側のコードは以下のように、フィールドの読み書きと同じように書けます。
 
-<pre class="source" title="クラス利用側のプロパティ参照">
-<code><reserved></span><span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>();
-<em>s.X += 1;</em>
-</code></pre>
+```csharp
+var s = new Sample();
+s.X += 1;
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="set-accessibility"></a>getterとsetterで異なるアクセシビリティ(C# 2.0)
 
@@ -86,18 +86,18 @@ s.SetX(s.GetX() + 1);
 
 そこで、C# 2.0で、プロパティのgetとsetの[アクセシビリティ](../oop/oo_conceal.md#level)を[別々に設定できる](../oop/oo_property.md#level)ようになりました。例えばgetだけpublicにして、setをprivateにするには以下のような書き方をします。
 
-<pre class="source" title="getとsetで異なるアクセシビリティを指定">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> X
+    private int _x;
+    public int X
     {
-        <span class="reserved">get</span> { <span class="reserved">return</span> _x; }
-        <em><span class="reserved">private</span> <span class="reserved">set</span></em> { _x = <span class="reserved">value</span>; }
+        get { return _x; }
+        private set { _x = value; }
     }
-    <span class="reserved">public</span> Sample(<span class="reserved">int</span> x) { _x = x; }
+    public Sample(int x) { _x = x; }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="auto-property"></a>自動プロパティ(C# 3.0)
 
@@ -105,13 +105,13 @@ s.SetX(s.GetX() + 1);
 
 そこで、C# 3.0では、自動的に上記のようなフィールドとそれに対する読み書きを生成する[自動プロパティ](../oop/oo_property.md#auto)(auto property)という機能が追加されました。以下のように、getやsetの後ろのブロックを省略することで自動プロパティになります。
 
-<pre class="source" title="自動プロパティ">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <em><span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>;</em> }
-    <span class="reserved">public</span> Sample(<span class="reserved">int</span> x) { X = x; }
+    public int X { get; private set; }
+    public Sample(int x) { X = x; }
 }
-</code></pre>
+```
 
 単純なフィールドの読み書きでいい間はこの書き方をし、追加の処理が必要になった際には自動実装ではない以前通りのプロパティに変更します。
 
@@ -121,26 +121,26 @@ s.SetX(s.GetX() + 1);
 
 C# 5.0までは、immutableであることを確実に保証するためには以下のような書き方でプロパティを作る必要がありました。
 
-<pre class="source" title="C# 5.0までのimmutableプロパティの書き方">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span> { <span class="reserved">return</span> _x; } }
-    <span class="reserved">public</span> Sample(<span class="reserved">int</span> x) { _x = x; }
+    private readonly int _x;
+    public int X { get { return _x; } }
+    public Sample(int x) { _x = x; }
 }
-</code></pre>
+```
 
 時代とともに、データをimmutableにしておくことの良さが一般に広まってきました。C#でも、プロパティをimmutableに書くことが増えています。
 
 そこで、C# 6ではimmutableなプロパティを書きやすくするため、[get-onlyプロパティ](../oop/oo_property.md#get-only)という構文が追加されました。以下のように、getだけを書くことで、前述のようなreadonlyフィールドを自動生成してくれます。書き込みはコンストラクター内でだけ行えます。
 
-<pre class="source" title="get-onlyプロパティ">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <em><span class="reserved">get</span>;</em> }
-    <span class="reserved">public</span> Sample(<span class="reserved">int</span> x) { X = x; }
+    public int X { get; }
+    public Sample(int x) { X = x; }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-6"></a> <a id="record-type"></a>レコード型(検討段階)
 
@@ -148,9 +148,9 @@ immutableなプロパティは、値の初期化をコンストラクターで�
 
 そこで、以下のような書き方で、コンストラクターとimmutableなプロパティを自動生成する構文の追加が検討がされています(C# 7には入らず、そのさらに先)。
 
-<pre class="source" title="レコード型(予定)">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Sample</span>(<span class="reserved">int</span> X);
-</code></pre>
+```csharp
+class Sample(int X);
+```
 
 `X`以外のメンバーを書きたいときだけ追加でクラス本体を書きます。immutableなプロパティだけでいい場合には、この例のように;だけを書いて、本体を省略します。
 

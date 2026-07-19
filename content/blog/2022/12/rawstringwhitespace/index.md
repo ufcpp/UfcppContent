@@ -33,23 +33,23 @@ Unicode に対応している言語は結構こういう仕様のものが多い
 「空白の有無」は、`A B` と `AB` みたいな単語区切りを除けば、
 自分の思いつく限り、意味が変わるのは `x +++ y` くらいでした。
 
-<pre class="source" title="+++">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
-<span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">2</span>;
+```csharp
+var x = 1;
+var y = 2;
 
-<span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> <span class="variable">x</span><span class="operator">++</span><span class="operator">+</span><span class="variable">y</span>; <span class="comment">// ここの +++</span>
+var z = x+++y; // ここの +++
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>((<span class="variable">x</span>, <span class="variable">y</span>, <span class="variable">z</span>));
-</pre>
+Console.WriteLine((x, y, z));
+```
 
 ちなみに、以下のような差。
 
-<pre class="source" title="++ + と + ++ と + + +">
-<span class="reserved">var</span> <span class="variable">z1</span> <span class="operator">=</span> <span class="variable">x</span><span class="operator">++</span> <span class="operator">+</span> <span class="variable">y</span>; <span class="comment">// (x++) + y</span>
-<span class="reserved">var</span> <span class="variable">z2</span> <span class="operator">=</span> <span class="variable">x</span> <span class="operator">+</span> <span class="operator">++</span><span class="variable">y</span>; <span class="comment">// x + (++y)</span>
-<span class="reserved">var</span> <span class="variable">z3</span> <span class="operator">=</span> <span class="variable">x</span> <span class="operator">+</span> <span class="operator">+</span> <span class="operator">+</span><span class="variable">y</span>; <span class="comment">// x + (+(+y))</span>
-<span class="comment">// +++ は ++ + の意味になる。</span>
-</pre>
+```csharp
+var z1 = x++ + y; // (x++) + y
+var z2 = x + ++y; // x + (++y)
+var z3 = x + + +y; // x + (+(+y))
+// +++ は ++ + の意味になる。
+```
 
 コメントまで含めると `//*/` と `//* /` とかも思いつきますが、
 すぐに思いついたのはこれだけでした。
@@ -92,55 +92,55 @@ C# は「空白かどうか」を Unicode カテゴリーを見て判定して�
 こんな文字は入力する方が大変なんですが…
 頑張って入力すると、[以下のようなソースコード](https://gist.github.com/ufcpp/3eeebaf3c79c0af2f76336f8e38b3104)が書けたりします。
 
-<pre class="source" title="スペース混在">
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span>[] {
-				<span class="number">0</span>,
-<span class="number">1</span>,
-<span class="number">2</span>,
-    <span class="number">3</span>,
-    <span class="number">4</span>,
-    <span class="number">5</span>,
-    <span class="number">6</span>,
-    <span class="number">7</span>,
-    <span class="number">8</span>,
-    <span class="number">9</span>,
-    <span class="number">10</span>,
-    <span class="number">11</span>,
-    <span class="number">12</span>,
-    <span class="number">13</span>,
-    <span class="number">14</span>,
-    <span class="number">15</span>,
-    <span class="number">16</span>,
-    <span class="number">17</span>,
-    <span class="number">18</span>,
-　　　　<span class="number">19</span>,
+```csharp
+var a = new[] {
+				0,
+1,
+2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+　　　　19,
 };
-</pre>
+```
 
 入力も大変なら、Visual Studio みたいな IDE は自動整形機能でごっそり全部、消すか、通常のスペース(U+0020)に置き換えてくれるので、
 この変なソースコードを維持するのもそれなりに大変です。
 
 ちなみに今回は、以下のコードでコード生成しました。
 
-<pre class="source" title="スペース混在コード生成">
-<span class="reserved">using</span> <span class="reserved">var</span> <span class="variable">f</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">StreamWriter</span>(<span class="string">&quot;a.cs&quot;</span>);
+```csharp
+using var f = new StreamWriter("a.cs");
 
-<span class="reserved">var</span> <span class="variable">ws</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">0x0009</span>, <span class="number">0x000B</span>, <span class="number">0x000C</span>, <span class="number">0x20</span>, <span class="number">0xA0</span>, <span class="number">0x1680</span>, <span class="number">0x2000</span>, <span class="number">0x2001</span>, <span class="number">0x2002</span>, <span class="number">0x2003</span>, <span class="number">0x2004</span>, <span class="number">0x2005</span>, <span class="number">0x2006</span>, <span class="number">0x2007</span>, <span class="number">0x2008</span>, <span class="number">0x2009</span>, <span class="number">0x200A</span>, <span class="number">0x202F</span>, <span class="number">0x205F</span>, <span class="number">0x3000</span> }<span class="operator">.</span><span class="method">Select</span>(<span class="variable local">i</span> <span class="operator">=&gt;</span> (<span class="reserved">char</span>)<span class="variable local">i</span>)<span class="operator">.</span><span class="method">ToArray</span>();
+var ws = new[] { 0x0009, 0x000B, 0x000C, 0x20, 0xA0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000 }.Select(i => (char)i).ToArray();
 
-<span class="variable">f</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">&quot;&quot;&quot;
+f.WriteLine("""
     var a = new[] {
-    &quot;&quot;&quot;</span>);
+    """);
 
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; <span class="variable">i</span> <span class="operator">&lt;</span> <span class="variable">ws</span><span class="operator">.</span><span class="property">Length</span>; <span class="variable">i</span><span class="operator">++</span>)
+for (int i = 0; i < ws.Length; i++)
 {
-    <span class="reserved">var</span> <span class="variable">w</span> <span class="operator">=</span> <span class="variable">ws</span>[<span class="variable">i</span>];
-    <span class="variable">f</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">$&quot;</span>{<span class="variable">w</span>}{<span class="variable">w</span>}{<span class="variable">w</span>}{<span class="variable">w</span>}{<span class="variable">i</span>}<span class="string">,</span><span class="string">&quot;</span>);
+    var w = ws[i];
+    f.WriteLine($"{w}{w}{w}{w}{i},");
 }
 
-<span class="variable">f</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">&quot;&quot;&quot;
+f.WriteLine("""
     };
-    &quot;&quot;&quot;</span>);
-</pre>
+    """);
+```
 
 
 ## <a id="raw-string">raw string と空白文字</a>
@@ -153,15 +153,15 @@ C# についてまとめると以下の通り。
 
 ところで、C# 11 では以下のような「[複数行文字列リテラル](../../../../study/csharp/start/st_string.md#multiline-indent)」を書けるようになりました。
 
-<pre class="source" title="生文字列で複数行文字列リテラルを書く例">
-<span class="reserved">var</span> <span class="variable">raw</span> <span class="operator">=</span> <span class="string">&quot;&quot;&quot;
+```csharp
+var raw = """
     raw string literals (生文字列リテラル)
     | ← ここよりも左側にあるインデントは無視される。
     ここまでがリテラル。
-    &quot;&quot;&quot;</span>; <span class="comment">// この「閉じ引用符」行のインデントが基準。</span>
+    """; // この「閉じ引用符」行のインデントが基準。
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">raw</span>); <span class="comment">// 「raw」から始まる。「    raw」にはならない。末尾も改行は入らない。</span>
-</pre>
+Console.WriteLine(raw); // 「raw」から始まる。「    raw」にはならない。末尾も改行は入らない。
+```
 
 ここでちょっと好奇心を働かせます。
 空白文字を混在させたときの扱いはどうなるんだろう？
@@ -169,51 +169,51 @@ C# についてまとめると以下の通り。
 試してみると、コンパイル エラーでした。
 CS9003「閉じ行と異なる空白を含んでいます」エラー。
 
-<pre class="source" title="異なる空白文字を使うとコンパイル エラー">
-<span class="reserved">_</span> <span class="operator">=</span> <span class="string">&quot;&quot;&quot;
-<span class="error" title="CS9003">　　　　</span>全角スペース4つ。
-    &quot;&quot;&quot;</span>; <span class="comment">// スペース4つ。</span>
-</pre>
+```csharp
+_ = """
+　　　　全角スペース4つ。
+    """; // スペース4つ。
+```
 
-<pre class="source" title="1個だけ変えてもダメ">
-<span class="reserved">_</span> <span class="operator">=</span> <span class="string">&quot;&quot;&quot;
-<span class="error" title="CS9003">   　</span>4つ中1個だけ全角。
-    &quot;&quot;&quot;</span>; <span class="comment">// スペース4つ。</span>
-</pre>
+```csharp
+_ = """
+   　4つ中1個だけ全角。
+    """; // スペース4つ。
+```
 
 おっ？異なる文字がダメということは？
 もしや？…
 
-<pre class="source" title="順序まで完全一致していればOK！">
-<span class="reserved">_</span> <span class="operator">=</span> <span class="string">&quot;&quot;&quot;
+```csharp
+_ = """
 　 	 　全角、半角、タブ、半角、全角。
-　 	 　&quot;&quot;&quot;</span>; <span class="comment">// 全角、半角、タブ、半角、全角。</span>
-</pre>
+　 	 　"""; // 全角、半角、タブ、半角、全角。
+```
 
 混在していても、順序を含めて完全に一致していればコンパイルできるみたいです。
 
 じゃあ、こんな感じで…
 
-<pre class="source" title="空白文字全部入りコード生成">
-<span class="reserved">using</span> <span class="reserved">var</span> <span class="variable">f</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">StreamWriter</span>(<span class="string">&quot;a.cs&quot;</span>);
+```csharp
+using var f = new StreamWriter("a.cs");
 
-<span class="reserved">var</span> <span class="variable">ws</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">0x0009</span>, <span class="number">0x000B</span>, <span class="number">0x000C</span>, <span class="number">0x20</span>, <span class="number">0xA0</span>, <span class="number">0x1680</span>, <span class="number">0x2000</span>, <span class="number">0x2001</span>, <span class="number">0x2002</span>, <span class="number">0x2003</span>, <span class="number">0x2004</span>, <span class="number">0x2005</span>, <span class="number">0x2006</span>, <span class="number">0x2007</span>, <span class="number">0x2008</span>, <span class="number">0x2009</span>, <span class="number">0x200A</span>, <span class="number">0x202F</span>, <span class="number">0x205F</span>, <span class="number">0x3000</span> }<span class="operator">.</span><span class="method">Select</span>(<span class="variable local">i</span> <span class="operator">=&gt;</span> (<span class="reserved">char</span>)<span class="variable local">i</span>)<span class="operator">.</span><span class="method">ToArray</span>();
-<span class="reserved">var</span> <span class="variable">w</span> <span class="operator">=</span> <span class="reserved">string</span><span class="operator">.</span><span class="static"><span class="method">Join</span></span>(<span class="string">&quot;&quot;</span>, <span class="variable">ws</span>);
+var ws = new[] { 0x0009, 0x000B, 0x000C, 0x20, 0xA0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000 }.Select(i => (char)i).ToArray();
+var w = string.Join("", ws);
 
-<span class="variable">f</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">$&quot;&quot;&quot;&quot;
-</span><span class="string">    _ = &quot;&quot;&quot;
-    </span>{<span class="variable">w</span>}<span class="string">abc
-    </span>{<span class="variable">w</span>}<span class="string">&quot;&quot;&quot;;</span><span class="string">
-    &quot;&quot;&quot;&quot;</span>);
-</pre>
+f.WriteLine($""""
+    _ = """
+    {w}abc
+    {w}""";
+    """");
+```
 
 どうかな？
 
-<pre class="source" title="空白文字全部入り(コンパイルできる)">
-<span class="reserved">_</span> <span class="operator">=</span> <span class="string">&quot;&quot;&quot;
+```csharp
+_ = """
 	                　abc
-	                　&quot;&quot;&quot;</span>;
-</pre>
+	                　""";
+```
 
 コンパイルできる！
 

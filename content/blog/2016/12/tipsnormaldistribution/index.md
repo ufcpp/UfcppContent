@@ -38,17 +38,17 @@ C#関係ない… こころなし程度にC#に関係している点というと
 以降のサンプル コードでは、[Math.NET Numerics](https://www.nuget.org/packages/MathNet.Numerics/)を使って、
 以下の`using`ディレクティブがあるものとして説明します。
 
-<pre class="source" title="MathNet.Numerics.Distributions">
-<code><span class="reserved">using</span> MathNet.Numerics.Distributions;
-<span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Math</span>;
-</code></pre>
+```csharp
+using MathNet.Numerics.Distributions;
+using static System.Math;
+```
 
 例えば、x, yそれぞれに対して、一様乱数(一定の範囲内で、全ての値が均等な確率で出現する乱数)を使って点を作ると、完全に真四角になります。
 
-<pre class="source" title="一様乱数を2個使って2次元座標を作る">
-<code><span class="reserved">var</span> rand = <span class="reserved">new</span> <span class="type">ContinuousUniform</span>(-1, 1);
-<span class="reserved">var</span> p = (rand.Sample(), rand.Sample());
-</code></pre>
+```csharp
+var rand = new ContinuousUniform(-1, 1);
+var p = (rand.Sample(), rand.Sample());
+```
 
 このコードで1万点ほどプロットすると、以下のようになります。
 
@@ -61,17 +61,17 @@ C#関係ない… こころなし程度にC#に関係している点というと
 乱数を足すために、以下のようなメソッドを用意してみます。
 `n`個足して平均を取るだけの関数です。
 
-<pre class="source" title="一様乱数を n 回重ねて平均を取る">
-<code><span class="reserved">static</span> <span class="reserved">double</span> Mean(<span class="type">IContinuousDistribution</span> d, <span class="reserved">int</span> n)
-    =&gt; <span class="type">Enumerable</span>.Range(0, n).Select(_ =&gt; d.Sample()).Sum() / n;
-</code></pre>
+```csharp
+static double Mean(IContinuousDistribution d, int n)
+    => Enumerable.Range(0, n).Select(_ => d.Sample()).Sum() / n;
+```
 
 これを使って、`n` = 2～5に対して、以下のコードで点を生成してみます。
 
-<pre class="source" title="一様乱数を重ねたもので2次元座標を作る">
-<code><span class="reserved">var</span> rand = <span class="reserved">new</span> <span class="type">ContinuousUniform</span>(-1, 1);
-<span class="reserved">var</span> p = (Mean(rand, n), Mean(rand, n));
-</code></pre>
+```csharp
+var rand = new ContinuousUniform(-1, 1);
+var p = (Mean(rand, n), Mean(rand, n));
+```
 
 先ほどと同様、1万点ずつプロットした結果を以下に示します。
 上から順に、`n` = 2～5です。
@@ -85,10 +85,10 @@ C#関係ない… こころなし程度にC#に関係している点というと
 
 ちなみに、正規分布乱数を使うと、真円になります。
 
-<pre class="source" title="正規分布乱数で2次元座標を作る">
-<code><span class="reserved">var</span> rand = <span class="reserved">new</span> <span class="type">Normal</span>(-1, 1);
-<span class="reserved">var</span> p = (rand.Sample(), rand.Sample());
-</code></pre>
+```csharp
+var rand = new Normal(-1, 1);
+var p = (rand.Sample(), rand.Sample());
+```
 
 ![正規分布乱数でx, yを生成した結果](../../../../../assets/media/1119/normalxy.png)
 
@@ -162,13 +162,13 @@ C#関係ない… こころなし程度にC#に関係している点というと
 例えばの話、以下のような乱数で2次元の点を作ってみましょう。
 角度を一様分布にしたものです。
 
-<pre class="source" title="確度を一様分布にして作った2次元座標">
-<code><span class="reserved">var</span> chi = <span class="reserved">new</span> <span class="type">ChiSquared</span>(2);
-<span class="reserved">var</span> uni = <span class="reserved">new</span> <span class="type">ContinuousUniform</span>(0, 2 * PI));
-<span class="reserved">var</span> r = Sqrt(chi.Sample());
-<span class="reserved">var</span> θ = uni.Sample();
-<span class="reserved">var</span> p = (r * Cos(θ), r * Sin(θ));
-</code></pre>
+```csharp
+var chi = new ChiSquared(2);
+var uni = new ContinuousUniform(0, 2 * PI));
+var r = Sqrt(chi.Sample());
+var θ = uni.Sample();
+var p = (r * Cos(θ), r * Sin(θ));
+```
 
 `ChiSquared`は[カイ二乗分布](https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E4%BA%8C%E4%B9%97%E5%88%86%E5%B8%83)っていうやつで、
 正規分布なx, yに対して、<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><msup><mrow><mi>y</mi></mrow><mrow><mn>2</mn></mrow></msup></math>

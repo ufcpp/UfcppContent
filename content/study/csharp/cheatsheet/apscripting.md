@@ -42,29 +42,29 @@ aliases:
 
 サンプル コード: [https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Scripting/src/Scripting](https://github.com/ufcpp/UfcppSample/tree/master/Chapters/Scripting/src/Scripting)
 
-<pre class="source" title="C#スクリプト ライブラリの利用例">
-<code><reserved></span><span class="reserved">using</span> Microsoft.CodeAnalysis.CSharp.Scripting;
-<span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using System;
+using System.Threading.Tasks;
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    public static void Main(string[] args)
     {
         MainAsync().Wait();
     }
 
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> MainAsync()
+    private static async Task MainAsync()
     {
-        <span class="reserved">var</span> result = <span class="reserved">await</span> <span class="type">CSharpScript</span>.EvaluateAsync&lt;<span class="reserved">int</span>&gt;(<span class="string">@"
+        var result = await CSharpScript.EvaluateAsync<int>(@"
 var x = 1;
 var y = 2;
 x + y
-"</span>);
-        <span class="type">Console</span>.WriteLine(result);
+");
+        Console.WriteLine(result);
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-4"></a> <a id="script-globals"></a>スクリプトとアプリとのやり取り
 
@@ -73,28 +73,28 @@ x + y
 
 例えば、以下のようなクラスを用意します。
 
-<pre class="source" title="globalsに渡す用のコマンド発行クラス">
-<code><inactive></span><span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-<span class="inactive">///</span><span class="comment"> コマンド発行クラス。</span>
-<span class="inactive">///</span><span class="comment"> C# スクリプトのglobalsとして渡して、スクリプトからコマンドを発行するのに使う。</span>
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Commander</span>
+```csharp
+/// <summary>
+/// コマンド発行クラス。
+/// C# スクリプトのglobalsとして渡して、スクリプトからコマンドを発行するのに使う。
+/// </summary>
+public class Commander
 {
-    <span class="comment">// 中略</span>
+    // 中略
 
-    <span class="reserved">public</span> <span class="reserved">void</span> walk(<span class="reserved">double</span> distance) =&gt; _queue.Enqueue(<span class="type">Command</span>.Walk(distance));
-    <span class="reserved">public</span> <span class="reserved">void</span> turn(<span class="reserved">double</span> angle) =&gt; _queue.Enqueue(<span class="type">Command</span>.Turn(angle));
-    <span class="reserved">public</span> <span class="reserved">void</span> speed(<span class="reserved">double</span> speedDotPerSecond) =&gt; _queue.Enqueue(<span class="type">Command</span>.Speed(speedDotPerSecond));
-    <span class="reserved">public</span> <span class="reserved">void</span> clear() =&gt; _queue.Enqueue(<span class="type">Command</span>.Clear());
+    public void walk(double distance) => _queue.Enqueue(Command.Walk(distance));
+    public void turn(double angle) => _queue.Enqueue(Command.Turn(angle));
+    public void speed(double speedDotPerSecond) => _queue.Enqueue(Command.Speed(speedDotPerSecond));
+    public void clear() => _queue.Enqueue(Command.Clear());
 }
-</code></pre>
+```
 
 これを、`EvaluateAsync`や`RunAsync`などのスクリプトAPIの`globals`引数に渡すことで、
 C#スクリプト側から、`walk`, `turn`, `speed`, `clear`などのメソッドを呼び出せるようになります。
 
-<pre class="source" title="globalsへのオブジェクトの受け渡し">
-<code>_state = <span class="reserved">await</span> CSharpScript.RunAsync(s, globals: ViewModel.Commander);
-</code></pre>
+```csharp
+_state = await CSharpScript.RunAsync(s, globals: ViewModel.Commander);
+```
 
 ちなみに、このコードは、C#スクリプトを使ってタートル グラフィックスをやってみるサンプル プログラムの一部です。
 コード全体は、GitHubで公開しています。
@@ -150,11 +150,11 @@ REPLで1行1行実行する他に、スクリプト ファイルを与えて実�
 
 この例では、以下のようなC#スクリプトを与えています。
 
-<pre class="source" title="C#スクリプトの例">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="type">Console</span>.WriteLine(<span class="type">DateTime</span>.Now);
-</code></pre>
+Console.WriteLine(DateTime.Now);
+```
 
 見てのとおり、通常の(コンパイルして使う)C#と違って、トップ レベルにステートメントを書いて実行できます。
 `class Program`や`static void Main()`などのクラス/メソッドは必ずしも必要ありません。
@@ -164,20 +164,20 @@ REPLで1行1行実行する他に、スクリプト ファイルを与えて実�
 通常の(コンパイルして使う)C#の機能はほぼ全て使えます。
 例えば以下のように、通常のC#コードをそのままC#インタラクティブ ウィンドウに張り付けて実行できます。
 
-<pre class="source" title="通常のC#コードをC#インタラクティブに貼り付け">
-<code>&gt; <span class="reserved">using</span> System;
+```csharp
+> using System;
 . 
-. <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+. public class Program
 . {
-.     <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+.     public static void Main()
 .     {
-.         <span class="type">Console</span>.WriteLine(<span class="string">"Hello World!"</span>);
+.         Console.WriteLine("Hello World!");
 .     }
 . }
 . 
-&gt; <span class="type">Program</span>.Main()
+> Program.Main()
 Hello World!
-</code></pre>
+```
 
 一方で、スクリプト実行でだけできる書き方がいくつかあります。
 
@@ -186,19 +186,19 @@ Hello World!
 式を1つだけ書いて、`;`も入力せずに改行すると、その式の結果を出力します。
 例えば、以下のようなコードでは、1行目は普通のC#と同じく代入ステートメント、2行目は`x * x`という式の計算結果の出力になります。
 
-<pre class="source" title="式の計算結果の出力">
-<code>&gt; <span class="reserved">var</span> x = 10;
-&gt; x * x
+```csharp
+> var x = 10;
+> x * x
 100
-</code></pre>
+```
 
 一方で、例えば以下のような書き方はできません。
 `;` を付けたことで通常のC#構文として解釈されますが、式 + `;` という構文はC#にはないのでエラーになります。
 
-<pre class="source" title="式の後ろには ; は付けちゃダメ">
-<code>&gt; x * x<em>;</em>
+```csharp
+> x * x;
 (1,1): error CS0201: Only assignment, call, increment, decrement, and new object expressions can be used as a statement
-</code></pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="top-level"></a>トップ レベル
 
@@ -212,12 +212,12 @@ Hello World!
 
 このうち、名前空間とアセンブリに対する属性は、スクリプト実行では使えません。
 
-<pre class="source" title="スクリプト実行で使えない構文">
-<code>&gt; <span class="reserved">namespace</span> Sample { }
+```csharp
+> namespace Sample { }
 (1,1): error CS7021: スクリプト コードで名前空間を宣言することはできません
-&gt; [<span class="reserved">assembly</span>:System.Reflection.<span class="type">AssemblyTitle</span>(<span class="string">"test"</span>)]
+> [assembly:System.Reflection.AssemblyTitle("test")]
 (1,2): error CS7026: アセンブリ属性とモジュール属性は、このコンテキストでは許可されていません。
-</code></pre>
+```
 
 一方、スクリプト実行時には、トップ レベルに以下のようなものが書けます。
 
@@ -227,48 +227,48 @@ Hello World!
 
 例えば以下のようなコードが書けます。
 
-<pre class="source" title="トップ レベルのステートメントやメンバーの例">
-<code>&gt; <span class="reserved">var</span> x = 10;
-&gt; <span class="reserved">var</span> y = 20;
-&gt; <span class="reserved">int</span> Product =&gt; x * y;
-&gt; Product
+```csharp
+> var x = 10;
+> var y = 20;
+> int Product => x * y;
+> Product
 200
-&gt; x = 15;
-&gt; y = 25;
-&gt; Product
+> x = 15;
+> y = 25;
+> Product
 375
-</code></pre>
+```
 
 トップ レベルで定義した変数は特殊なスコープを持ちます。
 上記の例のように、トップ レベルに書いたメンバー内では参照(この例だと`Product`プロパティ内で、変数`x`, `y`を参照)できますが、
 クラスを書くと、その中からは参照できません。
 
-<pre class="source" title="">
-<code>&gt; <span class="reserved">var</span> x = 10;
-&gt; <span class="reserved">int</span> X =&gt; x; <span class="comment">// これはOK</span>
-&gt; <span class="reserved">class</span> <span class="type">C</span> { <span class="reserved">int</span> X =&gt; x; } <span class="comment">// クラス内からは x を使えない</span>
+```csharp
+> var x = 10;
+> int X => x; // これはOK
+> class C { int X => x; } // クラス内からは x を使えない
 (1,20): error CS0120: 静的でないフィールド、メソッド、またはプロパティ 'x' で、オブジェクト参照が必要です
-</code></pre>
+```
 
 ちなみに、トップ レベルに拡張メソッドも書けます。
 
-<pre class="source" title="トップ レベルの拡張メソッド">
-<code>&gt; <span class="reserved">static</span> <span class="reserved">int</span> Square(<span class="reserved">this</span> <span class="reserved">int</span> x) =&gt; x * x;
-&gt; 10.Square()
+```csharp
+> static int Square(this int x) => x * x;
+> 10.Square()
 100
-</code></pre>
+```
 
 また、トップ レベルは、通常のC#でいうところの[非同期メソッド](../async/sp5_async.md)と同じ状態になっていて、常に`await`演算子が使えます。
 
-<pre class="source" title="トップ レベルはawaitを使える">
-<code>&gt; <span class="reserved">#r</span> <span class="string">"System.Net.Http"</span>
-&gt; <span class="reserved">using</span> System.Net.Http;
-&gt; <span class="reserved">var</span> c = <span class="reserved">new</span> <span class="type">HttpClient</span>();
-&gt; <span class="reserved">var</span> res = <span class="reserved">await</span> c.GetAsync(<span class="string">"http://ufcpp.net"</span>);
-&gt; <span class="reserved">var</span> content = <span class="reserved">await</span> res.Content.ReadAsStringAsync();
-&gt; content.Substring(0, 50)
-"\r\n&lt;!DOCTYPE html&gt;\r\n&lt;html lang=\"ja\" xmlns=\"http://w"
-</code></pre>
+```csharp
+> #r "System.Net.Http"
+> using System.Net.Http;
+> var c = new HttpClient();
+> var res = await c.GetAsync("http://ufcpp.net");
+> var content = await res.Content.ReadAsStringAsync();
+> content.Substring(0, 50)
+"\r\n<!DOCTYPE html>\r\n<html lang=\"ja\" xmlns=\"http://w"
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="directive"></a>スクリプト用ディレクティブ
 
@@ -286,17 +286,17 @@ Hello World!
 
 例えば、`a.csx`という名前で以下のようなファイルがあったとします。
 
-<pre class="source" title="a.csx スクリプト ファイル">
-<code><reserved></span><span class="reserved">var</span> x = 10;
-</code></pre>
+```csharp
+var x = 10;
+```
 
 この状況下で、以下のようなスクリプトを実行できます。
 
-<pre class="source" title="a.csxをloadするスクリプト">
-<code>&gt; <span class="reserved">#load</span> <span class="string">"a.csx"</span>
-&gt; x
+```csharp
+> #load "a.csx"
+> x
 10
-</code></pre>
+```
 
 ディレクティブは、これからいくつか追加も予定されています。
 `#help`と打つことでヘルプが表示されるので詳しくはそれを読んでみてください。

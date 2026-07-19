@@ -48,10 +48,11 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 一般形
 式変形を繰り返すと、楕円積分は以下のいずれかの形式に帰着
-</pre><div class="math">
+```
+<div class="math">
       <span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> u</td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table>
       <table class="frac" summary="fraction"><tr><td class="num">
           <span class="normal">d</span>x</td></tr><tr><td>

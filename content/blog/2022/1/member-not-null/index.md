@@ -27,77 +27,77 @@ aliases: []
 
 例えば以下のコードはプロパティ定義の行に警告。
 
-<pre class="source" title="非 null 参照型のプロパティが未初期化">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="warning">S</span> { <span class="reserved">get</span>; } <span class="comment">// CS8618 警告</span>
+    public string S { get; } // CS8618 警告
 }
-</code></pre>
+```
 
 以下のようにコンストラクターを足すと、今度はコンストラクターの行に警告。
 
-<pre class="source" title="コンストラクター内でも非 null 参照型のプロパティが未初期化">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> S { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type"><span class="warning">C</span></span>() { } <span class="comment">// CS8618 警告</span>
+    public string S { get; }
+    public C() { } // CS8618 警告
 }
-</code></pre>
+```
 
 以下のように書くと警告は消えるんですが、
 
-<pre class="source" title="ちゃんと非 null 値で初期化したので OK に">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> S { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">C</span>()
+    public string S { get; }
+    public C()
     {
-        S = <span class="string">&quot;値は適当&quot;</span>; <span class="comment">// これで警告が消える。</span>
+        S = "値は適当"; // これで警告が消える。
     }
 }
-</code></pre>
+```
 
 これをメソッド抽出してしまうと再び警告が出ます。
 
-<pre class="source" title="初期化コードはコンストラクターに直にないとダメ">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> S { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
+    public string S { get; private set; }
 
-    <span class="reserved">public</span> <span class="type"><span class="warning">C</span></span>() <span class="comment">// 再び CS8618</span>
+    public C() // 再び CS8618
     {
-        <span class="method">Initialize</span>();
+        Initialize();
     }
 
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Initialize</span>()
+    private void Initialize()
     {
-        S = <span class="string">&quot;値は適当&quot;</span>;
+        S = "値は適当";
     }
 }
-</code></pre>
+```
 
 null 許容参照型の初期リリースではこの問題を回避する手段はなかったんですが、後々、[`MemberNotNull`](../../../../study/csharp/resource/nullablereferencetype.md#MemberNotNull) という属性が追加されていて、
 以下のように書けば警告をなくすことができるようになりました。
 
-<pre class="source" title="MemberNotNull 属性">
-<code><span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> S { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
+    public string S { get; private set; }
 
-    <span class="reserved">public</span> <span class="type">C</span>()
+    public C()
     {
-        <span class="method">Initialize</span>();
+        Initialize();
     }
 
-    [<span class="type">MemberNotNull</span>(<span class="reserved">nameof</span>(S))]
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Initialize</span>()
+    [MemberNotNull(nameof(S))]
+    private void Initialize()
     {
-        S = <span class="string">&quot;値は適当&quot;</span>; <span class="comment">// 逆に、この行を消すと CS8774 警告。</span>
+        S = "値は適当"; // 逆に、この行を消すと CS8774 警告。
     }
 }
-</code></pre>
+```
 
 ## 値型に対して MemberNotNull
 
@@ -107,42 +107,42 @@ null 許容参照型の初期リリースではこの問題を回避する手段
 実際には「値を代入したかどうか」を見ているようで、
 値型に対しても使えたりします。
 
-<pre class="source" title="MemberNotNull(値型プロパティ)">
-<code><span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="type">DateOnly</span> D { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="type">C</span>() = &gt; <span class="method">Initialize</span>();
+    public DateOnly D { get; private set; }
+    public C() = > Initialize();
 
-    [<span class="type">MemberNotNull</span>(<span class="reserved">nameof</span>(D))]
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Initialize</span>()
+    [MemberNotNull(nameof(D))]
+    private void Initialize()
     {
-    <span class="warning">}</span> <span class="comment">// CS8774</span>
-    <span class="comment">// member not &quot;null&quot; と言いつつ、非 null が確定している値型に対してもフロー解析してる。</span>
+    } // CS8774
+    // member not "null" と言いつつ、非 null が確定している値型に対してもフロー解析してる。
 }
-</code></pre>
+```
 
 「代入したかどうか」しか調べてない雰囲気？
 
 代入さえされていれば `D = default;` でも警告が消えたりします。
 (C# 10.0 時点では。)
 
-<pre class="source" title="D = default でもよかったりする">
-<code><span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="type">DateOnly</span> D { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="type">C</span>() =&gt; <span class="method">Initialize</span>();
+    public DateOnly D { get; private set; }
+    public C() => Initialize();
 
-    [<span class="type">MemberNotNull</span>(<span class="reserved">nameof</span>(D))]
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Initialize</span>()
+    [MemberNotNull(nameof(D))]
+    private void Initialize()
     {
-        D = <span class="reserved">default</span>; <span class="comment">// これでも OK。</span>
+        D = default; // これでも OK。
     }
 }
-</code></pre>
+```
 
 ということで、[defaultable value type](../defaultable/index.md) の仕様が入るまではまだ機能不足ではあるんですが。
 とりあえず、`MemberNotNull` に対して値型のプロパティを渡せなくするみたいな処理をあえて入れたりはしていないようです。

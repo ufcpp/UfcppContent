@@ -44,10 +44,10 @@ Global.asax は、
 以下のように &lt;script&gt; タグを1つだけ書いてその中で処理に記述するか、
 
 
-<pre class="xsource" title="Global.asax（インラインコード）">
-<code><span class="bracket">&lt;%@ </span><span class="element">Application</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="bracket">%&gt;</span>
+```xml
+<%@ Application Language="C#" %>
 
-<span class="bracket">&lt;</span><span class="element">script</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="attribute">runat</span><span class="attvalue">="Server"</span><span class="bracket">&gt;</span>
+<script Language="C#" runat="Server">
 void Application_OnBeginRequest(object sender, EventArgs e)
 {
   // HTTP リクエスト処理開始時の処理
@@ -57,34 +57,34 @@ void Session_Start(object sender, EventArgs e)
 {
   // セッション開始時の処理
 }
-<span class="bracket">&lt;/</span><span class="element">script</span><span class="bracket">&gt;</span>
-</code></pre>
+</script>
+```
 あるいは、以下のように、コードビハインドで処理を記述します。
 
 
-<pre class="xsource" title="Global.asax（コードビハインド）">
-<code><span class="bracket">&lt;%@ </span><span class="element">Application</span>
-    <span class="attribute">Codebehind</span><span class="attvalue">="Global.asax.cs"</span>
-    <span class="attribute">Inherits</span><span class="attvalue">="WebApplication1.Global"</span>
-    <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="bracket">%&gt;</span>
-</code></pre>
-<pre class="source" title="Glocal.asax.cs" lang="">
-<code><span class="reserved">namespace</span> WebApplication1
+```xml
+<%@ Application
+    Codebehind="Global.asax.cs"
+    Inherits="WebApplication1.Global"
+    Language="C#" %>
+```
+```csharp
+namespace WebApplication1
 {
-  <span class="reserved">public class</span> Global : System.Web.HttpApplication
+  public class Global : System.Web.HttpApplication
   {
-    <span class="reserved">protected void</span> Application_OnBeginRequest(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Application_OnBeginRequest(object sender, EventArgs e)
     {
-      <span class="comment">// HTTP リクエスト処理開始時の処理</span>
+      // HTTP リクエスト処理開始時の処理
     }
 
-    <span class="reserved">protected void</span> Session_Start(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Session_Start(object sender, EventArgs e)
     {
-      <span class="comment">// セッション開始時の処理</span>
+      // セッション開始時の処理
     }
   }
 }
-</code></pre>
+```
 
 
 BeginReqest の他に、ASP.NET Web アプリケーションにどのようなイベントがあるかは、
@@ -165,12 +165,12 @@ Request.PhysicalApplicationPath プロパティの値は C:\Users\user1\wwwroot 
 以下のようにします。
 （この例では、日付に応じて、yyyyMM.csv という形式の名前で保存します。）
 
-<pre class="source" title="PhysicalApplicationPath" lang="">
-<code><span class="reserved">string</span> basePath = Request.PhysicalApplicationPath + <span class="literal">@"\accesslog\"</span>;
+```csharp
+string basePath = Request.PhysicalApplicationPath + @"\accesslog\";
 DateTime now = DateTime.Now;
-<span class="reserved">string</span> filename = basePath +
-  <span class="reserved">string</span>.Format(<span class="literal">"{0}{1:00}.csv"</span>, now.Year, now.Month);
-</code></pre>
+string filename = basePath +
+  string.Format("{0}{1:00}.csv", now.Year, now.Month);
+```
 
 
 
@@ -182,18 +182,18 @@ Web アプリケーションにいつ誰がアクセスしてくるかは分か�
 
 例えば、単に以下のようなコードを書いたとします。
 
-<pre class="source" title="ログ記録（排他制御なし）" lang="">
-<code><span class="reserved">using</span> (StreamWriter sw = <span class="reserved">new</span> StreamWriter(filename, <span class="reserved">true</span>))
+```csharp
+using (StreamWriter sw = new StreamWriter(filename, true))
 {
-  sw.Write(<span class="literal">"\""</span> + DateTime.Now.ToString() + <span class="literal">"\","</span>);
-  sw.Write(<span class="literal">"\""</span> +
+  sw.Write("\"" + DateTime.Now.ToString() + "\",");
+  sw.Write("\"" +
     System.Net.Dns.GetHostEntry(Request.UserHostName).HostName +
-    <span class="literal">"\","</span>);
-  sw.Write(<span class="literal">"\""</span> + Request.UserAgent + <span class="literal">"\","</span>);
-  sw.Write(<span class="literal">"\""</span> + Request.Url + <span class="literal">"\","</span>);
-  sw.Write(<span class="literal">"\""</span> + Request.UrlReferrer + <span class="literal">"\"\n"</span>);
+    "\",");
+  sw.Write("\"" + Request.UserAgent + "\",");
+  sw.Write("\"" + Request.Url + "\",");
+  sw.Write("\"" + Request.UrlReferrer + "\"\n");
 }
-</code></pre>
+```
 
 
 排他制御も何もしていないので、
@@ -231,20 +231,20 @@ Lock() と UnLock() で囲まれた領域は、
 そういう観点からすると、Application でロックするのは作法的にはあまりよくないかも。
 でも、Application.Lock() は使いやすいから。）
 
-<pre class="source" title="ログ記録（排他制御なし）" lang="">
-<code>Application.Lock();
-<span class="reserved">using</span> (StreamWriter sw = <span class="reserved">new</span> StreamWriter(filename, <span class="reserved">true</span>))
+```csharp
+Application.Lock();
+using (StreamWriter sw = new StreamWriter(filename, true))
 {
-  sw.Write(<span class="literal">"\""</span> + DateTime.Now.ToString() + <span class="literal">"\","</span>);
-  sw.Write(<span class="literal">"\""</span> +
+  sw.Write("\"" + DateTime.Now.ToString() + "\",");
+  sw.Write("\"" +
     System.Net.Dns.GetHostEntry(Request.UserHostName).HostName +
-    <span class="literal">"\","</span>);
-  sw.Write(<span class="literal">"\""</span> + Request.UserAgent + <span class="literal">"\","</span>);
-  sw.Write(<span class="literal">"\""</span> + Request.Url + <span class="literal">"\","</span>);
-  sw.Write(<span class="literal">"\""</span> + Request.UrlReferrer + <span class="literal">"\"\n"</span>);
+    "\",");
+  sw.Write("\"" + Request.UserAgent + "\",");
+  sw.Write("\"" + Request.Url + "\",");
+  sw.Write("\"" + Request.UrlReferrer + "\"\n");
 }
 Application.UnLock();
-</code></pre>
+```
 
 
 
@@ -253,49 +253,49 @@ Application.UnLock();
 まとめると、
 Global.asax.cs（Global.asax のコードビハインド）に以下のようなコードを書くことでアクセスログの記録ができます。
 
-<pre class="source" title="Global.asax.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Web;
-<span class="reserved">using</span> System.IO;
+```csharp
+using System;
+using System.Web;
+using System.IO;
 
-<span class="reserved">namespace</span> WebApplication1
+namespace WebApplication1
 {
-  <span class="reserved">public class</span> Global : System.Web.HttpApplication
+  public class Global : System.Web.HttpApplication
   {
-    <span class="reserved">void</span> AddAccessLog()
+    void AddAccessLog()
     {
-      <span class="reserved">string</span> basePath = Request.PhysicalApplicationPath + <span class="literal">@"\accesslog\"</span>;
+      string basePath = Request.PhysicalApplicationPath + @"\accesslog\";
       DateTime now = DateTime.Now;
-      <span class="reserved">string</span> filename = basePath
-        + <span class="reserved">string</span>.Format(<span class="literal">"{0}{1:00}.csv"</span>, now.Year, now.Month);
+      string filename = basePath
+        + string.Format("{0}{1:00}.csv", now.Year, now.Month);
 
       Application.Lock();
-      <span class="reserved">using</span> (StreamWriter sw = <span class="reserved">new</span> StreamWriter(filename, <span class="reserved">true</span>))
+      using (StreamWriter sw = new StreamWriter(filename, true))
       {
-        sw.Write(<span class="literal">"\""</span> + DateTime.Now.ToString() + <span class="literal">"\","</span>);
-        sw.Write(<span class="literal">"\""</span> +
+        sw.Write("\"" + DateTime.Now.ToString() + "\",");
+        sw.Write("\"" +
           System.Net.Dns.GetHostEntry(Request.UserHostName).HostName +
-          <span class="literal">"\","</span>);
-        sw.Write(<span class="literal">"\""</span> + Request.UserAgent + <span class="literal">"\","</span>);
-        sw.Write(<span class="literal">"\""</span> + Request.Url + <span class="literal">"\","</span>);
-        sw.Write(<span class="literal">"\""</span> + Request.UrlReferrer + <span class="literal">"\"\n"</span>);
+          "\",");
+        sw.Write("\"" + Request.UserAgent + "\",");
+        sw.Write("\"" + Request.Url + "\",");
+        sw.Write("\"" + Request.UrlReferrer + "\"\n");
       }
       Application.UnLock();
     }
 
-    <span class="reserved">protected void</span> Application_OnBeginRequest(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Application_OnBeginRequest(object sender, EventArgs e)
     {
-      <span class="comment">// ↓もし、毎リクエストでログをとりたければ
-      // AddAccessLog();</span>
+      // ↓もし、毎リクエストでログをとりたければ
+      // AddAccessLog();
     }
 
-    <span class="reserved">protected void</span> Session_Start(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Session_Start(object sender, EventArgs e)
     {
       AddAccessLog();
     }
   }
 }
-</code></pre>
+```
 
 
 
@@ -307,38 +307,38 @@ Global.asax.cs（Global.asax のコードビハインド）に以下のような
 まあ、単純に、ユーザエージェントを見て、それっぽい文字が含まれていたらログを記録しないだけなので、
 以下のようなコードを Global.asax.cs に追加するだけで簡単に実現可能です。
 
-<pre class="source" title="Global.asax.cs に追加" lang="">
-<code><span class="reserved">static readonly string</span>[] excludeList = <span class="reserved">new string</span>[]
+```csharp
+static readonly string[] excludeList = new string[]
 {
-  <span class="literal">"Googlebot"</span>,
-  <span class="literal">"Yahoo! Slurp"</span>,
-  <span class="literal">"msnbot"</span>,
-  <span class="literal">"MMCrawler"</span>,
-  <span class="literal">"yetibot@naver.com"</span>,
-  <span class="literal">"AMZNKAssocBot"</span>,
-  <span class="literal">"Mediapartners-Google"</span>,
+  "Googlebot",
+  "Yahoo! Slurp",
+  "msnbot",
+  "MMCrawler",
+  "yetibot@naver.com",
+  "AMZNKAssocBot",
+  "Mediapartners-Google",
 };
 
-<span class="reserved">bool</span> CheckExcludeList()
+bool CheckExcludeList()
 {
-  <span class="reserved">string</span> agent = Request.UserAgent;
+  string agent = Request.UserAgent;
 
-  <span class="reserved">foreach</span> (<span class="reserved">string</span> exclude <span class="reserved">in</span> excludeList)
+  foreach (string exclude in excludeList)
   {
-    <span class="reserved">if</span> (agent.Contains(exclude))
-      <span class="reserved">return true</span>;
+    if (agent.Contains(exclude))
+      return true;
   }
-  <span class="reserved">return false</span>;
+  return false;
 }
 
-<span class="reserved">protected void</span> Session_Start(Object sender, EventArgs e)
+protected void Session_Start(Object sender, EventArgs e)
 {
-  <span class="reserved">if</span> (CheckExcludeList())
-    <span class="reserved">return</span>;
+  if (CheckExcludeList())
+    return;
 
   AddAccessLog();
 }
-</code></pre>
+```
 
 
 （汎用性を持たせたければ、

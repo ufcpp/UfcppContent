@@ -41,28 +41,28 @@ Visual Studio 2017で、csproj 形式が新しくなりました。
 
 [.NET Standard 1.4向けライブラリの例](https://github.com/ufcpp/UfcppSample/tree/master/Demo/2017/NewCsproj/NewCsproj/ClassLibraryStd14):
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>netstandard1.4<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;
-</code></pre>
+</Project>
+```
 
 [.NET Core 1.1向けコンソール アプリの例](https://github.com/ufcpp/UfcppSample/tree/master/Demo/2017/NewCsproj/NewCsproj/ConsoleAppCore11):
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>netcoreapp1.1<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;
-</code></pre>
+</Project>
+```
 
 要するに、「どうせ初期設定のまま大して変更しない設定が多いんだから、全部消す。設定した値だけを入れる」という変更。
 
@@ -97,29 +97,29 @@ Visual Studio 2017でも、「.NET Framework向けライブラリ」もしくは
 
 例えば、[以下のような感じ](https://github.com/ufcpp/UfcppSample/tree/master/Demo/2017/NewCsproj/NewCsproj/ClassLibraryMultiTarget)。
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFrameworks</span><span class="attvalue">&gt;</span>net35;netstandard1.0<span class="attvalue">&lt;/</span><span class="element">TargetFrameworks</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <TargetFrameworks>net35;netstandard1.0</TargetFrameworks>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;
-</code></pre>
+</Project>
+```
 
 この状態で、自動的に`NET35`、`NETSTANDARD1_0`みたいなシンボルが`#define`された状態になるので、
 C#コードも以下のような条件コンパイルができます。
 
-<pre class="source" title="">
-<code>    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Class1</span>
+```csharp
+    public class Class1
     {
-<span class="inactive">#if</span> NET35
-<span class="inactive">        public static string Name =&gt; ".NET Framework 3.5";
-#elif</span> NETSTANDARD1_0
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span> Name =&gt; <span class="string">".NET Standard 1.0"</span>;
-<span class="inactive">#endif</span>
+#if NET35
+        public static string Name => ".NET Framework 3.5";
+#elif NETSTANDARD1_0
+        public static string Name => ".NET Standard 1.0";
+#endif
     }
-</code></pre>
+```
 
 ## 新形式でだけ有効になる Visual Studio 2017 新機能
 
@@ -138,21 +138,21 @@ csprojでも、新形式でだけ働きだす機能がいくつかあります�
 C#ファイルを追加するたびにcsprojが衝突してうっとおしいという経験をした方は多いと思います。
 ソースコード1つ1つに対して、以下のようなタグが書き出されるせいです。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">  &lt;</span><span class="string">ItemGroup</span><span class="reserved">&gt;</span>
-<span class="reserved">    &lt;</span><span class="string">Compile</span><span class="reserved"> </span>Include<span class="reserved">=</span>"<span class="reserved">Class1.cs</span>"<span class="reserved"> /&gt;</span>
-<span class="reserved">    &lt;</span><span class="string">Compile</span><span class="reserved"> </span>Include<span class="reserved">=</span>"<span class="reserved">Properties\AssemblyInfo.cs</span>"<span class="reserved"> /&gt;</span>
-<span class="reserved">  &lt;/</span><span class="string">ItemGroup</span><span class="reserved">&gt;</span>
-</code></pre>
+```xml
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+```
 
 これに対して、Visual Studio 2017では、ワイルドカード指定ができるようになっています。
 以下のように、`**/*.cs`でソースコード指定すれば、フォルダー下のすべてのC#ファイルがコンパイルの対象になります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">  &lt;</span><span class="string">ItemGroup</span><span class="reserved">&gt;</span>
-<span class="reserved">    &lt;</span><span class="string">Compile</span><span class="reserved"> </span>Include<span class="reserved">=</span>"<span class="reserved">**/*.cs</span>"<span class="reserved"> /&gt;</span>
-<span class="reserved">  &lt;/</span><span class="string">ItemGroup</span><span class="reserved">&gt;</span>
-</code></pre>
+```xml
+  <ItemGroup>
+    <Compile Include="**/*.cs" />
+  </ItemGroup>
+```
 
 これは、実のところ、Visual Studio 2017を使えば旧形式csprojでも使えはするんですが…
 
@@ -221,16 +221,16 @@ C#コンパイラーが割かし最近実装した2つの機能があります�
 
 これで困った場合は、以下のように`DebugType`タグ設定を入れて、旧PDBを出力するようにすれば解決します。
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net35<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">DebugType</span><span class="attvalue"> </span><span class="attribute">Condition</span><span class="attvalue">=</span>"<span class="attvalue">'$(Configuration)'=='DEBUG'</span>"<span class="attvalue">&gt;</span>full<span class="attvalue">&lt;/</span><span class="element">DebugType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <DebugType Condition="'$(Configuration)'=='DEBUG'">full</DebugType>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;
-</code></pre>
+</Project>
+```
 
 ## 共有プロジェクト的なこと
 
@@ -243,19 +243,19 @@ shprojを新形式に変換(前節で説明したような新機能への対応)
 
 以下のような`Compile`タグを書けば、「1段上のフォルダーの、別プロジェクトのフォルダー以下のすべてのC#ファイルをコンパイルの対象にする」ということができます。
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>netstandard1.4<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+  </PropertyGroup>
 
-<span class="attvalue">  &lt;</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Compile</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">..\ClassLibraryNet35\**\*.cs</span>"<span class="attvalue"> </span><span class="attribute">Exclude</span><span class="attvalue">=</span>"<span class="attvalue">..\ClassLibraryNet35\obj\**\*.cs</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
+  <ItemGroup>
+    <Compile Include="..\ClassLibraryNet35\**\*.cs" Exclude="..\ClassLibraryNet35\obj\**\*.cs" />
+  </ItemGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;
-</code></pre>
+</Project>
+```
 
 ## WPF/UWP
 
@@ -268,29 +268,29 @@ WPFやWindows Formsのアプリは`WinExe`、UWPは`AppContainerExe`なんです
 以下のような設定が、WPFアプリをビルドするのに必要な最低限のものです。
 (ビルドはできるんですが、デバッグ実行しようとすると「Unable to run your project」というエラーが出ます。)
 
-<pre class="xsource" title="">
-<code><attvalue></span><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>WinExe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net47<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LanguageTargets</span><span class="attvalue">&gt;</span>$(MSBuildExtensionsPath)\$(VisualStudioVersion)\Bin\Microsoft.CSharp.targets<span class="attvalue">&lt;/</span><span class="element">LanguageTargets</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net47</TargetFramework>
+    <LanguageTargets>$(MSBuildExtensionsPath)\$(VisualStudioVersion)\Bin\Microsoft.CSharp.targets</LanguageTargets>
+  </PropertyGroup>
 
-<span class="attvalue">  &lt;</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">ApplicationDefinition</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">App.xaml</span>"<span class="attvalue"> </span><span class="attribute">SubType</span><span class="attvalue">=</span>"<span class="attvalue">Designer</span>"<span class="attvalue"> </span><span class="attribute">Generator</span><span class="attvalue">=</span>"<span class="attvalue">MSBuild:Compile</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Page</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">**\*.xaml</span>"<span class="attvalue"> </span><span class="attribute">Exclude</span><span class="attvalue">=</span>"<span class="attvalue">App.xaml</span>"<span class="attvalue"> </span><span class="attribute">SubType</span><span class="attvalue">=</span>"<span class="attvalue">Designer</span>"<span class="attvalue"> </span><span class="attribute">Generator</span><span class="attvalue">=</span>"<span class="attvalue">MSBuild:Compile</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Compile</span><span class="attvalue"> </span><span class="attribute">Update</span><span class="attvalue">=</span>"<span class="attvalue">**\*.xaml.cs</span>"<span class="attvalue"> </span><span class="attribute">SubType</span><span class="attvalue">=</span>"<span class="attvalue">Designer</span>"<span class="attvalue"> </span><span class="attribute">DependentUpon</span><span class="attvalue">=</span>"<span class="attvalue">%(Filename)</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+    <Page Include="**\*.xaml" Exclude="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+    <Compile Update="**\*.xaml.cs" SubType="Designer" DependentUpon="%(Filename)" />
+  </ItemGroup>
 
-<span class="attvalue">  &lt;</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Reference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">System.Xaml</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Reference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">PresentationCore</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Reference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">PresentationFramework</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Reference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">WindowsBase</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
+  <ItemGroup>
+    <Reference Include="System.Xaml" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;
-</code></pre>
+</Project>
+```
 
 実行できないのでアプリのプロジェクトに使うには苦しいんですが、例えば、「WPF向けコントロールやリソース ディクショナリ(XAML)を含むライブラリ」を作りたい場合であれば、新形式csprojを十分実用できます。

@@ -30,18 +30,18 @@ aliases: []
 
 おおむね、例えば以下のコードを、
 
-<pre class="source" title="なんか長い文字列リテラルを持ってるコード例">
-<span class="reserved">string</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;Some very very long looo...ooong string!!!!!&quot;</span>;
-</pre>
+```csharp
+string s = "Some very very long looo...ooong string!!!!!";
+```
 
 特定条件下では以下のようなコード扱いでコンパイルするというもの。
 
-<pre class="source" title="なんか u8 リテラルみたいな状態で記録して、デコードして使いたい">
-<span class="reserved">string</span> <span class="variable">s</span> <span class="operator">=</span> System<span class="operator">.</span>Text<span class="operator">.</span><span class="type">Encoding</span><span class="operator">.</span><span class="property"><span class="static">UTF8</span></span><span class="operator">.</span><span class="method">GetString</span>(
-    <span class="string">&quot;Some very very long looo...ooong string!!!!!&quot;</span><span class="reserved">u8</span>
+```csharp
+string s = System.Text.Encoding.UTF8.GetString(
+    "Some very very long looo...ooong string!!!!!"u8
     );
-<span class="comment">// ※ 実際にはこの GetString 結果を静的にキャッシュ</span>
-</pre>
+// ※ 実際にはこの GetString 結果を静的にキャッシュ
+```
 
 ちなみにこれから説明していきますが、一番の目的は「data セクションに書くこと」で、
 UTF-8 化(その結果、dll サイズが大体縮む)は副産物だそうです。

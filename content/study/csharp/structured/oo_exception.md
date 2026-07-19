@@ -50,42 +50,42 @@ C# では、例外処理を行うための専用の構文が用意されてい�
 簡単化のため、とりあえず正の整数のみを扱うことにします。
 想定外の文字列が来ないものと仮定するとプログラムは以下のようになります。
 
-<pre class="source" title="文字列→整数変換 関数定義 (例外を想定せず)" lang="">
-<code><span class="comment">// 文字→整数</span>
-<span class="reserved">static int</span> CharToInt(<span class="reserved">char</span> c)
+```csharp
+// 文字→整数
+static int CharToInt(char c)
 {
-  <span class="reserved">return</span> c - <span class="literal">'0'</span>;
+  return c - '0';
 }
 
-<span class="comment">// 文字列→整数</span>
-<span class="reserved">static int</span> StringToInt(<span class="reserved">string</span> str)
+// 文字列→整数
+static int StringToInt(string str)
 {
-  <span class="reserved">int</span> val = 0;
-  <span class="reserved">foreach</span>(<span class="reserved">char</span> c <span class="reserved">in</span> str)
+  int val = 0;
+  foreach(char c in str)
   {
-    <span class="reserved">int</span> i = CharToInt(c);
+    int i = CharToInt(c);
     val = val * 10 + i;
   }
-  <span class="reserved">return</span> val;
+  return val;
 }
-</code></pre>
+```
 
 
 当然、この関数に対して想定外の文字列を入力すると、おかしな結果が得られます。
 
-<pre class="source" title="文字列→整数変換 利用側 (例外を想定せず)" lang="">
-<code><span class="reserved">static void</span> Main()
+```csharp
+static void Main()
 {
-  Console.Write(<span class="literal">"{0}\n"</span>, StringToInt(<span class="literal">"12345"</span>));
-  Console.Write(<span class="literal">"{0}\n"</span>, StringToInt(<span class="literal">"12a45"</span>)); <span class="comment">// 途中に数字以外の文字が</span>
+  Console.Write("{0}\n", StringToInt("12345"));
+  Console.Write("{0}\n", StringToInt("12a45")); // 途中に数字以外の文字が
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 12345
-16945    <span class="input">←変な値が出力されてる</span>
-</pre>
+16945    ←変な値が出力されてる
+```
 
 
 利用側が「想定外の文字列は絶対に入力しない」とか、
@@ -103,57 +103,57 @@ C# では、例外処理を行うための専用の構文が用意されてい�
 想定外の文字列が来たときには負の数を返すことにしておけば、
 例外が起きたかどうか調べることが出来ます。
 
-<pre class="source" title="文字列→整数変換 関数定義 (例外処理構文未使用)" lang="">
-<code><span class="comment">// 文字→整数</span>
-<span class="reserved">static int</span> CharToInt(<span class="reserved">char</span> c)
+```csharp
+// 文字→整数
+static int CharToInt(char c)
 {
-  <span class="reserved">if</span>(<span class="literal">'0'</span> &lt;= c &amp;&amp; c &lt;= <span class="literal">'9'</span>)
-    <span class="reserved">return</span> c - <span class="literal">'0'</span>;
-  <span class="reserved">else
-    return</span> -1; <span class="comment">// 想定外の文字が入力された場合、-1 を返す。</span>
+  if('0' <= c && c <= '9')
+    return c - '0';
+  else
+    return -1; // 想定外の文字が入力された場合、-1 を返す。
 }
 
-<span class="comment">// 文字列→整数</span>
-<span class="reserved">static int</span> StringToInt(<span class="reserved">string</span> str)
+// 文字列→整数
+static int StringToInt(string str)
 {
-  <span class="reserved">int</span> val = 0;
-  <span class="reserved">foreach</span>(<span class="reserved">char</span> c <span class="reserved">in</span> str)
+  int val = 0;
+  foreach(char c in str)
   {
-    <span class="reserved">int</span> i = CharToInt(c);
-    <span class="reserved">if</span>(i == -1) <span class="reserved">return</span> -1; <span class="comment">// 想定外の文字列が入力された場合、-1 を返す。</span>
+    int i = CharToInt(c);
+    if(i == -1) return -1; // 想定外の文字列が入力された場合、-1 を返す。
     val = val * 10 + i;
   }
-  <span class="reserved">return</span> val;
+  return val;
 }
-</code></pre>
+```
 
 
 関数の利用側のコードは以下のようになります。
 
-<pre class="source" title="文字列→整数変換 利用側 (例外処理構文未使用)" lang="">
-<code><span class="reserved">static void</span> Main()
+```csharp
+static void Main()
 {
-  <span class="reserved">int</span> i;
+  int i;
 
-  i = StringToInt(<span class="literal">"12345"</span>);
-  <span class="reserved">if</span>(i == -1)
-    Console.Write(<span class="literal">"想定外の文字列が入力されました"</span>);
-  <span class="reserved">else</span>
-    Console.Write(<span class="literal">"{0}\n"</span>, i);
+  i = StringToInt("12345");
+  if(i == -1)
+    Console.Write("想定外の文字列が入力されました");
+  else
+    Console.Write("{0}\n", i);
 
-  i = StringToInt(<span class="literal">"12a45"</span>);
-  <span class="reserved">if</span>(i == -1)
-    Console.Write(<span class="literal">"想定外の文字列が入力されました"</span>);
-  <span class="reserved">else</span>
-    Console.Write(<span class="literal">"{0}\n"</span>, i);
+  i = StringToInt("12a45");
+  if(i == -1)
+    Console.Write("想定外の文字列が入力されました");
+  else
+    Console.Write("{0}\n", i);
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 12345
 想定外の文字列が入力されました
-</pre>
+```
 
 
 
@@ -183,9 +183,9 @@ C# では、例外処理を行うための専用の構文が用意されてい�
 <strong id="throw" class="keyword">throw 文</strong>を使って例外が起こったことを利用側に知らせます。
 throw 文は以下のようにして使用します。
 
-<pre class="source" title="throw 文" lang="">
-<code><span class="reserved">throw</span> <span class="input">例外クラスのインスタンス</span>
-</code></pre>
+```csharp
+throw 例外クラスのインスタンス
+```
 
 
 この throw 文は想定外のことが起こった場所に挿入します。
@@ -199,28 +199,28 @@ throw 文によって投げられる例外は、
 
 例として先ほどの文字列→整数変換関数を throw 文を使って書き直してみましょう。
 
-<pre class="source" title="文字列→整数変換 関数定義 (throw 使用)" lang="">
-<code><span class="comment">// 文字→整数</span>
-<span class="reserved">static int</span> CharToInt(<span class="reserved">char</span> c)
+```csharp
+// 文字→整数
+static int CharToInt(char c)
 {
-  <span class="reserved">if</span>(c &lt; <span class="literal">'0'</span> || <span class="literal">'9'</span> &lt; c)
-    <span class="reserved">throw new</span> <span class="type">FormatException</span>(); <span class="comment">// 不正な文字が入力された場合、例外を投げる</span>
+  if(c < '0' || '9' < c)
+    throw new FormatException(); // 不正な文字が入力された場合、例外を投げる
 
-  <span class="reserved">return</span> c - <span class="literal">'0'</span>;
+  return c - '0';
 }
 
-<span class="comment">// 文字列→整数</span>
-<span class="reserved">static int</span> StringToInt(<span class="reserved">string</span> str)
+// 文字列→整数
+static int StringToInt(string str)
 {
-  <span class="reserved">int</span> val = 0;
-  <span class="reserved">foreach</span>(<span class="reserved">char</span> c <span class="reserved">in</span> str)
+  int val = 0;
+  foreach(char c in str)
   {
-    <span class="reserved">int</span> i = CharToInt(c);
-    val = <span class="reserved">checked</span>(val * 10 + i);
+    int i = CharToInt(c);
+    val = checked(val * 10 + i);
   }
-  <span class="reserved">return</span> val;
+  return val;
 }
-</code></pre>
+```
 
 
 
@@ -230,45 +230,45 @@ throw 文によって投げられる例外は、
 <strong id="try" class="keyword">try-catch-finally 文</strong>を使って例外を処理します。
 try-catch-finally 文は以下のようにして使用します。
 
-<pre class="source" title="try-catch-finally 文" lang="">
-<code><span class="reserved">try</span>
+```csharp
+try
 {
-  <span class="input">例外が投げられる可能性のあるコード</span>
+  例外が投げられる可能性のあるコード
 }
-<span class="reserved">catch</span>(<span class="input">例外の種類</span>)
+catch(例外の種類)
 {
-  <span class="input">例外処理コード</span>
+  例外処理コード
 }
-<span class="reserved">finally</span>
+finally
 {
-  <span class="input">例外発生の有無にかかわらず実行したいコード</span>
-  <span class="input">リソースの破棄などを行う</span>
+  例外発生の有無にかかわらず実行したいコード
+  リソースの破棄などを行う
 }
-</code></pre>
+```
 
 `try`句は必須ですが、`catch`、`finally`はどちらか片方だけにできます。
 というか、`catch`を使いたい範囲と`finally`を使いたい範囲は違っていることが多く、
 片方だけ使うことは多いです。
 
-<pre class="source" title="catch のみの try、finally のみの try">
-<code><span class="reserved">try</span>
+```csharp
+try
 {
-    <span class="input">(リソースの寿命の方が広い)</span>
+    (リソースの寿命の方が広い)
 
-    <span class="reserved">try</span>
+    try
     {
-        <span class="input">例外が投げられる可能性のあるコード(範囲が狭い)</span>
+        例外が投げられる可能性のあるコード(範囲が狭い)
     }
-    <span class="reserved">catch</span> (<span class="input">例外の種類</span>)
+    catch (例外の種類)
     {
-        <span class="input">例外処理</span>
+        例外処理
     }
 }
-<span class="reserved">finally</span>
+finally
 {
-    <span class="input">リソースの破棄など</span>
+    リソースの破棄など
 }
-</code></pre>
+```
 
 本項では主に`catch`の方について説明して行きます。
 `finally` については「[リソースの破棄](../resource/oo_dispose.md)」で改めて説明します。
@@ -281,39 +281,39 @@ try-catch-finally 文は以下のようにして使用します。
 
 こちらも例として、先ほどの文字列→整数変換関数利用側コードを try-catch 文を使って書き直してみましょう。
 
-<pre class="source" title="文字列→整数変換 関数利用側 (try-catch使用)" lang="">
-<code><span class="reserved">static void</span> Main()
+```csharp
+static void Main()
 {
-    <em><span class="reserved">try</span></em>
+    try
     {
-        <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, StringToInt(<span class="literal">"12345"</span>));
-        <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, StringToInt(<span class="literal">"12a45"</span>));
-        <span class="comment">//↑ ここで FormatException 例外が投げられる。</span>
+        Console.Write("{0}\n", StringToInt("12345"));
+        Console.Write("{0}\n", StringToInt("12a45"));
+        //↑ ここで FormatException 例外が投げられる。
     }
-    <span class="reserved">catch</span>(<span class="type">FormatException</span>)
+    catch(FormatException)
     {
-        <span class="type">Console</span>.Write(<span class="literal">"想定外の文字列が入力されました"</span>);
+        Console.Write("想定外の文字列が入力されました");
     }
-    <span class="reserved">catch</span>(<span class="type">OverflowException</span>)
+    catch(OverflowException)
     {
-        <span class="type">Console</span>.Write(<span class="literal">桁あふれしました"</span>);
+        Console.Write(桁あふれしました");
     }
 }
-</code></pre>
+```
 
 ちなみに、同じ型の`catch`を複数並べるとエラーになります。
 
-<pre class="source" title="同じ型のcatchを並べるとエラー">
-<code><span class="reserved">try</span></em>
+```csharp
+try
 {
 }
-<span class="reserved">catch</span>(<span class="type">FormatException</span>)
+catch(FormatException)
 {
 }
-<span class="reserved">catch</span>(<span class="error"><span class="type">FormatException</span></span>)
+catch(FormatException)
 {
 }
-</code></pre>
+```
 
 ##### <a id="sec-generated-title-8"></a>try-catch 文の利点
 
@@ -351,44 +351,44 @@ C# 6ではバージョン アップとともに、式として書けるものや
 - [null合体演算子](../resource/sp2_nullable.md#nullableType)(`??`)の後ろ
 - [条件演算子]()の第2、第3引数(条件式以外の部分。 `:` の前後)
 
-<pre class="source" title="throw 式">
-<code><span class="comment">// 式形式メンバーの中( =&gt; の直後)</span>
-<span class="reserved">static</span> <span class="reserved">void</span> A() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
+```csharp
+// 式形式メンバーの中( => の直後)
+static void A() => throw new NotImplementedException();
 
-<span class="reserved">static</span> <span class="reserved">string</span> B(<span class="reserved">object</span> obj)
+static string B(object obj)
 {
-    <span class="comment">// null 合体演算子(??)の後ろ</span>
-    <span class="reserved">var</span> s = obj <span class="reserved">as</span> <span class="reserved">string</span> ?? <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentException</span>(<span class="reserved">nameof</span>(obj));
+    // null 合体演算子(??)の後ろ
+    var s = obj as string ?? throw new ArgumentException(nameof(obj));
 
-    <span class="comment">// 条件演算子(?:)の条件以外の部分</span>
-    <span class="reserved">return</span> s.Length == 0 ? <span class="string">"empty"</span> :
-        s.Length &lt; 5 ? <span class="string">"short"</span> :
-        <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>(<span class="string">"too long"</span>);
+    // 条件演算子(?:)の条件以外の部分
+    return s.Length == 0 ? "empty" :
+        s.Length < 5 ? "short" :
+        throw new InvalidOperationException("too long");
 }
-</code></pre>
+```
 
 これ以外の文脈で`throw`式を書くことはできません。
 例えば、以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="=&gt;、??、?: 以外の場所に throw 式は書けない">
-<code><span class="reserved">static</span> <span class="reserved">void</span> C()
+```csharp
+static void C()
 {
-    <span class="comment">// コンパイル エラー。この文脈に throw 式は書けない</span>
-    B(<span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>());
+    // コンパイル エラー。この文脈に throw 式は書けない
+    B(throw new InvalidOperationException());
 }
-</code></pre>
+```
 
 ちなみに、式になっている以上「戻り値の型」を考えないといけないわけですが、
 `throw`式の戻り値の型は「任意の型に変換可能」とみなされます。
 `throw` 式単体で具体的な型を持っているわけではないので、以下のように、型を決めれない書き方をするとコンパイル エラーになります。
 
-<pre class="source" title="型が決まらなくてコンパイル エラーになる例">
-<code><span class="comment">// コンパイル エラー。null(型を持っていない)と並べると型が決まらない。</span>
-<span class="reserved">var</span> x = <span class="reserved">true</span> ? <span class="reserved">null</span> : <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
+```csharp
+// コンパイル エラー。null(型を持っていない)と並べると型が決まらない。
+var x = true ? null : throw new Exception();
 
-<span class="comment">// コンパイル エラー。throw 式同士を並べると型が決まらない。</span>
-<span class="reserved">var</span> y = <span class="reserved">true</span> ? <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">InvalidOperationException</span>() : <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NotSupportedException</span>();
-</code></pre>
+// コンパイル エラー。throw 式同士を並べると型が決まらない。
+var y = true ? throw new InvalidOperationException() : throw new NotSupportedException();
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="std"></a>標準で用意されている例外クラス
 
@@ -499,63 +499,63 @@ C# 6ではバージョン アップとともに、式として書けるものや
 
 例外は、`catch`句でキャッチされるまで、どんどん上位の呼び出し元に伝搬していきます。
 
-<pre class="source" title="例外は上位に伝搬する">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// A で投げた例外が</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> A() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
+    // A で投げた例外が
+    static void A() => throw new NotImplementedException();
 
-    <span class="comment">// B → C と伝搬して</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> B() =&gt; A();
-    <span class="reserved">static</span> <span class="reserved">void</span> C() =&gt; B();
+    // B → C と伝搬して
+    static void B() => A();
+    static void C() => B();
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">try</span>
+        try
         {
             C();
         }
-        <span class="reserved">catch</span>(<span class="type">NotImplementedException</span> ex)
+        catch(NotImplementedException ex)
         {
-            <span class="comment">// 最終的にここでキャッチされる</span>
-            <span class="type">Console</span>.WriteLine(ex);
+            // 最終的にここでキャッチされる
+            Console.WriteLine(ex);
         }
     }
 }
-</code></pre>
+```
 
 例外が最後までキャッチされなかった場合<sup>※</sup>、アプリ自体が停止します。
 
-<pre class="source" title="未処理例外">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> A() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
-    <span class="reserved">static</span> <span class="reserved">void</span> B() =&gt; A();
-    <span class="reserved">static</span> <span class="reserved">void</span> C() =&gt; B();
+    static void A() => throw new NotImplementedException();
+    static void B() => A();
+    static void C() => B();
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        C(); <span class="comment">// 例外が出るけども、誰もキャッチしていない</span>
-        <span class="comment">// この時点でアプリが停止</span>
+        C(); // 例外が出るけども、誰もキャッチしていない
+        // この時点でアプリが停止
 
-        <span class="type">Console</span>.WriteLine(<span class="string">"ここは絶対に通らない"</span>);
+        Console.WriteLine("ここは絶対に通らない");
     }
 }
-</code></pre>
+```
 
 このとき、以下のような、例外で停止した旨を示すメッセージが表示されます。
 
-<pre class="console" title="未処理例外">
-<code>Unhandled Exception: System.NotImplementedException: The method or operation is not implemented.
+```console
+Unhandled Exception: System.NotImplementedException: The method or operation is not implemented.
    at Program.A() in C:\Projects\ConsoleApp1\Program.cs:line 5
    at Program.B() in C:\Projects\ConsoleApp1\Program.cs:line 6
    at Program.C() in C:\Projects\ConsoleApp1\Program.cs:line 7
    at Program.Main() in C:\Users\xii-h\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\Program.cs:line 11
-</code></pre>
+```
 
 例外の種類の他に、どのメソッドを経由して例外が発生したかや、メソッドがソースコード中のどこにあるかなどの情報が入っています。この情報を[スタックトレース](misc_stacktrace.md)と呼びます。
 
@@ -581,87 +581,87 @@ try ブロックで囲んだだけでは（例外が発生しなければ）ほ�
 C# 6で、例外のcatch句に続けてwhenと書くことで、catchしたい例外の条件を書けるようになりました。
 この機能を<strong id="key-exception-filter" class="keyword">例外フィルター</strong>(exception filter)といいます。
 
-<pre class="source" title="例外フィルター" lang="">
-<code><span class="reserved">try</span>
+```csharp
+try
 {
-  <span class="input">例外が投げられる可能性のあるコード</span>
+  例外が投げられる可能性のあるコード
 }
-<span class="reserved">catch</span>(<span class="input">例外の種類</span>) <em><span class="reserved">when</span> (<span class="input">条件</span>)</em>
+catch(例外の種類) when (条件)
 {
-  <span class="input">例外処理コード</span>
+  例外処理コード
 }
-</code></pre>
+```
 
 用途としては、例えば、以下のように、複数の種類の例外に対して、同じ例外処理を掛けたい場合があります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">try</span>
+```csharp
+try
 {
     F();
 }
-<span class="reserved">catch</span> (<span class="type">DirectoryNotFoundException</span> e)
+catch (DirectoryNotFoundException e)
 {
-    <span class="comment">// DirectoryNotFoundException のときと FileNotFoundException の時で</span>
-    <span class="comment">// 全く同じ例外処理の仕方をしたい場合がある。</span>
-    <span class="type">Console</span>.WriteLine(e);
+    // DirectoryNotFoundException のときと FileNotFoundException の時で
+    // 全く同じ例外処理の仕方をしたい場合がある。
+    Console.WriteLine(e);
 }
-<span class="reserved">catch</span> (<span class="type">FileNotFoundException</span> e)
+catch (FileNotFoundException e)
 {
-    <span class="comment">// DirectoryNotFoundException のときと FileNotFoundException の時で</span>
-    <span class="comment">// 全く同じ例外処理の仕方をしたい場合がある。</span>
-    <span class="type">Console</span>.WriteLine(e);
+    // DirectoryNotFoundException のときと FileNotFoundException の時で
+    // 全く同じ例外処理の仕方をしたい場合がある。
+    Console.WriteLine(e);
 
-    <span class="comment">// コピペ コードになっちゃうので嫌！</span>
+    // コピペ コードになっちゃうので嫌！
 }
-</code></pre>
+```
 
 これに対して、例外フィルターを使うと、以下のように書き直せます。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">try</span>
+```csharp
+try
 {
     F();
 }
-<span class="reserved">catch</span> (<span class="type">IOException</span> e) <span class="reserved">when</span> (e <span class="reserved">is</span> <span class="type">DirectoryNotFoundException</span> || e <span class="reserved">is</span> <span class="type">FileNotFoundException</span>)
+catch (IOException e) when (e is DirectoryNotFoundException || e is FileNotFoundException)
 {
-    <span class="comment">// DirectoryNotFoundException のときと FileNotFoundException の時で</span>
-    <span class="comment">// 全く同じ例外処理の仕方をしたい場合がある。</span>
-    <span class="type">Console</span>.WriteLine(e);
+    // DirectoryNotFoundException のときと FileNotFoundException の時で
+    // 全く同じ例外処理の仕方をしたい場合がある。
+    Console.WriteLine(e);
 }
-</code></pre>
+```
 
 また、入れ子になっている例外の処理にも有効です。
 例えば、Parallelクラス(System.Threading.Tasks名前空間)のメソッドを使って並列処理を行った場合、1段階ラップされた状態で例外が throw されます。この時、以下のように例外フィルターを使うことで、catch句が書きやすくなります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">try</span>
+```csharp
+try
 {
-    <span class="type">Parallel</span>.For(0, 10000, F);
+    Parallel.For(0, 10000, F);
 }
-<span class="reserved">catch</span> (<span class="type">AggregateException</span> e) <span class="reserved">when</span> (e.InnerExceptions.Any(i =&gt; i <span class="reserved">is</span> <span class="type">ArgumentException</span>))
+catch (AggregateException e) when (e.InnerExceptions.Any(i => i is ArgumentException))
 {
-    <span class="comment">// F が ArgumentException を throw する場合でも、</span>
-    <span class="comment">// Parellel.For を通した結果、ここに来る例外は AggregateException で、</span>
-    <span class="comment">// AggregateException.InnerExceptions の中に ArgumentException が入っている。</span>
+    // F が ArgumentException を throw する場合でも、
+    // Parellel.For を通した結果、ここに来る例外は AggregateException で、
+    // AggregateException.InnerExceptions の中に ArgumentException が入っている。
 }
-</code></pre>
+```
 
 `when`句が付いている場合は、同じ型の`catch`を複数書くことができます。
 この場合、書いた順に上から調べて最初に条件を満たした`catch`句が実行されます。
 
-<pre class="source" title="">
-<code><span class="reserved">try</span>
+```csharp
+try
 {
 }
-<span class="reserved">catch</span> (<span class="type">Exception</span> e) <span class="reserved">when</span> (e <span class="reserved">is</span> <span class="type">FormatException</span> || (e <span class="reserved">is</span> <span class="type">AggregateException</span> a &amp;&amp; a.InnerException <span class="reserved">is</span> <span class="type">FormatException</span>))
+catch (Exception e) when (e is FormatException || (e is AggregateException a && a.InnerException is FormatException))
 {
 }
-<span class="reserved">catch</span> (<span class="type">Exception</span> e) <span class="reserved">when</span> (e <span class="reserved">is</span> <span class="type">OverflowException</span> || (e <span class="reserved">is</span> <span class="type">AggregateException</span> a &amp;&amp; a.InnerException <span class="reserved">is</span> <span class="type">OverflowException</span>))
+catch (Exception e) when (e is OverflowException || (e is AggregateException a && a.InnerException is OverflowException))
 {
 }
-<span class="reserved">catch</span> (<span class="type">Exception</span> e)
+catch (Exception e)
 {
 }
-</code></pre>
+```
 
 ちなみに、この例外フィルターは、[IL](../../il/summary/il_about.md)のレベルでは.NET 1.0の頃からある機能です。単に、それに対応するILコードをC#を使って書くすべが今までなく、C# 6で追加されたというものです。

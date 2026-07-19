@@ -27,45 +27,46 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;text&gt;通常の文字列&lt;/text&gt; &lt;bold&gt;太字&lt;/bold&gt; &lt;cursive&gt;筆記体&lt;/cursive&gt;
-</pre>
+```xml
+<text>通常の文字列</text> <bold>太字</bold> <cursive>筆記体</cursive>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>α ∈ &lt;bold&gt;C&lt;/bold&gt;,
-&lt;cursive&gt;Re&lt;/cursive&gt;&lt;paren&gt;α&lt;/paren&gt; ∈ &lt;bold&gt;R&lt;/bold&gt;
-&lt;text&gt;（C や R は太字、Re は筆記体で書く。）&lt;/text&gt;
-</pre><div class="math">α ∈ <span class="bold">C</span>,
+```xml
+α ∈ <bold>C</bold>,
+<cursive>Re</cursive><paren>α</paren> ∈ <bold>R</bold>
+<text>（C や R は太字、Re は筆記体で書く。）</text>
+```
+<div class="math">α ∈ <span class="bold">C</span>,
 <span class="cursive">Re</span><span class="paren" style="font-size:em;">(</span>α<span class="paren" style="font-size:em;">)</span> ∈ <span class="bold">R</span>
 <span class="normal">（C や R は太字、Re は筆記体で書く。）</span>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:text"&gt;
-  &lt;span class="normal"&gt;
-  &lt;xsl:apply-templates/&gt;
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:text">
+  <span class="normal">
+  <xsl:apply-templates/>
+  </span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:bold"&gt;
-  &lt;span class="bold"&gt;&lt;xsl:apply-templates/&gt;&lt;/span&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:bold">
+  <span class="bold"><xsl:apply-templates/></span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:cursive"&gt;
-  &lt;span class="cursive"&gt;&lt;xsl:apply-templates/&gt;&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:cursive">
+  <span class="cursive"><xsl:apply-templates/></span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>
+```css
 span.bold
 {
   font-weight:bold;
   font-style:normal;
 }
-
-
-</pre>
+```

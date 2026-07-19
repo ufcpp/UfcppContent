@@ -21,22 +21,22 @@ aliases: []
 
 1つ目:
 
-<pre class="source" title="Hello World">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+    static void Main() => Console.WriteLine("Hello World!");
 }
-</code></pre>
+```
 
 2つ目:
 
-<pre class="source" title=";">
-<code>;
-<span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+;
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+    static void Main() => Console.WriteLine("Hello World!");
 }
-</code></pre>
+```
 
 C# 9.0 当初、2つ目のコードもコンパイルできていました。
 そして、実行結果がどうなるかと言うと…
@@ -54,16 +54,16 @@ C# 9.0 当初、2つ目のコードもコンパイルできていました。
 
 空じゃないステートメントもある:
 
-<pre class="source" title="1つでも空じゃないものがあればOK">
-<code>;
-<span class="type">Console</span>.<span class="method">WriteLine</span>();
-</code></pre>
+```csharp
+;
+Console.WriteLine();
+```
 
 空ブロック:
 
-<pre class="source" title="; はダメでも {} は OK">
-<code>{}
-</code></pre>
+```csharp
+{}
+```
 
 `;` だけのものが禁止された経緯を考えると、`{}` だけのものも禁止されてもおかしくはないんですけど。
 「`Main` を呼ぶかトップ レベル ステートメントを呼ぶか」の分岐条件が緩すぎるんですよね。
@@ -73,23 +73,23 @@ C# 9.0 当初、2つ目のコードもコンパイルできていました。
 
 トップ レベル ステートメントを使った時、例えば以下のようなコードを書くと、
 
-<pre class="source" title="トップ レベル ステートメント利用例">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>();
-</code></pre>
+```csharp
+Console.WriteLine();
+```
 
 扱いとしては以下のようなコードに展開されていました。
 
-<pre class="source" title="C# 9.0 時点でのトップ レベル ステートメントの展開結果">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">&lt;Program&gt;$</span>
+internal class <Program>$
 {
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">&lt;Main&gt;$</span>(<span class="reserved">string</span>[] <span class="variable">args</span>)
+    private static void <Main>$(string[] args)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+        Console.WriteLine("Hello World!");
     }
 }
-</code></pre>
+```
 
 クラス名、メソッド名がどうなるかは仕様には明記されておらず、実装依存(変更が掛かっても文句は言えない)です。
 とりあえず、「通常の C# では書けない名前」(unspeakable name というそうです)になっていました。
@@ -99,40 +99,40 @@ C# 9.0 当初、2つ目のコードもコンパイルできていました。
 ということで、[クラス名だけは speakable な `Program` に変更](https://github.com/dotnet/roslyn/pull/55368)。
 C# 10.0 では上記のコードは以下のような展開結果に変更されています。
 
-<pre class="source" title="C# 10.0 時点でのトップ レベル ステートメントの展開結果">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">Program</span>
+internal class Program
 {
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">&lt;Main&gt;$</span>(<span class="reserved">string</span>[] <span class="variable">args</span>)
+    private static void <Main>$(string[] args)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+        Console.WriteLine("Hello World!");
     }
 }
-</code></pre>
+```
 
 トップ レベル ステートメントだけを使っている分には特に影響のない修正のはずなんですが…
 例えば以下のようなコードがコンパイル エラーを起こすようになります。
 
-<pre class="source" title="C# 10.0 ではエラーになるコード">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+```csharp
+Console.WriteLine("Hello World!");
 
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="error"><span class="type">Program</span></span>
+internal class Program
 {
 }
-</code></pre>
+```
 
 コンパイラーが生成する `Program` クラスと、コード中に手書きした `Program` クラスが衝突しています。
 
 一方で、現状のこの実装を逆手に取ると、以下のようなコードはコンパイルできるようになります。
 
-<pre class="source" title="現状の実装を逆手に取ったコード">
-<code><span class="method">A</span>(); <span class="comment">// Program.A が呼ばれる。</span>
+```csharp
+A(); // Program.A が呼ばれる。
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Program</span>
+partial class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">A</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
+    public static void A() => Console.WriteLine("Hello World!");
 }
-</code></pre>
+```
 
 ただ、`Program` というクラス名が仕様書上に明記されているわけではないので、将来もこのコードが有効であるという保証はあんまりできません。その点はご注意ください。

@@ -30,8 +30,8 @@ aliases:
 これで、目次も索引もキーワードリストも出なくなります。
 
 
-<pre class="xsource" title="パラメータ">
-<code><span class="bracket">&lt;</span><span class="element">xsl:param</span> <span class="attribute">name</span><span class="attvalue">="DocumentMenu"</span><span class="bracket">&gt;</span>no<span class="bracket">&lt;/</span><span class="element">xsl:param</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">xsl:param</span> <span class="attribute">name</span><span class="attvalue">="DocumentIndex"</span><span class="bracket">&gt;</span>no<span class="bracket">&lt;/</span><span class="element">xsl:param</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">xsl:param</span> <span class="attribute">name</span><span class="attvalue">="DocumentKeyword"</span><span class="bracket">&gt;</span>no<span class="bracket">&lt;/</span><span class="element">xsl:param</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<xsl:param name="DocumentMenu">no</xsl:param>
+<xsl:param name="DocumentIndex">no</xsl:param>
+<xsl:param name="DocumentKeyword">no</xsl:param>
+```

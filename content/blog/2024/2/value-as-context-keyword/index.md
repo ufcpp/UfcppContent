@@ -23,27 +23,27 @@ C# 13 向けに検討されている機能の一つに、
 プロパティの `get`/`set` アクセサー内で、`field` を使って
 [バッキング フィールド](../../../../study/csharp/oop/oo_property.md#auto)(自動プロパティの値を保存するためにコンパイラーが生成するフィールド)に明示的にアクセスするというものです。
 
-<pre class="source" title="半自動プロパティ案">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// 手動プロパティ (manual property)</span>
-    <span class="comment">// (と、自前で用意したフィールド)。</span>
-    <span class="comment">// こういう、プロパティからほぼ素通しで値を記録しているフィールドを「バッキング フィールド」(backing field)という。</span>
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_x</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_x</span>; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">_x</span> <span class="operator">=</span> <span class="reserved">value</span>; }
+    // 手動プロパティ (manual property)
+    // (と、自前で用意したフィールド)。
+    // こういう、プロパティからほぼ素通しで値を記録しているフィールドを「バッキング フィールド」(backing field)という。
+    private int _x;
+    public int X { get => _x; set => _x = value; }
 
-    <span class="comment">// 自動プロパティ (auto-property)。</span>
-    <span class="comment">// 前述の X とほぼ一緒。</span>
-    <span class="comment">// バッキング フィールドの自動生成。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 自動プロパティ (auto-property)。
+    // 前述の X とほぼ一緒。
+    // バッキング フィールドの自動生成。
+    public int Y { get; set; }
 
-    <span class="comment">// 【C# 12 候補(改め、13 候補)】 半自動プロパティ (semi-auto-property)。</span>
-    <span class="comment">// バッキング フィールドは自動生成。</span>
-    <span class="comment">// 全自動の方と違って、バッキング フィールドの使い方は自由にできる。</span>
-    <span class="comment">// field キーワードでバッキング フィールドを読み書き。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Z</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">value</span>; }
+    // 【C# 12 候補(改め、13 候補)】 半自動プロパティ (semi-auto-property)。
+    // バッキング フィールドは自動生成。
+    // 全自動の方と違って、バッキング フィールドの使い方は自由にできる。
+    // field キーワードでバッキング フィールドを読み書き。
+    public int Z { get => field; set => field = value; }
 }
-</pre>
+```
 
 C# 12 時点では「これを破壊的変更なしで実装するのは大変」ということで見送りになりまして、
 その結果検討されていたのが先日書いたブログの話。
@@ -60,66 +60,66 @@ C# 12 時点では「これを破壊的変更なしで実装するのは大変�
 
 1つ目、[`@` で「脱キーワード化」](../../../../study/csharp/start/st_variable.md#identifier)ができない。
 
-<pre class="source" title="キーワードじゃないので…">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">set</span>
+        set
         {
-            <span class="comment">// value は @ を付けてもダメ。</span>
-            <span class="comment">// 扱いが「暗黙定義された引数」なので、@value もその引数を指す。</span>
-            <span class="reserved">var</span> <span class="variable"><span class="warning" title="CS0219"><span class="error" title="CS0136">@value</span></span></span> <span class="operator">=</span> <span class="number">1</span>;
+            // value は @ を付けてもダメ。
+            // 扱いが「暗黙定義された引数」なので、@value もその引数を指す。
+            var @value = 1;
 
-            <span class="comment">// 普通、キーワードだったら @ を付けることで識別子に使える。</span>
-            <span class="reserved">var</span> <span class="variable">@this</span> <span class="operator">=</span> <span class="number">2</span>;
+            // 普通、キーワードだったら @ を付けることで識別子に使える。
+            var @this = 2;
         }
     }
 }
-</pre>
+```
 
 2つ目、[`nameof`](../../../../study/csharp/start/st_string.md#nameof-operator)。
 
-<pre class="source" title="nameof が使える">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">set</span>
+        set
         {
-            <span class="comment">// 逆に、引数扱いゆえに nameof が使える。</span>
-            <span class="reserved">var</span> <span class="variable">n1</span> <span class="operator">=</span> <span class="reserved">nameof</span>(<span class="reserved">value</span>);
+            // 逆に、引数扱いゆえに nameof が使える。
+            var n1 = nameof(value);
 
-            <span class="comment">// キーワードには nameof は使えない。</span>
-            <span class="reserved">var</span> <span class="variable">n2</span> <span class="operator">=</span> <span class="reserved">nameof</span>(<span class="reserved"><span class="error" title="CS8081">this</span></span>);
+            // キーワードには nameof は使えない。
+            var n2 = nameof(this);
         }
     }
 }
-</pre>
+```
 
 3つ目、外側の識別子の参照。
 
-<pre class="source" title="外にある「value フィールド」の参照ができない">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">int</span> <span class="field">value</span>;
-    <span class="reserved">int</span> <span class="field">@this</span>;
+    int value;
+    int @this;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">set</span>
+        set
         {
-            <span class="comment">// 外にある「value フィールド」すら、@value では参照できない。</span>
-            <span class="comment">// 暗黙の引数の方になる(@ を付けるだけ無駄)。</span>
-            <span class="comment">// (ちなみに、 this.value = 1; と書けばフィールド参照になる。)</span>
-            <span class="reserved">@value</span> <span class="operator">=</span> <span class="number">1</span>;
+            // 外にある「value フィールド」すら、@value では参照できない。
+            // 暗黙の引数の方になる(@ を付けるだけ無駄)。
+            // (ちなみに、 this.value = 1; と書けばフィールド参照になる。)
+            @value = 1;
 
-            <span class="comment">// キーワードの場合は @this で外のフィールド参照になる。</span>
-            <span class="field">@this</span> <span class="operator">=</span> <span class="number">2</span>;
+            // キーワードの場合は @this で外のフィールド参照になる。
+            @this = 2;
         }
     }
 }
-</pre>
+```
 
 `field` を足すことで軽微ながら破壊的変更が出るんなら、
 `value` に軽微な破壊的変更がかかってもいいのではということで、

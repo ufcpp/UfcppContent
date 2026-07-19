@@ -148,16 +148,16 @@ C# では <code>class</code> と <code>struct</code> という2つのキーワ�
 もう1つ、昔からある些細なミスに、if 文の条件式で代入を行ってしまうというものもあります。
 例えば、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">if</span>(a <em>==</em> 0)
-</code></pre>
+```csharp
+if(a == 0)
+```
 
 
 と書くつもりで、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">if</span>(a <em>=</em> 0)
-</code></pre>
+```csharp
+if(a = 0)
+```
 
 
 と書いてしまうというものです。
@@ -176,9 +176,9 @@ C言語などでは、慣習的に「if 文の条件式の中では定数を先�
 つまり、整数型を暗黙的に bool 値に変換することはできなくなっています。
 そのため、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">if</span>(a = 0)
-</code></pre>
+```csharp
+if(a = 0)
+```
 
 
 はコンパイル時にエラーとして検出されます。
@@ -191,23 +191,23 @@ Java は C++ をより良くした言語といわれていながら、一方で�
 
 例えば、Java で複素数計算をしたければ、
 
-<pre class="source" title="" lang="">
-<code>Complex a(1,2), b(2,1), c(0,1);
+```csharp
+Complex a(1,2), b(2,1), c(0,1);
 a.Add(b, c);
 a.Mul(a, c);
 a.Div(a, 5);
-</code></pre>
+```
 
 
 とか書く必要があるわけです。
 当然、C++ プログラマなら
 
-<pre class="source" title="" lang="">
-<code>std::complex a(2,1), b(1,2), c(0,1);
+```cpp
+std::complex a(2,1), b(1,2), c(0,1);
 a = b + c;
 a *= c;
 a /= 5;
-</code></pre>
+```
 
 
 と書けるわけで、直感的ですっきりとした書き方ができます。
@@ -231,13 +231,13 @@ C# ではそれはありえなくなったわけです。
 Java では、多次元配列は「配列の配列」を用いて表現します。
 そして、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span>[][] array = <span class="reserved">new int</span>[5][];
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;5; i++)
+```csharp
+int[][] array = new int[5][];
+for(int i=0; i<5; i++)
 {
-  array[i] = <span class="reserved">new int</span>[5];
+  array[i] = new int[5];
 }
-</code></pre>
+```
 
 
 と言った感じで使用します。
@@ -251,9 +251,9 @@ C# では二通りの多次元配列の定義の仕方があります。
 (C# でも、rectangular array を単に「多次元配列」と呼び、jagged array は「配列の配列」と呼ぶこともあります。)
 こちらは、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span>[,] array = <span class="reserved">new int</span>[5,4];
-</code></pre>
+```csharp
+int[,] array = new int[5,4];
+```
 
 
 と言った感じで使用します。
@@ -269,8 +269,8 @@ C# では unsafe コード中に限り、単なる連続したデータの並び
 ちなみに、C++ 的に表現すると、
 jagged array は、
 
-<pre class="source" title="" lang="">
-<code>class JaggedArray
+```csharp
+class JaggedArray
 {
   int** p_;
   int w_;
@@ -279,23 +279,23 @@ public:
   JaggedArray(int width, int height) : w_(width), h_(height)
   {
     p_ = new int*[width];
-    for(int i=0; i&lt;width; ++i)
+    for(int i=0; i<width; ++i)
       p_[i] = new int[height];
   }
 
-  int&amp; operator() (int x, int y)
+  int& operator() (int x, int y)
   {
     return p_[x][y];
   }
   // 以下省略
 }
-</code></pre>
+```
 
 
 rectangular array は、
 
-<pre class="source" title="" lang="">
-<code>class RectangularArray
+```csharp
+class RectangularArray
 {
   int* p_;
   int w_;
@@ -306,13 +306,13 @@ public:
     p_ = new int*[width*height];
   }
 
-  int&amp; operator() (int x, int y)
+  int& operator() (int x, int y)
   {
     return p_[x + y * height];
   }
   // 以下省略
 }
-</code></pre>
+```
 
 
 になります。
@@ -352,34 +352,34 @@ jagged array の方が <code>int*</code> （32bit CPU ならたいてい4バイ�
 プロパティとは上で述べたようなアクセッサを簡潔に定義するための機能です。
 C++で、
 
-<pre class="source" title="" lang="">
-<code>class A
+```csharp
+class A
 {
   double x; //実装は外部から隠す
 public:
-<em>  //アクセッサ
+  //アクセッサ
   void setX(double xx){x = xx;}
-  double geX(){return x;}</em>
+  double geX(){return x;}
 };
-</code></pre>
+```
 
 
 と言った感じでアクセッサ関数を用意してデータの参照を行っていましたが、
 C#では、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> A
+```csharp
+class A
 {
-  <span class="reserved">double</span> x; <span class="comment">//やはり実装は外部から隠す</span>
+  double x; //やはり実装は外部から隠す
 
-<em>  <span class="comment">//これがプロパティ</span>
-  <span class="reserved">public double</span> X
+  //これがプロパティ
+  public double X
   {
-    <span class="reserved">set</span>{x = <span class="reserved">value</span>;}
-    <span class="reserved">get</span>{<span class="reserved">return</span> x;}
-  }</em>
+    set{x = value;}
+    get{return x;}
+  }
 }
-</code></pre>
+```
 
 
 というように、プロパティを用いてデータの参照を行えます。
@@ -396,42 +396,42 @@ Java では、イベント処理(ボタンが押されたときや、メニュ�
 
 一方、C# では、イベント処理はデリゲートを用いて行います。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System.Windows.Forms;
-<span class="reserved">using</span> System.Drawing;
-<span class="reserved">using</span> System;
+```csharp
+using System.Windows.Forms;
+using System.Drawing;
+using System;
 
-<span class="reserved">class</span> EventSample : Form
+class EventSample : Form
 {
-  Button button = <span class="reserved">new</span> Button();
+  Button button = new Button();
 
   EventSample()
   {
-    <span class="reserved">this</span>.Text = <span class="literal">"Event Sample"</span>;
-    <span class="reserved">this</span>.ClientSize = <span class="reserved">new</span> Size(300, 200);
+    this.Text = "Event Sample";
+    this.ClientSize = new Size(300, 200);
 
-    button.Location = <span class="reserved">new</span> Point(60, 60);
-    button.Size = <span class="reserved">new</span> Size(80, 25);
-    button.Text = <span class="literal">"OK"</span>;
+    button.Location = new Point(60, 60);
+    button.Size = new Size(80, 25);
+    button.Text = "OK";
 
-<em>    <span class="comment">//ボタンが押されたときの処理を追加
-    //このEventHandlerはデリゲート</span>
-    button.Click += <span class="reserved">new</span> EventHandler(OnOKButtonClick);</em>
+    //ボタンが押されたときの処理を追加
+    //このEventHandlerはデリゲート
+    button.Click += new EventHandler(OnOKButtonClick);
 
     Controls.Add(button);
   }
 
-  <span class="reserved">void</span> OnOKButtonClick(object obj, EventArgs args)
+  void OnOKButtonClick(object obj, EventArgs args)
   {
-    MessageBox.Show(<span class="literal">"Event Sample"</span>, <span class="literal">"Sample"</span>);
+    MessageBox.Show("Event Sample", "Sample");
   }
 
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Application.Run(<span class="reserved">new</span> EventSample());
+    Application.Run(new EventSample());
   }
 }
-</code></pre>
+```
 
 
 
@@ -440,12 +440,12 @@ Java では、イベント処理(ボタンが押されたときや、メニュ�
 C++ や Java ではクラスやメソッドに対して public や private などといった<strong id="attribute" class="keyword">属性</strong>(attribute)を付加することができます。
 Java の例をあげると、
 
-<pre class="source" title="" lang="">
-<code><em>final</em> class MyClass
+```csharp
+final class MyClass
 {
-   <em>public</em> int myMethod();
+   public int myMethod();
 }
-</code></pre>
+```
 
 
 強調表示してある部分が属性です。
@@ -456,22 +456,22 @@ C# ではこのようなクラスやメソッドに対する属性を自分で�
 例えば、作成中のクラスがまだテスト段階であるということを明示的に示したいときに、
 <code>IsTest</code> という属性を作成して、そのクラスに付けておくことができます。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">// IsTest 属性を作成</span>
-<span class="reserved">public class</span> IsTestedAttribute : Attribute
+```csharp
+// IsTest 属性を作成
+public class IsTestedAttribute : Attribute
 {
-   <span class="reserved">public override string</span> ToString()
+   public override string ToString()
    {
-       <span class="reserved">return</span> <span class="literal">"Is Tested"</span>;
+       return "Is Tested";
    }
 }
 
-<span class="comment">// 新しく作ったクラスに IsTest 属性を持たせる</span>
-<em>[IsTest]</em> <span class="reserved">class</span> MyClass
+// 新しく作ったクラスに IsTest 属性を持たせる
+[IsTest] class MyClass
 {
-   <span class="comment">// クラスの実装</span>
+   // クラスの実装
 }
-</code></pre>
+```
 
 
 新しい属性は <code>Attribute</code> クラスの派生クラスとして作成し、

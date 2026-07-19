@@ -36,26 +36,26 @@ aliases:
 配列だけではなく、コレクション(`List<T>` 型など)、`Span<T>` なども全く同じ書き方で初期化できます。
 これをコレクション式(collection expression)と言います。
 
-<pre class="source" title="コレクション式">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="reserved">int</span>[] <span class="variable">array</span> <span class="operator">=</span> <em>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</em>;
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">list</span> <span class="operator">=</span> <em>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</em>;
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> <span class="operator">=</span> <em>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</em>;
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">ros</span> <span class="operator">=</span> <em>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</em>;
-<span class="type struct">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">immutable</span> <span class="operator">=</span> <em>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</em>;
-</pre>
+int[] array = [1, 2, 3];
+List<int> list = [1, 2, 3];
+Span<int> span = [1, 2, 3];
+ReadOnlySpan<int> ros = [1, 2, 3];
+ImmutableArray<int> immutable = [1, 2, 3];
+```
 
 また、コレクション式中では、`..` を使うことで「別のコレクションの中身の展開」ができます。
 これを スプレッド (spread)演算子と言います。
 
-<pre class="source" title="">
-<span class="reserved">int</span>[] <span class="variable">array1</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
-<span class="reserved">int</span>[] <span class="variable">array2</span> <span class="operator">=</span> [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>];
+```csharp
+int[] array1 = [1, 2, 3];
+int[] array2 = [4, 5, 6];
 
-<span class="comment">// 0, 1, 2, 3, 4, 5, 6, 7</span>
-<span class="reserved">int</span>[] <span class="variable">combined</span> <span class="operator">=</span> [<span class="number">0</span>, <em>..</em><span class="variable">array1</span>, <em>..</em><span class="variable">array2</span>, <span class="number">7</span>];
-</pre>
+// 0, 1, 2, 3, 4, 5, 6, 7
+int[] combined = [0, ..array1, ..array2, 7];
+```
 
 詳しくは「[コレクション式](../datatype/collection-expression.md)」で説明します。
 
@@ -63,12 +63,12 @@ aliases:
 
 通常のクラス、構造体に対してプライマリ コンストラクターが使えるようになりました。
 
-<pre class="source" title="">
-<span class="reserved">class</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable local">x</span>)
+```csharp
+class A(int x)
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; } <span class="operator">=</span> <span class="variable local">x</span>;
+    public int X { get; } = x;
 }
-</pre>
+```
 
 レコード型の方を先に実装してしまったがために混乱があるんですが、
 通常クラス・構造体の場合はプライマリ コンストラクター引数からプロパティを自動生成する機能はありません。
@@ -81,12 +81,12 @@ aliases:
 
 C# 11 ではエラーになっていた以下のようなコードをコンパイルできるようになりました。
 
-<pre class="source" title="C# 12 から書ける using エイリアス">
-<span class="reserved">using</span> <span class="type struct">Primitive</span> <span class="operator">=</span> <span class="reserved">int</span>;
-<span class="reserved">using</span> <span class="type">Array</span> <span class="operator">=</span> <span class="reserved">int</span>[];
-<span class="reserved">using</span> <span class="type struct">Nullable</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">?</span>;
-<span class="reserved">using</span> <span class="type struct">Tuple</span> <span class="operator">=</span> (<span class="reserved">int</span>, <span class="reserved">int</span>);
-</pre>
+```csharp
+using Primitive = int;
+using Array = int[];
+using Nullable = int?;
+using Tuple = (int, int);
+```
 
 詳しくは「[任意の型に対する using エイリアス](../structured/sp_namespace.md#using-any-type)」で説明します。
 
@@ -95,16 +95,16 @@ C# 11 ではエラーになっていた以下のようなコードをコンパ�
 ラムダ式の引数に[オプション引数](../structured/sp4_optional.md#optional)にできる(既定値を与えられる)ようになりました。
 また、[params 引数](../structured/sp_params.md)も使えるようになりました。
 
-<pre class="source" title="ラムダ式の引数の既定値と params 引数">
-<span class="comment">// オプション引数(既定値値指定)。</span>
-<span class="reserved">var</span> <span class="variable">f1</span> <span class="operator">=</span> (<span class="reserved">int</span> <span class="variable local">x</span> <span class="operator">=</span> <span class="number">1</span>) <span class="operator">=&gt;</span> <span class="number">0</span>;
+```csharp
+// オプション引数(既定値値指定)。
+var f1 = (int x = 1) => 0;
 
-<span class="comment">// params 引数。</span>
-<span class="reserved">var</span> <span class="variable">f2</span> <span class="operator">=</span> (<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="number">0</span>;
+// params 引数。
+var f2 = (params int[] x) => 0;
 
-<span class="comment">// 混在も OK。</span>
-<span class="reserved">var</span> <span class="variable">f3</span> <span class="operator">=</span> (<span class="reserved">int</span> <span class="variable local">x</span> <span class="operator">=</span> <span class="number">1</span>, <span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="number">0</span>;
-</pre>
+// 混在も OK。
+var f3 = (int x = 1, params int[] y) => 0;
+```
 
 詳しくは「[ラムダ式のオプション引数(既定値)と params 引数](../functional/fun_localfunctions.md#lambda-default)」で説明します。
 
@@ -113,25 +113,25 @@ C# 11 ではエラーになっていた以下のようなコードをコンパ�
 ref 引数、in 引数の亜種として、
 「書き換えはしないけども、右辺値は受け付けたくない」ということを表す ref readonly 引数というものを導入しました。
 
-<pre class="source" title="ref readonly 引数">
-<span class="comment">// in 引数の代わりに ref readonly 引数。</span>
-<span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
+```csharp
+// in 引数の代わりに ref readonly 引数。
+void m(ref readonly int x) { }
 
-<span class="method">m</span>(<span class="warning" title="CS9193"><span class="number">10</span></span>); <span class="comment">// リテラルは警告に。</span>
+m(10); // リテラルは警告に。
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;
-<span class="reserved">var</span> <span class="variable">b</span> <span class="operator">=</span> <span class="number">2</span>;
-<span class="method">m</span>(<span class="warning" title="CS9193"><span class="variable">a</span> <span class="operator">+</span> <span class="variable">b</span></span>); <span class="comment">// 式も警告に。</span>
+var a = 1;
+var b = 2;
+m(a + b); // 式も警告に。
 
-<span class="comment">// in や ref を付けないのも警告。</span>
-<span class="method">m</span>(<span class="variable"><span class="warning" title="CS9192">a</span></span>);
+// in や ref を付けないのも警告。
+m(a);
 
-<span class="comment">// in を付けると警告が出ない。</span>
-<span class="method">m</span>(<span class="reserved">in</span> <span class="variable">a</span>);
+// in を付けると警告が出ない。
+m(in a);
 
-<span class="comment">// in 引数と違って、ref 修飾でも OK。</span>
-<span class="method">m</span>(<span class="reserved">ref</span> <span class="variable">a</span>);
-</pre>
+// in 引数と違って、ref 修飾でも OK。
+m(ref a);
+```
 
 ちなみに、呼び出し側の書き方が変わる以外に差はなく、コンパイル結果の挙動は in 引数と全く同じです。
 呼び出し側の差は以下の通りです。
@@ -150,38 +150,38 @@ ref 引数、in 引数の亜種として、
 
 .NET 8 で、[`InlineArray` 属性](https://learn.microsoft.com/ja-jp/dotnet/api/system.runtime.compilerservices.inlinearrayattribute) (`System.Runtime.CompilerServices` 名前空間) というものが入って、「値型の固定長配列」みたいなものを作れるようになりました。
 
-<pre class="source" title="InlineArray 属性">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// この属性を付けると、 .NET ランタイムが特別扱いして、構造体のサイズを拡大する。</span>
-<span class="comment">// (コンストラクター引数で Length 指定。)</span>
-[<span class="type">InlineArray</span>(<span class="number">3</span>)]
-<span class="reserved">struct</span> <span class="type struct">FixedBuffer</span>&lt;<span class="type param">T</span>&gt;
+// この属性を付けると、 .NET ランタイムが特別扱いして、構造体のサイズを拡大する。
+// (コンストラクター引数で Length 指定。)
+[InlineArray(3)]
+struct FixedBuffer<T>
 {
-    <span class="reserved">private</span> <span class="type param">T</span> <span class="field">_value</span>;
+    private T _value;
 }
-</pre>
+```
 
 基本的には .NET ランタイム側の機能ですが、
 いくつか、C# 側にもこの `InlineArray` 向けの特殊対応が入っています。
 
-<pre class="source" title="InlineArray 型利用側の特殊対応">
-<span class="type struct">FixedBuffer</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">buffer</span> <span class="operator">=</span> <span class="reserved">new</span>();
+```csharp
+FixedBuffer<string> buffer = new();
 
-<span class="comment">// InlineArray に対して直接インデクサーを書ける。</span>
-<span class="variable">buffer</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="string">&quot;zero&quot;</span>;
-<span class="variable">buffer</span>[<span class="number">1</span>] <span class="operator">=</span> <span class="string">&quot;one&quot;</span>;
+// InlineArray に対して直接インデクサーを書ける。
+buffer[0] = "zero";
+buffer[1] = "one";
 
-<span class="comment">// Span/ReadOnlySpan に暗黙的に変換できる。</span>
-<span class="type struct">Span</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">span</span> <span class="operator">=</span> <span class="variable">buffer</span>;
-<span class="variable">span</span>[<span class="number">2</span>] <span class="operator">=</span> <span class="string">&quot;two&quot;</span>;
+// Span/ReadOnlySpan に暗黙的に変換できる。
+Span<string> span = buffer;
+span[2] = "two";
 
-<span class="comment">// foreach で列挙できる。</span>
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">buffer</span>)
+// foreach で列挙できる。
+foreach (var x in buffer)
 {
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span>);
+    Console.WriteLine(x);
 }
-</pre>
+```
 
 詳しくは「[[雑記] InlineArray](../datatype/inline-array.md)」で説明します。
 
@@ -192,20 +192,20 @@ ref 引数、in 引数の亜種として、
 C# 11 以前だと、以下の例の最後の行のように、
 静的メンバー内から「インスタンス メンバーのインスタンス メンバー」みたいな名前の参照ができなかったようです。
 
-<pre class="source" title="C# 11 まではエラーになっていたコードの例">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Instance</span> { <span class="reserved">get</span>; }
+    public string? Instance { get; }
 
-    <span class="comment">// これは元から行けた。</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="method">InstanceM</span>() <span class="operator">=&gt;</span> <span class="reserved">nameof</span>(<span class="property">Instance</span><span class="operator">.</span><span class="property">Length</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span> <span class="static"><span class="method">StaticM1</span></span>() <span class="operator">=&gt;</span> <span class="reserved">nameof</span>(<span class="reserved">string</span><span class="operator">.</span><span class="property">Length</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span> <span class="method"><span class="static">StaticM2</span></span>() <span class="operator">=&gt;</span> <span class="reserved">nameof</span>(<span class="property">Instance</span>);
+    // これは元から行けた。
+    public string InstanceM() => nameof(Instance.Length);
+    public static string StaticM1() => nameof(string.Length);
+    public static string StaticM2() => nameof(Instance);
 
-    <span class="comment">// これが今までダメだったらしい。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span> <span class="static"><span class="method">StaticM</span></span>() <span class="operator">=&gt;</span> <span class="reserved">nameof</span>(<span class="property"><span class="error" title="CS0120">Instance</span></span><span class="operator">.</span><span class="property">Length</span>);
+    // これが今までダメだったらしい。
+    public static string StaticM() => nameof(Instance.Length);
 }
-</pre>
+```
 
 これが、C# 12 ではコンパイルできるようになりました。
 

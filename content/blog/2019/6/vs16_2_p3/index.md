@@ -22,31 +22,31 @@ C# 的には、[16.2.P3 マイルストーン](https://github.com/dotnet/roslyn/
 
 唯一、動作確認が取れたのが以下の機能。notnull 制約。
 
-<pre class="source" title="notnull 制約">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">C</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <em>notnull</em>
+class C<T>
+    where T : notnull
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value { <span class="reserved">get</span>; }
+    public T Value { get; }
  
-    <span class="reserved">public</span> <span class="type">C</span>(<span class="type">T</span> <span class="variable">value</span>) =&gt; Value = <span class="variable">value</span>;
+    public C(T value) => Value = value;
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">c</span> = <span class="reserved">new</span> <span class="type">C</span>&lt;<span class="reserved">string</span>&gt;(<span class="string">&quot;&quot;</span>);
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">c</span>.Value.Length);
+        var c = new C<string>("");
+        Console.WriteLine(c.Value.Length);
  
-        <span class="reserved">var</span> <span class="variable">c1</span> = <span class="reserved">new</span> <span class="type">C</span>&lt;<span class="reserved">int</span>&gt;(1);
-        <span class="reserved">var</span> <span class="variable">c2</span> = <span class="reserved">new</span> <span class="type">C</span>&lt;<span class="reserved">int</span>?&gt;(1); <span class="comment">// 警告あり</span>
-        <span class="reserved">var</span> <span class="variable">c3</span> = <span class="reserved">new</span> <span class="type">C</span>&lt;<span class="reserved">string</span>?&gt;(<span class="string">&quot;&quot;</span>); <span class="comment">// 警告あり</span>
-        <span class="reserved">var</span> <span class="variable">c4</span> = <span class="reserved">new</span> <span class="type">C</span>&lt;<span class="reserved">string</span>&gt;(<span class="reserved">null</span>); <span class="comment">// 警告あり</span>
+        var c1 = new C<int>(1);
+        var c2 = new C<int?>(1); // 警告あり
+        var c3 = new C<string?>(""); // 警告あり
+        var c4 = new C<string>(null); // 警告あり
     }
 }
-</code></pre>
+```
 
 これも、Preview 3 で対応するつもりがそんなになかったのか、
 コンパイルはできるものの Visual Studio 上は未対応(コード補完もハイライトも効かない)な状態です。
@@ -64,15 +64,15 @@ null 許容<em>値型</em>とnull 許容<em>参照型</em>を統一的に扱い�
 ただ、以下のようなコードは今のところ受け付けません。
 notnull とは… (仕組み上しょうがなさそう。これを受け付けるためには .NET ランタイム側での対応が必要そうで結構な手間。)
 
-<pre class="source" title="T? とは書けない問題">
-<code><span class="reserved">class</span> <span class="type">C</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : notnull
+```csharp
+class C<T>
+    where T : notnull
 {
-    <span class="comment">// せっかく notnull にしても、T? とは書けない。</span>
-    <span class="comment">// [return: MaybeNull] という属性ベースの回避策を取る予定。</span>
-    <span class="reserved">public</span> <span class="type">T</span>? <span class="method">X</span>() =&gt; <span class="reserved">default</span>;
+    // せっかく notnull にしても、T? とは書けない。
+    // [return: MaybeNull] という属性ベースの回避策を取る予定。
+    public T? X() => default;
 }
-</code></pre>
+```
 
 元々は、`where T : object` (`object` に `?` がついてないんだから非 null 扱い)でいいんじゃないかって言われてたんですが、「`object` だと参照型っぽくて値型に使えなさそうな印象がある」という理由で新規キーワード追加になりました。
 

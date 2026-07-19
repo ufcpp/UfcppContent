@@ -24,38 +24,38 @@ C#に馴れちゃってる人だと、LINQとかasync/awaitとかの機能が最
 
 `Dictionary<TKey, TValue>`の列挙を、キーも値も両方使うのに、`Keys`を使ってやろうとする人が結構いるらしいという話を聞きます。要するに以下のような書き方。
 
-<pre class="source" title="C#っぽくない書き方">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> dic = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;
+        var dic = new Dictionary<string, int>
         {
-            { <span class="string">"one"</span>, 1 },
-            { <span class="string">"two"</span>, 2 },
-            { <span class="string">"three"</span>, 3 },
+            { "one", 1 },
+            { "two", 2 },
+            { "three", 3 },
         };
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> key <span class="reserved">in</span> <em>dic.Keys</em>)
+        foreach (var key in dic.Keys)
         {
-            <em><span class="reserved">var</span> value = dic[key];</em>
-            <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{key}<span class="string"> =&gt; </span>{value}<span class="string">"</span>);
+            var value = dic[key];
+            Console.WriteLine($"{key} => {value}");
         }
     }
 }
-</code></pre>
+```
 
 C#の`Dictionary`はキーと値をまとめて列挙できる(`IDictionary<TKey, TValue>`インターフェイスが`IEnumerable<KeyValuePair<TKey, TValue>>`インターフェイスから派生している)ので、以下のように書けます。
 
-<pre class="source" title="C#の書き方">
-<code>        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> dic)
+```csharp
+        foreach (var x in dic)
         {
-            <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{x.Key}<span class="string"> =&gt; </span>{x.Value}<span class="string">"</span>);
+            Console.WriteLine($"{x.Key} => {x.Value}");
         }
-</code></pre>
+```
 
 得られる結果が一緒だからどちらでもいいと思うかもしれないですけど、パフォーマンスが結構違います。この手のコレクション(他の言語で言うところの`map`とか`Hashtable`)のインデクサー アクセスはそこそこなコストです。
 この例みたいなのだと、`Dictionary`内の要素の数にもよりますが、前者の`Keys`越しの方が2～3倍くらい遅いです。
@@ -64,24 +64,24 @@ C#の`Dictionary`はキーと値をまとめて列挙できる(`IDictionary<TKey
 
 `string`が`IEnumerable<char>`なのも案外気付いていない人がいるとか。
 
-<pre class="source" title="C#っぽくない書き方">
-<code><span class="reserved">var</span> s = <span class="string">"aáαあ亜😀"</span>;
+```csharp
+var s = "aáαあ亜😀";
 
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; s.Length; i++)
+for (int i = 0; i < s.Length; i++)
 {
-    <span class="reserved">var</span> c = s[i];
-    <span class="type">Console</span>.WriteLine(c);
+    var c = s[i];
+    Console.WriteLine(c);
 }
-</code></pre>
+```
 
 C#だと大体は`foreach`で列挙します。
 
-<pre class="source" title="C#の書き方">
-<code><span class="reserved">foreach</span> (<span class="reserved">var</span> c <span class="reserved">in</span> s)
+```csharp
+foreach (var c in s)
 {
-    <span class="type">Console</span>.WriteLine(c);
+    Console.WriteLine(c);
 }
-</code></pre>
+```
 
 というか、[文字列からインデックス使って「N文字目」を取れると思うなよ](http://www.buildinsider.net/language/csharpunicode/01)。
 
@@ -89,23 +89,23 @@ C#だと大体は`foreach`で列挙します。
 C#で正しくサロゲートペアを正しく扱うのはいまだにちょっと面倒なんですが…
 いずれ、以下のように書けるようになるはずです。
 
-<pre class="source" title="Utf8String">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Text.Utf8;
+```csharp
+using System;
+using System.Text.Utf8;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> si = <span class="reserved">new</span> <span class="type">Utf8String</span>(<span class="string">"aáαあ亜😀"</span>);
+        var si = new Utf8String("aáαあ亜😀");
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> c <span class="reserved">in</span> si.CodePoints)
+        foreach (var c in si.CodePoints)
         {
-            <span class="type">Console</span>.WriteLine(c);
+            Console.WriteLine(c);
         }
     }
 }
-</code></pre>
+```
 
 逆に、この`Utf8String`からは、インデックスを使って「N文字目」を取る手段はなくなっています。
 
@@ -115,16 +115,16 @@ C# 6で[interpolation](../../../../study/csharp/start/st_string.md#string-interp
 
 interpolation でも書けない書き方なんですけども、以下のように、同じインデックスを複数回使う書き方ができたりします。
 
-<pre class="source" title="C#の書き方">
-<code><span class="type">Console</span>.WriteLine(<span class="string">"({0} + {1}) × ({0} - {1}) = {0}^2 - {1}^2"</span>, <span class="string">"x"</span>, <span class="string">"y"</span>);
-<span class="comment">// (x + y) × (x - y) = x^2 - y^2</span>
-</code></pre>
+```csharp
+Console.WriteLine("({0} + {1}) × ({0} - {1}) = {0}^2 - {1}^2", "x", "y");
+// (x + y) × (x - y) = x^2 - y^2
+```
 
 わざわざ、以下のような書き方をしてしまう人をちらほら見かけるとか
 
-<pre class="source" title="C#っぽくない書き方">
-<code><span class="type">Console</span>.WriteLine(<span class="string">"({0} + {1}) × ({2} - {3}) = {4}^2 - {5}^2"</span>, <span class="string">"x"</span>, <span class="string">"y"</span>, <span class="string">"x"</span>, <span class="string">"y"</span>, <span class="string">"x"</span>, <span class="string">"y"</span>);
-</code></pre>
+```csharp
+Console.WriteLine("({0} + {1}) × ({2} - {3}) = {4}^2 - {5}^2", "x", "y", "x", "y", "x", "y");
+```
 
 `printf`だとこんな感じで書いてましたもんね…
 
@@ -132,11 +132,11 @@ interpolation でも書けない書き方なんですけども、以下のよう
 
 以下のようなコードをC#で書くと、結果はどうなるでしょう。
 
-<pre class="source" title="問題">
-<code><span class="reserved">string</span> s1 = <span class="string">"abc"</span>;
-<span class="reserved">object</span> s2 = <span class="reserved">null</span>;
-<span class="type">Console</span>.WriteLine(s1 + s2);
-</code></pre>
+```csharp
+string s1 = "abc";
+object s2 = null;
+Console.WriteLine(s1 + s2);
+```
 
 選択肢:
 
@@ -170,32 +170,32 @@ C#文化では、ガイドラインとして「演算子は、組み込み型の
 
 以下のようなコード。
 
-<pre class="source" title="C#っぽくない書き方">
-<code><span class="reserved">class</span> <span class="type">MyObject</span> : <span class="type">IDisposable</span>
+```csharp
+class MyObject : IDisposable
 {
-    <span class="reserved">bool</span> _isDisposed;
+    bool _isDisposed;
 
-    <span class="reserved">public</span> <span class="reserved">void</span> Dispose()
+    public void Dispose()
     {
-        <span class="comment">// Dispose 後、もうこのオブジェクトは無効</span>
-        _isDisposed = <span class="reserved">true</span>;
+        // Dispose 後、もうこのオブジェクトは無効
+        _isDisposed = true;
     }
 
-    <span class="comment">// 無効だったら if (x) { } で {} の中を通らなくする</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="reserved">true</span>(<span class="type">MyObject</span> obj) =&gt; !obj._isDisposed;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="reserved">false</span>(<span class="type">MyObject</span> obj) =&gt; obj._isDisposed;
+    // 無効だったら if (x) { } で {} の中を通らなくする
+    public static bool operator true(MyObject obj) => !obj._isDisposed;
+    public static bool operator false(MyObject obj) => obj._isDisposed;
 }
-</code></pre>
+```
 
 使う側は以下のような感じ。
 
-<pre class="source" title="C#っぽくない書き方">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">MyObject</span> obj)
+```csharp
+static void M(MyObject obj)
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">"----"</span>);
-    <span class="reserved">if</span> (obj) <span class="type">Console</span>.WriteLine(<span class="string">"有効"</span>);
+    Console.WriteLine("----");
+    if (obj) Console.WriteLine("有効");
 }
-</code></pre>
+```
 
 C言語だと`if (x)`って結構書いてたましたもんね…
 `bool`って概念を持っていなくて、0以外の値は全てtrue扱い(nullは0)で。

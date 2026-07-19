@@ -40,28 +40,28 @@ aliases: []
 
 例えば以下のような感じ。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+public class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; (X, Y) = (x, y);
-    <span class="reserved">public</span> <span class="reserved">void</span> Deconstruct(<span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">int</span> y) =&gt; (x, y) = (X, Y);
+    public int X { get; }
+    public int Y { get; }
+    public Point(int x, int y) => (X, Y) = (x, y);
+    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+public class C
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> M(<span class="reserved">object</span> obj)
-        =&gt; obj <span class="reserved">switch</span>
+    static int M(object obj)
+        => obj switch
         {
-            0 =&gt; 1,
-            <span class="reserved">int</span> i =&gt; 2,
-            <span class="type">Point</span>(1, _) =&gt; 4, <span class="comment">// new!</span>
-            <span class="type">Point</span> { X: 2, Y: <span class="reserved">var</span> y } =&gt; y, <span class="comment">// new!</span>
-            _ =&gt; 0
+            0 => 1,
+            int i => 2,
+            Point(1, _) => 4, // new!
+            Point { X: 2, Y: var y } => y, // new!
+            _ => 0
         };
 }
-</code></pre>
+```
 
 ## 何に使うかと言われると
 
@@ -71,43 +71,43 @@ aliases: []
 例えば、`x + 1` みたいな式を `Add(Variable(x), Const(1))` みたいなツリー構造で表す奴とか。
 そのツリーに対して、`x + 0` は `x` と等しいとか、`x * 1` は `x` と等しいとかその手の簡単化をするやつは、以下のように書けるようになります。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Node</span> Simplify(<span class="reserved">this</span> <span class="type">Node</span> n)
-    =&gt; n <span class="reserved">switch</span>
+```csharp
+public static Node Simplify(this Node n)
+    => n switch
         {
-            <span class="type">Add</span>(<span class="reserved">var</span> l, <span class="reserved">var</span> r) =&gt; (l.Simplify(), r.Simplify()) <span class="reserved">switch</span>
+            Add(var l, var r) => (l.Simplify(), r.Simplify()) switch
             {
-                (<span class="type">Const</span>(0), <span class="reserved">var</span> r1) =&gt; r1,
-                (<span class="reserved">var</span> l1, <span class="type">Const</span>(0)) =&gt; l1,
-                (<span class="reserved">var</span> l1, <span class="reserved">var</span> r1) =&gt; <span class="reserved">new</span> <span class="type">Add</span>(l1, r1)
+                (Const(0), var r1) => r1,
+                (var l1, Const(0)) => l1,
+                (var l1, var r1) => new Add(l1, r1)
             },
-            <span class="type">Mul</span>(<span class="reserved">var</span> l, <span class="reserved">var</span> r) =&gt; (l.Simplify(), r.Simplify()) <span class="reserved">switch</span>
+            Mul(var l, var r) => (l.Simplify(), r.Simplify()) switch
             {
-                (<span class="type">Const</span>(0) c, _) =&gt; c,
-                (_, <span class="type">Const</span>(0) c) =&gt; c,
-                (<span class="type">Const</span>(1), <span class="reserved">var</span> r1) =&gt; r1,
-                (<span class="reserved">var</span> l1, <span class="type">Const</span>(1)) =&gt; l1,
-                (<span class="reserved">var</span> l1, <span class="reserved">var</span> r1) =&gt; <span class="reserved">new</span> <span class="type">Mul</span>(l1, r1)
+                (Const(0) c, _) => c,
+                (_, Const(0) c) => c,
+                (Const(1), var r1) => r1,
+                (var l1, Const(1)) => l1,
+                (var l1, var r1) => new Mul(l1, r1)
             },
-            _ =&gt; n
+            _ => n
         };
-</code></pre>
+```
 
 ([コード全体はGist上に](https://gist.github.com/ufcpp/37702d99a7c0148b3b0d0f8b82e46414))
 
 ちなみに、単に「複数の値を同時にマッチング」という使い方もできます。
 以下のように、`(x, y) switch { }` でスイッチ。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> Compare(<span class="reserved">int</span>? x, <span class="reserved">int</span>? y)
-    =&gt; (x, y) <span class="reserved">switch</span>
+```csharp
+static int Compare(int? x, int? y)
+    => (x, y) switch
     {
-        (<span class="reserved">null</span>, <span class="reserved">null</span>) =&gt; 0,
-        (<span class="reserved">null</span>, _) =&gt; -1,
-        (_, <span class="reserved">null</span>) =&gt; 1,
-        ({} ix, {} iy) =&gt; ix.CompareTo(iy)
+        (null, null) => 0,
+        (null, _) => -1,
+        (_, null) => 1,
+        ({} ix, {} iy) => ix.CompareTo(iy)
     };
-</code></pre>
+```
 
 要するに、このコードは「タプルに対する位置パターン」なんですが、
 それが「`x`, `y` に対して多値マッチング」っぽく使えます。
@@ -116,19 +116,19 @@ aliases: []
 
 ちなみに、`switch` ステートメントでも以下のような書き方ができます。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">int</span> Compare(<span class="reserved">int</span>? x, <span class="reserved">int</span>? y)
+```csharp
+static int Compare(int? x, int? y)
 {
-    <span class="reserved">switch</span> (x, y)
+    switch (x, y)
     {
-        <span class="reserved">case</span> (<span class="reserved">null</span>, <span class="reserved">null</span>): <span class="reserved">return</span> 0;
-        <span class="reserved">case</span> (<span class="reserved">null</span>, _): <span class="reserved">return</span> -1;
-        <span class="reserved">case</span> (_, <span class="reserved">null</span>): <span class="reserved">return</span> 1;
-        <span class="reserved">case</span> ({ } ix, { } iy): <span class="reserved">return</span> ix.CompareTo(iy);
+        case (null, null): return 0;
+        case (null, _): return -1;
+        case (_, null): return 1;
+        case ({ } ix, { } iy): return ix.CompareTo(iy);
         }
     }
 }
-</code></pre>
+```
 
 先ほど書いた通り、これは実際には「タプルに対する位置パターン」なんですが、
 だったら、本来は `switch ((x, y))` という書き方(内側の`()`がタプル構築、外側の`()`が`switch`ステートメントのもの)をする必要があります。
@@ -143,29 +143,29 @@ aliases: []
 
 C# 7.0 までのパターンだと、null チェックを楽に書く手段がなかったです。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">LongLongNamedStruct</span> { }
+```csharp
+struct LongLongNamedStruct { }
  
-<span class="reserved">void</span> M1(<span class="type">LongLongNamedStruct</span>? x)
+void M1(LongLongNamedStruct? x)
 {
-    <span class="comment">// こういう書き方だと null チェックになる。</span>
-    <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="type">LongLongNamedStruct</span> nonNull)
+    // こういう書き方だと null チェックになる。
+    if (x is LongLongNamedStruct nonNull)
     {
-        <span class="comment">// obj が null じゃない時だけここが実行される。</span>
-        <span class="comment">// でも、x の型が既知なのに、長いクラス名をわざわざ書くのはしんどい…</span>
+        // obj が null じゃない時だけここが実行される。
+        // でも、x の型が既知なのに、長いクラス名をわざわざ書くのはしんどい…
     }
 }
  
-<span class="reserved">void</span> M2(<span class="type">LongLongNamedStruct</span>? x)
+void M2(LongLongNamedStruct? x)
 {
-    <span class="comment">// が、var パターンは null にもマッチしちゃう。</span>
-    <span class="comment">// (var は「何にでもマッチ」。null でも true になっちゃう。)</span>
-    <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="reserved">var</span> nullable)
+    // が、var パターンは null にもマッチしちゃう。
+    // (var は「何にでもマッチ」。null でも true になっちゃう。)
+    if (x is var nullable)
     {
-        <span class="comment">// obj が null でもここが実行される。</span>
+        // obj が null でもここが実行される。
     }
 }
-</code></pre>
+```
 
 もちろん、単に null チェックだけなら `!(x is null)` とか `x.HasValue` でいいんですけども、
 値を使いたければその後ろで `var nonNull = x.GetValueOrDefault();` を書かないと行けないのがしんどく。
@@ -173,16 +173,16 @@ C# 7.0 までのパターンだと、null チェックを楽に書く手段が�
 そこで、プロパティ パターンが使えます。
 以下のように、「空のプロパティ パターン」を書けば、「非 null のときだけ」判定ができます。
 
-<pre class="source" title="">
-<code><span class="reserved">void</span> M3(<span class="type">LongLongNamedStruct</span>? x)
+```csharp
+void M3(LongLongNamedStruct? x)
 {
-    <span class="comment">// (C# 8.0) プロパティ パターンであれば、null チェックを含む。</span>
-    <span class="reserved">if</span> (x <span class="reserved">is</span> {} nonNull)
+    // (C# 8.0) プロパティ パターンであれば、null チェックを含む。
+    if (x is {} nonNull)
     {
-        <span class="comment">// obj が null じゃない時だけここが実行される。</span>
+        // obj が null じゃない時だけここが実行される。
     }
 }
-</code></pre>
+```
 
 ちょっと「知ってないと使えない仕様」ですけども…
 覚えておくと便利です。
@@ -193,64 +193,64 @@ C# 7.0 の時、タプルとか分解の構文を決めるにあたって、C# �
 
 まず、タプルは「引数と対になるもの」として考えられています。
 
-<pre class="source" title="">
-<code><span class="comment">// タプル型宣言と引数宣言は同じような見た目。</span>
-(<span class="reserved">int</span> x, <span class="reserved">int</span> y) tup0;
-<span class="reserved">int</span> method(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x + y;
+```csharp
+// タプル型宣言と引数宣言は同じような見た目。
+(int x, int y) tup0;
+int method(int x, int y) => x + y;
  
-<span class="comment">// タプル構築はメソッド呼び出しみたいな書き方になる。</span>
-<span class="comment">// 位置指定:</span>
-<span class="reserved">var</span> tup1 = (1, 2);
-<span class="reserved">var</span> ret1 = method(1, 2);
+// タプル構築はメソッド呼び出しみたいな書き方になる。
+// 位置指定:
+var tup1 = (1, 2);
+var ret1 = method(1, 2);
  
-<span class="comment">// 名前指定:</span>
-<span class="reserved">var</span> tup2 = (x: 1, y: 2);
-<span class="reserved">var</span> ret2 = method(x: 1, y: 2);
+// 名前指定:
+var tup2 = (x: 1, y: 2);
+var ret2 = method(x: 1, y: 2);
  
-<span class="comment">// タプル戻り値は、引数と同じような書き方に。</span>
-(<span class="reserved">int</span> x, <span class="reserved">int</span> y) swap(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; (y, x);
-</code></pre>
+// タプル戻り値は、引数と同じような書き方に。
+(int x, int y) swap(int x, int y) => (y, x);
+```
 
 また、分解は「コンストラクターと対になるもの」です。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+public class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
  
-    <span class="comment">// 複数の値を組み合わせて1つの型にまとめるのが構築(construct)。</span>
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x = 0, <span class="reserved">int</span> y = 0) =&gt; (X, Y) = (x, y);
+    // 複数の値を組み合わせて1つの型にまとめるのが構築(construct)。
+    public Point(int x = 0, int y = 0) => (X, Y) = (x, y);
  
-    <span class="comment">// 1つにまとまっている値をバラバラに戻すのが分解(deconstruct)。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Deconstruct(<span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">int</span> y) =&gt; (x, y) = (X, Y);
+    // 1つにまとまっている値をバラバラに戻すのが分解(deconstruct)。
+    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 }
-</code></pre>
+```
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span>(1, 2); <span class="comment">// contruct</span>
-<span class="reserved">var</span> (x, y) = p;          <span class="comment">// deconstruct</span>
-</code></pre>
+```csharp
+var p = new Point(1, 2); // contruct
+var (x, y) = p;          // deconstruct
+```
 
 C# 8.0 の再帰パターンもこの話の延長にあります。
 
-<pre class="source" title="">
-<code><span class="comment">// 位置指定で構築できるんなら、位置指定でマッチングできるべき</span>
-<span class="reserved">var</span> p1 = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
-<span class="reserved">var</span> r1 = p1 <span class="reserved">is</span> (1, 2);
+```csharp
+// 位置指定で構築できるんなら、位置指定でマッチングできるべき
+var p1 = new Point(1, 2);
+var r1 = p1 is (1, 2);
  
-<span class="comment">// 名前指定で構築できるんなら、名前指定でマッチングできるべき</span>
-<span class="reserved">var</span> p2 = <span class="reserved">new</span> <span class="type">Point</span>(x: 1, y: 2);
-<span class="reserved">var</span> r2 = p2 <span class="reserved">is</span> (x: 1, y: 2);
+// 名前指定で構築できるんなら、名前指定でマッチングできるべき
+var p2 = new Point(x: 1, y: 2);
+var r2 = p2 is (x: 1, y: 2);
  
-<span class="comment">// 初期化子でプロパティ指定できるんなら、プロパティ指定でマッチングできるべき</span>
-<span class="reserved">var</span> p3 = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-<span class="reserved">var</span> r3 = p3 <span class="reserved">is</span> { X: 1, Y: 2 };
+// 初期化子でプロパティ指定できるんなら、プロパティ指定でマッチングできるべき
+var p3 = new Point { X = 1, Y = 2 };
+var r3 = p3 is { X: 1, Y: 2 };
  
-<span class="comment">// 混在構築できるんなら、混在マッチングできるべき</span>
-<span class="reserved">var</span> p4 = <span class="reserved">new</span> <span class="type">Point</span>(x: 1) { Y = 2 };
-<span class="reserved">var</span> r4 = p4 <span class="reserved">is</span> (1, _) { Y: 2 };
-</code></pre>
+// 混在構築できるんなら、混在マッチングできるべき
+var p4 = new Point(x: 1) { Y = 2 };
+var r4 = p4 is (1, _) { Y: 2 };
+```
 
 ## 最近の変更
 

@@ -62,29 +62,30 @@ C# で識別子に使える文字は、まあかなり端折って言うと、�
 
 これを、こうじゃ:
 
-<pre class="source" title="Unicode 8.0 以降に追加された letter">
-<span class="comment">// Unicode 8.0</span>
-<span class="reserved">int</span> <span class="variable">ᏸ</span> <span class="operator">=</span> <span class="number">8</span>; <span class="comment">// U+13F8, Cherokee Small Letter Ye</span>
+```csharp
+// Unicode 8.0
+int ᏸ = 8; // U+13F8, Cherokee Small Letter Ye
 
-<span class="comment">// Unicode 9.0</span>
-<span class="reserved">int</span> <span class="variable">Ɪ</span> <span class="operator">=</span> <span class="number">9</span>; <span class="comment">// U+A7AE, Small Captital I</span>
+// Unicode 9.0
+int Ɪ = 9; // U+A7AE, Small Captital I
 
-<span class="comment">// Unicode 10.0</span>
-<span class="reserved">int</span> <span class="variable">ৼ</span> <span class="operator">=</span> <span class="number">10</span>; <span class="comment">// U+09FC, Bengali Letter Vedic Anusvara</span>
+// Unicode 10.0
+int ৼ = 10; // U+09FC, Bengali Letter Vedic Anusvara
 
-<span class="comment">// Unicode 11.0</span>
-<span class="reserved">int</span> <span class="variable">ՠ</span> <span class="operator">=</span> <span class="number">11</span>; <span class="comment">// U+0560, Armenian Small Letter Turned Ayb</span>
+// Unicode 11.0
+int ՠ = 11; // U+0560, Armenian Small Letter Turned Ayb
 
-<span class="comment">// Unicode 12.0</span>
-<span class="reserved">int</span> <span class="variable">Ꞻ</span> <span class="operator">=</span> <span class="number">12</span>; <span class="comment">// U+A7BA, Latin Capital Letter Glottal A</span>
+// Unicode 12.0
+int Ꞻ = 12; // U+A7BA, Latin Capital Letter Glottal A
 
-<span class="comment">// Unicode 13.0</span>
-<span class="reserved">int</span> <span class="variable">ഄ</span> <span class="operator">=</span> <span class="number">13</span>; <span class="comment">// U+0D04, Malayalam Letter Vedic Anusvara</span>
+// Unicode 13.0
+int ഄ = 13; // U+0D04, Malayalam Letter Vedic Anusvara
 
-<span class="comment">// Unicode 14.0</span>
-<span class="reserved">int</span> <span class="variable">ౝ</span> <span class="operator">=</span> <span class="number">14</span>; <span class="comment">// U+0C5D, Telugu Letter Nakaara Pollu</span>
+// Unicode 14.0
+int ౝ = 14; // U+0C5D, Telugu Letter Nakaara Pollu
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">ᏸ</span> <span class="operator">+</span> <span class="variable">Ɪ</span> <span class="operator">+</span> <span class="variable">ৼ</span> <span class="operator">+</span> <span class="variable">ՠ</span> <span class="operator">+</span> <span class="variable">Ꞻ</span> <span class="operator">+</span> <span class="variable">ഄ</span> <span class="operator">+</span> <span class="variable">ౝ</span>);</pre>
+Console.WriteLine(ᏸ + Ɪ + ৼ + ՠ + Ꞻ + ഄ + ౝ);
+```
 
 (ちなみに C# コンパイラーっていまだに[サロゲートペア](https://ja.wikipedia.org/wiki/Unicode#%E3%82%B5%E3%83%AD%E3%82%B2%E3%83%BC%E3%83%88%E3%83%9A%E3%82%A2)に対応していないので、[BMP](https://ja.wikipedia.org/wiki/%E5%9F%BA%E6%9C%AC%E5%A4%9A%E8%A8%80%E8%AA%9E%E9%9D%A2) 内で当該文字を探さないといけないんですが。
 見ての通り、最近でも BMP への文字追加が意外とたくさんあります。)
@@ -107,9 +108,9 @@ C# で識別子に使える文字は、まあかなり端折って言うと、�
 
 <em>Ɪ と ՠ の2文字、ASCII 文字と似てて[ホモグラフ攻撃](https://ja.wikipedia.org/wiki/%E3%83%9B%E3%83%A2%E3%82%B0%E3%83%A9%E3%83%95%E6%94%BB%E6%92%83)できそうじゃない…</em>
 
-<pre class="source" title="おもむろに謎のクラスを1つ定義">
-<span class="reserved">class</span> <span class="type">Ɪՠage</span> { }
-</pre>
+```csharp
+class Ɪՠage { }
+```
 
 この `Ɪՠage` クラス、最初の2文字が先ほどの Ɪ (U+A7AE)と ՠ (U+0560)です。
 

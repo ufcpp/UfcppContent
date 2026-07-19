@@ -40,43 +40,43 @@ aliases:
 
 ちょっと考えてみた結果、以下のようなクラスを作ると便利なんじゃないかという考えに至る。
 
-<pre class="source" title="動的にジェネリック型 T の加減乗除関数を作る" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Linq.Expressions;
+```csharp
+using System;
+using System.Linq.Expressions;
 
-<span class="reserved">namespace</span> GenericOperator
+namespace GenericOperator
 {
-    <span class="reserved">using</span> Binary = Func&lt;ParameterExpression, ParameterExpression, BinaryExpression&gt;;
-    <span class="reserved">using</span> Unary = Func&lt;ParameterExpression, UnaryExpression&gt;;
+    using Binary = Func<ParameterExpression, ParameterExpression, BinaryExpression>;
+    using Unary = Func<ParameterExpression, UnaryExpression>;
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// 動的にジェネリック型 T の加減乗除関数を作る。
-    /// &lt;/summary&gt;
-    /// &lt;typeparam name="T"&gt;対象となる型。&lt;/typeparam&gt;</span>
-    <span class="reserved">public static class</span> Operator&lt;T&gt;
+    /// </summary>
+    /// <typeparam name="T">対象となる型。</typeparam>
+    public static class Operator<T>
     {
-        <span class="reserved">static readonly</span> ParameterExpression x = Expression.Parameter(<span class="reserved">typeof</span>(T), <span class="literal">"x"</span>);
-        <span class="reserved">static readonly</span> ParameterExpression y = Expression.Parameter(<span class="reserved">typeof</span>(T), <span class="literal">"y"</span>);
+        static readonly ParameterExpression x = Expression.Parameter(typeof(T), "x");
+        static readonly ParameterExpression y = Expression.Parameter(typeof(T), "y");
 
-        <span class="reserved">public static readonly</span> Func&lt;T, T, T&gt; Add = Lambda(Expression.Add);
-        <span class="reserved">public static readonly</span> Func&lt;T, T, T&gt; Subtract = Lambda(Expression.Subtract);
-        <span class="reserved">public static readonly</span> Func&lt;T, T, T&gt; Multiply = Lambda(Expression.Multiply);
-        <span class="reserved">public static readonly</span> Func&lt;T, T, T&gt; Divide = Lambda(Expression.Divide);
-        <span class="reserved">public static readonly</span> Func&lt;T, T&gt; Plus = Lambda(Expression.UnaryPlus);
-        <span class="reserved">public static readonly</span> Func&lt;T, T&gt; Negate = Lambda(Expression.Negate);
+        public static readonly Func<T, T, T> Add = Lambda(Expression.Add);
+        public static readonly Func<T, T, T> Subtract = Lambda(Expression.Subtract);
+        public static readonly Func<T, T, T> Multiply = Lambda(Expression.Multiply);
+        public static readonly Func<T, T, T> Divide = Lambda(Expression.Divide);
+        public static readonly Func<T, T> Plus = Lambda(Expression.UnaryPlus);
+        public static readonly Func<T, T> Negate = Lambda(Expression.Negate);
 
-        <span class="reserved">public static</span> Func&lt;T, T, T&gt; Lambda(Binary op)
+        public static Func<T, T, T> Lambda(Binary op)
         {
-            <span class="reserved">return</span> Expression.Lambda&lt;Func&lt;T, T, T&gt;&gt;(op(x, y), x, y).Compile();
+            return Expression.Lambda<Func<T, T, T>>(op(x, y), x, y).Compile();
         }
 
-        <span class="reserved">public static</span> Func&lt;T, T&gt; Lambda(Unary op)
+        public static Func<T, T> Lambda(Unary op)
         {
-            <span class="reserved">return</span> Expression.Lambda&lt;Func&lt;T, T&gt;&gt;(op(x), x).Compile();
+            return Expression.Lambda<Func<T, T>>(op(x), x).Compile();
         }
     }
 }
-</code></pre>
+```
 
 
 
@@ -103,29 +103,29 @@ C# の generics において、メソッド呼び出しにインターフェー�
 
 例えば、C++ ならば以下のような書き方ができます。
 
-<pre class="source" title="C++ で複素数に + 演算子を定義" lang="">
-<code>template&lt;typename T&gt;
-Complex&lt;T&gt; operator +(Complex&lt;T&gt; x, Complex&lt;T&gt; y)
+```cpp
+template<typename T>
+Complex<T> operator +(Complex<T> x, Complex<T> y)
 {
   //↓ T の型がなんであれ、+ 演算子を持っているものならコンパイル可能。
   T re = x.re + y.re;
   T im = x.im + y.im;
-  return Complex&lt;T&gt;(re, im);
+  return Complex<T>(re, im);
 }
-</code></pre>
+```
 
 
 ところが、同じことを C# でやろうとすると、コンパイルエラーになります。
 
-<pre class="source" title="C# で複素数に + 演算子を定義（失敗例）" lang="">
-<code><span class="reserved">public static</span> Complex&lt;T&gt; <span class="reserved">operator</span> +(Complex&lt;T&gt; x, Complex&lt;T&gt; y)
+```csharp
+public static Complex<T> operator +(Complex<T> x, Complex<T> y)
 {
-  <span class="comment">//↓ エラー： 演算子 '+' を 'T' と 'T' 型のオペランドに適用することはできません。</span>
+  //↓ エラー： 演算子 '+' を 'T' と 'T' 型のオペランドに適用することはできません。
   T re = x.re + y.re;
   T im = x.im + y.im;
-  <span class="reserved">return new</span> Complex&lt;T&gt;(re, im);
+  return new Complex<T>(re, im);
 }
-</code></pre>
+```
 
 
 （
@@ -152,72 +152,72 @@ C# ジェネリクスでできないことも、動的コード生成などを�
 
 2つ目のリフレクションを使えば、例えば以下のようなことができます。
 
-<pre class="source" title="ジェネリクスとリフレクションの組み合わせ" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.IO;
-<span class="reserved">using</span> System.Text;
+```csharp
+using System;
+using System.IO;
+using System.Text;
 
-<span class="reserved">class</span> Test
+class Test
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> mem = <span class="reserved">new</span> MemoryStream();
-        <span class="reserved">var</span> writer = <span class="reserved">new</span> BinaryWriter(mem);
-<em>
+        var mem = new MemoryStream();
+        var writer = new BinaryWriter(mem);
+
         Serializer.Serialize(writer, 10);
         Serializer.Serialize(writer, 10.0);
-        Serializer.Serialize(writer, (<span class="reserved">byte</span>)10);
-        Serializer.Serialize(writer, <span class="literal">"10"</span>);
-</em>
+        Serializer.Serialize(writer, (byte)10);
+        Serializer.Serialize(writer, "10");
+
         mem.Seek(0, SeekOrigin.Begin);
 
-        <span class="reserved">var</span> reader = <span class="reserved">new</span> BinaryReader(mem);
-<em>
-        Console.WriteLine(Serializer.Deserialize&lt;<span class="reserved">int</span>&gt;(reader));
-        Console.WriteLine(Serializer.Deserialize&lt;<span class="reserved">double</span>&gt;(reader));
-        Console.WriteLine(Serializer.Deserialize&lt;<span class="reserved">byte</span>&gt;(reader));
-        Console.WriteLine(Serializer.Deserialize&lt;<span class="reserved">string</span>&gt;(reader));
-</em>
+        var reader = new BinaryReader(mem);
+
+        Console.WriteLine(Serializer.Deserialize<int>(reader));
+        Console.WriteLine(Serializer.Deserialize<double>(reader));
+        Console.WriteLine(Serializer.Deserialize<byte>(reader));
+        Console.WriteLine(Serializer.Deserialize<string>(reader));
+
     }
 }
 
-<span class="reserved">static class</span> Serializer
+static class Serializer
 {
-    <span class="reserved">public static void</span> Serialize&lt;T&gt;(BinaryWriter writer, T value)
+    public static void Serialize<T>(BinaryWriter writer, T value)
     {
-        <span class="comment">// string だけ特殊処理。</span>
-        <span class="reserved">if</span> (<span class="reserved">typeof</span>(T) == <span class="reserved">typeof</span>(<span class="reserved">string</span>))
+        // string だけ特殊処理。
+        if (typeof(T) == typeof(string))
         {
-            <span class="reserved">var</span> s = value <span class="reserved">as string</span>;
-            <span class="reserved">var</span> b = Encoding.UTF8.GetBytes(s);
+            var s = value as string;
+            var b = Encoding.UTF8.GetBytes(s);
             writer.Write(b.Length);
             writer.Write(b);
-            <span class="reserved">return</span>;
+            return;
         }
 
-        <span class="comment">// BinaryWriter.Write のオーバーロードがあるものはこれを呼び出す。</span>
-        <span class="reserved">var</span> write = <span class="reserved">typeof</span>(BinaryWriter).GetMethod(<span class="literal">"Write"</span>, <span class="reserved">new</span>[] { <span class="reserved">typeof</span>(T) });
-        System.Diagnostics.Debug.Assert(write != <span class="reserved">null</span>);
-        write.Invoke(writer, <span class="reserved">new object</span>[] { value });
+        // BinaryWriter.Write のオーバーロードがあるものはこれを呼び出す。
+        var write = typeof(BinaryWriter).GetMethod("Write", new[] { typeof(T) });
+        System.Diagnostics.Debug.Assert(write != null);
+        write.Invoke(writer, new object[] { value });
     }
 
-    <span class="reserved">public static</span> T Deserialize&lt;T&gt;(BinaryReader reader)
+    public static T Deserialize<T>(BinaryReader reader)
     {
-        <span class="comment">// string だけ特殊処理。</span>
-        <span class="reserved">if</span> (<span class="reserved">typeof</span>(T) == <span class="reserved">typeof</span>(<span class="reserved">string</span>))
+        // string だけ特殊処理。
+        if (typeof(T) == typeof(string))
         {
-            <span class="reserved">var</span> count = reader.ReadInt32();
-            <span class="reserved">var</span> b = reader.ReadBytes(count);
-            <span class="reserved">return</span> (T)(<span class="reserved">object</span>)Encoding.UTF8.GetString(b);
+            var count = reader.ReadInt32();
+            var b = reader.ReadBytes(count);
+            return (T)(object)Encoding.UTF8.GetString(b);
         }
 
-        <span class="comment">// BinaryReader.Read*** があるものはこれを呼び出す。</span>
-        <span class="reserved">var</span> read = <span class="reserved">typeof</span>(BinaryReader).GetMethod(<span class="literal">"Read"</span> + <span class="reserved">typeof</span>(T).Name, <span class="reserved">new</span> Type[0]);
-        System.Diagnostics.Debug.Assert(read != <span class="reserved">null</span>);
-        <span class="reserved">return</span> (T)read.Invoke(reader, <span class="reserved">new object</span>[0]);
+        // BinaryReader.Read*** があるものはこれを呼び出す。
+        var read = typeof(BinaryReader).GetMethod("Read" + typeof(T).Name, new Type[0]);
+        System.Diagnostics.Debug.Assert(read != null);
+        return (T)read.Invoke(reader, new object[0]);
     }
 }
-</code></pre>
+```
 
 
 これも、特殊な用途で使うものであって、
@@ -236,71 +236,71 @@ C# ジェネリクスでできないことも、動的コード生成などを�
 
 .NET Framework 3.0 で導入された式木を使うと、以下のようなことができます。
 
-<pre class="source" title="式木を使ってジェネリックに加算" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Linq.Expressions;
+```csharp
+using System;
+using System.Linq.Expressions;
 
-<span class="reserved">class</span> Test
+class Test
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> add = CreateAdder&lt;<span class="reserved">int</span>&gt;();
+        var add = CreateAdder<int>();
 
-        Console.WriteLine(add(10, 20)); <span class="comment">// 10 + 20 で 30 が表示される。</span>
+        Console.WriteLine(add(10, 20)); // 10 + 20 で 30 が表示される。
     }
 
-    <span class="comment">/// &lt;summary&gt;
-    /// (T x, T y) =&gt; x + y; に相当する匿名デリゲートを生成する。
-    /// &lt;/summary&gt;
-    /// &lt;typeparam name="T"&gt;オペランドの型。&lt;/typeparam&gt;
-    /// &lt;returns&gt;加算デリゲート。&lt;/returns&gt;</span>
-    <span class="reserved">static</span> Func&lt;T, T, T&gt; CreateAdder&lt;T&gt;()
+    /// <summary>
+    /// (T x, T y) => x + y; に相当する匿名デリゲートを生成する。
+    /// </summary>
+    /// <typeparam name="T">オペランドの型。</typeparam>
+    /// <returns>加算デリゲート。</returns>
+    static Func<T, T, T> CreateAdder<T>()
     {
-        <span class="reserved">var</span> x = Expression.Parameter(<span class="reserved">typeof</span>(T), <span class="literal">"x"</span>);
-        <span class="reserved">var</span> y = Expression.Parameter(<span class="reserved">typeof</span>(T), <span class="literal">"y"</span>);
+        var x = Expression.Parameter(typeof(T), "x");
+        var y = Expression.Parameter(typeof(T), "y");
 
-        <span class="reserved">var</span> expression = Expression.Lambda&lt;Func&lt;T, T, T&gt;&gt;(
+        var expression = Expression.Lambda<Func<T, T, T>>(
             Expression.Add(x, y),
             x, y);
 
-        <span class="reserved">return</span> expression.Compile();
+        return expression.Compile();
     }
 }
-</code></pre>
+```
 
 
 汎用化するために、このページの冒頭で載せたようなクラスを定義。
 要点だけ抜粋すると、以下のような感じ。
 
-<pre class="source" title="動的にジェネリック型 T の加減乗除関数を作る" lang="">
-<code><span class="reserved">using</span> Binary = Func&lt;ParameterExpression, ParameterExpression, BinaryExpression&gt;;
+```csharp
+using Binary = Func<ParameterExpression, ParameterExpression, BinaryExpression>;
 
-<span class="reserved">public static class</span> Operator&lt;T&gt;
+public static class Operator<T>
 {
-    <em><span class="reserved">public static readonly</span> Func&lt;T, T, T&gt; Add = Lambda(Expression.Add);</em>
+    public static readonly Func<T, T, T> Add = Lambda(Expression.Add);
 
-    <span class="reserved">public static</span> Func&lt;T, T, T&gt; Lambda(Binary op)
+    public static Func<T, T, T> Lambda(Binary op)
     {
-        <span class="reserved">return</span> Expression.Lambda&lt;Func&lt;T, T, T&gt;&gt;(
+        return Expression.Lambda<Func<T, T, T>>(
             op(x, y),
             x, y).Compile();
     }
 }
-</code></pre>
+```
 
 
 これを使えば、ジェネリックな複素数の加算を以下のような感じで作れます。
 
-<pre class="source" title="C# で複素数に + 演算子を定義" lang="">
-<code><span class="reserved">static</span> T Add(T x, T y) { <span class="reserved">return</span> Operator&lt;T&gt;.Add(x, y); }
+```csharp
+static T Add(T x, T y) { return Operator<T>.Add(x, y); }
 
-<span class="reserved">public static</span> Complex&lt;T&gt; <span class="reserved">operator</span> +(Complex&lt;T&gt; x, Complex&lt;T&gt; y)
+public static Complex<T> operator +(Complex<T> x, Complex<T> y)
 {
     T re = Add(x.re, y.re);
     T im = Add(x.im, y.im);
-    <span class="reserved">return new</span> Complex&lt;T&gt;(re, im);
+    return new Complex<T>(re, im);
 }
-</code></pre>
+```
 
 
 <code>x.re + y.re</code> と書けなくて不格好なのと、
@@ -329,8 +329,8 @@ C++ の template には少々及びませんが、
 
 利用例としては以下のような感じ。
 
-<pre class="source" title="Complex&lt;T&gt; クラスの利用例" lang="">
-<code><span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+```csharp
+static void Main(string[] args)
 {
     ShowFourOperations(
         4 .I(5),
@@ -345,19 +345,19 @@ C++ の template には少々及びませんが、
         2.Over(3) .I(3.Over(4)));
 }
 
-<span class="reserved">static void</span> ShowFourOperations&lt;T&gt;(Complex&lt;T&gt; x, Complex&lt;T&gt; y)
-    <span class="reserved">where</span> T: IComparable&lt;T&gt;
+static void ShowFourOperations<T>(Complex<T> x, Complex<T> y)
+    where T: IComparable<T>
 {
-    Console.WriteLine(<span class="reserved">typeof</span>(T).Name);
-    Console.WriteLine(<span class="literal">"({0}) + ({1}) = {2}"</span>, x, y, x + y);
-    Console.WriteLine(<span class="literal">"({0}) - ({1}) = {2}"</span>, x, y, x - y);
-    Console.WriteLine(<span class="literal">"({0}) * ({1}) = {2}"</span>, x, y, x * y);
-    Console.WriteLine(<span class="literal">"({0}) / ({1}) = {2}"</span>, x, y, x / y);
+    Console.WriteLine(typeof(T).Name);
+    Console.WriteLine("({0}) + ({1}) = {2}", x, y, x + y);
+    Console.WriteLine("({0}) - ({1}) = {2}", x, y, x - y);
+    Console.WriteLine("({0}) * ({1}) = {2}", x, y, x * y);
+    Console.WriteLine("({0}) / ({1}) = {2}", x, y, x / y);
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 Int32
 (4 + i5) + (2 + i4) = 6 + i9
 (4 + i5) - (2 + i4) = 2 + i1
@@ -373,4 +373,4 @@ Rational
 ((1/2) + i(1/3)) - ((2/3) + i(3/4)) = (-1/6) - i(5/12)
 ((1/2) + i(1/3)) * ((2/3) + i(3/4)) = (1/12) + i(43/72)
 ((1/2) + i(1/3)) / ((2/3) + i(3/4)) = (7/12) - i(11/72)
-</pre>
+```

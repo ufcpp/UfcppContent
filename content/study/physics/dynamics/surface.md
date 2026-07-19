@@ -281,60 +281,60 @@ f<span class="paren" style="font-size:em;">(</span>x<span class="paren" style="f
 （参考：
 「[C# によるプログラミング入門](../../csharp/index.md)」「[C# 3.0 の新機能](../../csharp/cheatsheet/ap_ver3.md)」）
 
-<pre class="source" title="数値計算例" lang="">
-<code><span class="reserved">using</span> Func2 = System.Linq.Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>, <span class="reserved">double</span>&gt;;
-<span class="reserved">using</span> Func4 = System.Linq.Func&lt;<span class="reserved">double</span>, <span class="reserved">double</span>, <span class="reserved">double</span>, <span class="reserved">double</span>, <span class="reserved">double</span>&gt;;
+```csharp
+using Func2 = System.Linq.Func<double, double, double>;
+using Func4 = System.Linq.Func<double, double, double, double, double>;
 
-<span class="reserved">static void</span> Simulate()
+static void Simulate()
 {
-  <span class="reserved">const double</span> M = 0.1;
-  <span class="reserved">const double</span> G = 10;
+  const double M = 0.1;
+  const double G = 10;
 
-  Func2 x = (q1_, q2_) =&gt; (Math.Cos(q1_) * Math.Sin(q2_));
-  Func2 y = (q1_, q2_) =&gt; (Math.Sin(q1_) * Math.Sin(q2_));
-  Func2 z = (q1_, q2_) =&gt; (-Math.Cos(q2_));
+  Func2 x = (q1_, q2_) => (Math.Cos(q1_) * Math.Sin(q2_));
+  Func2 y = (q1_, q2_) => (Math.Sin(q1_) * Math.Sin(q2_));
+  Func2 z = (q1_, q2_) => (-Math.Cos(q2_));
 
   Func4 fq1 =
-    (q1_, q2_, p1_, p2_) =&gt; (p1_ / (M * Math.Sin(q2_)));
+    (q1_, q2_, p1_, p2_) => (p1_ / (M * Math.Sin(q2_)));
   Func4 fq2 =
-    (q1_, q2_, p1_, p2_) =&gt; (p2_ / M);
+    (q1_, q2_, p1_, p2_) => (p2_ / M);
   Func4 fp1 =
-    (q_1, q2_, p1_, p2_) =&gt; (0);
+    (q_1, q2_, p1_, p2_) => (0);
   Func4 fp2 =
-    (q1_, q2_, p1_, p2_) =&gt; (
+    (q1_, q2_, p1_, p2_) => (
       (p1_ * p1_ * Math.Cos(q2_))
         / (M * Math.Sin(q2_) * Math.Sin(q2_) * Math.Sin(q2_))
       - M * G * Math.Sin(q2_)
       );
 
-  <span class="reserved">double</span> q1 = 0;
-  <span class="reserved">double</span> q2 = Math.PI / 2;
-  <span class="reserved">double</span> p1 = 0.1;
-  <span class="reserved">double</span> p2 = 0;
+  double q1 = 0;
+  double q2 = Math.PI / 2;
+  double p1 = 0.1;
+  double p2 = 0;
 
-  <span class="reserved">const double</span> dt = 0.01;
-  <span class="reserved">const double</span> t_end = 10;
-  <span class="reserved">const int</span> DISPLAY_INTERVAL = 5;
+  const double dt = 0.01;
+  const double t_end = 10;
+  const int DISPLAY_INTERVAL = 5;
 
-  Console.Write(<span class="literal">"t,x,y,z\n"</span>);
+  Console.Write("t,x,y,z\n");
 
-  <span class="reserved">int</span> n = 0;
-  <span class="reserved">for</span> (<span class="reserved">double</span> t = 0; t &lt; t_end; t += dt, ++n)
+  int n = 0;
+  for (double t = 0; t < t_end; t += dt, ++n)
   {
     q1 += dt * fq1(q1, q2, p1, p2);
     q2 += dt * fq2(q1, q2, p1, p2);
     p1 += dt * fp1(q1, q2, p1, p2);
     p2 += dt * fp2(q1, q2, p1, p2);
 
-    <span class="reserved">if</span> (n == DISPLAY_INTERVAL)
+    if (n == DISPLAY_INTERVAL)
     {
-      Console.Write(<span class="literal">"{0},{1},{2},{3}\n"</span>,
+      Console.Write("{0},{1},{2},{3}\n",
         t,
         x(q1, q2), y(q1, q2), z(q1, q2)));
     }
   }
 }
-</code></pre>
+```
 
 
 ちなみに、

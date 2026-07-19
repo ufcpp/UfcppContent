@@ -25,29 +25,32 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;arg/&gt;
-</pre>
+```xml
+<arg/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;arg/&gt;z = nπi
-</pre><div class="math"><span class="normal">arg</span>z = nπi
+```xml
+<arg/>z = nπi
+```
+<div class="math"><span class="normal">arg</span>z = nπi
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:arg"&gt;
-  &lt;span class="normal"&gt;arg&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:arg">
+  <span class="normal">arg</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.normal
+```css
+span.normal
 {
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

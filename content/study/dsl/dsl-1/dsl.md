@@ -128,11 +128,11 @@ GUI アプリのウィンドウサイズ設定を例にとってみましょう�
 一昔前だと、
 ini ファイルに保存することが多かったです。
 
-<pre class="source" title="ini 形式の設定ファイル" lang="">
-<code>[window]
+```csharp
+[window]
 width=480
 height=360
-</code></pre>
+```
 
 
 あまり複雑なことをしないならシンプルでいい形式だと思います。
@@ -140,58 +140,58 @@ height=360
 一方、最近だったら XML なんかが流行りですね。
 
 
-<pre class="xsource" title="XML 形式の設定ファイル">
-<code><span class="bracket">&lt;</span><span class="element">configuration</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">window</span>
-    <span class="attribute">width</span><span class="attvalue">="480"</span>
-    <span class="attribute">height</span><span class="attvalue">="360"</span>
-    /<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">configuration</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<configuration>
+  <window
+    width="480"
+    height="360"
+    />
+</configuration>
+```
 設定ファイルに階層的なデータ構造が必要になるなら ini よりも XML の方がいいですね。
 たいていの環境で読み書き用のライブラリがそろってるのが強みです。
 
 最近だと Json なんていう形式も流行っています。
 JavaScript の文法そのままで記述するので、JavaScript ならそのまま読めるというのが利点です。
 
-<pre class="source" title="ini 形式の設定ファイル" lang="">
-<code>{
+```csharp
+{
   "window":
   {
     "width": 480,
     "height": 360,
   }
 }
-</code></pre>
+```
 
 
 あと、設定変更するたびに再コンパイルが必要ですが、
 以下のように、C# ソースファイル中に埋め込んでもいい。
 
-<pre class="source" title="設定直書き" lang="">
-<code><span class="reserved">public static class</span> Configuration
+```csharp
+public static class Configuration
 {
-  <span class="reserved">public static class</span> Window
+  public static class Window
   {
-    <span class="reserved">public const int</span> Width = 480;
-    <span class="reserved">public const int</span> Height = 360;
+    public const int Width = 480;
+    public const int Height = 360;
   }
 }
-</code></pre>
+```
 
 
 C# 3.0 以降なら以下のような書き方もありかと思います。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> configuration = <span class="reserved">new</span>
+```csharp
+var configuration = new
 {
-    Window = <span class="reserved">new</span>
+    Window = new
     {
         Width = 480,
         Height = 360,
     }
 };
-</code></pre>
+```
 
 
 この方法の最大の利点は、設定読み込みのためのコードを一切書く必要がないことですね。
@@ -239,8 +239,8 @@ C# 3.0 以降なら以下のような書き方もありかと思います。
 外部設定ファイルに書いておきたいと思います。
 例えば以下のような感じで。
 
-<pre class="source" title="シナリオファイル" lang="">
-<code>主人公：
+```csharp
+主人公：
 今日はもうクタクタだ。
 でも、何か忘れているような・・・
 
@@ -248,7 +248,7 @@ C# 3.0 以降なら以下のような書き方もありかと思います。
 ある。
 そうだ、○○さんとの約束が。
 待ち合わせの時間は9時。もう2時間も過ぎてる・・・
-</code></pre>
+```
 
 
 ストーリーが某漫画のパクリ臭いのは気にしないでください。
@@ -263,13 +263,13 @@ C# 3.0 以降なら以下のような書き方もありかと思います。
 でも、サウンドノベルなんで、条件分岐くらいは欲しくなります。
 なので、設定ファイルで条件分岐できるようにします。
 
-<pre class="source" title="条件分岐を追加" lang="">
-<code>主人公：
+```csharp
+主人公：
 今日はもうクタクタだ。
 でも、何か忘れているような・・・
 
 if ひな祭りflag = ON
-  and 体力 &gt; 300
+  and 体力 > 300
 {
 主人公：
 ある。
@@ -282,15 +282,15 @@ else
 気のせいかな。
 いや、もう今日はこれ以上考え事するのはよして寝よう。
 }
-</code></pre>
+```
 
 
 他にも、選択肢を表示したり、
 高感度パラメータなんかも持ったりしたいですよね。
 とかやってると、どんどんプログラミング言語チックになってきます。
 
-<pre class="source" title="パラメータの更新などの機能も追加" lang="">
-<code>[scene 9-11]
+```csharp
+[scene 9-11]
 主人公：
 今日はもうクタクタだ。
 でも、何か忘れているような・・・
@@ -301,7 +301,7 @@ if ひな祭りflag = ON
   1 何かあったはずだ
   2 気のせいだよな
 
-if 体力 &gt; 300
+if 体力 > 300
   and A = 1
 {
 主人公：
@@ -320,7 +320,7 @@ else
 いや、もう今日はこれ以上考え事するのはよして寝よう。
 
 nextscene 10-1
-</code></pre>
+```
 
 
 まあ、この設定ファイルはかなり適当に書いたんで、
@@ -330,42 +330,42 @@ nextscene 10-1
 結局、何かのプログラミング言語を参考にする方が早いわけで。
 例えば、C# 的に書くなら以下のような感じですか。
 
-<pre class="source" title="C# 風の文法にしてみた" lang="">
-<code>scene 9-11
+```csharp
+scene 9-11
 {
   ShowText(characters.主人公,
-    <span class="literal">"今日はもうクタクタだ。"</span>,
-    <span class="literal">"でも、何か忘れているような・・・"</span>);
+    "今日はもうクタクタだ。",
+    "でも、何か忘れているような・・・");
 
-  <span class="reserved">if</span> (parameters.flags.ひな祭り == ON)
+  if (parameters.flags.ひな祭り == ON)
   {
     A = ShowOption(
-      Option(1, <span class="literal">"何かあったはずだ"</span>),
-      Option(2, <span class="literal">"気のせいだよな"</span>));
+      Option(1, "何かあったはずだ"),
+      Option(2, "気のせいだよな"));
 
-  <span class="reserved">if</span> (characters.主人公.体力 &gt; 300
-      &amp;&amp; A == 1
+  if (characters.主人公.体力 > 300
+      && A == 1
   {
     ShowText(characters.主人公,
-      <span class="literal">"ある。"</span>,
-      <span class="literal">"そうだ、○○さんとの約束が。"</span>,
-      <span class="literal">"待ち合わせの時間は9時。もう2時間も過ぎてる・・・"</span>);
+      "ある。",
+      "そうだ、○○さんとの約束が。",
+      "待ち合わせの時間は9時。もう2時間も過ぎてる・・・");
 
     nextscene 9-12
-    <span class="reserved">return</span>;
+    return;
   }
-  <span class="reserved">else</span>
+  else
   {
     characters.○○さん.高感度 -= 100;
   }
 
   ShowText(characters.主人公,
-    <span class="literal">"気のせいかな。"</span>,
-    <span class="literal">"いや、もう今日はこれ以上考え事するのはよして寝よう。"</span>);
+    "気のせいかな。",
+    "いや、もう今日はこれ以上考え事するのはよして寝よう。");
 
   nextscene 10-1
 }
-</code></pre>
+```
 
 
 ここまでやるんだったら、
@@ -399,15 +399,15 @@ C# のライブラリとしてサウンドノベルフレームワークを提�
 当然、元言語の文法に準拠せざるを得ません。
 例えば以下のような感じ。
 
-<pre class="source" title="元言語の文法に準拠" lang="">
-<code>XDocument doc = 
-  <span class="reserved">new</span> XDocument(
-    <span class="reserved">new</span> XElement(<span class="literal">"configuration"</span>,
-      <span class="reserved">new</span> XElement(<span class="literal">"window"</span>,
-        <span class="reserved">new</span> XAttribute(<span class="literal">"width"</span>, <span class="literal">"480"</span>),
-        <span class="reserved">new</span> XAttribute(<span class="literal">"height"</span>, <span class="literal">"360"</span>)
+```csharp
+XDocument doc = 
+  new XDocument(
+    new XElement("configuration",
+      new XElement("window",
+        new XAttribute("width", "480"),
+        new XAttribute("height", "360")
       )));
-</code></pre>
+```
 
 
 元言語の文法どおりに書けばいいのは、新しい文法を覚える必要がないとか、
@@ -419,18 +419,18 @@ C# のライブラリとしてサウンドノベルフレームワークを提�
 それでは2つ目、
 XML を文字列としてソースファイル中に埋め込んでみます。
 
-<pre class="source" title="文字列で持つ" lang="">
-<code>XDocument doc = 
-  <span class="reserved">new</span> XDocument(
-<span class="literal">@"
-&lt;configuration&gt;
-  &lt;window
+```csharp
+XDocument doc = 
+  new XDocument(
+@"
+<configuration>
+  <window
     width='480'
     height='360'
-    /&gt;
-&lt;/configuration&gt;
-"</span>;
-</code></pre>
+    />
+</configuration>
+";
+```
 
 
 これも、言語を拡張する必要はないってのは利点ですが、いくつか問題もあります。
@@ -448,16 +448,16 @@ XML 自体に対してツールによる文法チェックができません。
 言語を拡張してしまうことも考えられます。
 汎用プログラミング言語中に別文法の言語（XML）を含められるようにしてしまう。
 
-<pre class="source" title="言語の構文を拡張" lang="">
-<code>XDocument doc = 
-  &lt;configuration&gt;
-    &lt;window
-      width=<span class="literal">"480"</span>
-      height=<span class="literal">"360"</span>
-      /&gt;
-  &lt;/configuration&gt;
+```csharp
+XDocument doc = 
+  <configuration>
+    <window
+      width="480"
+      height="360"
+      />
+  </configuration>
 ;
-</code></pre>
+```
 
 
 当然、コンパイラの修正が必要です。
@@ -474,15 +474,15 @@ XML 自体に対してツールによる文法チェックができません。
 VB9 に導入されることになりました。
 VB9 なら、本当に以下のようなコードがかけます。
 
-<pre class="source" title="VB9 の XML 埋め込み" lang="">
-<code>Dim doc = 
-  &lt;configuration&gt;
-    &lt;window
-      width=<span class="literal">"480"</span>
-      height=<span class="literal">"360"</span>
-      /&gt;
-  &lt;/configuration&gt;
-</code></pre>
+```vbnet
+Dim doc = 
+  <configuration>
+    <window
+      width="480"
+      height="360"
+      />
+  </configuration>
+```
 
 
 でも、先ほど説明したように、
@@ -598,14 +598,15 @@ GUI ツールなんかも自作しないといけない。）
 
 ## <a id="sec-generated-title-12"></a> <a id="plan"></a>予定
 
-<pre>
+```text
       - UML も general-purpose
       - UML は元々はノートやホワイトボード、仕様書に書くことを想定したもの
       - コードの生成はそこまで想定されていない
       - UML を実行可能にする試みもあるけど・・・
       汎用的に作りすぎててなかなか難しい
 
-    </pre>
+    
+```
 
 ## <a id="sec-generated-title-13"></a> <a id="summay"></a>まとめ
 

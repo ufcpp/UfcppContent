@@ -71,7 +71,7 @@ aliases:
 
 ## <a id="sec-generated-title-5"></a> <a id="plan"></a>予定
 
-<pre>
+```text
 目的
 • 関数呼び出し（特に再帰）を理解する
 • MSILとかJavaバイトコードとかの理解深める
@@ -109,7 +109,7 @@ Further Reading
 		§ Java VMもMSILもスタックマシン
 	○ レジスタ型は実装依存しやすい。VMの場合はスタック型で設計しておいて、JIT時にレジスタコードに。
 • いろんな意味にとれる文
-	○ G(F&lt;x, y&gt;(z + w))
+	○ G(F<x, y>(z + w))
 		§ ジェネリック関数Fとも読めるし、比較演算結果2個を引数に取る関数ともとれるし
 		§ 解決策
 			□ 意味解析しながら
@@ -121,6 +121,4 @@ Further Reading
 • コンパイラ入門
 	○ http://www.atmarkit.co.jp/fjava/rensai4/compiler01/compiler01_02.html
 • 文法
-
-
-</pre>
+```

@@ -40,7 +40,7 @@ $env:userprofile 以下の
 
 プロファイルディレクトリ内に profile.ps1 を置いておくと、
 PowerShell のホスト起動時に読み込まれる。
-<pre>
+```text
       profile.ps1 に書いておくと便利そうな TIPS
 
       ?eq など
@@ -48,14 +48,15 @@ PowerShell のホスト起動時に読み込まれる。
 
       Windows.Forms をロードしておく
       http://d.hatena.ne.jp/newpops/20061229/p1
-    </pre>
+    
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="d36e31"></a>Display.xml
 
 ## <a id="sec-generated-title-5"></a> <a id="d36e33"></a>ホストの配色
 
-<pre class="source" title="配色のカスタマイズ" lang="">
-<code>$Host.UI.RawUI.BackgroundColor = 'White'
+```powershell
+$Host.UI.RawUI.BackgroundColor = 'White'
 $Host.UI.RawUI.ForegroundColor = 'Black'
 $Host.PrivateData.DebugBackgroundColor = 'Gray'
 $Host.PrivateData.DebugForegroundColor = 'Yellow'
@@ -67,7 +68,7 @@ $Host.PrivateData.VerboseBackgroundColor = 'Gray'
 $Host.PrivateData.VerboseForegroundColor = 'Yellow'
 $Host.PrivateData.WarningBackgroundColor = 'Gray'
 $Host.PrivateData.WarningForegroundColor = 'Yellow'
-</code></pre>
+```
 
 
 

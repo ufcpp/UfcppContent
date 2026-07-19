@@ -25,16 +25,19 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;Sigma&gt;&lt;sub&gt;∑の下にくる式&lt;/sub&gt;&lt;sup&gt;∑の上にくる式&lt;/sup&gt;&lt;/Sigma&gt;
-</pre>
+```xml
+<Sigma><sub>∑の下にくる式</sub><sup>∑の上にくる式</sup></Sigma>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>f(a) = 
-&lt;Sigma&gt;&lt;sub&gt;n=0&lt;/sub&gt;&lt;sup&gt;∞&lt;/sup&gt;&lt;/Sigma&gt;
-&lt;frac&gt;&lt;num&gt;f&lt;sup&gt;(n)&lt;/sup&gt;(a)&lt;/num&gt;&lt;denom&gt;n&lt;factorial/&gt;&lt;/denom&gt;&lt;/frac&gt;
-&lt;paren&gt;z-a&lt;/paren&gt;&lt;sup&gt;n&lt;/sup&gt;
-</pre><div class="math">f(a) = 
+```xml
+f(a) = 
+<Sigma><sub>n=0</sub><sup>∞</sup></Sigma>
+<frac><num>f<sup>(n)</sup>(a)</num><denom>n<factorial/></denom></frac>
+<paren>z-a</paren><sup>n</sup>
+```
+<div class="math">f(a) =
 <table class="sigma" summary="sum"><tr><td class="sigmasub">∞</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">n=0</td></tr></table>
 <table class="frac" summary="fraction"><tr><td class="num">f<sup>(n)</sup>(a)</td></tr><tr><td>n<span class="normal">!</span></td></tr></table>
 <span class="paren" style="font-size:em;">(</span>z-a<span class="paren" style="font-size:em;">)</span><sup>n</sup>
@@ -42,23 +45,24 @@ aliases:
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:Sigma"&gt;
-  &lt;table class="sigma" summary="sum"&gt;
-    &lt;tr&gt;&lt;td class="sigmasub"&gt;&lt;xsl:apply-templates select="ufcpp:sup"/&gt;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td class="sigma"&gt;&amp;#8721;&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td class="sigmasub"&gt;&lt;xsl:apply-templates select="ufcpp:sub"/&gt;&lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:Sigma">
+  <table class="sigma" summary="sum">
+    <tr><td class="sigmasub"><xsl:apply-templates select="ufcpp:sup"/></td></tr>
+    <tr><td class="sigma">&#8721;</td></tr>
+    <tr><td class="sigmasub"><xsl:apply-templates select="ufcpp:sub"/></td></tr>
+  </table>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:Sigma/ufcpp:sup|ufcpp:Pi/ufcpp:sup|ufcpp:Sigma/ufcpp:sub|ufcpp:Pi/ufcpp:sub"&gt;
-  &lt;xsl:apply-templates/&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:Sigma/ufcpp:sup|ufcpp:Pi/ufcpp:sup|ufcpp:Sigma/ufcpp:sub|ufcpp:Pi/ufcpp:sub">
+  <xsl:apply-templates/>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>table.sigma
+```css
+table.sigma
 {
   display:inline;
   text-align:center;
@@ -76,5 +80,4 @@ td.sigmasub
 {
   font-size:70%;
 }
-
-</pre>
+```

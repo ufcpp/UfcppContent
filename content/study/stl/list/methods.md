@@ -22,15 +22,15 @@ aliases:
 
 以下の説明において:
 
-<pre class="source" title="" lang="">
-<code>n   :負でない整数
+```csharp
+n   :負でない整数
 t   :要素のインスタンス
 i,j :input iterator
 p,q :要素のイテレータ
 X   :コンテナのクラス名
 x   :コンテナのインスタンス
 N   :コンテナのサイズ
-</code></pre>
+```
 
 
 
@@ -171,15 +171,15 @@ N   :コンテナのサイズ
 ## <a id="sec-generated-title-3"></a> <a id="d29e384"></a>・可能な操作とそのオーダー
 
 <h3>コンストラクタ/デストラクタ/コピー/交換</h3>
-<pre class="source" title="" lang="">
-<code>n    :負でない整数
+```csharp
+n    :負でない整数
 t    :要素のインスタンス
 i,j  :input iterator
 X    :コンテナのクラス名
 x    :コンテナのインスタンス
 comp :比較オブジェクト
 alloc:アロケーター
-</code></pre>
+```
 
 
 <table summary="">
@@ -268,9 +268,9 @@ alloc:アロケーター
 <h3>辞書式比較</h3>
 すべてのコンテナに共通
 
-<pre class="source" title="" lang="">
-<code>x:コンテナのインスタンス
-</code></pre>
+```csharp
+x:コンテナのインスタンス
+```
 
 
 <table summary="">
@@ -296,10 +296,10 @@ alloc:アロケーター
 </table>
 
 <h3>要素数/領域確保</h3>
-<pre class="source" title="" lang="">
-<code>n   :負でない整数
+```csharp
+n   :負でない整数
 t   :要素のインスタンス
-</code></pre>
+```
 
 
 <table summary="">
@@ -349,11 +349,11 @@ t   :要素のインスタンス
 </table>
 
 <h3>参照</h3>
-<pre class="source" title="" lang="">
-<code>n   :負でない整数
+```csharp
+n   :負でない整数
 N   :コンテナのサイズ
 key :連想コンテナのキー
-</code></pre>
+```
 
 
 <table summary="">
@@ -421,13 +421,13 @@ key :連想コンテナのキー
 </table>
 
 <h3>挿入</h3>
-<pre class="source" title="" lang="">
-<code>n   :負でない整数
+```csharp
+n   :負でない整数
 t   :要素のインスタンス
 i,j :input iterator
 p,q :要素のイテレータ
 N   :コンテナのサイズ
-</code></pre>
+```
 
 
 <table summary="">
@@ -505,11 +505,11 @@ N   :コンテナのサイズ
 </table>
 
 <h3>削除</h3>
-<pre class="source" title="" lang="">
-<code>p,q :要素のイテレータ
+```csharp
+p,q :要素のイテレータ
 N   :コンテナのサイズ
 key :連想コンテナのキー
-</code></pre>
+```
 
 
 <table summary="">
@@ -587,10 +587,10 @@ key :連想コンテナのキー
 </table>
 
 <h3>検索</h3>
-<pre class="source" title="" lang="">
-<code>N   :コンテナのサイズ
+```csharp
+N   :コンテナのサイズ
 key :連想コンテナのキー
-</code></pre>
+```
 
 
 <table summary="">
@@ -630,14 +630,14 @@ key :連想コンテナのキー
 </table>
 
 <h3>リスト操作</h3>
-<pre class="source" title="" lang="">
-<code>t   :要素のインスタンス
+```csharp
+t   :要素のインスタンス
 i,j :input iterator
 p,q :要素のイテレータ
 x   :コンテナのインスタンス
 pred:述語(真理値を返す関数オブジェクト)
 comp:比較オブジェクト
-</code></pre>
+```
 
 
 <table summary="">

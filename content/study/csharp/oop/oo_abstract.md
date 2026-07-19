@@ -49,25 +49,25 @@ aliases:
 このプロパティ自体は意味のある値を返さず、
 実装は派生クラスの <code>Age</code> プロパティで行っていました。
 
-<pre class="source" title="人間の基底クラス" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="comment">// ここではあんまり関係ないんで name は省略。</span>
-  <span class="reserved">protected int</span> age;
+  // ここではあんまり関係ないんで name は省略。
+  protected int age;
 
-  <span class="reserved">public</span> Person(<span class="reserved">int</span> age){<span class="reserved">this</span>.age  = age;}
+  public Person(int age){this.age  = age;}
 
-  <span class="reserved">public virtual int</span> Age
+  public virtual int Age
   {
-    <span class="comment">// 基底クラスでは特に意味のない値を返す。</span>
-    <span class="comment">// 意味のある実装は派生クラスで行います。</span>
-    <span class="reserved">get</span>
+    // 基底クラスでは特に意味のない値を返す。
+    // 意味のある実装は派生クラスで行います。
+    get
     {
-      <span class="reserved">return</span> 0;
+      return 0;
     }
   }
 }
-</code></pre>
+```
 
 
 しかし、<code>Person</code> クラスのように、
@@ -80,41 +80,41 @@ aliases:
 性悪説を信じて <code>Person</code> がデフォルトで鯖を読むようにするか、
 とにかく、<code>Person</code> の <code>Age</code> プロパティが何らかの意味を持つ値を返すようにします。
 
-<pre class="source" title="性善説を信じた人間クラス" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">protected int</span> age;
+  protected int age;
 
-  <span class="reserved">public</span> Person(<span class="reserved">int</span> age){<span class="reserved">this</span>.age  = age;}
+  public Person(int age){this.age  = age;}
 
-  <span class="reserved">public virtual int</span> Age
+  public virtual int Age
   {
-    <span class="comment">// 性善説を信じてみる。</span>
-    <span class="comment">// 普通の人はみんな正直に年齢を答えてくれるに違いない。</span>
-    <span class="reserved">get</span>
+    // 性善説を信じてみる。
+    // 普通の人はみんな正直に年齢を答えてくれるに違いない。
+    get
     {
-      <span class="reserved">return</span> <span class="reserved">this</span>.age;
+      return this.age;
     }
   }
 }
-</code></pre>
+```
 
 
 そして、もう1つの方法は、<code>Person</code> クラスのインスタンスを生成出来ないようにすることです。
 例えば、<code>Person</code> クラスのコンストラクタを protected にしてしまえば、<code>Person</code> クラスのインスタンスは外部から生成できなくなります。
 
-<pre class="source" title="Person クラスのインスタンスを生成不能に" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">protected int</span> age;
+  protected int age;
 
-  <span class="comment">// ↓ protected なので外部からコンストラクタを呼べない。</span>
-  <span class="comment">//    Person は継承して使う専用のクラスになります。</span>
-  <em><span class="reserved">protected</span></em> Person(<span class="reserved">int</span> age){<span class="reserved">this</span>.age  = age;}
+  // ↓ protected なので外部からコンストラクタを呼べない。
+  //    Person は継承して使う専用のクラスになります。
+  protected Person(int age){this.age  = age;}
 
-  <span class="reserved">public virtual int</span> Age{<span class="reserved">get</span>{<span class="reserved">return</span> 0;}}
+  public virtual int Age{get{return 0;}}
 }
-</code></pre>
+```
 
 
 これで <code>Person</code> クラスのインスタンスが作られることはなくなるんですが、
@@ -131,17 +131,17 @@ C# にはインスタンスを作成できないクラスや、
         <code>abstract</code>
       </em> 修飾子を付けます。
 
-<pre class="source" title="抽象クラスの定義" lang="">
-<code><span class="reserved"><em>abstract</em> class</span> Person
+```csharp
+abstract class Person
 {
-  <span class="reserved">protected int</span> age;
+  protected int age;
 
-  <span class="comment">// 抽象クラスなので、コンストラクタが public であってもインスタンスは生成できない。</span>
-  <span class="reserved">public</span> Person(<span class="reserved">int</span> age){<span class="reserved">this</span>.age  = age;}
+  // 抽象クラスなので、コンストラクタが public であってもインスタンスは生成できない。
+  public Person(int age){this.age  = age;}
 
-  <span class="reserved">public virtual int</span> Age{<span class="reserved">get</span>{<span class="reserved">return</span> 0;}}
+  public virtual int Age{get{return 0;}}
 }
-</code></pre>
+```
 
 
 また、実体を持たず、意味だけを定義し、実装は派生クラスで行うメソッドは<strong id="abmethod" class="keyword">抽象メソッド</strong>（abstract method）と呼ばれています。
@@ -151,16 +151,16 @@ C# にはインスタンスを作成できないクラスや、
 ちなみに、「[プロパティ](oo_property.md#property)」も、内部的に見るとメソッドのようなものなので、
 abstract を付けて抽象プロパティにすることができます。
 
-<pre class="source" title="抽象メソッドの定義" lang="">
-<code><span class="reserved">abstract class</span> Person
+```csharp
+abstract class Person
 {
-  <span class="reserved">protected int</span> age;
+  protected int age;
 
-  <span class="reserved">public</span> Person(<span class="reserved">int</span> age){<span class="reserved">this</span>.age  = age;}
+  public Person(int age){this.age  = age;}
 
-  <span class="reserved">public <em>abstract</em> int</span> Age{<span class="reserved">get</span>;} <span class="comment">// 抽象メソッドや抽象プロパティには定義は要らない</span>
+  public abstract int Age{get;} // 抽象メソッドや抽象プロパティには定義は要らない
 }
-</code></pre>
+```
 
 
 
@@ -168,123 +168,123 @@ abstract を付けて抽象プロパティにすることができます。
 
 いままで例に挙げてきた <code>Person</code> クラスの最終形です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-abstract <span class="reserved">class</span> Person
+abstract class Person
 {
-  <span class="reserved">protected string</span> name;
-  <span class="reserved">protected int</span> age;
+  protected string name;
+  protected int age;
 
-  <span class="reserved">public</span> Person(<span class="reserved">string</span> name, <span class="reserved">int</span> age)
+  public Person(string name, int age)
   {
-    <span class="reserved">this</span>.name = name;
-    <span class="reserved">this</span>.age  = age;
+    this.name = name;
+    this.age  = age;
   }
 
-  <span class="reserved">public string</span> Name{<span class="reserved">get</span>{<span class="reserved">return this</span>.name;}}
-  <span class="reserved">public</span> abstract <span class="reserved">int</span> Age{<span class="reserved">get</span>;} <span class="comment">// 抽象メソッドには定義は要らない</span>
+  public string Name{get{return this.name;}}
+  public abstract int Age{get;} // 抽象メソッドには定義は要らない
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 正直者。
 /// 年齢を偽らない。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Truepenny : Person
+/// </summary>
+class Truepenny : Person
 {
-  <span class="reserved">public</span> Truepenny(<span class="reserved">string</span> name, <span class="reserved">int</span> age) : <span class="reserved">base</span>(name, age){}
+  public Truepenny(string name, int age) : base(name, age){}
 
-  <span class="reserved">public override int</span> Age
+  public override int Age
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="comment">// 実年齢をそのまま返す。</span>
-      <span class="reserved">return this</span>.age;
+      // 実年齢をそのまま返す。
+      return this.age;
     }
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 嘘つき。
 /// 鯖を読む(しかも、歳取るにつれ大幅に)。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Liar : Person
+/// </summary>
+class Liar : Person
 {
-  <span class="reserved">public</span> Liar(<span class="reserved">string</span> name, <span class="reserved">int</span> age) : <span class="reserved">base</span>(name, age){}
+  public Liar(string name, int age) : base(name, age){}
 
-  <span class="reserved">public override int</span> Age
+  public override int Age
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="comment">// 年齢を偽る。</span>
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 20) <span class="reserved">return this</span>.age;
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 25) <span class="reserved">return this</span>.age - 1;
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 30) <span class="reserved">return this</span>.age - 2;
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 35) <span class="reserved">return this</span>.age - 3;
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 40) <span class="reserved">return this</span>.age - 4;
-      <span class="reserved">return this</span>.age - 5;
+      // 年齢を偽る。
+      if(this.age < 20) return this.age;
+      if(this.age < 25) return this.age - 1;
+      if(this.age < 30) return this.age - 2;
+      if(this.age < 35) return this.age - 3;
+      if(this.age < 40) return this.age - 4;
+      return this.age - 5;
     }
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// いいかげん。
 /// 大体の歳しか答えない。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Equivocator : Person
+/// </summary>
+class Equivocator : Person
 {
-  <span class="reserved">public</span> Equivocator(<span class="reserved">string</span> name, <span class="reserved">int</span> age) : <span class="reserved">base</span>(name, age){}
+  public Equivocator(string name, int age) : base(name, age){}
 
-  <span class="reserved">public override int</span> Age
+  public override int Age
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="comment">// 年齢を四捨五入した値を返す。</span>
-      <span class="reserved">return</span> ((<span class="reserved">this</span>.age + 5) / 10) * 10;
+      // 年齢を四捨五入した値を返す。
+      return ((this.age + 5) / 10) * 10;
     }
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// いくつになったって気持ちは17歳。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Seventeenist : Person
+/// </summary>
+class Seventeenist : Person
 {
-  <span class="reserved">public</span> Seventeenist(<span class="reserved">string</span> name, <span class="reserved">int</span> age) : <span class="reserved">base</span>(name, age) { }
+  public Seventeenist(string name, int age) : base(name, age) { }
 
-  <span class="reserved">public override int</span> Age
+  public override int Age
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="comment">// 「おいおい」って突っ込み入れてあげてね。</span>
-      <span class="reserved">return</span> 17;
+      // 「おいおい」って突っ込み入れてあげてね。
+      return 17;
     }
   }
 }
 
-<span class="reserved">class</span> PolymorphismTest
+class PolymorphismTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Introduce(<span class="reserved">new</span> Truepenny  (<span class="literal">"Ky Kiske"</span>  , 24)); <span class="comment">//正直者のカイさん24歳。</span>
-    Introduce(<span class="reserved">new</span> Liar       (<span class="literal">"Axl Low"</span>   , 24)); <span class="comment">//嘘つきのアクセルさん24歳。</span>
-    Introduce(<span class="reserved">new</span> Equivocator(<span class="literal">"Sol Badguy"</span>, 24)); <span class="comment">//いい加減なソルさん24歳。</span>
-    Introduce(<span class="reserved">new</span> Seventeenist(<span class="literal">"Ino"</span>       , 24)); <span class="comment">// 時空を超えるイノさん24歳。</span>
+    Introduce(new Truepenny  ("Ky Kiske"  , 24)); //正直者のカイさん24歳。
+    Introduce(new Liar       ("Axl Low"   , 24)); //嘘つきのアクセルさん24歳。
+    Introduce(new Equivocator("Sol Badguy", 24)); //いい加減なソルさん24歳。
+    Introduce(new Seventeenist("Ino"       , 24)); // 時空を超えるイノさん24歳。
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// p さんの自己紹介をする。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static void</span> Introduce(Person p)
+  /// </summary>
+  static void Introduce(Person p)
   {
-    Console.Write(<span class="literal">"My name is {0}.\n"</span>, p.Name);
-    Console.Write(<span class="literal">"I'm {0} years old.\n\n"</span>, p.Age);
+    Console.Write("My name is {0}.\n", p.Name);
+    Console.Write("I'm {0} years old.\n\n", p.Age);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 My name is Ky Kiske.
 I'm 24 years old.
 
@@ -296,7 +296,7 @@ I'm 20 years old.
 
 My name is Ino.
 I'm 17 years old.
-</pre>
+```
 
 
 ## <a id="exercise"></a>演習問題
@@ -312,14 +312,14 @@ I'm 17 years old.
 
 必要な箇所（Shape クラスの部分）だけ抜粋。
 
-<pre class="source" title="Shape" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の抽象基底クラス。
-/// &lt;/summary&gt;</span>
-abstract <span class="reserved">class</span> Shape
+/// </summary>
+abstract class Shape
 {
-  <span class="reserved">public</span> abstract <span class="reserved">double</span> GetArea();
-  <span class="reserved">public</span> abstract <span class="reserved">double</span> GetPerimeter();
+  public abstract double GetArea();
+  public abstract double GetPerimeter();
 }
-</code></pre>
+```

@@ -21,36 +21,36 @@ aliases: []
 
 例えば、以下のようなコードを考えます。非常に小さい型`Distance`があって、ループの中でそのインスタンスが`new`されています。
 
-<pre class="source" title="小さいオブジェクトの new">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Linq;
+```csharp
+using System;
+using System.Linq;
 
-<span class="comment">// ただの double なんだけど、次元をはっきりさせたいために専用の型を作る的なやつ</span>
-<span class="reserved">class</span> <span class="type">Distance</span>
+// ただの double なんだけど、次元をはっきりさせたいために専用の型を作る的なやつ
+class Distance
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> Value { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> Distance(<span class="reserved">double</span> value) { Value = value; }
+    public double Value { get; }
+    public Distance(double value) { Value = value; }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> r = <span class="reserved">new</span> <span class="type">Random</span>();
-        <span class="reserved">var</span> segments = <span class="type">Enumerable</span>.Range(0, 1000).Select(_ =&gt; <span class="reserved">new</span> <span class="type">Distance</span>(r.NextDouble())).ToArray();
+        var r = new Random();
+        var segments = Enumerable.Range(0, 1000).Select(_ => new Distance(r.NextDouble())).ToArray();
 
-        <span class="reserved">var</span> sum = <span class="reserved">new</span> <span class="type">Distance</span>(0);
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> segments)
+        var sum = new Distance(0);
+        foreach (var s in segments)
         {
-            <span class="comment">// ループの中で new されるのがまずい。</span>
-            <span class="comment">// ヒープ確保が頻繁すぎる。</span>
-            sum = <span class="reserved">new</span> <span class="type">Distance</span>(sum.Value + s.Value);
+            // ループの中で new されるのがまずい。
+            // ヒープ確保が頻繁すぎる。
+            sum = new Distance(sum.Value + s.Value);
         }
 
-        <span class="type">Console</span>.WriteLine(<span class="string">$"</span>{sum.Value}<span class="string">"</span>);
+        Console.WriteLine($"{sum.Value}");
     }
 }
-</code></pre>
+```
 
 Javaでは起こりうる問題で、この、ループの中の`new`で、オブジェクトをヒープではなくスタック上に確保できれば結構なパフォーマンス改善が見込めます。で、そのためコード解析手法(Escape Analysisと言います)は論文になっているし、実際、Java 6で採用されているみたいです。
 

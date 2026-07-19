@@ -29,35 +29,35 @@ RC (リリース候補)の段階で大きな変更をするわけもなく、[�
 ワイルドカード(wildcard)は、仮引数、分解、出力変数などの値を受け取る側で、別にその値を使わない場合に無視する記法がほしいというやつ。
 以下の、`*`みたいなやつ。
 
-<pre class="source" title="Wildcardの例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Diagnostics;
+```csharp
+using System;
+using System.Diagnostics;
 
-<span class="reserved">class</span> <span class="type">Base</span>
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">EventHandler</span>&lt;<span class="reserved">string</span>&gt; E;
-    <span class="reserved">protected</span> <span class="reserved">virtual</span> <span class="reserved">void</span> M(<span class="reserved">int</span> x, <span class="reserved">int</span> y) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> Deconstruct(<span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">int</span> y)
+    public event EventHandler<string> E;
+    protected virtual void M(int x, int y) { }
+    public void Deconstruct(out int x, out int y)
     {
         x = 1;
         y = 2;
     }
 }
 
-<span class="reserved">class</span> <span class="type">X</span> : <span class="type">Base</span>
+class X : Base
 {
-    <span class="reserved">public</span> X()
+    public X()
     {
-        E += (*, *) =&gt; <span class="type">Debug</span>.WriteLine(<span class="string">"log message"</span>);
+        E += (*, *) => Debug.WriteLine("log message");
 
-        Deconstruct(<span class="reserved">out</span> *, <span class="reserved">out</span> <span class="reserved">var</span> y);
+        Deconstruct(out *, out var y);
     }
 
-    <span class="reserved">protected</span> <span class="reserved">override</span> <span class="reserved">void</span> M(<span class="reserved">int</span> *, <span class="reserved">int</span> *)
+    protected override void M(int *, int *)
     {
     }
 }
-</code></pre>
+```
 
 案としては `_`、`*`、`?` なんかが出ていました。これまで、`*` が最有力だったんですが、`_` の方にするかも、とのこと。
 
@@ -87,19 +87,19 @@ RC (リリース候補)の段階で大きな変更をするわけもなく、[�
 
 例えば、現状、C# 7では書けないものの、将来的には認められそうな書き方として、以下のようなものがあります。
 
-<pre class="source" title="C# 7では書けないけども、将来的には認められそうな書き方">
-<code><span class="reserved">var</span> tuple = (1, 2);
+```csharp
+var tuple = (1, 2);
 
-<span class="comment">// タプル構築 + 分解(しかも、新しい変数 x, y を宣言しながら)</span>
-<span class="reserved">var</span> t = (<span class="reserved">int</span> x, <span class="reserved">int</span> y) = tuple;
-</code></pre>
+// タプル構築 + 分解(しかも、新しい変数 x, y を宣言しながら)
+var t = (int x, int y) = tuple;
+```
 
 この、`int x`、`int y`の部分は、まさに、宣言式であるべきだろうという話です。
 
 付随して、タプル、分解、出力変数宣言などでモデルをそろえておかないと、細かい挙動で差が出て気持ち悪いというのもあります。
 例えば、以下のようなコードはどう評価されるべきか。
 
-```
+```csharp
 (A < B, C > D) = F(A < B, C > D = value);
 ```
 

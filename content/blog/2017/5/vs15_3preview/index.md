@@ -41,16 +41,15 @@ aliases: []
 
 名前が長い型のデフォルト引数とか作る場合にありがたそう。
 
-<pre class="source" title="">
-<code>
-<span class="reserved">void</span> X(
-    (<span class="reserved">int</span> x, <span class="reserved">int</span> y) t = <span class="reserved">default</span>,
-    <span class="type">KeyValuePair</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>?&gt; p = <span class="reserved">default</span>,
-    <span class="type">CancellationToken</span> ct = <span class="reserved">default</span>)
+```csharp
+void X(
+    (int x, int y) t = default,
+    KeyValuePair<string, int?> p = default,
+    CancellationToken ct = default)
 {
     ...
 }
-</code></pre>
+```
 
 ### async Mainメソッド
 
@@ -87,13 +86,13 @@ git の衝突解決するためのQuick Actionが入ってました。
 
 例えば、こんな衝突したとして。
 
-<pre class="source" title="">
-<code><span class="comment">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
-<span class="reserved">class</span> <span class="type">A</span> { }
-<span class="comment">=======</span>
-<span class="reserved">class</span> B { }
-<span class="comment">&gt;&gt;&gt;&gt;&gt;&gt;&gt; branch</span>
-</code></pre>
+```csharp
+<<<<<<< HEAD
+class A { }
+=======
+class B { }
+>>>>>>> branch
+```
 
 なるほど、こういうQuick Action出れば間違えないわ。
 

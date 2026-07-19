@@ -488,7 +488,7 @@ g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 
 ## <a id="sec-generated-title-14"></a> <a id="plan"></a>加筆予定
 
-<pre>
+```text
 定数の 1/2π、普通は逆変換側に付けるけど、他にいろんな流儀あり。
 順変換側に付けたり、
 両方に1/√2πを付けたりとか。
@@ -503,4 +503,4 @@ g<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
   信号の一部分だけ切り出してフーリエ変換する。
   (窓掛け)
   リプル防止のために、切り出す際、窓関数をかける。
-</pre>
+```

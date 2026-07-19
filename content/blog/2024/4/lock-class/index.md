@@ -24,20 +24,20 @@ aliases: []
 C# は**なぜか**任意のオブジェクト インスタンスを使って排他制御ができます。
 ロックを掛けるために以下のようなコードを書くことになります。
 
-<pre class="source" title="ロック用のオブジェクトをわざわざ用意">
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+```csharp
+class MultiThreadCode
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">object</span> <span class="field">_syncObj</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="reserved">object</span>();
+    private readonly object _syncObj = new object();
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Run</span>()
+    public void Run()
     {
-        <span class="reserved">lock</span> (<span class="field">_syncObj</span>)
+        lock (_syncObj)
         {
-            <span class="comment">// いろんなスレッドから同時に呼ばれるコード。</span>
+            // いろんなスレッドから同時に呼ばれるコード。
         }
     }
 }
-</pre>
+```
 
 Java からの習慣(= 1995年頃の発想)ですかね。
 Java の `synchronized` ブロックも同じ仕様のはず。
@@ -45,23 +45,23 @@ Java の `synchronized` ブロックも同じ仕様のはず。
 本来の思想としては「`lock()` の `()` 内には同時に操作されるとまずいリソースを書く」という感じのはず。
 そういわれると、`lock (任意のオブジェクト)` に正当性があるように感じます。
 
-<pre class="source" title="lock (任意オブジェクト) の本来の意図">
-<span class="reserved">class</span> <span class="type">Resource</span>;
+```csharp
+class Resource;
 
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+class MultiThreadCode
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">Resource</span> <span class="field">_someResource</span> <span class="operator">=</span> <span class="reserved">new</span>();
+    private readonly Resource _someResource = new();
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Run</span>()
+    public void Run()
     {
-        <span class="reserved">lock</span> (<span class="field">_someResource</span>)
+        lock (_someResource)
         {
-            <span class="comment">// _someResource に対する操作をする。</span>
-            <span class="comment">// _someResource を同時に操作されると困るんだから、「_someResource を lock」。</span>
+            // _someResource に対する操作をする。
+            // _someResource を同時に操作されると困るんだから、「_someResource を lock」。
         }
     }
 }
-</pre>
+```
 
 ですがまあ、実際のところこんなにきれいに `lock (x) { x に対する操作 }` になることはなく、
 大体は先ほどのように「`lock` のためだけに1個追加で `object _syncObj` みたいなフィールドを用意」みたいなことになります。
@@ -69,84 +69,84 @@ Java の `synchronized` ブロックも同じ仕様のはず。
 これがめんどくさく…
 とはいえ、面倒だからといって以下のようなことは**してはいけない**とされています。
 
-<pre class="source" title="ダメ！絶対！">
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+```csharp
+class MultiThreadCode
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Run</span>()
+    public void Run()
     {
-        <span class="comment">// ✖</span>
-        <span class="comment">// 任意のオブジェクトでロックできるということは、this でも行ける！</span>
-        <span class="reserved">lock</span> (<span class="reserved">this</span>)
+        // ✖
+        // 任意のオブジェクトでロックできるということは、this でも行ける！
+        lock (this)
         {
-            <span class="comment">// いろんなスレッドから同時に呼ばれるコード。</span>
+            // いろんなスレッドから同時に呼ばれるコード。
         }
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">StaticRun</span></span>()
+    public static void StaticRun()
     {
-        <span class="comment">// ✖</span>
-        <span class="comment">// 静的メソッド内では this がない…</span>
-        <span class="comment">// そうだ、Type 型もオブジェクトじゃん！</span>
-        <span class="reserved">lock</span> (<span class="reserved">typeof</span>(<span class="type">MultiThreadCode</span>))
+        // ✖
+        // 静的メソッド内では this がない…
+        // そうだ、Type 型もオブジェクトじゃん！
+        lock (typeof(MultiThreadCode))
         {
-            <span class="comment">// いろんなスレッドから同時に呼ばれるコード。</span>
+            // いろんなスレッドから同時に呼ばれるコード。
         }
     }
 }
-</pre>
+```
 
 「外に漏れるインスタンスでロックを取ってはいけない」というお作法があるからです。
 以下のようなコードを書かれる可能性があって困ります。
 
-<pre class="source" title="ダメな lock の例">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">MultiThreadCode</span>();
+```csharp
+var x = new MultiThreadCode();
 
-<span class="comment">// ここの lock と、MultiThreadCode.Run 内の lock (this) が同じオブジェクトをロックする。</span>
-<span class="comment">// 意図しない挙動のはず。</span>
-<span class="reserved">lock</span> (<span class="variable">x</span>)
+// ここの lock と、MultiThreadCode.Run 内の lock (this) が同じオブジェクトをロックする。
+// 意図しない挙動のはず。
+lock (x)
 {
 }
 
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+class MultiThreadCode
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Run</span>()
+    public void Run()
     {
-        <span class="reserved">lock</span> (<span class="reserved">this</span>)
+        lock (this)
         {
-            <span class="comment">// いろんなスレッドから同時に呼ばれるコード。</span>
+            // いろんなスレッドから同時に呼ばれるコード。
         }
     }
 }
-</pre>
+```
 
 さらにいうと、外に漏れてダメなら以下のようなコードもダメになると。
 
-<pre class="source" title="これもダメ">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">MultiThreadCode</span>();
+```csharp
+var x = new MultiThreadCode();
 
-<span class="comment">// ここの lock と、MultiThreadCode.Run 内の lock (_items) が同じオブジェクトをロックする。</span>
-<span class="reserved">lock</span> (<span class="variable">x</span><span class="operator">.</span><span class="property">Items</span>)
+// ここの lock と、MultiThreadCode.Run 内の lock (_items) が同じオブジェクトをロックする。
+lock (x.Items)
 {
 }
 
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+class MultiThreadCode
 {
-    <span class="comment">// private だから一見外に漏れてない。</span>
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="field">_items</span> <span class="operator">=</span> [];
+    // private だから一見外に漏れてない。
+    private readonly List<int> _items = [];
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Run</span>()
+    public void Run()
     {
-        <span class="reserved">lock</span> (<span class="field">_items</span>)
+        lock (_items)
         {
-            <span class="comment">// _items に Add/Remove とかしたり。</span>
+            // _items に Add/Remove とかしたり。
         }
     }
 
-    <span class="comment">// List としては公開していないものの、</span>
-    <span class="comment">// インスタンス自体は _items そのままなので…</span>
-    <span class="reserved">public</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="property">Items</span> <span class="operator">=&gt;</span> <span class="field">_items</span>;
+    // List としては公開していないものの、
+    // インスタンス自体は _items そのままなので…
+    public IEnumerable<int> Items => _items;
 }
-</pre>
+```
 
 なのでまあ、元の話の戻りますが、結局は「`_items` とは別に
 `object _syncObj = new();` を用意」みたいなことになります。
@@ -190,27 +190,27 @@ syncblock が何かという話は以下の英語の記事がわかりやすそ�
 C# の `lock` ステートメントをどうするかはいったん置いておいて(後述)、
 以下のような使い方を想定しているクラスです。
 
-<pre class="source" title="Lock クラス導入">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>Versioning;
+```csharp
+using System.Runtime.Versioning;
 
-<span class="comment">// 今のペースなら、.NET 9 正式リリースまでには外れる気はする。</span>
-[<span class="reserved">module</span>: <span class="type">RequiresPreviewFeatures</span>]
+// 今のペースなら、.NET 9 正式リリースまでには外れる気はする。
+[module: RequiresPreviewFeatures]
 
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+class MultiThreadCode
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">Lock</span> <span class="field">_syncObj</span> <span class="operator">=</span> <span class="reserved">new</span>();
+    private readonly Lock _syncObj = new();
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Run</span>()
+    public void Run()
     {
-        <span class="comment">// C# コンパイラーに手を入れないとしたらこんな使い方に。</span>
-        <span class="comment">// lock じゃなくて using。</span>
-        <span class="reserved">using</span> (<span class="field">_syncObj</span><span class="operator">.</span><span class="method">EnterScope</span>())
+        // C# コンパイラーに手を入れないとしたらこんな使い方に。
+        // lock じゃなくて using。
+        using (_syncObj.EnterScope())
         {
-            <span class="comment">// いろんなスレッドから同時に呼ばれるコード。</span>
+            // いろんなスレッドから同時に呼ばれるコード。
         }
     }
 }
-</pre>
+```
 
 `Lock` クラスが何をやっているかというと、おおむね「`lock` が内部で使っている C++ コード([`AwareLock`](https://github.com/dotnet/runtime/blob/e5cf6905f6065b45f32f8780fe9645969e836ecf/src/coreclr/vm/syncblk.h#L157))を [C# に移植](https://github.com/dotnet/runtime/pull/87672)」です。
 本当に、「オブジェクト ヘッダーの syncblock を使うのが高コスト」を避けるためのクラスという感じです。
@@ -233,40 +233,40 @@ C# の `lock` ステートメントをどうするかはいったん置いてお
 この実装、 Visual Studio 17.10.0 Preview 2.0 ([3週間くらい前](https://github.com/ufcpp-live/UfcppLiveAgenda/issues/88))の時点で入ってるみたいです。
 以下のコードを書いて、ILSpy とかでコンパイル結果の中身を覗くと `using (_syncObj.EnterScope())` に置き換わっています。
 
-<pre class="source" title="Lock インスタンスに対する lock ステートメント">
-<span class="reserved">class</span> <span class="type">MultiThreadCode</span>
+```csharp
+class MultiThreadCode
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">Lock</span> <span class="field">_syncObj</span> <span class="operator">=</span> <span class="reserved">new</span>();
+    private readonly Lock _syncObj = new();
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Run</span>()
+    public void Run()
     {
-        <span class="comment">// C# コンパイラーが特殊対応することになったので、lock で OK に。</span>
-        <span class="reserved">lock</span> (<span class="field">_syncObj</span>)
+        // C# コンパイラーが特殊対応することになったので、lock で OK に。
+        lock (_syncObj)
         {
-            <span class="comment">// いろんなスレッドから同時に呼ばれるコード。</span>
+            // いろんなスレッドから同時に呼ばれるコード。
         }
     }
 }
-</pre>
+```
 
 ちなみに、現状は `Lock` クラス専用です。
 珍しくパターン ベースでなく、`Lock` でないと認識せず。
 まあ、需要がないんでしょうね。
 
-<pre class="source" title="Lock 専用なので、自作はできず">
-<span class="comment">// これは現状、既存の lock (Monitor.TryEnter を使ったコード)になる。 </span>
-<span class="reserved">lock</span> (<span class="reserved">new</span> <span class="type">MyLock</span>())
+```csharp
+// これは現状、既存の lock (Monitor.TryEnter を使ったコード)になる。 
+lock (new MyLock())
 {
 }
 
-<span class="comment">// System.Threading.Lock と同じパターンのメソッド持ちの自作クラス。</span>
-<span class="reserved">class</span> <span class="type">MyLock</span>
+// System.Threading.Lock と同じパターンのメソッド持ちの自作クラス。
+class MyLock
 {
-    <span class="reserved">public</span> <span class="type struct">Scope</span> <span class="method">EnterScope</span>() <span class="operator">=&gt;</span> <span class="reserved">default</span>;
+    public Scope EnterScope() => default;
 
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Scope</span>
+    public ref struct Scope
     {
-        <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() { }
+        public void Dispose() { }
     }
 }
-</pre>
+```

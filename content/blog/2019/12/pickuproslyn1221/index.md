@@ -60,13 +60,13 @@ Dec. 11 は Records がらみの検討があったみたいです。
 
 以下のように、`key` 修飾子を付けることで、そのメンバーの比較によってクラス自体の等価性を判定(する `Equals` メソッドなどを生成)しようという話。
 
-<pre class="source" title="key 修飾子">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <em><span class="reserved">key</span></em> <span class="reserved">string</span> Item1 { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span> Item2 { <span class="reserved">get</span>; }
+    public key string Item1 { get; }
+    public string Item2 { get; }
 }
-</code></pre>
+```
 
 検討事項としては、これ単体では Records 的な機能としては足りていない(コンストラクターを書かなきゃいけないようでは「何度も同じ名前を書かないといけなくてつらい」問題の対処にならない)とか、
 クラスの場合に mutable なプロパティで `Equals` を実装してしまうと `Dictionary`/`HashSet` の動作を狂わせてしまうので避けたいとか、
@@ -136,14 +136,14 @@ Dec. 18 は [null 許容参照型](../../../../study/csharp/resource/nullableref
 
 型推論はしたいけど、null 許容性だけを変えたいということがあります。
 
-<pre class="source" title="">
-<code><span class="reserved">var</span> <span class="variable">current</span> = myLinkedList.Head; <span class="comment">// 連結リストの先頭とかで、not-null 指定あり</span>
-<span class="control">while</span> (<span class="variable">current</span> <span class="reserved">is</span> <span class="reserved">object</span>)
+```csharp
+var current = myLinkedList.Head; // 連結リストの先頭とかで、not-null 指定あり
+while (current is object)
 {
     ...
-    <span class="variable">current</span> = <span class="variable">current</span>.Next; <span class="comment">// not-null と推論された current に null が渡る可能性あり。警告</span>
+    current = current.Next; // not-null と推論された current に null が渡る可能性あり。警告
 }
-</code></pre>
+```
 
 こういう時のために、`var?` という書き方を導入したらどうかという案が以前に検討されています。
 それを再検討。

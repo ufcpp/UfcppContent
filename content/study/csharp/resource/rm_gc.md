@@ -147,19 +147,19 @@ GC クラス(System 名前空間)に SuppressFinalize というメソッドが�
 ここで、マナーの悪いコードを書いてしまうと、オブジェクトが完全復活(resurrection)してしまうことがあります。
 例えば、以下のように、ファイナライザーの中で、静的なオブジェクトに参照を渡してしまうなどです。
 
-<pre class="source" title="オブジェクトの復活" lang="">
-<code><span class="reserved">class</span> <span class="type">X</span>
+```csharp
+class X
 {
-    <span class="reserved">static</span> <span class="type">List</span>&lt;<span class="type">X</span>&gt; resurrected = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="type">X</span>&gt;();
+    static List<X> resurrected = new List<X>();
 
     ~X()
     {
-        <span class="comment">// 死んだはずのオブジェクトを静的なもの(＝ ずっと生きてる)に渡すという暴挙</span>
-        <span class="comment">// ガベージ コレクションの対象から外れる</span>
-        resurrected.Add(<span class="reserved">this</span>);
+        // 死んだはずのオブジェクトを静的なもの(＝ ずっと生きてる)に渡すという暴挙
+        // ガベージ コレクションの対象から外れる
+        resurrected.Add(this);
     }
 }
-</code></pre>
+```
 
 
 ちなみにこの場合、すでにファイナライズ リストからはこのオブジェクトが外れているので、

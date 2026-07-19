@@ -386,10 +386,11 @@ Dictionary&lt;TKey, TValue&gt;, SortedDictionary&lt;TKey, TValue&gt;, SortedList
 ## <a id="sec-generated-title-15"></a> <a id="plan"></a>追記予定
 
 その他、特殊系
-<pre>
+```text
 BitArray
 
 Concurrent 系
 
 ObservableCollection も？
-    </pre>
+    
+```

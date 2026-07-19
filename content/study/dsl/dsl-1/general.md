@@ -46,76 +46,76 @@ how（どうやって： 手順を逐一書く）から what（何を： 意図�
 例えば、手続き型言語に今のようなフロー制御構文が入る前（if と goto しかなかった時代がある）、処理のフローは以下のように書いていました。
 ぱっと見で何をしているのかまるで分らないと思います。
 
-<pre class="source" title="フロー制御構文が入る前のプログラム記述" lang="">
-<code><span class="reserved">int</span>[] a = <span class="reserved">new</span>[] { -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, };
-<span class="reserved">int</span> N = a.Length;
+```csharp
+int[] a = new[] { -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, };
+int N = a.Length;
 
-<span class="reserved">int</span> sum = 0;
-<span class="reserved">int</span> i = 0;
+int sum = 0;
+int i = 0;
 LOOP_BEGIN:
-<span class="reserved">if</span> (!(i &lt; N))
-    <span class="reserved">goto</span> LOOP_END;
-<span class="reserved">int</span> x = a[i];
-<span class="reserved">if</span> (!(x &gt; 0))
-    <span class="reserved">goto</span> NOT_MATCH;
+if (!(i < N))
+    goto LOOP_END;
+int x = a[i];
+if (!(x > 0))
+    goto NOT_MATCH;
 sum = x + sum;
 NOT_MATCH:
 i = i + 1;
-<span class="reserved">goto</span> LOOP_BEGIN;
+goto LOOP_BEGIN;
 LOOP_END: ;
-</code></pre>
+```
 
 
 while 構文の導入以来、普通は以下のように書きます。
 少なくとも、何か反復処理していることはわかるようになりました。
 
-<pre class="source" title="while の導入" lang="">
-<code><span class="reserved">int</span>[] a = <span class="reserved">new</span>[] { -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, };
-<span class="reserved">int</span> N = a.Length;
+```csharp
+int[] a = new[] { -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, };
+int N = a.Length;
 
-<span class="reserved">int</span> sum = 0;
-<span class="reserved">int</span> i = 0;
+int sum = 0;
+int i = 0;
 
-<span class="reserved">while</span> (i &lt; N)
+while (i < N)
 {
-    <span class="reserved">int</span> x = a[i];
+    int x = a[i];
 
-    <span class="reserved">if</span> (x &gt; 0)
+    if (x > 0)
     {
         sum = x + sum;
     }
     i = i + 1;
 }
-</code></pre>
+```
 
 
 要するに、配列の要素の列挙です。
 今なら、だいたいのプログラミング言語に列挙用の専用構文（foreach）が用意されているので、以下のようになるでしょう。
 どういう意図で反復処理をしていたのかがはっきりします。
 
-<pre class="source" title="foreach の導入" lang="">
-<code><span class="reserved">int</span>[] a = <span class="reserved">new</span>[] { -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, };
+```csharp
+int[] a = new[] { -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, };
 
-<span class="reserved">int</span> sum = 0;
+int sum = 0;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> a)
+foreach (var x in a)
 {
-    <span class="reserved">if</span> (x &gt; 0)
+    if (x > 0)
     {
         sum += x;
     }
 }
-</code></pre>
+```
 
 
 今の C# （バージョン 3.0 で導入された「[LINQ](../../csharp/data/sp3_linq.md#linq)」を使う）なら、さらに意図をそのまま書きやすくなっています。
 この例のように、配列の和を求めたいなら、以下のように書けます。
 
-<pre class="source" title="LINQ の導入" lang="">
-<code><span class="reserved">int</span>[] a = <span class="reserved">new</span>[] { -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, };
+```csharp
+int[] a = new[] { -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, };
 
-<span class="reserved">int</span> sum = a.Where(x =&gt; x &gt; 0).Sum();
-</code></pre>
+int sum = a.Where(x => x > 0).Sum();
+```
 
 
 「配列 a の 0 以上の項の和」を「a.Where(x =&gt; x &gt; 0).Sum()」と書ける。

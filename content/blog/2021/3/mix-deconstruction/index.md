@@ -28,10 +28,10 @@ aliases: []
 その中で、今日は C# 10.0 候補で、すでに Visual Studio 16.10 にマージ済みの機能の紹介。
 以下のようなコードがコンパイルできるようになっています。
 
-<pre class="source" title="宣言と変数の混在分解">
-<code><span class="reserved">int</span> <span class="variable">x</span>;
-(<span class="variable">x</span>, <span class="reserved">var</span> <span class="variable">y</span>) = (1, <span class="string">&quot;abc&quot;</span>);
-</code></pre>
+```csharp
+int x;
+(x, var y) = (1, "abc");
+```
 
 配信では言ってるんですが、 .NET 6 Preview 1 が出た時点で、コマンドライン (dotnet コマンド)ではコンパイルできていました。
 「今回、.NET SDK と Visual Studio で2週間くらいリリースタイミング違うんですね」とか「Visual Studio は [Ignite](https://myignite.microsoft.com/home) のために取っといたんですかね」とかいう感じ。
@@ -45,29 +45,29 @@ aliases: []
 
 1つ目。`()` 内で変数宣言。
 
-<pre class="source" title="() 内で変数宣言">
-<code>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">string</span> <span class="variable">y</span>) = (1, <span class="string">&quot;abc&quot;</span>);
-</code></pre>
+```csharp
+(int x, string y) = (1, "abc");
+```
 
 2つ目。これを型推論(var)で書いたもの。型推論してる点以外は1つ目のコードと同じ。コンパイラーの解釈結果は全く同じです。
 
-<pre class="source" title="() 内で変数宣言 (`var` 利用)">
-<code>(<span class="reserved">var</span> <span class="variable">x</span>, <span class="reserved">var</span> <span class="variable">y</span>) = (1, <span class="string">&quot;abc&quot;</span>);
-</code></pre>
+```csharp
+(var x, var y) = (1, "abc");
+```
 
 3つ目。タプル変数宣言。頭に1個だけ `var` を書いて、複数の変数の宣言をまとめてやる構文。
 
-<pre class="source" title="タプル変数宣言">
-<code><span class="reserved">var</span> (<span class="variable">x</span>, <span class="variable">y</span>) = (1, <span class="string">&quot;abc&quot;</span>);
-</code></pre>
+```csharp
+var (x, y) = (1, "abc");
+```
 
 4つ目。既存の変数を使って分解。
 
-<pre class="source" title="既存の変数を使って分解">
-<code><span class="reserved">int</span> <span class="variable">x</span>;
-<span class="reserved">string</span> <span class="variable">y</span>;
-(<span class="variable">x</span>, <span class="variable">y</span>) = (1, <span class="string">&quot;abc&quot;</span>);
-</code></pre>
+```csharp
+int x;
+string y;
+(x, y) = (1, "abc");
+```
 
 ## <a id="mix-deconstruction">混在分解(C# 10.0)</a>
 
@@ -77,17 +77,17 @@ aliases: []
 それが今回、16.10 Preview 1 でマージされました。
 以下のコードが通ります。
 
-<pre class="source" title="変数宣言と既存変数が混在した分解">
-<code><span class="reserved">int</span> <span class="variable">x</span>;
-(<span class="variable">x</span>, <span class="reserved">string</span> <span class="variable">y</span>) = (1, <span class="string">&quot;abc&quot;</span>);
-</code></pre>
+```csharp
+int x;
+(x, string y) = (1, "abc");
+```
 
 変数宣言には `var` も使えて、それが冒頭のコードになります。
 
-<pre class="source" title="変数宣言と既存変数が混在した分解(var 型推論あり)">
-<code><span class="reserved">int</span> <span class="variable">x</span>;
-(<span class="variable">x</span>, <span class="reserved">var</span> <span class="variable">y</span>) = (1, <span class="string">&quot;abc&quot;</span>);
-</code></pre>
+```csharp
+int x;
+(x, var y) = (1, "abc");
+```
 
 欲しいかと言われると微妙なライン… と感じますが、
 実装負担がほとんどなかったみたいですね。
@@ -97,24 +97,24 @@ aliases: []
 
 pull request をみるに、式ステートメントと `for` の初期化式(1項目)中でだけ認めるみたいです。
 
-<pre class="source" title="宣言と変数の混在分解ができる場所">
-<code><span class="reserved">int</span> <span class="variable">x</span>;
+```csharp
+int x;
  
-<span class="comment">// OK な例1</span>
-(<span class="variable">x</span>, <span class="reserved">string</span> <span class="variable">y1</span>) = (1, <span class="string">&quot;abc&quot;</span>);
+// OK な例1
+(x, string y1) = (1, "abc");
  
-<span class="comment">// OK な例2</span>
-<span class="control">for</span> ((<span class="variable">x</span>, <span class="reserved">string</span> <span class="variable">y2</span>) = (1, <span class="string">&quot;abc&quot;</span>); <span class="reserved">false</span>;)
+// OK な例2
+for ((x, string y2) = (1, "abc"); false;)
 {
 }
  
-<span class="comment">// ダメな例1</span>
-<span class="reserved">var</span> <span class="variable">t</span> = (<span class="variable">x</span>, <span class="reserved">string</span> <span class="variable">y3</span>) = (1, <span class="string">&quot;abc&quot;</span>);
+// ダメな例1
+var t = (x, string y3) = (1, "abc");
  
-<span class="comment">// ダメな例2</span>
-<span class="method">m</span>(<span class="reserved">out</span> (<span class="variable">x</span>, <span class="reserved">string</span> <span class="variable">y4</span>));
-<span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">out</span> (<span class="reserved">int</span>, <span class="reserved">string</span>) <span class="variable">t</span>) =&gt; <span class="variable">t</span> = (1, <span class="string">&quot;abc&quot;</span>);
-</code></pre>
+// ダメな例2
+m(out (x, string y4));
+void m(out (int, string) t) => t = (1, "abc");
+```
 
 ちなみに、コミュニティ貢献であってもレビューのコストは掛かるわけで、
 この手の pull request が常にうまくいくわけではないんですが。

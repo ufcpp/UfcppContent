@@ -73,23 +73,23 @@ aliases:
 図1のような結果を表示します。
 
 
-<pre class="xsource" title="日記データ（20060731.xml）">
-<code><span class="bracket">&lt;?</span><span class="element">xml</span> <span class="attribute">version</span><span class="attvalue">="1.0"</span> <span class="attribute">encoding</span><span class="attvalue">="Shift_JIS"</span><span class="bracket">?&gt;</span>
-<span class="bracket">&lt;</span><span class="element">content</span><span class="bracket">&gt;</span>
+```xml
+<?xml version="1.0" encoding="Shift_JIS"?>
+<content>
 
-<span class="bracket">&lt;</span><span class="element">blog</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+<blog>
+<p>
 全く会話をしないまま１日が過ぎた。
 見た目がカタい人間にうつるからかもしれないと思い、
 馬車内で今日は兜をかぶらなかった。
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+</p>
+<p>
 誰もそれに気付かないようだった。
-<span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">blog</span><span class="bracket">&gt;</span>
+</p>
+</blog>
 
-<span class="bracket">&lt;/</span><span class="element">content</span><span class="bracket">&gt;</span>
-</code></pre>
+</content>
+```
 <figure>
 	[![表示結果](../../../../assets/media/ufcpp2000/dotnet/resources/blog1.jpg)](../../../../assets/media/ufcpp2000/dotnet/resources/blog1.jpg)
 	<figcaption>表示結果</figcaption>
@@ -137,76 +137,76 @@ Visual Studio を使う場合、
 （ファイル名は ShowXml.ascx としておきます。）
 
 
-<pre class="xsource" title="ShowXml.ascx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Control</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="attribute">AutoEventWireup</span><span class="attvalue">="true"</span>
-  <span class="attribute">CodeBehind</span><span class="attvalue">="ShowXml.ascx.cs"</span> <span class="attribute">Inherits</span><span class="attvalue">="WebsiteSample.ShowXml"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Control Language="C#" AutoEventWireup="true"
+  CodeBehind="ShowXml.ascx.cs" Inherits="WebsiteSample.ShowXml" %>
 
-<span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">id</span><span class="attvalue">="content"</span> <span class="bracket">/&gt;</span>
-</code></pre>
+<div runat="server" id="content" />
+```
 コードビハインド側は以下のような感じ。
 （例外処理とかはサボっています。）
 
-<pre class="source" title="ShowXml.ascx.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Web;
-<span class="reserved">using</span> System.Xml;
-<span class="reserved">using</span> System.Xml.Xsl;
-<span class="reserved">using</span> System.IO;
-<span class="reserved">using</span> System.Text;
+```html
+using System;
+using System.Web;
+using System.Xml;
+using System.Xml.Xsl;
+using System.IO;
+using System.Text;
 
-<span class="reserved">namespace</span> WebsiteSample
+namespace WebsiteSample
 {
-  <span class="reserved">public partial class</span> ShowXml : System.Web.UI.UserControl
+  public partial class ShowXml : System.Web.UI.UserControl
   {
-    <span class="reserved">#region</span> プロパティ
+    #region プロパティ
 
-    <span class="reserved">string</span> xmlFileName = <span class="reserved">null</span>;
+    string xmlFileName = null;
 
-    <span class="reserved">public string</span> XmlFileName
+    public string XmlFileName
     {
-      <span class="reserved">get</span> { <span class="reserved">return</span> xmlFileName; }
-      <span class="reserved">set</span> { xmlFileName = value; }
+      get { return xmlFileName; }
+      set { xmlFileName = value; }
     }
 
-    <span class="reserved">string</span> xslFileName = <span class="reserved">null</span>;
+    string xslFileName = null;
 
-    <span class="reserved">public string</span> XslFileName
+    public string XslFileName
     {
-      <span class="reserved">get</span> { <span class="reserved">return</span> xslFileName; }
-      <span class="reserved">set</span> { xslFileName = value; }
+      get { return xslFileName; }
+      set { xslFileName = value; }
     }
 
-    <span class="reserved">#endregion
+    #endregion
 
-    protected void</span> Page_PreRender(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Page_PreRender(object sender, EventArgs e)
     {
-      <span class="reserved">if</span> (<span class="reserved">this</span>.xmlFileName == <span class="reserved">null</span> || <span class="reserved">this</span>.xslFileName == <span class="reserved">null</span>
-        || !File.Exists(<span class="reserved">this</span>.xmlFileName)
-        || !File.Exists(<span class="reserved">this</span>.xslFileName)
+      if (this.xmlFileName == null || this.xslFileName == null
+        || !File.Exists(this.xmlFileName)
+        || !File.Exists(this.xslFileName)
         )
-        <span class="reserved">return</span>;
+        return;
 
-      XslCompiledTransform xslt = <span class="reserved">new</span> XslCompiledTransform();
-      xslt.Load(<span class="reserved">this</span>.XslFileName);
-      XmlDocument xml = <span class="reserved">new</span> XmlDocument();
-      xml.Load(<span class="reserved">this</span>.xmlFileName);
+      XslCompiledTransform xslt = new XslCompiledTransform();
+      xslt.Load(this.XslFileName);
+      XmlDocument xml = new XmlDocument();
+      xml.Load(this.xmlFileName);
 
-      XmlNodeReader reader = <span class="reserved">new</span> XmlNodeReader(xml);
-      MemoryStream s = <span class="reserved">new</span> MemoryStream();
-      XmlTextWriter writer = <span class="reserved">new</span> XmlTextWriter(s, Encoding.UTF8);
+      XmlNodeReader reader = new XmlNodeReader(xml);
+      MemoryStream s = new MemoryStream();
+      XmlTextWriter writer = new XmlTextWriter(s, Encoding.UTF8);
       xslt.Transform(reader, writer);
 
       s.Seek(0, SeekOrigin.Begin);
-      StreamReader sr = <span class="reserved">new</span> StreamReader(s);
+      StreamReader sr = new StreamReader(s);
 
-      <span class="reserved">string</span> result = sr.ReadToEnd();
-      <span class="reserved">this</span>.content.InnerHtml = result;
+      string result = sr.ReadToEnd();
+      this.content.InnerHtml = result;
 
       s.Dispose();
     }
   }
 }
-</code></pre>
+```
 
 
 XML のファイル名と XSL のファイル名を public なプロパティにしておきます。
@@ -259,64 +259,64 @@ App_Data フォルダに格納する事にします。
 aspx ファイル中に以下のように書きます。
 
 
-<pre class="xsource" title="BlogLatest.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span>
-  <span class="attribute">MasterPageFile</span><span class="attvalue">="~/Site.Master"</span> <span class="attribute">AutoEventWireup</span><span class="attvalue">="true"</span>
-  <span class="attribute">CodeBehind</span><span class="attvalue">="BlogLatest.aspx.cs"</span> <span class="attribute">Inherits</span><span class="attvalue">="WebsiteSample.BlogLatest"</span>
-  <span class="attribute">Title</span><span class="attvalue">="日記"</span> <span class="bracket">%&gt;</span>
-<em><span class="bracket">&lt;%@ </span><span class="element">Register</span> <span class="attribute">TagPrefix</span><span class="attvalue">="local"</span> <span class="attribute">TagName</span><span class="attvalue">="ShowXml"</span> <span class="attribute">Src</span><span class="attvalue">="~/ShowXml.ascx"</span> <span class="bracket">%&gt;</span></em>
+```html
+<%@ Page Language="C#"
+  MasterPageFile="~/Site.Master" AutoEventWireup="true"
+  CodeBehind="BlogLatest.aspx.cs" Inherits="WebsiteSample.BlogLatest"
+  Title="日記" %>
+<%@ Register TagPrefix="local" TagName="ShowXml" Src="~/ShowXml.ascx" %>
 
-<span class="bracket">&lt;</span><span class="element">asp:Content</span> <span class="attribute">ID</span><span class="attvalue">="Content1"</span>
-  <span class="attribute">ContentPlaceHolderID</span><span class="attvalue">="ContentPlaceHolder1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<asp:Content ID="Content1"
+  ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-<span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="blogHead"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">asp:Label</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="head"</span> <span class="bracket">/&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+<div class="blogHead">
+<asp:Label runat="server" ID="head" />
+</div>
 
-<em><span class="bracket">&lt;</span><span class="element">local:ShowXml</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ID</span><span class="attvalue">="xmlContent"</span> <span class="bracket">/&gt;</span></em>
+<local:ShowXml runat="server" ID="xmlContent" />
 
-<span class="bracket">&lt;/</span><span class="element">asp:Content</span><span class="bracket">&gt;</span>
-</code></pre>
+</asp:Content>
+```
 で、最新の記事を表示したいなら、
 コードビハインドファイルは以下のようにします。
 
-<pre class="source" title="BlogLatest.aspx.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Web;
-<span class="reserved">using</span> System.IO;
-<span class="reserved">using</span> System.Text.RegularExpressions;
+```html
+using System;
+using System.Web;
+using System.IO;
+using System.Text.RegularExpressions;
 
-<span class="reserved">namespace</span> WebsiteSample
+namespace WebsiteSample
 {
-  <span class="reserved">public partial class</span> BlogLatest : System.Web.UI.Page
+  public partial class BlogLatest : System.Web.UI.Page
   {
-    <span class="reserved">internal static</span> Regex yyyyMMdd =
-      <span class="reserved">new</span> Regex(<span class="literal">@"(\d{4})(\d{2})(\d{2})\.xml"</span>);
+    internal static Regex yyyyMMdd =
+      new Regex(@"(\d{4})(\d{2})(\d{2})\.xml");
 
-    <span class="reserved">protected void</span> Page_Load(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Page_Load(object sender, EventArgs e)
     {
-      <span class="reserved">string</span> basePath = Context.Server.MapPath(<span class="literal">"~/App_Data"</span>);
-      <span class="reserved">string</span>[] files = Directory.GetFiles(basePath, <span class="literal">"*.xml"</span>);
+      string basePath = Context.Server.MapPath("~/App_Data");
+      string[] files = Directory.GetFiles(basePath, "*.xml");
       Array.Sort(files);
 
-      <span class="reserved">string</span> xmlFile = files[files.Length - 1];
-      <span class="reserved">string</span> xslFile = basePath + <span class="literal">@"\main.xsl"</span>;
+      string xmlFile = files[files.Length - 1];
+      string xslFile = basePath + @"\main.xsl";
 
-<em>      <span class="reserved">this</span>.xmlContent.XmlFileName = xmlFile;
-      <span class="reserved">this</span>.xmlContent.XslFileName = xslFile;</em>
+      this.xmlContent.XmlFileName = xmlFile;
+      this.xmlContent.XslFileName = xslFile;
 
       Match match = yyyyMMdd.Match(xmlFile);
-      <span class="reserved">if</span> (match.Success)
+      if (match.Success)
       {
-        <span class="reserved">this</span>.head.Text = <span class="reserved">string</span>.Format(<span class="literal">"{0}年{1}月{2}日"</span>,
+        this.head.Text = string.Format("{0}年{1}月{2}日",
           match.Groups[1],
-          match.Groups[2].ToString().TrimStart(<span class="literal">'0'</span>),
-          match.Groups[3].ToString().TrimStart(<span class="literal">'0'</span>));
+          match.Groups[2].ToString().TrimStart('0'),
+          match.Groups[3].ToString().TrimStart('0'));
       }
     }
   }
 }
-</code></pre>
+```
 
 
 やっていることは、

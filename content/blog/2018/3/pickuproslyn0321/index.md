@@ -53,11 +53,11 @@ aliases: []
 
 ↓みたいな書き方を認めてほしいというもの。
 
-<pre class="source" title="">
-<code><span class="reserved">int</span> x;
-<span class="reserved">int</span> y;
-(x, y) = <span class="reserved">default</span>; <span class="comment">// x = default; y = default; と同じ意味</span>
-</code></pre>
+```csharp
+int x;
+int y;
+(x, y) = default; // x = default; y = default; と同じ意味
+```
 
 ### and, or, and not パターン
 
@@ -65,15 +65,15 @@ aliases: []
 
 ↓みたいに、パターン マッチングで条件のところに and, or, not を書けるようにしたいとのこと。
 
-<pre class="source" title="">
-<code><span class="reserved">switch</span> (o)
+```csharp
+switch (o)
 {
-    <span class="reserved">case</span> 1 <span class="reserved">or</span> 2:
-    <span class="reserved">case</span> <span class="type">Point</span>(0, 0) <span class="reserved">or</span> <span class="reserved">null</span>:
-    <span class="reserved">case</span> <span class="type">Point</span>(<span class="reserved">var</span> x, <span class="reserved">var</span> y) <span class="reserved">and var</span> p:
-    <span class="reserved">case</span> <span class="reserved">not</span> <span class="reserved">string</span> _:
+    case 1 or 2:
+    case Point(0, 0) or null:
+    case Point(var x, var y) and var p:
+    case not string _:
 }
-</code></pre>
+```
 
 ### 型引数の部分的な型推論
 
@@ -81,9 +81,9 @@ aliases: []
 
 いくつか文法案は出ているものの、そのうちの1つで書くと、↓みたいな感じ。
 
-<pre class="source" title="">
-<code>M&lt;<span class="reserved">int</span>, &gt;(args); <span class="comment">// 2個目の型引数だけは args から推論できて、1個目は無理な時、こう書けるようにしたい</span>
-</code></pre>
+```csharp
+M<int, >(args); // 2個目の型引数だけは args から推論できて、1個目は無理な時、こう書けるようにしたい
+```
 
 ### 制約なしの型引数に対して is null を認めたい
 
@@ -91,30 +91,30 @@ aliases: []
 
 ちょっと説明しにくいんですけど、以下のような感じ。`where T : class`なしの`T t`に対して、`t is null`を認めたい。
 
-<pre class="source" title="">
-<code><span class="reserved">void</span> M(<span class="reserved">string</span> s)
+```csharp
+void M(string s)
 {
-    <span class="reserved">if</span> (s <span class="reserved">is</span> <span class="reserved">null</span>) { } <span class="comment">// OK。クラスだし、null チェックしたい</span>
+    if (s is null) { } // OK。クラスだし、null チェックしたい
 }
 
-<span class="reserved">void</span> M(<span class="reserved">int</span> x)
+void M(int x)
 {
-    <span class="reserved">if</span> (x == <span class="reserved">null</span>) { } <span class="comment">// 警告は出るけど別にエラーにはならない。常にfalse</span>
-    <span class="comment">// ↑あんまり良い話ではないけど、default とかジェネリクスがなかった頃の名残っぽい</span>
+    if (x == null) { } // 警告は出るけど別にエラーにはならない。常にfalse
+    // ↑あんまり良い話ではないけど、default とかジェネリクスがなかった頃の名残っぽい
 }
 
-<span class="reserved">void</span> M1&lt;<span class="type">T</span>&gt;(<span class="type">T</span> t)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
+void M1<T>(T t)
+    where T : class
 {
-    <span class="reserved">if</span> (t <span class="reserved">is</span> <span class="reserved">null</span>) { } <span class="comment">// OK。クラス制約あるし。</span>
+    if (t is null) { } // OK。クラス制約あるし。
 }
 
-<span class="reserved">void</span> M2&lt;<span class="type">T</span>&gt;(<span class="type">T</span> t)
+void M2<T>(T t)
 {
-    <span class="reserved">if</span> (t <span class="reserved">is</span> <span class="reserved">null</span>) { } <span class="comment">// 今は NG。</span>
-    <span class="comment">// とはいえ、構造体の == null が OK なんだから別にこれも認めていいでしょ。常にfalseで</span>
+    if (t is null) { } // 今は NG。
+    // とはいえ、構造体の == null が OK なんだから別にこれも認めていいでしょ。常にfalseで
 }
-</code></pre>
+```
 
 ### 暗黙的なスコープのusingステートメント
 
@@ -122,37 +122,37 @@ aliases: []
 
 以下のような、`using`したいリソースがたくさんあるときのネスト問題への対処。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> (<span class="reserved">var</span> d = SomeDisposable())
+```csharp
+using (var d = SomeDisposable())
 {
-    <span class="comment">// ここのネストが1段深くなるのがしんどい時がある</span>
+    // ここのネストが1段深くなるのがしんどい時がある
 }
 
-<span class="comment">// 特に、多段の時。最後の1個以外は {} を省略できるとはいえ</span>
-<span class="reserved">using</span> (<span class="reserved">var</span> d1 = SomeDisposable())
-<span class="reserved">using</span> (<span class="reserved">var</span> d2 = SomeDisposable())
-<span class="reserved">using</span> (<span class="reserved">var</span> d3 = SomeDisposable())
-<span class="reserved">using</span> (<span class="reserved">var</span> d4 = SomeDisposable())
-<span class="reserved">using</span> (<span class="reserved">var</span> d5 = SomeDisposable())
+// 特に、多段の時。最後の1個以外は {} を省略できるとはいえ
+using (var d1 = SomeDisposable())
+using (var d2 = SomeDisposable())
+using (var d3 = SomeDisposable())
+using (var d4 = SomeDisposable())
+using (var d5 = SomeDisposable())
 {
 }
-</code></pre>
+```
 
 以下のような書き方を予定。
 
-<pre class="source" title="">
-<code>{
-    <span class="comment">// 変数宣言の前に using を付けることで、その変数のスコープを using のスコープにする</span>
-    <span class="reserved">using</span> <span class="reserved">var</span> d1 = SomeDisposable();
-    <span class="reserved">using</span> <span class="reserved">var</span> d2 = SomeDisposable();
-    <span class="reserved">using</span> <span class="reserved">var</span> d3 = SomeDisposable();
-    <span class="reserved">using</span> <span class="reserved">var</span> d4 = SomeDisposable();
-    <span class="reserved">using</span> <span class="reserved">var</span> d5 = SomeDisposable();
+```csharp
+{
+    // 変数宣言の前に using を付けることで、その変数のスコープを using のスコープにする
+    using var d1 = SomeDisposable();
+    using var d2 = SomeDisposable();
+    using var d3 = SomeDisposable();
+    using var d4 = SomeDisposable();
+    using var d5 = SomeDisposable();
 
-    <span class="comment">// Dispose が走るのは、変数がスコープを抜ける時</span>
-    <span class="comment">// = このブロックから抜けるとき</span>
+    // Dispose が走るのは、変数がスコープを抜ける時
+    // = このブロックから抜けるとき
 }
-</code></pre>
+```
 
 ### defer ステートメント
 
@@ -160,17 +160,17 @@ aliases: []
 
 Swift にあるやつ。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="reserved">defer</span>
+    defer
     {
-        <span class="type">Console</span>.WriteLine(<span class="string">"関数を抜ける時に呼ばれる"</span>); <span class="comment">// 例外があっても常に</span>
+        Console.WriteLine("関数を抜ける時に呼ばれる"); // 例外があっても常に
     }
 
-    <span class="type">Console</span>.WriteLine(<span class="string">"こっちの方が先に表示される"</span>);
+    Console.WriteLine("こっちの方が先に表示される");
 }
-</code></pre>
+```
 
 「一回り外側のブロックに影響する」っていう点が気持ち悪くて据え置きになっていたんですが…
 前節の`using var`を認めてしまった以上、それを理由にリジェクトできなくなった感じ。
@@ -178,14 +178,14 @@ Swift にあるやつ。
 前節の`using var`を使って、以下のように代用できないこともないんですが、
 これだとラムダ式のオーバーヘッド(デリゲートのヒープ確保とインライン展開の阻害)が掛かるのが嫌だそうです。
 
-<pre class="source" title="">
-<code>    <span class="reserved">using</span> <span class="reserved">var</span> d = <span class="reserved">new</span> <span class="type">ActionDisposable</span>(() =&gt;
+```csharp
+    using var d = new ActionDisposable(() =>
     {
-        <span class="type">Console</span>.WriteLine(<span class="string">"関数を抜ける時に呼ばれる"</span>);
+        Console.WriteLine("関数を抜ける時に呼ばれる");
     });
 
-    <span class="type">Console</span>.WriteLine(<span class="string">"こっちの方が先に表示される"</span>);
-</code></pre>
+    Console.WriteLine("こっちの方が先に表示される");
+```
 
 ### ユーザー定義の位置指定パターン(positional patterns)
 
@@ -196,25 +196,25 @@ Swift にあるやつ。
 
 そんな中、さらに C# 8.0からも外れて「8.X」にしようという風に外されたのがこいつ。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">Cartesian</span>
+```csharp
+struct Cartesian
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> X;
-    <span class="reserved">public</span> <span class="reserved">double</span> Y;
-    <span class="reserved">public</span> Cartesian(<span class="reserved">double</span> x, <span class="reserved">double</span> y) =&gt; (X, Y) = (x, y);
+    public double X;
+    public double Y;
+    public Cartesian(double x, double y) => (X, Y) = (x, y);
 
-    <span class="comment">// こいつを使った positional パターンは C# 8.0 で入る予定</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Deconstruct(<span class="reserved">out</span> <span class="reserved">double</span> x, <span class="reserved">out</span> <span class="reserved">double</span> y) =&gt; (x, y) = (X, Y);
+    // こいつを使った positional パターンは C# 8.0 で入る予定
+    public void Deconstruct(out double x, out double y) => (x, y) = (X, Y);
 }
 
-<span class="reserved">class</span> <span class="type">Polar</span>
+class Polar
 {
-    <span class="comment">// こんな感じの定義を書くことで、Cartesian p を p is Polar(var r, var t) みたいなパターンに掛けることができる仕様がある</span>
-    <span class="comment">// が、こいつは C# 8.0 では入らない</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="reserved">is</span>(<span class="type">Cartesian</span> p, <span class="reserved">out</span> <span class="reserved">double</span> radius, <span class="reserved">out</span> <span class="reserved">double</span> theta)
+    // こんな感じの定義を書くことで、Cartesian p を p is Polar(var r, var t) みたいなパターンに掛けることができる仕様がある
+    // が、こいつは C# 8.0 では入らない
+    public static bool operator is(Cartesian p, out double radius, out double theta)
     {
-        radius = <span class="type">Math</span>.Sqrt(p.X * p.X + p.Y * p.Y);
-        theta = <span class="type">Math</span>.Atan2(p.Y, p.X);
+        radius = Math.Sqrt(p.X * p.X + p.Y * p.Y);
+        theta = Math.Atan2(p.Y, p.X);
     }
 }
-</code></pre>
+```

@@ -49,44 +49,44 @@ C# 8.0では他にも「[非同期 `foreach`](https://github.com/dotnet/csharpla
 
 これまで、`using`を使うときには以下のような書き方でした。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> (<span class="reserved">var</span> d = someDisposable)
+```csharp
+using (var d = someDisposable)
 {
-    <span class="comment">// このスコープ内を抜けたら Dispose</span>
+    // このスコープ内を抜けたら Dispose
 }
-</code></pre>
+```
 
 で、C# 8.0 では、以下のような書き方を認めようという話です。
 
-<pre class="source" title="">
-<code>{
-    <span class="comment">// 変数宣言と同時に、その変数を using</span>
-    <span class="reserved">using</span> <span class="reserved">var</span> d = someDisposable;
+```csharp
+{
+    // 変数宣言と同時に、その変数を using
+    using var d = someDisposable;
 
-    <span class="comment">// 変数のスコープを抜けたら Dispose</span>
+    // 変数のスコープを抜けたら Dispose
 }
-</code></pre>
+```
 
 C# の言語機能としては「`using`修飾付きの変数宣言」みたいになるようです。
 
 この機能を追加する主な動機は、以下のような「`using`の入れ子」の解消です。
 
-<pre class="source" title="">
-<code><span class="comment">// 同寿命のリソースを何個も使うとき、こんな感じになる</span>
-<span class="reserved">using</span> (<span class="reserved">var</span> a = someDisposable)
-<span class="reserved">using</span> (<span class="reserved">var</span> b = anotherDisposable)
-<span class="reserved">using</span> (<span class="reserved">var</span> c = oneMoreDisposable)
+```csharp
+// 同寿命のリソースを何個も使うとき、こんな感じになる
+using (var a = someDisposable)
+using (var b = anotherDisposable)
+using (var c = oneMoreDisposable)
 {
-    <span class="comment">// ここを抜けたら Dispose</span>
+    // ここを抜けたら Dispose
 }
 
-<span class="comment">// それをこう変えたい</span>
-<span class="reserved">using</span> <span class="reserved">var</span> a = someDisposable;
-<span class="reserved">using</span> <span class="reserved">var</span> b = anotherDisposable;
-<span class="reserved">using</span> <span class="reserved">var</span> c = oneMoreDisposable;
+// それをこう変えたい
+using var a = someDisposable;
+using var b = anotherDisposable;
+using var c = oneMoreDisposable;
 
-<span class="comment">// メソッドを抜けたら Dispose</span>
-</code></pre>
+// メソッドを抜けたら Dispose
+```
 
 これも、`fixed`ステートメントにも同じことが言えそう(同寿命で重ねることが結構ある)ということで、
 同じような「`fixed`変数宣言」も考えているそうです(こちらはたぶんC# 8.0よりも将来の話)。

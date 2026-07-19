@@ -47,34 +47,34 @@ aliases:
 </figure>
 
 
-<pre class="source" title="クラスの継承階層の例" lang="">
-<code><span class="reserved">public abstract class</span> <span class="type">Shape</span>
+```csharp
+public abstract class Shape
 {
-    <span class="reserved">public abstract float</span> GetArea();
+    public abstract float GetArea();
 }
 
-<span class="reserved">public class</span> <span class="type">Rectangle</span> : <span class="type">Shape</span>
+public class Rectangle : Shape
 {
-    <span class="reserved">public float</span> Width { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public float Width { get; set; }
 
-    <span class="reserved">public float</span> Height { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public float Height { get; set; }
 
-    <span class="reserved">public override float</span> GetArea()
+    public override float GetArea()
     {
-        <span class="reserved">return this</span>.Width * <span class="reserved">this</span>.Height;
+        return this.Width * this.Height;
     }
 }
 
-<span class="reserved">public class</span> <span class="type">Circle</span> : <span class="type">Shape</span>
+public class Circle : Shape
 {
-    <span class="reserved">public float</span> Radius { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public float Radius { get; set; }
 
-    <span class="reserved">public override float</span> GetArea()
+    public override float GetArea()
     {
-        <span class="reserved">return</span> (<span class="reserved">float</span>)(<span class="type">Math</span>.PI * <span class="reserved">this</span>.Radius * <span class="reserved">this</span>.Radius);
+        return (float)(Math.PI * this.Radius * this.Radius);
     }
 }
-</code></pre>
+```
 
 
 
@@ -122,36 +122,36 @@ DbContext クラスの OnModelCreating メソッドをオーバーライドす�
 
 table per hierarchy にしたい場合は以下のように書きます。
 
-<pre class="source" title="table per hierarchy なデータベース コンテキスト" lang="">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">TablePerHierarchyContext</span> : <span class="type">DbContext</span>
+```csharp
+public class TablePerHierarchyContext : DbContext
 {
-    <span class="reserved">public</span> <span class="type">DbSet</span>&lt;<span class="type">Shape</span>&gt; Shapes { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public DbSet<Shape> Shapes { get; set; }
 
-    <span class="reserved">protected</span> <span class="reserved">override</span> <span class="reserved">void</span> OnModelCreating(<span class="type">DbModelBuilder</span> modelBuilder)
+    protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
-        modelBuilder.Entity&lt;<span class="type">Shape</span>&gt;()
-            .Map&lt;<span class="type">Rectangle</span>&gt;(x =&gt; x.Requires(<span class="literal">"type"</span>).HasValue(<span class="literal">"R"</span>))
-            .Map&lt;<span class="type">Circle</span>&gt;(x =&gt; x.Requires(<span class="literal">"type"</span>).HasValue(<span class="literal">"C"</span>));
+        modelBuilder.Entity<Shape>()
+            .Map<Rectangle>(x => x.Requires("type").HasValue("R"))
+            .Map<Circle>(x => x.Requires("type").HasValue("C"));
     }
 }
-</code></pre>
+```
 
 
 一方、
 table per type にしたい場合は以下のように書きます。
 
-<pre class="source" title="table per type なデータベース コンテキスト" lang="">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">TablePerTypeContext</span> : <span class="type">DbContext</span>
+```csharp
+public class TablePerTypeContext : DbContext
 {
-    <span class="reserved">public</span> <span class="type">DbSet</span>&lt;<span class="type">Shape</span>&gt; Shapes { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public DbSet<Shape> Shapes { get; set; }
 
-    <span class="reserved">protected</span> <span class="reserved">override</span> <span class="reserved">void</span> OnModelCreating(<span class="type">DbModelBuilder</span> modelBuilder)
+    protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
-        modelBuilder.Entity&lt;<span class="type">Rectangle</span>&gt;().ToTable(<span class="literal">"Rectangle"</span>);
-        modelBuilder.Entity&lt;<span class="type">Circle</span>&gt;().ToTable(<span class="literal">"Circle"</span>);
+        modelBuilder.Entity<Rectangle>().ToTable("Rectangle");
+        modelBuilder.Entity<Circle>().ToTable("Circle");
     }
 }
-</code></pre>
+```
 
 
 
@@ -159,32 +159,32 @@ table per type にしたい場合は以下のように書きます。
 
 作成した2つのデータベース コンテキストを使って、サンプル データを作成してみましょう。
 
-<pre class="source" title="サンプル データの作成" lang="">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> Create()
+```csharp
+private static void Create()
 {
-    <span class="reserved">using</span> (<span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">TablePerHierarchyContext</span>())
+    using (var db = new TablePerHierarchyContext())
     {
         Create(db.Shapes);
         db.SaveChanges();
     }
 
-    <span class="comment">// ↑↓見ての通り、コンテキストが違う以外は全く一緒。</span>
+    // ↑↓見ての通り、コンテキストが違う以外は全く一緒。
 
-    <span class="reserved">using</span> (<span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">TablePerTypeContext</span>())
+    using (var db = new TablePerTypeContext())
     {
         Create(db.Shapes);
         db.SaveChanges();
     }
 }
 
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> Create(System.Data.Entity.<span class="type">DbSet</span>&lt;<span class="type">Shape</span>&gt; shapes)
+private static void Create(System.Data.Entity.DbSet<Shape> shapes)
 {
-    shapes.Add(<span class="reserved">new</span> <span class="type">Rectangle</span> { Width = 10, Height = 20 });
-    shapes.Add(<span class="reserved">new</span> <span class="type">Rectangle</span> { Width = 15, Height = 12 });
-    shapes.Add(<span class="reserved">new</span> <span class="type">Circle</span> { Radius = 1.5f });
-    shapes.Add(<span class="reserved">new</span> <span class="type">Circle</span> { Radius = 3 });
+    shapes.Add(new Rectangle { Width = 10, Height = 20 });
+    shapes.Add(new Rectangle { Width = 15, Height = 12 });
+    shapes.Add(new Circle { Radius = 1.5f });
+    shapes.Add(new Circle { Radius = 3 });
 }
-</code></pre>
+```
 
 
 TablePerHierarchyContext によって作られるデータベースは以下のようになります。
@@ -209,33 +209,33 @@ TablePerTypeContext によって作られるデータベースは以下のよう
 
 作成したデータを参照してみましょう。
 
-<pre class="source" title="データの参照" lang="">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> Query()
+```csharp
+private static void Query()
 {
-    <span class="reserved">using</span> (<span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">TablePerTypeContext</span>())
+    using (var db = new TablePerTypeContext())
     {
         Query(db.Shapes);
     }
 
-    <span class="comment">// ↑↓見ての通り、コンテキストが違う以外は全く一緒。</span>
+    // ↑↓見ての通り、コンテキストが違う以外は全く一緒。
 
-    <span class="reserved">using</span> (<span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">TablePerHierarchyContext</span>())
+    using (var db = new TablePerHierarchyContext())
     {
         Query(db.Shapes);
     }
 }
 
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> Query(System.Data.Entity.<span class="type">DbSet</span>&lt;<span class="type">Shape</span>&gt; shapes)
+private static void Query(System.Data.Entity.DbSet<Shape> shapes)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> shapes)
+    foreach (var x in shapes)
     {
-        <span class="type">Console</span>.WriteLine(<span class="literal">"{0}: {1}"</span>, x.GetType().Name, x.GetArea());
+        Console.WriteLine("{0}: {1}", x.GetType().Name, x.GetArea());
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 Table Per Hierarchy
 Rectangle: 200
 Rectangle: 180
@@ -246,7 +246,7 @@ Circle: 7.068583
 Circle: 28.27433
 Rectangle: 200
 Rectangle: 180
-</pre>
+```
 
 
 
@@ -296,151 +296,151 @@ discriminator にしたいプロパティの Column 属性に <code>IsDiscrimina
 例えば、図2のようにしたい場合には、以下のようなコードを書きます。
 
         
-<pre class="source" title="InheritanceMapping の例1" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Data.Linq;
-<span class="reserved">using</span> System.Data.Linq.Mapping;
+```csharp
+using System;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
 
-<span class="reserved">namespace</span> LinqToSqlSample
+namespace LinqToSqlSample
 {
-  <span class="reserved">public sealed class</span> <span class="type">ShapeDataContext</span> : <span class="type">DataContext</span>
+  public sealed class ShapeDataContext : DataContext
   {
-    <span class="reserved">public</span> ShapeDataContext(<span class="reserved">string</span> connection) : <span class="reserved">base</span>(connection) {}
+    public ShapeDataContext(string connection) : base(connection) {}
 
-    <span class="reserved">public</span> <span class="type">Table</span>&lt;<span class="type">Shape</span>&gt; Shapes;
+    public Table<Shape> Shapes;
   }
 
-  <span class="reserved">public enum</span> <span class="type">ShapeType</span> : <span class="reserved">int</span>
+  public enum ShapeType : int
   {
     Invalid,
     Rectangle,
     Circle,
   }
 
-  [<span class="type">Table</span>(Name = <span class="literal">"Shape"</span>)]
-  [<span class="type"><em>InheritanceMapping</em></span>(Code = <span class="literal">"0"</span>, Type = <span class="reserved">typeof</span>(<span class="type">Shape</span>), IsDefault = <span class="reserved">true</span>)]
-  [<span class="type"><em>InheritanceMapping</em></span>(Code = <span class="literal">"1"</span>, Type = <span class="reserved">typeof</span>(<span class="type">Rectangle</span>))]
-  [<span class="type"><em>InheritanceMapping</em></span>(Code = <span class="literal">"2"</span>, Type = <span class="reserved">typeof</span>(<span class="type">Circle</span>))]
-  <span class="reserved">public class</span> <span class="type">Shape</span>
+  [Table(Name = "Shape")]
+  [InheritanceMapping(Code = "0", Type = typeof(Shape), IsDefault = true)]
+  [InheritanceMapping(Code = "1", Type = typeof(Rectangle))]
+  [InheritanceMapping(Code = "2", Type = typeof(Circle))]
+  public class Shape
   {
-    [<span class="type">Column</span>(AutoSync = <span class="type">AutoSync</span>.OnInsert, IsDbGenerated = <span class="reserved">true</span>, IsPrimaryKey = <span class="reserved">true</span>)]
-    <span class="reserved">public int</span> ID;
+    [Column(AutoSync = AutoSync.OnInsert, IsDbGenerated = true, IsPrimaryKey = true)]
+    public int ID;
 
-    [<span class="type">Column</span>(<em>IsDiscriminator</em> = <span class="reserved">true</span>)]
-    <span class="reserved">public</span> <span class="type">ShapeType</span> Type;
+    [Column(IsDiscriminator = true)]
+    public ShapeType Type;
 
-    <span class="reserved">public virtual float</span> GetArea() { <span class="reserved">return</span> <span class="literal">0</span>; }
+    public virtual float GetArea() { return 0; }
   }
 
-  <span class="reserved">public class</span> <span class="type">Rectangle</span> : <span class="type">Shape</span>
+  public class Rectangle : Shape
   {
-    [<span class="type">Column</span>(CanBeNull = <span class="reserved">true</span>)]
-    <span class="reserved">public float</span> Width;
+    [Column(CanBeNull = true)]
+    public float Width;
 
-    [<span class="type">Column</span>(CanBeNull = <span class="reserved">true</span>)]
-    <span class="reserved">public float</span> Height;
+    [Column(CanBeNull = true)]
+    public float Height;
 
-    <span class="reserved">public override float</span> GetArea()
+    public override float GetArea()
     {
-      <span class="reserved">return this</span>.Width * <span class="reserved">this</span>.Height;
+      return this.Width * this.Height;
     }
   }
 
-  <span class="reserved">public class</span> <span class="type">Circle</span> : <span class="type">Shape</span>
+  public class Circle : Shape
   {
-    [<span class="type">Column</span>(CanBeNull = <span class="reserved">true</span>)]
-    <span class="reserved">public float</span> Radius;
+    [Column(CanBeNull = true)]
+    public float Radius;
 
-    <span class="reserved">public override float</span> GetArea()
+    public override float GetArea()
     {
-      <span class="reserved">return</span> (<span class="reserved">float</span>)(<span class="type">Math</span>.PI * <span class="reserved">this</span>.Radius * <span class="reserved">this</span>.Radius);
+      return (float)(Math.PI * this.Radius * this.Radius);
     }
   }
 }
-</code></pre>
+```
 
 
         
 あるいは、図3のようにしたい場合には、以下のようなコードを書きます。
 
         
-<pre class="source" title="InheritanceMapping の例2" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Data.Linq;
-<span class="reserved">using</span> System.Data.Linq.Mapping;
+```csharp
+using System;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
 
-<span class="reserved">namespace</span> LinqToSqlSample
+namespace LinqToSqlSample
 {
-  <span class="reserved">public sealed class</span> <span class="type">ShapeDataContext</span> : <span class="type">DataContext</span>
+  public sealed class ShapeDataContext : DataContext
   {
-    <span class="reserved">public</span> ShapeDataContext(<span class="reserved">string</span> connection) : <span class="reserved">base</span>(connection) {}
+    public ShapeDataContext(string connection) : base(connection) {}
 
-    <span class="reserved">public</span> <span class="type">Table</span>&lt;<span class="type">Shape</span>&gt; Shapes;
+    public Table<Shape> Shapes;
   }
 
-  <span class="reserved">public enum</span> <span class="type">ShapeType</span> : <span class="reserved">int</span>
+  public enum ShapeType : int
   {
     Invalid,
     Rectangle,
     Circle,
   }
 
-  [<span class="type">Table</span>(Name = <span class="literal">"Shape"</span>)]
-  [<span class="type"><em>InheritanceMapping</em></span>(Code = <span class="literal">"0"</span>, Type = <span class="reserved">typeof</span>(<span class="type">Shape</span>), IsDefault = <span class="reserved">true</span>)]
-  [<span class="type"><em>InheritanceMapping</em></span>(Code = <span class="literal">"1"</span>, Type = <span class="reserved">typeof</span>(<span class="type">Rectangle</span>))]
-  [<span class="type"><em>InheritanceMapping</em></span>(Code = <span class="literal">"2"</span>, Type = <span class="reserved">typeof</span>(<span class="type">Circle</span>))]
-  <span class="reserved">public class</span> <span class="type">Shape</span>
+  [Table(Name = "Shape")]
+  [InheritanceMapping(Code = "0", Type = typeof(Shape), IsDefault = true)]
+  [InheritanceMapping(Code = "1", Type = typeof(Rectangle))]
+  [InheritanceMapping(Code = "2", Type = typeof(Circle))]
+  public class Shape
   {
-    [<span class="type">Column</span>(AutoSync = <span class="type">AutoSync</span>.OnInsert, IsDbGenerated = <span class="reserved">true</span>, IsPrimaryKey = <span class="reserved">true</span>)]
-    <span class="reserved">public int</span> ID;
+    [Column(AutoSync = AutoSync.OnInsert, IsDbGenerated = true, IsPrimaryKey = true)]
+    public int ID;
 
-    [<span class="type">Column</span>(<em>IsDiscriminator</em> = <span class="reserved">true</span>)]
-    <span class="reserved">public</span> <span class="type">ShapeType</span> Type;
+    [Column(IsDiscriminator = true)]
+    public ShapeType Type;
 
-    [<span class="type">Column</span>(Name = <span class="literal">"a"</span>, CanBeNull = <span class="reserved">true</span>)]
-    <span class="reserved">protected float</span> a;
+    [Column(Name = "a", CanBeNull = true)]
+    protected float a;
 
-    [<span class="type">Column</span>(Name = <span class="literal">"b"</span>, CanBeNull = <span class="reserved">true</span>)]
-    <span class="reserved">protected float</span> b;
+    [Column(Name = "b", CanBeNull = true)]
+    protected float b;
 
-    <span class="reserved">public virtual float</span> GetArea() { <span class="reserved">return</span> <span class="literal">0</span>; }
+    public virtual float GetArea() { return 0; }
   }
 
-  <span class="reserved">public class</span> <span class="type">Rectangle</span> : <span class="type">Shape</span>
+  public class Rectangle : Shape
   {
-    <span class="reserved">public float</span> Width
+    public float Width
     {
-      <span class="reserved">get</span> { <span class="reserved">return this</span>.a; }
-      <span class="reserved">set</span> { <span class="reserved">this</span>.a = <span class="reserved">value</span>; }
+      get { return this.a; }
+      set { this.a = value; }
     }
 
-    <span class="reserved">public float</span> Height
+    public float Height
     {
-      <span class="reserved">get</span> { <span class="reserved">return this</span>.b; }
-      <span class="reserved">set</span> { <span class="reserved">this</span>.b = <span class="reserved">value</span>; }
+      get { return this.b; }
+      set { this.b = value; }
     }
 
-    <span class="reserved">public override float</span> GetArea()
+    public override float GetArea()
     {
-      <span class="reserved">return this</span>.Width * <span class="reserved">this</span>.Height;
+      return this.Width * this.Height;
     }
   }
 
-  <span class="reserved">public class</span> <span class="type">Circle</span> : <span class="type">Shape</span>
+  public class Circle : Shape
   {
-    <span class="reserved">public float</span> Radius
+    public float Radius
     {
-      <span class="reserved">get</span> { <span class="reserved">return this</span>.a; }
-      <span class="reserved">set</span> { <span class="reserved">this</span>.a = <span class="reserved">value</span>; }
+      get { return this.a; }
+      set { this.a = value; }
     }
 
-    <span class="reserved">public override float</span> GetArea()
+    public override float GetArea()
     {
-      <span class="reserved">return</span> (<span class="reserved">float</span>)(<span class="type">Math</span>.PI * <span class="reserved">this</span>.Radius * <span class="reserved">this</span>.Radius);
+      return (float)(Math.PI * this.Radius * this.Radius);
     }
   }
 }
-</code></pre>
+```
 
 
         
@@ -451,34 +451,34 @@ InheritanceMapping 属性の情報を元にどの派生クラスになるか決�
 以下のようなコードで動作確認ができます。
 
         
-<pre class="source" title="確認用のコード" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ShapeDataContext</span>(<span class="literal">"shape.sdf"</span>);
+```csharp
+var db = new ShapeDataContext("shape.sdf");
 
-<span class="reserved">if</span> (!db.DatabaseExists())
+if (!db.DatabaseExists())
 {
   db.CreateDatabase();
 
-  db.Shapes.InsertOnSubmit(<span class="reserved">new</span> <span class="type">Rectangle</span> { Width = <span class="literal">2</span>, Height = <span class="literal">3</span> });
-  db.Shapes.InsertOnSubmit(<span class="reserved">new</span> <span class="type">Circle</span> { Radius = <span class="literal">1</span> });
-  db.Shapes.InsertOnSubmit(<span class="reserved">new</span> <span class="type">Rectangle</span> { Width = <span class="literal">1</span>, Height = <span class="literal">2</span> });
-  db.Shapes.InsertOnSubmit(<span class="reserved">new</span> <span class="type">Circle</span> { Radius = <span class="literal">2</span> });
-  db.Shapes.InsertOnSubmit(<span class="reserved">new</span> <span class="type">Rectangle</span> { Width = <span class="literal">2</span>, Height = <span class="literal">1</span> });
-  db.Shapes.InsertOnSubmit(<span class="reserved">new</span> <span class="type">Circle</span> { Radius = <span class="literal">0.5F</span> });
-  db.Shapes.InsertOnSubmit(<span class="reserved">new</span> <span class="type">Rectangle</span> { Width = <span class="literal">0.5F</span>, Height = <span class="literal">0.5F</span> });
-  db.Shapes.InsertOnSubmit(<span class="reserved">new</span> <span class="type">Circle</span> { Radius = <span class="literal">0.1F</span> });
+  db.Shapes.InsertOnSubmit(new Rectangle { Width = 2, Height = 3 });
+  db.Shapes.InsertOnSubmit(new Circle { Radius = 1 });
+  db.Shapes.InsertOnSubmit(new Rectangle { Width = 1, Height = 2 });
+  db.Shapes.InsertOnSubmit(new Circle { Radius = 2 });
+  db.Shapes.InsertOnSubmit(new Rectangle { Width = 2, Height = 1 });
+  db.Shapes.InsertOnSubmit(new Circle { Radius = 0.5F });
+  db.Shapes.InsertOnSubmit(new Rectangle { Width = 0.5F, Height = 0.5F });
+  db.Shapes.InsertOnSubmit(new Circle { Radius = 0.1F });
 
   db.SubmitChanges();
 }
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> db.Shapes)
+foreach (var s in db.Shapes)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}, area = {1}\n"</span>, s.Type, s.GetArea());
+  Console.Write("{0}, area = {1}\n", s.Type, s.GetArea());
 }
-</code></pre>
+```
 
 
         
-<pre class="console" title="実行結果">
+```console
 Rectangle, area = 6
 Circle, area = 3.141593
 Rectangle, area = 2
@@ -487,7 +487,7 @@ Rectangle, area = 2
 Circle, area = 0.7853982
 Rectangle, area = 0.25
 Circle, area = 0.03141593
-</pre>
+```
 
 
     

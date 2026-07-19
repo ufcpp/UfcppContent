@@ -19,49 +19,49 @@ aliases: []
 
 配列や`List<T>`であれば以下のようにも書けます。
 
-<pre class="source" title="やむなく for ステートメント">
-<code><span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; length; i++)
+```csharp
+for (int i = 0; i < length; i++)
 {
-    <span class="reserved">var</span> item = array[i];
-    <span class="type">Console</span>.WriteLine(<span class="string">$"index: </span>{i}<span class="string">, value: </span>{item}<span class="string">"</span>);
+    var item = array[i];
+    Console.WriteLine($"index: {i}, value: {item}");
 }
-</code></pre>
+```
 
 `IEnumerable<T>`の場合にはこうは書けず、
 現状だと、以下のようにループの外側に1個変数を作る必要があったりします。
 
-<pre class="source" title="やむなく foreach ループの外に変数を置く">
-<code><span class="reserved">var</span> i = 0;
-<span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> items)
+```csharp
+var i = 0;
+foreach (var item in items)
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">$"index: </span>{i}<span class="string">, value: </span>{item}<span class="string">"</span>);
+    Console.WriteLine($"index: {i}, value: {item}");
     i++;
 }
-</code></pre>
+```
 
 ループの外側に変数`i`が漏れるのが嫌なのと、
 あと、`continue`が絡むと`i++`するのが大変になったりします。
 
 `Select`のオーバーロードの1つを使って、以下のような書き方も一応できます。
 
-<pre class="source" title="Select のオーバーロードの1つに、インデックスを拾えるものがある">
-<code><span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> items.Select((item, index) =&gt; <span class="reserved">new</span> { item, index }))
+```csharp
+foreach (var x in items.Select((item, index) => new { item, index }))
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">$"index: </span>{x.index}<span class="string">, value: </span>{x.item}<span class="string">"</span>);
+    Console.WriteLine($"index: {x.index}, value: {x.item}");
 }
-</code></pre>
+```
 
 ただ、これだと無駄にオブジェクトが`new`されます(匿名型は参照型なのでヒープ確保が発生します)。ループの中でのヒープ確保はできれば避けたい負担です。
 それに、`x.item`みたいな書き方がちょっと嫌な感じです。
 
 [C# 7](../../../../study/csharp/cheatsheet/ap_ver7.md)であれば、[タプル](../../../../study/csharp/datatype/tuples.md)を使うのがいいかもしれません。ついでに、[分解構文](../../../../study/csharp/datatype/deconstruction.md)も使えば多少すっきりします。
 
-<pre class="source" title="[C# 7] タプルがあれば">
-<code><span class="reserved">foreach</span> (<span class="reserved">var</span> (item, index) <span class="reserved">in</span> items.Select((item, index) =&gt; (item, index)))
+```csharp
+foreach (var (item, index) in items.Select((item, index) => (item, index)))
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">$"index: </span>{index}<span class="string">, value: </span>{item}<span class="string">"</span>);
+    Console.WriteLine($"index: {index}, value: {item}");
 }
-</code></pre>
+```
 
 タプルは値型なので、いくらかヒープ確保が減ります。
 また、[分解](../../../../study/csharp/datatype/deconstruction.md)があるおかげで`x.`とか書く必要がなくなりました。
@@ -70,36 +70,36 @@ aliases: []
 `(item, index) => (item, index)`とか毎度書きたくないです。
 拡張メソッドを用意しておきたいところ。
 
-<pre class="source" title="Indexed 拡張メソッド">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">TupleEnumerable</span>
+```csharp
+public static partial class TupleEnumerable
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;(<span class="type">T</span> item, <span class="reserved">int</span> index)&gt; Indexed&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt; source)
+    public static IEnumerable<(T item, int index)> Indexed<T>(this IEnumerable<T> source)
     {
-        <span class="reserved">if</span> (source == <span class="reserved">null</span>) <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(source));
+        if (source == null) throw new ArgumentNullException(nameof(source));
 
-        <span class="type">IEnumerable</span>&lt;(<span class="type">T</span> item, <span class="reserved">int</span> index)&gt; impl()
+        IEnumerable<(T item, int index)> impl()
         {
-            <span class="reserved">var</span> i = 0;
-            <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> source)
+            var i = 0;
+            foreach (var item in source)
             {
-                <span class="reserved">yield</span> <span class="reserved">return</span> (item, i);
+                yield return (item, i);
                 ++i;
             }
         }
 
-        <span class="reserved">return</span> impl();
+        return impl();
     }
 }
-</code></pre>
+```
 
 これで、以下のように書けます。
 
-<pre class="source" title="Indexed拡張メソッドの使い方">
-<code><span class="reserved">foreach</span> (<span class="reserved">var</span> (item, index) <span class="reserved">in</span> items.Indexed())
+```csharp
+foreach (var (item, index) in items.Indexed())
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">$"index: </span>{index}<span class="string">, value: </span>{item}<span class="string">"</span>);
+    Console.WriteLine($"index: {index}, value: {item}");
 }
-</code></pre>
+```
 
 これなら、まあ、悪くはなさそうです。
 こういうメソッド、そこそこ使うことがありそう。

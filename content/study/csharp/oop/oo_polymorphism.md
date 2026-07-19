@@ -51,24 +51,24 @@ aliases:
 このとき、変数の型を<strong id="statictype" class="keyword">静的な型</strong>といい、
 実際に格納されているインスタンスの型を<strong id="dynamictype" class="keyword">動的な型</strong>といいます。
 
-<pre class="source" title="派生クラスのインスタンスを基底クラスの変数に格納" lang="">
-<code><span class="reserved">class</span> Base{}
-<span class="reserved">class</span> Derived : Base{}
+```csharp
+class Base{}
+class Derived : Base{}
 
-<span class="reserved">class</span> DynamicTypeTest
+class DynamicTypeTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">// 変数の型
+    // 変数の型
     // ｜         実際に格納するインスタンスの型
     // ｜         ｜
-    // ↓         ↓              静的な型, 動的な型</span>
-    Base    a = <span class="reserved">new</span> Base();    <span class="comment">// Base    , Base</span>
-    Base    b = <span class="reserved">new</span> Derived(); <span class="comment">// Base    , Derived</span>
-    Derived c = <span class="reserved">new</span> Derived(); <span class="comment">// Derived , Derived</span>
+    // ↓         ↓              静的な型, 動的な型
+    Base    a = new Base();    // Base    , Base
+    Base    b = new Derived(); // Base    , Derived
+    Derived c = new Derived(); // Derived , Derived
   }
 }
-</code></pre>
+```
 
 
 ここでいう“静的”とはコンパイル時に型が確定するという意味です。
@@ -79,9 +79,9 @@ aliases:
 静的な型の情報は以下のように <strong id="typeof" class="keyword">typeof 演算子</strong>を用いて取得することが出来ます。
 typeof 演算子は <code>System.Type</code> というクラスのインスタンスを返します。
 
-<pre class="source" title="静的型情報 typeof" lang="">
-<code><span class="reserved">typeof</span>(<span class="input">クラス名</span>)
-</code></pre>
+```csharp
+typeof(クラス名)
+```
 
 
 逆に、“動的”とはコンパイル時には型が確定せず、
@@ -92,42 +92,42 @@ typeof 演算子は <code>System.Type</code> というクラスのインスタ�
 
 動的な型の情報は以下のように <code>GetType</code> メソッドを用いて取得します。
 
-<pre class="source" title="動的型情報 GetType" lang="">
-<code><span class="input">変数名</span>.GetType()
-</code></pre>
+```csharp
+変数名.GetType()
+```
 
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-<pre class="source" title="動的型情報のサンプル" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Base{}
-<span class="reserved">class</span> Derived : Base{}
+class Base{}
+class Derived : Base{}
 
-<span class="reserved">class</span> DynamicTypeTest
+class DynamicTypeTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    ShowDynamicType(<span class="reserved">new</span> Base());
-    ShowDynamicType(<span class="reserved">new</span> Derived());
+    ShowDynamicType(new Base());
+    ShowDynamicType(new Derived());
   }
 
-  <span class="comment">// Base 型の変数 b に格納されているインスタンスの動的な型の名前を表示する。</span>
-  <span class="reserved">static void</span> ShowDynamicType(Base b)
+  // Base 型の変数 b に格納されているインスタンスの動的な型の名前を表示する。
+  static void ShowDynamicType(Base b)
   {
     Type t = b.GetType();
-    Console.Write(t.Name + <span class="literal">"\n"</span>);
+    Console.Write(t.Name + "\n");
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 Base
 Derived
-</pre>
+```
 
 
 
@@ -142,32 +142,32 @@ Derived
 ところが、ダウンキャストの場合は必ずしも安全には行うことが出来ません。
 以下に危険なダウンキャストの例を挙げます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> Base{}
-<span class="reserved">class</span> Derived1 : Base{}
-<span class="reserved">class</span> Derived2 : Base{}
+```csharp
+class Base{}
+class Derived1 : Base{}
+class Derived2 : Base{}
 
-<span class="reserved">class</span> DowncastTest
+class DowncastTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Derived1 d1 = <span class="reserved">new</span> Derived1(); <span class="comment">// 当然、合法。</span>
-    Derived2 d2 = <span class="reserved">new</span> Derived2(); <span class="comment">// 同じく、合法。</span>
+    Derived1 d1 = new Derived1(); // 当然、合法。
+    Derived2 d2 = new Derived2(); // 同じく、合法。
 
     Base b;
     Derived1 d;
 
-    b = d1;          <span class="comment">// アップキャストは常に合法。明示的なキャスト不要。</span>
-    d = (Derived1)b; <span class="comment">// ダウンキャストは明示的なキャストが必要。
-    // Derived1 の変数に Derived1 のインスタンスを格納しているので、これはOK。</span>
+    b = d1;          // アップキャストは常に合法。明示的なキャスト不要。
+    d = (Derived1)b; // ダウンキャストは明示的なキャストが必要。
+    // Derived1 の変数に Derived1 のインスタンスを格納しているので、これはOK。
 
-    b = d2;          <span class="comment">// 同じ事を今度は d2 の方で繰り返す。</span>
+    b = d2;          // 同じ事を今度は d2 の方で繰り返す。
     d = (Derived1)b;
-    <span class="comment">// Derived1 の変数に Derived2 のインスタンスを格納しているので、これは問題あり。
-    // コンパイルは通るが、実行時エラーになる。</span>
+    // Derived1 の変数に Derived2 のインスタンスを格納しているので、これは問題あり。
+    // コンパイルは通るが、実行時エラーになる。
   }
 }
-</code></pre>
+```
 
 
 このプログラムを実行すると <code>InvalidCastException</code> という例外が発生します。
@@ -178,85 +178,85 @@ Derived
 
 is 演算子はキャスト可能かどうかを調べるための演算子で以下のようにして使用します。
 
-<pre class="source" title="is 演算子" lang="">
-<code><span class="input">変数名</span> <span class="reserved">is</span> <span class="input">型名</span>
-</code></pre>
+```csharp
+変数名 is 型名
+```
 
 
 is 演算子を適用した結果は bool 型になり、
 左辺の変数が右辺の型にキャスト可能ならば true を、不能ならば false を返します。
 
-<pre class="source" title="is 演算子の例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Base{}
-<span class="reserved">class</span> Derived1 : Base{}
-<span class="reserved">class</span> Derived2 : Base{}
+class Base{}
+class Derived1 : Base{}
+class Derived2 : Base{}
 
-<span class="reserved">class</span> DowncastTest
+class DowncastTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
     Base b;
 
-    b = <span class="reserved">new</span> Derived1();
-    <span class="reserved">if</span>(<em>b <span class="reserved">is</span> Derived1</em>)
-      Console.Write(<span class="literal">"b = new Derived1();\n"</span>);
+    b = new Derived1();
+    if(b is Derived1)
+      Console.Write("b = new Derived1();\n");
 
-    b = <span class="reserved">new</span> Derived2();
-    <span class="reserved">if</span>(<em>b <span class="reserved">is</span> Derived1</em>)
-      Console.Write(<span class="literal">"b = new Derived2();\n"</span>);
+    b = new Derived2();
+    if(b is Derived1)
+      Console.Write("b = new Derived2();\n");
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 b = new Derived1();
-</pre>
+```
 
 
 as 演算子はキャストと同じような働きをする演算子で、以下のようにして使用します。
 
-<pre class="source" title="as 演算子" lang="">
-<code><span class="input">変換先の変数</span> = <span class="input">変換元の変数</span> <span class="reserved">as</span> <span class="input">型名</span>
-</code></pre>
+```csharp
+変換先の変数 = 変換元の変数 as 型名
+```
 
 
 キャストとの違いは、
 もし型変換が出来ない場合には結果が null になるということです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Base{}
-<span class="reserved">class</span> Derived1 : Base{}
-<span class="reserved">class</span> Derived2 : Base{}
+class Base{}
+class Derived1 : Base{}
+class Derived2 : Base{}
 
-<span class="reserved">class</span> DowncastTest
+class DowncastTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
     Base b;
     Derived1 d;
 
-    b = <span class="reserved">new</span> Derived1();
-    d = <em>b <span class="reserved">as</span> Derived1</em>;
-    <span class="reserved">if</span>(d != <span class="reserved">null</span>)
-      Console.Write(<span class="literal">"b = new Derived1();\n"</span>);
+    b = new Derived1();
+    d = b as Derived1;
+    if(d != null)
+      Console.Write("b = new Derived1();\n");
 
-    b = <span class="reserved">new</span> Derived2();
-    d = <em>b <span class="reserved">as</span> Derived1</em>;
-    <span class="reserved">if</span>(d != <span class="reserved">null</span>)
-      Console.Write(<span class="literal">"b = new Derived2();\n"</span>);
+    b = new Derived2();
+    d = b as Derived1;
+    if(d != null)
+      Console.Write("b = new Derived2();\n");
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 b = new Derived1();
-</pre>
+```
 
 
 ### <a id="sec-generated-title-6"></a> <a id="type-switch"></a>is演算子の拡張
@@ -265,24 +265,24 @@ b = new Derived1();
 
 C# 7では、`is`演算子で以下のような書き方ができるようになりました。
 
-<pre class="source" title="is 演算子の拡張" lang="">
-<code><span class="input">変数名</span> <span class="reserved">is</span> <span class="input">型名</span> <span class="input">新しい変数名</span>
-</code></pre>
+```csharp
+変数名 is 型名 新しい変数名
+```
 
 演算子の結果はこれまで通り`bool`で、左辺の変数の中身が右辺の型にキャストできるなら`true`、できないなら`false`を返します。
 そして、キャストできるとき、そのキャスト結果が新しい変数に入ります。
 例えば、以下のような書き方ができます。
 
-<pre class="source" title="C# 7の新しいis演算子の例">
-<code><span class="reserved">static</span> <span class="reserved">void</span> TypeSwitch(<span class="reserved">object</span> obj)
+```csharp
+static void TypeSwitch(object obj)
 {
-    <span class="comment">// C# 7での新しい書き方</span>
-    <span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">string</span> s)
+    // C# 7での新しい書き方
+    if (obj is string s)
     {
-        <span class="type">Console</span>.WriteLine(<span class="string">"string #"</span> + s.Length);
+        Console.WriteLine("string #" + s.Length);
     }
 }
-</code></pre>
+```
 
 詳しくは、「[型スイッチ](../datatype/typeswitch.md#is)」で説明します。
 
@@ -292,41 +292,41 @@ C# では、何も指定しない通常のメソッド呼び出し時、
 基底クラスと派生クラスに同名のメソッドがある場合、
 どちらのメソッドが呼び出されるかは静的な型によって決定されます。
 
-<pre class="source" title="静的型情報に基づいたメソッドが呼び出し" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Base
+class Base
 {
-  <span class="reserved">public void</span> Test(){Console.Write(<span class="literal">"Base.Test()\n"</span>);}
+  public void Test(){Console.Write("Base.Test()\n");}
 }
 
-<span class="reserved">class</span> Derived : Base
+class Derived : Base
 {
-  <span class="reserved">public new void</span> Test(){Console.Write(<span class="literal">"Derived.Test()\n"</span>);}
+  public new void Test(){Console.Write("Derived.Test()\n");}
 }
 
-<span class="reserved">class</span> NonVirtualTest
+class NonVirtualTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Base    a = <span class="reserved">new</span> Base();
-    a.Test(); <span class="comment">// Base の Test が呼ばれる。</span>
+    Base    a = new Base();
+    a.Test(); // Base の Test が呼ばれる。
 
-    Base    b = <span class="reserved">new</span> Derived();
-    b.Test(); <span class="comment">// Base の Test が呼ばれる。</span>
+    Base    b = new Derived();
+    b.Test(); // Base の Test が呼ばれる。
 
-    Derived c = <span class="reserved">new</span> Derived();
-    c.Test(); <span class="comment">// Derived の Test が呼ばれる。</span>
+    Derived c = new Derived();
+    c.Test(); // Derived の Test が呼ばれる。
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 Base.Test()
 Base.Test()
 Derived.Test()
-</pre>
+```
 
 
 しかし、動的な型に基づいて呼び出されるメソッドを決定したい場合があります。
@@ -335,41 +335,41 @@ Derived.Test()
 以下のように、
 メソッドに <em>virtual</em> という修飾子を付けます。
 
-<pre class="source" title="動的型情報に基づいたメソッドが呼び出し" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Base
+class Base
 {
-  <span class="reserved">public <em>virtual</em> void</span> Test(){Console.Write(<span class="literal">"Base.Test()\n"</span>);}
+  public virtual void Test(){Console.Write("Base.Test()\n");}
 }
 
-<span class="reserved">class</span> Derived : Base
+class Derived : Base
 {
-  <span class="reserved">public <em>override</em> void</span> Test(){Console.Write(<span class="literal">"Derived.Test()\n"</span>);}
+  public override void Test(){Console.Write("Derived.Test()\n");}
 }
 
-<span class="reserved">class</span> VirtualTest
+class VirtualTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Base    a = <span class="reserved">new</span> Base();
-    a.Test(); <span class="comment">// Base の Test が呼ばれる。</span>
+    Base    a = new Base();
+    a.Test(); // Base の Test が呼ばれる。
 
-    Base    b = <span class="reserved">new</span> Derived();
-    b.Test(); <span class="comment">// Derived の Test が呼ばれる。</span>
+    Base    b = new Derived();
+    b.Test(); // Derived の Test が呼ばれる。
 
-    Derived c = <span class="reserved">new</span> Derived();
-    c.Test(); <span class="comment">// Derived の Test が呼ばれる。</span>
+    Derived c = new Derived();
+    c.Test(); // Derived の Test が呼ばれる。
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 Base.Test()
 Derived.Test()
 Derived.Test()
-</pre>
+```
 
 
 このような virtual 修飾子をつけたメソッドのことを<strong id="virtual_method" class="keyword">仮想メソッド</strong>（virtual method）と呼びます。
@@ -401,122 +401,122 @@ Derived.Test()
 年齢を取得するプロパティ <code>Age</code> は、virtual にしておいて、
 とりあえず意味のない値を返しておきます。
 
-<pre class="source" title="人間の基底クラス" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">protected string</span> name;
-  <span class="reserved">protected int</span> age;
+  protected string name;
+  protected int age;
 
-  <span class="reserved">public</span> Person(<span class="reserved">string</span> name, <span class="reserved">int</span> age)
+  public Person(string name, int age)
   {
-    <span class="reserved">this</span>.name = name;
-    <span class="reserved">this</span>.age  = age;
+    this.name = name;
+    this.age  = age;
   }
 
-  <span class="reserved">public string</span> Name{<span class="reserved">get</span>{<span class="reserved">return this</span>.name;}}
-  <span class="reserved">public virtual int</span> Age{<span class="reserved">get</span>{<span class="reserved">return</span> 0;}} <span class="comment">// 基底クラスでは特に意味のない値を返す。</span>
+  public string Name{get{return this.name;}}
+  public virtual int Age{get{return 0;}} // 基底クラスでは特に意味のない値を返す。
 }
-</code></pre>
+```
 
 
 次に正直者を表すクラス(<code>Truepenny</code>)を定義します。
 <code>Truepenny</code> の <code>Age</code> プロパティでは実年齢をそのまま返します。
 
-<pre class="source" title="正直者クラス" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 正直者。
 /// 年齢を偽らない。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Truepenny : Person
+/// </summary>
+class Truepenny : Person
 {
-  <span class="reserved">public</span> Truepenny(<span class="reserved">string</span> name, <span class="reserved">int</span> age) : <span class="reserved">base</span>(name, age){}
+  public Truepenny(string name, int age) : base(name, age){}
 
-  <span class="reserved">public override int</span> Age
+  public override int Age
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="comment">// 実年齢をそのまま返す。</span>
-      <span class="reserved">return this</span>.age;
+      // 実年齢をそのまま返す。
+      return this.age;
     }
   }
 }
-</code></pre>
+```
 
 
 次は嘘つき(<code>Liar</code>)クラスの定義です。
 <code>Liar</code> の <code>Age</code> プロパティでは、
 歳を取るにつれ大幅に鯖を読んだ値を返します。
 
-<pre class="source" title="嘘つきクラス" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 嘘つき。
 /// 鯖を読む(しかも、歳取るにつれ大幅に)。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Liar : Person
+/// </summary>
+class Liar : Person
 {
-  <span class="reserved">public</span> Liar(<span class="reserved">string</span> name, <span class="reserved">int</span> age) : <span class="reserved">base</span>(name, age){}
+  public Liar(string name, int age) : base(name, age){}
 
-  <span class="reserved">public override int</span> Age
+  public override int Age
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="comment">// 年齢を偽る。</span>
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 20) <span class="reserved">return this</span>.age;
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 25) <span class="reserved">return this</span>.age - 1;
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 30) <span class="reserved">return this</span>.age - 2;
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 35) <span class="reserved">return this</span>.age - 3;
-      <span class="reserved">if</span>(<span class="reserved">this</span>.age &lt; 40) <span class="reserved">return this</span>.age - 4;
-      <span class="reserved">return this</span>.age - 5;
+      // 年齢を偽る。
+      if(this.age < 20) return this.age;
+      if(this.age < 25) return this.age - 1;
+      if(this.age < 30) return this.age - 2;
+      if(this.age < 35) return this.age - 3;
+      if(this.age < 40) return this.age - 4;
+      return this.age - 5;
     }
   }
 }
-</code></pre>
+```
 
 
 次はいい加減な人(<code>Equivocator</code>)クラスの定義です。
 <code>Equivocator</code> の <code>Age</code> プロパティでは、
 実年齢を四捨五入した値を返します。
 
-<pre class="source" title="いい加減な人のクラス" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// いいかげん。
 /// 大体の歳しか答えない。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Equivocator : Person
+/// </summary>
+class Equivocator : Person
 {
-  <span class="reserved">public</span> Equivocator(<span class="reserved">string</span> name, <span class="reserved">int</span> age) : <span class="reserved">base</span>(name, age){}
+  public Equivocator(string name, int age) : base(name, age){}
 
-  <span class="reserved">public override int</span> Age
+  public override int Age
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="comment">// 年齢を四捨五入した値を返す。</span>
-      <span class="reserved">return</span> ((<span class="reserved">this</span>.age + 5) / 10) * 10;
+      // 年齢を四捨五入した値を返す。
+      return ((this.age + 5) / 10) * 10;
     }
   }
 }
-</code></pre>
+```
 
 
 おまけで永遠の17歳。
 
-<pre class="source" title="永遠の17歳" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// いくつになったって気持ちは17歳。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Seventeenist : Person
+/// </summary>
+class Seventeenist : Person
 {
-  <span class="reserved">public</span> Seventeenist(<span class="reserved">string</span> name, <span class="reserved">int</span> age) : <span class="reserved">base</span>(name, age) { }
+  public Seventeenist(string name, int age) : base(name, age) { }
 
-  <span class="reserved">public override int</span> Age
+  public override int Age
   {
-    <span class="reserved">get</span>
+    get
     {
-      <span class="reserved">return</span> 17;
+      return 17;
     }
   }
 }
-</code></pre>
+```
 
 
 最後に、これらのクラスを利用したプログラムを作ってみます。
@@ -524,32 +524,32 @@ Derived.Test()
 その人の自己紹介文を画面に表示するメソッドを用意し、
 正直者、嘘つき、いい加減な人のそれぞれに自己紹介をしてもらいます。
 
-<pre class="source" title="Person クラスとその派生クラスの利用例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> PolymorphismTest
+class PolymorphismTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Introduce(<span class="reserved">new</span> Truepenny   (<span class="literal">"Ky Kiske"</span>  , 24)); <span class="comment">// 正直者のカイさん24歳。</span>
-    Introduce(<span class="reserved">new</span> Liar        (<span class="literal">"Axl Low"</span>   , 24)); <span class="comment">// 嘘つきのアクセルさん24歳。</span>
-    Introduce(<span class="reserved">new</span> Equivocator (<span class="literal">"Sol Badguy"</span>, 24)); <span class="comment">// いい加減なソルさん24歳。</span>
-    Introduce(<span class="reserved">new</span> Seventeenist(<span class="literal">"Ino"</span>       , 24)); <span class="comment">// 時空を超えるイノさん24歳。</span>
+    Introduce(new Truepenny   ("Ky Kiske"  , 24)); // 正直者のカイさん24歳。
+    Introduce(new Liar        ("Axl Low"   , 24)); // 嘘つきのアクセルさん24歳。
+    Introduce(new Equivocator ("Sol Badguy", 24)); // いい加減なソルさん24歳。
+    Introduce(new Seventeenist("Ino"       , 24)); // 時空を超えるイノさん24歳。
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// p さんの自己紹介をする。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static void</span> Introduce(Person p)
+  /// </summary>
+  static void Introduce(Person p)
   {
-    Console.Write(<span class="literal">"My name is {0}.\n"</span>, p.Name);
-    Console.Write(<span class="literal">"I'm {0} years old.\n\n"</span>, p.Age);
+    Console.Write("My name is {0}.\n", p.Name);
+    Console.Write("I'm {0} years old.\n\n", p.Age);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 My name is Ky Kiske.
 I'm 24 years old.
 
@@ -561,7 +561,7 @@ I'm 20 years old.
 
 My name is Ino.
 I'm 17 years old.
-</pre>
+```
 
 
 正直者、嘘つき、いい加減な人はいずれも実年齢24歳にしてあります。
@@ -599,35 +599,35 @@ C# 9.0 (.NET 5.0)から、仮想メソッドの戻り値に共変性が認めら
 
 例えば以下のようなコードを書けるようになります。
 
-<pre class="source" title="仮想メソッド戻り値の共変性">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">Base</span> <span class="method">Clone</span>() =&gt; <span class="reserved">new</span> <span class="type">Base</span>();
+    public virtual Base Clone() => new Base();
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// これの戻り値が Base じゃなくてもよくなった。</span>
-    <span class="comment">// Derived は常に Base に安全に変換可能なので、 Base Clone() の override として Derived Clone() を使える。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="type">Derived</span> <span class="method">Clone</span>() =&gt; <span class="reserved">new</span> <span class="type">Derived</span>();
+    // これの戻り値が Base じゃなくてもよくなった。
+    // Derived は常に Base に安全に変換可能なので、 Base Clone() の override として Derived Clone() を使える。
+    public override Derived Clone() => new Derived();
 }
-</code></pre>
+```
 
 get のみのプロパティでも同様に、共変なオーバーライドができます。
 
-<pre class="source" title="get のみのプロパティの共変戻り値">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">Base</span> P { <span class="reserved">get</span>; }
+    public virtual Base P { get; }
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// get のみの時は OK。</span>
-    <span class="comment">// set を書いちゃうとコンパイル エラー。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="type">Derived</span> P { <span class="reserved">get</span>; }
+    // get のみの時は OK。
+    // set を書いちゃうとコンパイル エラー。
+    public override Derived P { get; }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-11"></a> <a id="runtime-feature">ランタイム側の修正</a>
 
@@ -649,49 +649,49 @@ C# 9.0 時点では共変戻り値を使えるのはクラスの仮想メソッ�
 
 例えば以下のようなコードはおそらく書きたい意図とは異なる挙動になると思います。
 
-<pre class="source" title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例1">
-<code><span class="reserved">interface</span> <span class="type">IA</span>
+```csharp
+interface IA
 {
-    <span class="type">IA</span> <span class="method">M</span>();
+    IA M();
 }
  
-<span class="reserved">interface</span> <span class="type">IB</span> : <span class="type">IA</span>
+interface IB : IA
 {
-    <span class="comment">// 以下の行は override 扱いを受けない。</span>
-    <span class="comment">// 「IA.M を隠してしまう(別メソッド扱いされる)」という警告が出る。</span>
-    <span class="type">IB</span> <span class="method"><span class="warning">M</span></span>();
+    // 以下の行は override 扱いを受けない。
+    // 「IA.M を隠してしまう(別メソッド扱いされる)」という警告が出る。
+    IB M();
 }
-</code></pre>
+```
 
 以下のようなコードはコンパイル エラーになります。
 
-<pre class="source" title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例2">
-<code><span class="reserved">interface</span> <span class="type">IA</span>
+```csharp
+interface IA
 {
-    <span class="reserved">public</span> <span class="type">IA</span> <span class="method">M</span>() =&gt; <span class="reserved">null</span>;
+    public IA M() => null;
 }
  
-<span class="reserved">interface</span> <span class="type">IB</span> : <span class="type">IA</span>
+interface IB : IA
 {
-    <span class="comment">// コンパイル エラー(IA.M と一致しない)</span>
-    <span class="type">IB</span> <span class="type">IA</span>.<span class="method"><span class="error">M</span></span>() =&gt; <span class="reserved">null</span>;
+    // コンパイル エラー(IA.M と一致しない)
+    IB IA.M() => null;
 }
-</code></pre>
+```
 
 以下のような実装クラスもコンパイル エラーになります。
 
-<pre class="source" title="インターフェイスの共変戻り値は C# 9.0 時点ではないという例3">
-<code><span class="reserved">interface</span> <span class="type">IA</span>
+```csharp
+interface IA
 {
-    <span class="type">IA</span> <span class="method">M</span>();
+    IA M();
 }
  
-<span class="reserved">class</span> <span class="type">ImpleA</span> : <span class="type"><span class="error">IA</span></span>
+class ImpleA : IA
 {
-    <span class="comment">// コンパイル エラー(IA.M を実装していない)</span>
-    <span class="reserved">public</span> <span class="type">ImpleA</span> <span class="method">M</span>() =&gt; <span class="reserved">this</span>;
+    // コンパイル エラー(IA.M を実装していない)
+    public ImpleA M() => this;
 }
-</code></pre>
+```
 ## <a id="exercise"></a>演習問題
 
 ### <a id="exercise-polim1"></a>問題 1
@@ -702,330 +702,330 @@ C# 9.0 時点では共変戻り値を使えるのはクラスの仮想メソッ�
 
 まず、三角形や円等の共通の基底クラスとなる <code>Shape</code> クラスを以下のように作成。
 
-<pre class="source" title="Shape" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の基底クラス。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Shape
+/// </summary>
+class Shape
 {
-  <span class="reserved">virtual public double</span> GetArea() { <span class="reserved">return</span> 0; }
-  <span class="reserved">virtual public double</span> GetPerimeter() { <span class="reserved">return</span> 0; }
+  virtual public double GetArea() { return 0; }
+  virtual public double GetPerimeter() { return 0; }
 }
-</code></pre>
+```
 
 
 そして、<code>Shape</code> クラスを継承して、
 三角形 <code>Triangle</code> クラスと
 円 <code>Circle</code> クラスを作成。
 
-<pre class="source" title="Triangle" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 2次元空間上の三角形をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle : Shape
-</code></pre>
+/// </summary>
+class Triangle : Shape
+```
 
 
-<pre class="source" title="Circle" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 2次元空間上の円をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Circle : Shape
-</code></pre>
+/// </summary>
+class Circle : Shape
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Shape、Triangle、Circle" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">double</span> y; <span class="comment">// y 座標</span>
+  double x; // x 座標
+  double y; // y 座標
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 座標値 (x, y) を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="x"&gt;x 座標値&lt;/param&gt;
-  /// &lt;param name="y"&gt;y 座標値&lt;/param&gt;</span>
-  <span class="reserved">public</span> Point(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  /// </summary>
+  /// <param name="x">x 座標値</param>
+  /// <param name="y">y 座標値</param>
+  public Point(double x, double y)
   {
-    <span class="reserved">this</span>.x = x;
-    <span class="reserved">this</span>.y = y;
+    this.x = x;
+    this.y = y;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// x 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> X
+  /// </summary>
+  public double X
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    get { return this.x; }
+    set { this.x = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// y 座標。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Y
+  /// </summary>
+  public double Y
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.y; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.y = value; }
+    get { return this.y; }
+    set { this.y = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 演算子
+  #endregion
+  #region 演算子
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ベクトル和
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;和&lt;/returns&gt;</span>
-  <span class="reserved">public static</span> Point <span class="reserved">operator</span> +(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>和</returns>
+  public static Point operator +(Point a, Point b)
   {
-    <span class="reserved">return new</span> Point(a.x + b.x, a.y + b.y);
+    return new Point(a.x + b.x, a.y + b.y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// ベクトル差
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;和&lt;/returns&gt;</span>
-  <span class="reserved">public static</span> Point <span class="reserved">operator</span> -(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>和</returns>
+  public static Point operator -(Point a, Point b)
   {
-    <span class="reserved">return new</span> Point(a.x - b.x, a.y - b.y);
+    return new Point(a.x - b.x, a.y - b.y);
   }
 
-  <span class="reserved">#endregion</span>
+  #endregion
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// A-B 間の距離を求める。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;点B&lt;/param&gt;
-  /// &lt;returns&gt;距離AB&lt;/returns&gt;</span>
-  <span class="reserved">public static double</span> GetDistance(Point a, Point b)
+  /// </summary>
+  /// <param name="a">点A</param>
+  /// <param name="b">点B</param>
+  /// <returns>距離AB</returns>
+  public static double GetDistance(Point a, Point b)
   {
-    <span class="reserved">double</span> x = a.x - b.x;
-    <span class="reserved">double</span> y = a.y - b.y;
-    <span class="reserved">return</span> Math.Sqrt(x * x + y * y);
+    double x = a.x - b.x;
+    double y = a.y - b.y;
+    return Math.Sqrt(x * x + y * y);
   }
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の図形を表すクラス。
 /// 三角形や円等の共通の基底クラス。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Shape
+/// </summary>
+class Shape
 {
-  <span class="reserved">virtual public double</span> GetArea() { <span class="reserved">return</span> 0; }
-  <span class="reserved">virtual public double</span> GetPerimeter() { <span class="reserved">return</span> 0; }
+  virtual public double GetArea() { return 0; }
+  virtual public double GetPerimeter() { return 0; }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の円をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Circle : Shape
+/// </summary>
+class Circle : Shape
 {
   Point center;
-  <span class="reserved">double</span> radius;
+  double radius;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 半径を指定して初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="r"&gt;半径。&lt;/param&gt;</span>
-  <span class="reserved">public</span> Circle(Point center, <span class="reserved">double</span> r)
+  /// </summary>
+  /// <param name="r">半径。</param>
+  public Circle(Point center, double r)
   {
-    <span class="reserved">this</span>.center = center;
-    <span class="reserved">this</span>.radius = r;
+    this.center = center;
+    this.radius = r;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の中心。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point Center
+  /// </summary>
+  public Point Center
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.center; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.center = value; }
+    get { return this.center; }
+    set { this.center = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の半径。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public double</span> Radius
+  /// </summary>
+  public double Radius
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.radius; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>.radius = value; }
+    get { return this.radius; }
+    set { this.radius = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 面積・周
+  #endregion
+  #region 面積・周
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public override double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public override double GetArea()
   {
-    <span class="reserved">return</span> Math.PI * <span class="reserved">this</span>.radius * <span class="reserved">this</span>.radius;
+    return Math.PI * this.radius * this.radius;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 円の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public override double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public override double GetPerimeter()
   {
-    <span class="reserved">return</span> 2 * Math.PI * <span class="reserved">this</span>.radius;
+    return 2 * Math.PI * this.radius;
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return string</span>.Format(
-      <span class="literal">"Circle (c = {0}, r = {1})"</span>,
-      <span class="reserved">this</span>.center, <span class="reserved">this</span>.radius);
+    return string.Format(
+      "Circle (c = {0}, r = {1})",
+      this.center, this.radius);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Triangle : Shape
+/// </summary>
+class Triangle : Shape
 {
   Point a;
   Point b;
   Point c;
 
-  <span class="reserved">#region</span> 初期化
+  #region 初期化
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 3つの頂点の座標を与えて初期化。
-  /// &lt;/summary&gt;
-  /// &lt;param name="a"&gt;頂点A&lt;/param&gt;
-  /// &lt;param name="b"&gt;頂点B&lt;/param&gt;
-  /// &lt;param name="c"&gt;頂点C&lt;/param&gt;</span>
-  <span class="reserved">public</span> Triangle(Point a, Point b, Point c)
+  /// </summary>
+  /// <param name="a">頂点A</param>
+  /// <param name="b">頂点B</param>
+  /// <param name="c">頂点C</param>
+  public Triangle(Point a, Point b, Point c)
   {
-    <span class="reserved">this</span>.a = a;
-    <span class="reserved">this</span>.b = b;
-    <span class="reserved">this</span>.c = c;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
-  <span class="reserved">#endregion
-  #region</span> プロパティ
+  #endregion
+  #region プロパティ
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点A。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point A
+  /// </summary>
+  public Point A
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> a; }
-    <span class="reserved">set</span> { a = value; }
+    get { return a; }
+    set { a = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点B。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point B
+  /// </summary>
+  public Point B
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> b; }
-    <span class="reserved">set</span> { b = value; }
+    get { return b; }
+    set { b = value; }
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 頂点C。
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> Point C
+  /// </summary>
+  public Point C
   {
-    <span class="reserved">get</span> { <span class="reserved">return</span> c; }
-    <span class="reserved">set</span> { c = value; }
+    get { return c; }
+    set { c = value; }
   }
 
-  <span class="reserved">#endregion
-  #region</span> 面積・周
+  #endregion
+  #region 面積・周
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public override double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public override double GetArea()
   {
     Point ab = b - a;
     Point ac = c - a;
-    <span class="reserved">return</span> 0.5 * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
+    return 0.5 * Math.Abs(ab.X * ac.Y - ac.X * ab.Y);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の周の長さを求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;周&lt;/returns&gt;</span>
-  <span class="reserved">public override double</span> GetPerimeter()
+  /// </summary>
+  /// <returns>周</returns>
+  public override double GetPerimeter()
   {
-    <span class="reserved">double</span> l = Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.b);
-    l += Point.GetDistance(<span class="reserved">this</span>.a, <span class="reserved">this</span>.c);
-    l += Point.GetDistance(<span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
-    <span class="reserved">return</span> l;
+    double l = Point.GetDistance(this.a, this.b);
+    l += Point.GetDistance(this.a, this.c);
+    l += Point.GetDistance(this.b, this.c);
+    return l;
   }
 
-  <span class="reserved">#endregion
+  #endregion
 
-  public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return string</span>.Format(
-      <span class="literal">"Circle (a = {0}, b = {1}, c = {2})"</span>,
-      <span class="reserved">this</span>.a, <span class="reserved">this</span>.b, <span class="reserved">this</span>.c);
+    return string.Format(
+      "Circle (a = {0}, b = {1}, c = {2})",
+      this.a, this.b, this.c);
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// Class1 の概要の説明です。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Class1
+/// </summary>
+class Class1
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Triangle t = <span class="reserved">new</span> Triangle(
-      <span class="reserved">new</span> Point(0, 0),
-      <span class="reserved">new</span> Point(3, 4),
-      <span class="reserved">new</span> Point(4, 3));
+    Triangle t = new Triangle(
+      new Point(0, 0),
+      new Point(3, 4),
+      new Point(4, 3));
 
-    Circle c = <span class="reserved">new</span> Circle(
-      <span class="reserved">new</span> Point(0, 0), 3);
+    Circle c = new Circle(
+      new Point(0, 0), 3);
 
     Show(t);
     Show(c);
   }
 
-  <span class="reserved">static void</span> Show(Shape f)
+  static void Show(Shape f)
   {
-    Console.Write(<span class="literal">"{0}\n"</span>, f);
-    Console.Write(<span class="literal">"{0}\n"</span>, f.GetArea());
-    Console.Write(<span class="literal">"{0}\n"</span>, f.GetPerimeter());
+    Console.Write("{0}\n", f);
+    Console.Write("{0}\n", f.GetArea());
+    Console.Write("{0}\n", f.GetPerimeter());
   }
 }
-</code></pre>
+```

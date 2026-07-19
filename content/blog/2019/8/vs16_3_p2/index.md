@@ -53,22 +53,22 @@ C# 8.0 の変更は大部分もう[null 許容参照型](../../../../study/cshar
 [switch 式](../../../../study/csharp/datatype/typeswitch.md#switch-expression)でターゲットからの型推論が効くようになりました。
 要するに以下のようなコードが 16.3 Preview 2 からコンパイルできるようになります。
 
-<pre class="source" title="target-typed switch">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">class</span> <span class="type">Base</span> { }
-    <span class="reserved">class</span> <span class="type">A</span> : <span class="type">Base</span> { }
-    <span class="reserved">class</span> <span class="type">B</span> : <span class="type">Base</span> { }
+    class Base { }
+    class A : Base { }
+    class B : Base { }
  
-    <span class="reserved">static</span> <span class="type">Base</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">b</span>) =&gt; <span class="variable">b</span> <span class="control">switch</span>
+    static Base M(bool b) => b switch
     {
-        <span class="comment">// 条件ごとに型が違うので、これまでは switch 式の結果の型が確定できなかった。</span>
-        <span class="comment">// ターゲット(この場合戻り値の Base)からの型推論で型を確定するようになった。</span>
-        <span class="reserved">true</span> =&gt; <span class="reserved">new</span> <span class="type">A</span>(),
-        <span class="reserved">_</span> =&gt; <span class="reserved">new</span> <span class="type">B</span>(),
+        // 条件ごとに型が違うので、これまでは switch 式の結果の型が確定できなかった。
+        // ターゲット(この場合戻り値の Base)からの型推論で型を確定するようになった。
+        true => new A(),
+        _ => new B(),
     };
 }
-</code></pre>
+```
 
 まあ元々「スケジュール的に厳しいけど C# 8.0 正式リリース時点で入れておかないと後からの変更は破壊的になるので避けたい」って言ってたやつです。
 ほんとにぎりぎり間に合わせて来た感じ。

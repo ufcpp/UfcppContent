@@ -63,16 +63,16 @@ C# 的には、letter系のカテゴリーに含まれている文字を識別�
 
 要するに、以下のようなコードを実行すると、結果はSurrogateになります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">char</span>.GetUnicodeCategory(<span class="string">"𩸽"</span>[0])
-</code></pre>
+```csharp
+char.GetUnicodeCategory("𩸽"[0])
+```
 
 とはいえ、以下のように、`char`じゃなくて`string`を受け付けて、サロゲートペアな文字でも使えるオーバーロードに書き直せばちゃんと判定できます。
 𩸽の場合はOtherLetter。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">char</span>.GetUnicodeCategory(<span class="string">"𩸽"</span>, 0)
-</code></pre>
+```csharp
+char.GetUnicodeCategory("𩸽", 0)
+```
 
 ってことで、
 

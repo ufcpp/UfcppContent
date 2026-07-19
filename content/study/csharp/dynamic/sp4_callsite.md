@@ -48,66 +48,66 @@ dynamic を使ったコードは、内部的には CallSite というクラス�
 （多分、「動的呼び出し（call）用の動的コードを生成するための用地（site）というような意味合い。）
 例えば、以下のような C# 4.0 コードは、
 
-<pre class="source" title="dynamic を使ったメソッド　X の動的呼び出し" lang="">
-<code><span class="reserved">public static void</span> CallX(<span class="reserved">object</span> obj)
+```csharp
+public static void CallX(object obj)
 {
-    <span class="reserved">dynamic</span> d = obj;
+    dynamic d = obj;
     d.X();
 }
 
-<span class="reserved">public static dynamic</span> GetX(<span class="reserved">dynamic</span> obj)
+public static dynamic GetX(dynamic obj)
 {
-    <span class="reserved">return</span> obj.X;
+    return obj.X;
 }
-</code></pre>
+```
 
 
 以下のようなコードに展開されます。
 
-<pre class="source" title="CallX の展開結果" lang="">
-<code><span class="comment">// ↓本当は、いかにもコンパイラが自動生成したような変な変数名になってる</span>
-<span class="reserved">static</span> CallSite&lt;Action&lt;CallSite, <span class="reserved">object</span>&gt; site1;
-<span class="reserved">static</span> CallSite&lt;Func&lt;CallSite, <span class="reserved">object</span>, <span class="reserved">object</span>&gt; site2;
+```csharp
+// ↓本当は、いかにもコンパイラが自動生成したような変な変数名になってる
+static CallSite<Action<CallSite, object> site1;
+static CallSite<Func<CallSite, object, object> site2;
 
-<span class="reserved">public static void</span> CallX(<span class="reserved">object</span> obj)
+public static void CallX(object obj)
 {
-    <span class="reserved">object</span> d = obj; <span class="comment">// (1) dynamic 型の変数は、実のところ単なる object 型になる</span>
+    object d = obj; // (1) dynamic 型の変数は、実のところ単なる object 型になる
 
-    <span class="reserved">if</span> (site1 == <span class="reserved">null</span>)
+    if (site1 == null)
     {
-        <span class="comment">// d.X() 相当のコードを動的生成するための CallSite を作る。</span>
-        site1 = CallSite&lt;Action&lt;CallSite, <span class="reserved">object</span>&gt;&gt;.Create(
-            <span class="reserved">new</span> CSharpInvokeMemberBinder(
-                CSharpCallFlags.None, <span class="literal">"X"</span>, <span class="reserved">typeof</span>(DynamicSample), <span class="reserved">null</span>,
-                <span class="reserved">new</span> CSharpArgumentInfo[] {
-                   <span class="reserved">new</span> CSharpArgumentInfo(CSharpArgumentInfoFlags.None, <span class="reserved">null</span>)
+        // d.X() 相当のコードを動的生成するための CallSite を作る。
+        site1 = CallSite<Action<CallSite, object>>.Create(
+            new CSharpInvokeMemberBinder(
+                CSharpCallFlags.None, "X", typeof(DynamicSample), null,
+                new CSharpArgumentInfo[] {
+                   new CSharpArgumentInfo(CSharpArgumentInfoFlags.None, null)
                 }));
     }
 
-    <span class="comment">// 動的生成したコードを呼んだり、新たに動的生成するのは、
-    // 実際には Target デリゲートの中。</span>
+    // 動的生成したコードを呼んだり、新たに動的生成するのは、
+    // 実際には Target デリゲートの中。
     site1.Target.Invoke(site1, d);
 }
 
-<span class="comment">// 引数や戻り値が dynamic の場合は、Dynamic 属性付きの object 型になる</span>
+// 引数や戻り値が dynamic の場合は、Dynamic 属性付きの object 型になる
 [return: Dynamic]
-<span class="reserved">public static object</span> GetX([Dynamic] <span class="reserved">object</span> obj)
+public static object GetX([Dynamic] object obj)
 {
-    <span class="reserved">if</span> (site2 == <span class="reserved">null</span>)
+    if (site2 == null)
     {
-        <span class="comment">// d.X 相当のコードを動的生成するための CallSite を作る。</span>
-        site2 = CallSite&lt;Func&lt;CallSite, <span class="reserved">object</span>, <span class="reserved">object</span>&gt;&gt;.Create(
-            <span class="reserved">new</span> CSharpGetMemberBinder(
-                <span class="literal">"X"</span>, <span class="reserved">typeof</span>(DynamicSample), <span class="reserved">new</span> CSharpArgumentInfo[] {
-                    <span class="reserved">new</span> CSharpArgumentInfo(CSharpArgumentInfoFlags.None, <span class="reserved">null</span>)
+        // d.X 相当のコードを動的生成するための CallSite を作る。
+        site2 = CallSite<Func<CallSite, object, object>>.Create(
+            new CSharpGetMemberBinder(
+                "X", typeof(DynamicSample), new CSharpArgumentInfo[] {
+                    new CSharpArgumentInfo(CSharpArgumentInfoFlags.None, null)
                 }));
     }
 
-    <span class="comment">// 動的生成したコードを呼んだり、新たに動的生成するのは、
-    // 実際には Target デリゲートの中。</span>
-    <span class="reserved">return</span> site2.Target.Invoke(site2, obj);
+    // 動的生成したコードを呼んだり、新たに動的生成するのは、
+    // 実際には Target デリゲートの中。
+    return site2.Target.Invoke(site2, obj);
 }
-</code></pre>
+```
 
 
 要点は3つ。
@@ -129,82 +129,82 @@ dynamic を使ったコードは、内部的には CallSite というクラス�
 メンバー変数やプロパティ、メソッドの引数や戻り値の型を dynamic にした場合には、
 普通の object と区別するために、Dynamic 属性が付きます。
 
-<pre class="source" title="メンバー変数、プロパティ、メソッドの引数・戻り値に dynamic" lang="">
-<code><span class="reserved">dynamic</span> x;
-<span class="reserved">public dynamic</span> X { <span class="reserved">get</span> { <span class="reserved">return</span> x; } <span class="reserved">set</span> { x = value; } }
+```csharp
+dynamic x;
+public dynamic X { get { return x; } set { x = value; } }
 
-<span class="reserved">public static dynamic</span> GetX(<span class="reserved">dynamic</span> obj)
+public static dynamic GetX(dynamic obj)
 {
-    <span class="comment">// 中身省略</span>
+    // 中身省略
 }
-</code></pre>
+```
 
 
 というコードは、以下のようなコードに変換されます。
 
-<pre class="source" title="Dynamic属性" lang="">
-<code>[Dynamic]
-<span class="reserved">private object</span> x;
+```csharp
+[Dynamic]
+private object x;
 
 [Dynamic]
-<span class="reserved">public object</span> X
+public object X
 {
     [return: Dynamic]
-    <span class="reserved">get</span> { <span class="reserved">return this</span>.x; }
+    get { return this.x; }
     [param: Dynamic]
-    <span class="reserved">set</span> { <span class="reserved">this</span>.x = value; }
+    set { this.x = value; }
 }
 
 [return: Dynamic]
-<span class="reserved">public static object</span> GetX([Dynamic] <span class="reserved">object</span> obj)
+public static object GetX([Dynamic] object obj)
 {
-    <span class="comment">// 中身省略</span>
+    // 中身省略
 }
-</code></pre>
+```
 
 
 なので、以下のようなコードはコンパイルエラーを起こしたりします。
 （dynamic 型と object 型でメソッドを「[オーバーロード](../structured/st_function.md#overload)」することはできません。）
 
-<pre class="source" title="dynamic と object でオーバーロードはできない" lang="">
-<code><span class="comment">// 同じパラメーター型の GetX が2個あるぞって怒られる。</span>
-<span class="reserved">public static dynamic</span> GetX(<span class="reserved">dynamic</span> obj)
+```csharp
+// 同じパラメーター型の GetX が2個あるぞって怒られる。
+public static dynamic GetX(dynamic obj)
 {
-    <span class="reserved">return</span> obj.X;
+    return obj.X;
 }
 
-<span class="reserved">public static object</span> GetX(<span class="reserved">object</span> obj)
+public static object GetX(object obj)
 {
-    <span class="reserved">var</span> t = obj.GetType();
-    <span class="reserved">return</span> t.GetMethod(<span class="literal">"X"</span>).Invoke(obj, <span class="reserved">new object</span>[0]);
+    var t = obj.GetType();
+    return t.GetMethod("X").Invoke(obj, new object[0]);
 }
-</code></pre>
+```
 
 
 ジェネリック型の型引数を dynamic にした場合はどうなるかというと、
 
-<pre class="source" title="型引数を dynamic に" lang="">
-<code><span class="reserved">static void</span> GenericDynamic(
-    IDictionary&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; a,
-    IDictionary&lt;<span class="reserved">dynamic</span>, <span class="reserved">object</span>&gt; b,
-    IDictionary&lt;<span class="reserved">object</span>, <span class="reserved">dynamic</span>&gt; c,
-    IDictionary&lt;<span class="reserved">dynamic</span>, <span class="reserved">dynamic</span>&gt; d)
+```csharp
+static void GenericDynamic(
+    IDictionary<object, object> a,
+    IDictionary<dynamic, object> b,
+    IDictionary<object, dynamic> c,
+    IDictionary<dynamic, dynamic> d)
 {
 }
-</code></pre>
+```
 
 
 この例の場合、以下のようなコードに変換されます。
 
-<pre class="source" title="型引数を dynamix にした結果がこれだよ" lang="">
-<code><span class="reserved">private static void</span> GenericDynamic(
-    IDictionary&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; a,
-    [Dynamic(<span class="reserved">new bool</span>[] { <span class="reserved">false</span>, <span class="reserved">true</span>, <span class="reserved">false</span> })] IDictionary&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; b,
-    [Dynamic(<span class="reserved">new bool</span>[] { <span class="reserved">false</span>, <span class="reserved">false</span>, <span class="reserved">true</span> })] IDictionary&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; c,
-    [Dynamic(<span class="reserved">new bool</span>[] { <span class="reserved">false</span>, <span class="reserved">true</span>, <span class="reserved">true</span> })] IDictionary&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; d)
+```csharp
+private static void GenericDynamic(
+    IDictionary<object, object> a,
+    [Dynamic(new bool[] { false, true, false })] IDictionary<object, object> b,
+    [Dynamic(new bool[] { false, false, true })] IDictionary<object, object> c,
+    [Dynamic(new bool[] { false, true, true })] IDictionary<object, object> d)
 {
 }
-</code></pre>
+```
 
 
 要するに、型引数の少なくともどれか1つが dynamic 型だった場合、
@@ -216,17 +216,17 @@ bool[] の引数付きの Dynamic 属性が付きます。
 続いて CallSite の初期化部分。
 上述のコードのうち、以下のようなコードの部分について。
 
-<pre class="source" title="CallSite の初期化" lang="">
-<code><span class="reserved">if</span> (site2 == <span class="reserved">null</span>)
+```csharp
+if (site2 == null)
 {
-    <span class="comment">// d.X 相当のコードを動的生成するための CallSite を作る。</span>
-    site2 = CallSite&lt;Func&lt;CallSite, <span class="reserved">object</span>, <span class="reserved">object</span>&gt;&gt;.Create(
-        <span class="reserved">new</span> CSharpGetMemberBinder(
-            <span class="literal">"X"</span>, <span class="reserved">typeof</span>(DynamicSample), <span class="reserved">new</span> CSharpArgumentInfo[] {
-                <span class="reserved">new</span> CSharpArgumentInfo(CSharpArgumentInfoFlags.None, <span class="reserved">null</span>)
+    // d.X 相当のコードを動的生成するための CallSite を作る。
+    site2 = CallSite<Func<CallSite, object, object>>.Create(
+        new CSharpGetMemberBinder(
+            "X", typeof(DynamicSample), new CSharpArgumentInfo[] {
+                new CSharpArgumentInfo(CSharpArgumentInfoFlags.None, null)
             }));
 }
-</code></pre>
+```
 
 
 <code>d.X</code> などのメンバーアクセスに対して、どういう動的コード生成を行えばいいかは、CallSite クラス自身は知りません。
@@ -256,19 +256,19 @@ C# 4.0 の場合（要するに、CSharpGetMemberBinder の中の挙動として
 最後に、実際に動的コード生成。
 CallSite.Target デリゲートを呼んでいる部分について。
 
-<pre class="source" title="CallSite.Target 呼び出し" lang="">
-<code>    site1.Target.Invoke(site1, d);
-</code></pre>
+```csharp
+    site1.Target.Invoke(site1, d);
+```
 
 
 Target デリゲートの中身は、初期状態では以下のようなコードと同じ状態になっています。
 
-<pre class="source" title="CallSite.Target の初期状態" lang="">
-<code><span class="reserved">static  object</span> _anonymous(CallSite site, <span class="reserved">object</span> x)
+```csharp
+static  object _anonymous(CallSite site, object x)
 {
-    <span class="reserved">return</span> site.Update(site, x);
+    return site.Update(site, x);
 }
-</code></pre>
+```
 
 
 この状態で、<code>GetX(new Point { X = 1, Y = 2});</code> というように、
@@ -277,15 +277,15 @@ Point 型のインスタンスを引数として Target が呼ばれたとしま
 この Update が呼ばれて、動的コード生成が行われます。
 その結果、Target が以下のような状態に更新されます。
 
-<pre class="source" title="Point 型に対応" lang="">
-<code><span class="reserved">static  object</span> _anonymous(CallSite site, <span class="reserved">object</span> x)
+```csharp
+static  object _anonymous(CallSite site, object x)
 {
-    <span class="reserved">if</span> (x <span class="reserved">is</span> Point)
-        <span class="reserved">return</span> ((Point)x).X;
-    <span class="reserved">else</span>
-        <span class="reserved">return</span> site.Update(site, x);
+    if (x is Point)
+        return ((Point)x).X;
+    else
+        return site.Update(site, x);
 }
-</code></pre>
+```
 
 
 ここで、<code>((Point)x).X</code> の部分を生成するのが CallSiteBinder の役目です。
@@ -316,17 +316,17 @@ DLR や C# 4.0 以外（例えば JavaScript とか）でも、同様の手法�
 Point 以外の型のインスタンスが来ると、当然また Target の更新がかかります。
 例えば、Vector3D を使って <code>GetX(new Vector3D(1, 2, 3));</code> とかすると、
 
-<pre class="source" title="Vector3D 型にも対応" lang="">
-<code><span class="reserved">static  object</span> _anonymous(CallSite site, <span class="reserved">object</span> x)
+```csharp
+static  object _anonymous(CallSite site, object x)
 {
-    <span class="reserved">if</span> (x <span class="reserved">is</span> Point)
-        <span class="reserved">return</span> ((Point)x).X;
-    <span class="reserved">else if</span> (x <span class="reserved">is</span> Vector3D)
-        <span class="reserved">return</span> ((Vector3D)x).X;
-    <span class="reserved">else</span>
-        <span class="reserved">return</span> site.Update(site, x);
+    if (x is Point)
+        return ((Point)x).X;
+    else if (x is Vector3D)
+        return ((Vector3D)x).X;
+    else
+        return site.Update(site, x);
 }
-</code></pre>
+```
 
 
 となります。

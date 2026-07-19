@@ -18,23 +18,23 @@ aliases: []
 
 割と手短に示せるバグで、以下のような例がわかりやすいんですが、nullable型な引数のデフォルト値として、[`default`式](../../../../study/csharp/cheatsheet/ap_ver7_1.md#default-expr)を使ったとき、値が `null` にならないとおかしいはずなのに 0 になるという問題。
 
-<pre class="source" title="デフォルト値にデフォルト式">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="reserved">int</span>? x = <span class="reserved">default</span>; <span class="comment">// null</span>
-    <span class="reserved">int</span> y = <span class="reserved">default</span>; <span class="comment">// 0</span>
+    int? x = default; // null
+    int y = default; // 0
 
-    <span class="type">Console</span>.WriteLine(x); <span class="comment">// null</span>
-    <span class="type">Console</span>.WriteLine(y); <span class="comment">// 0</span>
-    A(); <span class="comment">// 0 !!</span>
-    A(<span class="reserved">default</span>); <span class="comment">// null !!</span>
+    Console.WriteLine(x); // null
+    Console.WriteLine(y); // 0
+    A(); // 0 !!
+    A(default); // null !!
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> A(<span class="reserved">int</span>? x = <span class="reserved">default</span>) <span class="comment">// 0 !!</span>
+static void A(int? x = default) // 0 !!
 {
-    <span class="type">Console</span>.WriteLine(x);
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 ## バグ報告
 
@@ -73,42 +73,42 @@ C# 7.1は、実質的には初のマイナーリリースですし、半年と�
 
 例えば、値型のデフォルト値なんですが、以下のような感じになっています。
 
-<pre class="source" title="値型のデフォルト値">
-<code><span class="comment">// 以下の3つの X は全部同じ意味</span>
-<span class="reserved">static</span> <span class="reserved">void</span> X(<span class="type">DateTime</span> d = <span class="reserved">default</span>(<span class="type">DateTime</span>)) { }
-<span class="reserved">static</span> <span class="reserved">void</span> X(<span class="type">DateTime</span> d = <span class="reserved">new</span> <span class="type">DateTime</span>()) { }
+```csharp
+// 以下の3つの X は全部同じ意味
+static void X(DateTime d = default(DateTime)) { }
+static void X(DateTime d = new DateTime()) { }
 
-<span class="comment">// これは現在の C# ではコンパイルできない</span>
-<span class="comment">// C# 3.0 までデフォルト引数を認めていなかったので、VB との相互運用のために使っていた書き方</span>
-<span class="comment">// 属性には定数しか含められず、かつ、構造体の規定値は .NET 的には「定数」ではない</span>
-<span class="comment">// 代わりに null を入れてある</span>
-[<span class="type">DefaultParameterValue</span>(<span class="reserved">null</span>)]
-<span class="reserved">static</span> <span class="reserved">void</span> X(<span class="type">DateTime</span> d) { }
-</code></pre>
+// これは現在の C# ではコンパイルできない
+// C# 3.0 までデフォルト引数を認めていなかったので、VB との相互運用のために使っていた書き方
+// 属性には定数しか含められず、かつ、構造体の規定値は .NET 的には「定数」ではない
+// 代わりに null を入れてある
+[DefaultParameterValue(null)]
+static void X(DateTime d) { }
+```
 
 IL へのコンパイル結果としても以下のような感じ。
 
-<pre class="source" title="上記コードのコンパイル結果のIL">
-<code><span class="reserved">.method private hidebysig static</span>
-    <span class="reserved">void</span> X(
-        [opt] valuetype[mscorlib] System.<span class="type">DateTime</span> d
+```cil
+.method private hidebysig static
+    void X(
+        [opt] valuetype[mscorlib] System.DateTime d
     ) cil managed
 {
-    .param [1] = nullref <span class="comment">// DateTime 構造体なのに null 扱い</span>
+    .param [1] = nullref // DateTime 構造体なのに null 扱い
     .maxstack 8
     IL_0000: ret
 }
-</code></pre>
+```
 
 本来 `null` を代入できないはずの `DateTime` 構造体に対して、`null` でデフォルト値を代用している状態です。
 
 nullable 型に対しても、以下のような感じで、null の扱いがちょっと特殊になっています。
 
-<pre class="source" title="int? への null 代入">
-<code><span class="comment">// 以下の2行は同じ意味</span>
-<span class="reserved">int</span>? x = <span class="reserved">null</span>;
-<span class="reserved">int</span>? x = <span class="reserved">new</span> <span class="reserved">int</span>?(); <span class="comment">// null というより、(false, 0) みたいな値</span>
-</code></pre>
+```csharp
+// 以下の2行は同じ意味
+int? x = null;
+int? x = new int?(); // null というより、(false, 0) みたいな値
+```
 
 なんかこの辺りが合わさった結果、`default`式の型推論に失敗したんじゃないかなぁと思います。
 

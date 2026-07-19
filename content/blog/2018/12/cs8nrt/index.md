@@ -22,20 +22,20 @@ null許容参照型の話です。
 要は、参照型に対しても、単に`T`と書くとnullを認めない型になり、
 null許容にしたければ`T?`と書くようにするという機能です。
 
-<pre class="source" title="">
-<code><span class="reserved">#nullable enable</span>
-    <span class="comment">// string には null が来ない</span>
-    <span class="comment">// null が来ないなら s.Length で OK</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> M1(<span class="reserved">string</span> s) =&gt; s.Length;
+```csharp
+#nullable enable
+    // string には null が来ない
+    // null が来ないなら s.Length で OK
+    static int M1(string s) => s.Length;
  
-    <span class="comment">// string? には null が来る</span>
-    <span class="comment">// null が来るのに s.Length (null チェックしてない)はダメ</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> M2(<span class="reserved">string</span>? s) =&gt; <span class="warning">s.Length</span>;
+    // string? には null が来る
+    // null が来るのに s.Length (null チェックしてない)はダメ
+    static int M2(string? s) => s.Length;
  
-    <span class="comment">// string? には null が来る</span>
-    <span class="comment">// null が来ても ?. や ?? を駆使すれば OK</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> M3(<span class="reserved">string</span>? s) =&gt; s?.Length ?? 0;
-</code></pre>
+    // string? には null が来る
+    // null が来ても ?. や ?? を駆使すれば OK
+    static int M3(string? s) => s?.Length ?? 0;
+```
 
 ### null-forgiving
 
@@ -43,34 +43,34 @@ null許容にしたければ`T?`と書くようにするという機能です。
 一例としては循環参照を作りたいときとかなんですが、
 例えば以下のような感じで一時的に有効な値を持てない場合があり得ます。
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">Node</span>
+```csharp
+class Node
 {
-    <span class="reserved">public</span> <span class="type">Node</span> Next { <span class="reserved">get</span>; <span class="reserved">private</span> <span class="reserved">set</span>; }
-    <span class="reserved">public</span> Node(<span class="type">Node</span> next) =&gt; Next = next;
+    public Node Next { get; private set; }
+    public Node(Node next) => Next = next;
  
-    <span class="reserved">public</span> (<span class="type">Node</span> a, <span class="type">Node</span> b) CircularDependency()
+    public (Node a, Node b) CircularDependency()
     {
-        <span class="comment">// 参照に循環があるとき、どうしても片方は最初から有効な参照にできない</span>
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">Node</span>(<span class="reserved"><span class="warning">null</span></span>); <span class="comment">// やむなくいったん null</span>
-        <span class="reserved">var</span> b = <span class="reserved">new</span> <span class="type">Node</span>(a);
+        // 参照に循環があるとき、どうしても片方は最初から有効な参照にできない
+        var a = new Node(null); // やむなくいったん null
+        var b = new Node(a);
         a.Next = b;
  
-        <span class="comment">// メソッドを抜けるまでには有効な値を入れておくのでどうかご容赦願いたい…</span>
-        <span class="reserved">return</span> (a, b);
+        // メソッドを抜けるまでには有効な値を入れておくのでどうかご容赦願いたい…
+        return (a, b);
     }
 }
-</code></pre>
+```
 
 こういうとき、警告をもみ消す処理があると問題を回避できます。
 そのための演算子が後置きの`!`。
 
-<pre class="source" title="">
-<code><span class="comment">// 非 null なところに null を渡すのを容赦してもらう</span>
-<span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">Node</span>(<span class="reserved">null</span>!);
-<span class="reserved">var</span> b = <span class="reserved">new</span> <span class="type">Node</span>(a);
+```csharp
+// 非 null なところに null を渡すのを容赦してもらう
+var a = new Node(null!);
+var b = new Node(a);
 a.Next = b;
-</code></pre>
+```
 
 今のところ、この演算子は null-forgiving 演算子と呼ばれています。
 (日本語だとどうするといいんだろう。直訳だと「null容赦」。)
@@ -113,22 +113,21 @@ null 許容参照型を有効にするには、以下の2通りのオプショ�
 前者は、`#if`や`#pragma`などと同じ[プリプロセス命令](../../../../study/csharp/misc/sp_preprocess.md)です。
 以下のように、`#nullable`を書いた行から先がオン/オフ切り替わります。
 
-<pre class="source" title="">
-<code><span class="reserved">#nullable enable</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M1(<span class="reserved">string</span> s)
+```csharp
+#nullable enable
+    static void M1(string s)
     {
-        <span class="comment">// enable 時に string に null を代入したら警告</span>
-        s = <span class="reserved"><span class="warning">null</span></span>;
+        // enable 時に string に null を代入したら警告
+        s = null;
     }
  
-<span class="reserved">#nullable disable</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M2(<span class="reserved">string</span> s)
+#nullable disable
+    static void M2(string s)
     {
-        <span class="comment">// disable にしたので string に null を代入しても何も言われない</span>
-        s = <span class="reserved">null</span>;
+        // disable にしたので string に null を代入しても何も言われない
+        s = null;
     }
-
-</code></pre>
+```
 
 これら`enable`、`disable`に加えて、
 リリース版までには`restore`と`safeonly`というオプションも入るそうです。
@@ -140,19 +139,18 @@ null 許容参照型を有効にするには、以下の2通りのオプショ�
 (最終的にはVisual Studio上の設定画面からもオン/オフができると思いますが、
 現状ではcsprojを手書きする必要があります。)
 
-<pre class="xsource" title="">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>netcoreapp3.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>8.0<span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<em><span class="attvalue">    &lt;</span><span class="element">NullableReferenceTypes</span><span class="attvalue">&gt;</span>true<span class="attvalue">&lt;/</span><span class="element">NullableReferenceTypes</span><span class="attvalue">&gt;</span></em>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <NullableReferenceTypes>true</NullableReferenceTypes>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-
-</code></pre>
+</Project>
+```
 
 完全に1から書くプロジェクトの場合ならオンになっていて特に困ることもないので、
 積極的にこのオプションを指定するといいと思います。
@@ -168,20 +166,19 @@ null 許容参照型がらみの違反は、全て警告になっていて、エ
 まあ、C# には「警告をエラーとして扱う」というオプションもあるので、
 「null は絶対に許さない。慈悲はない」という方はcsprojに`TreatWarningsAsErrors`を加えるといいと思います。
 
-<pre class="xsource" title="">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>netcoreapp3.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>8.0<span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<em><span class="attvalue">    &lt;</span><span class="element">NullableReferenceTypes</span><span class="attvalue">&gt;</span>true<span class="attvalue">&lt;/</span><span class="element">NullableReferenceTypes</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TreatWarningsAsErrors</span><span class="attvalue">&gt;</span>true<span class="attvalue">&lt;/</span><span class="element">TreatWarningsAsErrors</span><span class="attvalue">&gt;</span></em>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <NullableReferenceTypes>true</NullableReferenceTypes>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-
-</code></pre>
+</Project>
+```
 
 ちなみに、「全部警告にするにしてもオプション指定必須、既定動作ではオフ」なのもこいつのせいです。
 例え警告であっても、既存コードに対して警告を起こす変更は破壊的変更になります。
@@ -200,101 +197,101 @@ C# 8.0で「null許容参照型」が入ってしまったので、
 値型の場合は`T`と`T?`が明確に違う型ですが、
 参照型の場合は`T?`も内部的に`T`になっていて、単に C# コンパイラーがフロー解析を頑張るだけになっています。
 
-<pre class="source" title="">
-<code><span class="comment">// null 許容値型は Nullable&lt;T&gt; 構造体が作られる</span>
-<span class="comment">// T と T? は型システムのレベルで別の型</span>
-<span class="comment">// なので、typeof の結果もことなる</span>
-<span class="type">Console</span>.WriteLine(<span class="reserved">typeof</span>(<span class="reserved">int</span>) == <span class="reserved">typeof</span>(<span class="reserved">int</span>?)); <span class="comment">// false</span>
+```csharp
+// null 許容値型は Nullable<T> 構造体が作られる
+// T と T? は型システムのレベルで別の型
+// なので、typeof の結果もことなる
+Console.WriteLine(typeof(int) == typeof(int?)); // false
  
-<span class="comment">// null 許容参照型は C# がフロー解析するだけ</span>
-<span class="comment">// T? と書いても、内部的には T のまま</span>
-<span class="comment">// なので、typeof の結果は同じ</span>
-<span class="type">Console</span>.WriteLine(<span class="reserved">typeof</span>(<span class="reserved">string</span>) == <span class="reserved">typeof</span>(<span class="reserved">string</span>?)); <span class="comment">// true</span>
-</code></pre>
+// null 許容参照型は C# がフロー解析するだけ
+// T? と書いても、内部的には T のまま
+// なので、typeof の結果は同じ
+Console.WriteLine(typeof(string) == typeof(string?)); // true
+```
 
 この余波なんですが、例えば以下のような差が出ます。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span>? x)
+```csharp
+static void M(string? x)
 {
-    <span class="comment">// 参照型の場合、フロー解析で保証をしている</span>
-    <span class="comment">// この if を抜けた時点で、x が null でないことが保証される</span>
-    <span class="reserved">if</span> (x == <span class="reserved">null</span>) <span class="reserved">return</span>;
+    // 参照型の場合、フロー解析で保証をしている
+    // この if を抜けた時点で、x が null でないことが保証される
+    if (x == null) return;
  
-    <span class="comment">// なので、? の付かない string に代入できるようになる</span>
-    <span class="reserved">string</span> y = x;
+    // なので、? の付かない string に代入できるようになる
+    string y = x;
 }
  
-<span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">int</span>? x)
+static void M(int? x)
 {
-    <span class="comment">// 値型の場合、型自体が違う</span>
-    <span class="comment">// この if を抜けても x はあくまで Nullable&lt;int&gt; 型</span>
-    <span class="reserved">if</span> (x == <span class="reserved">null</span>) <span class="reserved">return</span>;
+    // 値型の場合、型自体が違う
+    // この if を抜けても x はあくまで Nullable<int> 型
+    if (x == null) return;
  
-    <span class="comment">// なので、「int? を int に暗黙的に変換できません」となる</span>
-    <span class="reserved">int</span> y = <span class="error">x</span>;
+    // なので、「int? を int に暗黙的に変換できません」となる
+    int y = x;
 }
-</code></pre>
+```
 
-<pre class="source" title="">
-<code><span class="comment">// int と int? は別の型なので、オーバーロード可能</span>
-<span class="reserved">void</span> M(<span class="reserved">int</span> x) { }
-<span class="reserved">void</span> M(<span class="reserved">int</span>? x) { }
+```csharp
+// int と int? は別の型なので、オーバーロード可能
+void M(int x) { }
+void M(int? x) { }
  
-<span class="comment">// string と string? 型システム上は同じ型なので、オーバーロードできない</span>
-<span class="reserved">void</span> M(<span class="reserved">string</span> x) { }
-<span class="reserved">void</span> <span class="error">M</span>(<span class="reserved">string</span>? x) { }
-</code></pre>
+// string と string? 型システム上は同じ型なので、オーバーロードできない
+void M(string x) { }
+void M(string? x) { }
+```
 
 ### ジェネリクス
 
 ある程度はジェネリックな型に対しても使えます。
 例えば、null 許容参照型を表す `class?` 制約というものも追加されます。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">A</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
+```csharp
+struct A<T> where T : class
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value;
+    public T Value;
 }
  
-<span class="reserved">struct</span> <span class="type">B</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>?
+struct B<T> where T : class?
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value;
+    public T Value;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> a1 = <span class="reserved">new</span> <span class="type">A</span>&lt;<span class="reserved">string</span>&gt; { Value = <span class="reserved"><span class="warning">null</span></span> }; <span class="comment">// null ダメ</span>
-        <span class="reserved">var</span> a2 = <span class="reserved">new</span> <span class="type">A</span>&lt;<span class="warning"><span class="reserved">string</span>?</span>&gt; { Value = <span class="reserved">null</span> }; <span class="comment">// string? を渡しちゃダメ</span>
-        <span class="reserved">var</span> b1 = <span class="reserved">new</span> <span class="type">B</span>&lt;<span class="reserved">string</span>&gt; { Value = <span class="reserved"><span class="warning">null</span></span> }; <span class="comment">// null ダメ</span>
-        <span class="reserved">var</span> b2 = <span class="reserved">new</span> <span class="type">B</span>&lt;<span class="reserved">string</span>?&gt; { Value = <span class="reserved">null</span> }; <span class="comment">// これなら警告が出ない</span>
+        var a1 = new A<string> { Value = null }; // null ダメ
+        var a2 = new A<string?> { Value = null }; // string? を渡しちゃダメ
+        var b1 = new B<string> { Value = null }; // null ダメ
+        var b2 = new B<string?> { Value = null }; // これなら警告が出ない
     }
 }
-</code></pre>
+```
 
 しかし、「null許容参照型でもnull許容値型でもいいので、とにかくnull許容 or 非 null」みたいな指定ができません。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">A</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span> <span class="comment">// 非 null 参照型</span>
+```csharp
+struct A<T> where T : class // 非 null 参照型
 {
-    <span class="reserved">public</span> <span class="type">T</span> NonNull;
-    <span class="reserved">public</span> <span class="type">T</span>? Nullable; <span class="comment">// OK</span>
+    public T NonNull;
+    public T? Nullable; // OK
 }
  
-<span class="reserved">struct</span> <span class="type">B</span>&lt;<span class="type">T</span>&gt; <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> <span class="comment">// 非 null 値型</span>
+struct B<T> where T : struct // 非 null 値型
 {
-    <span class="reserved">public</span> <span class="type">T</span> NonNull;
-    <span class="reserved">public</span> <span class="type">T</span>? Nullable; <span class="comment">// OK</span>
+    public T NonNull;
+    public T? Nullable; // OK
 }
  
-<span class="reserved">struct</span> <span class="type">C</span>&lt;<span class="type">T</span>&gt; <span class="comment">// 「非 null」だけを指定する手段はない</span>
+struct C<T> // 「非 null」だけを指定する手段はない
 {
-    <span class="reserved">public</span> <span class="type">T</span> NonNull;
-    <span class="reserved">public</span> <span class="error"><span class="type">T</span>?</span> Nullable; <span class="comment">// これが無理</span>
+    public T NonNull;
+    public T? Nullable; // これが無理
 }
-</code></pre>
+```
 
 ### 漏れがあり得る
 
@@ -303,29 +300,29 @@ C# 8.0で「null許容参照型」が入ってしまったので、
 
 例えば、現状だと以下のようなものすら漏れます。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// new string[] { null } みたいなのはちゃんと警告になるものの、</span>
-        <span class="comment">// new string[1] は通っちゃう。</span>
-        <span class="comment">// 「既定値」が使われるので、null が入る。</span>
-        M(<span class="reserved">new</span> <span class="reserved">string</span>[1]);
+        // new string[] { null } みたいなのはちゃんと警告になるものの、
+        // new string[1] は通っちゃう。
+        // 「既定値」が使われるので、null が入る。
+        M(new string[1]);
     }
  
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span>[] x)
+    static void M(string[] x)
     {
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> x)
+        foreach (var item in x)
         {
-            <span class="comment">// 本来は null は絶対来ないはずなものの…</span>
-            <span class="type">Console</span>.WriteLine(item.Length); <span class="comment">// ぬるぽ</span>
+            // 本来は null は絶対来ないはずなものの…
+            Console.WriteLine(item.Length); // ぬるぽ
         }
     }
 }
-</code></pre>
+```
 
 この例は、将来的には「治る」可能性が高いです。
 (徐々にフロー解析を賢くしたい意志はあるし、
@@ -372,37 +369,37 @@ C# 8.0で「null許容参照型」が入ってしまったので、
 前述のジェネリクスの問題は本当にどうしようもなかったです。
 例えば以下のような感じのやつ。
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">MyDictionary</span>&lt;<span class="type">T</span>&gt;
+```csharp
+class MyDictionary<T>
 {
-    <span class="comment">// 制約なしの T は T? にできないので…</span>
-    <span class="reserved">public</span> <span class="type">T</span> GetValueOrDefault(<span class="reserved">int</span> key)
+    // 制約なしの T は T? にできないので…
+    public T GetValueOrDefault(int key)
     {
-        <span class="comment">//if (keyで検索) return 見つかったら値を返す;</span>
-        <span class="reserved">return</span> <span class="reserved">default</span>!; <span class="comment">// ! を付けないと警告</span>
+        //if (keyで検索) return 見つかったら値を返す;
+        return default!; // ! を付けないと警告
     }
 }
-</code></pre>
+```
 
 あとは、「null は素通し」形のメソッド。
 以下のような感じのコードがあって、結局は `!` に頼りました。
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="comment">// 引数が null の場合に限り、戻り値も null</span>
-    <span class="comment">// (例として素通ししているものの、実際のコードは多少の変換コードあり。</span>
-    <span class="comment">//  ただし、メソッドの先頭で if (s == null) return null;)</span>
-    <span class="reserved">static</span> <span class="reserved">string</span>? M(<span class="reserved">string</span>? s) =&gt; s;
+    // 引数が null の場合に限り、戻り値も null
+    // (例として素通ししているものの、実際のコードは多少の変換コードあり。
+    //  ただし、メソッドの先頭で if (s == null) return null;)
+    static string? M(string? s) => s;
  
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// null を与えて null が返ってくるのは想定通り。</span>
-        <span class="reserved">string</span>? s1 = M(<span class="reserved">null</span>);
+        // null を与えて null が返ってくるのは想定通り。
+        string? s1 = M(null);
  
-        <span class="comment">// 自分は、この場合に M が null を返さないことを知っているものの…</span>
-        <span class="comment">// コンパイラーにはわからないので警告が出る。</span>
-        <span class="reserved">string</span> s2 = M(<span class="string">&quot;abc&quot;</span>);
+        // 自分は、この場合に M が null を返さないことを知っているものの…
+        // コンパイラーにはわからないので警告が出る。
+        string s2 = M("abc");
     }
 }
-</code></pre>
+```

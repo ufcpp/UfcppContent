@@ -162,11 +162,11 @@ SQL を例に、簡単な説明をしたいと思います。
 その「名」を取り出したい場合、
 以下のような問い合わせを書きます。
 
-<pre class="source" title="Generics の例" lang="">
-<code>SELECT 名 FROM 学生名簿
-  WHERE 出席番号 &lt;= 15
+```sql
+SELECT 名 FROM 学生名簿
+  WHERE 出席番号 <= 15
   ORDER BY 出席番号;
-</code></pre>
+```
 
 
 この問い合わせの結果は、
@@ -252,10 +252,10 @@ SELECT などのキーワードに関して、
 で、この2つのテーブル「学生名簿」と「備考欄」に対して、
 以下のような問い合わせ操作をしてみます。
 
-<pre class="source" title="Generics の例" lang="">
-<code>SELECT 姓, 名, 備考 FROM 学生名簿, 備考欄
+```sql
+SELECT 姓, 名, 備考 FROM 学生名簿, 備考欄
   WHERE 学生名簿.学生番号 == 備考欄.学生番号
-</code></pre>
+```
 
 
 その結果得られるデータは以下のようになります。
@@ -305,37 +305,37 @@ C# 等の言語に SQL ライクなデータベース操作構文を組み込む
 百聞は一見にしかずということで、
 とりあえず、先ほどの SQL での例を C# 3.0 の構文を使って書いてみましょう。
 
-<pre class="source" title="C# 3.0 LINQ" lang="">
-<code><span class="reserved">var</span> 学生名簿 =
-<span class="reserved">new</span>[] {
-  <span class="reserved">new</span> {学生番号 = <span class="literal">14</span>, 姓 = <span class="literal">"風浦"</span>, 名 = <span class="literal">"可符香"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">20</span>, 姓 = <span class="literal">"小森"</span>, 名 = <span class="literal">"霧"</span>    },
-  <span class="reserved">new</span> {学生番号 = <span class="literal">22</span>, 姓 = <span class="literal">"常月"</span>, 名 = <span class="literal">"まとい"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">19</span>, 姓 = <span class="literal">"小節"</span>, 名 = <span class="literal">"あびる"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">18</span>, 姓 = <span class="literal">"木村"</span>, 名 = <span class="literal">"カエレ"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">16</span>, 姓 = <span class="literal">"音無"</span>, 名 = <span class="literal">"芽留"</span>  },
-  <span class="reserved">new</span> {学生番号 = <span class="literal">17</span>, 姓 = <span class="literal">"木津"</span>, 名 = <span class="literal">"千里"</span>  },
-  <span class="reserved">new</span> {学生番号 =  <span class="literal">8</span>, 姓 = <span class="literal">"関内"</span>, 名 = <span class="literal">"マリア"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">28</span>, 姓 = <span class="literal">"日塔"</span>, 名 = <span class="literal">"奈美"</span>  },
+```csharp
+var 学生名簿 =
+new[] {
+  new {学生番号 = 14, 姓 = "風浦", 名 = "可符香"},
+  new {学生番号 = 20, 姓 = "小森", 名 = "霧"    },
+  new {学生番号 = 22, 姓 = "常月", 名 = "まとい"},
+  new {学生番号 = 19, 姓 = "小節", 名 = "あびる"},
+  new {学生番号 = 18, 姓 = "木村", 名 = "カエレ"},
+  new {学生番号 = 16, 姓 = "音無", 名 = "芽留"  },
+  new {学生番号 = 17, 姓 = "木津", 名 = "千里"  },
+  new {学生番号 =  8, 姓 = "関内", 名 = "マリア"},
+  new {学生番号 = 28, 姓 = "日塔", 名 = "奈美"  },
 };
 
-<span class="reserved">var</span> 出席番号前半名 =
-  <span class="reserved">from</span> p <span class="reserved">in</span> 学生名簿
-  <span class="reserved">where</span> p.学生番号 &lt;= <span class="literal">15</span>
-  <span class="reserved">orderby</span> p.学生番号
-  <span class="reserved">select</span> p.名;
+var 出席番号前半名 =
+  from p in 学生名簿
+  where p.学生番号 <= 15
+  orderby p.学生番号
+  select p.名;
 
-<span class="reserved">foreach</span>(<span class="reserved">var</span> 名 <span class="reserved">in</span> 出席番号前半名)
+foreach(var 名 in 出席番号前半名)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, 名);
+  Console.Write("{0}\n", 名);
 }
-</code></pre>
+```
 
 
-<pre class="console" title="C# 3.0 LINQ の例、実行結果">
+```console
 マリア
 可符香
-</pre>
+```
 
 
 非常に見慣れない構文だらけで困惑するかもしれませんが、
@@ -392,13 +392,13 @@ C# 3.0 の目玉となる機能は<strong id="query" class="keyword">クエリ�
 すでに何度か例を示していますが、
 以下のように、SQL 風の問い合わせを C# ソースファイル中に直接書ける機能です。
 
-<pre class="source" title="クエリ式" lang="">
-<code><span class="reserved">var</span> list1 =
-  <span class="reserved">from</span> p <span class="reserved">in</span> list
-  <span class="reserved">where</span> p.id &lt;= <span class="literal">15</span>
-  <span class="reserved">orderby</span> p.id
-  <span class="reserved">select new</span> { p.FamilyName, p.FirstName };
-</code></pre>
+```csharp
+var list1 =
+  from p in list
+  where p.id <= 15
+  orderby p.id
+  select new { p.FamilyName, p.FirstName };
+```
 
 
 この SQL 風のクエリ式は、
@@ -406,19 +406,19 @@ C# 3.0 の目玉となる機能は<strong id="query" class="keyword">クエリ�
 C# 3.0 のコンパイラは、クエリ式をメソッド（あるいは「[拡張メソッド](../functional/sp3_extension.md#exmethod)」）呼び出しに変換します。
 例えば、以下のようなクエリ式を考えます。
 
-<pre class="source" title="where を使った簡単なクエリ式" lang="">
-<code><span class="reserved">var</span> list1 =
-  <span class="reserved">from</span> <span style="background:#ffcccc;">p</span> <span class="reserved">in</span> <span style="background:#eeeeff;">list</span>
-  <span class="reserved">where</span> <span style="background:#eeffee;">p.id &lt;= <span class="literal">15</span></span>
-  <span class="reserved">select</span> <span style="background:#ffddff;">p.Name</span>;
-</code></pre>
+```csharp
+var list1 =
+  from p in list
+  where p.id <= 15
+  select p.Name;
+```
 
 
 これは、C# 3.0 コンパイラによって、以下のように解釈されます。
 
-<pre class="source" title="where を使った簡単なクエリ式" lang="">
-<code><span class="reserved">var</span> list1 = <span style="background:#eeeeff;">list</span>.Where(<span style="background:#ffcccc;">p</span> =&gt; <span style="background:#eeffee;">p.id &lt;= 15</span>).Select(<span style="background:#ffcccc;">p</span> =&gt; <span style="background:#ffddff;">p.Name</span>);
-</code></pre>
+```csharp
+var list1 = list.Where(p => p.id <= 15).Select(p => p.Name);
+```
 
 
 そして、実際のデータ問い合わせはこの Where や Select などのメソッド（あるいは「[拡張メソッド](../functional/sp3_extension.md#exmethod)」）内で行われます。

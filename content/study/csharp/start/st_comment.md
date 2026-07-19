@@ -58,8 +58,8 @@ C#では、コメントの書き方には2通りあります。
 行末までがコメントとなります(そのため、複数行にわたるコメントは書けません)。
 <code>/\* \*/</code> と違い、コメントを閉じ忘れるということが無いので便利です。
 
-<pre class="source" title="コメントの例" lang="">
-<code><span class="comment">/*
+```csharp
+/*
  この部分はコメントです。
  複数行にわたるコメントを書くことも可能です。
 */
@@ -73,8 +73,7 @@ C#では、コメントの書き方には2通りあります。
  2重に使っちゃだめ。
  このコメントはエラーになります。
 */
-</span>
-</code></pre>
+```
 
 
 どんなにプログラミングの得意な人でも、コメントのまったく入っていないソースファイルの内容を理解するのは困難です。
@@ -110,132 +109,132 @@ C# みたいな、割と意図どおりにプログラムコードを書ける�
 </ul>
 <div>
 
-<pre class="source" title="コメントのつけ方の指針" lang="C#">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment"><em>// クラスの前にはそのクラスの説明を書いたほうがいい。</em></span>
+// クラスの前にはそのクラスの説明を書いたほうがいい。
 
-<span class="comment"><em>//「///」から始まるコメントはC#では特別な意味を持つ。
-// 詳しくは「XML Documentation」で説明する。</em>
+//「///」から始まるコメントはC#では特別な意味を持つ。
+// 詳しくは「XML Documentation」で説明する。
 
-/// &lt;summary&gt;
+/// <summary>
 /// コメント付けのサンプルプログラム。
 /// ここでは例として配列で与えられたデータ列の平均値と分散を求めて表示する。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> CommentSample
+/// </summary>
+class CommentSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-<em>    <span class="comment">// 変数名の後に変数の説明を書いたりすることも。
-    // ほんとは、コメントが無くても意味の分かる変数名を付けるべき。</span></em>
+    // 変数名の後に変数の説明を書いたりすることも。
+    // ほんとは、コメントが無くても意味の分かる変数名を付けるべき。
 
-    <span class="reserved">var</span> dataSource = <span class="reserved">new</span>[] {
+    var dataSource = new[] {
       455,  58,   8,   7, 987,  56,   2,  64, 698,  79,
        98,  79,  45, 465, 167,  97,  94, 657, 237, 587,
-      687, 654, 647,   4, 654, 984,   8, 489,   7,  22 }; <span class="comment">// データ列</span>
-    <span class="reserved">double</span> mean; <span class="comment">// 平均値</span>
-    <span class="reserved">double</span> variance;  <span class="comment">// 分散
+      687, 654, 647,   4, 654, 984,   8, 489,   7,  22 }; // データ列
+    double mean; // 平均値
+    double variance;  // 分散
 
-<em>    // 処理の区切りごとに、処理の内容の簡単な説明を書いたり。
+    // 処理の区切りごとに、処理の内容の簡単な説明を書いたり。
     // これも、できれば、コメントなんて書かなくても分かりやすい簡潔な処理を書く方がいい。
     // (「関数の前にだけ説明があれば十分」と言うのが理想。
     //   要するに、処理の区切りごとに関数に分かれてる方がいい。
-    // コメントが必要そうな処理の区切りがあったら、そこを関数化する。)</em>
+    // コメントが必要そうな処理の区切りがあったら、そこを関数化する。)
 
-    // データ列 dataSource の平均値と分散を求める</span>
-    CalcMean(dataSource, <span class="reserved">out</span> mean, <span class="reserved">out</span> variance);
+    // データ列 dataSource の平均値と分散を求める
+    CalcMean(dataSource, out mean, out variance);
 
-    <span class="comment">// 結果の表示</span>
-    Console.WriteLine(<span class="literal">"平均 : {0}, 分散 : {1}"</span>, mean, variance);
+    // 結果の表示
+    Console.WriteLine("平均 : {0}, 分散 : {1}", mean, variance);
   }
 
-  <span class="comment"><em>// 関数の前にはその関数の説明を書く。</em>
+  // 関数の前にはその関数の説明を書く。
 
-  /// &lt;summary&gt;
+  /// <summary>
   /// 配列に入ったデータの平均値と分散を求める
-  /// &lt;param name="data"&gt;与えられたデータ列&lt;/param&gt;
-  /// &lt;param name="mean"&gt;dataの平均値(出力)&lt;/param&gt;
-  /// &lt;param name="variance"&gt;dataの分散(出力)&lt;/param&gt;
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static void</span> CalcMean(<span class="reserved">int</span>[] data, <span class="reserved">out double</span> mean, <span class="reserved">out double</span> variance)
+  /// <param name="data">与えられたデータ列</param>
+  /// <param name="mean">dataの平均値(出力)</param>
+  /// <param name="variance">dataの分散(出力)</param>
+  /// </summary>
+  static void CalcMean(int[] data, out double mean, out double variance)
   {
-    <span class="reserved">int</span> sum = 0;     <span class="comment">// 合計</span>
-    <span class="reserved">int</span> sq_sum = 0;  <span class="comment">// 二乗の合計
+    int sum = 0;     // 合計
+    int sq_sum = 0;  // 二乗の合計
 
-    // データ列の合計と二乗の合計を求める</span>
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> n <span class="reserved">in</span> data)
+    // データ列の合計と二乗の合計を求める
+    foreach(int n in data)
     {
       sum += n;
       sq_sum += n*n;
     }
-    <span class="comment">// 平均値と分散を計算</span>
-    mean = (<span class="reserved">double</span>)sum / data.Length;
-    variance = (<span class="reserved">double</span>)sq_sum / data.Length - mean*mean;
+    // 平均値と分散を計算
+    mean = (double)sum / data.Length;
+    variance = (double)sq_sum / data.Length - mean*mean;
   }
 }
-</code></pre>
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="comment">' VB の場合は ' の後ろがコメント。</span>
-<span class="comment">' を3つ付けるとドキュメンテーション コメント。</span>
+```vbnet
+' VB の場合は ' の後ろがコメント。
+' を3つ付けるとドキュメンテーション コメント。
 
-<span class="comment">''' </span><span class="inactive">&lt;summary&gt;</span>
-<span class="comment">''' コメント受けのサンプル プログラム</span>
-<span class="comment">''' 「'''」から始まるコメントは VB では特別な意味を持つ。</span>
-<span class="comment">''' 詳しくは「XML Documentation」で説明する。</span>
-<span class="comment">''' </span><span class="inactive">&lt;/summary&gt;</span>
-<span class="reserved">Module</span> <span class="type">Program</span>
+''' <summary>
+''' コメント受けのサンプル プログラム
+''' 「'''」から始まるコメントは VB では特別な意味を持つ。
+''' 詳しくは「XML Documentation」で説明する。
+''' </summary>
+Module Program
 
-    <span class="reserved">Sub</span> Main()
-        <span class="reserved">Dim</span> dataSource = <span class="reserved">New</span> <span class="reserved">Integer</span>() {
+    Sub Main()
+        Dim dataSource = New Integer() {
             455, 58, 8, 7, 987, 56, 2, 64, 698, 79,
             98, 79, 45, 465, 167, 97, 94, 657, 237, 587,
             687, 654, 647, 4, 654, 984, 8, 489, 7, 22
         }
 
-        <span class="reserved">Dim</span> mean <span class="reserved">As</span> <span class="reserved">Double</span>
-        <span class="reserved">Dim</span> variance <span class="reserved">As</span> <span class="reserved">Double</span>
+        Dim mean As Double
+        Dim variance As Double
 
         CalcMean(dataSource, mean, variance)
 
-        <span class="type">Console</span>.WriteLine(<span class="literal">"平均 : {0}, 分散 : {1}"</span>, mean, variance)
-    <span class="reserved">End</span> <span class="reserved">Sub</span>
+        Console.WriteLine("平均 : {0}, 分散 : {1}", mean, variance)
+    End Sub
 
-    <span class="comment">''' </span><span class="inactive">&lt;summary&gt;</span>
-    <span class="comment">''' 配列に入ったデータの平均値と分散を求める。</span>
-    <span class="comment">''' </span><span class="inactive">&lt;/summary&gt;</span>
-    <span class="comment">''' </span><span class="inactive">&lt;param name=</span><span class="inactive">"data"</span><span class="inactive">&gt;</span><span class="comment">与えられたデータ。</span><span class="inactive">&lt;/param&gt;</span>
-    <span class="comment">''' </span><span class="inactive">&lt;param name=</span><span class="inactive">"mean"</span><span class="inactive">&gt;</span><span class="comment">data の平均値。</span><span class="inactive">&lt;/param&gt;</span>
-    <span class="comment">''' </span><span class="inactive">&lt;param name=</span><span class="inactive">"variance"</span><span class="inactive">&gt;</span><span class="comment">data の分散。</span><span class="inactive">&lt;/param&gt;</span>
-    <span class="comment">''' </span><span class="inactive">&lt;remarks&gt;&lt;/remarks&gt;</span>
-    <span class="reserved">Sub</span> CalcMean(<span class="reserved">ByVal</span> data <span class="reserved">As</span> <span class="reserved">Integer</span>(), <span class="reserved">ByRef</span> mean <span class="reserved">As</span> <span class="reserved">Double</span>, <span class="reserved">ByRef</span> variance <span class="reserved">As</span> <span class="reserved">Double</span>)
-        <span class="reserved">Dim</span> sum = 0
-        <span class="reserved">Dim</span> squareSum = 0
+    ''' <summary>
+    ''' 配列に入ったデータの平均値と分散を求める。
+    ''' </summary>
+    ''' <param name="data">与えられたデータ。</param>
+    ''' <param name="mean">data の平均値。</param>
+    ''' <param name="variance">data の分散。</param>
+    ''' <remarks></remarks>
+    Sub CalcMean(ByVal data As Integer(), ByRef mean As Double, ByRef variance As Double)
+        Dim sum = 0
+        Dim squareSum = 0
 
-        <span class="reserved">For</span> <span class="reserved">Each</span> x <span class="reserved">In</span> data
+        For Each x In data
             sum += x
             squareSum += x
-        <span class="reserved">Next</span>
+        Next
 
-        mean = <span class="reserved">CType</span>(sum, <span class="reserved">Double</span>) / data.Length
-        variance = <span class="reserved">CType</span>(squareSum, <span class="reserved">Double</span>) / data.Length - mean * mean
-    <span class="reserved">End</span> <span class="reserved">Sub</span>
+        mean = CType(sum, Double) / data.Length
+        variance = CType(squareSum, Double) / data.Length - mean * mean
+    End Sub
 
-<span class="reserved">End</span> <span class="reserved">Module</span>
-</code></pre>
+End Module
+```
 
 
 </div>
 </div>
 
 
-<pre class="console" title="">
+```console
 平均 : 303.2, 分散 : 99802.0266666667
-</pre>
+```
 
 
 ここで、<code>/**</code> もしくは <code>///</code> で始まるコメントには特殊な意味があります。

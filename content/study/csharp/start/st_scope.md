@@ -47,19 +47,19 @@ C#の識別子のスコープは、原則として、<em>その識別子の定�
 スコープの範囲は、ブロックが入れ子になっている個所も含めます。
 すなわち、以下のようなコードはコンパイル エラーになります。
 
-<pre class="source" title="入れ子のブロックにもスコープは及ぶ">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M()
+```csharp
+public static void M()
 {
-    <span class="reserved">int</span> x = 10;
+    int x = 10;
 
     {
-        <span class="reserved">int</span> x = 20; <span class="comment">// ここでエラー</span>
-        <span class="type">Console</span>.WriteLine(x);
+        int x = 20; // ここでエラー
+        Console.WriteLine(x);
     }
 
-    <span class="type">Console</span>.WriteLine(x);
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 この例では`x`という名前の変数が2つあります。1つ目の`x`(10を代入している方)のスコープはメソッド`M`全体になります。2つ目の`x`(20の方)のスコープはそれよりも1回り小さい内側のブロック内になりますが、この範囲は1つ目の`x`のスコープ内でもあります。
 プログラミング言語によっては、この「入れ子のレベル違い」の同名識別子を認めているものもありますが、C#では認めません。
@@ -67,40 +67,40 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 
 逆に、以下のようなコードであれば、2つの`x`がそれぞれ直近のブロック内だけをスコープにしているので、エラーにはなりません。
 
-<pre class="source" title="2つの独立したブロックは別スコープ">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M()
+```csharp
+public static void M()
 {
     {
-        <span class="reserved">int</span> x = 10;
-        <span class="type">Console</span>.WriteLine(x);
+        int x = 10;
+        Console.WriteLine(x);
     }
 
     {
-        <span class="comment">// 別ブロック = 別スコープ。↑のxとは完全に別物</span>
-        <span class="reserved">string</span> x = <span class="string">"a"</span>;
-        <span class="type">Console</span>.WriteLine(x);
+        // 別ブロック = 別スコープ。↑のxとは完全に別物
+        string x = "a";
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 もう1つ注意が必要なのは、変数の定義位置がどこであろうと、スコープは直近のブロック全体になるということです。
 例えば以下のコードを見てください。
 
-<pre class="source" title="スコープはあくまで直近のブロック全体">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M3()
+```csharp
+public static void M3()
 {
     {
-        <span class="comment">// 下で定義されている string の方の x と名前被り</span>
-        <span class="reserved">int</span> x = 20; <span class="comment">// コンパイル エラー</span>
-        <span class="type">Console</span>.WriteLine(x);
+        // 下で定義されている string の方の x と名前被り
+        int x = 20; // コンパイル エラー
+        Console.WriteLine(x);
     }
 
-    <span class="comment">// string の方の x はここから下でしか使えない</span>
-    <span class="comment">// にも関わらず、x のスコープはメソッド内全体</span>
-    <span class="reserved">string</span> x = <span class="string">"a"</span>;
-    <span class="type">Console</span>.WriteLine(x);
+    // string の方の x はここから下でしか使えない
+    // にも関わらず、x のスコープはメソッド内全体
+    string x = "a";
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 2つ目の`x`(`string`の方)は下の方で定義されていますが、これのスコープはブロックの先頭からになります。
 その結果、1つ目の`x`は「スコープ被り」で、同名が許されず、コンパイル エラーになります。
@@ -110,20 +110,20 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 「入れ子のもの含めて、スコープ内では同名不可」の原則には例外もあります。
 1つは、以下のように、メンバーとローカル変数には同じ名前をつけれるということです。
 
-<pre class="source" title="メンバー名とローカル変数名は同じものを付けれる">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+public class Sample
 {
-    <span class="reserved">int</span> x = 20;
+    int x = 20;
 
-    <span class="reserved">public</span> <span class="reserved">void</span> M()
+    public void M()
     {
-        <span class="reserved">int</span> x = 10;
+        int x = 10;
 
-        <span class="type">Console</span>.WriteLine(x);      <span class="comment">// ローカル変数の方の x = 10</span>
-        <span class="type">Console</span>.WriteLine(<span class="reserved">this</span>.x); <span class="comment">// フィールドの方の x = 20</span>
+        Console.WriteLine(x);      // ローカル変数の方の x = 10
+        Console.WriteLine(this.x); // フィールドの方の x = 20
     }
 }
-</code></pre>
+```
 
 この場合、ローカル変数側が優先されます。フィールドの方を使うためには`this.`を付けるのが必須になります。
 
@@ -131,121 +131,121 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 
 もう1つの例外は、型と名前空間です。外で定義された型の名前と同名のメンバーやローカル変数が作れます。
 
-<pre class="source" title="型や名前空間と同じ名前のフィールド・ローカル変数">
-<code><reserved></span><span class="reserved">namespace</span> Color
+```csharp
+namespace Color
 {
-    <span class="reserved">public</span> <span class="reserved">enum</span> <span class="type">Color</span>
+    public enum Color
     {
         Green,
         Yellow,
         Red,
     }
 
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Sample</span>
+    public class Sample
     {
-        <span class="reserved">public</span> <span class="type">Color</span> Color { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public Color Color { get; set; }
 
-        <span class="reserved">public</span> <span class="reserved">void</span> M()
+        public void M()
         {
-            <span class="type">Color</span> Color = <span class="type">Color</span>.Red;
+            Color Color = Color.Red;
         }
     }
 }
-</code></pre>
+```
 
 この場合、どの識別子かを明確化するには、完全修飾名を使うことになります。
 
-<pre class="source" title="完全修飾名で識別子を参照">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">namespace</span> Color
+namespace Color
 {
-    <span class="reserved">public</span> <span class="reserved">enum</span> <span class="type">Color</span>
+    public enum Color
     {
         Green,
         Yellow,
         Red,
     }
 
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Sample</span>
+    public class Sample
     {
-        <span class="reserved">public</span> <span class="reserved">global</span>::Color.<span class="type">Color</span> Color { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public global::Color.Color Color { get; set; }
 
-        <span class="reserved">public</span> <span class="reserved">void</span> M()
+        public void M()
         {
-            <span class="reserved">global</span>::Color.<span class="type">Color</span> Color = <span class="reserved">global</span>::Color.<span class="type">Color</span>.Red;
+            global::Color.Color Color = global::Color.Color.Red;
 
-            <span class="type">Console</span>.WriteLine(Color);
-            <span class="type">Console</span>.WriteLine(<span class="reserved">this</span>.Color);
+            Console.WriteLine(Color);
+            Console.WriteLine(this.Color);
         }
     }
 }
-</code></pre>
+```
 
 ちなみに、これは、あくまで型が外側のスコープで定義されている場合だけです。
 以下のように、まったく同じスコープ内で定義する場合は、型名とメンバー名を同じにすることはできなくなります。
 
-<pre class="source" title="同スコープ内での同名の型とメンバー定義">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+public class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">enum</span> <span class="type">Color</span>
+    public enum Color
     {
         Green,
         Yellow,
         Red,
     }
 
-    <span class="comment">// enum の Color と同じスコープ内でプロパティの Color を作ろうとしていて</span>
-    <span class="comment">// この場合はコンパイル エラーになる</span>
-    <span class="reserved">public</span> <span class="type">Color</span> Color { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // enum の Color と同じスコープ内でプロパティの Color を作ろうとしていて
+    // この場合はコンパイル エラーになる
+    public Color Color { get; set; }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="parameter"></a>引数
 
 メソッドの引数のスコープは、そのメソッド本体内全域です。ほぼ、ローカル変数と扱いは一緒です。
 メソッド内で、引数と同名のローカル変数は作れません。
 
-<pre class="source" title="引数の扱いはローカル変数と同じ">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">int</span> x)
+```csharp
+public static void M(int x)
 {
-    <span class="reserved">int</span> x = 10; <span class="comment">// コンパイル エラー</span>
-    <span class="type">Console</span>.WriteLine(x);
+    int x = 10; // コンパイル エラー
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 ローカル変数と同じくスコープの例外として、メンバーと同じ名前を付けることができます。
 極端な話、以下のように、メソッドと同名の引数を使うこともできます。
 
-<pre class="source" title="メソッド名と同名の引数が利用可能">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+public class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> X(<span class="reserved">int</span> X)
+    public static int X(int X)
     {
-        <span class="reserved">if</span> (X &lt;= 1) <span class="reserved">return</span> 1;
-        <span class="reserved">else</span> <span class="reserved">return</span> <span class="type">Sample</span>.X(X - 1);
+        if (X <= 1) return 1;
+        else return Sample.X(X - 1);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="loop"></a>ループ変数
 
 `for`ステートメントや、`foreach`ステートメントの場合、ループ変数があります。ループ変数のスコープはステートメントの内側になります。
 
-<pre class="source" title="ループ変数のスコープ">
-<code><reserved></span><span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++)
+```csharp
+for (int i = 0; i < 5; i++)
 {
-    <span class="comment">// for の i のスコープはこのブロック内</span>
-    <span class="type">Console</span>.WriteLine(i);
+    // for の i のスコープはこのブロック内
+    Console.WriteLine(i);
 }
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> <span class="type">Enumerable</span>.Range(0, 5))
+foreach (var i in Enumerable.Range(0, 5))
 {
-    <span class="comment">// foreach の i のスコープはこのブロック内</span>
-    <span class="comment">// for の方の i とは別物</span>
-    <span class="type">Console</span>.WriteLine(i);
+    // foreach の i のスコープはこのブロック内
+    // for の方の i とは別物
+    Console.WriteLine(i);
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-8"></a>変数を使える範囲
 
@@ -255,69 +255,69 @@ C#は、原則として<em>スコープ内で識別子の意味を変えない�
 
 まず、変数は、変数宣言よりも前では使えません。
 
-<pre class="source" title="変数は、宣言より前では使えない">
-<code><span class="comment">// 宣言より後なのでコンパイル エラー</span>
+```csharp
+// 宣言より後なのでコンパイル エラー
 x = 10;
 
-<span class="reserved">int</span> x; <span class="comment">// 変数宣言</span>
+int x; // 変数宣言
 
-<span class="comment">// 宣言より後なので OK</span>
+// 宣言より後なので OK
 x = 20;
-</code></pre>
+```
 
 また、変数に格納された値を読み出すためには、それよりも前に確実に初期化を行っている必要があります。
 
-<pre class="source" title="読み出す前に初期化が必要">
-<code>{
-    <span class="reserved">int</span> x; <span class="comment">// 未初期化変数</span>
+```csharp
+{
+    int x; // 未初期化変数
 
-    <span class="comment">// 初期化前には読めない。コンパイル エラー</span>
-    <span class="type">Console</span>.WriteLine(x);
+    // 初期化前には読めない。コンパイル エラー
+    Console.WriteLine(x);
 }
 
 {
-    <span class="reserved">int</span> y; <span class="comment">// 未初期化変数</span>
+    int y; // 未初期化変数
 
-    y = 10; <span class="comment">// ここで初期化</span>
+    y = 10; // ここで初期化
 
-    <span class="comment">// これならOK</span>
-    <span class="type">Console</span>.WriteLine(y);
+    // これならOK
+    Console.WriteLine(y);
 }
-</code></pre>
+```
 
 C#では、変数が確実に初期化されているかどうかを結構真面目に判定しています。
 例えば、以下のように、if ステートメントでは真偽両方で初期化されているかまで見ています。
 (これを、「確実な代入ルール」(definite assignment rule)と呼んで、結構事細かにルールが決まっています。)
 
-<pre class="source" title="if ステートメントの中まで追って、変数の初期化を確認">
-<code>{
-    <span class="reserved">int</span> x; <span class="comment">// 未初期化変数</span>
+```csharp
+{
+    int x; // 未初期化変数
 
-    <span class="reserved">if</span> (<span class="type">Console</span>.ReadKey().Key == <span class="type">ConsoleKey</span>.A)
+    if (Console.ReadKey().Key == ConsoleKey.A)
     {
         x = 10;
     }
 
-    <span class="comment">// 条件を満たさない時に x が初期化されない。コンパイル エラー</span>
-    <span class="type">Console</span>.WriteLine(x);
+    // 条件を満たさない時に x が初期化されない。コンパイル エラー
+    Console.WriteLine(x);
 }
 
 {
-    <span class="reserved">int</span> y; <span class="comment">// 未初期化変数</span>
+    int y; // 未初期化変数
 
-    <span class="reserved">if</span> (<span class="type">Console</span>.ReadKey().Key == <span class="type">ConsoleKey</span>.A)
+    if (Console.ReadKey().Key == ConsoleKey.A)
     {
         y = 10;
     }
-    <span class="reserved">else</span>
+    else
     {
         y = 20;
     }
 
-    <span class="comment">// これならOK</span>
-    <span class="type">Console</span>.WriteLine(y);
+    // これならOK
+    Console.WriteLine(y);
 }
-</code></pre>
+```
 
 <!-- original-page-break -->
 
@@ -334,48 +334,48 @@ C#では、変数が確実に初期化されているかどうかを結構真面
 1つ目の制限 があるので、基本的に、識別子のスコープが、オブジェクトの寿命の最大範囲です。
 例えば以下のようなコードから、変数のスコープ = オブジェクトの寿命になっていることが分かります。
 
-<pre class="source" title="変数のスコープとオブジェクトの寿命">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">public</span> Sample()
+    public Sample()
     {
-        <span class="type">Console</span>.WriteLine(<span class="string">"Sampleが作られました"</span>);
+        Console.WriteLine("Sampleが作られました");
     }
     ~Sample()
     {
-        <span class="type">Console</span>.WriteLine(<span class="string">"SampleがGCされました"</span>);
+        Console.WriteLine("SampleがGCされました");
     }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M()
+    public static void M()
     {
         {
-            <span class="type">Console</span>.WriteLine(<span class="string">"Scope開始"</span>);
-            <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>();
+            Console.WriteLine("Scope開始");
+            var s = new Sample();
 
-            <span class="comment">// この時点ではまだ生きているので、GC しても無駄</span>
-            <span class="type">GC</span>.Collect();
+            // この時点ではまだ生きているので、GC しても無駄
+            GC.Collect();
 
-            <span class="type">Console</span>.WriteLine(<span class="string">"Scope終了"</span>);
+            Console.WriteLine("Scope終了");
         }
 
-        <span class="comment">// この時点で s に入っていた Sample インスタンスは寿命迎えてる</span>
-        <span class="comment">// GC を強制起動すると回収されるはず</span>
-        <span class="type">GC</span>.Collect();
+        // この時点で s に入っていた Sample インスタンスは寿命迎えてる
+        // GC を強制起動すると回収されるはず
+        GC.Collect();
     }
 }
-</code></pre>
+```
 
-<pre class="console" title="実行結果">
-<code>Scope開始
+```console
+Scope開始
 Sampleが作られました
 Scope終了
 SampleがGCされました
-</code></pre>
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="closure"></a>ラムダ式と変数の昇格
 
@@ -384,43 +384,43 @@ SampleがGCされました
 
 その1つが[匿名関数](../functional/sp_delegate.md#anonymous)です。匿名関数は、外側のローカル変数を取り込んでしまえる(補足(capture)できる)機能を持っています。この場合、取り込んだローカル変数に入っているインスタンスの寿命が延びます。
 
-<pre class="source" title="ローカル変数の補足とオブジェクトの寿命">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Value { <span class="reserved">get</span>; }
+    public int Value { get; }
 
-    <span class="reserved">public</span> Sample(<span class="reserved">int</span> value)
+    public Sample(int value)
     {
         Value = value;
     }
     ~Sample()
     {
-        <span class="type">Console</span>.WriteLine(<span class="string">"SampleがGCされました"</span>);
+        Console.WriteLine("SampleがGCされました");
     }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; M()
+    public static Func<int> M()
     {
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f;
+        Func<int> f;
         {
-            <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>(1);
-            f = () =&gt; s.Value;
-            <span class="comment">// 変数 s のスコープはここまで</span>
+            var s = new Sample(1);
+            f = () => s.Value;
+            // 変数 s のスコープはここまで
         }
 
-        <span class="comment">// でも、f が内部で s を参照しているので、インスタンスの寿命が延びる</span>
-        <span class="comment">// 変数 s のスコープを超えて、f のスコープ内でずっと生き残る</span>
-        <span class="comment">// GC 起動しても回収されず</span>
-        <span class="type">GC</span>.Collect();
+        // でも、f が内部で s を参照しているので、インスタンスの寿命が延びる
+        // 変数 s のスコープを超えて、f のスコープ内でずっと生き残る
+        // GC 起動しても回収されず
+        GC.Collect();
 
-        <span class="reserved">return</span> f;
+        return f;
     }
 }
-</code></pre>
+```
 
 詳細は「[匿名デリゲートのコンパイル結果](../functional/sp2_anonymousmethod.md)」で説明していますが、匿名関数から外部のローカル変数を参照すると、実際にはクラスが自動生成されて、フィールドが作られます。すなわち、ローカル変数だったものがフィールドに昇格します。この昇格により、格納されているインスタンスの寿命が延びます。
 
@@ -431,54 +431,54 @@ SampleがGCされました
 まず、`for`ステートメントですが、これのループ変数は、全ループで1つ、同じ変数扱いになります。
 例えば、以下の2つのループ(`for`ステートメントと、その下の`while`ステートメントを使ったもの)は同じ意味になります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public static</span> <span class="reserved">void</span> M(<span class="reserved">int</span> n)
+```csharp
+public static void M(int n)
 {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; n; i++)
+    for (int i = 0; i < n; i++)
     {
-        <span class="type">Console</span>.WriteLine(i);
+        Console.WriteLine(i);
     }
 
     {
-        <span class="reserved">int</span> i = 0;
-        <span class="reserved">while</span>(i &lt; n)
+        int i = 0;
+        while(i < n)
         {
-            <span class="type">Console</span>.WriteLine(i);
+            Console.WriteLine(i);
             i++;
         }
     }
 }
-</code></pre>
+```
 
 `while`に書き換えたものを見てのとおり、ループの外側に1つの変数があり、それがずっと使いまわされます。
 
-<pre class="source" title="forのループ変数はループ全体で共有">
-<code><type></span><span class="type">Action</span> a = <span class="reserved">null</span>;
+```csharp
+Action a = null;
 
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 10; i++)
+for (int i = 0; i < 10; i++)
 {
-    a += () =&gt; <span class="type">Console</span>.WriteLine(i); <span class="comment">// この i はずっと共有</span>
+    a += () => Console.WriteLine(i); // この i はずっと共有
 }
-<span class="comment">// ループを抜けたときには、i の値は 10 に置き換わってる</span>
+// ループを抜けたときには、i の値は 10 に置き換わってる
 
-<span class="comment">// 結果、10が10回表示される</span>
+// 結果、10が10回表示される
 a();
-</code></pre>
+```
 
 この結果(10が10回表示される)は意図通りでしょうか。0～9までの数字が1回ずつ表示される方を期待したいところですが、残念ながらそうはなりません。「0～9まで1回ずつ」という挙動を得るためには以下のように書く必要があります。
 
-<pre class="source" title="ループ1回1回で分けたい場合は別の変数が必要">
-<code><type></span><span class="type">Action</span> a = <span class="reserved">null</span>;
+```csharp
+Action a = null;
 
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 10; i++)
+for (int i = 0; i < 10; i++)
 {
-    <span class="reserved">var</span> j = i;
-    a += () =&gt; <span class="type">Console</span>.WriteLine(j); <span class="comment">// この j は1回1回別</span>
+    var j = i;
+    a += () => Console.WriteLine(j); // この j は1回1回別
 }
 
-<span class="comment">// 結果、0～9が1回ずつ表示される</span>
+// 結果、0～9が1回ずつ表示される
 a();
-</code></pre>
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="foreach-loop-variable"></a>foreachステートメントのループ変数
 
@@ -490,59 +490,59 @@ C# 4.0以前では、`for`ステートメントと同じで、ループ変数が
 一方、C# 5.0以降では、ループ1回1回別扱いされるように変更されています。
 すなわち、`while`を使って書き直すなら以下のようになります。
 
-<pre class="source" title="foreachのループ変数は4.0以前と5.0以降で挙動が異なる">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; list)
+```csharp
+public static void M(IEnumerable<int> list)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> list)
+    foreach (var i in list)
     {
-        <span class="type">Console</span>.WriteLine(i);
+        Console.WriteLine(i);
     }
 
     {
-        <span class="comment">// C# 4.0 以前</span>
-        <span class="reserved">var</span> e = list.GetEnumerator();
-        <span class="reserved">using</span> (e <span class="reserved">as</span> <span class="type">IDisposable</span>)
+        // C# 4.0 以前
+        var e = list.GetEnumerator();
+        using (e as IDisposable)
         {
-            <span class="reserved">int</span> i; <span class="comment">// ループの外</span>
-            <span class="reserved">while</span> (e.MoveNext())
+            int i; // ループの外
+            while (e.MoveNext())
             {
                 i = e.Current;
-                <span class="type">Console</span>.WriteLine(i);
+                Console.WriteLine(i);
             }
         }
     }
 
     {
-        <span class="comment">// C# 5.0 以降</span>
-        <span class="reserved">var</span> e = list.GetEnumerator();
-        <span class="reserved">using</span> (e <span class="reserved">as</span> <span class="type">IDisposable</span>)
+        // C# 5.0 以降
+        var e = list.GetEnumerator();
+        using (e as IDisposable)
         {
-            <span class="reserved">while</span> (e.MoveNext())
+            while (e.MoveNext())
             {
-                <span class="reserved">var</span> i = e.Current; <span class="comment">// ループの中</span>
-                <span class="type">Console</span>.WriteLine(i);
+                var i = e.Current; // ループの中
+                Console.WriteLine(i);
             }
         }
     }
 }
-</code></pre>
+```
 
 当然、以下のように、匿名関数で変数を取り込んだ際の挙動が変わります。
 
-<pre class="source" title="ラムダ式で変数補足した場合の挙動">
-<code><type></span><span class="type">Action</span> a = <span class="reserved">null</span>;
+```csharp
+Action a = null;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> <span class="type">Enumerable</span>.Range(0, 10))
+foreach (var i in Enumerable.Range(0, 10))
 {
-    <span class="comment">// C# 4.0 以前: この i はずっと共有</span>
-    <span class="comment">// C# 5.0 以降: この i は1回1回別</span>
-    a += () =&gt; <span class="type">Console</span>.WriteLine(i);
+    // C# 4.0 以前: この i はずっと共有
+    // C# 5.0 以降: この i は1回1回別
+    a += () => Console.WriteLine(i);
 }
 
-<span class="comment">// C# 4.0 以前: 9が10回表示される</span>
-<span class="comment">// C# 5.0 以降: 0～9が1回ずつ表示される</span>
+// C# 4.0 以前: 9が10回表示される
+// C# 5.0 以降: 0～9が1回ずつ表示される
 a();
-</code></pre>
+```
 
 便利になる方向への変更なので概ね問題は起こしませんが、もしも、C# 4.0以前を使う必要がある場合には注意が必要です。
 最新のコンパイラーと同じ感覚で上記のようなコードを書くと、C# 4.0以前のコンパイラーではバグになったりします。
@@ -554,70 +554,70 @@ a();
 これらは、結構大々的なクラスの自動生成を行っていて、ローカル変数がフィールドに格上げされます。
 例えば、以下のようなコードを実行すると、`Sample`のインスタンスはプログラム終了直前まで回収されません。
 
-<pre class="source" title="イテレーターと非同期メソッドでのローカル変数の昇格">
-<code><reserved></span><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
     ~Sample()
     {
-        <span class="type">Console</span>.WriteLine(<span class="string">"SampleがGCされました"</span>);
+        Console.WriteLine("SampleがGCされました");
     }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M()
+    public static void M()
     {
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> Iterator()) ;
+        foreach (var i in Iterator()) ;
         AsyncMethod().Wait();
     }
 
-    <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Iterator()
+    static IEnumerable<int> Iterator()
     {
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>();
-        <span class="reserved">yield</span> <span class="reserved">return</span> 1;
-        <span class="type">Console</span>.WriteLine(<span class="string">"1"</span>);
+        var s = new Sample();
+        yield return 1;
+        Console.WriteLine("1");
 
-        <span class="comment">// s はずっと生き残ってる。回収されない</span>
-        <span class="type">GC</span>.Collect();
+        // s はずっと生き残ってる。回収されない
+        GC.Collect();
 
-        <span class="reserved">yield</span> <span class="reserved">return</span> 2;
-        <span class="type">Console</span>.WriteLine(<span class="string">"2"</span>);
+        yield return 2;
+        Console.WriteLine("2");
 
-        <span class="comment">// 同上。回収されない</span>
-        <span class="type">GC</span>.Collect();
+        // 同上。回収されない
+        GC.Collect();
 
-        <span class="reserved">yield</span> <span class="reserved">return</span> 3;
-        <span class="type">Console</span>.WriteLine(<span class="string">"3"</span>);
+        yield return 3;
+        Console.WriteLine("3");
     }
 
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> AsyncMethod()
+    static async Task AsyncMethod()
     {
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>();
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(1);
-        <span class="type">Console</span>.WriteLine(<span class="string">"1"</span>);
+        var s = new Sample();
+        await Task.Delay(1);
+        Console.WriteLine("1");
 
-        <span class="comment">// s はずっと生き残ってる。回収されない</span>
-        <span class="type">GC</span>.Collect();
+        // s はずっと生き残ってる。回収されない
+        GC.Collect();
 
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(1);
-        <span class="type">Console</span>.WriteLine(<span class="string">"2"</span>);
+        await Task.Delay(1);
+        Console.WriteLine("2");
 
-        <span class="comment">// 同上。回収されない</span>
-        <span class="type">GC</span>.Collect();
+        // 同上。回収されない
+        GC.Collect();
 
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(1);
-        <span class="type">Console</span>.WriteLine(<span class="string">"3"</span>);
+        await Task.Delay(1);
+        Console.WriteLine("3");
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
-<code>1
+```console
+1
 2
 3
 1
@@ -625,7 +625,7 @@ a();
 3
 SampleがGCされました
 SampleがGCされました
-</code></pre>
+```
 
 <h5 class="version version6">Ver. 6</h5>
 
@@ -639,8 +639,8 @@ C# 5.0以前の場合、すべてのローカル変数が問答無用で軒並�
 昇格が起きない分、オブジェクトの寿命が短くなります。
 例えば、先ほどのコードですが、まったく同じものを、C# 6以降のコンパイラーを使って、リリース設定でコンパイルすると、結果は以下のように変わります。
 
-<pre class="console" title="実行結果(C# 6以降、リリース設定)">
-<code>1
+```console
+1
 2
 SampleがGCされました
 3
@@ -648,7 +648,7 @@ SampleがGCされました
 SampleがGCされました
 2
 3
-</code></pre>
+```
 
 <!-- original-page-break -->
 
@@ -678,23 +678,23 @@ C# 6以前であれば、変数の宣言は宣言ステートメントでしか�
 「ブロックを持たない」というのは、例えば、if ステートメントや foreach ステートメント直下です。
 以下のようなコードはコンパイル エラーになります。
 
-<pre class="source" title="ifやforeach直下には変数宣言を書けない">
-<code><span class="reserved">if</span> (<span class="reserved">true</span>)
-    <span class="reserved">int</span> x = 10; <span class="comment">// コンパイル エラー</span>
+```csharp
+if (true)
+    int x = 10; // コンパイル エラー
 
-<span class="reserved">if</span> (<span class="reserved">true</span>)
+if (true)
 {
-    <span class="reserved">int</span> x = 10; <span class="comment">// これなら OK</span>
+    int x = 10; // これなら OK
 }
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> <span class="reserved">new</span>[] { 1 })
-    <span class="reserved">int</span> x = 10; <span class="comment">// コンパイル エラー</span>
+foreach (var n in new[] { 1 })
+    int x = 10; // コンパイル エラー
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> <span class="reserved">new</span>[] { 1 })
+foreach (var n in new[] { 1 })
 {
-    <span class="reserved">int</span> x = 10; <span class="comment">// これなら OK</span>
+    int x = 10; // これなら OK
 }
-</code></pre>
+```
 
 このifやforeach直下の部分を、構文上は埋め込みステートメント(embedded statement)と呼びます。
 つまり、変数宣言ステートメントは、埋め込みステートメントに含まれていません。
@@ -704,102 +704,102 @@ C# 6以前であれば、変数の宣言は宣言ステートメントでしか�
 ところが、C# 7で導入された[is 演算子の拡張](../datatype/typeswitch.md#is)と[出力変数宣言]では、式の中で変数宣言ができます。
 式は割かしどこにでも書けるものなので、実質的に、ほぼどこででも変数宣言できるようになりました。
 
-<pre class="source" title="宣言をどこにでも書けるようになった例">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">object</span> obj)
+```csharp
+static void M(object obj)
 {
-    <span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">int</span> x1) <span class="comment">// 条件式内</span>
+    if (obj is int x1) // 条件式内
         ;
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> obj <span class="reserved">is</span> <span class="reserved">int</span> x2 ? <span class="string">"a"</span> : <span class="string">"b"</span>) <span class="comment">// foreach の () 内</span>
+    foreach (var n in obj is int x2 ? "a" : "b") // foreach の () 内
         ;
 
-    <span class="reserved">for</span> (<span class="reserved">var</span> n = 0; obj <span class="reserved">is</span> <span class="reserved">int</span> x3 ? n &lt; x3 : <span class="reserved">false</span>; n++) <span class="comment">// for の () 内</span>
+    for (var n = 0; obj is int x3 ? n < x3 : false; n++) // for の () 内
         ;
 
-    <span class="reserved">if</span> (<span class="reserved">true</span>)
-        <span class="type">Console</span>.WriteLine(obj <span class="reserved">is</span> <span class="reserved">int</span> x4 ? 1 : 2); <span class="comment">// 埋め込みステートメント内</span>
+    if (true)
+        Console.WriteLine(obj is int x4 ? 1 : 2); // 埋め込みステートメント内
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> <span class="string">"a"</span>)
-        <span class="type">Console</span>.WriteLine(obj <span class="reserved">is</span> <span class="reserved">int</span> x5 ? 1 : 2); <span class="comment">// 埋め込みステートメント内</span>
+    foreach (var n in "a")
+        Console.WriteLine(obj is int x5 ? 1 : 2); // 埋め込みステートメント内
 }
-</code></pre>
+```
 
 そうなると問題は、式中で宣言した変数のスコープがどうなるかです。
 これには、仕様を決める段階で紆余曲折あったんですが、「式を囲うブロック、埋め込みステートメント、while、for、foreach、using、 case内」ということになりました。
 
-<pre class="source" title="">
-<code><span class="reserved">if</span> (<span class="reserved">true</span>)
+```csharp
+if (true)
 {
-    <span class="type">Console</span>.WriteLine(obj <span class="reserved">is</span> <span class="reserved">int</span> x ? 1 : 2); <span class="comment">// もちろん、ブロック内がスコープ</span>
-    x = 1; <span class="comment">// これは OK</span>
+    Console.WriteLine(obj is int x ? 1 : 2); // もちろん、ブロック内がスコープ
+    x = 1; // これは OK
 }
 
-<span class="reserved">if</span> (<span class="reserved">true</span>)
-    <span class="type">Console</span>.WriteLine(obj <span class="reserved">is</span> <span class="reserved">int</span> x ? 1 : 2); <span class="comment">// 埋め込みステートメント内がスコープ</span>
+if (true)
+    Console.WriteLine(obj is int x ? 1 : 2); // 埋め込みステートメント内がスコープ
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> n <span class="reserved">in</span> obj <span class="reserved">is</span> <span class="reserved">int</span> x ? <span class="string">"a"</span> : <span class="string">"b"</span>) <span class="comment">// foreach 内がスコープ</span>
+foreach (var n in obj is int x ? "a" : "b") // foreach 内がスコープ
     ;
 
-<span class="reserved">for</span> (<span class="reserved">var</span> n = 0; obj <span class="reserved">is</span> <span class="reserved">int</span> x ? n &lt; x : <span class="reserved">false</span>; n++) <span class="comment">// for 内がスコープ</span>
+for (var n = 0; obj is int x ? n < x : false; n++) // for 内がスコープ
     ;
 
-<span class="reserved">while</span> (obj <span class="reserved">is</span> <span class="reserved">int</span> x) <span class="comment">// while 内がスコープ</span>
+while (obj is int x) // while 内がスコープ
 {
-    obj = <span class="string">""</span>;
+    obj = "";
 }
 
-<span class="reserved">using</span> (obj <span class="reserved">is</span> <span class="type">IDisposable</span> x ? x : <span class="reserved">null</span>) <span class="comment">// using 内がスコープ</span>
+using (obj is IDisposable x ? x : null) // using 内がスコープ
     ;
 
-<span class="comment">// どの x ももうスコープ外。コンパイル エラー</span>
-<span class="error">x</span> = 10;
-</code></pre>
+// どの x ももうスコープ外。コンパイル エラー
+x = 10;
+```
 
 特に、forステートメントの更新式の部分で宣言された変数のスコープは、更新式内だけになります。
 (ループ本体の中からすら参照できない。)
 
-<pre class="source" title="for ステートメントの更新式のスコープ">
-<code><span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100; i += obj <span class="reserved">is</span> <span class="reserved">int</span> x ? x : 1) <span class="comment">// この x はこの式内でだけ使える</span>
+```csharp
+for (int i = 0; i < 100; i += obj is int x ? x : 1) // この x はこの式内でだけ使える
 {
-    <span class="reserved">var</span> x = <span class="string">"別の値"</span>; <span class="comment">// OK。更新式内の x とは別物</span>
+    var x = "別の値"; // OK。更新式内の x とは別物
 }
-</code></pre>
+```
 
 また、switch-case では以下のような書き方もできます。
 
-<pre class="source" title="caseごとにスコープが分かれる">
-<code><span class="reserved">switch</span> (obj)
+```csharp
+switch (obj)
 {
-    <span class="reserved">case</span> <span class="reserved">int</span> x: <span class="reserved">return</span> x;
-    <span class="reserved">case</span> <span class="reserved">string</span> x: <span class="reserved">return</span> x.Length; <span class="comment">// int x の方とは別になる</span>
-    <span class="reserved">default</span>: <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">IndexOutOfRangeException</span>();
+    case int x: return x;
+    case string x: return x.Length; // int x の方とは別になる
+    default: throw new IndexOutOfRangeException();
 }
-</code></pre>
+```
 
 一方で、if ステートメントの条件式ではスコープが区切られません。そのifを囲うブロックがスコープになります。
 
-<pre class="source" title="if, while はスコープを区切らない">
-<code><span class="reserved">if</span> (obj <span class="reserved">is</span> <span class="reserved">int</span> x1) <span class="comment">// 条件式内</span>
+```csharp
+if (obj is int x1) // 条件式内
 {
 }
-<span class="reserved">else</span>
+else
 {
-    x1 = 10; <span class="comment">// ここも x1 のスコープ</span>
+    x1 = 10; // ここも x1 のスコープ
 }
 
-<span class="type">Console</span>.WriteLine(x1); <span class="comment">// ここも x1 のスコープ</span>
-</code></pre>
+Console.WriteLine(x1); // ここも x1 のスコープ
+```
 
 これは、いわゆる「early return」(`if (条件) { 長い処理 }` の代わりに、`if (!条件) return;` で処理を打ち切ってしまうパターン)で変数宣言をしたいという要件が多いからだそうです。
 
-<pre class="source" title="early return と if の条件式中での変数宣言">
-<code><span class="reserved">void</span> M(<span class="reserved">string</span> s)
+```csharp
+void M(string s)
 {
-    <span class="reserved">if</span> (!<span class="reserved">int</span>.TryParse(s, <span class="reserved">out</span> var x)) <span class="reserved">return</span>;
+    if (!int.TryParse(s, out var x)) return;
 
-    <span class="comment">// x を使った長い処理</span>
+    // x を使った長い処理
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-16"></a> <a id="lambda"></a>ラムダ式
 
@@ -808,40 +808,40 @@ C# 6以前であれば、変数の宣言は宣言ステートメントでしか�
 後者であっても、この中で宣言した変数のスコープはラムダ式内に限られます。
 (要するに、`() => x` みたいなのの`x`の部分は、前述の「埋め込みステートメント」と同じ扱いになっています。)
 
-<pre class="source" title="ラムダ式中の変数宣言">
-<code><span class="type">Func</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; f = s =&gt; <span class="reserved">int</span>.TryParse(s, <span class="reserved">out</span> var x) ? x : -1;
-f(<span class="string">"123"</span>);
-<span class="type">Console</span>.WriteLine(<span class="error">x</span>); <span class="comment">// ここで x は使えない</span>
-</code></pre>
+```csharp
+Func<string, int> f = s => int.TryParse(s, out var x) ? x : -1;
+f("123");
+Console.WriteLine(x); // ここで x は使えない
+```
 
 ### <a id="sec-generated-title-17"></a> <a id="is-operator"></a>余談: is 演算子で新しい変数を導入
 
 Swift など、他のプログラミング言語の一部では、(C#風に書くと)以下のような構文を持っているものがあります。
 
-<pre class="source" title="is 演算子">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">Derived1</span> : <span class="type">Base</span> { <span class="reserved">public</span> <span class="reserved">int</span> Id =&gt; 1; }
-<span class="reserved">class</span> <span class="type">Derived2</span> : <span class="type">Base</span> { <span class="reserved">public</span> <span class="reserved">string</span> Name =&gt; <span class="string">"2"</span>; }
+class Base { }
+class Derived1 : Base { public int Id => 1; }
+class Derived2 : Base { public string Name => "2"; }
 
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Base</span> x)
+    public static void M(Base x)
     {
-        <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="type">Derived1</span>)
+        if (x is Derived1)
         {
-            <span class="comment">// この中では、x を Derived1 として扱える</span>
-            <span class="type">Console</span>.WriteLine(x.Id);
+            // この中では、x を Derived1 として扱える
+            Console.WriteLine(x.Id);
         }
-        <span class="reserved">else</span> <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="type">Derived2</span>)
+        else if (x is Derived2)
         {
-            <span class="comment">// この中では、x を Derived2 として扱える</span>
-            <span class="type">Console</span>.WriteLine(x.Name);
+            // この中では、x を Derived2 として扱える
+            Console.WriteLine(x.Name);
         }
     }
 }
-</code></pre>
+```
 
 is演算子の拡張は、C# 7でもこういう「型による分岐」機能がほしいということで入った機能です。
 しかし、Swiftのような構文だと、「スコープ内で識別子の意味を変えない・上書かない」という原則に反します。
@@ -849,21 +849,21 @@ is演算子の拡張は、C# 7でもこういう「型による分岐」機能�
 
 結局、is演算子の拡張は以下のように、式の中で新しい変数を導入する構文になっています。
 
-<pre class="source" title="C# 7のis演算子">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Base</span> x)
+```csharp
+public static void M(Base x)
 {
-    <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="type">Derived1</span> d1)
+    if (x is Derived1 d1)
     {
-        <span class="comment">// x の型が Derived1 だった場合だけ、キャスト結果が d1 に入る</span>
-        <span class="type">Console</span>.WriteLine(d1.Id);
+        // x の型が Derived1 だった場合だけ、キャスト結果が d1 に入る
+        Console.WriteLine(d1.Id);
     }
-    <span class="reserved">else</span> <span class="reserved">if</span> (x <span class="reserved">is</span> <span class="type">Derived2</span> d2)
+    else if (x is Derived2 d2)
     {
-        <span class="comment">// x の型が Derived2 だった場合だけ、キャスト結果が d2 に入る</span>
-        <span class="type">Console</span>.WriteLine(d2.Name);
+        // x の型が Derived2 だった場合だけ、キャスト結果が d2 に入る
+        Console.WriteLine(d2.Name);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-18"></a> <a id="local-functions"></a>ローカル関数を使える範囲
 
@@ -871,62 +871,62 @@ is演算子の拡張は、C# 7でもこういう「型による分岐」機能�
 ローカル変数のようなものだと考えると、宣言より前では使えないはずです。
 一方で、メソッドのようなものだと考えると、通常、メソッドは宣言よりも前で使えます。
 
-<pre class="source" title="ローカル関数はローカル変数的であるべきか、メソッド的であるべきか">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// ローカル関数は、こういうローカル変数的な扱いすべき？</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f = x =&gt; x * x;
+        // ローカル関数は、こういうローカル変数的な扱いすべき？
+        Func<int, int> f = x => x * x;
 
-        <span class="comment">// もしローカル変数的に扱うなら、f はこの後ろでしか使えない</span>
-        <span class="reserved">var</span> y = f(2);
+        // もしローカル変数的に扱うなら、f はこの後ろでしか使えない
+        var y = f(2);
 
-        <span class="comment">// それとも、メソッドと同じような扱いにすべき？</span>
-        <span class="comment">// メソッドなら、宣言よりも前でも使える</span>
-        <span class="reserved">var</span> z = M(2);
+        // それとも、メソッドと同じような扱いにすべき？
+        // メソッドなら、宣言よりも前でも使える
+        var z = M(2);
     }
 
-    <span class="comment">// メソッドであれば、宣言が後ろにあってもいい</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> M(<span class="reserved">int</span> x) =&gt; x * x;
+    // メソッドであれば、宣言が後ろにあってもいい
+    static int M(int x) => x * x;
 }
-</code></pre>
+```
 
 これは結局、後者が選ばれました。すなわち、メソッド的に、宣言よりも前で使えます。
 
-<pre class="source" title="ローカル関数は宣言より前で使える">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="comment">// ローカル関数は宣言より前で使える</span>
-    <span class="reserved">var</span> y = f(2);
+    // ローカル関数は宣言より前で使える
+    var y = f(2);
 
-    <span class="reserved">int</span> f(<span class="reserved">int</span> x) =&gt; x * x;
+    int f(int x) => x * x;
 }
-</code></pre>
+```
 
 もう1つ、ローカル関数が絡むと、「確実な代入ルール」も少々複雑です。
 ローカル関数が周りのローカル変数をキャプチャする際、
 その変数は、初めてローカル関数を呼び出すまでに初期化すればよいということになっています。
 
-<pre class="source" title="ローカル関数を呼ぶまでに初期化すればOK">
-<code><span class="reserved">static</span> <span class="reserved">void</span> SuccessfulSample()
+```csharp
+static void SuccessfulSample()
 {
-    <span class="reserved">int</span> a; <span class="comment">// 未初期化</span>
-    <span class="reserved">int</span> f(<span class="reserved">int</span> x) =&gt; a * x; <span class="comment">// (この時点で)未初期化変数 a 参照</span>
-    a = 10; <span class="comment">// ここで初期化</span>
-    <span class="reserved">var</span> y = f(2); <span class="comment">// OK</span>
+    int a; // 未初期化
+    int f(int x) => a * x; // (この時点で)未初期化変数 a 参照
+    a = 10; // ここで初期化
+    var y = f(2); // OK
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> ErroneousSample()
+static void ErroneousSample()
 {
-    <span class="reserved">int</span> a; <span class="comment">// 未初期化</span>
-    <span class="reserved">int</span> f(<span class="reserved">int</span> x) =&gt; a * x; <span class="comment">// 未初期化変数 a 参照</span>
-    <span class="comment">// a を初期化しない！</span>
-    <span class="reserved">var</span> y = f(2); <span class="comment">// コンパイル エラー</span>
+    int a; // 未初期化
+    int f(int x) => a * x; // 未初期化変数 a 参照
+    // a を初期化しない！
+    var y = f(2); // コンパイル エラー
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-19"></a> <a id="query-expression"></a>クエリ式
 
@@ -936,13 +936,13 @@ C# 7.3までは、クエリ式中では式中での変数宣言ができませ�
 (変数のスコープをどうするかがちょっと悩ましく、7.0時点では「先送り」していました。)
 C# 7.3で、これが許されるようになりました。
 
-<pre class="source" title="クエリ式中での変数宣言">
-<code><span class="reserved">var</span> q =
-    <span class="reserved">from</span> s <span class="reserved">in</span> <span class="reserved">new</span>[] { <span class="string">"a"</span>, <span class="string">"abc"</span>, <span class="string">"112"</span>, <span class="string">"132"</span>, <span class="string">"451"</span>, <span class="reserved">null</span> }
-    <span class="reserved">where</span> s <span class="reserved">is</span> <span class="reserved">string</span> <em>x</em> &amp;&amp; x.Length &gt; 1
-    <span class="reserved">where</span> <span class="reserved">int</span>.TryParse(s, <span class="reserved">out var</span> <em>x</em>) &amp;&amp; (x % 3) == 0
-    <span class="reserved">select</span> s;
-</code></pre>
+```csharp
+var q =
+    from s in new[] { "a", "abc", "112", "132", "451", null }
+    where s is string x && x.Length > 1
+    where int.TryParse(s, out var x) && (x % 3) == 0
+    select s;
+```
 
 ちなみに、この場合、変数のスコープは「句の中のみ」に限られます
 (`where`とか`select`とかによってスコープが区切られます)。
@@ -950,12 +950,12 @@ C# 7.3で、これが許されるようになりました。
 
 これは、クエリ式が実際には以下のようなメソッド チェーンに展開されるためです。
 
-<pre class="source" title="クエリ式のメソッド チェーンへの展開">
-<code><span class="reserved">var</span> q =
-    <span class="reserved">new</span>[] { <span class="string">"a"</span>, <span class="string">"abc"</span>, <span class="string">"112"</span>, <span class="string">"132"</span>, <span class="string">"451"</span>, <span class="reserved">null</span> }
-    .Where(s =&gt; s <span class="reserved">is</span> <span class="reserved">string</span> <em>x</em> &amp;&amp; x.Length &gt; 1)
-    .Where(s =&gt; <span class="reserved">int</span>.TryParse(s, <span class="reserved">out var</span> <em>x</em>) &amp;&amp; (x % 3) == 0);
-</code></pre>
+```csharp
+var q =
+    new[] { "a", "abc", "112", "132", "451", null }
+    .Where(s => s is string x && x.Length > 1)
+    .Where(s => int.TryParse(s, out var x) && (x % 3) == 0);
+```
 
 前述の通り、ラムダ式内で変数宣言した場合、その変数のスコープはラムダ式内に限られます。
 クエリ式は句ごとに1つのラムダ式が作られるので、それとの整合性を取った結果が「句ごとに別スコープ」です。
@@ -968,28 +968,28 @@ C# 7.3で、これが許されるようになりました。
 ラムダ式同様、スコープをどうするか悩ましくて保留になっていたものに初期化子があります。
 C# 7.3で、以下のように、初期化子内でも変数宣言できるようになりました。
 
-<pre class="source" title="初期化子内での変数宣言">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> Derived(<span class="reserved">string</span> s) : <span class="reserved">this</span>(<span class="reserved">int</span>.TryParse(s, <span class="reserved">out var</span> <em>x</em>) ? x : -1)
+    public Derived(string s) : this(int.TryParse(s, out var x) ? x : -1)
     {
-        <span class="comment">// コンストラクター初期化子中で宣言した x は、コンストラクター本体内で利用可能。</span>
-        <span class="type">Console</span>.WriteLine(x);
+        // コンストラクター初期化子中で宣言した x は、コンストラクター本体内で利用可能。
+        Console.WriteLine(x);
     }
 
-    <span class="reserved">public</span> Derived(<span class="reserved">int</span> a) : <span class="reserved">base</span>(<span class="reserved">out var</span> <em>x</em>)
+    public Derived(int a) : base(out var x)
     {
-        <span class="comment">// base の場合でも同様。</span>
-        <span class="type">Console</span>.WriteLine(x);
+        // base の場合でも同様。
+        Console.WriteLine(x);
     }
 
-    <span class="comment">// フィールド初期化子、プロパティ初期化子中で宣言した x は、その初期化子内でのみ有効。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Field = <span class="reserved">int</span>.TryParse(<span class="string">"123"</span>, <span class="reserved">out var</span> <em>x</em>) ? x : -1;
-    <span class="reserved">public</span> <span class="reserved">int</span> Property{ <span class="reserved">get</span>; <span class="reserved">set</span>; } = <span class="reserved">int</span>.TryParse(<span class="string">"123"</span>, <span class="reserved">out var</span> <em>x</em>) ? x : -1;
+    // フィールド初期化子、プロパティ初期化子中で宣言した x は、その初期化子内でのみ有効。
+    public int Field = int.TryParse("123", out var x) ? x : -1;
+    public int Property{ get; set; } = int.TryParse("123", out var x) ? x : -1;
 }
-</code></pre>
+```
 
 ちなみに、コンストラクター初期化子内で宣言した変数のスコープはそのコンストラクター全体、
 フィールド初期化子・プロパティ初期化子中のものはその初期化子の中限定です。

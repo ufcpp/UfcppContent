@@ -69,17 +69,17 @@ C#でもそういう特殊なメソッドを用意して、上記のような通
 
 `bool`型には`true`と`false`しかないはずなんだから、以下の`default`句は不要にできないかという話。ご意見求む状態。
 
-<pre class="source" title="">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">bool</span> b = ...;
-<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">switch</span> (b)
+```csharp
+bool b = ...;
+switch (b)
 {
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">case</span> <span class="pl-c1" style="box-sizing: border-box; color: rgb(0, 134, 179);">true</span>:
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">case</span> <span class="pl-c1" style="box-sizing: border-box; color: rgb(0, 134, 179);">false</span>:
-        <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">break</span>;
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">default</span>:
-        <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">break</span>; <span class="pl-c" style="box-sizing: border-box; color: rgb(150, 152, 150);">// warning: unreachable code?</span>
+    case true:
+    case false:
+        break;
+    default:
+        break; // warning: unreachable code?
 }
-</code></pre>
+```
 
 これ、昔から要望としては頻出なんですが、できない理由もあります。ILは結構低級機能を提供しているので、`bool`型の変数を無理やり書き換えて、`true`でも`false`でもない値を作れて、上記`default`句に来ちゃう場合があったり。
 というか、C#でも、以下のような書き方でそういう値を作れます。
@@ -100,19 +100,19 @@ C#でもそういう特殊なメソッドを用意して、上記のような通
 
 シナリオ的には以下のようなもの。
 
-<pre class="source" title="">
-<code><comment></span><span class="comment">// シナリオ 1:</span>
-<span class="reserved">int</span> f(<span class="reserved">string</span> s);                 <span class="comment">// ライブラリv1がこいつを持ってる</span>
-<span class="reserved">int</span> f(<span class="reserved">string</span> s, <span class="reserved">bool</span> b = <span class="reserved">false</span>); <span class="comment">// v2でこれに変えたい</span>
-<span class="comment">// バイナリ互換性のためにf(string)は消せない</span>
-<span class="comment">// でも、今後、オーバーロード解決時に、f("") で優先的に f(string, bool) の方を見てほしい(今は無理)</span>
+```csharp
+// シナリオ 1:
+int f(string s);                 // ライブラリv1がこいつを持ってる
+int f(string s, bool b = false); // v2でこれに変えたい
+// バイナリ互換性のためにf(string)は消せない
+// でも、今後、オーバーロード解決時に、f("") で優先的に f(string, bool) の方を見てほしい(今は無理)
 
-<span class="comment">// シナリオ 2:</span>
-<span class="reserved">float</span> g();  <span class="comment">// ライブラリv1がこいつを持ってる</span>
-<span class="reserved">double</span> g(); <span class="comment">// v2でこれに変えたい</span>
-<span class="comment">// バイナリ互換性のためにfloat g()は消せない</span>
-<span class="comment">// でも、今後、double g()を使いたい(呼び分けどころか今はそもそも定義すら不可能)</span>
-</code></pre>
+// シナリオ 2:
+float g();  // ライブラリv1がこいつを持ってる
+double g(); // v2でこれに変えたい
+// バイナリ互換性のためにfloat g()は消せない
+// でも、今後、double g()を使いたい(呼び分けどころか今はそもそも定義すら不可能)
+```
 
 これに対して、v1側に`obsolete`修飾子を付けることで、v2側の新メソッドの追加・オーバーロード解決できるようにしたいとのこと。
 

@@ -35,107 +35,107 @@ C# 12 リリース(2023/11)直後から再検討が始まっていて、先月�
 
 今、コレクション式の要素の型は `IEnumerable<T>` の `T` で判定しています。
 
-<pre class="source" title="iteration type を元に型判定してる">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections;
+```csharp
+using System.Collections;
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="reserved">new</span> <span class="type">A</span>()) ; <span class="comment">// この x は int</span>
+foreach (var x in new A()) ; // この x は int
 
-<span class="comment">// Add(int) だけあればよさそうに見えるのに、</span>
-<span class="comment">// 実際には IEnumerable&lt;int&gt; をみて「int のコレクション」と判断してる。</span>
-<span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> [<span class="number">1</span>];
+// Add(int) だけあればよさそうに見えるのに、
+// 実際には IEnumerable<int> をみて「int のコレクション」と判断してる。
+A a = [1];
 
-<span class="comment">// foreach すると int を列挙する型。</span>
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;
+// foreach すると int を列挙する型。
+class A : IEnumerable<int>
 {
-    <span class="type">IEnumerator</span>&lt;<span class="reserved">int</span>&gt; <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;<span class="operator">.</span><span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
-    <span class="type">IEnumerator</span> <span class="type">IEnumerable</span><span class="operator">.</span><span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
+    IEnumerator<int> IEnumerable<int>.GetEnumerator() => throw new NotImplementedException();
+    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
+    public void Add(int x) { }
 }
-</pre>
+```
 
-<pre class="source" title="インターフェイス実装を消したらエラー">
-<span class="comment">// foreach はインターフェイスがなくても GetEnumerator っていう名前のメソッドさえ持っていれば OK なのに。</span>
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="reserved">new</span> <span class="type">A</span>()) { }
+```csharp
+// foreach はインターフェイスがなくても GetEnumerator っていう名前のメソッドさえ持っていれば OK なのに。
+foreach (var x in new A()) { }
 
-<span class="comment">// これはダメになる。</span>
-<span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="error" title="CS9174">[<span class="number">1</span>]</span>;
+// これはダメになる。
+A a = [1];
 
-<span class="comment">// インターフェイスを削るとコレクション式で使えなくなる。</span>
-<span class="reserved">class</span> <span class="type">A</span>
+// インターフェイスを削るとコレクション式で使えなくなる。
+class A
 {
-    <span class="reserved">public</span> <span class="type">IEnumerator</span>&lt;<span class="reserved">int</span>&gt; <span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
+    public IEnumerator<int> GetEnumerator() => throw new NotImplementedException();
+    public void Add(int x) { }
 }
-</pre>
+```
 
-<pre class="source" title="コレクション初期化子は使えるのに…">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections;
+```csharp
+using System.Collections;
 
-<span class="comment">// foreach なんとか OK。</span>
-<span class="comment">// non-generic な GetEnumerator が呼ばれてるので object を介してるけど…</span>
-<span class="control">foreach</span> (<span class="reserved">int</span> <span class="variable">x</span> <span class="control">in</span> <span class="reserved">new</span> <span class="type">A</span>()) { }
+// foreach なんとか OK。
+// non-generic な GetEnumerator が呼ばれてるので object を介してるけど…
+foreach (int x in new A()) { }
 
-<span class="comment">// 旧来のコレクション初期化子は使えるのに…</span>
-<span class="type">A</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span>() { <span class="number">1</span> };
+// 旧来のコレクション初期化子は使えるのに…
+A a1 = new() { 1 };
 
-<span class="comment">// コレクション式はダメになる。</span>
-<span class="type">A</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="error" title="CS9215"><span class="error" title="CS1503">[<span class="number">1</span>]</span></span>;
+// コレクション式はダメになる。
+A a2 = [1];
 
-<span class="comment">// non-generic インターフェイスに変えると？</span>
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">IEnumerable</span>
+// non-generic インターフェイスに変えると？
+class A : IEnumerable
 {
-    <span class="reserved">public</span> <span class="type">IEnumerator</span> <span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
+    public IEnumerator GetEnumerator() => throw new NotImplementedException();
+    public void Add(int x) { }
 }
-</pre>
+```
 
 ちなみに、この「`IEnumerable<T>` の `T`」以外は受け付けなかったりします。
 これも、コレクション初期化子時代はできたこと。
 
-<pre class="source" title="コレクション初期化子は使えるのに… (再)">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections;
+```csharp
+using System.Collections;
 
-<span class="comment">// 旧来のコレクション初期化子は string を受け付けるのに…</span>
-<span class="type">A</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span>() { <span class="number">1</span>, <span class="string">&quot;2&quot;</span> };
+// 旧来のコレクション初期化子は string を受け付けるのに…
+A a1 = new() { 1, "2" };
 
-<span class="comment">// コレクション式はダメになる。</span>
-<span class="type">A</span> <span class="variable">a2</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="string"><span class="error" title="CS0029">&quot;2&quot;</span></span>];
+// コレクション式はダメになる。
+A a2 = [1, "2"];
 
-<span class="comment">// Add だけは string 受付。</span>
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;
+// Add だけは string 受付。
+class A : IEnumerable<int>
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">string</span> <span class="variable local">x</span>) { }
+    public void Add(int x) { }
+    public void Add(string x) { }
 
-    <span class="type">IEnumerator</span>&lt;<span class="reserved">int</span>&gt; <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;<span class="operator">.</span><span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
-    <span class="type">IEnumerator</span> <span class="type">IEnumerable</span><span class="operator">.</span><span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
+    IEnumerator<int> IEnumerable<int>.GetEnumerator() => throw new NotImplementedException();
+    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
 }
-</pre>
+```
 
 これが、非ジェネリックな `IEnumerable` を使うと object のみ受け付けるようになるみたいです。
 しかもこれ、 Visual Studio 17.10 以前であれば受け付けていたコードがコンパイル エラーになるというひと悶着あり。
 
 * [False positive for CS1503 with MSBuild 17.10, but not dotnet build #72098](https://github.com/dotnet/roslyn/issues/72098)
 
-<pre class="source" title="">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections;
+```csharp
+using System.Collections;
 
-<span class="comment">// 旧来のコレクション初期化子は string を受け付けるのに…</span>
-<span class="type">A</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span>() { <span class="number">1</span>, <span class="string">&quot;2&quot;</span> };
+// 旧来のコレクション初期化子は string を受け付けるのに…
+A a1 = new() { 1, "2" };
 
-<span class="comment">// これ、ちょっと前まで受け付けていたらしい。</span>
-<span class="comment">// Visual Studio 17.10 Preview 1 だとエラー。</span>
-<span class="type">A</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="error" title="CS9215"><span class="error" title="CS1503">[<span class="number">1</span>, <span class="string">&quot;2&quot;</span>]</span></span>;
+// これ、ちょっと前まで受け付けていたらしい。
+// Visual Studio 17.10 Preview 1 だとエラー。
+A a2 = [1, "2"];
 
-<span class="comment">// non-generic なインターフェイスを実装。</span>
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">IEnumerable</span>
+// non-generic なインターフェイスを実装。
+class A : IEnumerable
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">string</span> <span class="variable local">x</span>) { }
+    public void Add(int x) { }
+    public void Add(string x) { }
 
-    <span class="type">IEnumerator</span> <span class="type">IEnumerable</span><span class="operator">.</span><span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
+    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
 }
-</pre>
+```
 
 [意図した破壊的変更](https://github.com/dotnet/roslyn/blob/main/docs/compilers/CSharp/Compiler%20Breaking%20Changes%20-%20DotNet%208.md#collection-expression-target-type-must-have-constructor-and-add-method) (たぶん、[1/8 の LDM での決定](https://github.com/dotnet/csharplang/discussions/7832))だそうですが、
 本当にこの変更をしてよかったのかどうか。

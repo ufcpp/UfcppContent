@@ -77,116 +77,116 @@ aliases:
 例えば、
 以下の型(クラス、構造体、インターフェイス、デリゲート)はいずれも、アセンブリの外からアクセスできません。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">internal</span> <span class="reserved">interface</span> <span class="type">InternalInterface</span>
+```csharp
+internal interface InternalInterface
 {
-    <span class="type">InternalDelegate</span> X { <span class="reserved">get</span>; }
+    InternalDelegate X { get; }
 }
 
-<span class="reserved">internal</span> <span class="reserved">delegate</span> <span class="reserved">void</span> <span class="type">InternalDelegate</span>();
+internal delegate void InternalDelegate();
 
-<span class="reserved">namespace</span> A
+namespace A
 {
-    <span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">InternalClass</span> : <span class="type">InternalInterface</span>
+    internal class InternalClass : InternalInterface
     {
-        <span class="reserved">private</span> <span class="type">InternalStruct</span> _value;
+        private InternalStruct _value;
 
-        <span class="reserved">public</span> <span class="type">InternalDelegate</span> X =&gt; _value.X;
+        public InternalDelegate X => _value.X;
     }
 
-    <span class="reserved">internal</span> <span class="reserved">struct</span> <span class="type">InternalStruct</span>
+    internal struct InternalStruct
     {
-        <span class="reserved">public</span> <span class="type">InternalDelegate</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public InternalDelegate X { get; set; }
     }
 }
-</code></pre>
+```
 
 一方、以下の型はいずれも、アセンブリの外からアクセスできます。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">PublicInterface</span>
+```csharp
+public interface PublicInterface
 {
-    <span class="type">PublicDelegate</span> X { <span class="reserved">get</span>; }
+    PublicDelegate X { get; }
 }
 
-<span class="reserved">public</span> <span class="reserved">delegate</span> <span class="reserved">void</span> <span class="type">PublicDelegate</span>();
+public delegate void PublicDelegate();
 
-<span class="reserved">namespace</span> A
+namespace A
 {
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">PublicClass</span> : <span class="type">PublicInterface</span>
+    public class PublicClass : PublicInterface
     {
-        <span class="reserved">private</span> <span class="type">PublicStruct</span> _value;
+        private PublicStruct _value;
 
-        <span class="reserved">public</span> <span class="type">PublicDelegate</span> X =&gt; _value.X;
+        public PublicDelegate X => _value.X;
     }
 
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">PublicStruct</span>
+    public struct PublicStruct
     {
-        <span class="reserved">public</span> <span class="type">PublicDelegate</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public PublicDelegate X { get; set; }
     }
 }
-</code></pre>
+```
 
 これらの型を定義しているのとは別のプロジェクトから参照する場合、
 以下のように、internal なものへのアクセスはコンパイル エラーになります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">namespace</span> ConsoleApplication
+```csharp
+namespace ConsoleApplication
 {
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+        static void Main(string[] args)
         {
-            <span class="reserved">var</span> c1 = <span class="reserved">new</span> A.<span class="type">PublicClass</span>();
-            <span class="reserved">var</span> s1 = <span class="reserved">new</span> A.<span class="type">PublicStruct</span>();
+            var c1 = new A.PublicClass();
+            var s1 = new A.PublicStruct();
 
-            <span class="reserved">var</span> c2 = <span class="reserved">new</span> A.InternalClass();  <span class="comment">// コンパイル エラー</span>
-            <span class="reserved">var</span> s2 = <span class="reserved">new</span> A.InternalStruct(); <span class="comment">// コンパイル エラー</span>
+            var c2 = new A.InternalClass();  // コンパイル エラー
+            var s2 = new A.InternalStruct(); // コンパイル エラー
         }
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="details"></a>いくつか細かいルール
 
 ちなみに、入れ子であれば、型に対しても5種類全部のアクセシビリティを指定できます。
 それぞれの意味は、[実装の隠蔽](../oop/oo_conceal.md)で紹介したメンバーに対するものと同じです。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">TopLevelClass</span>
+```csharp
+public class TopLevelClass
 {
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">PublicClass</span> { }
-    <span class="reserved">protected</span> <span class="reserved">class</span> <span class="type">ProtectedClass</span> { }
-    <span class="reserved">protected</span> <span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">ProtectedInternalClass</span> { }
-    <span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">InternalClass</span> { }
-    <span class="reserved">private</span> <span class="reserved">class</span> <span class="type">PrivateClass</span> { }
+    public class PublicClass { }
+    protected class ProtectedClass { }
+    protected internal class ProtectedInternalClass { }
+    internal class InternalClass { }
+    private class PrivateClass { }
 }
-</code></pre>
+```
 
 インターフェイスの実装であれば、
 public なクラスで internal なインターフェイスを実装することも可能です。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">PublicStruct</span> { }
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">PublicInterface</span> { <span class="type">PublicStruct</span> X { <span class="reserved">get</span>; } }
+```csharp
+public struct PublicStruct { }
+public interface PublicInterface { PublicStruct X { get; } }
 
-<span class="reserved">internal</span> <span class="reserved">struct</span> <span class="type">InternalStruct</span> { }
-<span class="reserved">internal</span> <span class="reserved">interface</span> <span class="type">InternalInterface</span> { <span class="type">InternalStruct</span> X { <span class="reserved">get</span>; } }
+internal struct InternalStruct { }
+internal interface InternalInterface { InternalStruct X { get; } }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">PublicClass</span> : <span class="type">PublicInterface</span>, <span class="type">InternalInterface</span>
+public class PublicClass : PublicInterface, InternalInterface
 {
-    <span class="reserved">public</span> <span class="type">PublicStruct</span> X =&gt; <span class="reserved">default</span>(<span class="type">PublicStruct</span>);
-    <span class="type">InternalStruct</span> <span class="type">InternalInterface</span>.X =&gt; <span class="reserved">default</span>(<span class="type">InternalStruct</span>);
+    public PublicStruct X => default(PublicStruct);
+    InternalStruct InternalInterface.X => default(InternalStruct);
 }
-</code></pre>
+```
 
 一方、internal なクラスを public なクラスで継承することはできません。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">InternalClass</span> { }
+```csharp
+internal class InternalClass { }
 
-<span class="comment">// コンパイル エラー</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">PublicClass</span> : <span class="type">InternalClass</span>
+// コンパイル エラー
+public class PublicClass : InternalClass
 {
 }
-</code></pre>
+```

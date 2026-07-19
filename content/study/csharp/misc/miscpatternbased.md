@@ -27,19 +27,19 @@ C# の言語機能のいくつか(というか結構多くのもの)は、「所
 例えば C# 3.0 の[クエリ式](../data/sp3_linq.md#query)がパターン ベースな構文の代表例です。
 以下のような書き方をした場合、
 
-<pre class="source" title="クエリ式の例">
-<code><span class="reserved">from</span> x <span class="reserved">in</span> <span class="variable">source</span>
-<span class="reserved">where</span> x &lt; 10
-<span class="reserved">select</span> x * x;
-</code></pre>
+```csharp
+from x in source
+where x < 10
+select x * x;
+```
 
 C# コンパイラーが以下のようなメソッド呼び出しに展開します。
 
-<pre class="source" title="クエリ式の展開結果の例">
-<code><span class="variable">source</span>
-    .<span class="method">Where</span>(<span class="variable">x</span> =&gt; <span class="variable">x</span> &lt; 10)
-    .<span class="method">Select</span>(<span class="variable">x</span> =&gt; <span class="variable">x</span> * <span class="variable">x</span>);
-</code></pre>
+```csharp
+source
+    .Where(x => x < 10)
+    .Select(x => x * x);
+```
 
 C# コンパイラーは「`select`句を見たら`Select`メソッドに置き換える」というルールだけを提供していて、
 `Select`メソッドをどう実装するかは自由にできます。
@@ -62,25 +62,25 @@ C# コンパイラーは「`select`句を見たら`Select`メソッドに置き�
 逆に、インターフェイスの実装が必須の構文が1つだけあって、[`using` ステートメント](../resource/oo_dispose.md#using)がそうです。
 (ただし、C# 8.0 で、[`ref struct` に対してだけは緩和されています](../resource/oo_dispose.md#pattern-based-using)。)
 
-<pre class="source" title="using ステートメントはインターフェイス必須">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">struct</span> <span class="type">Disposable</span>
-    <span class="comment">// インターフェイス実装が必須。</span>
-    <span class="comment">// 以下の行をコメントアウトするとコンパイル エラーになる。</span>
-    : <span class="type">IDisposable</span>
+struct Disposable
+    // インターフェイス実装が必須。
+    // 以下の行をコメントアウトするとコンパイル エラーになる。
+    : IDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() { }
+    public void Dispose() { }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">using</span> (<span class="reserved">var</span> <span class="variable">d</span> = <span class="reserved">new</span> <span class="type">Disposable</span>()) ;
+        using (var d = new Disposable()) ;
     }
 }
-</code></pre>
+```
 
 また、パターン ベースの逆という意味では、
 C# コンパイラーだけではできない言語機能もあります。
@@ -133,20 +133,20 @@ C# コンパイラーだけの修正で済むなら実装コストがだいぶ�
 
 例えば以下のような型があったとします。
 
-<pre class="source" title="分解可能な型の例">
-<code><span class="reserved">interface</span> <span class="type">IDeconstructibleTo2Ints</span>
+```csharp
+interface IDeconstructibleTo2Ints
 {
-    <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">y</span>);
+    void Deconstruct(out int x, out int y);
 }
  
-<span class="reserved">struct</span> <span class="type">Point</span> : <span class="type">IDeconstructibleTo2Ints</span>
+struct Point : IDeconstructibleTo2Ints
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Point</span>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">y</span>) =&gt; (X, Y) = (<span class="variable">x</span>, <span class="variable">y</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">y</span>) =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) = (X, Y);
+    public int X { get; }
+    public int Y { get; }
+    public Point(int x, int y) => (X, Y) = (x, y);
+    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 }
-</code></pre>
+```
 
 この型は[分解](../datatype/deconstruction.md)構文を使えるように作ってあります。
 (分解は `Deconstruct` メソッドの呼び出しに展開されます。)
@@ -157,23 +157,23 @@ C# コンパイラーだけの修正で済むなら実装コストがだいぶ�
 `Sum1` はパターン ベース(`Point`構造体の`Deconstruct`が直接呼ばれる)、
 `Sum2` はインターフェイスを介しています。
 
-<pre class="source" title="分解がインターフェイスを介するかどうか">
-<code><span class="comment">// Point を直接分解。</span>
-<span class="comment">// 最終的にインライン展開が働いて、単なる p.X + p.Y に展開される(ものすごく高速)。</span>
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">Sum1</span>(<span class="type">Point</span> <span class="variable">p</span>)
+```csharp
+// Point を直接分解。
+// 最終的にインライン展開が働いて、単なる p.X + p.Y に展開される(ものすごく高速)。
+static int Sum1(Point p)
 {
-    <span class="reserved">var</span> (<span class="variable">x</span>, <span class="variable">y</span>) = <span class="variable">p</span>;
-    <span class="control">return</span> <span class="variable">x</span> + <span class="variable">y</span>;
+    var (x, y) = p;
+    return x + y;
 }
  
-<span class="comment">// インターフェイスを介して分解。</span>
-<span class="comment">// インライン展開が効かず、ボックス化も起きてるので遅い。</span>
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method">Sum2</span>(<span class="type">IDeconstructibleTo2Ints</span> <span class="variable">p</span>)
+// インターフェイスを介して分解。
+// インライン展開が効かず、ボックス化も起きてるので遅い。
+static int Sum2(IDeconstructibleTo2Ints p)
 {
-    <span class="reserved">var</span> (<span class="variable">x</span>, <span class="variable">y</span>) = <span class="variable">p</span>;
-    <span class="control">return</span> <span class="variable">x</span> + <span class="variable">y</span>;
+    var (x, y) = p;
+    return x + y;
 }
-</code></pre>
+```
 
 [ベンチマークを取ってみれば](https://gist.github.com/ufcpp/a09030dd049f20d10e2504edf3711926)わかるんですが、
 `Sum1`は最適化によってほとんど消えることすらあって、計測できない(誤差しか残らない)くらい高速です。
@@ -191,26 +191,26 @@ C# コンパイラーだけの修正で済むなら実装コストがだいぶ�
 例えば、クエリ式(の`where`と`select`)を使える最低限のコードを書くと以下のようになります。
 (意味のあることはしていません。単に、クエリ式で使えるというだけです。)
 
-<pre class="source" title="クエリ式を使うための最低限の型の例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">struct</span> <span class="type">Queryable</span>
+struct Queryable
 {
-    <span class="reserved">public</span> <span class="type">Queryable</span> <span class="method">Where</span>(<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; <span class="variable">f</span>) =&gt; <span class="reserved">this</span>;
-    <span class="reserved">public</span> <span class="type">Queryable</span> <span class="method">Select</span>(<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">f</span>) =&gt; <span class="reserved">this</span>;
+    public Queryable Where(Func<int, bool> f) => this;
+    public Queryable Select(Func<int, int> f) => this;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">q</span> =
-            <span class="reserved">from</span> x <span class="reserved">in</span> <span class="reserved">new</span> <span class="type">Queryable</span>()
-            <span class="reserved">where</span> x &lt; 10
-            <span class="reserved">select</span> x * x;
+        var q =
+            from x in new Queryable()
+            where x < 10
+            select x * x;
     }
 }
-</code></pre>
+```
 
 これに対して、融通が利くポイントが2つあります。
 
@@ -219,30 +219,30 @@ C# コンパイラーだけの修正で済むなら実装コストがだいぶ�
 
 例えば、上記のコードは以下のように書き換えてもコンパイルできます。
 
-<pre class="source" title="拡張メソッドやオプション引数の許容">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">struct</span> <span class="type">Queryable</span>
+struct Queryable
 {
-    <span class="reserved">public</span> <span class="type">Queryable</span> <span class="method">Where</span>(<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; <span class="variable">f</span>, <em><span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable">dummy</span></em>) =&gt; <span class="reserved">this</span>;
+    public Queryable Where(Func<int, bool> f, params int[] dummy) => this;
 }
  
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">QueryableExtensions</span>
+static class QueryableExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Queryable</span> <span class="method">Select</span>(<em><span class="reserved">this</span></em> <span class="type">Queryable</span> <span class="variable">q</span>, <span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">f</span>, <em><span class="reserved">int</span> <span class="variable">dummy</span> = 0</em>) =&gt; <span class="variable">q</span>;
+    public static Queryable Select(this Queryable q, Func<int, int> f, int dummy = 0) => q;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">q</span> =
-            <span class="reserved">from</span> x <span class="reserved">in</span> <span class="reserved">new</span> <span class="type">Queryable</span>()
-            <span class="reserved">where</span> x &lt; 10
-            <span class="reserved">select</span> x * x;
+        var q =
+            from x in new Queryable()
+            where x < 10
+            select x * x;
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-8"></a> <a id="index"></a>パターン ベースな構文一覧
 

@@ -53,10 +53,10 @@ C# では、無効な値として [null](../../../../study/csharp/resource/rm_nu
 となるようにしたという修正。
 `==` 演算子の実装は、具体的には概ね以下のような構造です。
 
-<pre class="source" title="インライン展開可能、かつ、== null の最適化が掛かるように == を実装">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> ==(<span class="type">MyClass</span> left, <span class="type">MyClass</span> right)
-    =&gt; (right <span class="reserved">is</span> <span class="reserved">null</span>) ? (left <span class="reserved">is</span> <span class="reserved">null</span>) : right.Equals(left);
-</code></pre>
+```csharp
+public static bool operator ==(MyClass left, MyClass right)
+    => (right is null) ? (left is null) : right.Equals(left);
+```
 
 最後が `right is null` を先に判定して、後ろが `right.Equals(left)` なのがポイント。
 `null == x` だと最適化は掛からない構造。

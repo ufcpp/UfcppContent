@@ -134,58 +134,58 @@ LINQ でどう解決されるのかを説明したいと思います。
 C# の場合、以下のようなクラスを定義して、
 List や Dictionary を使ってデータを格納します。
 
-<pre class="source" title="データを表現するクラス" lang="">
-<code><span class="reserved">class</span> <span class="type">Author</span>
+```csharp
+class Author
 {
-  <span class="reserved">public string</span> Name;
-  <span class="reserved">public</span> <span class="type">DateTime</span> Birthday;
-  <span class="reserved">public string</span> Url;
+  public string Name;
+  public DateTime Birthday;
+  public string Url;
 }
 
-<span class="reserved">class</span> <span class="type">Series</span>
+class Series
 {
-  <span class="reserved">public string</span> Name;
-  <span class="reserved">public string</span> Publisher;
+  public string Name;
+  public string Publisher;
 }
-</code></pre>
+```
 
 
-<pre class="source" title="List でデータを格納" lang="">
-<code><span class="type">List</span>&lt;<span class="type">Author</span>&gt; authors = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="type">Author</span>&gt; {
-  <span class="reserved">new</span> <span class="type">Author</span> {
-    Name = <span class="literal">"赤松健"</span>,
-    Birthday = <span class="reserved">new</span> <span class="type">DateTime</span>(<span class="literal">1968</span>, <span class="literal">07</span>, <span class="literal">05</span>),
-    Url = <span class="literal">"http://www.ailove.net/main.html"</span>
+```csharp
+List<Author> authors = new List<Author> {
+  new Author {
+    Name = "赤松健",
+    Birthday = new DateTime(1968, 07, 05),
+    Url = "http://www.ailove.net/main.html"
   },
-  <span class="reserved">new</span> <span class="type">Author</span> {
-    Name = <span class="literal">"久米田康治"</span>,
-    Birthday = <span class="reserved">new</span> <span class="type">DateTime</span>(<span class="literal">1967</span>, <span class="literal">09</span>, <span class="literal">05</span>),
-    Url = <span class="literal">"http://websunday.net/backstage/kumeta.html"</span>
+  new Author {
+    Name = "久米田康治",
+    Birthday = new DateTime(1967, 09, 05),
+    Url = "http://websunday.net/backstage/kumeta.html"
   },
-  <span class="reserved">new</span> <span class="type">Author</span> {
-    Name = <span class="literal">"島本和彦"</span>,
-    Birthday = <span class="reserved">new</span> <span class="type">DateTime</span>(<span class="literal">1961</span>, <span class="literal">04</span>, <span class="literal">26</span>),
-    Url = <span class="literal">"http://simamoto.zenryokutei.com/"</span>
+  new Author {
+    Name = "島本和彦",
+    Birthday = new DateTime(1961, 04, 26),
+    Url = "http://simamoto.zenryokutei.com/"
   },
-  <span class="reserved">new</span> <span class="type">Author</span> {
-    Name = <span class="literal">"藤田和日郎"</span>,
-    Birthday = <span class="reserved">new</span> <span class="type">DateTime</span>(<span class="literal">1964</span>, <span class="literal">05</span>, <span class="literal">24</span>),
-    Url = <span class="literal">"http://websunday.net/backstage/fujita.html"</span>
+  new Author {
+    Name = "藤田和日郎",
+    Birthday = new DateTime(1964, 05, 24),
+    Url = "http://websunday.net/backstage/fujita.html"
   },
 };
 
-<span class="type">List</span>&lt;<span class="type">Series</span>&gt; series = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="type">Series</span>&gt; {
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"魔法先生ネギま！"</span>, Publisher = <span class="literal">"講談社"</span> },
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"ラブひな"</span>, Publisher = <span class="literal">"講談社"</span> },
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"さよなら絶望先生"</span>, Publisher = <span class="literal">"講談社"</span> },
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"かってに改蔵"</span>, Publisher = <span class="literal">"小学館"</span> },
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"アニメ店長"</span>, Publisher = <span class="literal">"一迅社"</span> },
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"新吼えろペン"</span>, Publisher = <span class="literal">"小学館"</span> },
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"ゲキトウ"</span>, Publisher = <span class="literal">"講談社"</span> },
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"からくりサーカス"</span>, Publisher = <span class="literal">"小学館"</span> },
-  <span class="reserved">new</span> <span class="type">Series</span> { Name = <span class="literal">"うしおととら"</span>, Publisher = <span class="literal">"小学館"</span> },
+List<Series> series = new List<Series> {
+  new Series { Name = "魔法先生ネギま！", Publisher = "講談社" },
+  new Series { Name = "ラブひな", Publisher = "講談社" },
+  new Series { Name = "さよなら絶望先生", Publisher = "講談社" },
+  new Series { Name = "かってに改蔵", Publisher = "小学館" },
+  new Series { Name = "アニメ店長", Publisher = "一迅社" },
+  new Series { Name = "新吼えろペン", Publisher = "小学館" },
+  new Series { Name = "ゲキトウ", Publisher = "講談社" },
+  new Series { Name = "からくりサーカス", Publisher = "小学館" },
+  new Series { Name = "うしおととら", Publisher = "小学館" },
 };
-</code></pre>
+```
 
 
 
@@ -296,56 +296,56 @@ List や Dictionary を使ってデータを格納します。
 OOP では、通常、階層的なデータ構造を持っています。
 作家が複数のシリーズを持っているなら、作家クラスは以下のように書かれます。
 
-<pre class="source" title="Author クラスには Series リストがある" lang="">
-<code><span class="reserved">class</span> <span class="type">Author</span>
+```csharp
+class Author
 {
-  <span class="reserved">public string</span> Name;
-  <span class="reserved">public</span> <span class="type">DateTime</span> Birthday;
-  <span class="reserved">public string</span> Url;
+  public string Name;
+  public DateTime Birthday;
+  public string Url;
 
-  <em><span class="reserved">public</span> <span class="type">List</span>&lt;<span class="type">Series</span>&gt; Series;</em>
+  public List<Series> Series;
 }
-</code></pre>
+```
 
 
 また、シリーズに作者があるなら、シリーズクラスは以下のようになります。
 （もちろん、本当は1つの本に複数の作者（原作、作画、コンテ構成など）があったりしますが、
 ここでは単純化のために、作家は1人だけとします。）
 
-<pre class="source" title="Series クラスには Author フィールドがある" lang="">
-<code><span class="reserved">class</span> <span class="type">Series</span>
+```csharp
+class Series
 {
-  <span class="reserved">public string</span> Name;
-  <span class="reserved">public string</span> Publisher;
+  public string Name;
+  public string Publisher;
 
-  <em><span class="reserved">public</span> <span class="type">Author</span> Author;</em>
+  public Author Author;
 }
-</code></pre>
+```
 
 
 で、例えば、各作家の著作一覧を取得したければ以下のように書きます。
 階層的にデータを取得するために、2重ループなどを書きます。
 
-<pre class="source" title="各作家の著作一覧を取得" lang="">
-<code><span class="reserved">foreach</span> (<span class="type">Author</span> a <span class="reserved">in</span> authors)
+```csharp
+foreach (Author a in authors)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, a.Name);
-  <span class="reserved">foreach</span> (<span class="type">Series</span> s <span class="reserved">in</span> a.Series)
+  Console.Write("{0}\n", a.Name);
+  foreach (Series s in a.Series)
   {
-    <span class="type">Console</span>.Write(<span class="literal">"  - {0}\n"</span>, s.Name);
+    Console.Write("  - {0}\n", s.Name);
   }
 }
-</code></pre>
+```
 
 
 また、各シリーズの著者を取得するには以下のようにします。
 
-<pre class="source" title="各シリーズの著者を取得" lang="">
-<code><span class="reserved">foreach</span> (<span class="type">Series</span> s <span class="reserved">in</span> series)
+```csharp
+foreach (Series s in series)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}, {1}\n"</span>, s.Name, <em>s.Author.Name</em>);
+  Console.Write("{0}, {1}\n", s.Name, s.Author.Name);
 }
-</code></pre>
+```
 
 
 
@@ -454,11 +454,11 @@ ID を元に2つのテーブルを結合してから所望のデータを取り�
 例えば、OOP の例と同じく、
 各作家のシリーズ一覧を取得したければ、以下のような SQL 文を書きます。
 
-<pre class="source" title="INNER JOIN で結合" lang="">
-<code><span class="reserved">SELECT</span> <span class="type">[a]</span>.<span class="type">[Name]</span> <span class="reserved">AS</span> <span class="type">[AuthorName]</span>, <span class="type">[s]</span>.<span class="type">[Name]</span>
-  <span class="reserved">FROM</span> <span class="type">[Authors]</span> <span class="reserved">AS</span> <span class="type">[a]</span>
-  <span class="inactive">INNER JOIN</span> <span class="type">[Series]</span> <span class="reserved">AS</span> <span class="type">[s]</span> <span class="reserved">ON</span> <span class="type">[a]</span>.<span class="type">[Id]</span> = <span class="type">[s]</span>.<span class="type">[Author_Id]</span>
-</code></pre>
+```sql
+SELECT [a].[Name] AS [AuthorName], [s].[Name]
+  FROM [Authors] AS [a]
+  INNER JOIN [Series] AS [s] ON [a].[Id] = [s].[Author_Id]
+```
 
 
 このように、OOP と RDB には、階層的データ構造とテーブル結合という方法論の差があります。
@@ -469,25 +469,25 @@ ID を元に2つのテーブルを結合してから所望のデータを取り�
 前節のおさらいになりますが、
 OOP では階層的データ構造を、
 
-<pre class="source" title="OOP の階層的データ構造" lang="">
-<code><span class="reserved">class</span> <span class="type">Author</span>
+```csharp
+class Author
 {
-  <span class="reserved">public string</span> Name;
-  <span class="reserved">public</span> <span class="type">DateTime</span> Birthday;
-  <span class="reserved">public string</span> Url;
+  public string Name;
+  public DateTime Birthday;
+  public string Url;
 
-  <em><span class="reserved">public</span> <span class="type">List</span>&lt;<span class="type">Series</span>&gt; Series;</em>
+  public List<Series> Series;
 }
-</code></pre>
+```
 
 
 RDB ではテーブル結合という方法を用いて関連性のあるデータにアクセスします。
 
-<pre class="source" title="RDB のテーブル結合" lang="">
-<code><span class="reserved">SELECT</span> <span class="type">[a]</span>.<span class="type">[Name]</span> <span class="reserved">AS</span> <span class="type">[AuthorName]</span>, <span class="type">[s]</span>.<span class="type">[Name]</span>
-  <span class="reserved">FROM</span> <span class="type">[Authors]</span> <span class="reserved">AS</span> <span class="type">[a]</span>
-  <span class="inactive">INNER JOIN</span> <span class="type">[Series]</span> <span class="reserved">AS</span> <span class="type">[s]</span> <span class="reserved">ON</span> <span class="type">[a]</span>.<span class="type">[Id]</span> = <span class="type">[s]</span>.<span class="type">[Author_Id]</span>
-</code></pre>
+```sql
+SELECT [a].[Name] AS [AuthorName], [s].[Name]
+  FROM [Authors] AS [a]
+  INNER JOIN [Series] AS [s] ON [a].[Id] = [s].[Author_Id]
+```
 
 
 近年、プログラミング言語からリレーショナルデータベースにアクセスする機会が増え、
@@ -535,54 +535,54 @@ Entity Framework では、何の変哲もないただのクラスを使ってデ
 前節から引き続き、作家・シリーズ テーブルを例に取って説明しましょう。
 まず、テーブル間の関係を抜きにすると、以下のような感じになります。
 
-<pre class="source" title="エンティティ クラスの定義" lang="">
-<code><span class="reserved">using</span> System.ComponentModel.DataAnnotations;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
-<span class="reserved">namespace</span> CodeFirst.Models
+namespace CodeFirst.Models
 {
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Author</span>
+    public class Author
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> Id { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public int Id { get; set; }
 
-        [<span class="type">Required</span>]
-        [<span class="type">StringLength</span>(100)]
-        <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
 
-        <span class="reserved">public</span> <span class="type">DateTime</span>? Birthday { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public DateTime? Birthday { get; set; }
 
-        [<span class="type">StringLength</span>(512)]
-        <span class="reserved">public</span> <span class="reserved">string</span> Url { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        [StringLength(512)]
+        public string Url { get; set; }
     }
 
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Series</span>
+    public class Series
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> Id { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public int Id { get; set; }
 
-        [<span class="type">Required</span>]
-        [<span class="type">StringLength</span>(512)]
-        <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        [Required]
+        [StringLength(512)]
+        public string Name { get; set; }
     }
 }
-</code></pre>
+```
 
 
 次に、
 定義したエンティティ クラスを使ってデータベースを生成/テーブル参照するためのクラスを作ります。
 Entity Framework では、以下のように、DbContext クラスを継承したクラスを作ります。
 
-<pre class="source" title="エンティティ クラスの定義" lang="">
-<code><span class="reserved">using</span> System.Data.Entity;
+```csharp
+using System.Data.Entity;
 
-<span class="reserved">namespace</span> CodeFirst.Models
+namespace CodeFirst.Models
 {
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">ComicDatabase</span> : <span class="type">DbContext</span>
+    public class ComicDatabase : DbContext
     {
-        <span class="reserved">public</span> <span class="type">DbSet</span>&lt;<span class="type">Author</span>&gt; Authors { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-        <span class="reserved">public</span> <span class="type">DbSet</span>&lt;<span class="type">Series</span>&gt; Series { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<Series> Series { get; set; }
     }
 }
-</code></pre>
+```
 
 
 <span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span>
@@ -596,33 +596,33 @@ Entity Framework では、以下のように、DbContext クラスを継承し�
 以下のような感じになります。
 
                 
-<pre class="source" title="エンティティ定義" lang="">
-<code><span class="reserved">using</span> System.Data.Linq.Mapping;
+```csharp
+using System.Data.Linq.Mapping;
 
-[<span class="type">Table</span>(Name = <span class="literal">"Authors"</span>)]
-<span class="reserved">public class</span> <span class="type">Author</span>
+[Table(Name = "Authors")]
+public class Author
 {
-  [<span class="type">Column</span>(AutoSync = <span class="type">AutoSync</span>.OnInsert, IsPrimaryKey = <span class="reserved">true</span>, IsDbGenerated = <span class="reserved">true</span>)]
-  <span class="reserved">public int</span> Id;
-  [<span class="type">Column</span>]
-  <span class="reserved">public string</span> Name;
-  [<span class="type">Column</span>]
-  <span class="reserved">public</span> <span class="type">DateTime</span>? Birthday;
-  [<span class="type">Column</span>]
-  <span class="reserved">public string</span> Url;
+  [Column(AutoSync = AutoSync.OnInsert, IsPrimaryKey = true, IsDbGenerated = true)]
+  public int Id;
+  [Column]
+  public string Name;
+  [Column]
+  public DateTime? Birthday;
+  [Column]
+  public string Url;
 }
 
-[<span class="type">Table</span>(Name = <span class="literal">"Series"</span>)]
-<span class="reserved">public class</span> <span class="type">Series</span>
+[Table(Name = "Series")]
+public class Series
 {
-  [<span class="type">Column</span>(AutoSync = <span class="type">AutoSync</span>.OnInsert, IsPrimaryKey = <span class="reserved">true</span>, IsDbGenerated = <span class="reserved">true</span>)]
-  <span class="reserved">public int</span> Id;
-  [<span class="type">Column</span>]
-  <span class="reserved">public string</span> Name;
-  [<span class="type">Column</span>]
-  <span class="reserved">public int</span> AuthorId;
+  [Column(AutoSync = AutoSync.OnInsert, IsPrimaryKey = true, IsDbGenerated = true)]
+  public int Id;
+  [Column]
+  public string Name;
+  [Column]
+  public int AuthorId;
 }
-</code></pre>
+```
 
 
                 
@@ -646,20 +646,20 @@ LINQ to SQL では、これらの属性をみて、
 以下のようなクラスを作ります。
 
                 
-<pre class="source" title="ComicDataContext" lang="">
-<code><span class="reserved">using</span> System.Data.Linq;
+```csharp
+using System.Data.Linq;
 
-<span class="reserved">public class</span> <span class="type">ComicDataContext</span> : <span class="type">DataContext</span>
+public class ComicDataContext : DataContext
 {
-  <span class="reserved">public</span> ComicDataContext(<span class="reserved">string</span> connectionString)
-    : <span class="reserved">base</span>(connectionString)
+  public ComicDataContext(string connectionString)
+    : base(connectionString)
   {
   }
 
-  <span class="reserved">public</span> <span class="type">Table</span>&lt;<span class="type">Author</span>&gt; Author;
-  <span class="reserved">public</span> <span class="type">Table</span>&lt;<span class="type">Series</span>&gt; Series;
+  public Table<Author> Author;
+  public Table<Series> Series;
 }
-</code></pre>
+```
 
 
                 
@@ -676,44 +676,44 @@ DataContext を継承するクラスに、Table 型のメンバーを書くだ�
 
 例えば、Author テーブルに対するクエリは以下のように書けます。
 
-<pre class="source" title="クエリの例" lang="">
-<code><span class="reserved">using</span> (<span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDatabase</span>())
+```csharp
+using (var db = new ComicDatabase())
 {
-    <span class="reserved">var</span> q =
-        <span class="reserved">from</span> a <span class="reserved">in</span> db.Authors
-        <span class="reserved">where</span> a.Name == <span class="literal">"島本和彦"</span> || a.Name == <span class="literal">"赤松健"</span>
-        <span class="reserved">select</span> a;
+    var q =
+        from a in db.Authors
+        where a.Name == "島本和彦" || a.Name == "赤松健"
+        select a;
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> a <span class="reserved">in</span> q)
+    foreach (var a in q)
     {
-        <span class="type">Console</span>.Write(<span class="literal">"{0}, {1:yyyy/M/d}, {2}\n"</span>, a.Name, a.Birthday, a.Url);
+        Console.Write("{0}, {1:yyyy/M/d}, {2}\n", a.Name, a.Birthday, a.Url);
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 赤松健, 1968/7/5, http://www.ailove.net/main.html
 島本和彦, 1961/4/26, http://simamoto.zenryokutei.com/
-</pre>
+```
 
 
 <span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span>
 <div class="expand-panel" markdown="1" title="（LINQ to SQL 版）">
                 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDataContext</span>(ConnectionString);
+```csharp
+var db = new ComicDataContext(ConnectionString);
 
-<span class="reserved">var</span> q =
-  <span class="reserved">from</span> a <span class="reserved">in</span> db.Author
-  <span class="reserved">where</span> a.Name == <span class="literal">"島本和彦"</span> || a.Name == <span class="literal">"赤松健"</span>
-  <span class="reserved">select</span> a;
+var q =
+  from a in db.Author
+  where a.Name == "島本和彦" || a.Name == "赤松健"
+  select a;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> a <span class="reserved">in</span> q)
+foreach (var a in q)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}, {1:yyyy/M/d}, {2}\n"</span>, a.Name, a.Birthday, a.Url);
+  Console.Write("{0}, {1:yyyy/M/d}, {2}\n", a.Name, a.Birthday, a.Url);
 }
-</code></pre>
+```
 
 
                 
@@ -725,10 +725,10 @@ C# 3.0 のクエリ式は、実際には Select や Where などといった名�
 
 
                 
-<pre class="source" title="クエリ式の解釈結果" lang="">
-<code><span class="type">IQueryable</span>&lt;<span class="type">Author</span>&gt; q = db.Author.Where(
-  a =&gt; a.Name == <span class="literal">"島本和彦"</span> || a.Name == <span class="literal">"赤松健"</span>);
-</code></pre>
+```csharp
+IQueryable<Author> q = db.Author.Where(
+  a => a.Name == "島本和彦" || a.Name == "赤松健");
+```
 
 
             
@@ -739,17 +739,17 @@ C# 3.0 のクエリ式は、実際には Select や Where などといった名�
 IQueryable は、このようなクエリ式から SQL 文を生成し、データベースサーバに問い合わせを行います。
 ちなみに、IQueryable を ToString すると、生成された SQL 文を確認することができます。
 
-<pre class="source" title="クエリ式の解釈結果の確認" lang="">
-<code><span class="reserved">var</span> q =
-  <span class="reserved">from</span> a <span class="reserved">in</span> db.Author
-  <span class="reserved">where</span> a.Name == <span class="literal">"島本和彦"</span> || a.Name == <span class="literal">"赤松健"</span>
-  <span class="reserved">select</span> a;
+```csharp
+var q =
+  from a in db.Author
+  where a.Name == "島本和彦" || a.Name == "赤松健"
+  select a;
 
-<span class="type">Console</span>.WriteLine(q.ToString());
-</code></pre>
+Console.WriteLine(q.ToString());
+```
 
 
-<pre class="console" title="実行結果">
+```console
 SELECT
 [Extent1].[Id] AS [Id],
 [Extent1].[Name] AS [Name],
@@ -758,7 +758,7 @@ SELECT
 [Extent1].[Url] AS [Url]
 FROM [dbo].[Authors] AS [Extent1]
 WHERE [Extent1].[Name] IN (N'島本和彦',N'赤松健')
-</pre>
+```
 
 
 
@@ -771,34 +771,34 @@ Entity Framework を使うと、ただ単に他のエンティティを参照す
 データベース テーブルの関係性を表現できます。
 例えば、先ほどの Author / Series クラスに以下のような修正を加えます。
 
-<pre class="source" title="テーブル間の関係性を、エンティティ クラスの階層構造で表現" lang="">
-<code>    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Author</span>
+```csharp
+    public class Author
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> Id { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public int Id { get; set; }
 
-        [<span class="type">Required</span>]
-        [<span class="type">StringLength</span>(100)]
-        <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
 
-        <span class="reserved">public</span> <span class="type">DateTime</span>? Birthday { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public DateTime? Birthday { get; set; }
 
-        [<span class="type">StringLength</span>(512)]
-        <span class="reserved">public</span> <span class="reserved">string</span> Url { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        [StringLength(512)]
+        public string Url { get; set; }
 
-        <em><span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">IList</span>&lt;<span class="type">Series</span>&gt; Series { <span class="reserved">get</span>; <span class="reserved">set</span>; }</em>
+        public virtual IList<Series> Series { get; set; }
     }
 
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Series</span>
+    public class Series
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> Id { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        public int Id { get; set; }
 
-        [<span class="type">Required</span>]
-        [<span class="type">StringLength</span>(512)]
-        <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+        [Required]
+        [StringLength(512)]
+        public string Name { get; set; }
 
-        <em><span class="reserved">public</span> <span class="type">Author</span> Author { <span class="reserved">get</span>; <span class="reserved">set</span>; }</em>
+        public Author Author { get; set; }
     }
-</code></pre>
+```
 
 
 このような、エンティティ間の参照関係を表すプロパティをナビゲーション プロパティ（navigation property）と呼びます。
@@ -808,44 +808,44 @@ Entity Framework を使うと、ただ単に他のエンティティを参照す
 <span class="expand-button" title="展開/折畳">（LINQ to SQL 版）</span>
 <div class="expand-panel" markdown="1" title="（LINQ to SQL 版）">
                 
-<pre class="source" title="エンティティ間の関連性" lang="">
-<code><span class="reserved">using</span> System.Data.Linq.Mapping;
+```csharp
+using System.Data.Linq.Mapping;
 
-[<span class="type">Table</span>(Name = <span class="literal">"Authors"</span>)]
-<span class="reserved">public class</span> <span class="type">Author</span>
+[Table(Name = "Authors")]
+public class Author
 {
-  [<span class="type">Column</span>(AutoSync = <span class="type">AutoSync</span>.OnInsert, IsPrimaryKey = <span class="reserved">true</span>, IsDbGenerated = <span class="reserved">true</span>)]
-  <span class="reserved">public int</span> Id;
-  [<span class="type">Column</span>]
-  <span class="reserved">public string</span> Name;
-  [<span class="type">Column</span>]
-  <span class="reserved">public</span> <span class="type">DateTime</span>? Birthday;
-  [<span class="type">Column</span>]
-  <span class="reserved">public string</span> Url;
+  [Column(AutoSync = AutoSync.OnInsert, IsPrimaryKey = true, IsDbGenerated = true)]
+  public int Id;
+  [Column]
+  public string Name;
+  [Column]
+  public DateTime? Birthday;
+  [Column]
+  public string Url;
 
-  [<span class="type">Association</span>(OtherKey = <span class="literal">"AuthorId"</span>)]
-  <span class="reserved">public</span> <span class="type">EntitySet</span>&lt;<span class="type">Series</span>&gt; Series;
+  [Association(OtherKey = "AuthorId")]
+  public EntitySet<Series> Series;
 }
 
-[<span class="type">Table</span>(Name = <span class="literal">"Series"</span>)]
-<span class="reserved">public class</span> <span class="type">Series</span>
+[Table(Name = "Series")]
+public class Series
 {
-  [<span class="type">Column</span>(AutoSync = <span class="type">AutoSync</span>.OnInsert, IsPrimaryKey = <span class="reserved">true</span>, IsDbGenerated = <span class="reserved">true</span>)]
-  <span class="reserved">public int</span> Id;
-  [<span class="type">Column</span>]
-  <span class="reserved">public string</span> Name;
-  [<span class="type">Column</span>]
-  <span class="reserved">public int</span> AuthorId;
+  [Column(AutoSync = AutoSync.OnInsert, IsPrimaryKey = true, IsDbGenerated = true)]
+  public int Id;
+  [Column]
+  public string Name;
+  [Column]
+  public int AuthorId;
 
-  [<span class="type">Association</span>(Storage = <span class="literal">"_Author"</span>, ThisKey = <span class="literal">"AuthorId"</span>)]
-  <span class="reserved">public</span> <span class="type">Author</span> Author
+  [Association(Storage = "_Author", ThisKey = "AuthorId")]
+  public Author Author
   {
-    <span class="reserved">get</span> { <span class="reserved">return this</span>._Author.Entity; }
-    <span class="reserved">set</span> { <span class="reserved">this</span>._Author.Entity = <span class="reserved">value</span>; }
+    get { return this._Author.Entity; }
+    set { this._Author.Entity = value; }
   }
-  <span class="reserved">private</span> <span class="type">EntityRef</span>&lt;<span class="type">Author</span>&gt; _Author;
+  private EntityRef<Author> _Author;
 }
-</code></pre>
+```
 
 
                 
@@ -873,25 +873,25 @@ Series 側には ThisKey = "AuthorId" を指定します。
 これで、Author.Series や Series.Author の値が必要になった際に、
 自動的にテーブル結合を行うような SQL 文が生成されます。
 
-<pre class="source" title="自動的にテーブル結合を行うクエリが作られる" lang="">
-<code><span class="reserved">using</span> (<span class="reserved">var</span> db = <span class="reserved">new</span> <span class="type">ComicDatabase</span>())
+```csharp
+using (var db = new ComicDatabase())
 {
-    <span class="reserved">var</span> q =
-        <span class="reserved">from</span> s <span class="reserved">in</span> db.Series
-        <span class="reserved">where</span> s.Name.Contains(<span class="literal">"先生"</span>)
-        <span class="reserved">select</span> <span class="reserved">new</span> { Title = s.Name, Author = s.Author.Name };
+    var q =
+        from s in db.Series
+        where s.Name.Contains("先生")
+        select new { Title = s.Name, Author = s.Author.Name };
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> q)
+    foreach (var s in q)
     {
-        <span class="type">Console</span>.Write(<span class="literal">"{0}, {1}\n"</span>, s.Title, s.Author);
+        Console.Write("{0}, {1}\n", s.Title, s.Author);
     }
 
-    <span class="type">Console</span>.Write(<span class="literal">"\n{0}\n"</span>, q);
+    Console.Write("\n{0}\n", q);
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 魔法先生ネギま！, 赤松健
 さよなら絶望先生, 久米田康治
 
@@ -900,9 +900,9 @@ SELECT
 [Extent1].[Name] AS [Name],
 [Extent2].[Name] AS [Name1]
 FROM  [dbo].[Series] AS [Extent1]
-<em>LEFT OUTER JOIN [dbo].[Authors] AS [Extent2] ON [Extent1].[Author_Id] = [Extent2].[Id]</em>
+LEFT OUTER JOIN [dbo].[Authors] AS [Extent2] ON [Extent1].[Author_Id] = [Extent2].[Id]
 WHERE [Extent1].[Name] LIKE N'%先生%'
-</pre>
+```
 
 
 

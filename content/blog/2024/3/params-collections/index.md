@@ -34,20 +34,20 @@ params を配列以外のコレクションに対して使えるようにする�
 コレクション式を実装した今改めて検討して、
 むしろ「コレクション式とそろえるのがいいのではないか」という感じに変わったみたいです。
 
-<pre class="source" title="params コレクション(案)">
-<span class="comment">// ReadOnlySpan を優先するようになる予定。</span>
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+```csharp
+// ReadOnlySpan を優先するようになる予定。
+C.M(1, 2, 3);
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="comment">// 今でも書ける。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">_</span>) { }
+    // 今でも書ける。
+    public static void M(params int[] _) { }
 
-    <span class="comment">// 新規に書けるようになる予定。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved"><span class="error" title="CS0225">params</span></span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved"><span class="error" title="CS0225">params</span></span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
+    // 新規に書けるようになる予定。
+    public static void M(params List<int> _) { }
+    public static void M(params ReadOnlySpan<int> _) { }
 }
-</pre>
+```
 
 ## params ‘ref struct’
 
@@ -56,39 +56,39 @@ params に配列以外の型を認めたいという話の前提には、パフ�
 
 で、ref struct にはスコープの概念があって、引数や変数を [`scoped`](../../../../study/csharp/resource/refstruct.md#scoped) で修飾するかどうかでちょっと挙動が変わります。
 
-<pre class="source" title="scoped の有無">
-<span class="static"><span class="method">M</span></span>(<span class="reserved">true</span>);
+```csharp
+M(true);
 
-<span class="reserved">static</span> <span class="type struct">S</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">bool</span> <span class="variable local">b</span>)
+static S M(bool b)
 {
-    <span class="control">if</span>(<span class="variable local">b</span>)
+    if(b)
     {
-        <span class="comment">// [] が作る Span が S に伝搬してて、外に漏らせないので return に渡すとエラー。</span>
-        <span class="control">return</span> <span class="error" title="CS8347"><span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">Unscoped</span></span>(<span class="error" title="CS9203">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span>)</span>;
+        // [] が作る Span が S に伝搬してて、外に漏らせないので return に渡すとエラー。
+        return C.Unscoped([1, 2, 3]);
     }
-    <span class="control">else</span>
+    else
     {
-        <span class="comment">// こちらは Span が伝搬しないので return できる。</span>
-        <span class="control">return</span> <span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">Scoped</span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+        // こちらは Span が伝搬しないので return できる。
+        return C.Scoped([1, 2, 3]);
     }
 }
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="comment">// span の寿命が S に伝搬する。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">S</span> <span class="static"><span class="method">Unscoped</span></span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">span</span>) <span class="operator">=&gt;</span> <span class="reserved">new</span>(<span class="variable local">span</span>);
+    // span の寿命が S に伝搬する。
+    public static S Unscoped(Span<int> span) => new(span);
 
-    <span class="comment">// span の寿命を外に漏らさない。</span>
-    <span class="comment">// なので、S に直接伝搬できない。</span>
-    <span class="comment">// new(span.ToArray()) とかする必要がある。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type struct">S</span> <span class="static"><span class="method">Scoped</span></span>(<span class="reserved">scoped</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">span</span>) <span class="operator">=&gt;</span> <span class="error" title="CS8347"><span class="reserved">new</span>(<span class="error" title="CS8352"><span class="variable local">span</span></span>)</span>;
+    // span の寿命を外に漏らさない。
+    // なので、S に直接伝搬できない。
+    // new(span.ToArray()) とかする必要がある。
+    public static S Scoped(scoped Span<int> span) => new(span);
 }
 
-<span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">S</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">span</span>)
+readonly ref struct S(Span<int> span)
 {
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="field">Span</span> <span class="operator">=</span> <span class="variable local">span</span>;
+    public readonly Span<int> Span = span;
 }
-</pre>
+```
 
 で、ここに params をつけれるようになった場合にどうするかという話になります。
 
@@ -97,18 +97,18 @@ params に配列以外の型を認めたいという話の前提には、パフ�
 こうなるともう1つ問題が、オーバーライドをどうするかという話があるみたいです。
 というのも、params 配列の場合、実はオーバーライド側には params 修飾を付けなくてもいいそうで。
 
-<pre class="source" title="params 配列のオーバーライドには params 修飾不要">
-<span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+    public virtual void M(params int[] x) { }
 }
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// params 配列の場合、派生側で params を付けなくても別にいい。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span>[] <span class="variable local">x</span>) { }
+    // params 配列の場合、派生側で params を付けなくても別にいい。
+    public override void M(int[] x) { }
 }
-</pre>
+```
 
 ところがまあ、「params ref strcut は暗黙的に scoped」みたいな暗黙の挙動があるので、
 「何もつけてないのになぜか scoped」みたいな挙動は避けたいでしょう。
@@ -122,16 +122,16 @@ params に配列以外の型を認めたいという話の前提には、パフ�
 なので、「params の部分を `[]` で覆っても同じ結果になる」というのは**成り立たない**ことになります。
 例えば以下のようなもの。
 
-<pre class="source" title="params と []">
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="error" title="CS0121"><span class="static">M</span></span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]); <span class="comment">// こちらは解決できなくてエラーに。</span>
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// こちらは int[] 側に解決。</span>
+```csharp
+C.M([1, 2, 3]); // こちらは解決できなくてエラーに。
+C.M(1, 2, 3); // こちらは int[] 側に解決。
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">params</span> <span class="reserved">long</span>[] <span class="variable local">_</span>) { }
+    public static void M(params int[] _) { }
+    public static void M(params long[] _) { }
 }
-</pre>
+```
 
 で、params コレクションに関してですが、「既存の params 配列に沿う」案で行くみたいです。
 
@@ -141,59 +141,59 @@ params に配列以外の型を認めたいという話の前提には、パフ�
 引数をどういう順で評価するかは決めておかないと混乱のもとです。
 C# は基本的に「呼び出し側で並べた順」で、例えば名前付き引数を使うと順序を変えることができたりします。
 
-<pre class="source" title="引数の評価は並べた順">
-<span class="method"><span class="static">Test</span></span>(<span class="static"><span class="method">GetA</span></span>(), <span class="static"><span class="method">GetB</span></span>()); <span class="comment">// A → B</span>
-<span class="method"><span class="static">Test</span></span>(<span class="variable local">b</span>: <span class="static"><span class="method">GetB</span></span>(), <span class="variable local">a</span>: <span class="static"><span class="method">GetA</span></span>()); <span class="comment">// B → A</span>
+```csharp
+Test(GetA(), GetB()); // A → B
+Test(b: GetB(), a: GetA()); // B → A
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Test</span></span>(<span class="reserved">int</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">b</span>) { }
+static void Test(int a, int b) { }
 
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">GetA</span></span>() { <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;A&quot;</span>); <span class="control">return</span> <span class="number">0</span>; }
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">GetB</span></span>() { <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;B&quot;</span>); <span class="control">return</span> <span class="number">0</span>; }
-</pre>
+static int GetA() { Console.WriteLine("A"); return 0; }
+static int GetB() { Console.WriteLine("B"); return 0; }
+```
 
 で、名前付き引数を使うと params 引数の場所も末尾以外に移せたり。
 
-<pre class="source" title="params 引数を真ん中に。GetC の評価順も真ん中に">
-<span class="static"><span class="method">Test</span></span>(<span class="variable local">b</span>: <span class="static"><span class="method">GetB</span></span>(), <span class="variable local">c</span>: <span class="method"><span class="static">GetC</span></span>(), <span class="variable local">a</span>: <span class="method"><span class="static">GetA</span></span>()); <span class="comment">// B → C → A</span>
+```csharp
+Test(b: GetB(), c: GetC(), a: GetA()); // B → C → A
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Test</span></span>(<span class="reserved">int</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">b</span>, <span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">c</span>) { }
+static void Test(int a, int b, params int[] c) { }
 
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">GetA</span></span>() { <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;A&quot;</span>); <span class="control">return</span> <span class="number">0</span>; }
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">GetB</span></span>() { <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;B&quot;</span>); <span class="control">return</span> <span class="number">0</span>; }
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">GetC</span></span>() { <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;C&quot;</span>); <span class="control">return</span> <span class="number">0</span>; }
-</pre>
+static int GetA() { Console.WriteLine("A"); return 0; }
+static int GetB() { Console.WriteLine("B"); return 0; }
+static int GetC() { Console.WriteLine("C"); return 0; }
+```
 
 ちなみにこの時、`params int[] c` のための配列は、`Test` を呼ぶ直前になるそうです。
 ということで、展開結果は以下のような感じ。
 
-<pre class="source" title="先ほどのコードの展開結果">
-<span class="reserved">var</span> <span class="variable">b</span> <span class="operator">=</span> <span class="static"><span class="method">GetB</span></span>();
-<span class="reserved">var</span> <span class="variable">c</span> <span class="operator">=</span> <span class="static"><span class="method">GetC</span></span>();
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="static"><span class="method">GetA</span></span>();
-<span class="reserved">var</span> <span class="variable">paramsC</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="variable">c</span> };
-<span class="static"><span class="method">Test</span></span>(<span class="variable">a</span>, <span class="variable">b</span>, <span class="variable">paramsC</span>);
-</pre>
+```csharp
+var b = GetB();
+var c = GetC();
+var a = GetA();
+var paramsC = new[] { c };
+Test(a, b, paramsC);
+```
 
 ところが、params コレクションとなるとどうなるべきかという話になります。
 コレクションのインスタンスはいつ作られるべきなのか。
 
-<pre class="source" title="params を自作の型に変更">
-<span class="method"><span class="static">Test</span></span>(<span class="variable local">b</span>: <span class="static"><span class="method">GetB</span></span>(), <span class="variable local">c</span>: <span class="method"><span class="static">GetC</span></span>(), <span class="variable local">a</span>: <span class="static"><span class="method">GetA</span></span>());
+```csharp
+Test(b: GetB(), c: GetC(), a: GetA());
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Test</span></span>(<span class="reserved">int</span> <span class="variable local">a</span>, <span class="reserved">int</span> <span class="variable local">b</span>, <span class="reserved">params</span> <span class="type">MyCollection</span> <span class="variable local">c</span>) { }
+static void Test(int a, int b, params MyCollection c) { }
 
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">GetA</span></span>() { <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;A&quot;</span>); <span class="control">return</span> <span class="number">0</span>; }
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">GetB</span></span>() { <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;B&quot;</span>); <span class="control">return</span> <span class="number">0</span>; }
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">GetC</span></span>() { <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;C&quot;</span>); <span class="control">return</span> <span class="number">0</span>; }
+static int GetA() { Console.WriteLine("A"); return 0; }
+static int GetB() { Console.WriteLine("B"); return 0; }
+static int GetC() { Console.WriteLine("C"); return 0; }
 
-<span class="reserved">class</span> <span class="type">MyCollection</span> : <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;
+class MyCollection : IEnumerable<int>
 {
-    <span class="reserved">public</span> <span class="type">MyCollection</span>() { <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;MyCollection Construcotr&quot;</span>); }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">int</span> <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="type">IEnumerator</span>&lt;<span class="reserved">int</span>&gt; <span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
-    System<span class="operator">.</span>Collections<span class="operator">.</span><span class="type">IEnumerator</span> System<span class="operator">.</span>Collections<span class="operator">.</span><span class="type">IEnumerable</span><span class="operator">.</span><span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
+    public MyCollection() { Console.WriteLine("MyCollection Construcotr"); }
+    public void Add(int _) { }
+    public IEnumerator<int> GetEnumerator() => throw new NotImplementedException();
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => throw new NotImplementedException();
 }
-</pre>
+```
 
 こんな副作用の起こし方をするコードはめったに書かないでしょうけども、
 "MyCollection Construcotr" はいつ表示されるべきでしょう？
@@ -202,13 +202,13 @@ C# は基本的に「呼び出し側で並べた順」で、例えば名前付�
 引数 `c:` の場所で生成。`GetC` を呼ぶよりも前。
 要するに、以下のように展開したいんでしょうね。
 
-<pre class="source" title="params 部分の展開の例">
-<span class="reserved">var</span> <span class="variable">b</span> <span class="operator">=</span> <span class="static"><span class="method">GetB</span></span>();
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="method"><span class="static">GetA</span></span>();
-<span class="reserved">var</span> <span class="variable">paramsC</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">MyCollection</span>();
-<span class="variable">paramsC</span><span class="operator">.</span><span class="method">Add</span>(<span class="method"><span class="static">GetC</span></span>());
-<span class="method"><span class="static">Test</span></span>(<span class="variable">a</span>, <span class="variable">b</span>, <span class="variable">paramsC</span>);
-</pre>
+```csharp
+var b = GetB();
+var a = GetA();
+var paramsC = new MyCollection();
+paramsC.Add(GetC());
+Test(a, b, paramsC);
+```
 
 ## メタデータ
 

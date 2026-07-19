@@ -42,13 +42,13 @@ Visual Studio 2017 の頃から、所定のフォルダー以下にあるすべ�
 
 公式ドキュメントでは、「Deterministic オプション」を例に挙げています。
 
-<pre class="xsource" title="Deterministic">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Deterministic</span><span class="attvalue">&gt;</span>true<span class="attvalue">&lt;/</span><span class="element">Deterministic</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+<Project>
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>
+```
 
 これも Visual Studio 2017 (C# 7.0) の辺りで入った C# コンパイラーの機能なんですが、ソースコードを変更しない限り生成される DLL/EXE が常に同じバイナリになるというオプションです。
 
@@ -65,13 +65,13 @@ Visual Studio 2017 の頃から、所定のフォルダー以下にあるすべ�
 
 僕が常用しているのはこれ。「LangVersion オプション」を常に latest に。
 
-<pre class="xsource" title="LangVersion">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-<span class="attvalue"> &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">   &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>latest<span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<span class="attvalue"> &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+<Project>
+ <PropertyGroup>
+   <LangVersion>latest</LangVersion>
+ </PropertyGroup>
+</Project>
+```
 
 C# 7.0 以降、7.1、7.2、7.3 と、マイナー アップデートをしてきました。
 細かく頻繁なリリースなので追いかけれない人というのを懸念してか、
@@ -102,30 +102,30 @@ Visual Studio にはソリューション全体の NuGet パッケージをま�
 例として、`Google.Apis`パッケージでも参照してみましょう。
 `Directory.Build.targets` (`props`だとダメ。最後に読まれる`targets`の方)に、以下のように`Update`属性指定でタグを書きます。
 
-<pre class="xsource" title="PackageReference (targets 中は Update で Version 指定)">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">PackageReference</span><span class="attvalue"> </span><span class="attribute">Update</span><span class="attvalue">=</span>"<span class="attvalue">Google.Apis</span>"<span class="attvalue"> </span><span class="attribute">Version</span><span class="attvalue">=</span>"<span class="attvalue">1.36.1</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+<Project>
+  <ItemGroup>
+    <PackageReference Update="Google.Apis" Version="1.36.1" />
+  </ItemGroup>
+</Project>
+```
 
 配下にある `csproj` では、`Version` を指定せず、`Include` だけ指定します。
 
-<pre class="xsource" title="PackageReference (csproj 中は Version 未指定)">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>netcoreapp2.1<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
 
-<span class="attvalue">  &lt;</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">PackageReference</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>"<span class="attvalue">Google.Apis</span>"<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
+  <ItemGroup>
+    <PackageReference Include="Google.Apis" />
+  </ItemGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 これで、`Directory.Build.targets` 側に書かれた設定で「上書き」されて、
 バージョンが 1.36.1 にそろいます。
@@ -142,17 +142,17 @@ C# 8.0 で、null 許容参照型(単に `T` と書くと非 null で、参照�
 
 <sup>※</sup> 追記: その後、正式リリースまでの間に `Nullable` タグに変更になりました。
 
-<pre class="xsource" style="text-decoration: line-through" title="2018/12当時の仕様">
-<code><span class="attvalue">&lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">NullableReferenceTypes</span><span class="attvalue">&gt;</span>True<span class="attvalue">&lt;/</span><span class="element">NullableReferenceTypes</span><span class="attvalue">&gt;</span>
-<span class="attvalue">&lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+<PropertyGroup>
+  <NullableReferenceTypes>True</NullableReferenceTypes>
+</PropertyGroup>
+```
 
-<pre class="xsource" title="正式版での仕様">
-<code><span class="attvalue">&lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>
-<span class="attvalue">&lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+<PropertyGroup>
+  <Nullable>enable</Nullable>
+</PropertyGroup>
+```
 
 既存のプロジェクトに対していきなりこのオプションを指定するのはちょっと勇気が要ります(相当数の警告が出ます)が、
 新規に作り始めるプロジェクトであれば、この設定を入れてしまった方がいいでしょう。

@@ -21,30 +21,30 @@ aliases: []
 10/1 のは、nullable 参照型がジェネリクスに絡むときの話。
 例えば以下のような、型推論とかについての検討。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>&gt; nonNull = <span class="reserved">new</span>[] { <span class="string">""</span> };
-        <span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>?&gt; nullable = <span class="reserved">new</span>[] { <span class="reserved">default</span>(<span class="reserved">string</span>) };
+        IEnumerable<string> nonNull = new[] { "" };
+        IEnumerable<string?> nullable = new[] { default(string) };
 
-        <span class="comment">// 配列の要素の型推論。</span>
-        <span class="comment">// これは、IEnumerable&lt;string?&gt;[] になってるみたい。</span>
-        <span class="reserved">var</span> array = <span class="reserved">new</span>[] { nonNull, nullable };
+        // 配列の要素の型推論。
+        // これは、IEnumerable<string?>[] になってるみたい。
+        var array = new[] { nonNull, nullable };
 
-        <span class="comment">// ジェネリック メソッドの型引数の型推論。</span>
-        <span class="comment">// 配列の要素と似たような推論になるはず。</span>
-        <span class="comment">// が、201/9/11 版の実装では IEnumerable&lt;string&gt; で推論されてる。</span>
-        <span class="comment">// この挙動が変だよね、と言うのが議題。</span>
-        <span class="reserved">var</span> ret = M(nonNull, <span class="warning">nullable</span>);
+        // ジェネリック メソッドの型引数の型推論。
+        // 配列の要素と似たような推論になるはず。
+        // が、201/9/11 版の実装では IEnumerable<string> で推論されてる。
+        // この挙動が変だよね、と言うのが議題。
+        var ret = M(nonNull, nullable);
     }
 
-    <span class="reserved">static</span> <span class="type">T</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="type">T</span> y) =&gt; x;
+    static T M<T>(T x, T y) => x;
 }
-</code></pre>
+```
 
 10/3 の方は、null チェックのコンテキスト切り替えの再検討と、
 `IAsyncEnumerable`インターフェイスの実装方法の決定について。
@@ -83,33 +83,33 @@ nullable 参照型(`T` だと非 null、`T?` で null 許容)の追加は、何�
 
 結局、以下のように、`IEnumerable<T>`とほぼ同じで単に`Async`語尾を付け、`ValueTask`を返す作りにしたいとのこと。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt;
+```csharp
+public interface IAsyncEnumerable<out T>
 {
-    <span class="type">IAsyncEnumerator</span>&lt;<span class="type">T</span>&gt; GetAsyncEnumerator();
+    IAsyncEnumerator<T> GetAsyncEnumerator();
 }
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncEnumerator</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt; : <span class="type">IAsyncDisposable</span>
+public interface IAsyncEnumerator<out T> : IAsyncDisposable
 {
-    <span class="type">ValueTask</span>&lt;<span class="reserved">bool</span>&gt; MoveNextAsync();
-    <span class="type">T</span> Current { <span class="reserved">get</span>; }
+    ValueTask<bool> MoveNextAsync();
+    T Current { get; }
 }
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncDisposable</span>
+public interface IAsyncDisposable
 {
-    <span class="type">ValueTask</span> DisposeAsync();
+    ValueTask DisposeAsync();
 }
-</code></pre>
+```
 
 他の選択肢としては、以下のようなものが検討されていました。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IAsyncEnumerator</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt; : <span class="type">IAsyncDisposable</span>
+```csharp
+public interface IAsyncEnumerator<out T> : IAsyncDisposable
 {
-    <span class="type">ValueTask</span>&lt;<span class="reserved">bool</span>&gt; WaitForNextAsync();
-    <span class="type">T</span> TryGetNext(<span class="reserved">out</span> <span class="reserved">bool</span> success);
+    ValueTask<bool> WaitForNextAsync();
+    T TryGetNext(out bool success);
 }
-</code></pre>
+```
 
 というのも、パフォーマンス的には後者の方がだいぶ良いことがわかっています。
 ただ、これは今回新たに追加する非同期版だけの話ではなくて、

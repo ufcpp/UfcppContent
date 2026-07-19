@@ -35,175 +35,175 @@ aliases: []
 
 そこで当時の設計としては「read-only / writeable なインターフェイスを1個用意して、`IsReadOnly` プロパティで書き込み出来るかどうかを調べる」という作りでした。
 
-<pre class="source" title="read-only かどうかはプロパティで調べる">
-<span class="reserved">namespace</span> System<span class="operator">.</span>Collections;
+```csharp
+namespace System.Collections;
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IList</span> : <span class="type">ICollection</span>, <span class="type">IEnumerable</span>
+public interface IList : ICollection, IEnumerable
 {
-    <span class="reserved">object</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>] { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">bool</span> <span class="property">IsReadOnly</span> { <span class="reserved">get</span>; } <span class="comment">// ← これ</span>
-    <span class="reserved">void</span> <span class="method">Add</span>(<span class="reserved">object</span> <span class="variable local">value</span>);
-    <span class="comment">// 以下略</span>
+    object this[int index] { get; set; }
+    bool IsReadOnly { get; } // ← これ
+    void Add(object value);
+    // 以下略
 }
-</pre>
+```
 
 .NET Framework 2.0 (2005年)に[ジェネリクス](../../../../study/csharp/oop/sp2_generics.md)が導入されてもまだこの思想は引き継がれます。
 まあ、旧来インターフェイスとジェネリック インターフェイスで思想が違うのも混乱しそうですし。
 
-<pre class="source" title="ジェネリック ICollection でも IsReadOnly プロパティ">
-<span class="reserved">namespace</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic;
+```csharp
+namespace System.Collections.Generic;
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">ICollection</span>&lt;<span class="type param">T</span>&gt; : <span class="type">IEnumerable</span>&lt;<span class="type param">T</span>&gt;, <span class="type">IEnumerable</span>
+public interface ICollection<T> : IEnumerable<T>, IEnumerable
 {
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; }
-    <span class="reserved">bool</span> <span class="property">IsReadOnly</span> { <span class="reserved">get</span>; } <span class="comment">// ← これ</span>
-    <span class="reserved">void</span> <span class="method">Add</span>(<span class="type param">T</span> <span class="variable local">value</span>);
-    <span class="comment">// 以下略</span>
+    int Count { get; }
+    bool IsReadOnly { get; } // ← これ
+    void Add(T value);
+    // 以下略
 }
-</pre>
+```
 
 問題になり始めたのは C# 4.0 (2010年)で共変性を得てからでして。
 読み書き両方できてしまう `IList<T>` や `ICollection<T>` では、以下のような共変な代入ができません。
 
-<pre class="source" title="書き込みがあると共変にできない">
-<span class="type">IList</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">str</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">string</span>&gt;();
-<span class="type">IList</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">obj</span> <span class="operator">=</span> <span class="variable"><span class="error" title="CS0266">str</span></span>; <span class="comment">// ダメ。</span>
+```csharp
+IList<string> str = new List<string>();
+IList<object> obj = str; // ダメ。
 
-<span class="comment">// そりゃ、こういうコード書かれたらまずいので当然。</span>
-<span class="variable">obj</span><span class="operator">.</span><span class="method">Add</span>(<span class="number">1</span>);
-</pre>
+// そりゃ、こういうコード書かれたらまずいので当然。
+obj.Add(1);
+```
 
 そこで .NET Framework 4.5 (2012年)では read-only 系のインターフェイスが導入されます。
 
-<pre class="source" title="read-only 系インターフェイスは共変">
-<span class="type">IReadOnlyList</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">str</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">string</span>&gt; { <span class="string">&quot;abc&quot;</span> };
-<span class="type">IReadOnlyList</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">obj</span> <span class="operator">=</span> <span class="variable">str</span>; <span class="comment">// read-only なら共変。</span>
+```csharp
+IReadOnlyList<string> str = new List<string> { "abc" };
+IReadOnlyList<object> obj = str; // read-only なら共変。
 
-<span class="comment">// obj.Add(1); とか書かれる心配がない。</span>
-<span class="comment">// 読むだけなら安全。</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">obj</span>[<span class="number">0</span>]);
-</pre>
+// obj.Add(1); とか書かれる心配がない。
+// 読むだけなら安全。
+Console.WriteLine(obj[0]);
+```
 
 ## インターフェイスへの親インターフェイスの追加・メンバー移動は破壊的変更
 
 2012年に追加された read-only 系インターフェイスですが、元々あったインターフェイスとは独立しています。
 残念ながら「`IList<T>` は `IReadOnlyList<T>` ではない」という状態。
 
-<pre class="source" title="残念ながら完全に別インターフェイス">
-<span class="reserved">namespace</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic;
+```csharp
+namespace System.Collections.Generic;
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IReadOnlyCollection</span>&lt;<span class="reserved">out</span> <span class="type param">T</span>&gt; : <span class="type">IEnumerable</span>&lt;<span class="type param">T</span>&gt;
+public interface IReadOnlyCollection<out T> : IEnumerable<T>
 {
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; }
+    int Count { get; }
 }
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">ICollection</span>&lt;<span class="type param">T</span>&gt; : <span class="type">IEnumerable</span>&lt;<span class="type param">T</span>&gt;
+public interface ICollection<T> : IEnumerable<T>
 {
-    <span class="comment">// IReadOnlyCollection とは独立に Count を持つ。</span>
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; }
-    <span class="comment">// 以下略</span>
+    // IReadOnlyCollection とは独立に Count を持つ。
+    int Count { get; }
+    // 以下略
 }
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IReadOnlyList</span>&lt;<span class="reserved">out</span> <span class="type param">T</span>&gt; : <span class="type">IReadOnlyCollection</span>&lt;<span class="type param">T</span>&gt;
+public interface IReadOnlyList<out T> : IReadOnlyCollection<T>
 {
-    <span class="type param">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>] { <span class="reserved">get</span>; }
+    T this[int index] { get; }
 }
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IList</span>&lt;<span class="type param">T</span>&gt; : <span class="type">ICollection</span>&lt;<span class="type param">T</span>&gt;
+public interface IList<T> : ICollection<T>
 {
-    <span class="comment">// IReadOnlyList とは独立に this[int] を持つ。</span>
-    <span class="type param">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>] { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="comment">// 以下略</span>
+    // IReadOnlyList とは独立に this[int] を持つ。
+    T this[int index] { get; set; }
+    // 以下略
 }
-</pre>
+```
 
 普通に考えて、1から作るのであれば以下のようにします。
 
-<pre class="source" title="1からやり直せるならどう考えても ICollection : IReadOnlyCollection">
-<span class="reserved">namespace</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic;
+```csharp
+namespace System.Collections.Generic;
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IReadOnlyCollection</span>&lt;<span class="reserved">out</span> <span class="type param">T</span>&gt; : <span class="type">IEnumerable</span>&lt;<span class="type param">T</span>&gt;
+public interface IReadOnlyCollection<out T> : IEnumerable<T>
 {
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; }
+    int Count { get; }
 }
 
-<span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">ICollection</span>&lt;<span class="type param">T</span>&gt; : <span class="type">IReadOnlyCollection</span>&lt;<span class="type param">T</span>&gt; 
+public interface ICollection<T> : IReadOnlyCollection<T> 
 {
-    <span class="comment">// 以下略</span>
+    // 以下略
 }
-</pre>
+```
 
 ところが、後付けでこういうことをするのは破壊的変更になります。
 
 例えば以下のようなコードがあったとします。
 
-<pre class="source" title="バージョン1">
-<span class="comment">// バージョン1</span>
+```csharp
+// バージョン1
 
-<span class="comment">// corelib.dll</span>
-<span class="reserved">interface</span> <span class="type">ICollection</span>
+// corelib.dll
+interface ICollection
 {
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; }
+    int Count { get; }
 }
 
-<span class="comment">// corelib とは別のプロジェクトで、別の開発者が保守</span>
-<span class="comment">// mylib.dll</span>
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">ICollection</span>
+// corelib とは別のプロジェクトで、別の開発者が保守
+// mylib.dll
+class C : ICollection
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Count</span> <span class="operator">=&gt;</span> <span class="number">0</span>;
+    public int Count => 0;
 }
-</pre>
+```
 
 ここに `IReadOnlyCollection` を「理想的な状態」で導入したくて `Count` を移動させると mylib を壊します。
 
-<pre class="source" title="Count を IReadOnlyCollection">
-<span class="comment">// バージョン2</span>
+```csharp
+// バージョン2
 
-<span class="comment">// corelib.dll</span>
-<span class="reserved">interface</span> <span class="type">IReadOnlyCollection</span>
+// corelib.dll
+interface IReadOnlyCollection
 {
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; }
+    int Count { get; }
 }
 
-<span class="reserved">interface</span> <span class="type">ICollection</span> : <span class="type">IReadOnlyCollection</span>
+interface ICollection : IReadOnlyCollection
 {
-    <span class="comment">// Count は IReadOnlyCollection に移した。</span>
+    // Count は IReadOnlyCollection に移した。
 }
 
-<span class="comment">// corelib とは別のプロジェクトで、別の開発者が保守</span>
-<span class="comment">// mylib.dll</span>
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">ICollection</span>
+// corelib とは別のプロジェクトで、別の開発者が保守
+// mylib.dll
+class C : ICollection
 {
-    <span class="comment">// 再コンパイルするなら平気。</span>
-    <span class="comment">// ただ、古い dll のまま使うと「IReadOnlyCollection.Count がない」と怒られる。</span>
-    <span class="comment">// 再コンパイルするまでは C が持ってるのは ICollection.Count。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Count</span> <span class="operator">=&gt;</span> <span class="number">0</span>;
+    // 再コンパイルするなら平気。
+    // ただ、古い dll のまま使うと「IReadOnlyCollection.Count がない」と怒られる。
+    // 再コンパイルするまでは C が持ってるのは ICollection.Count。
+    public int Count => 0;
 }
-</pre>
+```
 
 ということでインターフェイスを独立。
 これなら「再コンパイルするまでは `C` は `IReadOnlyCollection` にはならない」というだけなので、
 DLL のロードに失敗したりはしません。
 
-<pre class="source" title="機能がダブるけどもこれで妥協">
-<span class="comment">// corelib.dll</span>
-<span class="reserved">interface</span> <span class="type">IReadOnlyCollection</span>
+```csharp
+// corelib.dll
+interface IReadOnlyCollection
 {
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; }
+    int Count { get; }
 }
 
-<span class="reserved">interface</span> <span class="type">ICollection</span>
+interface ICollection
 {
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; } <span class="comment">// IReadOnlyCollection と機能がダブってるけど許して</span>
+    int Count { get; } // IReadOnlyCollection と機能がダブってるけど許して
 }
 
-<span class="comment">// corelib とは別のプロジェクトで、別の開発者が保守</span>
-<span class="comment">// mylib.dll</span>
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">ICollection</span>, <span class="type">IReadOnlyCollection</span> <span class="comment">// 2個とも実装</span>
+// corelib とは別のプロジェクトで、別の開発者が保守
+// mylib.dll
+class C : ICollection, IReadOnlyCollection // 2個とも実装
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Count</span> <span class="operator">=&gt;</span> <span class="number">0</span>;
+    public int Count => 0;
 }
-</pre>
+```
 
 これが .NET のコレクション系インターフェイスの現状になります。
 
@@ -214,34 +214,34 @@ DLL のロードに失敗したりはしません。
 この機能を使えば先ほどの「既存クラスが `IReadOnlyCollection.Count` を実装していない」問題は解消できます。
 (親インターフェイスの追加は、「メンバー追加」の一種なのでデフォルト実装で対処できます。)
 
-<pre class="source" title="デフォルト実装で解決">
-<span class="comment">// corelib.dll</span>
-<span class="reserved">interface</span> <span class="type">IReadOnlyCollection</span>
+```csharp
+// corelib.dll
+interface IReadOnlyCollection
 {
-    <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; }
+    int Count { get; }
 }
 
-<span class="reserved">interface</span> <span class="type">ICollection</span> : <span class="type">IReadOnlyCollection</span>
+interface ICollection : IReadOnlyCollection
 {
-    <span class="reserved">new</span> <span class="reserved">int</span> <span class="property">Count</span> { <span class="reserved">get</span>; } <span class="comment">// IReadOnlyCollection.Count とは別の Count にはなっちゃう。</span>
+    new int Count { get; } // IReadOnlyCollection.Count とは別の Count にはなっちゃう。
 
-    <span class="comment">// IReadOnlyCollection のことを知らない既存クラスのために、</span>
-    <span class="comment">// 既存クラスに代わって ICollection 内で IReadOnlyCollection.Count を実装。</span>
-    <span class="reserved">int</span> <span class="type">IReadOnlyCollection</span><span class="operator">.</span><span class="property">Count</span> <span class="operator">=&gt;</span> <span class="property">Count</span>;
+    // IReadOnlyCollection のことを知らない既存クラスのために、
+    // 既存クラスに代わって ICollection 内で IReadOnlyCollection.Count を実装。
+    int IReadOnlyCollection.Count => Count;
 }
 
-<span class="comment">// corelib とは別のプロジェクトで、別の開発者が保守</span>
-<span class="comment">// mylib.dll</span>
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">ICollection</span>
+// corelib とは別のプロジェクトで、別の開発者が保守
+// mylib.dll
+class C : ICollection
 {
-    <span class="comment">// 再コンパイルするまではあくまで ICollection.Count。</span>
-    <span class="comment">// それでも、ICollection 側で IReadOnlyCollection.Count を実装してくれているので平気。</span>
-    <span class="comment">//</span>
-    <span class="comment">// ちなみに、再コンパイルするとこの Count をもって</span>
-    <span class="comment">// ICollection.Count と IReadOnlyCollection.Count の両方を実装。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Count</span> <span class="operator">=&gt;</span> <span class="number">0</span>;
+    // 再コンパイルするまではあくまで ICollection.Count。
+    // それでも、ICollection 側で IReadOnlyCollection.Count を実装してくれているので平気。
+    //
+    // ちなみに、再コンパイルするとこの Count をもって
+    // ICollection.Count と IReadOnlyCollection.Count の両方を実装。
+    public int Count => 0;
 }
-</pre>
+```
 
 ということで、インターフェイスのデフォルト実装の導入後、
 ついに `ICollection<T>` が `IReadOnlyCollection<T>` 派生に、
@@ -255,57 +255,57 @@ DLL のロードに失敗したりはしません。
 というのも、デフォルト実装には「ダイアモンド継承」問題というものがあります。
 以下のような感じで、「分かれ道からの合流がある継承」をやると問題を起こすことがあります。
 
-<pre class="source" title="ダイアモンド継承問題">
-<span class="reserved">interface</span> <span class="type">IA</span>
+```csharp
+interface IA
 {
-    <span class="reserved">int</span> <span class="method">M</span>();
+    int M();
 }
 
-<span class="reserved">interface</span> <span class="type">IB</span> : <span class="type">IA</span>
+interface IB : IA
 {
-    <span class="reserved">int</span> <span class="type">IA</span><span class="operator">.</span><span class="method">M</span>() <span class="operator">=&gt;</span> <span class="number">1</span>; <span class="comment">// デフォルト実装持ち</span>
+    int IA.M() => 1; // デフォルト実装持ち
 }
 
-<span class="reserved">interface</span> <span class="type">IC</span> : <span class="type">IA</span>
+interface IC : IA
 {
-    <span class="reserved">int</span> <span class="type">IA</span><span class="operator">.</span><span class="method">M</span>() <span class="operator">=&gt;</span> <span class="number">2</span>; <span class="comment">// デフォルト実装持ち</span>
+    int IA.M() => 2; // デフォルト実装持ち
 }
 
-<span class="comment">// IA.M の実装をデフォルト実装に頼るとして、</span>
-<span class="comment">// IB の実装と IC の実装のどちらを使えばいいか不明瞭。</span>
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type"><span class="error" title="CS8705">IB</span></span>, <span class="type">IC</span>
+// IA.M の実装をデフォルト実装に頼るとして、
+// IB の実装と IC の実装のどちらを使えばいいか不明瞭。
+class C : IB, IC
 {
 }
-</pre>
+```
 
 まあ、前述の `ICollection` に「分かれ道」はないので誰しもがこの問題を踏むわけではないんですが。
 1段自作のインターフェイスとかを挟んでいると問題を踏む可能性が出てきます。
 例えば以下のような感じ。
 
-<pre class="source" title="IReadOnlyCollection.Count でダイアモンド継承問題を踏む例">
-<span class="comment">// corelib とは別のプロジェクトで、別の開発者が保守</span>
-<span class="comment">// anotherlib.dll</span>
-<span class="reserved">interface</span> <span class="type">ICustomReadonlyList</span> : <span class="type">IReadOnlyCollection</span>
+```csharp
+// corelib とは別のプロジェクトで、別の開発者が保守
+// anotherlib.dll
+interface ICustomReadonlyList : IReadOnlyCollection
 {
-    <span class="comment">// 何らかのデフォルト実装持ち</span>
-    <span class="reserved">int</span> <span class="type">IReadOnlyCollection</span><span class="operator">.</span><span class="property">Count</span> <span class="operator">=&gt;</span> <span class="number">0</span>;
+    // 何らかのデフォルト実装持ち
+    int IReadOnlyCollection.Count => 0;
 }
 
-<span class="comment">// corelib とも anotherlib とも別のプロジェクトで、別の開発者が保守</span>
-<span class="comment">// mylib.dll</span>
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type"><span class="error" title="CS8705">ICollection</span></span>, <span class="type">ICustomReadonlyList</span>
+// corelib とも anotherlib とも別のプロジェクトで、別の開発者が保守
+// mylib.dll
+class C : ICollection, ICustomReadonlyList
 {
-    <span class="comment">// ICollection 更新前: </span>
-    <span class="comment">//   ICollection.Count は明示的に実装</span>
-    <span class="comment">//   IReadOnlyCollection.Count は ICustomReadonlyList 側のデフォルト実装を使用</span>
-    <span class="comment">//</span>
-    <span class="comment">// ICollection 更新後: </span>
-    <span class="comment">//   ICollection.Count は明示してるから平気</span>
-    <span class="comment">//   IReadOnlyCollection.Count は ICustomReadonlyList と ICollection のどちらのデフォルト実装を使えばいいかわからない</span>
-    <span class="comment">//   (ソースコードも修正しないと再コンパイルも失敗)</span>
-    <span class="reserved">int</span> <span class="type">ICollection</span><span class="operator">.</span><span class="property">Count</span> <span class="operator">=&gt;</span> <span class="number">1</span>;
+    // ICollection 更新前: 
+    //   ICollection.Count は明示的に実装
+    //   IReadOnlyCollection.Count は ICustomReadonlyList 側のデフォルト実装を使用
+    //
+    // ICollection 更新後: 
+    //   ICollection.Count は明示してるから平気
+    //   IReadOnlyCollection.Count は ICustomReadonlyList と ICollection のどちらのデフォルト実装を使えばいいかわからない
+    //   (ソースコードも修正しないと再コンパイルも失敗)
+    int ICollection.Count => 1;
 }
-</pre>
+```
 
 この辺りの懸念もあって、しばらく塩漬けが続きます。
 

@@ -25,59 +25,59 @@ aliases: []
 
 C# 8.0 で[null 許容参照型](../../../../study/csharp/resource/nullablereferencetype.md)(nullable reference type、通称 NRT)が入って、以下のように、null 参照例外が出そうな箇所にはコンパイル時に警告を出してくれるようになりました。
 
-<pre class="source" title="C# 8.0 の NRT">
-<code><span class="preprocess">#</span><span class="preprocess">nullable</span> <span class="preprocess">enable</span>
+```csharp
+#nullable enable
 
-<span class="comment">// 警告: ? が付いてない変数に null を渡してる。</span>
-<span class="reserved">string</span> <span class="variable">s</span> = <span class="reserved"><span class="warning">null</span></span>;
+// 警告: ? が付いてない変数に null を渡してる。
+string s = null;
 
-<span class="comment">// この行でも警告: s に null が入ってることを認識してる。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable"><span class="warning">s</span></span>.Length);
+// この行でも警告: s に null が入ってることを認識してる。
+Console.WriteLine(s.Length);
 
-<span class="comment">// OK</span>
-<span class="reserved">string</span>? <span class="variable">n</span> = <span class="reserved">null</span>;
+// OK
+string? n = null;
 
-<span class="comment">// 警告: null かもしれないもののメンバー参照してる。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable"><span class="warning">n</span></span>.Length);
+// 警告: null かもしれないもののメンバー参照してる。
+Console.WriteLine(n.Length);
 
-<span class="comment">// これなら OK: not null 判定してるのでメンバー参照してももう大丈夫。</span>
-<span class="control">if</span> (<span class="variable">n</span> <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span>) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">n</span>.Length);
-</code></pre>
+// これなら OK: not null 判定してるのでメンバー参照してももう大丈夫。
+if (n is not null) Console.WriteLine(n.Length);
+```
 
 この解析は「できる範囲で、できることからやる」みたいな感じなので結構判定漏れもあるんですが。
 その判定漏れの中で特に深刻なのが、構造体の `default` を挟んだ場合。
 
 例えば以下のようなコードで、簡単に判定から漏れた null を残せます。
 
-<pre class="source" title="default を介して null が紛れ込む例">
-<code><span class="preprocess">#</span><span class="preprocess">nullable</span> <span class="preprocess">enable</span>
+```csharp
+#nullable enable
 
-<span class="comment">// これは警告にしてもらえる: 非 null な S に null を渡した。</span>
-<span class="type">A</span> <span class="variable">a1</span> = <span class="reserved">new</span>(<span class="reserved"><span class="warning"null</span></span>);
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a1</span>.S.Length); <span class="comment">// OK</span>
+// これは警告にしてもらえる: 非 null な S に null を渡した。
+A a1 = new();
+Console.WriteLine(a1.S.Length); // OK
 
-<span class="comment">// これだと警告が出ない: default に対する解析がまだない(提案段階)。</span>
-<span class="type">A</span> <span class="variable">a</span> = <span class="reserved">default</span>;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span>.S.Length); <span class="comment">// OK じゃないんだけど OK になる</span>
+// これだと警告が出ない: default に対する解析がまだない(提案段階)。
+A a = default;
+Console.WriteLine(a.S.Length); // OK じゃないんだけど OK になる
 
-<span class="comment">// S は非 null なはず。</span>
-<span class="reserved">record</span> <span class="reserved">struct</span> <span class="type">A</span>(<span class="reserved">string</span> <span class="variable">S</span>);
-</code></pre>
+// S は非 null なはず。
+record struct A(string S);
+```
 
 この問題を一番深刻に踏み抜いてるのが、
 最近のブログで何度か出て来た [`ImmutableArray`](../../../2021/12/immutable-array-init/index.md) なわけです。
 
-<pre class="source" title="ImmutableArray の default によるぬるぽ">
-<code><span class="preprocess">#</span><span class="preprocess">nullable</span> <span class="preprocess">enable</span>
-<span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+#nullable enable
+using System.Collections.Immutable;
 
-<span class="reserved">var</span> <span class="variable">a</span> = <span class="reserved">new</span> <span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt;();
+var a = new ImmutableArray<int>();
 
-<span class="comment">// コードのぱっと見の印象からすると 0 とか返ってきて欲しい。</span>
-<span class="comment">// 実際にはぬるぽ発生。</span>
-<span class="comment">// ぬるぽるんだったら、NRT 警告みたいなの出してほしい(これが課題)。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span>.Length);
-</code></pre>
+// コードのぱっと見の印象からすると 0 とか返ってきて欲しい。
+// 実際にはぬるぽ発生。
+// ぬるぽるんだったら、NRT 警告みたいなの出してほしい(これが課題)。
+Console.WriteLine(a.Length);
+```
 
 ## defaultable value type
 
@@ -100,31 +100,31 @@ nullable reference type (null 許容参照型)との対比でこんな名前に�
 C# 2.0 の頃から null 許容値型があるので、
 null → default → 有効な値 みたいな「2段の無効な値」ができてしまうという問題があります。
 
-<pre class="source" title="2段の無効な値">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="comment">// null</span>
-<span class="comment">// Nullable&lt;T&gt;.HasValue で null 判定。</span>
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt;? <span class="variable">a1</span> = <span class="reserved">null</span>;
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt;? <span class="variable">a2</span> = <span class="reserved">default</span>; <span class="comment">// これは null になる</span>
+// null
+// Nullable<T>.HasValue で null 判定。
+ImmutableArray<int>? a1 = null;
+ImmutableArray<int>? a2 = default; // これは null になる
 
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a1</span>.HasValue); <span class="comment">// false</span>
+Console.WriteLine(a1.HasValue); // false
 
-<span class="comment">// default</span>
-<span class="comment">// HasValue は true。</span>
-<span class="comment">// ImmutableArray.IsDefault みたいな別判定が必要。</span>
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt;? <span class="variable">a3</span> = <span class="reserved">new</span>();
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a4</span> = <span class="reserved">new</span>();
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a5</span> = <span class="reserved">default</span>; <span class="comment">// これは new() になる</span>
+// default
+// HasValue は true。
+// ImmutableArray.IsDefault みたいな別判定が必要。
+ImmutableArray<int>? a3 = new();
+ImmutableArray<int> a4 = new();
+ImmutableArray<int> a5 = default; // これは new() になる
 
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a3</span>.HasValue); <span class="comment">// true</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a4</span>.IsDefault); <span class="comment">// true</span>
+Console.WriteLine(a3.HasValue); // true
+Console.WriteLine(a4.IsDefault); // true
 
-<span class="comment">// 有効な値</span>
-<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a6</span> = <span class="type">ImmutableArray</span>.<span class="method">Create</span>&lt;<span class="reserved">int</span>&gt;();
+// 有効な値
+ImmutableArray<int> a6 = ImmutableArray.Create<int>();
 
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a6</span>.IsDefault); <span class="comment">// false</span>
-</code></pre>
+Console.WriteLine(a6.IsDefault); // false
+```
 
 これがあるので、defaltable value type に対して `T?` という記法は使えません。
 なので提案では<em>仮に</em> `T~` としています。
@@ -133,31 +133,31 @@ null → default → 有効な値 みたいな「2段の無効な値」ができ
 
 この仮の `~` を使って話を進めると、とりあえず書きたいコードは以下のようなものになります。
 
-<pre class="source" title="defaultable value type の例 (~ 案)">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="method">m1</span>(<span class="reserved"><span class="warning">default</span></span>); <span class="comment">// 警告</span>
-<span class="method">m1</span>(<span class="type">ImmutableArray</span>.<span class="method">Create</span>&lt;<span class="reserved">int</span>&gt;()); <span class="comment">// OK</span>
-m2(<span class="reserved">default</span>); <span class="comment">// OK</span>
+m1(default); // 警告
+m1(ImmutableArray.Create<int>()); // OK
+m2(default); // OK
 
-<span class="reserved">void</span> <span class="method">m1</span>(<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span>)
+void m1(ImmutableArray<int> a)
 {
-    <span class="comment">// a に default が入ることはなく、a.Length が有効。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span>.Length);
+    // a に default が入ることはなく、a.Length が有効。
+    Console.WriteLine(a.Length);
 }
 
-<span class="reserved">void</span> <span class="method">m2</span>(<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt;<em>~</em> a)
+void m2(ImmutableArray<int>~ a)
 {
-    <span class="comment">// a に default が入る可能性があり、a.Length のところに警告を出したい。</span>
-    <span class="type">Console</span>.WriteLine(<span class="warning">a</span>.Length);
+    // a に default が入る可能性があり、a.Length のところに警告を出したい。
+    Console.WriteLine(a.Length);
 
-    <span class="comment">// 非 default を保証するような仕組みも欲しい。</span>
-    <span class="control">if</span> (!a.IsDefault)
+    // 非 default を保証するような仕組みも欲しい。
+    if (!a.IsDefault)
     {
-        <span class="type">Console</span>.WriteLine(a.Length); <span class="comment">// これは OK にしたい。</span>
+        Console.WriteLine(a.Length); // これは OK にしたい。
     }
 }
-</code></pre>
+```
 
 ### 参照型フィールドで自動判定
 
@@ -170,18 +170,18 @@ m2(<span class="reserved">default</span>); <span class="comment">// OK</span>
 
 という判定を自動的にする予定です。
 
-<pre class="source" title="非 null 参照型フィールドで自動判定">
-<code><span class="type">A</span> <span class="variable">a</span> = <span class="reserved">default</span>;
+```csharp
+A a = default;
 
-<span class="comment">// 警告: default のまま使った。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable"><span class="warning">a</span></span>.S);
+// 警告: default のまま使った。
+Console.WriteLine(a.S);
 
-<span class="comment">// OK: S が非 null になった時点で a は非 default。</span>
-<span class="variable">a</span>.S = <span class="string">&quot;&quot;</span>;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span>.S);
+// OK: S が非 null になった時点で a は非 default。
+a.S = "";
+Console.WriteLine(a.S);
 
-<span class="reserved">record</span> <span class="reserved">struct</span> <span class="type">A</span>(<span class="reserved">string</span> <span class="variable">S</span>);
-</code></pre>
+record struct A(string S);
+```
 
 ### opt-in
 
@@ -197,33 +197,33 @@ m2(<span class="reserved">default</span>); <span class="comment">// OK</span>
 それとも属性か何かでアノテーションを付けるかはまだ検討の余地がありますが、
 仮に属性を使う案でいうと以下のような感じになります。
 
-<pre class="source" title="属性を使って defaultable value type opt-in">
-<code>[<span class="type">MaybeDefault</span>] <span class="comment">// 「default 放置はダメ」を表す何らかの属性</span>
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">BlobHandle</span>
+```csharp
+[MaybeDefault] // 「default 放置はダメ」を表す何らかの属性
+public struct BlobHandle
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">nuint</span> _value;
+    private readonly nuint _value;
 
-    [<span class="type">AllowDefault</span>] <span class="comment">// 「このプロパティが true なら非 default」を表す何らかの属性</span>
-    <span class="reserved">public</span> <span class="reserved">bool</span> IsNil =&gt; _value != 0;
+    [AllowDefault] // 「このプロパティが true なら非 default」を表す何らかの属性
+    public bool IsNil => _value != 0;
 
-    <span class="reserved">public</span> <span class="reserved">byte</span> <span class="method">Read</span>() =&gt; <span class="comment">// ...</span>
+    public byte Read() => // ...
 }
 
-<span class="reserved">void</span> <span class="method">M1</span>(<span class="type">BlobHandle</span>~ handle)
+void M1(BlobHandle~ handle)
 {
-    <span class="control">if</span> (!handle.IsNil)
+    if (!handle.IsNil)
     {
-        handle.Read(); <span class="comment">// ok</span>
+        handle.Read(); // ok
     }
 }
-M1(<span class="reserved">default</span>); <span class="comment">// ok</span>
+M1(default); // ok
 
-<span class="reserved">void</span> <span class="method">M2</span>(<span class="type">BlobHandle</span> <span class="variable">handle</span>)
+void M2(BlobHandle handle)
 {
-    <span class="variable">handle</span>.<span class="method">Read</span>();
+    handle.Read();
 }
-<span class="method">M2</span>(<span class="reserved"><span class="warning">default</span></span>); <span class="comment">// warning</span>
-</code></pre>
+M2(default); // warning
+```
 
 ちなみに、属性はこれ専用のものを用意すべきか、
 それとも null 許容参照型で使っている `MaybeNull` などの属性をそのまま流用すべきかみたいな点も検討途中です。
@@ -235,36 +235,36 @@ M1(<span class="reserved">default</span>); <span class="comment">// ok</span>
 
 というのも、以下のようなコード(また `ImmutableArray` が起こす問題)を考えます。
 
-<pre class="source" title="ImmutableArray に対してパターン マッチングでぬるぽる">
-<code><span class="reserved">using</span> System.Collections.Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="reserved">void</span> <span class="method">m</span>(<span class="type">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">a</span>)
+void m(ImmutableArray<int> a)
 {
-    <span class="comment">// ImmutableArray に対してリスト パターンを使う。</span>
-    <span class="comment">// パターンマッチングは暗黙的に非 null 判定を含んでいて、たいていの型に対してはぬるぽを起こさない。</span>
-    <span class="comment">// ところが…</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span> <span class="reserved">is</span> [1, ..]);
+    // ImmutableArray に対してリスト パターンを使う。
+    // パターンマッチングは暗黙的に非 null 判定を含んでいて、たいていの型に対してはぬるぽを起こさない。
+    // ところが…
+    Console.WriteLine(a is [1, ..]);
 }
 
-<span class="comment">// こういうのは大丈夫。</span>
-<span class="method">m</span>(<span class="type">ImmutableArray</span>.<span class="method">Create</span>(1)); <span class="comment">// true</span>
-<span class="method">m</span>(<span class="type">ImmutableArray</span>.<span class="method">Create</span>(2)); <span class="comment">// false</span>
+// こういうのは大丈夫。
+m(ImmutableArray.Create(1)); // true
+m(ImmutableArray.Create(2)); // false
 
-<span class="comment">// これが例外を起こす。</span>
-<span class="comment">// null チェックに代わる「default チェック」が必要…</span>
-<span class="method">m</span>(<span class="reserved">default</span>);
-</code></pre>
+// これが例外を起こす。
+// null チェックに代わる「default チェック」が必要…
+m(default);
+```
 
 こんな感じで「`default` を放置しちゃダメ」な型に対するパターン マッチングをするにあたって、「null チェック代わりに何か `default` チェックを挟みたい」という要件があります。
 
 で、「何か特定のプロパティを呼ぶ」とかよりは、以下のように、`operator default` みたいなものを書けるようにした方がいいのではないかという案も出ています。
 
-<pre class="source" title="operator default">
-<code><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">ImmutableArray</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public struct ImmutableArray<T>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="reserved">default</span>(<span class="type">ImmutableArray</span>&lt;<span class="type">T</span>&gt; <span class="variable">arr</span>) =&gt; <span class="variable">arr</span>._array <span class="reserved">is</span> <span class="reserved">null</span>;
+    public static bool operator default(ImmutableArray<T> arr) => arr._array is null;
 }
-</code></pre>
+```
 
 ## 課題
 

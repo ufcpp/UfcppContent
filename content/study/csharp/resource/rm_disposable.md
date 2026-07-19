@@ -62,31 +62,31 @@ File クラスからは触れない機能を使いたければ、Windows API を
 
 この2種類に正式に対応（しつつ問題を起こさない実装を）するには、以下のような書き方をします。
 
-<pre class="source" title="Dispose メソッドの実装方法" lang="">
-<code><span class="reserved">class</span> <span class="type">SomeClass</span> : <span class="type">IDisposable</span>
+```csharp
+class SomeClass : IDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> Dispose()
+    public void Dispose()
     {
-        Dispose(<span class="reserved">true</span>);
-        <span class="type">GC</span>.SuppressFinalize(<span class="reserved">this</span>);
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
-    <span class="reserved">protected</span> <span class="reserved">virtual</span> <span class="reserved">void</span> Dispose(<span class="reserved">bool</span> disposing)
+    protected virtual void Dispose(bool disposing)
     {
-        <span class="reserved">if</span> (disposing)
+        if (disposing)
         {
-            <span class="comment">// 管理（managed）リソースの破棄処理をここに記述します。 </span>
+            // 管理（managed）リソースの破棄処理をここに記述します。 
         }
 
-        <span class="comment">// 非管理（unmanaged）リソースの破棄処理をここに記述します。</span>
+        // 非管理（unmanaged）リソースの破棄処理をここに記述します。
     }
 
     ~SomeClass()
     {
-        Dispose(<span class="reserved">false</span>);
+        Dispose(false);
     }
 }
-</code></pre>
+```
 
 
 派生クラス含め、まったく非管理リソースを持たないのであれば、ここまで煩雑なコードを書かなくても、単純に Dispose メソッドを実装するだけで構いません。
@@ -144,25 +144,25 @@ IDisposable インターフェイスを実装するクラスのインスタン�
 その最たるものが Task クラス(System.Threading.Tasks 名前空間)です。
 例えば、以下のようなコードを見てください。まじめに 全部 Dispose して回るのはかなり面倒です。
 
-<pre class="source" title="Task の Dispose は呼びにくい" lang="">
-<code><span class="reserved">var</span> t1 = <span class="type">Task</span>.Run(() =&gt; Work1()); <span class="comment">// ここで Task インスタンスが1個できる</span>
+```csharp
+var t1 = Task.Run(() => Work1()); // ここで Task インスタンスが1個できる
 
-t1.ContinueWith(t =&gt; Work2()); <span class="comment">// ここでも1個</span>
-t1.ContinueWith(t =&gt; Work3()); <span class="comment">// ここでも1個</span>
+t1.ContinueWith(t => Work2()); // ここでも1個
+t1.ContinueWith(t => Work3()); // ここでも1個
 
-<span class="comment">// t1 の Dispose はどこでやるべき？</span>
-<span class="comment">// ContinueWith の方で作られる Task も変数で受けて Dispose呼ぶべき？</span>
-</code></pre>
+// t1 の Dispose はどこでやるべき？
+// ContinueWith の方で作られる Task も変数で受けて Dispose呼ぶべき？
+```
 
 
 幸い、実は、Task クラスの Dispose メソッドはめったなことでは呼ぶ必要ありません。
 Task クラスにはいろいろな使い方がありますが、その中のある特定の使い方をした時だけ、Dispose を呼ぶ必要のある(破棄する必要のある)リソースを確保するそうです。
 以下のような場合が、唯一の Dispose が必要になる(ようなリソースを確保する)使い方です。
 
-<pre class="source" title="" lang="">
-<code><span class="type">IAsyncResult</span> ar = <span class="type">Task</span>.Run(() =&gt; Work1());
-ar.AsyncWaitHandle.WaitOne(); <span class="comment">// AsyncWaitHandle を呼んだ時点でリソース確保。</span>
-</code></pre>
+```csharp
+IAsyncResult ar = Task.Run(() => Work1());
+ar.AsyncWaitHandle.WaitOne(); // AsyncWaitHandle を呼んだ時点でリソース確保。
+```
 
 
 端的にいうと、古いバージョンのコードとの互換性のためだけにあるようなもので、

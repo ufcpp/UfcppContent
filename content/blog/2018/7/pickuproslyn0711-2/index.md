@@ -68,21 +68,21 @@ aliases: []
 
 オーバーロードに関しては、例えば以下のような話。
 
-<pre class="source" title="">
-<code><span class="reserved">struct</span> <span class="type">S1</span> { <span class="reserved">public</span> <span class="reserved">int</span> x; }
-<span class="reserved">struct</span> <span class="type">S2</span> { }
+```csharp
+struct S1 { public int x; }
+struct S2 { }
 
-<span class="reserved">void</span> M(S1 s1) { }
-<span class="reserved">void</span> M(S2 s2) { }
+void M(S1 s1) { }
+void M(S2 s2) { }
 
-<span class="reserved">void</span> X()
+void X()
 {
-    M(<span class="reserved">new</span>() { x = 43 });
-    <span class="comment">//↑ x を持ってるのは S1 だけだから、S1 と推論できる</span>
-    <span class="comment">// でも、それをやっちゃうと、S2 に後から x を追加することで破壊的変更が起きちゃう</span>
-    <span class="comment">// なので、こういうオーバーロード解決はやらない</span>
+    M(new() { x = 43 });
+    //↑ x を持ってるのは S1 だけだから、S1 と推論できる
+    // でも、それをやっちゃうと、S2 に後から x を追加することで破壊的変更が起きちゃう
+    // なので、こういうオーバーロード解決はやらない
 }
-</code></pre>
+```
 
 ## null 条件演算
 

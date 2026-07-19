@@ -25,24 +25,24 @@ aliases: []
 
 まず、[仮想テーブルのポインターを取得](https://github.com/dotnet/coreclr/blob/ef93a727984dbc5b8925a0c2d723be6580d20460/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/RuntimeHelpers.cs#L222)
 
-<pre class="source" title="仮想テーブルのポインターを取得">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="type">IntPtr</span> GetObjectMethodTablePointer(<span class="reserved">object</span> obj)
+```csharp
+private static IntPtr GetObjectMethodTablePointer(object obj)
 {
-    <span class="reserved">return</span> <span class="type">Unsafe</span>.Add(<span class="reserved">ref</span> <span class="type">Unsafe</span>.As&lt;<span class="reserved">byte</span>, <span class="type">IntPtr</span>&gt;(<span class="reserved">ref</span> <span class="type">JitHelpers</span>.GetPinningHelper(obj).m_data), -1);
+    return Unsafe.Add(ref Unsafe.As<byte, IntPtr>(ref JitHelpers.GetPinningHelper(obj).m_data), -1);
 }
-</code></pre>
+```
 
 - Managed なオブジェクトのアドレスを取得
 - その場所の1ワード手前に仮想テーブルへのポインターが入っているはず
 
 で、それを使って「配列かどうか」を判定。
 
-<pre class="source" title="仮想テーブルの中身を見て配列かどうかを判定">
-<code><span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">bool</span> ObjectHasComponentSize(<span class="reserved">object</span> obj)
+```csharp
+internal static unsafe bool ObjectHasComponentSize(object obj)
 {
-    <span class="reserved">return</span> *(<span class="reserved">int</span>*)GetObjectMethodTablePointer(obj) &lt; 0;
+    return *(int*)GetObjectMethodTablePointer(obj) < 0;
 }
-</code></pre>
+```
 
 - 仮想テーブルの最初の4バイトはヘッダーになっている
 - ヘッダーの最上位ビットは「クラスが可変長かどうか」のフラグになっている

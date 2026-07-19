@@ -23,34 +23,34 @@ aliases: []
 
 以下のような書き方で、複数行、かつ、一切のエスケープなしの文字列リテラルを導入したいという話が出ています。
 
-<pre class="source" title="raw string literal">
-<code><span class="reserved">string</span> <span class="variable">xml</span> = <span class="string">&quot;&quot;&quot;
-    &lt;a&gt;
-        &lt;b c=&quot;abc&quot; /&gt;
-    &lt;/a&gt;
-    &quot;&quot;&quot;;</span>
+```csharp
+string xml = """
+    <a>
+        <b c="abc" />
+    </a>
+    """;
  
-<span class="reserved">string</span> json = <span class="string">&quot;&quot;&quot;
+string json = """
     {
-        &quot;a&quot; : {
-            &quot;b&quot; : {
-                &quot;c&quot; : &quot;abc&quot;
+        "a" : {
+            "b" : {
+                "c" : "abc"
             }
         }
-    }&quot;&quot;&quot;;</span>
-</code></pre>
+    }""";
+```
 
 C# の文字列中に XML、Json/JavaScript とか、さらに言うと C# 自身を書きたいことが多々あって、
 結構昔から要望はありました。
 
 近い機能として、C# には 1.0 の頃から [`@""`](../../../../study/csharp/start/st_embeddedtype.md#verbatim-string) という書き方があったりしますし、Visual Studio などの IDE が自動補完で補ってくれたりはしていました。
 
-<pre class="source" title="逐語的文字列リテラル(C# 1.0 からある)">
-<code><span class="reserved">string</span> <span class="variable">s</span> = <span class="string">@&quot;
+```csharp
+string s = @"
 {
-    </span><span style="color:#b776fb;">&quot;&quot;</span><span class="string">a</span><span style="color:#b776fb;">&quot;&quot;</span><span class="string"> : </span><span style="color:#b776fb;">&quot;&quot;</span><span class="string">abc</span><span style="color:#b776fb;">&quot;&quot;</span><span class="string">
-}&quot;</span>;
-</code></pre>
+    ""a"" : ""abc""
+}";
+```
 
 ![Visual Studio の自動補完で複数行文字列を書く例](../../../../../assets/media/1183/idenewline.png)
 
@@ -98,13 +98,13 @@ C# 1.0 の頃からある `@""` の一番の問題点も `"` 自体を含みに�
 
 ということで、今提案されている raw string literal では「3個以上、任意個の `"` から開始して、同数の `"` で終わる」という仕様にしてあります。`"""` (3個)をエスケープなしで含みたければ `""""` (4個)から開始すればいいじゃない。
 
-<pre class="source" title="C# raw string in C# raw string">
-<code><span class="reserved">var</span> <span class="variable">cs</span> = <span class="string">&quot;&quot;&quot;&quot;
-    var s = &quot;&quot;&quot;
+```csharp
+var cs = """"
+    var s = """
         C# in C#
-        &quot;&quot;&quot;;
-    &quot;&quot;&quot;&quot;</span>;
-</code></pre>
+        """;
+    """";
+```
 
 ## インデント
 
@@ -112,28 +112,28 @@ C# 1.0 の頃からある `@""` の一番の問題点も `"` 自体を含みに�
 
 以下のような文字列リテラルを書くと、1行目の位置と2行目以降の位置がだいぶ離れるのが結構見づらくなります。
 
-<pre class="source" title="逐語的文字列リテラルでの改行。2行目以降の位置がだいぶずれる">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>()
+    static void M()
     {
-        <span class="reserved">const</span> <span class="reserved">string</span> s = <span class="string">@&quot;1行目
+        const string s = @"1行目
     2行目
 3行目
-&quot;</span>;
+";
     }
 }
-</code></pre>
+```
 
 本当は以下のように書けるとだいぶ見やすくなると思います。
 
-<pre class="source" title="整形… した結果余計のスペースが含まれる">
-<code><span class="reserved">const</span> <span class="reserved">string</span> s = <span class="string">@&quot;
+```csharp
+const string s = @"
     1行目
         2行目
     3行目
-    &quot;</span>;
-</code></pre>
+    ";
+```
 
 もちろんこれは有効な C# コードなんですが、1行目の前に改行文字が1つ入っちゃうのと、全部の行の行頭にスペースが入っちゃうわけで、空白文字を含めて一字一句一致しないとまずい場合には使えません。
 
@@ -144,13 +144,13 @@ C# 1.0 の頃からある `@""` の一番の問題点も `"` 自体を含みに�
 
 例えば先ほどの `@""` で書いた文字列リテラルと同じものを新しい raw string literal で書くと以下のようになります。
 
-<pre class="source" title="raw string は開始行の改行必須 ＆ 1行目でインデント量を決定">
-<code><span class="reserved">const</span> <span class="reserved">string</span> s = <span class="string">&quot;&quot;&quot;
+```csharp
+const string s = """
     1行目
         2行目
     3行目
-    &quot;&quot;&quot;</span>;
-</code></pre>
+    """;
+```
 
 ### 文字列補間はやらない
 
@@ -158,36 +158,36 @@ C# 1.0 の頃からある `@""` の一番の問題点も `"` 自体を含みに�
 
 文字列補間には、`$@""` もしくは `@$""` という書き方で、「複数行、かつ、文字列補間が掛かるリテラル」が書けます。
 
-<pre class="source" title="$@">
-<code>    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">@namespace</span>, <span class="reserved">string</span> <span class="variable">className</span>)
+```csharp
+    static void M(string @namespace, string className)
     {
-        <span class="reserved">string</span> <span class="variable">s</span> = <span class="string">$@&quot;
-namespace </span>{<span class="variable">@namespace</span>}<span class="string">
-</span><span style="color:#b776fb;">{{</span><span class="string">
-    class </span>{<span class="variable">className</span>}<span class="string">
-    </span><span style="color:#b776fb;">{{</span><span class="string">
-    </span><span style="color:#b776fb;">}}</span><span class="string">
-</span><span style="color:#b776fb;">}}</span><span class="string">
-&quot;</span>;
+        string s = $@"
+namespace {@namespace}
+{{
+    class {className}
+    {{
+    }}
+}}
+";
     }
-</code></pre>
+```
 
 はい、もうこの時点で何が嫌かわかるかと思います。`{{` が嫌。
 実際、「C# 内 C#」みたいなことをやると、上記のコードは以下のように書き直した方がまだマシなんじゃないかと思ったりすることが結構あります。
 
-<pre class="source" title="もう、 + でつなげばいいんじゃ…">
-<code>    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">@namespace</span>, <span class="reserved">string</span> <span class="variable">className</span>)
+```csharp
+    static void M(string @namespace, string className)
     {
-        <span class="reserved">string</span> <span class="variable">s</span> = <span class="string">@&quot;
-namespace &quot;</span> + <span class="variable">@namespace</span> + <span class="string">@&quot;
+        string s = @"
+namespace " + @namespace + @"
 {
-    class &quot;</span> + <span class="variable">className</span> + <span class="string">@&quot;
+    class " + className + @"
     {
     }
 }
-&quot;</span>;
+";
     }
-</code></pre>
+```
 
 ものすごく本末転倒…
 

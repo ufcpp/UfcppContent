@@ -26,12 +26,12 @@ aliases: []
 最近では、 [dotnet/runtime](https://github.com/dotnet/runtime) が `_` 開始の `camelCase` を採用したということで、このルールを支持する人が増えたというか、
 `this.x` 派だった人も「dotnet/runtime がそういうのなら」という感じでちらほら改宗していたりはします。
 
-<pre class="source" title="_ 始まり推奨">
-<code><span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">private</span> <span class="type">DateTime</span> <em>_date</em>;
+    private DateTime _date;
 }
-</code></pre>
+```
 
 ところで、以下のスクショをご覧ください。
 (フィールドに対する名前の提案。)
@@ -48,22 +48,22 @@ Visual Studio を触っている人なら1度は思ったことがあると思�
 
 .editorconfig に以下のような行を入れておくと `_` 始まりになります。
 
-<pre class="source" title="begin_with__">
-<code>[*.{cs,vb}]
+```csharp
+[*.{cs,vb}]
 
 dotnet_naming_rule.private_or_internal_field_should_be_begin_with__.severity = suggestion
-dotnet_naming_rule.private_or_internal_field_should_be_begin_with__.symbols = <span style="color:blue">private_or_internal_field</span>
-dotnet_naming_rule.private_or_internal_field_should_be_begin_with__.style = <span style="color:red">begin_with__</span>
+dotnet_naming_rule.private_or_internal_field_should_be_begin_with__.symbols = private_or_internal_field
+dotnet_naming_rule.private_or_internal_field_should_be_begin_with__.style = begin_with__
 
-dotnet_naming_symbols.<span style="color:blue">private_or_internal_field</span>.applicable_kinds = field
-dotnet_naming_symbols.<span style="color:blue">private_or_internal_field</span>.applicable_accessibilities = internal, private
-dotnet_naming_symbols.<span style="color:blue">private_or_internal_field</span>.required_modifiers = 
+dotnet_naming_symbols.private_or_internal_field.applicable_kinds = field
+dotnet_naming_symbols.private_or_internal_field.applicable_accessibilities = internal, private
+dotnet_naming_symbols.private_or_internal_field.required_modifiers = 
 
-dotnet_naming_style.<span style="color:red">begin_with__</span>.required_prefix = _
-dotnet_naming_style.<span style="color:red">begin_with__</span>.required_suffix = 
-dotnet_naming_style.<span style="color:red">begin_with__</span>.word_separator = 
-dotnet_naming_style.<span style="color:red">begin_with__</span>.capitalization = camel_case
-</code></pre>
+dotnet_naming_style.begin_with__.required_prefix = _
+dotnet_naming_style.begin_with__.required_suffix = 
+dotnet_naming_style.begin_with__.word_separator = 
+dotnet_naming_style.begin_with__.capitalization = camel_case
+```
 
 (style, symbols, rule の3つ組が必要みたいです。)
 

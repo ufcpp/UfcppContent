@@ -97,42 +97,42 @@ MEFは、.NET Framework 4からは標準ライブラリに取り込まれまし�
 以下のコードは、クラスのすべてのプロパティの値をコンソールに表示する物です。
 シリアライズ処理も、これと同じような仕組みで実現します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span> { X = 10, Y = 20 };
+        var p = new Point { X = 10, Y = 20 };
         OutputAllProperties(p);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> OutputAllProperties&lt;T&gt;(T obj)
+    static void OutputAllProperties<T>(T obj)
     {
-        <span class="reserved">var</span> t = <span class="reserved">typeof</span>(T);
+        var t = typeof(T);
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> p <span class="reserved">in</span> t.GetProperties())
+        foreach (var p in t.GetProperties())
         {
-            <span class="reserved">var</span> name = p.Name;
-            <span class="reserved">var</span> value = p.GetValue(obj, <span class="reserved">null</span>);
-            <span class="type">Console</span>.WriteLine(<span class="literal">"{0}: {1}"</span>, name, value);
+            var name = p.Name;
+            var value = p.GetValue(obj, null);
+            Console.WriteLine("{0}: {1}", name, value);
         }
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 X: 10
 Y: 20
-</pre>
+```
 
 
 ただし、実際には、パフォーマンス上の理由から、
@@ -227,12 +227,12 @@ DLR 上で動く言語としては、[IronPython](http://ironpython.codeplex.com
 
 しかし、C# 4.0でdynamicキーワードが導入されて、ゆるい型（実行時にいろいろ追加可能）が使えるようになりました。
 
-<pre class="source" title="dynamic キーワード" lang="">
-<code><span class="reserved">dynamic</span> d = <span class="reserved">new</span> ExpandoObject();
-d.X = 10; <span class="comment">// この瞬間、d に X というメンバーが追加される</span>
-d.Y = 20; <span class="comment">// 同上、Y 追加</span>
-<span class="type">Console</span>.WriteLine(d.X + d.Y);
-</code></pre>
+```csharp
+dynamic d = new ExpandoObject();
+d.X = 10; // この瞬間、d に X というメンバーが追加される
+d.Y = 20; // 同上、Y 追加
+Console.WriteLine(d.X + d.Y);
+```
 
 
 ここで使ったExpandoObjectを含め、System.Dynamic名前空間以下のクラスを使います。
@@ -285,20 +285,20 @@ dynamicキーワードを使えば、この手のスキーマレスなデータ�
 
 例えば、以下のようなクラスを考えてみます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">IService</span>
+```csharp
+public class IService
 {
-    <span class="reserved">void</span> SendMessage(<span class="reserved">string</span> message);
+    void SendMessage(string message);
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Service</span> : <span class="type">IService</span>
+public class Service : IService
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> SendMessage(<span class="reserved">string</span> message)
+    public void SendMessage(string message)
     {
-        <span class="comment">// 具体的な処理</span>
+        // 具体的な処理
     }
 }
-</code></pre>
+```
 
 
 このクラスを、普通にインスタンスを作って使うなら、図4のようになります。
@@ -340,15 +340,15 @@ dynamicキーワードを使えば、この手のスキーマレスなデータ�
 有名なものだと、[Moq](http://code.google.com/p/moq/) などがあります。
 以下のような使い方ができるモック用ライブラリです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> mock = <span class="reserved">new</span> Moq.<span class="type">Mock</span>&lt;<span class="type">IComparer</span>&lt;<span class="reserved">int</span>&gt;&gt;();
-mock.Setup(m =&gt; m.Compare(0, 1)).Returns(-1);
-mock.Setup(m =&gt; m.Compare(1, 0)).Returns(1);
-mock.Setup(m =&gt; m.Compare(0, 0)).Returns(0);
+```csharp
+var mock = new Moq.Mock<IComparer<int>>();
+mock.Setup(m => m.Compare(0, 1)).Returns(-1);
+mock.Setup(m => m.Compare(1, 0)).Returns(1);
+mock.Setup(m => m.Compare(0, 0)).Returns(0);
 
-<span class="reserved">var</span> c = mock.Object;
-<span class="type">Console</span>.WriteLine(c.Compare(1, 0));
-</code></pre>
+var c = mock.Object;
+Console.WriteLine(c.Compare(1, 0));
+```
 
 
 

@@ -25,28 +25,31 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;vec&gt;ベクトルにしたい文字&lt;/vec&gt;
-</pre>
+```xml
+<vec>ベクトルにしたい文字</vec>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;vec&gt;y&lt;/vec&gt; = A&lt;vec&gt;x&lt;/vec&gt;
-</pre><div class="math"><span class="vector">y</span> = A<span class="vector">x</span>
+```xml
+<vec>y</vec> = A<vec>x</vec>
+```
+<div class="math"><span class="vector">y</span> = A<span class="vector">x</span>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:vec"&gt;
-  &lt;span class="vector"&gt;&lt;xsl:apply-templates/&gt;&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:vec">
+  <span class="vector"><xsl:apply-templates/></span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.vector
+```css
+span.vector
 {
   font-weight:bold;
 }
-
-</pre>
+```

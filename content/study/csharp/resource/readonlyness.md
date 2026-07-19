@@ -30,37 +30,37 @@ aliases:
 例えば以下のコードを見てください。`Program`クラスのフィールド`c`には`readonly`が付いていますが、
 `c`が普通に書き換え可能なクラスのフィールドなので、クラスの中身は自由に書き換えられます。
 
-<pre class="source" title="参照型のフィールドに対してreadonlyを付ける例">
-<code><span class="comment">// 書き換え可能なクラス</span>
-<span class="reserved">class</span> <span class="type">MutableClass</span>
+```csharp
+// 書き換え可能なクラス
+class MutableClass
 {
-    <span class="comment">// フィールドを直接公開</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
+    // フィールドを直接公開
+    public int X;
 
-    <span class="comment">// 書き換え可能なプロパティ</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 書き換え可能なプロパティ
+    public int Y { get; set; }
 
-    <span class="comment">// フィールドの値を書き換えるメソッド</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> M(<span class="reserved">int</span> value) =&gt; X = value;
+    // フィールドの値を書き換えるメソッド
+    public void M(int value) => X = value;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">MutableClass</span> c = <span class="reserved">new</span> <span class="type">MutableClass</span>();
+    static readonly MutableClass c = new MutableClass();
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// これは許されない。c は readonly なので、c 自体の書き換えはできない</span>
-        <span class="error">c</span> = <span class="reserved">new</span> <span class="type">MutableClass</span>();
+        // これは許されない。c は readonly なので、c 自体の書き換えはできない
+        c = new MutableClass();
 
-        <span class="comment">// けども、c の中身までは保証してない</span>
-        <span class="comment">// 書き換え放題</span>
+        // けども、c の中身までは保証してない
+        // 書き換え放題
         c.X = 1;
         c.Y = 2;
         c.M(3);
     }
 }
-</code></pre>
+```
 
 ![参照型のフィールドに対してreadonlyを付ける例](../../../../assets/media/1145/mutableclass.png)
 
@@ -75,53 +75,53 @@ aliases:
 
 例えば以下のように、`readonly`が付いたフィールド`c`自体に加えて、`c`のフィールドも書き換えできません。
 
-<pre class="source" title="値型のフィールドに対してreadonlyを付ける例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 書き換え可能な構造体</span>
-<span class="reserved">struct</span> <span class="type">MutableStruct</span>
+// 書き換え可能な構造体
+struct MutableStruct
 {
-    <span class="comment">// フィールドを直接公開</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
+    // フィールドを直接公開
+    public int X;
 
-    <span class="comment">// フィールドの値を書き換えるメソッド</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> M(<span class="reserved">int</span> value) =&gt; X = value;
+    // フィールドの値を書き換えるメソッド
+    public void M(int value) => X = value;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">readonly</span>  <span class="type">MutableStruct</span> c = <span class="reserved">new</span>  <span class="type">MutableStruct</span>();
+    static readonly  MutableStruct c = new  MutableStruct();
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main() =&gt; Allowed();
+    static void Main() => Allowed();
 
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> NotAllowed()
+    private static void NotAllowed()
     {
-        <span class="comment">// これはもちろん許されない。c は readonly なので、c 自体の書き換えはできない</span>
-        <span class="error">c</span> = <span class="reserved">new</span>  <span class="type">MutableStruct</span>();
+        // これはもちろん許されない。c は readonly なので、c 自体の書き換えはできない
+        c = new  MutableStruct();
 
-        <span class="comment">// 構造体の場合、フィールドに関しては readonly な性質を引き継ぐ</span>
-        <span class="error">c.X</span> = 1;
+        // 構造体の場合、フィールドに関しては readonly な性質を引き継ぐ
+        c.X = 1;
     }
 
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> Allowed()
+    private static void Allowed()
     {
-        <span class="comment">// でも、メソッドは呼べてしまう</span>
-        c.M(3); <span class="comment">// X を 3 で上書きしているはず？</span>
+        // でも、メソッドは呼べてしまう
+        c.M(3); // X を 3 で上書きしているはず？
 
-        <span class="type">Console</span>.WriteLine(c.X); <span class="comment">// でも、X は 0 のまま</span>
+        Console.WriteLine(c.X); // でも、X は 0 のまま
 
-        <span class="comment">//↑のコードは、実はコピーが発生している</span>
-        <span class="comment">// 以下のコードと同じ意味になる</span>
+        //↑のコードは、実はコピーが発生している
+        // 以下のコードと同じ意味になる
 
-        <span class="reserved">var</span> local = c;
+        var local = c;
         local.M(3);
 
-        <span class="type">Console</span>.WriteLine(c.X); <span class="comment">// 書き換わってるのは local (コピー)の方なので、c は書き換わらない(0)</span>
+        Console.WriteLine(c.X); // 書き換わってるのは local (コピー)の方なので、c は書き換わらない(0)
 
-        <span class="type">Console</span>.WriteLine(local.X); <span class="comment">// もちろんこっちは書き換わってる(3)</span>
+        Console.WriteLine(local.X); // もちろんこっちは書き換わってる(3)
     }
 }
-</code></pre>
+```
 
 ![値型のフィールドに対してreadonlyを付ける例](../../../../assets/media/1146/mutablestruct.png)
 
@@ -144,42 +144,42 @@ C# の`readonly`フィールドには少し片手落ちなところがあって�
 構造体のメソッドの中では`this`が「自分自身の参照」の意味なんですが、この`this`参照は書き換えできてしまいます。
 そのため、以下のように、`readonly`で一見書き換えができなさそうなフィールドを書き換えてしまうことができます。
 
-<pre class="source" title="構造体の this 書き換えの例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Point</span>
+struct Point
 {
-    <span class="comment">// フィールドに readonly を付けているものの…</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> Y;
+    // フィールドに readonly を付けているものの…
+    public readonly int X;
+    public readonly int Y;
 
-    <span class="reserved">public</span> <span class="type">Point</span>(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; (X, Y) = (x, y);
+    public Point(int x, int y) => (X, Y) = (x, y);
 
-    <span class="comment">// this の書き換えができてしまうので、実は X, Y の書き換えが可能</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Set(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+    // this の書き換えができてしまうので、実は X, Y の書き換えが可能
+    public void Set(int x, int y)
     {
-        <span class="comment">// X = x; Y = y; とは書けない</span>
-        <span class="comment">// でも、this 自体は書き換えられる</span>
-        <span class="reserved">this</span> = <span class="reserved">new</span> <span class="type">Point</span>(x, y);
+        // X = x; Y = y; とは書けない
+        // でも、this 自体は書き換えられる
+        this = new Point(x, y);
     }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
+        var p = new Point(1, 2);
 
-        <span class="comment">// p.X = 0; とは書けない。これはちゃんとコンパイル エラーになる</span>
+        // p.X = 0; とは書けない。これはちゃんとコンパイル エラーになる
 
-        <span class="comment">// でも、このメソッドは呼べるし、X, Y が書き換わる</span>
+        // でも、このメソッドは呼べるし、X, Y が書き換わる
         p.Set(3, 4);
 
-        <span class="type">Console</span>.WriteLine(p.X); <span class="comment">// 3</span>
-        <span class="type">Console</span>.WriteLine(p.Y); <span class="comment">// 4</span>
+        Console.WriteLine(p.X); // 3
+        Console.WriteLine(p.Y); // 4
     }
 }
-</code></pre>
+```
 
 わざわざこんな紛らわしいことをしようとは思わないのでめったに問題になることはないんですが、一応は注意が必要です。
 また、この問題は、次節で説明する通り、C# 7.2で少し緩和されます。
@@ -197,36 +197,36 @@ C# 7.2で、構造体自体に`readonly`修飾を付けられるようになり�
 
 `this`が`readonly`扱いになるので、前節のような`this`書き換えの問題は起きません。
 
-<pre class="source" title="readonly struct の例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 構造体自体に readonly を付ける</span>
-<span class="reserved"><em>readonly</em></span> <span class="reserved">struct</span> <span class="type">Point</span>
+// 構造体自体に readonly を付ける
+readonly struct Point
 {
-    <span class="comment">// フィールドには readonly が必須</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> Y;
+    // フィールドには readonly が必須
+    public readonly int X;
+    public readonly int Y;
 
-    <span class="reserved">public</span> <span class="type">Point</span>(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; (X, Y) = (x, y);
+    public Point(int x, int y) => (X, Y) = (x, y);
 
-    <span class="comment">// readonly を付けない場合と違って、以下のような this 書き換えも不可</span>
-    <span class="comment">//public void Set(int x, int y) =&gt; this = new <span class="type">Point</span>(x, y);</span>
+    // readonly を付けない場合と違って、以下のような this 書き換えも不可
+    //public void Set(int x, int y) => this = new Point(x, y);
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
+        var p = new Point(1, 2);
 
-        <span class="comment">// p.X = 0; とは書けない。これはちゃんとコンパイル エラーになる</span>
-        <span class="comment">// p.Set(3, 4); みたいなのもダメ</span>
+        // p.X = 0; とは書けない。これはちゃんとコンパイル エラーになる
+        // p.Set(3, 4); みたいなのもダメ
 
-        <span class="type">Console</span>.WriteLine(p.X); <span class="comment">// 1 しかありえない</span>
-        <span class="type">Console</span>.WriteLine(p.Y); <span class="comment">// 2 しかありえない</span>
+        Console.WriteLine(p.X); // 1 しかありえない
+        Console.WriteLine(p.Y); // 2 しかありえない
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="avoid-copy"></a>readonly struct によるコピー回避
 
@@ -235,53 +235,53 @@ C# 7.2で、構造体自体に`readonly`修飾を付けられるようになり�
 
 例えば以下のように、ほぼ同じ構造・どちらも書き換え不能な構造体を作ったとして、`readonly struct`になっているかどうかでコピー発生の有無が変わります。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 作りとしては readonly を意図しているので、何も書き換えしない</span>
-<span class="comment">// でも、struct 自体には readonly が付いていない</span>
-<span class="reserved">struct</span> <span class="type">NoReadOnly</span>
+// 作りとしては readonly を意図しているので、何も書き換えしない
+// でも、struct 自体には readonly が付いていない
+struct NoReadOnly
 {
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">void</span> M() { }
+    public readonly int X;
+    public void M() { }
 }
 
-<span class="comment">// <span class="type">NoReadOnly</span> と作りは同じ</span>
-<span class="comment">// ちゃんと readonly struct</span>
-<span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">ReadOnly</span>
+// NoReadOnly と作りは同じ
+// ちゃんと readonly struct
+readonly struct ReadOnly
 {
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">void</span> M() { }
+    public readonly int X;
+    public void M() { }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">NoReadOnly</span> nro;
-    <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">ReadOnly</span> ro;
+    static readonly NoReadOnly nro;
+    static readonly ReadOnly ro;
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// readonly を付けなかった場合</span>
-        <span class="comment">// フィールド参照(読み取り)は問題ない</span>
-        <span class="type">Console</span>.WriteLine(nro.X);
+        // readonly を付けなかった場合
+        // フィールド参照(読み取り)は問題ない
+        Console.WriteLine(nro.X);
 
-        <span class="comment">// メソッド呼び出しが問題。ここでコピー発生</span>
-        <span class="comment">// (呼び出し側では、「M の中で特に何も書き換えていない」というのを知るすべがないので、防衛的にコピーが発生)</span>
+        // メソッド呼び出しが問題。ここでコピー発生
+        // (呼び出し側では、「M の中で特に何も書き換えていない」というのを知るすべがないので、防衛的にコピーが発生)
         nro.M();
 
-        <span class="comment">// readonly を付けた場合</span>
-        <span class="comment">// これなら、M をそのまま呼んでも何も書き換わらない保証があるので、コピーは起きない</span>
+        // readonly を付けた場合
+        // これなら、M をそのまま呼んでも何も書き換わらない保証があるので、コピーは起きない
         ro.M();
     }
 
-    <span class="comment">// これも問題あり(コピー発生)</span>
-    <span class="comment">// in を付けたので readonly 扱い → M を呼ぶ際にコピー発生</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">in</span> <span class="type">NoReadOnly</span> x) =&gt; x.M();
+    // これも問題あり(コピー発生)
+    // in を付けたので readonly 扱い → M を呼ぶ際にコピー発生
+    static void F(in NoReadOnly x) => x.M();
 
-    <span class="comment">// こちらも、readonly struct であれば問題なし(コピー回避)</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> F(<span class="reserved">in</span> <span class="type">ReadOnly</span> x) =&gt; x.M();
+    // こちらも、readonly struct であれば問題なし(コピー回避)
+    static void F(in ReadOnly x) => x.M();
 }
-</code></pre>
+```
 
 C# 7.2 以降では、書き換えを意図していない構造体に対しては`readonly`修飾を付けるのが無難でしょう。
 
@@ -296,42 +296,42 @@ C# 7.2 以降では、書き換えを意図していない構造体に対して�
 
 例えば以下の例を見てください。
 
-<pre class="source" title="in/ref readonly で保証できる範囲">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
         _value = 0;
-        ByVal(_value); <span class="comment">// 0, 0</span>
+        ByVal(_value); // 0, 0
 
         _value = 0;
-        ByRef(_value); <span class="comment">// 0, 1</span>
+        ByRef(_value); // 0, 1
     }
 
-    <span class="comment">// 書き換えできるフィールド</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> _value;
+    // 書き換えできるフィールド
+    static int _value;
 
-    <span class="comment">// 値渡し = コピー なので、 _value 書き換えの影響は受けない</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> ByVal(<span class="reserved">int</span> value)
+    // 値渡し = コピー なので、 _value 書き換えの影響は受けない
+    static void ByVal(int value)
     {
-        <span class="type">Console</span>.WriteLine(value);
+        Console.WriteLine(value);
         _value++;
-        <span class="type">Console</span>.WriteLine(value);
+        Console.WriteLine(value);
     }
 
-    <span class="comment">// 参照渡しなので、 _value 書き換えの影響を受ける</span>
-    <span class="comment">// in (ref readonly) であっても、immutable ではない</span>
-    <span class="comment">// value を通して書き換えない保証があるだけで、別経路で書き換わることに対しては無力</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> ByRef(<span class="reserved">in</span> <span class="reserved">int</span> value)
+    // 参照渡しなので、 _value 書き換えの影響を受ける
+    // in (ref readonly) であっても、immutable ではない
+    // value を通して書き換えない保証があるだけで、別経路で書き換わることに対しては無力
+    static void ByRef(in int value)
     {
-        <span class="type">Console</span>.WriteLine(value);
+        Console.WriteLine(value);
         _value++;
-        <span class="type">Console</span>.WriteLine(value);
+        Console.WriteLine(value);
     }
 }
-</code></pre>
+```
 
 メソッドの中身としては全く同じメソッドが2つありますが、片方(`ByVal`)は値渡しで、もう片方(`ByRef`)は `in` 引数で整数値を受け取っています。
 `ByVal`では、`value`は値のコピーを受け取っているので、元の値の出どころとは無縁になっています。
@@ -347,43 +347,43 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 
 以下のように、関数メンバーに `readonly` 修飾を付けます。
 
-<pre class="source" title="readonly 関数メンバーの例">
-<code><span class="comment">// 構造体自体は readonly にしない。</span>
-<span class="comment">// フィールドは書き換えたい</span>
-<span class="reserved">struct</span> <span class="type">NonReadOnly</span>
+```csharp
+// 構造体自体は readonly にしない。
+// フィールドは書き換えたい
+struct NonReadOnly
 {
-    <span class="reserved">public</span> <span class="reserved">float</span> X;
-    <span class="reserved">public</span> <span class="reserved">float</span> Y;
+    public float X;
+    public float Y;
  
-    <span class="comment">// でも、このプロパティ内ではフィールドを書き換えない</span>
-    <span class="reserved">public</span> <span class="reserved">float</span> LengthSquared =&gt; X * X + Y * Y;
+    // でも、このプロパティ内ではフィールドを書き換えない
+    public float LengthSquared => X * X + Y * Y;
 }
  
-<span class="comment">// NonReadOnly との差は LengthSquared の readonly の有無だけ</span>
-<span class="reserved">struct</span> <span class="type">ReadOnly</span>
+// NonReadOnly との差は LengthSquared の readonly の有無だけ
+struct ReadOnly
 {
-    <span class="reserved">public</span> <span class="reserved">float</span> X;
-    <span class="reserved">public</span> <span class="reserved">float</span> Y;
+    public float X;
+    public float Y;
  
-    <span class="comment">// readonly 修飾でフィールドを書き換えないことを明示</span>
-    <span class="reserved">public</span> <span class="reserved"><em>readonly</em></span> <span class="reserved">float</span> LengthSquared =&gt; X * X + Y * Y;
+    // readonly 修飾でフィールドを書き換えないことを明示
+    public readonly float LengthSquared => X * X + Y * Y;
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// こっちは、LengthSquared 内での X, Y の書き換えを恐れて隠れたコピーが発生する。</span>
-    <span class="reserved">static</span> <span class="reserved">float</span> <span class="method">M</span>(<span class="reserved">in</span> <span class="type">NonReadOnly</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span>.LengthSquared;
+    // こっちは、LengthSquared 内での X, Y の書き換えを恐れて隠れたコピーが発生する。
+    static float M(in NonReadOnly x) => x.LengthSquared;
  
-    <span class="comment">// こっちは、LengthSquared に readonly が付いているのでコピー発生しない。</span>
-    <span class="reserved">static</span> <span class="reserved">float</span> <span class="method">M</span>(<span class="reserved">in</span> <span class="type">ReadOnly</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span>.LengthSquared;
+    // こっちは、LengthSquared に readonly が付いているのでコピー発生しない。
+    static float M(in ReadOnly x) => x.LengthSquared;
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>(<span class="reserved">string</span>[] <span class="variable">args</span>)
+    static void Main(string[] args)
     {
-        <span class="method">M</span>(<span class="reserved">new</span> <span class="type">NonReadOnly</span> { X = 1, Y = 2 });
-        <span class="method">M</span>(<span class="reserved">new</span> <span class="type">ReadOnly</span> { X = 1, Y = 2 });
+        M(new NonReadOnly { X = 1, Y = 2 });
+        M(new ReadOnly { X = 1, Y = 2 });
     }
 }
-</code></pre>
+```
 
 隠れたコピー問題はソースコードの見た目に現れず、気づきにくい問題なので、
 関数内でフィールドを書き換えていないなら積極的に `readonly` 修飾を付けておくべきでしょう。
@@ -392,78 +392,78 @@ C# 8.0 で、[関数メンバー](../structured/st_function.md#sec-function-memb
 例えば以下のコードでは、`A`のフィールドを書き換える`Increment`メソッドを、
 `readonly` なメソッドとそうでないメソッドから呼び出してみています。
 
-<pre class="source" title="readonly 関数メンバーから、非 readonly な構造体フィールドに触る">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">struct</span> <span class="type">A</span>
+struct A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Value;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Increment</span>() =&gt; Value++;
+    public int Value;
+    public void Increment() => Value++;
 }
  
-<span class="reserved">struct</span> <span class="type">B</span>
+struct B
 {
-    <span class="reserved">public</span> <span class="type">A</span> A;
+    public A A;
  
-    <span class="comment">// A の非 readonly メンバーを呼ぶ。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Mutable</span>() =&gt; A.<span class="method">Increment</span>();
+    // A の非 readonly メンバーを呼ぶ。
+    public void Mutable() => A.Increment();
  
-    <span class="comment">// Mutable との差は readonly 修飾が付いてるだけ。</span>
-    <span class="comment">// this が書き換わらないように、A のコピーが作られる。A 自体には変化が起きない。</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">void</span> <span class="method">Immutable</span>() =&gt; A.<span class="method">Increment</span>();
+    // Mutable との差は readonly 修飾が付いてるだけ。
+    // this が書き換わらないように、A のコピーが作られる。A 自体には変化が起きない。
+    public readonly void Immutable() => A.Increment();
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">b</span> = <span class="reserved">new</span> <span class="type">B</span>();
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">b</span>.A.Value); <span class="comment">// 初期状態: 0</span>
+        var b = new B();
+        Console.WriteLine(b.A.Value); // 初期状態: 0
  
-        <span class="variable">b</span>.<span class="method">Mutable</span>();
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">b</span>.A.Value); <span class="comment">// 意図通りの書き換え: 1</span>
+        b.Mutable();
+        Console.WriteLine(b.A.Value); // 意図通りの書き換え: 1
  
-        <span class="variable">b</span>.<span class="method">Immutable</span>();
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">b</span>.A.Value); <span class="comment">// 書き換わらない: 1 (Immutable の中で A のコピーが発生)</span>
+        b.Immutable();
+        Console.WriteLine(b.A.Value); // 書き換わらない: 1 (Immutable の中で A のコピーが発生)
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="similar-but-different"></a>注意: 似て非なるもの(ref readonly)
 
 この `readonly` 関数メンバーは、構文上、[`ref readonly`](sp_ref.md#ref-readonly)と似ているのでちょっと注意が必要かもしれません。
 
-<pre class="source" title="readonly ref との兼ね合い">
-<code><span class="reserved">struct</span> <span class="type">S</span>
+```csharp
+struct S
 {
-    <span class="reserved">public</span> <span class="reserved">int</span>[] _value;
+    public int[] _value;
  
-    <span class="comment">// これは、読み取り専用参照を返すという意味。</span>
-    <span class="comment">// _value 配列の中身が書き換わってもらっては困る。</span>
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> X =&gt; <span class="reserved">ref</span> _value[0];
+    // これは、読み取り専用参照を返すという意味。
+    // _value 配列の中身が書き換わってもらっては困る。
+    public ref readonly int X => ref _value[0];
  
-    <span class="comment">// これは、S 内のフィールド(この場合 _value) を書き換えないという意味。</span>
-    <span class="comment">// _value 配列の中身が書き換わろうと知ったことではない。</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">int</span> Y =&gt; <span class="reserved">ref</span> _value[0];
+    // これは、S 内のフィールド(この場合 _value) を書き換えないという意味。
+    // _value 配列の中身が書き換わろうと知ったことではない。
+    public readonly ref int Y => ref _value[0];
  
-    <span class="comment">// これは、上記2つの両方の意味。</span>
-    <span class="comment">// _value 自体も書き換わらないし、_value の中身を書き換えてもらっても困るとき用。</span>
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> Z =&gt; <span class="reserved">ref</span> _value[0];
+    // これは、上記2つの両方の意味。
+    // _value 自体も書き換わらないし、_value の中身を書き換えてもらっても困るとき用。
+    public readonly ref readonly int Z => ref _value[0];
 }
-</code></pre>
+```
 
 ちなみに、プロパティの場合は `get`/`set` それぞれ別に `readonly` 指定ができます。
 当然ですが、ほとんどの場合は「`get` だけが `readonly`」になると思われます。
 
-<pre class="source" title="プロパティの get にだけ readonly 修飾">
-<code><span class="reserved">struct</span> <span class="type">X</span>
+```csharp
+struct X
 {
-    <span class="reserved">int</span> _value;
+    int _value;
  
-    <span class="reserved">public</span> <span class="reserved">int</span> Value
+    public int Value
     {
-        <span class="reserved">readonly</span> <span class="reserved">get</span> =&gt; _value;
-        <span class="reserved">set</span> =&gt; _value = <span class="reserved">value</span>;
+        readonly get => _value;
+        set => _value = value;
     }
 }
-</code></pre>
+```

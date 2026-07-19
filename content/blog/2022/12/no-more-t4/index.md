@@ -23,18 +23,18 @@ aliases: []
 
 例えば、
 
-<pre class="source">
-public static bool TryParse(this string s, out {{T}} x) =&gt; {{T}}.TryParse(s, out x);
-</pre>
+```csharp
+public static bool TryParse(this string s, out {{T}} x) => {{T}}.TryParse(s, out x);
+```
 
 みたいな文字列の、`{{T}}` のところに `bool`, `byte`, `int`, `double` を与えて、
 
-<pre class="source">
-public static bool TryParse(this string s, out bool x) =&gt; bool.TryParse(s, out x);
-public static bool TryParse(this string s, out byte x) =&gt; byte.TryParse(s, out x);
-public static bool TryParse(this string s, out int x) =&gt; int.TryParse(s, out x);
-public static bool TryParse(this string s, out double x) =&gt; double.TryParse(s, out x);
-</pre>
+```csharp
+public static bool TryParse(this string s, out bool x) => bool.TryParse(s, out x);
+public static bool TryParse(this string s, out byte x) => byte.TryParse(s, out x);
+public static bool TryParse(this string s, out int x) => int.TryParse(s, out x);
+public static bool TryParse(this string s, out double x) => double.TryParse(s, out x);
+```
 
 とかを生成したいことがたまにあります。
 
@@ -46,18 +46,18 @@ C# でテキスト テンプレートというと、
 
 T4 を使うと、上記の `Parse` は以下のように書けます。
 
-<pre class="source">
-&lt;#
+```csharp
+<#
 var types = new[] { "bool", "byte", "int", "double" };
 
 foreach (var t in types)
 {
-#&gt;
-    public static bool TryParse(string s, out &lt;#= t #&gt; x) =&gt; &lt;#= t #&gt;.TryParse(s, out x);
-&lt;#
+#>
+    public static bool TryParse(string s, out <#= t #> x) => <#= t #>.TryParse(s, out x);
+<#
 }
-#&gt;
-</pre>
+#>
+```
 
 ## <a id="t4-now">T4 の今</a>
 
@@ -88,27 +88,27 @@ foreach (var t in types)
 generator 内では `ToStringWithCulture(t)` みたいに展開されるんですが、
 この `ToStringWithCulture` の中身は以下のようになっています。
 
-<pre class="source" title="T4 が生成する ToStringWithCulture メソッド">
-<span class="reserved">public</span> <span class="reserved">string</span> <span class="method">ToStringWithCulture</span>(<span class="reserved">object</span> <span class="variable local">objectToConvert</span>)
+```csharp
+public string ToStringWithCulture(object objectToConvert)
 {
-    <span class="control">if</span> ((<span class="variable local">objectToConvert</span> <span class="operator">==</span> <span class="reserved">null</span>))
+    if ((objectToConvert == null))
     {
-        <span class="control">throw</span> <span class="reserved">new</span> <span class="reserved">global</span><span class="operator">::</span>System<span class="operator">.</span><span class="type">ArgumentNullException</span>(<span class="string">&quot;objectToConvert&quot;</span>);
+        throw new global::System.ArgumentNullException("objectToConvert");
     }
-    System<span class="operator">.</span><span class="type">Type</span> <span class="variable">t</span> <span class="operator">=</span> <span class="variable local">objectToConvert</span><span class="operator">.</span><span class="method">GetType</span>();
-    System<span class="operator">.</span>Reflection<span class="operator">.</span><span class="type">MethodInfo</span> <span class="variable">method</span> <span class="operator">=</span> <span class="variable">t</span><span class="operator">.</span><span class="method">GetMethod</span>(<span class="string">&quot;ToString&quot;</span>, <span class="reserved">new</span> System<span class="operator">.</span><span class="type">Type</span>[] {
-                <span class="reserved">typeof</span>(System<span class="operator">.</span><span class="type">IFormatProvider</span>)});
-    <span class="control">if</span> ((<span class="variable">method</span> == <span class="reserved">null</span>))
+    System.Type t = objectToConvert.GetType();
+    System.Reflection.MethodInfo method = t.GetMethod("ToString", new System.Type[] {
+                typeof(System.IFormatProvider)});
+    if ((method == null))
     {
-        <span class="control">return</span> <span class="variable local">objectToConvert</span><span class="operator">.</span><span class="method">ToString</span>();
+        return objectToConvert.ToString();
     }
-    <span class="control">else</span>
+    else
     {
-        <span class="control">return</span> ((<span class="reserved">string</span>)(<span class="variable">method</span><span class="operator">.</span><span class="method">Invoke</span>(<span class="variable local">objectToConvert</span>, <span class="reserved">new</span> <span class="reserved">object</span>[] {
-                    <span class="reserved">this</span><span class="operator">.</span>formatProviderField })));
+        return ((string)(method.Invoke(objectToConvert, new object[] {
+                    this.formatProviderField })));
     }
 }
-</pre>
+```
 
 任意の型に対してカルチャー(`IFromatProvider`)指定するためだけにリフレクション。
 しかも、`MethodInfo` のキャッシュもせず、毎回律義に `GetMethod`。
@@ -155,19 +155,19 @@ TextTemplatingFilePreprocessor な T4 はもう本当に存在意義がないで
 C# 11 で入った[生文字列リテラル](../../../../study/csharp/start/st_string.md#raw-string)によってテンプレートも書きやすくなっています。
 本校冒頭で書いたテンプレートなら、普通に以下のように書けます。
 
-<pre class="source" title="文字列補間でテンプレート">
-<span class="reserved">using</span> System<span class="operator">.</span>Text;
+```csharp
+using System.Text;
 
-<span class="reserved">var</span> <span class="variable">s</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">StringBuilder</span>();
+var s = new StringBuilder();
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">t</span> <span class="control">in</span> <span class="reserved">new</span>[] { <span class="string">&quot;bool&quot;</span>, <span class="string">&quot;byte&quot;</span>, <span class="string">&quot;int&quot;</span>, <span class="string">&quot;double&quot;</span> })
+foreach (var t in new[] { "bool", "byte", "int", "double" })
 {
-    <span class="variable">s</span><span class="operator">.</span><span class="method">Append</span>(<span class="string">$$&quot;&quot;&quot;
-</span><span class="string">            public static bool TryParse(string s, out </span>{{<span class="variable">t</span>}}<span class="string"> x) =&gt; </span>{{<span class="variable">t</span>}}<span class="string">.TryParse(s, out x);
-</span><span class="string">
-        &quot;&quot;&quot;</span>);
+    s.Append($$"""
+            public static bool TryParse(string s, out {{t}} x) => {{t}}.TryParse(s, out x);
+
+        """);
 }
-</pre>
+```
 
 (カルチャー指定が必要なら `Append` メソッドの第1引数を追加。)
 
@@ -207,30 +207,30 @@ T4 も、テンプレートの文法自体に不満はそこまでないので�
 
 例えば以下のような拡張子 .scriban のファイルを置くか、
 
-<pre class="source">
+```csharp
 static class Extensions
 {
 {{
 for $t in ["bool","byte","int","double"]
 ~}}
-    public static bool TryParse(this string s, out {{$t}} x) =&gt; {{$t}}.TryParse(s, out x);
+    public static bool TryParse(this string s, out {{$t}} x) => {{$t}}.TryParse(s, out x);
 {{ end }}
 }
-</pre>
+```
 
 以下のようにクラスに属性を付けてコード生成できます。
 
-<pre class="source" title="">
-<span class="reserved">namespace</span> FileGenerator;
+```csharp
+namespace FileGenerator;
 
-[ScribanSourceGeneretor<span class="operator">.</span><span class="type">ClassMember</span>(<span class="string">&quot;&quot;&quot;
+[ScribanSourceGeneretor.ClassMember("""
     {{
-    for $t in [&quot;bool&quot;,&quot;byte&quot;,&quot;int&quot;,&quot;double&quot;]
+    for $t in ["bool","byte","int","double"]
     ~}}
-        public static bool TryParse(this string s, out {{$t}} x) =&gt; {{$t}}.TryParse(s, out x);
+        public static bool TryParse(this string s, out {{$t}} x) => {{$t}}.TryParse(s, out x);
     {{ end }}
-    &quot;&quot;&quot;</span>)]
-<span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type"><span class="static">Extensions</span></span>
+    """)]
+internal static partial class Extensions
 {
 }
-</pre>
+```

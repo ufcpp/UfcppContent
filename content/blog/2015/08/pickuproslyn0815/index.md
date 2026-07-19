@@ -42,20 +42,20 @@ aliases: []
 
 以下のコードで `b` は `false`
 
-<pre class="source" title="b は false">
-<code><reserved></span><span class="reserved">enum</span> <span class="type">Enum0</span> { First }
-<span class="reserved">enum</span> <span class="type">Enum1</span> { First }
-<span class="reserved">var</span> source = <span class="reserved">new</span> <span class="type">Enum0</span>[3];
-<span class="inactive">...</span>
-<span class="reserved">bool</span> b = source <span class="reserved">is</span> <span class="type">IEnumerable</span>&lt;<span class="type">Enum1</span>&gt;;
-</code></pre>
+```csharp
+enum Enum0 { First }
+enum Enum1 { First }
+var source = new Enum0[3];
+...
+bool b = source is IEnumerable<Enum1>;
+```
 
 これが、いったん `object` で受けるように変更するだけで `b` が `true` になる。
 
-<pre class="source" title="b が true に">
-<code><span class="reserved">object</span> source = <span class="reserved">new</span> <span class="type">Enum0</span>[3];
-<span class="reserved">bool</span> b = source <span class="reserved">is</span> <span class="type">IEnumerable</span>&lt;<span class="type">Enum1</span>&gt;;
-</code></pre>
+```csharp
+object source = new Enum0[3];
+bool b = source is IEnumerable<Enum1>;
+```
 
 なんか変じゃない？という話。
 

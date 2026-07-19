@@ -29,29 +29,29 @@ C# コンパイラーも、コンパイラーが出力するコードがより�
 コンパイラーの出力結果なんですが、今まで `int` (符号付き)だったところが `uint` (符号なし)で生成されていたりします。
 なんでかというと、以下のようなコード(よくある配列の範囲チェックみたいなやつ)を考えたとき、
 
-<pre class="source" title="">
-<code>0 &lt;= index &amp;&amp; index &lt; length
-</code></pre>
+```csharp
+0 <= index && index < length
+```
 
 以下のように書き換えた方が比較が1回減って速いから。
 
-<pre class="source" title="">
-<code>(<span class="reserved">uint</span>)index &lt; length
-</code></pre>
+```csharp
+(uint)index < length
+```
 
 こういう範囲チェック、ポインター操作をしていると頻出するので、
 ポインターの扱いを符号付き整数から符号なし整数に変えたみたいです。
 
 ということで、以下のようなコードを書いた場合、
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> M(<span class="reserved">string</span> s)
+```csharp
+public unsafe void M(string s)
 {
-    <span class="reserved">fixed</span> (<span class="reserved">char</span>* p = s)
+    fixed (char* p = s)
     {
     }
 }
-</code></pre>
+```
 
 これまで、`conv.i` (`s`のアドレスを符号付き整数に変換)命令が出ていたところに、
 `conv.u` (同、符号なし整数)命令が出るように変わったりしました。

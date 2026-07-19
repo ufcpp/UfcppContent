@@ -41,10 +41,10 @@ C#ではそういう反復処理のために<code>while</code>、<code>do</code>
 
 <strong id="while" class="keyword">while</strong> 文は以下のような書き方をします。
 
-<pre class="source" title="while 文の書式" lang="">
-<code><span class="reserved">while</span>(<span class="input">条件式</span>)
-  <span class="input">繰り返したい文</span> <span class="comment">// 条件式が真の間繰り返される</span>
-</code></pre>
+```csharp
+while(条件式)
+  繰り返したい文 // 条件式が真の間繰り返される
+```
 
 
 if と同じく、英文法に近い書き方になっています。
@@ -60,72 +60,72 @@ while A, B （A の間、B）。
       </em> を使用します。
 以下に <code>break</code> と <code>continue</code> の書式を示します。
 
-<pre class="source" title="break" lang="">
-<code><span class="reserved">while</span>(<span class="reserved">true</span>) <span class="comment">// 条件式が常に true なので、永久ループになる。</span>
+```csharp
+while(true) // 条件式が常に true なので、永久ループになる。
 {
-  <span class="comment">// 何らかの処理</span>
+  // 何らかの処理
 
-  <em><span class="reserved">break</span>;</em>
+  break;
 
-  <span class="comment">// break よりも後ろの処理は実行されない。</span>
+  // break よりも後ろの処理は実行されない。
 }
-<span class="comment">// break 文が実行されると処理がここに移る。</span>
-</code></pre>
+// break 文が実行されると処理がここに移る。
+```
 
 
-<pre class="source" title="continue" lang="">
-<code><span class="reserved">while</span>(<span class="reserved">true</span>) <span class="comment">// continue 文が実行されると条件式の判定から処理をやり直す。</span>
+```csharp
+while(true) // continue 文が実行されると条件式の判定から処理をやり直す。
 {
-  <span class="comment">// 何らかの処理</span>
+  // 何らかの処理
 
-  <em><span class="reserved">continue</span>;</em>
+  continue;
 
-  <span class="comment">// continue よりも後ろの処理は実行されない。</span>
+  // continue よりも後ろの処理は実行されない。
 }
-</code></pre>
+```
 
 
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-<pre class="source" title="while文の例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> WhileSample
+class WhileSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span> a, b;
+    int a, b;
 
-    <span class="comment">// 整数を2つ入力してもらう</span>
-    Console.Write(<span class="literal">"1つ目の整数を入力してください : "</span>);
-    a = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    Console.Write(<span class="literal">"2つ目の整数を入力してください : "</span>);
-    b = <span class="reserved">int</span>.Parse(Console.ReadLine());
+    // 整数を2つ入力してもらう
+    Console.Write("1つ目の整数を入力してください : ");
+    a = int.Parse(Console.ReadLine());
+    Console.Write("2つ目の整数を入力してください : ");
+    b = int.Parse(Console.ReadLine());
 
-    Console.Write(<span class="literal">"{0}と{1}の最大公約数は"</span>, a, b);
+    Console.Write("{0}と{1}の最大公約数は", a, b);
 
-    <span class="comment">// ユークリッド互除法を使ってaとbの最大公約数を求める</span>
-    <span class="reserved">while</span>(b != 0)
+    // ユークリッド互除法を使ってaとbの最大公約数を求める
+    while(b != 0)
     {
-      <span class="comment">// b が 0 になるまで繰り返し実行される</span>
-      <span class="reserved">int</span> r = a % b;
+      // b が 0 になるまで繰り返し実行される
+      int r = a % b;
       a = b;
       b = r;
     }
 
-    <span class="comment">// 結果を出力</span>
-    Console.Write(<span class="literal">"{0}"</span>, a);
+    // 結果を出力
+    Console.Write("{0}", a);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
-1つ目の整数を入力してください : <span class="input">504</span>
-2つ目の整数を入力してください : <span class="input">210</span>
+```console
+1つ目の整数を入力してください : 504
+2つ目の整数を入力してください : 210
 504と210の最大公約数は42
-</pre>
+```
 
 
 
@@ -133,11 +133,11 @@ while A, B （A の間、B）。
 
 <strong id="do" class="keyword">do-while</strong> 文は while 文と似たような書き方をします。
 
-<pre class="source" title="do-while文の書式" lang="">
-<code><span class="reserved">do</span>
-  <span class="input">繰り返したい文</span> <span class="comment">// 条件式が真の間繰り返される</span>
-<span class="reserved">while</span>(<span class="input">条件式</span>);
-</code></pre>
+```csharp
+do
+  繰り返したい文 // 条件式が真の間繰り返される
+while(条件式);
+```
 
 
 A while B（B の間、A）。
@@ -149,35 +149,35 @@ do-while 文は while 文と異なり、最低1回は文が実行されます。
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
-<pre class="source" title="do-while文の例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> DoWhileSample
+class DoWhileSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span> n;
+    int n;
 
-    <span class="reserved">do</span>
+    do
     {
-      <span class="comment">// 数値を入力してもらう</span>
-      Console.Write(<span class="literal">"1～5のいずれかの数値を入力してください : "</span>);
-      n = <span class="reserved">int</span>.Parse(Console.ReadLine());
+      // 数値を入力してもらう
+      Console.Write("1～5のいずれかの数値を入力してください : ");
+      n = int.Parse(Console.ReadLine());
     }
-    <span class="reserved">while</span>(n &lt; 1 || n &gt; 5); <span class="comment">// nの値が1～5の範囲に入るまで繰り返し</span>
+    while(n < 1 || n > 5); // nの値が1～5の範囲に入るまで繰り返し
 
-    Console.Write(<span class="literal">"あなたの入力した数値は{0}です"</span>, n);
+    Console.Write("あなたの入力した数値は{0}です", n);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
-1～5のいずれかの数値を入力してください : <span class="input">6</span>
-1～5のいずれかの数値を入力してください : <span class="input">-3</span>
-1～5のいずれかの数値を入力してください : <span class="input">2</span>
+```console
+1～5のいずれかの数値を入力してください : 6
+1～5のいずれかの数値を入力してください : -3
+1～5のいずれかの数値を入力してください : 2
 あなたの入力した数値は2です
-</pre>
+```
 
 
 
@@ -191,10 +191,10 @@ do-while 文は while 文と異なり、最低1回は文が実行されます。
 
 C# には、この3つの作業を行うために<strong id="for" class="keyword">for</strong> 文というものが用意されています。
 
-<pre class="source" title="for文の書式" lang="">
-<code><span class="reserved">for</span>(<span class="input">初期化式</span>; <span class="input">条件式</span>; <span class="input">更新式</span>)
-  <span class="input">反復を行いたい文</span>
-</code></pre>
+```csharp
+for(初期化式; 条件式; 更新式)
+  反復を行いたい文
+```
 
 
 「1 から n までの整数 i に対して A が成り立つ」みたいな文章は、英語では "A for integer i from 1 to n" と言ったりします。
@@ -204,45 +204,44 @@ for 文では、反復処理に入る前に1度だけ初期化式が実行され
 そして、1回の反復が終わるたびに更新式が実行され、次の反復に移ります。
 これと同様のことを while 文を用いて行うと以下のようになります。
 
-<pre class="source" title="for 文と等価な while 文" lang="">
-<code>
-<span class="input">初期化式</span>;
-<span class="reserved">while</span>(<span class="input">条件式</span>)
+```csharp
+初期化式;
+while(条件式)
 {
-  <span class="input">反復を行いたい文</span>
+  反復を行いたい文
 
-FOR_END: <span class="comment">// continue の代わりに goto FOR_END とする必要あり。</span>
-  <span class="input">更新式</span>
+FOR_END: // continue の代わりに goto FOR_END とする必要あり。
+  更新式
 }
-</code></pre>
+```
 
 
 
 ##### <a id="sec-generated-title-8"></a>サンプル
 
-<pre class="source" title="for文の例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> WhileSample
+class WhileSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="comment">//九九表を作成</span>
-    <span class="reserved">for</span>(<span class="reserved">int</span> x=1; x&lt;=9; ++x) <span class="comment">// xを1～9まで、1ずつ増やして繰り返し</span>
+    //九九表を作成
+    for(int x=1; x<=9; ++x) // xを1～9まで、1ずつ増やして繰り返し
     {
-      <span class="reserved">for</span>(<span class="reserved">int</span> y=1; y&lt;=9; ++y) <span class="comment">// yを1～9まで、1ずつ増やして繰り返し</span>
+      for(int y=1; y<=9; ++y) // yを1～9まで、1ずつ増やして繰り返し
       {
-        <span class="comment">// xy の値を、幅をそろえて表示</span>
-        Console.Write((x*y).ToString().PadLeft(3, <span class="literal">' '</span>));
+        // xy の値を、幅をそろえて表示
+        Console.Write((x*y).ToString().PadLeft(3, ' '));
       }
-      Console.Write(<span class="literal">"\n"</span>);
+      Console.Write("\n");
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
   1  2  3  4  5  6  7  8  9
   2  4  6  8 10 12 14 16 18
   3  6  9 12 15 18 21 24 27
@@ -252,7 +251,7 @@ FOR_END: <span class="comment">// continue の代わりに goto FOR_END とす�
   7 14 21 28 35 42 49 56 63
   8 16 24 32 40 48 56 64 72
   9 18 27 36 45 54 63 72 81
-</pre>
+```
 
 
 
@@ -262,17 +261,17 @@ FOR_END: <span class="comment">// continue の代わりに goto FOR_END とす�
 (配列と言うものについては「[配列](st_array.md)」で詳しく説明します。)
 例えば、配列に格納された値の平均値を求める場合、以下のようにします。
 
-<pre class="source" title="配列の全ての要素を読み出しする例" lang="">
-<code><span class="reserved">double</span> Average(<span class="reserved">double</span>[] a)
+```csharp
+double Average(double[] a)
 {
-  <span class="reserved">double</span> y = 0;
-  <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;a.Length; ++i)
+  double y = 0;
+  for(int i=0; i<a.Length; ++i)
   {
     y += a[i];
   }
-  <span class="reserved">return</span> y / a.Length;
+  return y / a.Length;
 }
-</code></pre>
+```
 
 
 C#には配列の全ての要素にアクセスするための専用の <strong id="foreach" class="keyword">foreach</strong> 文という構文があります。
@@ -280,25 +279,25 @@ foreach とは、
 "for each element in an array" (配列中のそれぞれの要素に対して処理を行う)という意味です。
 foreach 文は以下のよな書き方をします。
 
-<pre class="source" title="foreach文の書式" lang="">
-<code><span class="reserved">foreach</span>(<span class="input">変数宣言</span> <span class="reserved">in</span> <span class="input">配列名</span>)
-  <span class="input">繰り返したい文</span> <span class="comment">// 配列中の各要素に対して1回ずつ処理が行われる。</span>
-</code></pre>
+```csharp
+foreach(変数宣言 in 配列名)
+  繰り返したい文 // 配列中の各要素に対して1回ずつ処理が行われる。
+```
 
 
 上述の例を foreach 文を使って書き直すと以下のようになります。
 
-<pre class="source" title="foreach 文の例" lang="">
-<code><span class="reserved">double</span> Average(<span class="reserved">double</span>[] a)
+```csharp
+double Average(double[] a)
 {
-  <span class="reserved">double</span> y = 0;
-  <span class="reserved">foreach</span>(<span class="reserved">double</span> x <span class="reserved">in</span> a)
+  double y = 0;
+  foreach(double x in a)
   {
     y += x;
   }
-  <span class="reserved">return</span> y / a.Length;
+  return y / a.Length;
 }
-</code></pre>
+```
 
 
 ちなみに、foreach 文は配列だけでなく、任意のコレクションクラス(リストや辞書など、複数の要素をひとつにまとめるクラスのこと)に対して使用することが出来ます。
@@ -309,35 +308,35 @@ foreach 文は以下のよな書き方をします。
 C# 3.0 以降には、「`foreach` の[式](miscexpressions.md#term)版」とも言えるクエリ式という構文もあります。
 式なので戻り値が必須なのと、内部的な挙動は実はだいぶ`foreach`とは異なるんですが、似たような結果を得られます。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System.Linq;
+```csharp
+using System.Linq;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">array</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
+        var array = new[] { 1, 2, 3, 4, 5 };
  
-        <span class="comment">// foreach で奇数の2乗の和</span>
-        <span class="reserved">var</span> <span class="variable">sum1</span> = 0;
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">array</span>)
-            <span class="control">if</span> (<span class="variable">x</span> % 2 == 1)
-                <span class="variable">sum1</span> += <span class="variable">x</span> * <span class="variable">x</span>;
+        // foreach で奇数の2乗の和
+        var sum1 = 0;
+        foreach (var x in array)
+            if (x % 2 == 1)
+                sum1 += x * x;
  
-        <span class="comment">// クエリ式で奇数の2乗の和</span>
-        <span class="reserved">var</span> <span class="variable">sum2</span> = (
-            <span class="reserved">from</span> x <span class="reserved">in</span> <span class="variable">array</span>
-            <span class="reserved">where</span> x % 2 == 1
-            <span class="reserved">select</span> x * x
-            ).<span class="method">Sum</span>();
+        // クエリ式で奇数の2乗の和
+        var sum2 = (
+            from x in array
+            where x % 2 == 1
+            select x * x
+            ).Sum();
  
-        <span class="comment">// sum2 と同じ処理を、単にメソッド呼び出しで実装</span>
-        <span class="reserved">var</span> <span class="variable">sum3</span> = <span class="variable">array</span>
-            .<span class="method">Where</span>(<span class="variable">x</span> =&gt; <span class="variable">x</span> % 2 == 1)
-            .<span class="method">Sum</span>(<span class="variable">x</span> =&gt; <span class="variable">x</span> * <span class="variable">x</span>);
+        // sum2 と同じ処理を、単にメソッド呼び出しで実装
+        var sum3 = array
+            .Where(x => x % 2 == 1)
+            .Sum(x => x * x);
     }
 }
-</code></pre>
+```
 
 詳しくは「[LINQ](../data/sp3_linq.md)」で説明します。
 ## <a id="exercise"></a>演習問題
@@ -357,26 +356,26 @@ C# 3.0 以降には、「`foreach` の[式](miscexpressions.md#term)版」とも
 #### 解答例 1
 
 
-<pre class="source" title="整数の和" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"n: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    <span class="reserved">int</span> sum = 0;
+    Console.Write("n: ");
+    int n = int.Parse(Console.ReadLine());
+    int sum = 0;
 
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 1; i &lt;= n; ++i)
+    for (int i = 1; i <= n; ++i)
     {
       sum += i;
     }
 
-    Console.Write(<span class="literal">"loop {0}, formula {1}\n"</span>, sum, n * (n + 1) / 2);
+    Console.Write("loop {0}, formula {1}\n", sum, n * (n + 1) / 2);
   }
 }
-</code></pre>
+```
 
 
 
@@ -394,27 +393,27 @@ C# 3.0 以降には、「`foreach` の[式](miscexpressions.md#term)版」とも
 #### 解答例 1
 
 
-<pre class="source" title="平方数の判別" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"整数を入力してください: "</span>);
-    <span class="reserved">int</span> n = <span class="reserved">int</span>.Parse(Console.ReadLine());
-    <span class="reserved">int</span> i;
+    Console.Write("整数を入力してください: ");
+    int n = int.Parse(Console.ReadLine());
+    int i;
 
-    <span class="reserved">for</span> (i = 0; i &lt;= n; ++i)
+    for (i = 0; i <= n; ++i)
     {
-      <span class="reserved">if</span> (n == i * i) <span class="reserved">break</span>;
+      if (n == i * i) break;
     }
 
-    <span class="reserved">if</span> (i &lt;= n) Console.Write(<span class="literal">"{0} = {1} × {1} は平方数です\n"</span>, n, i);
-    <span class="reserved">else</span>        Console.Write(<span class="literal">"{0} は平方数ではありません\n"</span>, n);
+    if (i <= n) Console.Write("{0} = {1} × {1} は平方数です\n", n, i);
+    else        Console.Write("{0} は平方数ではありません\n", n);
   }
 }
-</code></pre>
+```
 
 
 ちなみに、この for ループの継続条件の部分は、
@@ -432,21 +431,21 @@ Sqrt は n の平方根を求める関数。
 #### 解答例 1
 
 
-<pre class="source" title="九九表" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Exercise
+class Exercise
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 1; i &lt;= 9; ++i)
+    for (int i = 1; i <= 9; ++i)
     {
-      <span class="reserved">for</span> (<span class="reserved">int</span> j = 1; j &lt;= 9; ++j)
+      for (int j = 1; j <= 9; ++j)
       {
-        Console.Write(<span class="literal">"{0,3}"</span>, i * j);
+        Console.Write("{0,3}", i * j);
       }
       Console.Write('\n');
     }
   }
 }
-</code></pre>
+```

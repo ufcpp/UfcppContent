@@ -37,17 +37,17 @@ aliases:
 
 [コレクション式](../datatype/collection-expression.md)で使える型であれば何でも `params` にできるようになりました。
 
-<pre class="source" title="任意のコレクションに対して params を付ける例">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M1</span></span>(<span class="reserved">params</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M2</span></span>(<span class="reserved">params</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M3</span></span>(<span class="reserved">params</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M4</span></span>(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>) { }
+```csharp
+static void M1(params List<int> x) { }
+static void M2(params IEnumerable<int> x) { }
+static void M3(params Span<int> x) { }
+static void M4(params ReadOnlySpan<int> x) { }
 
-<span class="method"><span class="static">M1</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="static"><span class="method">M2</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="method"><span class="static">M3</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-<span class="static"><span class="method">M4</span></span>(<span class="number">1</span>, <span class="number">2</span>);
-</pre>
+M1(1, 2);
+M2(1, 2);
+M3(1, 2);
+M4(1, 2);
+```
 
 需要が高いのは `ReadOnlySpan` で、
 `params T[]` を `params ReadOnlySpan<T>` に変更すればそれだけでパフォーマンスの改善が見込めます。
@@ -55,11 +55,11 @@ aliases:
 実際、 .NET 9 では、`string.Join` や `Task.WhenAll` などのメソッドに
 `params ReadOnlySpan<T>` なオーバーロードが増えています。
 
-<pre class="source" title="params ReadOnlySpan オーバーロードが増えている例">
-<span class="comment">// .NET 8 以前なら Join(string, string[])</span>
-<span class="comment">// .NET 9 以降なら Join(string, ReadOnlySpan&lt;string&gt;)</span>
-<span class="reserved">var</span> <span class="variable">joiend</span> <span class="operator">=</span> <span class="reserved">string</span><span class="operator">.</span><span class="method"><span class="static">Join</span></span>(<span class="string">&quot;,&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>);
-</pre>
+```csharp
+// .NET 8 以前なら Join(string, string[])
+// .NET 9 以降なら Join(string, ReadOnlySpan<string>)
+var joiend = string.Join(",", "a", "b", "c");
+```
 
 このため、自分で `params` を使わない場合でも、
 「.NET 9 にアップグレードして再コンパイルするだけでアプリのパフォーマンスがちょっと改善する」という間接的なメリットがあります。
@@ -72,15 +72,15 @@ aliases:
 
 例えば、C# 13 と同世代の .NET 9 では、[`GeneratedRegex`](https://learn.microsoft.com/ja-jp/dotnet/api/system.text.regularexpressions.generatedregexattribute) をプロパティにできるようになりました。
 
-<pre class="source" title="GeneratedRegex をプロパティに付けれるようになった">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>RegularExpressions;
+```csharp
+using System.Text.RegularExpressions;
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">MyPatterns</span>
+partial class MyPatterns
 {
-    [<span class="type">GeneratedRegex</span>(<span class="string">@&quot;\d{4}&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="type">Regex</span> <span class="property"><span class="static">FourDigits</span></span> { <span class="reserved">get</span>; } <span class="comment">// プロパティになった。</span>
+    [GeneratedRegex(@"\d{4}")]
+    public static partial Regex FourDigits { get; } // プロパティになった。
 }
-</pre>
+```
 
 詳しくは「[部分プロパティ](../misc/partial-type.md#partial_property)」で説明します。
 
@@ -90,25 +90,25 @@ ref 構造体にインターフェイスを実装できるようになりまし�
 また、このインターフェイスのメンバーを呼び出すために、
 ジェネリック型引数に ref 構造体を渡せるようにする仕組みとして `allows ref struct` アンチ制約が追加されました。
 
-<pre class="source" title="allows ref struct なジェネリック メソッドを介して、ref 構造体のインターフェイス実装を呼ぶ">
-<span class="type struct">S</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span>(); <span class="comment">// S は IFormattable を実装してる。</span>
+```csharp
+S x = new(); // S は IFormattable を実装してる。
 
-<span class="comment">// これはボックス化を起こすから C# 13 でもエラーになる。</span>
-<span class="type">IFormattable</span> <span class="variable">f</span> <span class="operator">=</span> <span class="variable"><span class="error" title="CS0029">x</span></span>;
-<span class="variable">f</span><span class="operator">.</span><span class="method">ToString</span>(<span class="string">&quot;X&quot;</span>, <span class="reserved">null</span>);
+// これはボックス化を起こすから C# 13 でもエラーになる。
+IFormattable f = x;
+f.ToString("X", null);
 
-<span class="comment">// allows ref struct なジェネリックメソッドを介して、</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type param">T</span> <span class="variable local">f</span>) <span class="reserved">where</span> <span class="type param">T</span> : <span class="type">IFormattable</span>, <span class="reserved">allows</span> <span class="reserved">ref</span> <span class="reserved">struct</span>
-    <span class="operator">=&gt;</span> <span class="variable local">f</span><span class="operator">.</span><span class="method">ToString</span>(<span class="string">&quot;X&quot;</span>, <span class="reserved">null</span>);
+// allows ref struct なジェネリックメソッドを介して、
+static void M<T>(T f) where T : IFormattable, allows ref struct
+    => f.ToString("X", null);
 
-<span class="comment">// こうやって IFormattable.ToString を呼べば大丈夫になった。</span>
-<span class="method"><span class="static">M</span></span>(<span class="variable">x</span>);
+// こうやって IFormattable.ToString を呼べば大丈夫になった。
+M(x);
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">S</span> : <span class="type">IFormattable</span>
+ref struct S : IFormattable
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="method">ToString</span>(<span class="reserved">string</span><span class="operator">?</span> <span class="variable local">format</span>, <span class="type">IFormatProvider</span><span class="operator">?</span> <span class="variable local">formatProvider</span>) <span class="operator">=&gt;</span> <span class="string">&quot;&quot;</span>;
+    public string ToString(string? format, IFormatProvider? formatProvider) => "";
 }
-</pre>
+```
 
 詳しくは「[ref 構造体のインターフェイス実装](../resource/refstruct.md#ref-struct-interface)」で説明します。
 また、「アンチ制約」という言葉については「[アンチ制約](../oop/sp2_generics.md#anti-constraint)」で説明しています。
@@ -117,29 +117,29 @@ ref 構造体にインターフェイスを実装できるようになりまし�
 
 C# 13 で、オーバーロードの解決優先度を属性を付けて明示できる機能が入りました。
 
-<pre class="source" title="オーバーロード解決の優先度を変更する例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// IEnumerable&lt;char&gt; の方が選ばれる。</span>
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M1</span></span>(<span class="string">&quot;&quot;</span>);
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M2</span></span>(<span class="string">&quot;&quot;</span>);
+// IEnumerable<char> の方が選ばれる。
+C.M1("");
+C.M2("");
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="comment">// 通常、インターフェイスよりも具体的な型の方が優先。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M1</span></span>(<span class="reserved">string</span> <span class="variable local">_</span>) { }
+    // 通常、インターフェイスよりも具体的な型の方が優先。
+    public static void M1(string _) { }
 
-    <span class="comment">// 属性を付けて優先度を上げる。</span>
-    [<span class="type">OverloadResolutionPriority</span>(<span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M1</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">_</span>) { }
+    // 属性を付けて優先度を上げる。
+    [OverloadResolutionPriority(1)]
+    public static void M1(IEnumerable<char> _) { }
 
-    <span class="comment">// 属性を付けて優先度を下げる。</span>
-    [<span class="type">OverloadResolutionPriority</span>(<span class="operator">-</span><span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M2</span></span>(<span class="reserved">string</span> <span class="variable local">_</span>) { }
+    // 属性を付けて優先度を下げる。
+    [OverloadResolutionPriority(-1)]
+    public static void M2(string _) { }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M2</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">_</span>) { }
+    public static void M2(IEnumerable<char> _) { }
 }
-</pre>
+```
 
 詳しくは「[オーバーロード解決](../structured/miscoverloadresolution.md#overload-resolution-priority)」で説明します。
 
@@ -151,14 +151,14 @@ C# 13 で、オーバーロードの解決優先度を属性を付けて明示�
 `lock` ステートメントでこの `Lock` クラスを特別扱いするようになりました。
 既存の `lock` (`Monitor.Enter` に展開される)と異なり、以下のようなコードに展開されます。
 
-<pre class="source" title="lock (x) は using (x.EnterSceop()) になる">
-<span class="reserved">var</span> <span class="variable">syncObject</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">Lock</span>();
+```csharp
+var syncObject = new Lock();
 
-<span class="comment">// lock (syncObject)</span>
-<span class="reserved">using</span> (<span class="variable">syncObject</span><span class="operator">.</span><span class="method">EnterScope</span>())
+// lock (syncObject)
+using (syncObject.EnterScope())
 {
 }
-</pre>
+```
 
 詳しくは「[Lock クラス](../async/sp_thread.md#lock-class)」で説明しています。
 
@@ -175,49 +175,49 @@ C# 13 で、オーバーロードの解決優先度を属性を付けて明示�
 
 以下のコードで、行末コメントで ⭕ を付けている部分が C# 13 で新たにコンパイルできるようになったコードです。
 
-<pre class="source" title="ref/unsafe をイテレーター/非同期メソッド中に書けるように">
-<span class="type">IEnumerable</span>&lt;<span class="reserved">object</span><span class="operator">?</span>&gt; <span class="method">Enumerate</span>()
+```csharp
+IEnumerable<object?> Enumerate()
 {
-    <span class="reserved">unsafe</span> { } <span class="comment">// ⭕</span>
+    unsafe { } // ⭕
 
-    <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+    yield return null;
 
-    <span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">data</span> <span class="operator">=</span> [];
+    Span<byte> data = [];
 
-    <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+    yield return null;
 
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>;
-    <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>; <span class="comment">// ⭕</span>
+    int x = 123;
+    ref int r = ref x; // ⭕
 }
 
-<span class="reserved">async</span> <span class="type">Task</span> <span class="method">GetAsync</span>()
+async Task GetAsync()
 {
-    <span class="reserved">unsafe</span> { }
+    unsafe { }
 
-    <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="static"><span class="method">Yield</span></span>();
+    await Task.Yield();
 
-    <span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">data</span> <span class="operator">=</span> []; <span class="comment">// ⭕</span>
+    Span<byte> data = []; // ⭕
 
-    <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>();
+    await Task.Yield();
 
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>;
-    <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>; <span class="comment">// ⭕</span>
+    int x = 123;
+    ref int r = ref x; // ⭕
 }
 
-<span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">object</span><span class="operator">?</span>&gt; <span class="method">EnumerateAsync</span>()
+async IAsyncEnumerable<object?> EnumerateAsync()
 {
-    <span class="reserved">unsafe</span> { } <span class="comment">// ⭕</span>
+    unsafe { } // ⭕
 
-    <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>(); <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+    await Task.Yield(); yield return null;
 
-    <span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">data</span> <span class="operator">=</span> []; <span class="comment">// ⭕</span>
+    Span<byte> data = []; // ⭕
 
-    <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>(); <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
+    await Task.Yield(); yield return null;
 
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>;
-    <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>; <span class="comment">// ⭕</span>
+    int x = 123;
+    ref int r = ref x; // ⭕
 }
-</pre>
+```
 
 元々、原理的にはこう書いても問題ないことはわかっていたんですが、
 正しく判定するのにコストがかかる割に、需要は低いだろうということでエラーにしていました。
@@ -227,23 +227,23 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 ただし、これは `yield` や `await` をまたがない場合に限って許されます。
 例えば以下のコードは C# 13 でもコンパイル エラーを起こします。
 
-<pre class="source" title="C# 13 でもエラーになる書き方の例">
-<span class="type">IEnumerable</span>&lt;<span class="reserved">object</span><span class="operator">?</span>&gt; <span class="method">Enumerate</span>()
+```csharp
+IEnumerable<object?> Enumerate()
 {
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>;
-    <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>;
-    <span class="control">yield</span> <span class="control">return</span> <span class="reserved">null</span>;
-    <span class="error" title="CS9217"><span class="variable">r</span></span> <span class="operator">=</span> <span class="number">456</span>;
+    int x = 123;
+    ref int r = ref x;
+    yield return null;
+    r = 456;
 }
 
-<span class="reserved">async</span> <span class="type">Task</span> <span class="method">GetAsync</span>()
+async Task GetAsync()
 {
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>;
-    <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>;
-    <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="static"><span class="method">Yield</span></span>();
-    <span class="error" title="CS9217"><span class="variable">r</span></span> <span class="operator">=</span> <span class="number">456</span>;
+    int x = 123;
+    ref int r = ref x;
+    await Task.Yield();
+    r = 456;
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-7"></a> <a id="escape-escape">\e (エスケープ文字のエスケープ シーケンス)</a>
 
@@ -251,11 +251,11 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 
 例えば、コンソール アプリで以下のように書くことで、文字列の色を変えたり装飾したりできます。
 
-<pre class="source" title="\e の利用例">
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;\e[31mred text&quot;</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;\e[4munderlined text&quot;</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;\e[0mreset style&quot;</span>);
-</pre>
+```csharp
+Console.WriteLine("\e[31mred text");
+Console.WriteLine("\e[4munderlined text");
+Console.WriteLine("\e[0mreset style");
+```
 
 ![\e エスケープ シーケンス](../../../../assets/media/1217/escapeescape.png)
 
@@ -276,22 +276,22 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 
 以下のように、オブジェクト初期化子中の `[]` の中で[インデックスの `^` 演算子](../data/dataranges.md)を使えるようになりました。
 
-<pre class="source" title="">
-<span class="comment">// これが C# 12 以前はコンパイル エラーを起こしてた。</span>
-<span class="reserved">var</span> <span class="variable">c</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">C</span> { [<span class="operator">^</span><span class="number">1</span>] <span class="operator">=</span> <span class="number">1</span> };
+```csharp
+// これが C# 12 以前はコンパイル エラーを起こしてた。
+var c = new C { [^1] = 1 };
 
-<span class="comment">// これなら昔からコンパイルできる。</span>
-<span class="comment">// (オブジェクト初期化子はこれと同じコードに展開されるはずなのに。)</span>
-<span class="variable">c</span>[<span class="operator">^</span><span class="number">1</span>] <span class="operator">=</span> <span class="number">1</span>;
+// これなら昔からコンパイルできる。
+// (オブジェクト初期化子はこれと同じコードに展開されるはずなのに。)
+c[^1] = 1;
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="comment">// インデクサーと Length さえ持っていれば c[^i] と書けるようになる。</span>
-    <span class="comment">// c[c.Length - i] 扱い。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Length</span> <span class="operator">=&gt;</span> <span class="number">1</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">i</span>] { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="variable local">i</span>; <span class="reserved">set</span> { } }
+    // インデクサーと Length さえ持っていれば c[^i] と書けるようになる。
+    // c[c.Length - i] 扱い。
+    public int Length => 1;
+    public int this[int i] { get => i; set { } }
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-11"></a> <a id="method-group-natrural-type">デリゲートの自然な型の改善</a>
 
@@ -301,38 +301,38 @@ C# 13 で書けるようになったのは、前述の[`Lock` クラスに対す
 
 例えば以下のようなクラスがあったとします。
 
-<pre class="source" title="同名のインスタンス メソッドと拡張メソッド">
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">C</span>
+```csharp
+public class C
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>() { } <span class="comment">// インスタンス メソッド M と、</span>
+    public void M() { } // インスタンス メソッド M と、
 }
 
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">E</span></span>
+public static class E
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="type">C</span> <span class="variable local">c</span>, <span class="reserved">object</span> <span class="variable local">o</span>) { } <span class="comment">// 同名の拡張メソッド。</span>
+    public static void M(this C c, object o) { } // 同名の拡張メソッド。
 }
-</pre>
+```
 
 この `C` 型のインスタンス `x` に対して `x.M` と書いたとき、
 C# 12 までは自然な型を決定できなかったのに対して、
 C# 13 ではインスタンスメソッドを優先的に見ます。
 
-<pre class="source" title="C# 13 の新ルール">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">C</span>();
+```csharp
+var x = new C();
 
-<span class="comment">// オーバーロード解決ではインスタンスメソッド優先。</span>
-<span class="variable">x</span><span class="operator">.</span><span class="method">M</span>();      <span class="comment">// C.M()</span>
-<span class="variable">x</span><span class="operator">.</span><span class="method">M</span>(<span class="string">&quot;&quot;</span>); <span class="comment">// E.M(C, object)</span>
+// オーバーロード解決ではインスタンスメソッド優先。
+x.M();      // C.M()
+x.M(""); // E.M(C, object)
 
-<span class="comment">// 型の明示があると昔から大丈夫だった。</span>
-<span class="type">Action</span> <span class="variable">a</span> <span class="operator">=</span> <span class="variable">x</span><span class="operator">.</span><span class="method">M</span>;         <span class="comment">// C.M()</span>
-<span class="type">Action</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">b</span> <span class="operator">=</span> <span class="variable">x</span><span class="operator">.</span><span class="method">M</span>; <span class="comment">// E.M(C, object)</span>
+// 型の明示があると昔から大丈夫だった。
+Action a = x.M;         // C.M()
+Action<object> b = x.M; // E.M(C, object)
 
-<span class="comment">// var を使う。</span>
-<span class="comment">// これが C# 13 から行けるように。</span>
-<span class="comment">// インスタンス メソッド優先で、Action 型になる。</span>
-<span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> <span class="variable">x</span><span class="operator">.</span><span class="method">M</span>;
-</pre>
+// var を使う。
+// これが C# 13 から行けるように。
+// インスタンス メソッド優先で、Action 型になる。
+var z = x.M;
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="collection-expression13">コレクション式の改善</a>
 
@@ -341,61 +341,61 @@ C# 13 ではインスタンスメソッドを優先的に見ます。
 1つは、`Add` メソッドが拡張メソッドでも大丈夫になりました。
 (こちらは最新のコンパイラーにすると `LangVersion` 12 にしても元の挙動(= コンパイル エラー)にはなりません。)
 
-<pre class="source" title="コレクション式も拡張メソッドの Add を見てくれるように">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections;
+```csharp
+using System.Collections;
 
-<span class="type">C</span> <span class="variable">c</span> <span class="operator">=</span> [<span class="string">'a'</span>];
+C c = ['a'];
 
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">IEnumerable</span>
+class C : IEnumerable
 {
-    <span class="reserved">public</span> <span class="type">IEnumerator</span> <span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
+    public IEnumerator GetEnumerator() => throw new NotImplementedException();
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">Extensions</span></span>
+static class Extensions
 {
-    <span class="comment">// C# 12 の頃はこの拡張メソッドを見てくれずエラーになっていた。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Add</span></span>(<span class="reserved">this</span> <span class="type">C</span> <span class="variable local">a</span>, <span class="reserved">char</span> <span class="variable local">_</span>) { }
+    // C# 12 の頃はこの拡張メソッドを見てくれずエラーになっていた。
+    public static void Add(this C a, char _) { }
 }
-</pre>
+```
 
 もう1つは、[params コレクション](#params-collections)との兼ね合いで、オーバーロード解決ルールが変わっています。
 以下のように、要素の型違いのオーバーロードがあるとき、要素の[自然な型](../../../blog/2022/12/stackalloc-natural-type/index.md)を見るようになりました。
 (この変更は言語バージョンを見て分岐しているようで、
 最新のコンパイラーでも [`LangVersion`](langversionoption.md#langversion) を12以前に戻すと古い挙動になります。)
 
-<pre class="source" title="要素の自然な型優先">
-<span class="comment">// C# 12 では以下の2つとも解決不能(コンパイル エラー)になってた。</span>
+```csharp
+// C# 12 では以下の2つとも解決不能(コンパイル エラー)になってた。
 
-<span class="comment">// C# 13 では int の方になる。</span>
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>([<span class="number">1</span>]);
+// C# 13 では int の方になる。
+C.M([1]);
 
-<span class="comment">// C# 13 では string の方になる。</span>
-<span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>([<span class="string">$&quot;</span><span class="string">&quot;</span>]);
+// C# 13 では string の方になる。
+C.M([$""]);
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">List</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable local">_</span>) { }
+    public static void M(List<int> _) { }
+    public static void M(List<byte> _) { }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">List</span>&lt;<span class="reserved">string</span>&gt; <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">List</span>&lt;<span class="type">IFormattable</span>&gt; <span class="variable local">_</span>) { }
+    public static void M(List<string> _) { }
+    public static void M(List<IFormattable> _) { }
 }
-</pre>
+```
 
 ただ、この結果、ちょっとした破壊的変更も起きています。
 C# 12 から C# 13 にアップデートすると、以下のような場合にオーバーロード解決先が変わります。
 
-<pre class="source" title="コレクション式のオーバーロード解決の破壊的変更">
-<span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>([<span class="number">1</span>, <span class="number">2</span>]);
+```csharp
+C.M([1, 2]);
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="comment">// C# 12 だとこっちが呼ばれる。</span>
-    <span class="comment">// (ReadOnlySpan 優先。)</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable local">data</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;ReadOnlySpan&lt;byte&gt;&quot;</span>);
+    // C# 12 だとこっちが呼ばれる。
+    // (ReadOnlySpan 優先。)
+    public static void M(ReadOnlySpan<byte> data) => Console.WriteLine("ReadOnlySpan<byte>");
 
-    <span class="comment">// C# 13 だとこっちが呼ばれる。</span>
-    <span class="comment">// (中身の自然な型(整数リテラルは int になる)優先。)</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">data</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;Span&lt;int&gt;&quot;</span>);
+    // C# 13 だとこっちが呼ばれる。
+    // (中身の自然な型(整数リテラルは int になる)優先。)
+    public static void M(Span<int> data) => Console.WriteLine("Span<int>");
 }
-</pre>
+```

@@ -24,33 +24,33 @@ STLのlistはいわゆる双方向連結リストと言われているもので�
 リストとは任意の位置への要素の挿入・削除を要素の順序を変えることなく行うことにできるデータ構造のことです。
 このような操作を配列を用いてやろうとすると、
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span> array[SIZE];
-<span class="reserved">int</span> rear;<span class="comment">//データの末尾</span>
+```csharp
+int array[SIZE];
+int rear;//データの末尾
 
-<span class="comment">//ポインターpの指す位置に新しいデータを挿入する。</span>
-<span class="reserved">void</span> insert(<span class="reserved">int</span>* p, <span class="reserved">int</span> data)
+//ポインターpの指す位置に新しいデータを挿入する。
+void insert(int* p, int data)
 {
-  <span class="reserved">int</span>* q;
+  int* q;
   rear++;
-  <span class="reserved">if</span>(rear==SIZE)<span class="comment">//full</span>
-    <span class="reserved">return</span>;
+  if(rear==SIZE)//full
+    return;
 
-  <span class="reserved">for</span>(q=array+rear; q&gt;p; q--)
-    *q = *(q-1); <span class="comment">//要素を1つずつずらす</span>
+  for(q=array+rear; q>p; q--)
+    *q = *(q-1); //要素を1つずつずらす
 
-  *p =data; <span class="comment">//そして、空いた場所に新しいデータを挿入</span>
+  *p =data; //そして、空いた場所に新しいデータを挿入
 }
 
-<span class="comment">//ポインターpの指す位置のデータを削除する</span>
-<span class="reserved">void</span> erase(<span class="reserved">int</span>* p)
+//ポインターpの指す位置のデータを削除する
+void erase(int* p)
 {
-  <span class="reserved">int</span>* q;
-  <span class="reserved">for</span>(q=p; q&lt;array+rear; q++)
-    *q = *(a+1); <span class="comment">//要素を1つずつ詰める</span>
+  int* q;
+  for(q=p; q<array+rear; q++)
+    *q = *(a+1); //要素を1つずつ詰める
   rear--;
 }
-</code></pre>
+```
 
 
 という風になります。
@@ -64,48 +64,48 @@ STLのlistはいわゆる双方向連結リストと言われているもので�
 線形リストから説明します。
 まず、ノード(node:節目、結び目)といわれる構造体を定義します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">struct</span> node
+```csharp
+struct node
 {
   node* next;
-  <span class="reserved">int</span> data;
+  int data;
 };
-</code></pre>
+```
 
 
 そして、このノードを数珠繋ぎしていくと線形リストになります。<br></br>	[![onewaylist.png](../../../../assets/media/ufcpp2000/stl/fig/onewaylist.png)](../../../../assets/media/ufcpp2000/stl/fig/onewaylist.png)
 <br></br>
 この際、一番後ろのノードの<code>next</code>にはNULLポインターを入れておきます。
 
-<pre class="source" title="" lang="">
-<code>node *root, *rear;
+```csharp
+node *root, *rear;
 
-<span class="reserved">void</span> insert(node* p, <span class="reserved">int</span> data)
+void insert(node* p, int data)
 {
   node* prev;
-  <span class="reserved">for</span>(prev=root; prev-&gt;next!=p &amp;&amp; prev-&gt;next!=NULL; prev=prev-&gt;next);
+  for(prev=root; prev->next!=p && prev->next!=NULL; prev=prev->next);
 
-  <span class="reserved">if</span>(prev-&gt;next == NULL)<span class="comment">//p don't exist;</span>
-    <span class="reserved">return</span>;
+  if(prev->next == NULL)//p don't exist;
+    return;
 
-  node* tmp = <span class="reserved">new</span> node;
-  tmp-&gt;data = data;
-  tmp-&gt;next = p;
-  prev-&gt;next = tmp;
+  node* tmp = new node;
+  tmp->data = data;
+  tmp->next = p;
+  prev->next = tmp;
 }
 
-<span class="reserved">void</span> erase(node* p);
+void erase(node* p);
 {
   node* prev;
-  <span class="reserved">for</span>(prev=root; prev-&gt;next!=p &amp;&amp; prev-&gt;next!=NULL; prev=prev-&gt;next);
+  for(prev=root; prev->next!=p && prev->next!=NULL; prev=prev->next);
 
-  <span class="reserved">if</span>(prev-&gt;next == NULL)<span class="comment">//p don't exist;</span>
-    <span class="reserved">return</span>;
+  if(prev->next == NULL)//p don't exist;
+    return;
 
-  prev-&gt;next = p-&gt;next;
-  <span class="reserved">delete</span> p;
+  prev->next = p->next;
+  delete p;
 }
-</code></pre>
+```
 
 
 これで要素をいくらでも追加できるようになりました。
@@ -116,47 +116,47 @@ STLのlistはいわゆる双方向連結リストと言われているもので�
 線形リストと違うところは、次の要素を指すポインター<code>next</code>の他に、
 一つ前の要素を指すポインターも持っていることです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">struct</span> node
+```csharp
+struct node
 {
   node *next, *prev;
-  <span class="reserved">int</span> data;
+  int data;
 };
-</code></pre>
+```
 
 
 そして、このノードをつないでいくことで双方向リストになります。<br></br>	[![twowaylist.png](../../../../assets/media/ufcpp2000/stl/fig/twowaylist.png)](../../../../assets/media/ufcpp2000/stl/fig/twowaylist.png)
 <br></br>
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">void</span> insert_prev(node* p, <span class="reserved">int</span> data)
+```csharp
+void insert_prev(node* p, int data)
 {
-  node* q = <span class="reserved">new</span> node;
-  q-&gt;prev = p-&gt;prev;
-  q-&gt;next = p;
-  p-&gt;prev = q;
-  q-&gt;prev-&gt;next = q;
-  q-&gt;data = data;
+  node* q = new node;
+  q->prev = p->prev;
+  q->next = p;
+  p->prev = q;
+  q->prev->next = q;
+  q->data = data;
 }
 
-<span class="reserved">void</span> insert_next(node* p, <span class="reserved">int</span> data)
+void insert_next(node* p, int data)
 {
-  node* q = <span class="reserved">new</span> node;
-  q-&gt;next = p-&gt;next;
-  q-&gt;prev = p;
-  p-&gt;next = q;
-  q-&gt;next-&gt;prev = q;
-  q-&gt;data = data;
+  node* q = new node;
+  q->next = p->next;
+  q->prev = p;
+  p->next = q;
+  q->next->prev = q;
+  q->data = data;
 }
 
-<span class="reserved">void</span> erase(node* p)
+void erase(node* p)
 {
-  node* next = p-&gt;next;
-  p-&gt;next-&gt;prev = p-&gt;prev;
-  p-&gt;prev-&gt;next = p-&gt;next;
-  <span class="reserved">delete</span> p;
+  node* next = p->next;
+  p->next->prev = p->prev;
+  p->prev->next = p->next;
+  delete p;
 }
-</code></pre>
+```
 
 
 これで、任意の位置への要素の挿入がO(1)で行えるようになります。
@@ -164,59 +164,59 @@ STLのlistはいわゆる双方向連結リストと言われているもので�
 ところで、リストの先頭の<code>prev</code>、末尾の<code>next</code>を<code>NULL</code>にしていると、
 リストの先頭への要素の挿入がうまくいきません。
 
-<pre class="source" title="" lang="">
-<code>node* root=NULL;
+```csharp
+node* root=NULL;
 
-<span class="reserved">void</span> insert_prev(node* p, <span class="reserved">int</span> data)
+void insert_prev(node* p, int data)
 {
-  <span class="reserved">if</span>(p==root)<span class="comment">//挿入位置が先頭の場合、特別な処理が必要。</span>
+  if(p==root)//挿入位置が先頭の場合、特別な処理が必要。
   {
-    root = <span class="reserved">new</span> node;
-    root-&gt;prev = NULL;
-    root-&gt;next = p;
-    p-&gt;prev = root;
-    <span class="reserved">return</span>;
+    root = new node;
+    root->prev = NULL;
+    root->next = p;
+    p->prev = root;
+    return;
   }
 
-  node* q = <span class="reserved">new</span> node;
-  q-&gt;prev = p-&gt;prev;
-  q-&gt;next = p;
-  p-&gt;prev = q;
-  q-&gt;prev-&gt;next = q;
-  q-&gt;data = data;
+  node* q = new node;
+  q->prev = p->prev;
+  q->next = p;
+  p->prev = q;
+  q->prev->next = q;
+  q->data = data;
 }
 
-<span class="reserved">void</span> erase(node* p)
+void erase(node* p)
 {
-  <span class="reserved">if</span>(p==root)<span class="comment">//挿入位置が先頭の場合、特別な処理が必要。</span>
+  if(p==root)//挿入位置が先頭の場合、特別な処理が必要。
   {
-    p = p-&gt;next;
-    <span class="reserved">delete</span> root;
+    p = p->next;
+    delete root;
     root = p;
-    <span class="reserved">return</span>;
+    return;
   }
 
-  node* next = p-&gt;next;
-  p-&gt;next-&gt;prev = p-&gt;prev;
-  p-&gt;prev-&gt;next = p-&gt;next;
-  <span class="reserved">delete</span> p;
+  node* next = p->next;
+  p->next->prev = p->prev;
+  p->prev->next = p->next;
+  delete p;
 }
-</code></pre>
+```
 
 
 ここで、リストの先頭<code>root</code>には要素を格納しないダミーノードを付けておき、
 リストの末尾の<code>next</code>には<code>NULL</code>ではなく、<code>root</code>を代入しておきます。
 
-<pre class="source" title="" lang="">
-<code>node* root;<span class="comment">//ダミーノード</span>
+```csharp
+node* root;//ダミーノード
 
-<span class="reserved">void</span> init()
+void init()
 {
-  root = <span class="reserved">new</span> node;
-  root-&gt;next = root;
-  root-&gt;prev = root;
+  root = new node;
+  root->next = root;
+  root->prev = root;
 }
-</code></pre>
+```
 
 
 こうすることで、先頭、末尾への要素の追加が簡単になり、

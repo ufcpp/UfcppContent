@@ -45,45 +45,45 @@ aliases:
 このドキュメント自体のソースは以下のようになっています。
 
 
-<pre class="xsource" title="ソース">
-<code><span class="bracket">&lt;</span><span class="element">document</span> <span class="attribute">title</span><span class="attvalue">="ドキュメント"</span> <span class="attribute">xmlns</span><span class="attvalue">="http://ufcpp.net/study/document"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="概要"</span> <span class="attribute">id</span><span class="attvalue">="abst"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../document.xsl"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>document.xsl<span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span> および <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../index.xsl"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>index.xsl<span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span> は、ドキュメント表示用の template が記述されている、
+```xml
+<document title="ドキュメント" xmlns="http://ufcpp.net/study/document">
+  <section title="概要" id="abst">
+    <p>
+      <a href="../document.xsl">
+        <code>document.xsl</code>
+      </a> および <a href="../index.xsl">
+        <code>index.xsl</code>
+      </a> は、ドキュメント表示用の template が記述されている、
       必須 xsl です。
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>document.xsl<span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span> を利用する際には、<span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../section.xsl"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>section.xsl<span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span> および <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../general.xsl"</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>general.xsl<span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span> も必要です。
-      （参考： <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">doc</span><span class="attvalue">="section"</span> <span class="bracket">/&gt;</span>、<span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">doc</span><span class="attvalue">="general"</span> <span class="bracket">/&gt;</span>）
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>document.xsl<span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span> では、パラメータを変更することで、
+    </p>
+    <p>
+      <code>document.xsl</code> を利用する際には、<a href="../section.xsl">
+        <code>section.xsl</code>
+      </a> および <a href="../general.xsl">
+        <code>general.xsl</code>
+      </a> も必要です。
+      （参考： <link doc="section" />、<link doc="general" />）
+    </p>
+    <p>
+      <code>document.xsl</code> では、パラメータを変更することで、
       メニュー、目次、キーワードリストの表示・非表示を切り替え可能です。
-      （パラメータは <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>main.xsl<span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span> に記述します。）
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ul</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">li</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>DocumentMenu   <span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span> … 左側にメニューを表示するかどうか。
-      <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">li</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>DocumentIndex  <span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span> … 目次を表示するかどうか。
-      <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">li</span><span class="bracket">&gt;</span>
-        <span class="bracket">&lt;</span><span class="element">code</span><span class="bracket">&gt;</span>DocumentKeyword<span class="bracket">&lt;/</span><span class="element">code</span><span class="bracket">&gt;</span> … キーワードリストを表示するかどうか。
-      <span class="bracket">&lt;/</span><span class="element">li</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">ul</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-      メニュー、目次、キーワードリストを非表示にした例 → <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">doc</span><span class="attvalue">="nomenu"</span> <span class="bracket">/&gt;</span>。
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">section</span><span class="bracket">&gt;</span>
-  <span class="comment">&lt;!-- 再帰になっちゃうのでこのセクションは省略 --&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">document</span><span class="bracket">&gt;</span>
-</code></pre>
+      （パラメータは <code>main.xsl</code> に記述します。）
+    </p>
+    <ul>
+      <li>
+        <code>DocumentMenu   </code> … 左側にメニューを表示するかどうか。
+      </li>
+      <li>
+        <code>DocumentIndex  </code> … 目次を表示するかどうか。
+      </li>
+      <li>
+        <code>DocumentKeyword</code> … キーワードリストを表示するかどうか。
+      </li>
+    </ul>
+    <p>
+      メニュー、目次、キーワードリストを非表示にした例 → <link doc="nomenu" />。
+    </p>
+  </section>
+  <!-- 再帰になっちゃうのでこのセクションは省略 -->
+</document>
+```

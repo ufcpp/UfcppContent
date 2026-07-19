@@ -30,34 +30,34 @@ aliases: []
 
 文法的には `[]` を使う案が有力です。
 
-<pre class="source" title="[] リテラル案">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Immutable;
+```csharp
+using System.Collections.Immutable;
 
-<span class="comment">// いろんなコレクション型に対して共通して使える。</span>
-<span class="reserved">int</span>[] <span class="variable">array</span> <span class="operator">=</span> [<span class="number">1, 2, 3</span>];
-<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> = [<span class="number">1, 2, 3</span>];
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">list</span> = [<span class="number">1, 2, 3</span>];
-<span class="type struct">ImmutableArray</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">immutable</span> = [<span class="number">1, 2, 3</span>];
-</pre>
+// いろんなコレクション型に対して共通して使える。
+int[] array = [1, 2, 3];
+Span<int> span = [1, 2, 3];
+List<int> list = [1, 2, 3];
+ImmutableArray<int> immutable = [1, 2, 3];
+```
 
 また、同時に、いわゆる "spread" と呼ばれる操作も導入されます。
 
-<pre class="source" title="コレクションの spread">
-<span class="comment">// いろんなコレクション型に対して共通して使える。</span>
-<span class="reserved">int</span>[] <span class="variable">a</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>];
-<span class="reserved">int</span>[] <span class="variable">b</span> <span class="operator">=</span> [<span class="number">3</span>, <span class="number">4</span>];
+```csharp
+// いろんなコレクション型に対して共通して使える。
+int[] a = [1, 2];
+int[] b = [3, 4];
 
-<span class="comment">// これだと、2重配列の [ [1, 2], [3, 4] ] になる。</span>
-<span class="reserved">int</span>[][] <span class="variable">nested</span> <span class="operator">=</span> [<span class="variable">a</span>, <span class="variable">b</span>];
+// これだと、2重配列の [ [1, 2], [3, 4] ] になる。
+int[][] nested = [a, b];
 
-<span class="comment">// これが &quot;spread&quot;。各コレクションを展開して、concat 的な操作をする。</span>
-<span class="comment">// [ 1, 2, 3, 4] になる。</span>
-<span class="reserved">int</span>[] <span class="variable">spread</span> <span class="operator">=</span> [..<span class="variable">a</span>, ..<span class="variable">b</span>];
+// これが "spread"。各コレクションを展開して、concat 的な操作をする。
+// [ 1, 2, 3, 4] になる。
+int[] spread = [..a, ..b];
 
-<span class="comment">// もちろん混在もあり得る。</span>
-<span class="comment">// [ [1, 2], 3, 4] になる。</span>
-<span class="reserved">object</span>[] <span class="variable">spread</span> <span class="operator">=</span> [<span class="variable">a</span>, ..<span class="variable">b</span>];
-</pre>
+// もちろん混在もあり得る。
+// [ [1, 2], 3, 4] になる。
+object[] spread = [a, ..b];
+```
 
 導入の動機は以下のようなものです。
 
@@ -104,34 +104,34 @@ aliases: []
 候補となる文法は以下のようなもの。
 (このうち、`[key: value]` が有力。`[ [key] = value ]` もありかも。)
 
-<pre class="source" title="Dictionary リテラルの文法候補">
-<span class="reserved">var</span> <span class="variable">dict1 <span class="operator">=</span> { <span class="string">&quot;key1&quot;</span></span>: <span class="string">&quot;value1&quot;</span>, <span class="string">&quot;key2&quot;</span>: <span class="string">&quot;value2&quot;</span> };
-<span class="reserved">var</span> <span class="variable">dict2</span> <span class="operator">=</span> [<span class="string">&quot;key1&quot;</span>: <span class="string">&quot;value1&quot;</span>, <span class="string">&quot;key2&quot;</span>: <span class="string">&quot;value2&quot;</span> ];
-<span class="reserved">var</span> <span class="variable">dict3</span> <span class="operator">=</span> [ [<span class="string">&quot;key1&quot;</span>] <span class="operator">=</span> <span class="string">&quot;value1&quot;</span>, [<span class="string">&quot;key2&quot;</span>] <span class="operator">=</span> <span class="string">&quot;value2&quot;</span> ];
-<span class="reserved">var</span> <span class="variable">dict4</span> <span class="operator">=</span> [<span class="string">&quot;key1&quot;</span> <span class="operator">=&gt;</span> <span class="string">&quot;value1&quot;</span>, <span class="string">&quot;key2&quot;</span> <span class="operator">=&gt;</span> <span class="string">&quot;value2&quot;</span>];
-</pre>
+```csharp
+var dict1 = { "key1": "value1", "key2": "value2" };
+var dict2 = ["key1": "value1", "key2": "value2" ];
+var dict3 = [ ["key1"] = "value1", ["key2"] = "value2" ];
+var dict4 = ["key1" => "value1", "key2" => "value2"];
+```
 
 Dictionary リテラルをやるのであれば、一緒に「Dictionary パターン」もやりたいそうです。
 
-<pre class="source" title="Dictionary パターンの文法候補">
-<span class="reserved">var</span> <span class="variable">dict</span> = [ <span class="string">"key1"</span>: <span class="string">"value1"</span>, <span class="string">"key2"</span>: <span class="string">"value2"</span> ];
+```csharp
+var dict = [ "key1": "value1", "key2": "value2" ];
 
-<span class="reserved">if</span> (<span class="variable">dict</span> <span class="reserved">is</span> [ <span class="string">"key1"</span>: <span class="reserved">var</span> <span class="variable">value</span> ])
+if (dict is [ "key1": var value ])
 {
 }
-</pre>
+```
 
 `[key: value]` の場合には `x.Add(new(key, value))` (もしくは前述の `Construct`)扱いで、
 `[ [key] = value ]` の場合には `x[key] = value` 扱いという区別で両方認める可能性もあります。
 この場合、「パターン」の方も、以下のような別パターンを考えます。
 
-<pre class="source" title="Dictionary パターンの文法候補">
-<span class="reserved">var</span> <span class="variable">dict</span> = [ [<span class="string">"key1"</span>] = <span class="string">"value1"</span>, [<span class="string">"key2"</span>] = <span class="string">"value2"</span> ];
+```csharp
+var dict = [ ["key1"] = "value1", ["key2"] = "value2" ];
 
-<span class="reserved">if</span> (<span class="variable">dict</span> <span class="reserved">is</span> [ [<span class="string">"key1"</span>]: <span class="reserved">var</span> <span class="variable">value</span> ])
+if (dict is [ ["key1"]: var value ])
 {
 }
-</pre>
+```
 
 他に、以下のような話あり。
 

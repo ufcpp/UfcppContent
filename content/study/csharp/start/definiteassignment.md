@@ -40,190 +40,191 @@ C# では、[クラス](../oop/oo_class.md)のフィールドや[配列](../stru
 まずわかりやすい例から見ていきましょう。
 分岐も何もなければ簡単です。以下のようなコードはコンパイル エラーになります。
 
-<pre class="source" title="未初期化変数を使おうとしてエラーになる例">
-<span class="reserved">int</span> <span class="variable">x</span>;
+```csharp
+int x;
 
-<span class="comment">// x に何も代入しないまま値を取り出そうとした。</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="error" title="CS0165"><span class="variable">x</span></span>);
-</pre>
+// x に何も代入しないまま値を取り出そうとした。
+Console.WriteLine(x);
+```
 
 解決策は当然「ちゃんと代入すること」(definitely assigned)なんですが、
 変数の宣言と同時に初期値を与えるのでもいいですし、
 後からの代入でも構いません。
 
-<pre class="source" title="ちゃんと代入">
-<span class="comment">// 変数宣言と同時に初期値を与える。</span>
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
+```csharp
+// 変数宣言と同時に初期値を与える。
+int x = 1;
 
-<span class="reserved">int</span> <span class="variable">y</span>;
+int y;
 
-<span class="comment">// ここで y を使うとまずいけども…</span>
+// ここで y を使うとまずいけども…
 
-<span class="variable">y</span> <span class="operator">=</span> <span class="number">2</span>;
+y = 2;
 
-<span class="comment">// 値の代入後なら大丈夫。</span>
+// 値の代入後なら大丈夫。
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">x</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">y</span>);
-</pre>
+Console.WriteLine(x);
+Console.WriteLine(y);
+```
 
 C# では、この明確な代入を判定する際、分岐も見てくれます。
 全ての分岐先でちゃんと代入していれば OK です。
 
-<pre class="source" title="if-else 両方で代入">
-<span class="comment">// 大丈夫な例: if-else 両方で代入。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">m</span></span>(<span class="reserved">bool</span> <span class="variable local">condition</span>)
+```csharp
+// 大丈夫な例: if-else 両方で代入。
+static void m(bool condition)
 {
-    <span class="reserved">int</span> <span class="variable">x</span>;
+    int x;
 
-    <span class="control">if</span> (<span class="variable local">condition</span>)
+    if (condition)
     {
-        <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
+        x = 1;
     }
-    <span class="control">else</span>
+    else
     {
-        <span class="variable">x</span> <span class="operator">=</span> <span class="operator">-</span><span class="number">1</span>;
+        x = -1;
     }
 
-    <span class="comment">// 大丈夫。</span>
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span>);
+    // 大丈夫。
+    Console.WriteLine(x);
 }
-</pre>
+```
 
-<pre class="source" title="if でだけ代入">
-<span class="comment">// ダメな例: if でだけ代入。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">m</span></span>(<span class="reserved">bool</span> <span class="variable local">condition</span>)
+```csharp
+// ダメな例: if でだけ代入。
+static void m(bool condition)
 {
-    <span class="reserved">int</span> <span class="variable">x</span>;
+    int x;
 
-    <span class="control">if</span> (<span class="variable local">condition</span>)
+    if (condition)
     {
-        <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
+        x = 1;
     }
 
-    <span class="comment">// エラー。</span>
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable"><span class="error" title="CS0165">x</span></span>);
+    // エラー。
+    Console.WriteLine(x);
 }
-</pre>
+```
 
 `if` だけではなく、`switch` でも判定してくれます。
 
-<pre class="source" title="case が全ての値を網羅">
-<span class="comment">// 大丈夫な例: case が全ての値を網羅しているなら大丈夫。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">m</span></span>(<span class="reserved">byte</span> <span class="variable local">condition</span>)
+```csharp
+// 大丈夫な例: case が全ての値を網羅しているなら大丈夫。
+static void m(byte condition)
 {
-    <span class="reserved">int</span> <span class="variable">x</span>;
+    int x;
 
-    <span class="control">switch</span> (<span class="variable local">condition</span>)
+    switch (condition)
     {
-        <span class="control">case</span> <span class="number">0</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="operator">-</span><span class="number">1</span>; <span class="control">break</span>;
-        <span class="control">case</span> <span class="number">1</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>; <span class="control">break</span>;
-        <span class="control">default</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>; <span class="control">break</span>; <span class="comment">// default は必須。</span>
+        case 0: x = -1; break;
+        case 1: x = 1; break;
+        default: x = 0; break; // default は必須。
     }
 
-    <span class="comment">// 大丈夫。</span>
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">x</span>);
+    // 大丈夫。
+    Console.WriteLine(x);
 }
-</pre>
+```
 
-<pre class="source" title="case に漏れ">
-<span class="comment">// ダメな例: case に漏れがあるとダメ。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">m</span></span>(<span class="reserved">byte</span> <span class="variable local">condition</span>)
+```csharp
+// ダメな例: case に漏れがあるとダメ。
+static void m(byte condition)
 {
-    <span class="reserved">int</span> <span class="variable">x</span>;
+    int x;
 
-    <span class="control">switch</span> (<span class="variable local">condition</span>)
+    switch (condition)
     {
-        <span class="control">case</span> <span class="number">0</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="operator">-</span><span class="number">1</span>; <span class="control">break</span>;
-        <span class="control">case</span> <span class="number">1</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>; <span class="control">break</span>;
-        <span class="control">case</span> <span class="operator">&lt;</span> <span class="number">255</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>; <span class="control">break</span>;
-        <span class="comment">// この条件だと、condition が 255 の時が漏れてる。</span>
+        case 0: x = -1; break;
+        case 1: x = 1; break;
+        case < 255: x = 1; break;
+        // この条件だと、condition が 255 の時が漏れてる。
     }
 
-    <span class="comment">// エラー。</span>
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="error" title="CS0165"><span class="variable">x</span></span>);
+    // エラー。
+    Console.WriteLine(x);
 }
-</pre>
+```
 
-<pre class="source" title="結構ちゃんと網羅性をチェックしてる">
-<span class="comment">// 大丈夫な例: 結構ちゃんと網羅性をチェックしてる。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">m</span></span>(<span class="reserved">sbyte</span> <span class="variable local">condition</span>)
+```csharp
+// 大丈夫な例: 結構ちゃんと網羅性をチェックしてる。
+static void m(sbyte condition)
 {
-    <span class="reserved">int</span> <span class="variable">x</span>;
+    int x;
 
-    <span class="control">switch</span> (<span class="variable local">condition</span>)
+    switch (condition)
     {
-        <span class="control">case</span> <span class="operator">&lt;</span> <span class="number">0</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="operator">-</span><span class="number">1</span>; <span class="control">break</span>;
-        <span class="control">case</span> <span class="number">0</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>; <span class="control">break</span>;
-        <span class="control">case</span> <span class="operator">&gt;</span> <span class="number">0</span>: <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>; <span class="control">break</span>;
-        <span class="comment">// 負、0、正 で全ての値を網羅。</span>
+        case < 0: x = -1; break;
+        case 0: x = 0; break;
+        case > 0: x = 1; break;
+        // 負、0、正 で全ての値を網羅。
     }
 
-    <span class="comment">// 大丈夫。</span>
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">x</span>);
+    // 大丈夫。
+    Console.WriteLine(x);
 }
-</pre>
+```
 
 ループも結構ちゃんと判定します。
 例えば、`while (false)` や、`break` なども追ってくれます。
 
 
-<pre class="source" title="通らないループ">
-<span class="comment">// ダメな例: 通らないループ。</span>
-<span class="reserved">int</span> <span class="variable">x</span>;
+```csharp
+// ダメな例: 通らないループ。
+int x;
 
-<span class="control">while</span> (<span class="reserved">false</span>)
+while (false)
 {
-    <span class="comment">// ここを通らないこともちゃんと判定される。</span>
-    <span class="variable"><span class="warning" title="CS0162">x</span></span> <span class="operator">=</span> <span class="number">1</span>;
+    // ここを通らないこともちゃんと判定される。
+    x = 1;
 }
 
-<span class="comment">// エラー。</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable"><span class="error" title="CS0165">x</span></span>);
-</pre>
+// エラー。
+Console.WriteLine(x);
+```
 
-<pre class="source" title="早すぎる break">
-<span class="comment">// ダメな例: 早すぎる break。</span>
-<span class="reserved">int</span> <span class="variable">x</span>;
+```csharp
+// ダメな例: 早すぎる break。
+int x;
 
-<span class="control">while</span> (<span class="reserved">true</span>)
+while (true)
 {
-    <span class="control">break</span>;
-    <span class="comment">// ここを通らないこともちゃんと判定される。</span>
-    <span class="variable"><span class="warning" title="CS0162">x</span></span> <span class="operator">=</span> <span class="number">1</span>;
+    break;
+    // ここを通らないこともちゃんと判定される。
+    x = 1;
 }
 
-<span class="comment">// エラー。</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="error" title="CS0165"><span class="variable">x</span></span>);
-</pre>
+// エラー。
+Console.WriteLine(x);
+```
 
-<pre class="source" title="break 前に代入">
-<span class="comment">// 大丈夫な例: break 前に代入。</span>
-<span class="reserved">int</span> <span class="variable">x</span>;
+```csharp
+// 大丈夫な例: break 前に代入。
+int x;
 
-<span class="control">while</span> (<span class="reserved">true</span>)
+while (true)
 {
-    <span class="comment">// これならここを通る。</span>
-    <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
-    <span class="control">break</span>;
+    // これならここを通る。
+    x = 1;
+    break;
 }
 
-<span class="comment">// 大丈夫。</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span>);</pre>
+// 大丈夫。
+Console.WriteLine(x);
+```
 
-<pre class="source" title="永久ループ">
-<span class="comment">// 大丈夫な例: 永久ループの下。</span>
-<span class="reserved">int</span> <span class="variable">x</span>;
+```csharp
+// 大丈夫な例: 永久ループの下。
+int x;
 
-<span class="control">while</span> (<span class="reserved">true</span>)
+while (true)
 {
 }
 
-<span class="comment">// 永久ループの下には来ないので、この行自体呼ばれない。</span>
-<span class="comment">// その場合、「代入してない」エラーにはならない。</span>
-<span class="comment">// 別途「絶対に通らない」警告は出る。</span>
-<span class="type"><span class="static"><span class="warning" title="CS0162">Console</span></span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span>);
-</pre>
+// 永久ループの下には来ないので、この行自体呼ばれない。
+// その場合、「代入してない」エラーにはならない。
+// 別途「絶対に通らない」警告は出る。
+Console.WriteLine(x);
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="improved-rule">ルールの改善</a>
 
@@ -236,28 +237,28 @@ C# では、この明確な代入を判定する際、分岐も見てくれま�
 それが C# 10 で改善されました。
 例えば以下のコードは C# 10 以降でだけコンパイルできます。
 
-<pre class="source" title="?. == true">
-<span class="comment">// C# 10 から大丈夫な例: ?. == true。</span>
-<span class="reserved">void</span> <span class="method">m</span>(<span class="type">Dictionary</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;<span class="operator">?</span> <span class="variable local">d</span>)
+```csharp
+// C# 10 から大丈夫な例: ?. == true。
+void m(Dictionary<int, int>? d)
 {
-    <span class="control">if</span> (<span class="variable local">d</span><span class="operator">?</span><span class="operator">.</span><span class="method">TryGetValue</span>(<span class="number">123</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">x</span>) <span class="operator">==</span> <span class="reserved">true</span>)
+    if (d?.TryGetValue(123, out var x) == true)
     {
-        <span class="comment">// C# 10 から大丈夫になった。</span>
-        <span class="comment">// (前までは ?. からの == true は判定漏れでエラー。)</span>
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span>);
+        // C# 10 から大丈夫になった。
+        // (前までは ?. からの == true は判定漏れでエラー。)
+        Console.WriteLine(x);
     }
 }
-</pre>
+```
 
-<pre class="source" title="?. ??">
-<span class="comment">// C# 10 から大丈夫な例: ?. ??。</span>
-<span class="reserved">void</span> <span class="method">m</span>(<span class="type">Dictionary</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;<span class="operator">?</span> <span class="variable local">d</span>)
+```csharp
+// C# 10 から大丈夫な例: ?. ??。
+void m(Dictionary<int, int>? d)
 {
-    <span class="control">if</span> (<span class="variable local">d</span><span class="operator">?</span><span class="operator">.</span><span class="method">TryGetValue</span>(<span class="number">123</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">x</span>) <span class="operator">??</span> <span class="reserved">false</span>)
+    if (d?.TryGetValue(123, out var x) ?? false)
     {
-        <span class="comment">// C# 10 から大丈夫になった。</span>
-        <span class="comment">// (前までは ?. からの ?? も同様。)</span>
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">x</span>);
+        // C# 10 から大丈夫になった。
+        // (前までは ?. からの ?? も同様。)
+        Console.WriteLine(x);
     }
 }
-</pre>
+```

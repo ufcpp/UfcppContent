@@ -15,39 +15,39 @@ aliases: []
 
 先日出た Visual Studio 17.1 Preview 3 で、引数 null チェックの簡素化構文が入りました。
 
-<pre class="source" title="引数 null チェックの !!">
-<code><span class="method">m</span>(<span class="reserved">null</span>); <span class="comment">// ArgumentNull 例外が出る。</span>
+```csharp
+m(null); // ArgumentNull 例外が出る。
 
-<span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> <span class="variable">x</span><em>!!</em>) { }
-</code></pre>
+void m(string x!!) { }
+```
 
 ## 展開結果
 
 上記の `void m(string x!!)` は以下のように展開されます。
 (クラス名は実際には通常の C# では書けない変な名前で生成されます。)
 
-<pre class="source" title="!! の展開結果">
-<code><span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> <span class="variable">x</span>)
+```csharp
+void m(string x)
 {
-    <span class="type">Internal</span>.<span class="method">ThrowIfNull</span>(<span class="variable">x</span>, <span class="string">&quot;x&quot;</span>);
+    Internal.ThrowIfNull(x, "x");
 }
 
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">Internal</span>
+internal class Internal
 {
-    <span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Throw</span>(<span class="reserved">string</span> <span class="variable">paramName</span>)
+    internal static void Throw(string paramName)
     {
-        <span class="control">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="variable">paramName</span>);
+        throw new ArgumentNullException(paramName);
     }
 
-    <span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">ThrowIfNull</span>(<span class="reserved">object</span> <span class="variable">argument</span>, <span class="reserved">string</span> <span class="variable">paramName</span>)
+    internal static void ThrowIfNull(object argument, string paramName)
     {
-        <span class="control">if</span> (<span class="variable">argument</span> == <span class="reserved">null</span>)
+        if (argument == null)
         {
-            <span class="method">Throw</span>(<span class="variable">paramName</span>);
+            Throw(paramName);
         }
     }
 }
-</code></pre>
+```
 
 もしかしたら、C# 11.0 リリースまでには、internal なコンパイラー生成メソッドではなくて、
 標準ライブラリ中の [`ArgumentNullException.ThrowIfNull`](https://docs.microsoft.com/ja-jp/dotnet/api/system.argumentnullexception.throwifnull) メソッドに置き変わったりするかもしれませんが、まあ、やってることは一緒です。

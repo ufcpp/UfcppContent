@@ -350,9 +350,9 @@ Z変換の結果得られた伝達関数 <span class="math">F<span class="paren"
 
 ## <a id="sec-generated-title-13"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 z 平面上の安定な領域を図示。
 
 
 差分方程式に具体例を追加したい。
-</pre>
+```

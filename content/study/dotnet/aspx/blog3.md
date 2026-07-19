@@ -68,38 +68,38 @@ Response.Redirect か Context.RewritePath メソッドを呼び出します。
 
 URL の書き換えは、例えば、正規表現を使って以下のように行います。
 
-<pre class="source" title="リダイレクト（Global.aspx のコードビハインド中に追加）" lang="">
-<code><span class="reserved">protected void</span> Application_BeginRequest(<span class="reserved">object</span> sender, EventArgs e)
+```html
+protected void Application_BeginRequest(object sender, EventArgs e)
 {
-  <span class="reserved">string</span> url = Request.Url.AbsolutePath;
+  string url = Request.Url.AbsolutePath;
 
-  Regex lookFor = <span class="reserved">new</span> Regex(<span class="literal">@"(\d{4})/(\d{2})/(\d{2})\.aspx"</span>);
-  <span class="reserved">string</span> sendTo = <span class="literal">"BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3"</span>;
+  Regex lookFor = new Regex(@"(\d{4})/(\d{2})/(\d{2})\.aspx");
+  string sendTo = "BlogDate.aspx?mode=date&y=$1&m=$2&d=$3";
 
-  <span class="reserved">if</span> (!lookFor.IsMatch(url))
-    <span class="reserved">continue</span>;
+  if (!lookFor.IsMatch(url))
+    continue;
 
-  <span class="reserved">string</span> result = lookFor.Replace(url, sendTo);
+  string result = lookFor.Replace(url, sendTo);
   Response.Redirect(result);
 }
-</code></pre>
+```
 
 
-<pre class="source" title="リライト（Global.aspx のコードビハインド中に追加）" lang="">
-<code><span class="reserved">protected void</span> Application_BeginRequest(<span class="reserved">object</span> sender, EventArgs e)
+```html
+protected void Application_BeginRequest(object sender, EventArgs e)
 {
-  <span class="reserved">string</span> url = Request.Url.AbsolutePath;
+  string url = Request.Url.AbsolutePath;
 
-  Regex lookFor = <span class="reserved">new</span> Regex(<span class="literal">@"(\d{4})/(\d{2})/(\d{2})\.aspx"</span>);
-  <span class="reserved">string</span> sendTo = <span class="literal">"BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3"</span>;
+  Regex lookFor = new Regex(@"(\d{4})/(\d{2})/(\d{2})\.aspx");
+  string sendTo = "BlogDate.aspx?mode=date&y=$1&m=$2&d=$3";
 
-  <span class="reserved">if</span> (!lookFor.IsMatch(url))
-    <span class="reserved">continue</span>;
+  if (!lookFor.IsMatch(url))
+    continue;
 
-  <span class="reserved">string</span> result = lookFor.Replace(url, sendTo);
-  Context.RewritePath(result, <span class="reserved">false</span>);
+  string result = lookFor.Replace(url, sendTo);
+  Context.RewritePath(result, false);
 }
-</code></pre>
+```
 
 
 
@@ -113,60 +113,60 @@ URL の書き換えは、例えば、正規表現を使って以下のように�
 2007/06/30.aspx を 20070630.aspx にリダイレクト、
 20070630.aspx を BlogDate.aspx&amp;y=2007&amp;m=06&amp;d=30 にリライトします。
 
-<pre class="source" title="Global.aspx のコードビハインド中に追加" lang="">
-<code><span class="reserved">public struct</span> RewriteRule
+```html
+public struct RewriteRule
 {
-  <span class="reserved">public</span> Regex LookFor;
-  <span class="reserved">public string</span> SendTo;
+  public Regex LookFor;
+  public string SendTo;
 
-  <span class="reserved">public</span> RewriteRule(<span class="reserved">string</span> lookFor, <span class="reserved">string</span> sendTo)
+  public RewriteRule(string lookFor, string sendTo)
   {
-    <span class="reserved">this</span>.LookFor = <span class="reserved">new</span> Regex(lookFor);
-    <span class="reserved">this</span>.SendTo = sendTo;
+    this.LookFor = new Regex(lookFor);
+    this.SendTo = sendTo;
   }
 }
 
-<span class="reserved">static</span> RewriteRule[] rewriteRules = <span class="reserved">new</span> RewriteRule[]
+static RewriteRule[] rewriteRules = new RewriteRule[]
   {
-    <span class="reserved">new</span> RewriteRule(<span class="literal">@"(\d{4})(\d{2})(\d{2})(\d+)\.aspx"</span>,
-      <span class="literal">"BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3&amp;n=$4"</span>),
-    <span class="reserved">new</span> RewriteRule(<span class="literal">@"(\d{4})(\d{2})(\d{2})\.aspx"</span>,
-      <span class="literal">"BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3"</span>),
+    new RewriteRule(@"(\d{4})(\d{2})(\d{2})(\d+)\.aspx",
+      "BlogDate.aspx?mode=date&y=$1&m=$2&d=$3&n=$4"),
+    new RewriteRule(@"(\d{4})(\d{2})(\d{2})\.aspx",
+      "BlogDate.aspx?mode=date&y=$1&m=$2&d=$3"),
   };
-<span class="reserved">static</span> RewriteRule[] redirectRules = <span class="reserved">new</span> RewriteRule[]
+static RewriteRule[] redirectRules = new RewriteRule[]
   {
-    <span class="reserved">new</span> RewriteRule(<span class="literal">@"(\d{4})/(\d{2})/(\d{2})/(\d+)\.aspx"</span>,
-      <span class="literal">"$1$2$3$4.aspx"</span>),
-    <span class="reserved">new</span> RewriteRule(<span class="literal">@"(\d{4})/(\d{2})/(\d{2})\.aspx"</span>,
-      <span class="literal">"$1$2$3.aspx"</span>),
+    new RewriteRule(@"(\d{4})/(\d{2})/(\d{2})/(\d+)\.aspx",
+      "$1$2$3$4.aspx"),
+    new RewriteRule(@"(\d{4})/(\d{2})/(\d{2})\.aspx",
+      "$1$2$3.aspx"),
   };
 
-<span class="reserved">protected void</span> Application_BeginRequest(<span class="reserved">object</span> sender, EventArgs e)
+protected void Application_BeginRequest(object sender, EventArgs e)
 {
-  <span class="reserved">string</span> url = Request.Url.AbsolutePath;
-  <span class="reserved">string</span> result;
+  string url = Request.Url.AbsolutePath;
+  string result;
 
-  <span class="reserved">foreach</span> (RewriteRule rule <span class="reserved">in</span> rewriteRules)
+  foreach (RewriteRule rule in rewriteRules)
   {
-    <span class="reserved">if</span> (!rule.LookFor.IsMatch(url))
-      <span class="reserved">continue</span>;
+    if (!rule.LookFor.IsMatch(url))
+      continue;
 
     result = rule.LookFor.Replace(url, rule.SendTo);
-    Context.RewritePath(result, <span class="reserved">false</span>);
-    <span class="reserved">return</span>;
+    Context.RewritePath(result, false);
+    return;
   }
 
-  <span class="reserved">foreach</span> (RewriteRule rule <span class="reserved">in</span> redirectRules)
+  foreach (RewriteRule rule in redirectRules)
   {
-    <span class="reserved">if</span> (!rule.LookFor.IsMatch(url))
-      <span class="reserved">continue</span>;
+    if (!rule.LookFor.IsMatch(url))
+      continue;
 
     result = rule.LookFor.Replace(url, rule.SendTo);
     Response.Redirect(result);
-    <span class="reserved">return</span>;
+    return;
   }
 }
-</code></pre>
+```
 
 
 まあ、さらに汎用性を持たせたければ、
@@ -242,67 +242,67 @@ false の時には、どちらの場合でも logo.jpg だと思う。
 具体例を挙げてみましょう。
 まず、先ほど作った Global.aspx のリライトルールに以下の物を追加します。
 
-<pre class="source" title="Test/RewriteText.aspx を RewriteText.aspx にリライト" lang="">
-<code><span class="reserved">static</span> RewriteRule[] rewriteRules = <span class="reserved">new</span> RewriteRule[]
+```html
+static RewriteRule[] rewriteRules = new RewriteRule[]
   {
-<em>    <span class="reserved">new</span> RewriteRule(<span class="literal">@"Test/(RewriteTest.aspx)"</span>,
-      <span class="literal">"$1"</span>),</em>
-    <span class="reserved">new</span> RewriteRule(<span class="literal">@"(\d{4})/(\d{2})/(\d{2})\.aspx"</span>,
-      <span class="literal">"BlogDate.aspx?mode=date&amp;y=$1&amp;m=$2&amp;d=$3"</span>),
+    new RewriteRule(@"Test/(RewriteTest.aspx)",
+      "$1"),
+    new RewriteRule(@"(\d{4})/(\d{2})/(\d{2})\.aspx",
+      "BlogDate.aspx?mode=date&y=$1&m=$2&d=$3"),
   };
-</code></pre>
+```
 
 
 で、RewriteText.aspx という名前で、以下のような Web フォームページを作ります。
 
 
-<pre class="xsource" title="RewriteText.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page Language="C#" %>
 
-<span class="bracket">&lt;</span><span class="element">html</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">head</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">title</span><span class="bracket">&gt;</span>リダイレクトのテスト<span class="bracket">&lt;/</span><span class="element">title</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">head</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">form</span> <span class="attribute">id</span><span class="attvalue">="form1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="Default.aspx"</span><span class="bracket">&gt;</span>html &amp;lt;a&amp;gt; tag<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">asp:HyperLink</span> <span class="attribute">runat</span><span class="attvalue">="server"</span>
-      <span class="attribute">NavigateUrl</span><span class="attvalue">="Default.aspx"</span><span class="bracket">&gt;</span>
+<html>
+<head runat="server">
+  <title>リダイレクトのテスト</title>
+</head>
+<body>
+  <form id="form1" runat="server">
+  <p>
+    <a href="Default.aspx">html &lt;a&gt; tag</a>
+  </p>
+  <p>
+    <asp:HyperLink runat="server"
+      NavigateUrl="Default.aspx">
       asp:HyperLink
-      <span class="bracket">&lt;/</span><span class="element">asp:HyperLink</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">form</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+      </asp:HyperLink>
+  </p>
+  </form>
+</body>
+</html>
+```
 このファイルの表示結果なんですが、
 まず、RewriteText.aspx で表示した場合には、
 &lt;body&gt; の中身には以下のような HTML が生成されます。
 
 
-<pre class="xsource" title="RewriteText.aspx の要求結果">
-<code>  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="Default.aspx"</span><span class="bracket">&gt;</span>html &amp;lt;a&amp;gt; tag<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="Default.aspx"</span><span class="bracket">&gt;</span>asp:HyperLink<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-</code></pre>
+```html
+  <p>
+    <a href="Default.aspx">html &lt;a&gt; tag</a>
+  </p>
+  <p>
+    <a href="Default.aspx">asp:HyperLink</a>
+  </p>
+```
 これに対して、Test/RewriteText.aspx という URL で要求を受けて、
 リライトした場合には、以下のような HTML になります。
 
 
-<pre class="xsource" title="RewriteText.aspx の要求結果">
-<code>  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="Default.aspx"</span><span class="bracket">&gt;</span>html &amp;lt;a&amp;gt; tag<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-    <em><span class="bracket">&lt;</span><span class="element">a</span> <span class="attribute">href</span><span class="attvalue">="../Default.aspx"</span><span class="bracket">&gt;</span>asp:HyperLink<span class="bracket">&lt;/</span><span class="element">a</span><span class="bracket">&gt;</span></em>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-</code></pre>
+```html
+  <p>
+    <a href="Default.aspx">html &lt;a&gt; tag</a>
+  </p>
+  <p>
+    <a href="../Default.aspx">asp:HyperLink</a>
+  </p>
+```
 runat="server" なしの a タグの方では、
 href 内のパスの修正が掛かっていない状態になります。
 （意図して修正が掛からないようにしているならいいけども、
@@ -313,66 +313,66 @@ href 内のパスの修正が掛かっていない状態になります。
 以下のように書き換える必要があります。
 
 
-<pre class="xsource" title="Site.Master">
-<code><span class="bracket">&lt;%@ </span><span class="element">Master</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="attribute">AutoEventWireup</span><span class="attvalue">="true"</span>
-  <span class="attribute">CodeBehind</span><span class="attvalue">="Site.master.cs"</span> <span class="attribute">Inherits</span><span class="attvalue">="WebsiteSample.Site"</span> <span class="bracket">%&gt;</span>
+```xml
+<%@ Master Language="C#" AutoEventWireup="true"
+  CodeBehind="Site.master.cs" Inherits="WebsiteSample.Site" %>
 
-&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<span class="bracket">&lt;</span><span class="element">html</span> <span class="attribute">xmlns</span><span class="attvalue">="http://www.w3.org/1999/xhtml"</span> <span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">head</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
 
-  <span class="bracket">&lt;</span><span class="element">link</span> <span class="attribute">rel</span><span class="attvalue">="stylesheet"</span> <span class="attribute">type</span><span class="attvalue">="text/css"</span> <span class="attribute">href</span><span class="attvalue">="main.css"</span> <span class="bracket">/&gt;</span>
+  <link rel="stylesheet" type="text/css" href="main.css" />
 
-  <span class="bracket">&lt;</span><span class="element">title</span><span class="bracket">&gt;</span>無題のページ<span class="bracket">&lt;/</span><span class="element">title</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">head</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
+  <title>無題のページ</title>
+</head>
+<body>
 
-<span class="bracket">&lt;</span><span class="element">form</span> <span class="attribute">id</span><span class="attvalue">="form1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<form id="form1" runat="server">
 
-  <span class="bracket">&lt;</span><span class="element">p</span> <span class="attribute">class</span><span class="attvalue">="head"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">asp:Image</span> <span class="attribute">runat</span><span class="attvalue">="server"</span> <span class="attribute">ImageUrl</span><span class="attvalue">="logo.jpg"</span>
-    <span class="attribute">Width</span><span class="attvalue">="320"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span> <span class="attribute">AlternateText</span><span class="attvalue">="site logo"</span> <span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="menu"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="menuItem"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">asp:HyperLink</span> <span class="attribute">runat</span><span class="attvalue">="server"</span>
-        <span class="attribute">NavigateUrl</span><span class="attvalue">="Default.aspx"</span><span class="bracket">&gt;</span>TOP<span class="bracket">&lt;/</span><span class="element">asp:HyperLink</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="menuItem"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">asp:HyperLink</span> <span class="attribute">runat</span><span class="attvalue">="server"</span>
-        <span class="attribute">NavigateUrl</span><span class="attvalue">="Mail.aspx"</span><span class="bracket">&gt;</span>メール<span class="bracket">&lt;/</span><span class="element">asp:HyperLink</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="menuItem"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">asp:HyperLink</span> <span class="attribute">runat</span><span class="attvalue">="server"</span>
-        <span class="attribute">NavigateUrl</span><span class="attvalue">="BlogLatest.aspx"</span><span class="bracket">&gt;</span>日記<span class="bracket">&lt;/</span><span class="element">asp:HyperLink</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">span</span> <span class="attribute">class</span><span class="attvalue">="menuItem"</span><span class="bracket">&gt;</span>
-      <span class="bracket">&lt;</span><span class="element">asp:HyperLink</span> <span class="attribute">runat</span><span class="attvalue">="server"</span>
-        <span class="attribute">NavigateUrl</span><span class="attvalue">="Rss.aspx"</span><span class="bracket">&gt;</span>RSS<span class="bracket">&lt;/</span><span class="element">asp:HyperLink</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">span</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+  <p class="head">
+  <asp:Image runat="server" ImageUrl="logo.jpg"
+    Width="320" Height="80" AlternateText="site logo" />
+  </p>
+  <div class="menu">
+    <span class="menuItem">
+      <asp:HyperLink runat="server"
+        NavigateUrl="Default.aspx">TOP</asp:HyperLink>
+    </span>
+    <span class="menuItem">
+      <asp:HyperLink runat="server"
+        NavigateUrl="Mail.aspx">メール</asp:HyperLink>
+    </span>
+    <span class="menuItem">
+      <asp:HyperLink runat="server"
+        NavigateUrl="BlogLatest.aspx">日記</asp:HyperLink>
+    </span>
+    <span class="menuItem">
+      <asp:HyperLink runat="server"
+        NavigateUrl="Rss.aspx">RSS</asp:HyperLink>
+    </span>
+  </div>
 
-  <span class="bracket">&lt;</span><span class="element">p</span> <span class="attribute">class</span><span class="attvalue">="counter"</span><span class="bracket">&gt;</span>
-    総アクセス数: <span class="bracket">&lt;%</span>= Session["count"] <span class="bracket">%&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
+  <p class="counter">
+    総アクセス数: <%= Session["count"] %>
+  </p>
 
-  <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="content"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">asp:ContentPlaceHolder</span> <span class="attribute">ID</span><span class="attvalue">="ContentPlaceHolder1"</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;/</span><span class="element">asp:ContentPlaceHolder</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
+  <div class="content">
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+    </asp:ContentPlaceHolder>
+  </div>
 
-  <span class="bracket">&lt;</span><span class="element">div</span> <span class="attribute">class</span><span class="attvalue">="foot"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+  <div class="foot">
+  <p>
     このサイトへのリンクはご自由にどうぞ
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">div</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">form</span><span class="bracket">&gt;</span>
+  </p>
+  </div>
+</form>
 
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+</body>
+</html>
+```
 
 ## <a id="sec-generated-title-8"></a> <a id="rss"></a>RSS
 
@@ -386,16 +386,16 @@ href 内のパスの修正が掛かっていない状態になります。
 
 この RssWriter クラスは、以下のように使います。
 
-<pre class="source" title="RssWriter クラス" lang="">
-<code>RssWriter writer = <span class="reserved">new</span> RssWriter();
-<span class="reserved">this</span>.writer.SiteName = <span class="literal">"My Site"</span>;
-<span class="reserved">this</span>.writer.AdministratorName = <span class="literal">"admin name"</span>;
-<span class="reserved">this</span>.writer.Url = <span class="literal">"http://my.domain.net/"</span>;
+```csharp
+RssWriter writer = new RssWriter();
+this.writer.SiteName = "My Site";
+this.writer.AdministratorName = "admin name";
+this.writer.Url = "http://my.domain.net/";
 
-<span class="reserved">this</span>.writer.Add(pageUrl, title, <span class="reserved">new</span> DateTime(year, month, day), digest);
+this.writer.Add(pageUrl, title, new DateTime(year, month, day), digest);
 
-<span class="reserved">this</span>.writer.Write(Request.Url.AbsoluteUri, Response.OutputStream);
-</code></pre>
+this.writer.Write(Request.Url.AbsoluteUri, Response.OutputStream);
+```
 
 
 このクラスを使って、
@@ -407,141 +407,141 @@ href 内のパスの修正が掛かっていない状態になります。
 
 そして、コードビハインドファイル（Rss.aspx.cs）の内容は以下のような感じ。
 
-<pre class="source" title="Rss.aspx.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Web;
-<span class="reserved">using</span> System.IO;
-<span class="reserved">using</span> System.Xml;
-<span class="reserved">using</span> System.Text.RegularExpressions;
+```html
+using System;
+using System.Web;
+using System.IO;
+using System.Xml;
+using System.Text.RegularExpressions;
 
-<span class="reserved">namespace</span> WebsiteSample
+namespace WebsiteSample
 {
-  <span class="reserved">public partial class</span> Rss : System.Web.UI.Page
+  public partial class Rss : System.Web.UI.Page
   {
-    RssWriter writer = <span class="reserved">new</span> RssWriter();
+    RssWriter writer = new RssWriter();
 
-    <span class="reserved">protected void</span> Page_Load(<span class="reserved">object</span> sender, EventArgs e)
+    protected void Page_Load(object sender, EventArgs e)
     {
-      Response.ContentType = <span class="literal">"application/xml"</span>;
+      Response.ContentType = "application/xml";
       Response.ContentEncoding = System.Text.Encoding.UTF8;
 
-      <span class="reserved">this</span>.writer.Write(Request.Url.AbsoluteUri, Response.OutputStream);
+      this.writer.Write(Request.Url.AbsoluteUri, Response.OutputStream);
     }
 
-    <span class="reserved">protected override void</span> OnInit(EventArgs e)
+    protected override void OnInit(EventArgs e)
     {
-      <span class="reserved">base</span>.OnInit(e);
+      base.OnInit(e);
 
-      <span class="reserved">this</span>.writer.SiteName = <span class="literal">"My Site"</span>;
-      <span class="reserved">this</span>.writer.AdministratorName = <span class="literal">"admin name"</span>;
-      <span class="reserved">this</span>.writer.Url = URL;
-      <span class="reserved">this</span>.ReadItems();
+      this.writer.SiteName = "My Site";
+      this.writer.AdministratorName = "admin name";
+      this.writer.Url = URL;
+      this.ReadItems();
     }
 
-    <span class="reserved">const int</span> DEFAULT_NUM = 15;
-    <span class="reserved">const int</span> DEFAULT_DIGEST_LENGTH = 128;
+    const int DEFAULT_NUM = 15;
+    const int DEFAULT_DIGEST_LENGTH = 128;
 
-    <span class="reserved">const string</span> URL = <span class="literal">"http://my.domain.net/"</span>;
+    const string URL = "http://my.domain.net/";
 
-    <span class="reserved">static readonly</span> Regex regYyyyMmDd =
-      <span class="reserved">new</span> Regex(<span class="literal">@"(?&lt;y&gt;\d\d\d\d)(?&lt;m&gt;\d\d)(?&lt;d&gt;\d\d)"</span>,
+    static readonly Regex regYyyyMmDd =
+      new Regex(@"(?<y>\d\d\d\d)(?<m>\d\d)(?<d>\d\d)",
       RegexOptions.Compiled);
-    <span class="reserved">static readonly</span> Regex regCDATA =
-      <span class="reserved">new</span> Regex(<span class="literal">@"\&lt;!\[CDATA\[.*?\]\]\&gt;"</span>,
+    static readonly Regex regCDATA =
+      new Regex(@"\<!\[CDATA\[.*?\]\]\>",
       RegexOptions.Compiled);
-    <span class="reserved">static readonly</span> Regex regTags =
-     <span class="reserved">new</span> Regex(<span class="literal">@"\&lt;.*?\&gt;"</span>,
+    static readonly Regex regTags =
+     new Regex(@"\<.*?\>",
      RegexOptions.Compiled);
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// データを読み出して、RssWriter に項目を追加。
-    /// &lt;/summary&gt;</span>
-    <span class="reserved">void</span> ReadItems()
+    /// </summary>
+    void ReadItems()
     {
-      <span class="reserved">int</span> num, digestLen;
-      <span class="reserved">if</span> (!<span class="reserved">int</span>.TryParse(Request.QueryString[<span class="literal">"num"</span>], <span class="reserved">out</span> num))
+      int num, digestLen;
+      if (!int.TryParse(Request.QueryString["num"], out num))
         num = DEFAULT_NUM;
-      <span class="reserved">if</span> (!<span class="reserved">int</span>.TryParse(Request.QueryString[<span class="literal">"len"</span>], <span class="reserved">out</span> digestLen))
+      if (!int.TryParse(Request.QueryString["len"], out digestLen))
         digestLen = DEFAULT_DIGEST_LENGTH;
 
-      <span class="reserved">string</span> PATH = Server.MapPath(<span class="literal">@"~/App_Data"</span>);
+      string PATH = Server.MapPath(@"~/App_Data");
 
-      DirectoryInfo dataDir = <span class="reserved">new</span> DirectoryInfo(PATH);
-      FileInfo[] files = dataDir.GetFiles(<span class="literal">"*.xml"</span>);
+      DirectoryInfo dataDir = new DirectoryInfo(PATH);
+      FileInfo[] files = dataDir.GetFiles("*.xml");
 
       Array.Sort(files,
-        <span class="reserved">delegate</span>(FileInfo a, FileInfo b)
+        delegate(FileInfo a, FileInfo b)
         {
-          <span class="reserved">return</span> b.Name.CompareTo(a.Name);
+          return b.Name.CompareTo(a.Name);
         });
 
-      <span class="reserved">foreach</span> (FileInfo file <span class="reserved">in</span> files)
+      foreach (FileInfo file in files)
       {
         Match m = regYyyyMmDd.Match(file.Name);
-        <span class="reserved">if</span> (!m.Success)
-          <span class="reserved">continue</span>;
-        <span class="reserved">int</span> year = <span class="reserved">int</span>.Parse(m.Groups[<span class="literal">"y"</span>].Value);
-        <span class="reserved">int</span> month = <span class="reserved">int</span>.Parse(m.Groups[<span class="literal">"m"</span>].Value);
-        <span class="reserved">int</span> day = <span class="reserved">int</span>.Parse(m.Groups[<span class="literal">"d"</span>].Value);
+        if (!m.Success)
+          continue;
+        int year = int.Parse(m.Groups["y"].Value);
+        int month = int.Parse(m.Groups["m"].Value);
+        int day = int.Parse(m.Groups["d"].Value);
 
-        XmlDocument doc = <span class="reserved">new</span> XmlDocument();
-        <span class="reserved">using</span> (Stream stream = <span class="reserved">new</span> FileStream(
+        XmlDocument doc = new XmlDocument();
+        using (Stream stream = new FileStream(
           file.FullName, FileMode.Open,
           FileAccess.Read, FileShare.ReadWrite))
         {
           doc.Load(stream);
         }
 
-        XmlNodeList list = doc.GetElementsByTagName(<span class="literal">"blog"</span>);
-        <span class="reserved">foreach</span> (XmlNode node <span class="reserved">in</span> list)
+        XmlNodeList list = doc.GetElementsByTagName("blog");
+        foreach (XmlNode node in list)
         {
-          <span class="reserved">string</span> pageUrl = URL +
-            <span class="reserved">string</span>.Format(<span class="literal">"{0}/{1:00}/{2:00}.aspx"</span>,
+          string pageUrl = URL +
+            string.Format("{0}/{1:00}/{2:00}.aspx",
             year, month, day);
 
           XmlAttribute att;
-          <span class="reserved">string</span> title = <span class="reserved">string</span>.Empty;
-          att = node.Attributes[<span class="literal">"title"</span>];
-          <span class="reserved">if</span> (att != <span class="reserved">null</span>) title = att.Value;
-          att = node.Attributes[<span class="literal">"category"</span>];
-          <span class="reserved">if</span> (att != <span class="reserved">null</span>)
+          string title = string.Empty;
+          att = node.Attributes["title"];
+          if (att != null) title = att.Value;
+          att = node.Attributes["category"];
+          if (att != null)
           {
-            title += <span class="literal">" ["</span> + att.Value + <span class="literal">"]"</span>;
+            title += " [" + att.Value + "]";
           }
 
-          <span class="reserved">string</span> digest = Digest(node.InnerXml, digestLen);
+          string digest = Digest(node.InnerXml, digestLen);
 
-          <span class="reserved">this</span>.writer.Add(
+          this.writer.Add(
             pageUrl, title,
-            <span class="reserved">new</span> DateTime(year, month, day), digest);
+            new DateTime(year, month, day), digest);
         }
 
-        <span class="reserved">if</span> (<span class="reserved">this</span>.writer.Count &gt;= num) <span class="reserved">break</span>;
+        if (this.writer.Count >= num) break;
       }
     }
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// XML のダイジェストを作る。
     /// XML のタグを取り除いて、テキストのみにして、最初の num 文字だけを返す。
-    /// &lt;/summary&gt;
-    /// &lt;param name="xml"&gt;XML 文字列&lt;/param&gt;
-    /// &lt;param name="num"&gt;最初何文字を返すか&lt;/param&gt;
-    /// &lt;returns&gt;タグを取り除いた結果&lt;/returns&gt;</span>
-    <span class="reserved">static string</span> Digest(<span class="reserved">string</span> xml, <span class="reserved">int</span> num)
+    /// </summary>
+    /// <param name="xml">XML 文字列</param>
+    /// <param name="num">最初何文字を返すか</param>
+    /// <returns>タグを取り除いた結果</returns>
+    static string Digest(string xml, int num)
     {
-      xml = xml.Replace(<span class="literal">"\n"</span>, <span class="literal">""</span>);
-      xml = xml.Replace(<span class="literal">"\r"</span>, <span class="literal">""</span>);
+      xml = xml.Replace("\n", "");
+      xml = xml.Replace("\r", "");
 
-      <span class="reserved">string</span> digest;
-      digest = regCDATA.Replace(xml, <span class="literal">""</span>);
-      digest = regTags.Replace(xml, <span class="literal">""</span>);
+      string digest;
+      digest = regCDATA.Replace(xml, "");
+      digest = regTags.Replace(xml, "");
 
-      <span class="reserved">if</span> (num &gt;= digest.Length)
-        <span class="reserved">return</span> digest;
+      if (num >= digest.Length)
+        return digest;
 
       digest = digest.Substring(0, num);
-      <span class="reserved">return</span> digest + <span class="literal">" …"</span>;
+      return digest + " …";
     }
   }
 }
-</code></pre>
+```

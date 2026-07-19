@@ -60,33 +60,33 @@ C#でユーザーからの入力を受け取りたい場合、<em>
 </ul>
 <div>
 
-<pre class="source" title="文字列の入力" lang="C#">
-<code><span class="reserved">var</span> str = <span class="type">Console</span>.ReadLine(); <span class="comment">// ユーザーの入力した文字列を1行読み込む</span>
-</code></pre>
+```csharp
+var str = Console.ReadLine(); // ユーザーの入力した文字列を1行読み込む
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Dim</span> str = <span class="type">Console</span>.ReadLine()
-</code></pre>
+```vbnet
+Dim str = Console.ReadLine()
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="F#">
-<code><span class="reserved">let</span> str = Console.ReadLine()
-</code></pre>
+```fsharp
+let str = Console.ReadLine()
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="C++">
-<code><span class="reserved">auto</span> str = Console::ReadLine();
-</code></pre>
+```cpp
+auto str = Console::ReadLine();
+```
 
 
 </div>
@@ -105,37 +105,37 @@ C#でユーザーからの入力を受け取りたい場合、<em>
 </ul>
 <div>
 
-<pre class="source" title="数値の入力" lang="C#">
-<code><span class="reserved">var</span> n    = <span class="reserved">int</span>.Parse(<span class="type">Console</span>.ReadLine());  <span class="comment">// ユーザーの入力した整数を読み込む</span>
-<span class="reserved">var</span> x = <span class="reserved">double</span>.Parse(<span class="type">Console</span>.ReadLine()); <span class="comment">// ユーザーの入力した実数を読み込む</span>
-</code></pre>
+```csharp
+var n    = int.Parse(Console.ReadLine());  // ユーザーの入力した整数を読み込む
+var x = double.Parse(Console.ReadLine()); // ユーザーの入力した実数を読み込む
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Dim</span> n = <span class="reserved">Integer</span>.Parse(<span class="type">Console</span>.ReadLine())
-<span class="reserved">Dim</span> x = <span class="reserved">Double</span>.Parse(<span class="type">Console</span>.ReadLine())
-</code></pre>
+```vbnet
+Dim n = Integer.Parse(Console.ReadLine())
+Dim x = Double.Parse(Console.ReadLine())
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="F#">
-<code><span class="reserved">let</span> n = Int32.Parse(Console.ReadLine())
-<span class="reserved">let</span> x = Double.Parse(Console.ReadLine())
-</code></pre>
+```fsharp
+let n = Int32.Parse(Console.ReadLine())
+let x = Double.Parse(Console.ReadLine())
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="C++">
-<code><span class="reserved">auto</span> n = Int32::Parse(Console::ReadLine());
-<span class="reserved">auto</span> x = double::Parse(Console::ReadLine());
-</code></pre>
+```cpp
+auto n = Int32::Parse(Console::ReadLine());
+auto x = double::Parse(Console::ReadLine());
+```
 
 
 </div>
@@ -163,37 +163,37 @@ C#でユーザーからの入力を受け取りたい場合、<em>
 </ul>
 <div>
 
-<pre class="source" title="出力" lang="C#">
-<code><span class="reserved">int</span> m = 1, n = 3;
-<span class="type">Console</span>.Write(<span class="literal">"m = {0}, n = {1}"</span>, m, n); <span class="comment">// 文字や数値の出力</span>
-</code></pre>
+```csharp
+int m = 1, n = 3;
+Console.Write("m = {0}, n = {1}", m, n); // 文字や数値の出力
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Dim</span> m = 1, n = 3
-<span class="type">Console</span>.Write(<span class="literal">"m = {0}, n = {1}"</span>, m, n)
-</code></pre>
+```vbnet
+Dim m = 1, n = 3
+Console.Write("m = {0}, n = {1}", m, n)
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="F#">
-<code><span class="reserved">let</span> m, n = 1, 3
-Console.Write(<span class="literal">"m = {0}, n = {1}"</span>, m, n)
-</code></pre>
+```fsharp
+let m, n = 1, 3
+Console.Write("m = {0}, n = {1}", m, n)
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="C++">
-<code><span class="reserved">int</span> m = 1, n = 3;
-Console::Write(<span class="literal">"m = {0}, n = {1}"</span>, m, n);
-</code></pre>
+```cpp
+int m = 1, n = 3;
+Console::Write("m = {0}, n = {1}", m, n);
+```
 
 
 </div>
@@ -205,9 +205,9 @@ Console::Write(<span class="literal">"m = {0}, n = {1}"</span>, m, n);
 <code>{1}</code> とある場所に <code>n</code> の値が書き込まれます。
 例えば上述のサンプルの出力結果は以下のようなものになります。
 
-<pre class="console" title="">
+```console
 m = 1, n = 3
-</pre>
+```
 
 
 
@@ -222,87 +222,87 @@ m = 1, n = 3
 </ul>
 <div>
 
-<pre class="source" title="入出力のサンプル" lang="C#">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 入力を促すメッセージの表示して、文字を入力してもらう</span>
-        <span class="type">Console</span>.Write(<span class="literal">"あなたのお名前は？ : "</span>);
-        <span class="reserved">var</span> name = <span class="type">Console</span>.ReadLine();
+        // 入力を促すメッセージの表示して、文字を入力してもらう
+        Console.Write("あなたのお名前は？ : ");
+        var name = Console.ReadLine();
 
-        <span class="comment">// 入力を促すメッセージの表示して、数値を入力してもらう</span>
-        <span class="type">Console</span>.Write(<span class="literal">"あなたのお年は？   : "</span>);
-        <span class="reserved">var</span> age = <span class="reserved">int</span>.Parse(<span class="type">Console</span>.ReadLine());
+        // 入力を促すメッセージの表示して、数値を入力してもらう
+        Console.Write("あなたのお年は？   : ");
+        var age = int.Parse(Console.ReadLine());
 
-        <span class="comment">// メッセージの出力</span>
-        <span class="type">Console</span>.WriteLine(<span class="literal">"{0} ({1}歳) さん、ようこそお越しくださいました。"</span>, name, age);
+        // メッセージの出力
+        Console.WriteLine("{0} ({1}歳) さん、ようこそお越しくださいました。", name, age);
     }
 }
-</code></pre>
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="VB">
-<code><span class="reserved">Module</span> <span class="type">Program</span>
+```vbnet
+Module Program
 
-    <span class="reserved">Sub</span> Main()
-        <span class="type">Console</span>.Write(<span class="literal">"あなたのお名前は？ : "</span>)
-        <span class="reserved">Dim</span> name = <span class="type">Console</span>.ReadLine()
+    Sub Main()
+        Console.Write("あなたのお名前は？ : ")
+        Dim name = Console.ReadLine()
 
-        <span class="type">Console</span>.Write(<span class="literal">"あなたのお年は？   : "</span>)
-        <span class="reserved">Dim</span> age = <span class="reserved">Integer</span>.Parse(<span class="type">Console</span>.ReadLine())
+        Console.Write("あなたのお年は？   : ")
+        Dim age = Integer.Parse(Console.ReadLine())
 
-        <span class="type">Console</span>.WriteLine(<span class="literal">"{0} ({1}歳) さん、ようこそお越しくださいました。"</span>, name, age)
-    <span class="reserved">End</span> <span class="reserved">Sub</span>
+        Console.WriteLine("{0} ({1}歳) さん、ようこそお越しくださいました。", name, age)
+    End Sub
 
-<span class="reserved">End</span> <span class="reserved">Module</span>
-</code></pre>
-
-
-</div>
-<div>
-
-<pre class="source" title="" lang="F#">
-<code><span class="reserved">open</span> System
-
-Console.Write(<span class="literal">"あなたのお名前は？ : "</span>)
-<span class="reserved">let</span> name = Console.ReadLine()
-
-Console.Write(<span class="literal">"あなたのお年は？   : "</span>)
-<span class="reserved">let</span> age = Int32.Parse(Console.ReadLine())
-
-Console.WriteLine(<span class="literal">"{0} ({1}歳) さん、ようこそお越しくださいました。"</span>, name, age)
-</code></pre>
+End Module
+```
 
 
 </div>
 <div>
 
-<pre class="source" title="" lang="C++">
-<code>Console::Write(<span class="literal">"あなたのお名前は？ : "</span>);
-<span class="reserved">auto</span> name = Console::ReadLine();
+```fsharp
+open System
 
-Console::Write(<span class="literal">"あなたのお年は？   : "</span>);
-<span class="reserved">auto</span> age = <span class="reserved">int</span>::Parse(Console::ReadLine());
+Console.Write("あなたのお名前は？ : ")
+let name = Console.ReadLine()
 
-Console::WriteLine(<span class="literal">"{0} ({1}歳) さん、ようこそお越しくださいました。"</span>, name, age);
-</code></pre>
+Console.Write("あなたのお年は？   : ")
+let age = Int32.Parse(Console.ReadLine())
+
+Console.WriteLine("{0} ({1}歳) さん、ようこそお越しくださいました。", name, age)
+```
+
+
+</div>
+<div>
+
+```cpp
+Console::Write("あなたのお名前は？ : ");
+auto name = Console::ReadLine();
+
+Console::Write("あなたのお年は？   : ");
+auto age = int::Parse(Console::ReadLine());
+
+Console::WriteLine("{0} ({1}歳) さん、ようこそお越しくださいました。", name, age);
+```
 
 
 </div>
 </div>
 
 
-<pre class="console" title="">
-あなたのお名前は？ : <span class="input">tiyu</span>
-あなたのお年は？   : <span class="input">12</span>
+```console
+あなたのお名前は？ : tiyu
+あなたのお年は？   : 12
 tiyu (12歳) さん、ようこそお越しくださいました。
-</pre>
+```
 
 
 
@@ -365,17 +365,17 @@ Console.Write を用いて、自分の名前を画面に表示せよ。
 #### 解答例 1
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Sample
+class Sample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"岩永信之"</span>);
+    Console.Write("岩永信之");
   }
 }
-</code></pre>
+```
 
 
 
@@ -391,34 +391,34 @@ Console.Write を用いて読んだ文字列をそのまま鸚鵡返しするプ
 #### 解答例 1
 
 
-<pre class="source" title="鸚鵡返し" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Sample
+class Sample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">string</span> line = Console.ReadLine();
+    string line = Console.ReadLine();
     Console.Write(line);
   }
 }
-</code></pre>
+```
 
 
 
 #### 解答例 2
 
 
-<pre class="source" title="鸚鵡返し×2" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Sample
+class Sample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">string</span> line = Console.ReadLine();
+    string line = Console.ReadLine();
     Console.Write(line);
     Console.Write(line);
   }
 }
-</code></pre>
+```

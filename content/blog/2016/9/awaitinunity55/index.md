@@ -38,17 +38,17 @@ async/await (C# 5)、expression-bodied method (C# 6)とか使ってます。
 これをコンパイルしようとすると、
 Unity 5.3だと以下のようなエラーに。
 
-<pre class="console" title="">
-<code>Assets/Scripts/NewBehaviourScript.cs(30,13): error CS1519: Unexpected symbol `=>' in class, struct, or interface member declaration
+```console
+Assets/Scripts/NewBehaviourScript.cs(30,13): error CS1519: Unexpected symbol `=>' in class, struct, or interface member declaration
 Assets/Scripts/NewBehaviourScript.cs(37,28): error CS1519: Unexpected symbol `XAsync' in class, struct, or interface member declaration
-</code></pre>
+```
 
 これが、5.4は試してないんですけど、5.5だと以下のように。
 
-<pre class="console" title="">
-<code>Assets/Scripts/NewBehaviourScript.cs(30,12): error CS1644: Feature `expression bodied members' cannot be used because it is not part of the C# 4.0 language specification
+```console
+Assets/Scripts/NewBehaviourScript.cs(30,12): error CS1644: Feature `expression bodied members' cannot be used because it is not part of the C# 4.0 language specification
 Assets/Scripts/NewBehaviourScript.cs(37,16): error CS1644: Feature `asynchronous functions' cannot be used because it is not part of the C# 4.0 language specification
-</code></pre>
+```
 
 5.3曰く「ちょっとその文法わからない」、5.5曰く「その機能はC# 4じゃないからダメ」。
 5.5は解釈自体はできていると。
@@ -63,7 +63,7 @@ Assets/Scripts/NewBehaviourScript.cs(37,16): error CS1644: Feature `asynchronous
 
 以下の1行を書いて保存。
 
-```
+```text
 -langversion:6
 ```
 

@@ -47,10 +47,10 @@ CPU構造の流行など、時代による差もあったりします。最近�
 
 普通に数字を並べると10進数扱いされますが、先頭に`0x`を付けると16進数で数値を書けるようになります(hexadecimal literals)。
 
-<pre class="source" title="16進数リテラル">
-<code><span class="reserved">var</span> x = 0xFF;       <span class="comment">// 16進数のFF = 15×16 + 15 = 10進数だと 255</span>
-<span class="reserved">var</span> y = 0XabcdABCD; <span class="comment">// 0X や、A～F の記号は大文字・小文字どちらでもOK</span>
-</code></pre>
+```csharp
+var x = 0xFF;       // 16進数のFF = 15×16 + 15 = 10進数だと 255
+var y = 0XabcdABCD; // 0X や、A～F の記号は大文字・小文字どちらでもOK
+```
 
 ### <a id="sec-generated-title-5"></a> <a id="binary"></a>2進数リテラル
 
@@ -59,16 +59,16 @@ CPU構造の流行など、時代による差もあったりします。最近�
 C# 7で、2進数でもリテラルを書けるようになりました(binary literals)。
 先頭に`0b`を付けると2進数リテラルになります。
 
-<pre class="source" title="2進数リテラル">
-<code><span class="reserved">var</span> x = 0b10010101; <span class="comment">// 2進数の10010101 = 128 + 16 + 4 + 1 = 10進数だと 149</span>
-<span class="reserved">var</span> y = 0B1111;     <span class="comment">// b は大文字・小文字どちらでもOK</span>
-</code></pre>
+```csharp
+var x = 0b10010101; // 2進数の10010101 = 128 + 16 + 4 + 1 = 10進数だと 149
+var y = 0B1111;     // b は大文字・小文字どちらでもOK
+```
 
 よくある用途としては、「フラグ」があります。
 以下のように、ビットごとに意味があって、ビットの組み合わせを表したい場合です。
 
-<pre class="source" title="2進数リテラルのフラグ利用">
-<code><reserved></span><span class="reserved">enum</span> <span class="type">ColorFlags</span>
+```csharp
+enum ColorFlags
 {
     Black = 0,
 
@@ -82,7 +82,7 @@ C# 7で、2進数でもリテラルを書けるようになりました(binary l
 
     White = Red | Green | Blue,
 }
-</code></pre>
+```
 
 この例では、1ビット目が赤(red)、2ビット目が緑(green)、3ビット目が青(blue)を表していて、
 「赤と緑の組み合わせが黄色(yellow)」というのを、1ビット目と2ビット目が1なので、2進数で11(つまり、10進数で3)という数値で表しています。
@@ -105,27 +105,27 @@ C#で書かれたソースコードの解釈を高速に行うためにこうい
 C# 7では、数値リテラルの数字と数字の間に、`_`で区切りを入れれるようになりました。
 リテラルの桁数が大きい時に便利です。
 
-<pre class="source" title="digit separators">
-<code><reserved></span><span class="reserved">var</span> million = 1_000_000;
-<span class="reserved">var</span> abcd = 0b1010_1011_1100_1101; <span class="comment">// 特に2進数リテラルで有用</span>
-<span class="reserved">var</span> abcd2 = 0xab_cd;              <span class="comment">// 16進数リテラルにも使える</span>
-<span class="reserved">var</span> x = 1.123_456_789;            <span class="comment">// 浮動小数点数リテラルにも使える</span>
-</code></pre>
+```csharp
+var million = 1_000_000;
+var abcd = 0b1010_1011_1100_1101; // 特に2進数リテラルで有用
+var abcd2 = 0xab_cd;              // 16進数リテラルにも使える
+var x = 1.123_456_789;            // 浮動小数点数リテラルにも使える
+```
 
 特に2進数リテラルを使うと桁が大きくなりがちなので、[2進数リテラル](#binary)との組み合わせが便利でしょう。
 
 ちなみに、末尾や先頭、小数点の前後に `_` を書くことはできません。以下のコードは全行でコンパイル エラーになります。
 
-<pre class="source" title="_ を挟めない個所">
-<code><reserved></span><span class="reserved">var</span> a = _10;
-<span class="reserved">var</span> b = 10_;
-<span class="reserved">var</span> c = 1._0;
-<span class="reserved">var</span> d = 1_.0;
+```csharp
+var a = _10;
+var b = 10_;
+var c = 1._0;
+var d = 1_.0;
 
-<span class="comment">// (以下の2つは C# 7.2 以降であれば書ける)</span>
-<span class="reserved">var</span> e = 0x_10;
-<span class="reserved">var</span> f = 0b_10;
-</code></pre>
+// (以下の2つは C# 7.2 以降であれば書ける)
+var e = 0x_10;
+var f = 0b_10;
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="leading-separator"></a>先頭区切り文字
 
@@ -133,26 +133,26 @@ C# 7では、数値リテラルの数字と数字の間に、`_`で区切りを�
 
 C# 7.2で、`0b`、`0x`の直後に区切り文字の `_` を入れることができるようになりました。
 
-<pre class="source" title="">
-<code><span class="comment">// C# 7.0 から書ける</span>
-<span class="reserved">var</span> b1 = 0b1111_0000;
-<span class="reserved">var</span> x1 = 0x0001_F408;
+```csharp
+// C# 7.0 から書ける
+var b1 = 0b1111_0000;
+var x1 = 0x0001_F408;
 
-<span class="comment">// C# 7.2 から書ける</span>
-<span class="comment">// b, x の直後に _ 入れてもOKに</span>
-<span class="reserved">var</span> b2 = 0b_1111_0000;
-<span class="reserved">var</span> x2 = 0x_0001_F408;
-</code></pre>
+// C# 7.2 から書ける
+// b, x の直後に _ 入れてもOKに
+var b2 = 0b_1111_0000;
+var x2 = 0x_0001_F408;
+```
 
 C# 7.2で認められたのはあくまで `0b` と `0x` の直後だけです。
 以下の4つは C# 7.2 であっても書けません。
 
-<pre class="source" title="C# 7.2 でも _ を挟めない個所">
-<code><reserved></span><span class="reserved">var</span> a = _10;
-<span class="reserved">var</span> b = 10_;
-<span class="reserved">var</span> c = 1._0;
-<span class="reserved">var</span> d = 1_.0;
-</code></pre>
+```csharp
+var a = _10;
+var b = 10_;
+var c = 1._0;
+var d = 1_.0;
+```
 
 「C# 7.0時点では迷ったので、入れない方に倒した」程度のものです。
 (後から機能を追加するのは簡単にできますが、

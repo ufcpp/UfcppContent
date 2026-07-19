@@ -73,12 +73,12 @@ Visual Studio のプロジェクト テンプレートの「Analyzer with Code F
 
 まず、クラス自体に `INotifyPropertyChanged` インターフェイス実装を用意するマクロ:
 
-<pre class="source" title="クラス用マクロ属性">
-[<span class="type">AttributeUsage</span>(<span class="type">AttributeTargets</span><span class="operator">.</span>Class)]
-<span class="reserved">class</span> <span class="type">NotifyClassAttribute</span>() : <span class="type">TemplateAttribute</span>(
-    <span class="static"><span class="method">Global</span></span>(<span class="string">&quot;using System.ComponentModel;&quot;</span>),
-    <span class="static"><span class="method">Parent</span></span>(<span class="string">$&quot;</span><span class="string">partial class </span>{<span class="constant"><span class="static">Name</span></span>}<span class="string"> : INotifyPropertyChanged;</span><span class="string">&quot;</span>),
-<span class="string">&quot;&quot;&quot;
+```csharp
+[AttributeUsage(AttributeTargets.Class)]
+class NotifyClassAttribute() : TemplateAttribute(
+    Global("using System.ComponentModel;"),
+    Parent($"partial class {Name} : INotifyPropertyChanged;"),
+"""
     public event PropertyChangedEventHandler? PropertyChanged;
     
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -86,9 +86,9 @@ Visual Studio のプロジェクト テンプレートの「Analyzer with Code F
         PropertyChanged?.Invoke(this, e);
     }
     
-    protected bool SetProperty&lt;T&gt;(ref T storage, T value, PropertyChangedEventArgs e)
+    protected bool SetProperty<T>(ref T storage, T value, PropertyChangedEventArgs e)
     {
-        if (global::System.Collections.Generic.EqualityComparer&lt;T&gt;.Default.Equals(storage, value))
+        if (global::System.Collections.Generic.EqualityComparer<T>.Default.Equals(storage, value))
         {
             return false;
         }
@@ -96,55 +96,54 @@ Visual Studio のプロジェクト テンプレートの「Analyzer with Code F
         OnPropertyChanged(e);
         return true;
     }
-&quot;&quot;&quot;</span>
+"""
     );
-</pre>
+```
 
 次にプロパティ用:
 
-<pre class="source" title="プロパティ用マクロ属性">
-[<span class="type">AttributeUsage</span>(<span class="type">AttributeTargets</span><span class="operator">.</span>Property)]
-<span class="reserved">class</span> <span class="type">NotifyPropertyAttribute</span>() : <span class="type">TemplateAttribute</span>(
-<span class="string">$&quot;&quot;&quot;
-</span><span class="string">    get =&gt; field;
-    set =&gt; SetProperty(ref field, value, </span>{<span class="static"><span class="constant">Name</span></span>}<span class="string">PropertyChangedEventArgs);</span><span class="string">
-&quot;&quot;&quot;</span>,
-<span class="static"><span class="method">Parent</span></span>(<span class="string">$&quot;&quot;&quot;
-</span><span class="string">    private static readonly System.ComponentModel.PropertyChangedEventArgs </span>{<span class="constant"><span class="static">Name</span></span>}<span class="string">PropertyChangedEventArgs = new(nameof(</span>{<span class="static"><span class="constant">Name</span></span>}<span class="string">));</span><span class="string">
-&quot;&quot;&quot;</span>)
+```csharp
+[AttributeUsage(AttributeTargets.Property)]
+class NotifyPropertyAttribute() : TemplateAttribute(
+$"""
+    get => field;
+    set => SetProperty(ref field, value, {Name}PropertyChangedEventArgs);
+""",
+Parent($"""
+    private static readonly System.ComponentModel.PropertyChangedEventArgs {Name}PropertyChangedEventArgs = new(nameof({Name}));
+""")
     );
-</pre>
-</pre>
+```
 
 で、これの利用側コード:
 
-<pre class="source" title="マクロ利用者コードの例">
-<span class="reserved">using</span> AttributeTemplateGenerator;
+```csharp
+using AttributeTemplateGenerator;
 
-<span class="reserved">namespace</span> Examples;
+namespace Examples;
 
-[<span class="type">NotifyClass</span>]
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">NotifyPropertyChangedExample</span>
+[NotifyClass]
+partial class NotifyPropertyChangedExample
 {
-    [<span class="type">NotifyProperty</span>]
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="property">Integer</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    [NotifyProperty]
+    public partial int Integer { get; set; }
 
-    [<span class="type">NotifyProperty</span>]
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Str</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    [NotifyProperty]
+    public partial string? Str { get; set; }
 
-    [<span class="type">NotifyProperty</span>]
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="type struct">TimeOnly</span> <span class="property">Time</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    [NotifyProperty]
+    public partial TimeOnly Time { get; set; }
 
-    [<span class="type">NotifyProperty</span>]
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="type struct">DateOnly</span><span class="operator">?</span> <span class="property">Date</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    [NotifyProperty]
+    public partial DateOnly? Date { get; set; }
 
-    [<span class="type">NotifyProperty</span>]
-    <span class="reserved">public</span> <span class="reserved">partial</span> (<span class="reserved">int</span>, <span class="reserved">string</span><span class="operator">?</span>, <span class="type struct">DateTimeOffset</span>) <span class="property">Tuple</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    [NotifyProperty]
+    public partial (int, string?, DateTimeOffset) Tuple { get; set; }
 
-    [<span class="type">NotifyProperty</span>]
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="property">List</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    [NotifyProperty]
+    public partial List<int> List { get; set; }
 }
-</pre>
+```
 
 「デモ用だし雑に」とか思いながら作り始めたんですけど、
 その先 Copilot に向かって「これもやろう」とか言ってみたら思った以上にしっかり作ってくれたというのもあり。

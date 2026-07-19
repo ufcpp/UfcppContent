@@ -49,18 +49,18 @@ Records とか Function pointers とか、一部の機能はまだちょっと�
 いわゆる共変戻り値。virtual メソッドの override 側で、戻り値の型を共変にできるようになりました。
 要するに、以下のようなやつです。
 
-<pre class="source" title="クラスの共変戻り値">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">class</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Base</span>
+```csharp
+class Base
 {
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">virtual</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Base</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Clone</span>() <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">=&gt;</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">new</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Base</span>();
+    public virtual Base Clone() => new Base();
 }
 
-<span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">class</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Derived</span> : <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Base</span>
+class Derived : Base
 {
-    <span class="comment">// これの戻り値、C# 8.0 までは Base でないとダメだった</span>
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">public</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">override</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Derived</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Clone</span>() <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">=&gt;</span> <span class="pl-k" style="box-sizing: border-box; color: rgb(215, 58, 73);">new</span> <span class="pl-en" style="box-sizing: border-box; color: rgb(111, 66, 193);">Derived</span>();
+    // これの戻り値、C# 8.0 までは Base でないとダメだった
+    public override Derived Clone() => new Derived();
 }
-</code></pre>
+```
 
 デリゲートや、`out` 修飾付きのジェネリック型引数などではこれまでもできていたことですし、
 認めてまずいことは何1つありません。
@@ -80,45 +80,45 @@ Android での Java との相互運用のためもあって、.NET Core と Xama
 
 例えば以下のような拡張メソッドを用意することで、2-[tuple](../../../../study/csharp/datatype/tuples.md) に対する `foreach` が使えます。
 
-<pre class="source" title="2-tuple を foreach するための拡張メソッド">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
  
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">i</span> <span class="control">in</span> (1, 2))
+foreach (var i in (1, 2))
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">i</span>);
+    Console.WriteLine(i);
 }
  
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">TupleExtensions</span>
+static class TupleExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">Tuple2Enumerator</span>&lt;<span class="type">T</span>&gt; <span class="method">GetEnumerator</span>&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> (<span class="type">T</span>, <span class="type">T</span>) <span class="variable">t</span>) =&gt; <span class="reserved">new</span>(<span class="variable">t</span>);
+    public static Tuple2Enumerator<T> GetEnumerator<T>(this (T, T) t) => new(t);
  
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Tuple2Enumerator</span>&lt;<span class="type">T</span>&gt; : <span class="type">IEnumerator</span>&lt;<span class="type">T</span>&gt;
+    public struct Tuple2Enumerator<T> : IEnumerator<T>
     {
-        <span class="reserved">private</span> <span class="reserved">int</span> _i;
-        <span class="reserved">private</span> (<span class="type">T</span>, <span class="type">T</span>) _tuple;
+        private int _i;
+        private (T, T) _tuple;
  
-        <span class="reserved">public</span> <span class="type">Tuple2Enumerator</span>((<span class="type">T</span>, <span class="type">T</span>) <span class="variable">tuple</span>)
+        public Tuple2Enumerator((T, T) tuple)
         {
             _i = 0;
-            _tuple = <span class="variable">tuple</span>;
+            _tuple = tuple;
         }
  
-        <span class="reserved">public</span> <span class="type">T</span> Current =&gt; _i <span class="control">switch</span>
+        public T Current => _i switch
         {
-            1 =&gt; _tuple.Item1,
-            2 =&gt; _tuple.Item2,
-            <span class="reserved">_</span> =&gt; <span class="reserved">default</span>!,
+            1 => _tuple.Item1,
+            2 => _tuple.Item2,
+            _ => default!,
         };
  
-        <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">MoveNext</span>() =&gt; ++_i &lt; 3;
+        public bool MoveNext() => ++_i < 3;
  
-        <span class="reserved">object</span> System.Collections.<span class="type">IEnumerator</span>.Current =&gt; Current!;
-        <span class="reserved">void</span> System.Collections.<span class="type">IEnumerator</span>.<span class="method">Reset</span>() =&gt; <span class="control">throw</span> <span class="reserved">new</span> <span class="type">NotImplementedException</span>();
-        <span class="reserved">void</span> <span class="type">IDisposable</span>.<span class="method">Dispose</span>() { }
+        object System.Collections.IEnumerator.Current => Current!;
+        void System.Collections.IEnumerator.Reset() => throw new NotImplementedException();
+        void IDisposable.Dispose() { }
     }
 }
-</code></pre>
+```
 
 まあ、実用途があるかというとそこまで有益な使い道は思いつかないんですが…
 
@@ -138,34 +138,34 @@ Android での Java との相互運用のためもあって、.NET Core と Xama
 
 [#3297](https://github.com/dotnet/csharplang/issues/3297)のうち、たぶん、制約なしジェネリック型に対する `T?` は 16.8 Preview 2 で入ったはず。
 
-<pre class="source" title="制約なし T?">
-<code><span class="reserved">class</span> <span class="type">C</span>&lt;<span class="type">T</span>&gt;
-<span class="comment">//where T :class // これがあれば前からOK</span>
-<span class="comment">//where T :struct // これがあれば前からOK</span>
-<span class="comment">// 制約なしは今回から初めてOK</span>
+```csharp
+class C<T>
+//where T :class // これがあれば前からOK
+//where T :struct // これがあれば前からOK
+// 制約なしは今回から初めてOK
 {
-    <span class="comment">// これだとエラー。 </span>
-    <span class="comment">// T? と言いつつ、C&lt;int&gt; とかを渡すと int。int? ではない</span>
-    <span class="comment">//public static T? M() =&gt; null;</span>
+    // これだとエラー。 
+    // T? と言いつつ、C<int> とかを渡すと int。int? ではない
+    //public static T? M() => null;
  
-    <span class="comment">// 実は nullable じゃなくて、defaultable</span>
-    <span class="comment">// LINQ の FirstOrDefault 的な奴</span>
-    <span class="comment">// あまりにきもいから、当初 T?? にしようという案もあった</span>
-    <span class="comment">// ? になったのは、 x ?? y の ?? と区別つかなくて困ったかららしい</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span>? <span class="method">M</span>() =&gt; <span class="reserved">default</span>;
+    // 実は nullable じゃなくて、defaultable
+    // LINQ の FirstOrDefault 的な奴
+    // あまりにきもいから、当初 T?? にしようという案もあった
+    // ? になったのは、 x ?? y の ?? と区別つかなくて困ったかららしい
+    public static T? M() => default;
 }
-</code></pre>
+```
 
 ただこれ、少々クセはありまして。
 上記コメントにもありますが、この場合の `T?` は nullable じゃなくて「defaultable」と呼んだ方がいいかもしれないようなものです。
 以下のように、型引数として非 null 値型を渡すと nullable にはなりません。
 
-<pre class="source" title="defaultable な T?">
-<code><span class="reserved">string</span>? <span class="variable">x1</span> = <span class="type">C</span>&lt;<span class="reserved">string</span>?&gt;.<span class="method">M</span>();
-<span class="reserved">string</span>? <span class="variable">x2</span> = <span class="type">C</span>&lt;<span class="reserved">string</span>&gt;.<span class="method">M</span>(); <span class="comment">// 順当に string?</span>
-<span class="reserved">int</span>?    <span class="variable">x3</span> = <span class="type">C</span>&lt;<span class="reserved">int</span>?&gt;.<span class="method">M</span>();   <span class="comment">// 順当に int?</span>
-<span class="reserved">int</span>     <span class="variable">x4</span> = <span class="type">C</span>&lt;<span class="reserved">int</span>&gt;.<span class="method">M</span>();    <span class="comment">// これの戻り値は int? にならない。default(int)、つまり、0 が返る。</span>
-</code></pre>
+```csharp
+string? x1 = C<string?>.M();
+string? x2 = C<string>.M(); // 順当に string?
+int?    x3 = C<int?>.M();   // 順当に int?
+int     x4 = C<int>.M();    // これの戻り値は int? にならない。default(int)、つまり、0 が返る。
+```
 
 「実は nullable じゃなくて defaultable」という挙動が気持ち悪すぎて C# 8.0 時点では見送られたし、
 9.0 でも `T??` みたいな他の文法が検討されたりしたんですが、他の文法にもいろいろ問題があって、

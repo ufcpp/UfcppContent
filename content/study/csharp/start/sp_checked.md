@@ -45,12 +45,12 @@ C#では<code>checked, unchecked</code>というキーワードを用いるこ�
 例えば、以下のようなプログラムを実行すると、
 「正の数同士を足し合わせているのに結果が負の数になる」という症状を引き起こします。
 
-<pre class="source" title="オーバーフローの例" lang="">
-<code><span class="reserved">sbyte</span> a = 64;           <span class="comment">// 2進表現では 0100 0000。</span>
-<span class="reserved">sbyte</span> b = 65;           <span class="comment">// 2進表現では 0100 0001。</span>
-<span class="reserved">sbyte</span> c = (<span class="reserved">sbyte</span>)(a + b); <span class="comment">// 2進表現では 1000 0001 ←これは sbyte では -127 を表す。</span>
-Console.Write(<span class="literal">"{0} + {1} = {2}"</span>, a, b, c); <span class="comment">// 64 + 65 = -127 と表示される。</span>
-</code></pre>
+```csharp
+sbyte a = 64;           // 2進表現では 0100 0000。
+sbyte b = 65;           // 2進表現では 0100 0001。
+sbyte c = (sbyte)(a + b); // 2進表現では 1000 0001 ←これは sbyte では -127 を表す。
+Console.Write("{0} + {1} = {2}", a, b, c); // 64 + 65 = -127 と表示される。
+```
 
 
 
@@ -65,17 +65,17 @@ C#では、コンパイル時に <code>/checked+</code> というオプション
 そこで、コードの特定の箇所でのみオーバーフローのチェックを行うために、<code>checked</code> というキーワードが用意されています。
 <code>checked</code> キーワードは以下のようにして使用します。
 
-<pre class="source" title="checked 文" lang="">
-<code><span class="reserved">checked</span>
-  <span class="input">ブロック</span>
-</code></pre>
+```csharp
+checked
+  ブロック
+```
 
 
 または、
 
-<pre class="source" title="checked 演算子" lang="">
-<code><span class="reserved">checked</span>(<span class="input">式</span>)
-</code></pre>
+```csharp
+checked(式)
+```
 
 
 前者の書き方をchecked文、後者の書き方をchecked演算子と呼びます。
@@ -83,34 +83,34 @@ checked文中の式や、
 checked演算子の後の式の中でオーバーフローが起きた場合、
 <code>System.OverflowException</code> 例外が発生します。
 
-<pre class="source" title="checkedの例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> CheckedSample
+class CheckedSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">try</span>
+    try
     {
-      <span class="reserved">checked</span>
+      checked
       {
-        <span class="reserved">sbyte</span> a = 64;
-        <span class="reserved">sbyte</span> b = 65;
-        <span class="reserved">sbyte</span> c = (<span class="reserved">sbyte</span>)(a + b);
+        sbyte a = 64;
+        sbyte b = 65;
+        sbyte c = (sbyte)(a + b);
       }
     }
-    <span class="reserved">catch</span>(OverflowException ex)
+    catch(OverflowException ex)
     {
       Console.Write(ex.Message);
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 演算操作の結果オーバーフローが発生しました。
-</pre>
+```
 
 
 
@@ -120,17 +120,17 @@ checked のときとは逆に、オーバーフローをあえて無視したい
 そのため、<code>unchecked</code> というキーワードも用意されています。
 <code>unchecked</code> キーワードは以下のようにして使用します。
 
-<pre class="source" title="unchecked 文" lang="">
-<code><span class="reserved">unchecked</span>
-  <span class="input">ブロック</span>
-</code></pre>
+```csharp
+unchecked
+  ブロック
+```
 
 
 または、
 
-<pre class="source" title="unchecked 演算子" lang="">
-<code><span class="reserved">unchecked</span>(<span class="input">式</span>)
-</code></pre>
+```csharp
+unchecked(式)
+```
 
 
 使い方はcheckedと同様で、
@@ -140,30 +140,30 @@ unchecked文中の式や、
 unchecked演算子の後の式の中ではオーバーフローは無視され、
 例外はスローされません。
 
-<pre class="source" title="uncheckedの例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 線形合同法っていう古典的な擬似乱数生成手法を使った乱数生成クラス。
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Random
+/// </summary>
+class Random
 {
-  <span class="reserved">uint</span> seed;
+  uint seed;
 
-  <span class="reserved">public</span> Random(<span class="reserved">uint</span> seed)
+  public Random(uint seed)
   {
-    <span class="reserved">this</span>.seed = seed;
+    this.seed = seed;
   }
 
-  <span class="reserved">public long</span> Next()
+  public long Next()
   {
-    seed = <span class="reserved">unchecked</span>(seed * 1664525  + 1013904223);
-    <span class="comment">// ↑ここであえてオーバーフローは無視する。
-    // 計算結果は (seed * 1664525  + 1013904223) を2の32乗で割ったあまりになる。</span>
-    <span class="reserved">return</span> seed;
+    seed = unchecked(seed * 1664525  + 1013904223);
+    // ↑ここであえてオーバーフローは無視する。
+    // 計算結果は (seed * 1664525  + 1013904223) を2の32乗で割ったあまりになる。
+    return seed;
   }
 }
-</code></pre>
+```
 
 
 
@@ -173,11 +173,11 @@ unchecked演算子の後の式の中ではオーバーフローは無視され�
 また、絶対値が浮動小数点数で表せる値の範囲を下回った場合(このような状況を<em>アンダーフロー</em>と呼ぶ)、
 値は0になります。
 
-<pre class="source" title="浮動小数点数型のオーバーフロー" lang="">
-<code><span class="reserved">float</span> x = 1e30f;
-<span class="reserved">float</span> y = 1e-30f;
-Console.Write(<span class="literal">"{0}, {1}"</span>, x*x, y*y); // +∞, 0 と表示される。
-</code></pre>
+```csharp
+float x = 1e30f;
+float y = 1e-30f;
+Console.Write("{0}, {1}", x*x, y*y); // +∞, 0 と表示される。
+```
 
 
 浮動小数点数の場合、例えchecked文中であっても、

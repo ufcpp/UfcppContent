@@ -38,26 +38,26 @@ runtime intrinsics (JIT コンパイラーの特別扱い)で実装したりし�
 ということで、皆様ご存じの通り<sup>[※](#as-you-all-known)</sup>、
 `Unsafe` クラスを使えば C# でも C++ 的な遊びがいろいろと楽しめます。
 
-<pre class="source" title="Unsafe.As">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">A</span>(<span class="number">123</span>);
+var a = new A(123);
 
-<span class="comment">// readonly struct なので、↓はエラー。</span>
-<span class="comment">//a.Value = 999;</span>
+// readonly struct なので、↓はエラー。
+//a.Value = 999;
 
-<span class="comment">// Unsafe.As を使えば、</span>
-<span class="comment">// C++ でいう reinterpret_cast 的に何でもかんでも変換可能。</span>
-<span class="comment">// (メモリレイアウトが想定通りかは利用者の自己責任。)</span>
-<span class="reserved">ref</span> <span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="static"><span class="type">Unsafe</span></span><span class="operator">.</span><span class="method"><span class="static">As</span></span>&lt;<span class="type struct">A</span>, <span class="reserved">int</span>&gt;(<span class="reserved">ref</span> <span class="variable">a</span>);
-<span class="variable">x</span> <span class="operator">=</span> <span class="number">999</span>;
+// Unsafe.As を使えば、
+// C++ でいう reinterpret_cast 的に何でもかんでも変換可能。
+// (メモリレイアウトが想定通りかは利用者の自己責任。)
+ref var x = ref Unsafe.As<A, int>(ref a);
+x = 999;
 
-<span class="comment">// a.Value が 999 に書き変わってる。</span>
-<span class="comment">// A { Value = 999 }</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">a</span>);
+// a.Value が 999 に書き変わってる。
+// A { Value = 999 }
+Console.WriteLine(a);
 
-<span class="reserved">readonly</span> <span class="reserved">record</span> <span class="reserved">struct</span> <span class="type struct">A</span>(<span class="reserved">int</span> <span class="variable local">Value</span>);
-</pre>
+readonly record struct A(int Value);
+```
 
 <sup><a id="as-you-all-known">※</a></sup>どの方面に向かって「皆」と言っているのかは不明。
 
@@ -75,22 +75,22 @@ runtime intrinsics (JIT コンパイラーの特別扱い)で実装したりし�
 
 なので、先ほどと同じノリで ref struct に対して `Unsafe.As` (とか、それ相当の unsafe コード)を書こうとしてもうまくいきません。
 
-<pre class="source" title="Span には Unsafe.As が使えない">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">span</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">int</span>[] { <span class="number">0xDE</span>, <span class="number">0xAD</span>, <span class="number">0xBE</span>, <span class="number">0xEF</span> });
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">A</span>(<span class="variable">span</span>);
+var span = (stackalloc int[] { 0xDE, 0xAD, 0xBE, 0xEF });
+var a = new A(span);
 
-<span class="reserved">var</span> <span class="variable">spanFromA</span> <span class="operator">=</span> <span class="type"><span class="static">Unsafe</span></span><span class="operator">.</span><span class="error" title="CS0306"><span class="error" title="CS0306"><span class="static"><span class="method">As</span></span>&lt;<span class="type struct">A</span>, <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;&gt;</span></span>(<span class="reserved">ref</span> <span class="variable">a</span>);
+var spanFromA = Unsafe.As<A, Span<int>>(ref a);
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">A</span>
+ref struct A
 {
-    <span class="comment">// private なので通常、この _span を取り出す方法ない。</span>
-    <span class="comment">// なんならリフレクションを使っても無理。</span>
-    <span class="reserved">private</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="field">_span</span>;
-    <span class="reserved">public</span> <span class="type struct">A</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">span</span>) <span class="operator">=&gt;</span> <span class="field">_span</span> <span class="operator">=</span> <span class="variable local">span</span>; 
+    // private なので通常、この _span を取り出す方法ない。
+    // なんならリフレクションを使っても無理。
+    private Span<int> _span;
+    public A(Span<int> span) => _span = span; 
 }
-</pre>
+```
 
 ## <a id="function-pointer">関数ポインター</a>
 
@@ -107,45 +107,45 @@ C# 9 で入った関数ポインター、
 
 これを使えば、以下のように、ref struct に対しても `Unsafe.As` 的なことができるようになったりします。
 
-<pre class="source" title="関数ポインターは制限がゆるくて、現状これでしかできないことができちゃう">
-<span class="reserved">var</span> <span class="variable">span</span> <span class="operator">=</span> (<span class="reserved">stackalloc</span> <span class="reserved">int</span>[] { <span class="number">0xDE</span>, <span class="number">0xAD</span>, <span class="number">0xBE</span>, <span class="number">0xEF</span> });
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">A</span>(<span class="variable">span</span>);
+```csharp
+var span = (stackalloc int[] { 0xDE, 0xAD, 0xBE, 0xEF });
+var a = new A(span);
 
-<span class="reserved">unsafe</span>
+unsafe
 {
-    <span class="comment">// function pointer の引数なら ref RefStruct も行ける。</span>
-    <span class="reserved">var</span> <span class="variable">f</span> <span class="operator">=</span> (<span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">ref</span> <span class="type struct">A</span>, <span class="reserved">ref</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;&gt;)(<span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">nint</span>, <span class="reserved">nint</span>&gt;)<span class="operator">&amp;</span><span class="method"><span class="static">id</span></span>;
+    // function pointer の引数なら ref RefStruct も行ける。
+    var f = (delegate*<ref A, ref Span<int>>)(delegate*<nint, nint>)&id;
 
-    <span class="comment">// 晴れて A の中から _span を抜き出し。</span>
-    <span class="reserved">var</span> <span class="variable">spanFromA</span> <span class="operator">=</span> <span class="variable">f</span>(<span class="reserved">ref</span> <span class="variable">a</span>);
+    // 晴れて A の中から _span を抜き出し。
+    var spanFromA = f(ref a);
 
-    <span class="comment">// span と同じ内容。</span>
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">spanFromA</span>) <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">Write</span></span>(<span class="string">$&quot;</span>{<span class="variable">x</span>:<span class="string">X2</span>}<span class="string">&quot;</span>);
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>();
+    // span と同じ内容。
+    foreach (var x in spanFromA) Console.Write($"{x:X2}");
+    Console.WriteLine();
 
-    <span class="comment">// span が書き変わる。</span>
-    <span class="variable">spanFromA</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="number">1</span>;
-    <span class="variable">spanFromA</span>[<span class="number">1</span>] <span class="operator">=</span> <span class="number">2</span>;
-    <span class="variable">spanFromA</span>[<span class="number">2</span>] <span class="operator">=</span> <span class="number">3</span>;
-    <span class="variable">spanFromA</span>[<span class="number">3</span>] <span class="operator">=</span> <span class="number">4</span>;
+    // span が書き変わる。
+    spanFromA[0] = 1;
+    spanFromA[1] = 2;
+    spanFromA[2] = 3;
+    spanFromA[3] = 4;
 }
 
-<span class="comment">// 上書きされた 01020304。</span>
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">span</span>) <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">Write</span></span>(<span class="string">$&quot;</span>{<span class="variable">x</span>:<span class="string">X2</span>}<span class="string">&quot;</span>);
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>();
+// 上書きされた 01020304。
+foreach (var x in span) Console.Write($"{x:X2}");
+Console.WriteLine();
 
-<span class="comment">// nint 素通しメソッド。</span>
-<span class="comment">// nint = unsafe コンテキスト内なら任意のポインター、任意の ref T を通せる。</span>
-<span class="reserved">static</span> <span class="reserved">nint</span> <span class="method"><span class="static">id</span></span>(<span class="reserved">nint</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span>;
+// nint 素通しメソッド。
+// nint = unsafe コンテキスト内なら任意のポインター、任意の ref T を通せる。
+static nint id(nint x) => x;
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">A</span>
+ref struct A
 {
-    <span class="comment">// private なので通常、この _span を取り出す方法ない。</span>
-    <span class="comment">// なんならリフレクションを使っても無理。</span>
-    <span class="reserved">private</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="field">_span</span>;
-    <span class="reserved">public</span> <span class="type struct">A</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">span</span>) <span class="operator">=&gt;</span> <span class="field">_span</span> <span class="operator">=</span> <span class="variable local">span</span>;
+    // private なので通常、この _span を取り出す方法ない。
+    // なんならリフレクションを使っても無理。
+    private Span<int> _span;
+    public A(Span<int> span) => _span = span;
 }
-</pre>
+```
 
 native interop でしか使い道がないと思っていた関数ポインター、
 こんなところで「これでしかできないこと」があるとは…

@@ -33,35 +33,35 @@ Visual Studio 2017の正式リリースまではバグ修正くらいしか作�
 
 まず`while`。
 
-<pre class="source" title="while">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">while</span> (&lt;cond&gt;) &lt;body&gt;
-</code></pre>
+```csharp
+while (<cond>) <body>
+```
 
 こういう`while`ステートメントがあったとき、これまでだと、以下のように展開するという仕様になっていました。
 
-<pre class="source" title="while 旧仕様">
-<code>continueLabel:;
-<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">if</span> (!&lt;cond&gt;) <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">goto</span> breakLabel;
+```csharp
+continueLabel:;
+if (!<cond>) goto breakLabel;
 {
-    &lt;body&gt;
+    <body>
 }
-<span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">goto</span> continueLabel;
+goto continueLabel;
 breakLabel:;
-</code></pre>
+```
 
 これが、以下のように変わります。`{ }` が1段増える。
 
-<pre class="source" title="while 新仕様">
-<code>continueLabel:;
+```csharp
+continueLabel:;
 {
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">if</span> (!&lt;cond&gt;) <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">goto</span> breakLabel;
+    if (!<cond>) goto breakLabel;
     {
-        &lt;body&gt;
+        <body>
     }
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">goto</span> continueLabel;
+    goto continueLabel;
 }
 breakLabel:;
-</code></pre>
+```
 
 要するに、条件式の中で宣言された変数は、`while`の外には漏らさないよというルールの追加です。
 
@@ -71,37 +71,37 @@ breakLabel:;
 
 同様に、`for`。
 
-<pre class="source" title="for">
-<code><span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">for</span> (&lt;decl&gt;; &lt;cond&gt;; &lt;incr&gt;) &lt;body&gt;
-</code></pre>
+```csharp
+for (<decl>; <cond>; <incr>) <body>
+```
 
 この`for`ステートメントは、以下のような仕様になっていました。
 
-<pre class="source" title="for 旧仕様">
-<code>{
-    &lt;decl&gt;
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">while</span>(&lt;cond&gt;)
+```csharp
+{
+    <decl>
+    while(<cond>)
     {
-        &lt;body&gt;
+        <body>
     continueLabel:;
-        &lt;incr&gt;
+        <incr>
     }
 }
-</code></pre>
+```
 
 これが以下のように変更。更新式(`<incr>`のところ)に `{ }`が増えます。
 
-<pre class="source" title="for 新仕様">
-<code>{
-    &lt;decl&gt;
-    <span class="pl-k" style="box-sizing: border-box; color: rgb(167, 29, 93);">while</span>(&lt;cond&gt;)
+```csharp
+{
+    <decl>
+    while(<cond>)
     {
-        &lt;body&gt;
+        <body>
     continueLabel:;
-        { &lt;incr&gt; }
+        { <incr> }
     }
 }
-</code></pre>
+```
 
 更新式のところで宣言した変数はその中でだけ使えて、`for`ステートメントのbody内でも参照できなくするということのようです。
 

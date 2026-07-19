@@ -34,15 +34,16 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 ヤコビの楕円関数の公式
 θ（テータ）関数
 テータ関数とヤコビの楕円関数との関係
-</pre>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="memo"></a>メモ
 
-<h3>諸定数</h3><pre>
+<h3>諸定数</h3>
+```text
 k  … ヤコビの楕円関数の率（modulus、複数形 moduli。母数、法と訳す場合も）。
 k' … 補率（complementary modulus）。k' ＝ √(1 － k^2)
 
@@ -59,7 +60,8 @@ Legendre は
  k  ＝ sinα
  k' ＝ cosα
 となるような値αを定義し、率角（modular angle）と呼んだ。
-</pre><h3>グラフ</h3>
+```
+<h3>グラフ</h3>
 <figure>
 	[![ヤコビの楕円関数（k=0.1）](../../../../assets/media/ufcpp2000/math/JacobiSn01.png)](../../../../assets/media/ufcpp2000/math/JacobiSn01.png)
 	<figcaption>ヤコビの楕円関数（k=0.1）</figcaption>
@@ -77,7 +79,8 @@ Legendre は
 	<figcaption>ヤコビの楕円関数（k=0.9）</figcaption>
 </figure>
 
-<h3>簡単な性質</h3><pre>
+<h3>簡単な性質</h3>
+```text
 sn(-u) = -sn(u)
 sn(2K - u) = sn(u)
 
@@ -86,11 +89,13 @@ cn(-u) = cn(u)
 sn^2 + cn^2 = 1
 k^2 sn^2 + dn^2 = 1
 dn^2 - k^2 cn^2 = k'^2
-</pre><h3>周期</h3><pre>
+```
+<h3>周期</h3>
+```text
 sn(u ＋ 2mK ＋ 2niK', k) ＝ (－1)^m     sn(u, k)
 cn(u ＋ 2mK ＋ 2niK', k) ＝ (－1)^(m+n) cn(u, k)
 dn(u ＋ 2mK ＋ 2niK', k) ＝ (－1)^n     dn(u, k)
-</pre>
+```
 <table summary="ヤコビの楕円関数の周期">
 	<caption>
 		ヤコビの楕円関数の周期
@@ -211,7 +216,8 @@ dn(u ＋ 2mK ＋ 2niK', k) ＝ (－1)^n     dn(u, k)
 	</tr>
 </table>
 
-<h3>特別な場合（k=0, 1）</h3><pre>
+<h3>特別な場合（k=0, 1）</h3>
+```text
 k = 0 のとき、
 sn(u, 0) = sin u
 cn(u, 0) = cos u
@@ -221,7 +227,9 @@ k = 1 のとき、
 sn(u, 0) = tanh u
 cn(u, 0) = 1 / cosh u
 dn(u, 0) = 1 / cosh u
-</pre><h3>sc, dc など</h3><pre>
+```
+<h3>sc, dc など</h3>
+```text
 sn = sinφ(u)
 cn = cosφ(u)
 dn = √(1 - k^2 sn^2)
@@ -249,7 +257,9 @@ s …     2m K ＋      2n i K'
 c … (2m＋1)K ＋      2n i K'
 d … (2m＋1)K ＋ (2n＋1) i K'
 n …     2m K ＋ (2n＋1) i K'
-</pre><h3>加法定理</h3><pre>
+```
+<h3>加法定理</h3>
+```text
 denom = 1 - k^2 sn^2(u) sn^2(v) とおくと、
 
 sn(u + v) = sn(u) cn(v) dn(v) + cn(u) dn(u) sn(v)
@@ -263,11 +273,15 @@ cn(u + v) = cn(u) cn(v) - sn(u) dn(u) sn(v) dn(v)
 dn(u + v) = dn(u) dn(v) - sn(u) cn(u) sn(v) cn(v)
             -------------------------------------
             denom
-</pre><h3>虚数</h3><pre>
+```
+<h3>虚数</h3>
+```text
 sn(iu, k) = i sn' / cn' = i sc(u, k')
 cn(iu, k) =     1 / cn' =   nc(u, k')
 dn(iu, k) =   dn' / cn' =   dc(u, k')
-</pre><h3>シフト</h3><pre>
+```
+<h3>シフト</h3>
+```text
 sn(u + K) =     cn(u) / dn(u) =     cd
 cn(u + K) = -k' sn(u) / dn(u) = -k' sd
 dn(u + K) =  k'     1 / dn(u) =  k' nd
@@ -275,11 +289,15 @@ dn(u + K) =  k'     1 / dn(u) =  k' nd
 sn(u + iK') =  (1/k)     1 / sn(u) =   (1/k) ns
 cn(u + iK') = -(1/k) dn(u) / sn(u) = -i(1/k) ds
 dn(u + iK') = -i     cn(u) / sn(u) = -i      cs
-</pre><h3>k ＞ 1 の場合への拡張</h3><pre>
+```
+<h3>k ＞ 1 の場合への拡張</h3>
+```text
 sn(u, 1/k) = k sn(u/k, k)
 cn(u, 1/k) =   dn(u/k, k)
 dn(u, 1/k) =   cn(u/k, k)
-</pre><h3>複素数</h3><pre>
+```
+<h3>複素数</h3>
+```text
 定義域が複素数、すなわち sn(u + iv, k) （u, v∈R） の場合。
 
 sn = sn(u, k), sn' = sn(v, k')
@@ -303,7 +321,9 @@ cn(u + iv, k) = cn cn' - i sn dn sn' dn'
 dn(u + iv, k) = dn cn' dn' - i k^2 sn cn sn'
                 ----------------------------
                 denom
-</pre><h3>倍周期・半周期公式</h3><pre>
+```
+<h3>倍周期・半周期公式</h3>
+```text
 加法定理より、
 
 倍周期公式
@@ -338,15 +358,17 @@ u = K/2 のときの値
 sn(K/2) = 1 / √(1 + k')
 cn(K/2) = √(k' / (1 + k'))
 dn(K/2) = √(k')
-</pre><h3>微分</h3><pre>
+```
+<h3>微分</h3>
+```text
 (d/du)sn = cn dn
 (d/du)cn = - sn dn
 (d/du)dn = -k^2 sn cn
-</pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="d78e302"></a>メモ（theta 関数）
 
-<pre>
+```text
 ・テータ関数
 
 以下の4つの関数を、Jacobi のテータ関数（Jacobian theta function）という。
@@ -399,4 +421,4 @@ dn(u, k) = ---------------------
 q = exp(－π K'(k) / K(k))
 
 という関係あり。
-</pre>
+```

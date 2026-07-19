@@ -54,21 +54,21 @@ await の対象にできるのは、
 以下のような Awaitable パターンを実装したクラスです。
 （インターフェイスなどの実装も不要で、いわゆる「[ダックタイピング](../appendix/ap_term.md#ducktype)」的。）
 
-<pre class="source" title="Awaitable パターン" lang="">
-<code><span class="comment">// 同名のメソッドを持っていれば型は問わない。</span>
-<span class="reserved">class</span> <span class="type">Awatable</span>
+```csharp
+// 同名のメソッドを持っていれば型は問わない。
+class Awatable
 {
-    <span class="reserved">public</span> <span class="type">Awaiter</span> GetAwaiter() { }
+    public Awaiter GetAwaiter() { }
 }
 
-<span class="comment">// 同上、同名のメソッドを持っていれば型は問わない。</span>
-<span class="reserved">struct</span> <span class="type">Awaiter</span>
+// 同上、同名のメソッドを持っていれば型は問わない。
+struct Awaiter
 {
-    <span class="reserved">public bool</span> IsCompleted { <span class="reserved">get</span>; }
-    <span class="reserved">public void</span> OnCompleted(<span class="type">Action</span> continuation) { }
-    <span class="reserved">public</span> T GetResult() { }
+    public bool IsCompleted { get; }
+    public void OnCompleted(Action continuation) { }
+    public T GetResult() { }
 }
-</code></pre>
+```
 
 
 await 可能な型は、上記の Awaitable クラスのように、Awaiter を返す GetAwaiter メソッド（あるいは拡張メソッドでも OK）を持つ必要があります。
@@ -113,48 +113,48 @@ GetAwaiter は拡張メソッドでもいいので、独自実装で挙動を変
 せっかくの非同期呼び出しを同期化（処理が終わるまでブロッキング）するという、使い道のない実装ですが、
 シンプルなのでサンプルとしては分かりやすいと思います。
 
-<pre class="source" title="awaitable/awaiter の実装例" lang="">
-<code><span class="reserved">public class</span> <span class="type">BlockingAwaitable</span>&lt;T&gt;
+```csharp
+public class BlockingAwaitable<T>
 {
-    <span class="reserved">private</span> <span class="type">BlockingAwaiter</span>&lt;T&gt; _awaiter;
+    private BlockingAwaiter<T> _awaiter;
 
-    <span class="reserved">public</span> BlockingAwaitable(<span class="type">Task</span>&lt;T&gt; task) { _awaiter = <span class="reserved">new</span> <span class="type">BlockingAwaiter</span>&lt;T&gt;(task); }
+    public BlockingAwaitable(Task<T> task) { _awaiter = new BlockingAwaiter<T>(task); }
 
-    <span class="reserved">public</span> <span class="type">BlockingAwaiter</span>&lt;T&gt; GetAwaiter() { <span class="reserved">return</span> _awaiter; }
+    public BlockingAwaiter<T> GetAwaiter() { return _awaiter; }
 }
 
-<span class="reserved">public class</span> <span class="type">BlockingAwaiter</span>&lt;T&gt;
+public class BlockingAwaiter<T>
 {
-    <span class="reserved">private</span> <span class="type">Task</span>&lt;T&gt; _task;
+    private Task<T> _task;
 
-    <span class="reserved">public</span> BlockingAwaiter(<span class="type">Task</span>&lt;T&gt; task) { _task = task; }
+    public BlockingAwaiter(Task<T> task) { _task = task; }
 
-    <span class="reserved">public bool</span> IsCompleted { <span class="reserved">get</span> { <span class="reserved">return true</span>; } }
+    public bool IsCompleted { get { return true; } }
 
-    <span class="reserved">public void</span> OnCompleted(<span class="type">Action</span> continuation) { }
+    public void OnCompleted(Action continuation) { }
 
-    <span class="reserved">public</span> T GetResult()
+    public T GetResult()
     {
         _task.Wait();
-        <span class="reserved">return</span> _task.Result;
+        return _task.Result;
     }
 }
 
-<span class="reserved">public static class</span> <span class="type">BlockingAwaitableExtensions</span>
+public static class BlockingAwaitableExtensions
 {
-    <span class="reserved">public static</span> <span class="type">BlockingAwaitable</span>&lt;T&gt; ToBlocking&lt;T&gt;(<span class="reserved">this</span> <span class="type">Task</span>&lt;T&gt; task)
+    public static BlockingAwaitable<T> ToBlocking<T>(this Task<T> task)
     {
-        <span class="reserved">return new</span> <span class="type">BlockingAwaitable</span>&lt;T&gt;(task);
+        return new BlockingAwaitable<T>(task);
     }
 }
-</code></pre>
+```
 
 
 以下のように利用します。
 
-<pre class="source" title="awaitable/awaiter の実装例" lang="">
-<code><span class="reserved">var</span>result = <span class="reserved">await</span> task.ToBlocking();
-</code></pre>
+```csharp
+varresult = await task.ToBlocking();
+```
 
 
 
@@ -166,12 +166,12 @@ GetAwaiter は拡張メソッドでもいいので、独自実装で挙動を変
 
 イテレーターの場合には、yield return の部分が以下のようなコードに置き換えられます。
 
-<pre class="source" title="yield return の置き換え" lang="">
-<code>state = State1; <span class="comment">// 次に復帰するときのための状態の記録</span>
-Current = x;    <span class="comment">// 戻り値を Current に保持</span>
-<span class="reserved">return</span> true;    <span class="comment">// いったん処理終了</span>
-<span class="reserved">case</span> State1:    <span class="comment">// 次に呼ばれたときに続きから処理するためのラベル</span>
-</code></pre>
+```csharp
+state = State1; // 次に復帰するときのための状態の記録
+Current = x;    // 戻り値を Current に保持
+return true;    // いったん処理終了
+case State1:    // 次に呼ばれたときに続きから処理するためのラベル
+```
 
 
 処理はいったん中断し、次に呼ばれたときには state の値に応じた switch や goto によって、
@@ -179,19 +179,19 @@ Current = x;    <span class="comment">// 戻り値を Current に保持</span>
 
 非同期メソッドの場合には、await の部分が以下のようなコードに置き換えられます。
 
-<pre class="source" title="await の置き換え" lang="">
-<code>state = State1;                  <span class="comment">// 次に復帰するときのための状態の記録</span>
-<span class="reserved">var</span> task = RunAsync();
-<span class="reserved">var</span> awaiter = task.GetAwaiter();
-<span class="reserved">if</span> (!awaiter.IsCompleted)
+```csharp
+state = State1;                  // 次に復帰するときのための状態の記録
+var task = RunAsync();
+var awaiter = task.GetAwaiter();
+if (!awaiter.IsCompleted)
 {
-    awaiter.OnCompleted(a);      <span class="comment">// タスクが未完の場合だけ、継続登録して一度 return</span>
-    <span class="reserved">return</span>;
+    awaiter.OnCompleted(a);      // タスクが未完の場合だけ、継続登録して一度 return
+    return;
 }
-<span class="reserved">case</span> State1:                     <span class="comment">// 次に呼ばれたときに続きから処理するためのラベル</span>
-<span class="reserved">var</span> y = awaiter.GetReslt();      <span class="comment">// タスクの結果を受け取り</span>
-awaiter = <span class="reserved">default</span>(T);            <span class="comment">// ガベージ コレクションが働きやすくなるように null 代入</span>
-</code></pre>
+case State1:                     // 次に呼ばれたときに続きから処理するためのラベル
+var y = awaiter.GetReslt();      // タスクの結果を受け取り
+awaiter = default(T);            // ガベージ コレクションが働きやすくなるように null 代入
+```
 
 
 このコードはラムダ式で囲われていて、
@@ -201,19 +201,19 @@ awaiter = <span class="reserved">default</span>(T);            <span class="comm
 ちなみに、awaitable/awaiter を介さない単純な実装に展開するなら、以下のようになります。
 （実際には、await は Task クラス以外にも使えますし、単純に ContinueWith を呼ぶより少しだけ複雑な処理（後述の SynchronizationContext を利用）を行っています。）
 
-<pre class="source" title="awaitable/awaiter を介さず直接 Task を使うなら" lang="">
-<code>state = State1;                  <span class="comment">// 次に復帰するときのための状態の記録</span>
-<span class="reserved">var</span> task = AnotherTaskAsync();
-<span class="reserved">if</span> (!task.IsCompleted)
+```csharp
+state = State1;                  // 次に復帰するときのための状態の記録
+var task = AnotherTaskAsync();
+if (!task.IsCompleted)
 {
-    <span class="comment">// 他のタスクの完了待ちに入って、いったん処理中止</span>
+    // 他のタスクの完了待ちに入って、いったん処理中止
     task.ContinueWith(a);
-    <span class="reserved">return</span>;
+    return;
 }
-<span class="comment">// ただし、タスクがすでに完了済みだったら処理続行</span>
-<span class="reserved">case</span> State1:                     <span class="comment">// 次に呼ばれたときに続きから処理するためのラベル</span>
-<span class="reserved">var</span> y = task.Result;             <span class="comment">// タスクの結果を受け取り</span>
-</code></pre>
+// ただし、タスクがすでに完了済みだったら処理続行
+case State1:                     // 次に呼ばれたときに続きから処理するためのラベル
+var y = task.Result;             // タスクの結果を受け取り
+```
 
 ##### <a id="sec-generated-title-6"></a>サンプル
 
@@ -222,113 +222,113 @@ awaiter = <span class="reserved">default</span>(T);            <span class="comm
 例えば、以下のような非同期メソッドを考えてみましょう。
 要は、複数の URL から文字列をダウンロードしてきて表示するプログラムです（ShowTitle の実装については割愛）。
 
-<pre class="source" title="非同期メソッドの例" lang="">
-<code><span class="reserved">private static async void</span> RunTaskAsync(<span class="reserved">params string</span>[] uriList)
+```csharp
+private static async void RunTaskAsync(params string[] uriList)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
+    var client = new WebClient();
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> uri <span class="reserved">in</span> uriList)
+    foreach (var uri in uriList)
     {
-        <span class="reserved">var</span> html = <span class="reserved">await</span> client.DownloadStringTaskAsync(uri);
+        var html = await client.DownloadStringTaskAsync(uri);
         ShowTitle(html);
     }
 }
-</code></pre>
+```
 
 
 非同期メソッドがイテレーターと似たようなコード生成をしているということは、
 イテレーターを使って似たようなことができなくもないです。
 上記の例は、イテレーターを使って書くと以下のようになります。
 
-<pre class="source" title="イテレーターを使って疑似的に非同期メソッド" lang="">
-<code><span class="reserved">private static void</span> RunPseudoAsync(<span class="reserved">params string</span>[] uriList)
+```csharp
+private static void RunPseudoAsync(params string[] uriList)
 {
     AsyncHelper(RunIterator(uriList));
 }
 
-<span class="reserved">private static</span> <span class="type">IEnumerable</span>&lt;<span class="type">Task</span>&gt; RunIterator(<span class="reserved">params string</span>[] uriList)
+private static IEnumerable<Task> RunIterator(params string[] uriList)
 {
-    <span class="reserved">var</span> client = <span class="reserved">new</span> <span class="type">WebClient</span>();
+    var client = new WebClient();
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> uri <span class="reserved">in</span> uriList)
+    foreach (var uri in uriList)
     {
-        <span class="comment">//↓ここから</span>
-        <span class="reserved">var</span> task = client.DownloadStringTaskAsync(uri);
-        <span class="reserved">if</span> (!task.IsCompleted)
+        //↓ここから
+        var task = client.DownloadStringTaskAsync(uri);
+        if (!task.IsCompleted)
         {
-            <span class="reserved">yield return</span> task;
+            yield return task;
         }
-        <span class="reserved">var</span> html = task.Result;
-        <span class="comment">//↑ここまでが await 相当の処理</span>
+        var html = task.Result;
+        //↑ここまでが await 相当の処理
 
         ShowTitle(html);
     }
 
-    <span class="reserved">yield return null</span>;
+    yield return null;
 }
 
-<span class="reserved">private static void</span> AsyncHelper(<span class="type">IEnumerable</span>&lt;<span class="type">Task</span>&gt; asyncTask)
+private static void AsyncHelper(IEnumerable<Task> asyncTask)
 {
-    <span class="reserved">var</span> e = asyncTask.GetEnumerator();
+    var e = asyncTask.GetEnumerator();
 
-    <span class="type">Action</span> a = <span class="reserved">null</span>;
+    Action a = null;
 
-    a = () =&gt;
+    a = () =>
     {
-        <span class="reserved">if</span> (e.MoveNext() &amp;&amp; e.Current != <span class="reserved">null</span>)
+        if (e.MoveNext() && e.Current != null)
         {
-            e.Current.ContinueWith(t =&gt; a());
+            e.Current.ContinueWith(t => a());
         }
     };
 
     a();
 }
-</code></pre>
+```
 
 
 さらに、イテレーター相当の処理も展開すると以下のようになります。
 
-<pre class="source" title="非同期メソッドの展開結果" lang="">
-<code><span class="reserved">private static void</span> RunAsyncInside(<span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>&gt; uriList)
+```csharp
+private static void RunAsyncInside(IEnumerable<string> uriList)
 {
-    <span class="type">Action</span> a = <span class="reserved">null</span>;
-    <span class="reserved">var</span> e = uriList.GetEnumerator();
-    <span class="reserved">int</span> state = 0;
-    <span class="type">WebClient</span> client = <span class="reserved">null</span>;
-    <span class="type">Task</span>&lt;<span class="reserved">string</span>&gt; task = <span class="reserved">null</span>;
+    Action a = null;
+    var e = uriList.GetEnumerator();
+    int state = 0;
+    WebClient client = null;
+    Task<string> task = null;
 
-    a = () =&gt;
+    a = () =>
     {
-        <span class="reserved">switch</span>(state)
+        switch(state)
         {
-            <span class="reserved">case</span> 0: <span class="reserved">goto</span> State0;
-            <span class="reserved">case</span> 1: <span class="reserved">goto</span> State1;
+            case 0: goto State0;
+            case 1: goto State1;
         }
 
         State0:
-        client = <span class="reserved">new</span> <span class="type">WebClient</span>();
+        client = new WebClient();
 
-        <span class="comment">// goto の都合上、ループは if goto とか if return に置き換わる。</span>
-        <span class="reserved">if</span> (!e.MoveNext()) <span class="reserved">return</span>;
+        // goto の都合上、ループは if goto とか if return に置き換わる。
+        if (!e.MoveNext()) return;
 
-        <span class="comment">//↓ここから</span>
+        //↓ここから
         state = 1;
         task = client.DownloadStringTaskAsync(e.Current);
-        <span class="reserved">if</span> (!task.IsCompleted)
+        if (!task.IsCompleted)
         {
-            task.ContinueWith(t =&gt; a);
-            <span class="reserved">return</span>;
+            task.ContinueWith(t => a);
+            return;
         }
         State1:
-        <span class="reserved">var</span> html = task.Result;
-        <span class="comment">//↑ここまでが await 相当の処理</span>
+        var html = task.Result;
+        //↑ここまでが await 相当の処理
 
         ShowTitle(html);
     };
 
     a();
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="catch-finally"></a>catch句、finally句内でのawait
 
@@ -355,7 +355,7 @@ C# 6からは、catch句、finally句内にも`await`を書けるようになり
 GUI アプリの場合、UI を更新できるのは UI スレッドだけ。
 非同期処理の結果を UI スレッドに返す必要あり。
 参考: 「[[雑記] GUI と非同期処理](misc_uithread.md)」
-<pre>
+```text
 ・ディスパッチャーを呼ぶ仕組み
 WPF とか Silverlight の場合、継続がディスパッチャー経由で呼ばれる。
 SynchronizationContext.Post 経由。
@@ -370,7 +370,7 @@ SynchronizationContext.Post 経由。
 
 ・もし、重たい処理が必要なら
 
-await Task.Run(() =&gt;
+await Task.Run(() =>
 {
     // 重たい処理
     // ここは別スレッドで動いてる
@@ -381,4 +381,4 @@ await Task.Run(() =&gt;
 // UI スレッドで実行しないといけない処理
 
 と書く。
-</pre>
+```

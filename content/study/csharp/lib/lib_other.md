@@ -206,18 +206,18 @@ System.Math クラスに、数学用の関数・定数などが定義されて�
 </table>
 
 
-<pre class="source" title="数学関数の例" lang="">
-<code>Console.Write(<span class="literal">"{0}\n"</span>, Math.Sin(2.0 / 3.0 * Math.PI));
-Console.Write(<span class="literal">"{0}\n"</span>, Math.Log10(10000));
-Console.Write(<span class="literal">"{0}\n"</span>, Math.Pow(2, 8));
-</code></pre>
+```csharp
+Console.Write("{0}\n", Math.Sin(2.0 / 3.0 * Math.PI));
+Console.Write("{0}\n", Math.Log10(10000));
+Console.Write("{0}\n", Math.Pow(2, 8));
+```
 
 
-<pre class="console" title="数学関数の例">
+```console
 0.866025403784439
 4
 256
-</pre>
+```
 
 
 以下、何点か補足。
@@ -293,27 +293,27 @@ ToEven の場合は、0.5 のときに条件分岐したりテーブル参照し
 時刻は System.DateTime で、
 時刻の差、すなわち、経過時間は System.TimeSpan クラスで表されます。
 
-<pre class="source" title="DateTime と TimeSpan" lang="">
-<code>DateTime t = DateTime.Now;
-Console.Write(<span class="literal">"{0}\n"</span>, t);
-Console.Write(<span class="literal">"{0}/{1,2}/{2,2} ({3}) {4,2}:{5:d02}:{6:d02}\n"</span>,
+```csharp
+DateTime t = DateTime.Now;
+Console.Write("{0}\n", t);
+Console.Write("{0}/{1,2}/{2,2} ({3}) {4,2}:{5:d02}:{6:d02}\n",
   t.Year, t.Month, t.Day, t.DayOfWeek,
   t.Hour, t.Minute, t.Second);
 
-Console.Write(<span class="literal">"エンターキーを押して"</span>);
+Console.Write("エンターキーを押して");
 Console.ReadLine();
 
 TimeSpan ts = DateTime.Now - t;
-Console.Write(<span class="literal">"キーを押すまでの時間: {0}[ms]"</span>, ts.TotalSeconds);
-</code></pre>
+Console.Write("キーを押すまでの時間: {0}[ms]", ts.TotalSeconds);
+```
 
 
-<pre class="console" title="DateTime と TimeSpan">
+```console
 2005/09/21 16:51:44
 2005/ 9/21 (Wednesday) 16:51:44
 エンターキーを押して
 キーを押すまでの時間: 2.6738448[ms]
-</pre>
+```
 
 
 

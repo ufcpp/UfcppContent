@@ -19,9 +19,9 @@ C# 7で、[分解](../../../../study/csharp/datatype/deconstruction.md)という
 
 分解という機能のおさらいですが、以下のような書き方でタプルなどの型のメンバーを抽出できる機能です。
 
-<pre class="source" title="分解構文">
-<code><span class="reserved">var</span> (x, y) = tuple;
-</code></pre>
+```csharp
+var (x, y) = tuple;
+```
 
 これ、他のプログラミング言語だと、destructuring とか呼ばれたりしています。
 といっても、文法上正式に destructuring と呼ばれているわけではないんですが(大体の言語は文法上は単に「pattern」とか呼ばれる機能)…

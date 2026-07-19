@@ -58,46 +58,46 @@ event source, observable, event sender, ... など、呼び方はいろいろあ
 
 C# の場合、イベント発生側に「登録口」を作るための専用構文(以下、event 構文)を持っているわけですが。(参考: 「[イベント](sp_event.md)」)
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">EventSource</span>
+class EventSource
 {
-    <span class="reserved">public <em>event</em></span> <span class="type">EventHandler</span>&lt;<span class="reserved">int</span>&gt; Progress; <span class="comment">// 登録口</span>
+    public event EventHandler<int> Progress; // 登録口
 
-    <span class="reserved">private async</span> <span class="type">Task</span> RunAsync()
+    private async Task RunAsync()
     {
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 100; i++)
+        for (int i = 0; i < 100; i++)
         {
-            <span class="reserved">await</span> <span class="type">Task</span>.Delay(100);
-            Progress(<span class="reserved">this</span>, i); <span class="comment">// イベントを起こす</span>
+            await Task.Delay(100);
+            Progress(this, i); // イベントを起こす
         }
     }
 }
 
-<span class="reserved">class</span> <span class="type">EventSubscriber</span> : <span class="type">IDisposable</span>
+class EventSubscriber : IDisposable
 {
-    <span class="type">EventSource</span> _source;
+    EventSource _source;
 
-    <span class="reserved">public</span> EventSubscriber(<span class="type">EventSource</span> source)
+    public EventSubscriber(EventSource source)
     {
         _source = source;
-        source.Progress += OnProgress; <span class="comment">// 購読開始</span>
+        source.Progress += OnProgress; // 購読開始
     }
 
-    <span class="comment">// イベントを受け取って処理</span>
-    <span class="reserved">private void</span> OnProgress(<span class="reserved">object</span> sender, <span class="reserved">int</span> i)
+    // イベントを受け取って処理
+    private void OnProgress(object sender, int i)
     {
-        <span class="type">Console</span>.WriteLine(<span class="literal">"進捗 "</span> + i + <span class="literal">"%"</span>);
+        Console.WriteLine("進捗 " + i + "%");
     }
 
-    <span class="reserved">public void</span> Dispose()
+    public void Dispose()
     {
-        _source.Progress -= OnProgress; <span class="comment">// 購読解除</span>
+        _source.Progress -= OnProgress; // 購読解除
     }
 }
-</code></pre>
+```
 
 
 以下のような挙動になります。
@@ -137,82 +137,82 @@ C# の event 構文では、イベント購読の開始・解除が <code>+=</co
 これで何が問題かというと、add で渡したものと同じものを remove に渡さないといけないという点です。
 当たり前のようで、匿名関数(ラムダ式)を多用する今の C# 的には結構きつかったりします。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">AnonymousFunctionProbrem</span>
+class AnonymousFunctionProbrem
 {
-    <span class="reserved">public event</span> <span class="type">Action</span> X;
+    public event Action X;
 
-    <span class="reserved">private void</span> RaiseX() =&gt; X?.Invoke();
+    private void RaiseX() => X?.Invoke();
 
-    <span class="reserved">public void</span> IncorrectSample()
+    public void IncorrectSample()
     {
-        <span class="comment">// 購読開始</span>
-        X += () =&gt; <span class="type">Console</span>.WriteLine(<span class="literal">"X"</span>);
+        // 購読開始
+        X += () => Console.WriteLine("X");
 
-        <span class="comment">// 数回、イベントを起こしてみる</span>
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++) RaiseX();
+        // 数回、イベントを起こしてみる
+        for (int i = 0; i < 5; i++) RaiseX();
 
-        <span class="comment">// 購読解除は、これだと実はできてない
-        // () =&gt; ... の部分が、それぞれ別オブジェクトになってて、remove できない
-        // というか、2か所に書かせるな</span>
-        X -= () =&gt; <span class="type">Console</span>.WriteLine(<span class="literal">"X"</span>);
+        // 購読解除は、これだと実はできてない
+        // () => ... の部分が、それぞれ別オブジェクトになってて、remove できない
+        // というか、2か所に書かせるな
+        X -= () => Console.WriteLine("X");
 
-        <span class="comment">// このイベントは受け取ってしまう。</span>
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++) RaiseX();
+        // このイベントは受け取ってしまう。
+        for (int i = 0; i < 5; i++) RaiseX();
     }
 
-    <span class="reserved">public void</span> CorrectSample()
+    public void CorrectSample()
     {
-        <span class="comment">// こうすればいい。のだけど…
-        // どこにでも書けるのが匿名関数(ラムダ式)のいいところなのに、そのよさが台無し</span>
-        <span class="type">Action</span> handler = () =&gt; <span class="type">Console</span>.WriteLine(<span class="literal">"X"</span>);
+        // こうすればいい。のだけど…
+        // どこにでも書けるのが匿名関数(ラムダ式)のいいところなのに、そのよさが台無し
+        Action handler = () => Console.WriteLine("X");
 
         X += handler;
 
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++) RaiseX();
+        for (int i = 0; i < 5; i++) RaiseX();
 
         X -= handler;
 
-        <span class="comment">// ちゃんと購読解除されてる</span>
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++) RaiseX();
+        // ちゃんと購読解除されてる
+        for (int i = 0; i < 5; i++) RaiseX();
     }
-</code></pre>
+```
 
 
 この問題の原因は add/remove (<code>+=</code>/<code>-=</code>)のペアでイベント購読をやっているせいです。
 解決策として簡単なのは、イベント購読解除側を IDisposable にしてしまう方法。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reactive.Disposables;
+```csharp
+using System;
+using System.Reactive.Disposables;
 
-<span class="reserved">class</span> <span class="type">SubscribeAnonymousFunctionProbrem</span>
+class SubscribeAnonymousFunctionProbrem
 {
-    <span class="reserved">public event</span> <span class="type">Action</span> X;
+    public event Action X;
 
-    <span class="reserved">public</span> <span class="type">IDisposable</span> SubscribeX(<span class="type">Action</span> handler)
+    public IDisposable SubscribeX(Action handler)
     {
         X += handler;
-        <span class="reserved">return</span> <span class="type">Disposable</span>.Create(() =&gt; X -= handler);
+        return Disposable.Create(() => X -= handler);
     }
 
-    <span class="reserved">private void</span> RaiseX() =&gt; X?.Invoke();
+    private void RaiseX() => X?.Invoke();
 
-    <span class="reserved">public void</span> CorrectSample()
+    public void CorrectSample()
     {
-        <span class="comment">// 購読解除は Dispose でやればいい</span>
-        <span class="reserved">using</span> (SubscribeX(() =&gt; <span class="type">Console</span>.WriteLine(<span class="literal">"X"</span>)))
+        // 購読解除は Dispose でやればいい
+        using (SubscribeX(() => Console.WriteLine("X")))
         {
-            <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++) RaiseX();
+            for (int i = 0; i < 5; i++) RaiseX();
         }
 
-        <span class="comment">// ちゃんと購読解除されてる</span>
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++) RaiseX();
+        // ちゃんと購読解除されてる
+        for (int i = 0; i < 5; i++) RaiseX();
     }
 }
-</code></pre>
+```
 
 
 
@@ -223,42 +223,42 @@ event 構文で作った「イベント登録口」は、「オブジェクト�
 
 例えば、以下の例では、ボタンに対して「1回クリックされるのを待つ Task を作る」というような処理をしています。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">// ボタンのクリックを1回受け取るまで待ちたい</span>
-<span class="reserved">public static</span> <span class="type">Task</span> FirstClickAsync(<span class="reserved">this</span> <span class="type">Button</span> x)
+```csharp
+// ボタンのクリックを1回受け取るまで待ちたい
+public static Task FirstClickAsync(this Button x)
 {
-    <span class="reserved">var</span> tcs = <span class="reserved">new</span> <span class="type">TaskCompletionSource</span>&lt;<span class="reserved">bool</span>&gt;();
-    <span class="type">RoutedEventHandler</span> handler = <span class="reserved">null</span>;
-    handler = (sender, arg) =&gt;
+    var tcs = new TaskCompletionSource<bool>();
+    RoutedEventHandler handler = null;
+    handler = (sender, arg) =>
     {
         x.Click -= handler;
-        tcs.TrySetResult(<span class="reserved">false</span>);
+        tcs.TrySetResult(false);
     };
     x.Click += handler;
-    <span class="reserved">return</span> tcs.Task;
+    return tcs.Task;
 }
-</code></pre>
+```
 
 
 これ自体はいいんですが、次に、同じような処理をダブルクリックのイベントでやりたくなったとします。
 同じようなコードをもう1つ書く必要があります。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">// ボタンのダブルクリックを1回受け取るまで待ちたい
-// FirstClickAsync とほとんど同じなのに…</span>
-<span class="reserved">public static</span> <span class="type">Task</span> FirstDoubleClickAsync(<span class="reserved">this</span> <span class="type">Button</span> x)
+```csharp
+// ボタンのダブルクリックを1回受け取るまで待ちたい
+// FirstClickAsync とほとんど同じなのに…
+public static Task FirstDoubleClickAsync(this Button x)
 {
-    <span class="reserved">var</span> tcs = <span class="reserved">new</span> <span class="type">TaskCompletionSource</span>&lt;<span class="reserved">bool</span>&gt;();
-    <span class="type">MouseButtonEventHandler</span> handler = <span class="reserved">null</span>;
-    handler = (sender, arg) =&gt;
+    var tcs = new TaskCompletionSource<bool>();
+    MouseButtonEventHandler handler = null;
+    handler = (sender, arg) =>
     {
         x.MouseDoubleClick -= handler;
-        tcs.TrySetResult(<span class="reserved">false</span>);
+        tcs.TrySetResult(false);
     };
     x.MouseDoubleClick += handler;
-    <span class="reserved">return</span> tcs.Task;
+    return tcs.Task;
 }
-</code></pre>
+```
 
 
 残念ながら、この2つのコードは、ほとんど見た目が同じなのに、処理を共通化できません。
@@ -267,82 +267,82 @@ event 構文で作った「イベント登録口」は、「オブジェクト�
 そうなってしまう原因は、イベントがメソッドの引数として渡せないことにあります。
 希望を言うなら以下のようなことができればよかったんですが、これはできません。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">// こんな感じのコードが書けたらよかったのにな(もちろん無理。コンパイル エラー)</span>
-<span class="reserved">public static</span> <span class="type">Task</span> FirstAsync&lt;<span class="type">TEventHandler</span>&gt;(<span class="reserved">this event</span> <span class="type">TEventHandler</span> x)
+```csharp
+// こんな感じのコードが書けたらよかったのにな(もちろん無理。コンパイル エラー)
+public static Task FirstAsync<TEventHandler>(this event TEventHandler x)
 {
-    <span class="reserved">var</span> tcs = <span class="reserved">new</span> <span class="type">TaskCompletionSource</span>&lt;<span class="reserved">bool</span>&gt;();
-    <span class="type">TEventHandler</span> handler = <span class="reserved">null</span>;
-    handler = (sender, arg) =&gt;
+    var tcs = new TaskCompletionSource<bool>();
+    TEventHandler handler = null;
+    handler = (sender, arg) =>
     {
         x -= handler;
-        tcs.TrySetResult(<span class="reserved">false</span>);
+        tcs.TrySetResult(false);
     };
     x += handler;
-    <span class="reserved">return</span> tcs.Task;
+    return tcs.Task;
 }
-</code></pre>
+```
 
 
 この問題の解決策は、1段階、以下のようなクラスを作ってラップしてしまうことです。
 event 構文を直接使うのをやめる。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reactive.Disposables;
+```csharp
+using System;
+using System.Reactive.Disposables;
 
-<span class="comment">// イベントの登録口。</span>
-<span class="reserved">public interface</span> <span class="type">IEvent</span>&lt;<span class="type">TArg</span>&gt;
+// イベントの登録口。
+public interface IEvent<TArg>
 {
-    <span class="type">IDisposable</span> Subscribe(<span class="type">EventHandler</span>&lt;<span class="type">TArg</span>&gt; handler);
+    IDisposable Subscribe(EventHandler<TArg> handler);
 }
 
-<span class="comment">// イベントの登録口の実装 + イベントを起こす機能。</span>
-<span class="reserved">public class</span> <span class="type">Event</span>&lt;<span class="type">TArg</span>&gt; : <span class="type">IEvent</span>&lt;<span class="type">TArg</span>&gt;
+// イベントの登録口の実装 + イベントを起こす機能。
+public class Event<TArg> : IEvent<TArg>
 {
-    <span class="reserved">event</span> <span class="type">EventHandler</span>&lt;<span class="type">TArg</span>&gt; e;
+    event EventHandler<TArg> e;
 
-    <span class="reserved">public</span> <span class="type">IDisposable</span> Subscribe(<span class="type">EventHandler</span>&lt;<span class="type">TArg</span>&gt; handler)
+    public IDisposable Subscribe(EventHandler<TArg> handler)
     {
         e += handler;
-        <span class="reserved">return</span> <span class="type">Disposable</span>.Create(() =&gt; e -= handler);
+        return Disposable.Create(() => e -= handler);
     }
 
-    <span class="reserved">public void</span> Raise(<span class="reserved">object</span> sender, <span class="type">TArg</span> arg) =&gt; e?.Invoke(sender, arg);
+    public void Raise(object sender, TArg arg) => e?.Invoke(sender, arg);
 }
-</code></pre>
+```
 
 
 つまり、Button クラスに以下のようであってほしい。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Button</span>
+```csharp
+class Button
 {
-    <span class="reserved">public</span> <span class="type">IEvent</span>&lt;<span class="type">RoutedEventArgs</span>&gt; Click =&gt; _click;
-    <span class="reserved">private</span> <span class="type">Event</span>&lt;<span class="type">RoutedEventArgs</span>&gt; _click = <span class="reserved">new</span> <span class="type">Event</span>&lt;<span class="type">RoutedEventArgs</span>&gt;();
+    public IEvent<RoutedEventArgs> Click => _click;
+    private Event<RoutedEventArgs> _click = new Event<RoutedEventArgs>();
 
-    <span class="reserved">public</span> <span class="type">IEvent</span>&lt;<span class="type">MouseButtonEventArgs</span>&gt; MouseDoubleClick =&gt; _mouseDoubleClick;
-    <span class="reserved">private</span> <span class="type">Event</span>&lt;<span class="type">MouseButtonEventArgs</span>&gt; _mouseDoubleClick = <span class="reserved">new</span> <span class="type">Event</span>&lt;<span class="type">MouseButtonEventArgs</span>&gt;();
+    public IEvent<MouseButtonEventArgs> MouseDoubleClick => _mouseDoubleClick;
+    private Event<MouseButtonEventArgs> _mouseDoubleClick = new Event<MouseButtonEventArgs>();
 }
-</code></pre>
+```
 
 
 これなら、どんなイベントであろうと、1つのメソッドで共通処理を書けます。
 先ほどの「イベントを1回受け取るまで待ちたい」という例であれば、以下のように書けます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public static</span> <span class="type">Task</span> FirstAsync&lt;<span class="type">TArg</span>&gt;(<span class="reserved">this</span> <span class="type">IEvent</span>&lt;<span class="type">TArg</span>&gt; x)
+```csharp
+public static Task FirstAsync<TArg>(this IEvent<TArg> x)
 {
-    <span class="reserved">var</span> tcs = <span class="reserved">new</span> <span class="type">TaskCompletionSource</span>&lt;<span class="reserved">bool</span>&gt;();
-    <span class="type">IDisposable</span> subscription = <span class="reserved">null</span>;
-    subscription = x.Subscribe((sender, arg) =&gt;
+    var tcs = new TaskCompletionSource<bool>();
+    IDisposable subscription = null;
+    subscription = x.Subscribe((sender, arg) =>
     {
         subscription.Dispose();
-        tcs.TrySetResult(<span class="reserved">false</span>);
+        tcs.TrySetResult(false);
     });
-    <span class="reserved">return</span> tcs.Task;
+    return tcs.Task;
 }
-</code></pre>
+```
 
 
 
@@ -357,55 +357,55 @@ C# の event 構文では、add/remove 句を書かなかった場合、コン�
 
 以下のようなイベントを書いたとします。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">EventInternal</span>
+class EventInternal
 {
-    <span class="reserved">public event</span> <span class="type">EventHandler</span> X;
+    public event EventHandler X;
 }
-</code></pre>
+```
 
 
 自動実装の結果は以下のようなものになります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Threading;
 
-<span class="reserved">class</span> <span class="type">SameAsEventInternal</span>
+class SameAsEventInternal
 {
-    <span class="reserved">private</span> <span class="type">EventHandler</span> _X;
+    private EventHandler _X;
 
-    <span class="reserved">public event</span> <span class="type">EventHandler</span> X
+    public event EventHandler X
     {
-        <span class="reserved">add</span>
+        add
         {
-            <span class="type">EventHandler</span> x2;
-            <span class="reserved">var</span> x1 = _X;
-            <span class="reserved">do</span>
+            EventHandler x2;
+            var x1 = _X;
+            do
             {
                 x2 = x1;
-                <span class="reserved">var</span> x3 = (<span class="type">EventHandler</span>)<span class="type">Delegate</span>.Combine(x2, <span class="reserved">value</span>);
-                x1 = <span class="type">Interlocked</span>.CompareExchange(<span class="reserved">ref</span> _X, x3, x2);
+                var x3 = (EventHandler)Delegate.Combine(x2, value);
+                x1 = Interlocked.CompareExchange(ref _X, x3, x2);
             }
-            <span class="reserved">while</span> (x1 != x2);
+            while (x1 != x2);
         }
-        <span class="reserved">remove</span>
+        remove
         {
-            <span class="type">EventHandler</span> x2;
-            <span class="reserved">var</span> x1 = _X;
-            <span class="reserved">do</span>
+            EventHandler x2;
+            var x1 = _X;
+            do
             {
                 x2 = x1;
-                <span class="reserved">var</span> x3 = (<span class="type">EventHandler</span>)<span class="type">Delegate</span>.Remove(x2, <span class="reserved">value</span>);
-                x1 = <span class="type">Interlocked</span>.CompareExchange(<span class="reserved">ref</span> _X, x3, x2);
+                var x3 = (EventHandler)Delegate.Remove(x2, value);
+                x1 = Interlocked.CompareExchange(ref _X, x3, x2);
             }
-            <span class="reserved">while</span> (x1 != x2);
+            while (x1 != x2);
         }
     }
 }
-</code></pre>
+```
 
 
 軽く説明すると、スレッド安全性を保証しつつ、実行性能を落とさないようにする工夫の結果、こんな大変なコードになりました。
@@ -434,13 +434,13 @@ Subject クラス(System.Reactive.Subjects 名前空間)が、同じ用途に使
 (ちなみに、IEvent に相当するようなものは、.NET の標準ライブラリに最初からあったりします。IObservable インターフェイス(System 名前空間)。)
 さきほどの、「Button クラスがこうだったらよかったのに」コードは、Rx を使って書くなら以下のようになります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">class</span> <span class="type">Button</span>
+```csharp
+class Button
 {
-    <span class="reserved">public</span> <span class="type">IObservable</span>&lt;<span class="type">RoutedEventArgs</span>&gt; Click =&gt; _click;
-    <span class="reserved">private</span> <span class="type">Subject</span>&lt;<span class="type">RoutedEventArgs</span>&gt; _click = <span class="reserved">new</span> <span class="type">Subject</span>&lt;<span class="type">RoutedEventArgs</span>&gt;();
+    public IObservable<RoutedEventArgs> Click => _click;
+    private Subject<RoutedEventArgs> _click = new Subject<RoutedEventArgs>();
 
-    <span class="reserved">public</span> <span class="type">IObservable</span>&lt;<span class="type">MouseButtonEventArgs</span>&gt; MouseDoubleClick =&gt; _mouseDoubleClick;
-    <span class="reserved">private</span> <span class="type">Subject</span>&lt;<span class="type">MouseButtonEventArgs</span>&gt; _mouseDoubleClick = <span class="reserved">new</span> <span class="type">Subject</span>&lt;<span class="type">MouseButtonEventArgs</span>&gt;();
+    public IObservable<MouseButtonEventArgs> MouseDoubleClick => _mouseDoubleClick;
+    private Subject<MouseButtonEventArgs> _mouseDoubleClick = new Subject<MouseButtonEventArgs>();
 }
-</code></pre>
+```

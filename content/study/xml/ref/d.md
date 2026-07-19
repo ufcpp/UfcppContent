@@ -25,29 +25,32 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;d/&gt;
-</pre>
+```xml
+<d/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;d/&gt;x = &lt;cos/&gt;t&lt;d/&gt;t
-</pre><div class="math"><span class="normal">d</span>x = <span class="normal">cos</span>t<span class="normal">d</span>t
+```xml
+<d/>x = <cos/>t<d/>t
+```
+<div class="math"><span class="normal">d</span>x = <span class="normal">cos</span>t<span class="normal">d</span>t
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:d"&gt;
-  &lt;span class="normal"&gt;d&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:d">
+  <span class="normal">d</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.normal
+```css
+span.normal
 {
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

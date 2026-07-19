@@ -20,17 +20,17 @@ C#は構文糖衣が結構多い言語です。
 
 例えば[クエリ式](../../../../study/csharp/data/sp3_linq.md#query)がわかりやすいですが、以下の3つの式は全く同じ意味になります。
 
-<pre class="source" title="クエリ式">
-<code><span class="reserved">from</span> x <span class="reserved">in</span> data <span class="reserved">where</span> x &gt; 2 <span class="reserved">select</span> x * x
-</code></pre>
+```csharp
+from x in data where x > 2 select x * x
+```
 
-<pre class="source" title="クエリ式 → メソッド呼び出しに展開">
-<code>data.Where(x =&gt; x &gt; 2).Select(x =&gt; x * x)
-</code></pre>
+```csharp
+data.Where(x => x > 2).Select(x => x * x)
+```
 
-<pre class="source" title="拡張メソッド → 静的メソッドに展開">
-<code><span class="type">Enumerable</span>.Select(<span class="type">Enumerable</span>.Where(data, x =&gt; x &gt; 2), x =&gt; x * x)
-</code></pre>
+```csharp
+Enumerable.Select(Enumerable.Where(data, x => x > 2), x => x * x)
+```
 
 ということで、C#の機能を説明するとき、結構、「こういうコードと同じ意味になります」というような文章を書くことは多いです。
 
@@ -57,21 +57,21 @@ C#上の構文糖衣でどうこうできるわけではなくて、.NETのメ�
 
 例えばC# 4.0以降で以下のようなコードを書いたとしましょう。型引数`T`に、共変であることを示す`out`修飾子を付けています。
 
-<pre class="source" title="共変なジェネリック型引数T">
-<code><span class="reserved">interface</span> <span class="type">IWrapper</span>&lt;<span class="reserved">out</span> <span class="type">T</span>&gt;
+```csharp
+interface IWrapper<out T>
 {
-    <span class="type">T</span> Value { <span class="reserved">get</span>; }
+    T Value { get; }
 }
-</code></pre>
+```
 
 逆アセンブルしてみると以下のようになっています。
 ILのレベルでも、`T`の前に`+`という記号が入っていますが、これが共変を表すフラグです。
 
-<pre class="source" title="">
-<code>.class <span class="reserved">interface</span> <span class="reserved">private</span> <span class="reserved">abstract</span> <span class="reserved">auto</span> <span class="reserved">ansi</span> IWrapper`1&lt;+ T&gt;
+```cil
+.class interface private abstract auto ansi IWrapper`1<+ T>
 {
-} <span class="comment">// end of class IWrapper`1
-</code></pre>
+} // end of class IWrapper`1
+```
 
 このフラグは、IL的には .NET 2.0の頃からありましたが、
 C#からこのフラグをいじれるようになったのはC# 4.0(.NET 4と同世代)からです。
@@ -94,22 +94,22 @@ ILはそんな安全性とか気にしないので、昔から参照戻り値を
 
 例えば、C# 7で以下のようなコードを書いたとします。
 
-<pre class="source" title="参照戻り値を使ったC#コード">
-<code><span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> RefMax(<span class="reserved">ref</span> <span class="reserved">int</span> x, <span class="reserved">ref</span> <span class="reserved">int</span> y)
+```csharp
+static ref int RefMax(ref int x, ref int y)
 {
-    <span class="reserved">if</span> (x &gt;= y) <span class="reserved">return</span> <span class="reserved">ref</span> x;
-    <span class="reserved">else</span> <span class="reserved">return</span> <span class="reserved">ref</span> y;
+    if (x >= y) return ref x;
+    else return ref y;
 }
-</code></pre>
+```
 
 コンパイル結果は以下の通り。`&`が参照を表す記号です。
 
-<pre class="source" title="IL的には参照は &amp;">
-<code>.method <span class="reserved">private</span> <span class="reserved">hidebysig</span> <span class="reserved">static</span> <span class="reserved">int32</span>&amp;  RefMax(<span class="reserved">int32</span>&amp; x,
-                                                <span class="reserved">int32</span>&amp; y) <span class="reserved">cil</span> <span class="reserved">managed</span>
+```cil
+.method private hidebysig static int32&  RefMax(int32& x,
+                                                int32& y) cil managed
 {
-  <span class="comment">// コード サイズ       10 (0xa)
-</span>  .maxstack  8
+  // コード サイズ       10 (0xa)
+  .maxstack  8
   IL_0000:  ldarg.0
   IL_0001:  ldind.i4
   IL_0002:  ldarg.1
@@ -119,9 +119,8 @@ ILはそんな安全性とか気にしないので、昔から参照戻り値を
   IL_0007:  ret
   IL_0008:  ldarg.1
   IL_0009:  ret
-} <span class="comment">// end of method Program::RefMax
-</span>
-</code></pre>
+} // end of method Program::RefMax
+```
 
 このコードは、.NET 1.0の頃から書けました。
 もっとも、`int32&` (C# 7でいう`ref int`)の戻り値を受け取る手段がなかったので、実際のところ書いてもC#からは使えないコードになります(例えばこのコードをVisual Studio 2017でコンパイルして、その結果のDLLをVisual Studio 2015から参照した場合、このメソッドはクラスのメンバー一覧情報のところに表示されません)。
@@ -130,22 +129,22 @@ ILはそんな安全性とか気にしないので、昔から参照戻り値を
 例えば、以下のようなunsafeなコードを書いてみます。
 ポインターになっただけで、やっていることは先ほどの参照を使ったコードとまったく同じです。
 
-<pre class="source" title="ポインターを使ったC#コード">
-<code><span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">int</span>* RefMax(<span class="reserved">int</span>* x, <span class="reserved">int</span>* y)
+```csharp
+unsafe static int* RefMax(int* x, int* y)
 {
-    <span class="reserved">if</span> (*x &gt;= *y) <span class="reserved">return</span> x;
-    <span class="reserved">else</span> <span class="reserved">return</span> y;
+    if (*x >= *y) return x;
+    else return y;
 }
-</code></pre>
+```
 
 こちらのコンパイル結果は以下のようになります。`&`が`*`に変わった以外の部分は一字一句たがわず、先ほどのコードと完全に一致しています。
 
-<pre class="source" title="IL的にはポインターは*">
-<code>.method <span class="reserved">private</span> <span class="reserved">hidebysig</span> <span class="reserved">static</span> <span class="reserved">int32</span>*  RefMax(<span class="reserved">int32</span>* x,
-                                                <span class="reserved">int32</span>* y) <span class="reserved">cil</span> <span class="reserved">managed</span>
+```cil
+.method private hidebysig static int32*  RefMax(int32* x,
+                                                int32* y) cil managed
 {
-  <span class="comment">// コード サイズ       10 (0xa)
-</span>  .maxstack  8
+  // コード サイズ       10 (0xa)
+  .maxstack  8
   IL_0000:  ldarg.0
   IL_0001:  ldind.i4
   IL_0002:  ldarg.1
@@ -155,9 +154,8 @@ ILはそんな安全性とか気にしないので、昔から参照戻り値を
   IL_0007:  ret
   IL_0008:  ldarg.1
   IL_0009:  ret
-} <span class="comment">// end of method Program::RefMax
-</span>
-</code></pre>
+} // end of method Program::RefMax
+```
 
 `ldind`はload indirect (間接ロード)の略で、
 ポインターや参照ごしに値を取ってくる命令です。
@@ -182,25 +180,24 @@ ILはそんな安全性とか気にしないので、昔から参照戻り値を
 以下のような感じで、実はほぼ素通しです。
 ロード(`ldarg`)して、即リターン(`ret`)。
 
-<pre class="source" title="参照とポインターは実はほぼ素通しで変換可能">
-<code>.method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">static</span> <span class="reserved">void</span>* AsPointer&lt;T&gt;(!!T&amp; 'value') <span class="reserved">cil</span> <span class="reserved">managed</span> aggressiveinlining
+```cil
+.method public hidebysig static void* AsPointer<T>(!!T& 'value') cil managed aggressiveinlining
   {
-        .custom <span class="reserved">instance</span> <span class="reserved">void</span> System.Runtime.Versioning.NonVersionableAttribute::<span class="reserved">.ctor</span>() = ( 01 00 00 00 )
+        .custom instance void System.Runtime.Versioning.NonVersionableAttribute::.ctor() = ( 01 00 00 00 )
         .maxstack 1
         ldarg.0
         conv.u
         ret
-  } <span class="comment">// end of method Unsafe::AsPointer
-</span>
-    .method <span class="reserved">public</span> <span class="reserved">hidebysig</span> <span class="reserved">static</span> !!T&amp; AsRef&lt;T&gt;(<span class="reserved">void</span>* source) <span class="reserved">cil</span> <span class="reserved">managed</span> aggressiveinlining
+  } // end of method Unsafe::AsPointer
+
+    .method public hidebysig static !!T& AsRef<T>(void* source) cil managed aggressiveinlining
   {
-        .custom <span class="reserved">instance</span> <span class="reserved">void</span> System.Runtime.Versioning.NonVersionableAttribute::<span class="reserved">.ctor</span>() = ( 01 00 00 00 )
+        .custom instance void System.Runtime.Versioning.NonVersionableAttribute::.ctor() = ( 01 00 00 00 )
         .maxstack 1
         ldarg.0
         ret
-  } <span class="comment">// end of method Unsafe::AsRef
-</span>
-</code></pre>
+  } // end of method Unsafe::AsRef
+```
 
 ちなみに、`conv.u`命令は、ネイティブ(CPUの種類に応じて32bitか64bitか切り替わる)符号なし整数への変換命令です。
 ポインター = ネイティブ符号なし整数。

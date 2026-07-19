@@ -33,14 +33,14 @@ aliases: []
 
 要は、以下のような「いつものおまじない」なしでいきなり(トップレベル、あるいは、名前空間直下のレベルに)ステートメントとかメソッドを書きたいという話になります。
 
-<pre class="source" title="いつものおまじない">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
     }
 }
-</code></pre>
+```
 
 主たる目的として3つのシナリオが上がっています。
 
@@ -91,31 +91,31 @@ aliases: []
 
 例えば以下のような `Point` クラスがあったとして
 
-<pre class="source" title="value 修飾が付いたプロパティを元に Equals を生成">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+public class Point
 {
-    <span class="reserved">public</span> <span class="reserved">value</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">value</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public value int X { get; set; }
+    public value int Y { get; set; }
 }
-</code></pre>
+```
 
 以下のようなコード扱いしたいそうです。
 
-<pre class="source" title="value 修飾からの生成結果">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+public class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
+    public int Y { get; set; }
 
-    <span class="reserved">protected</span> <span class="reserved">virtual</span> Type EqualityContract =&gt; <span class="reserved">typeof</span>(Point);
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">bool</span> Equals(<span class="reserved">object</span>? other) =&gt;
-        other <span class="reserved">is</span> Point that
-        &amp;&amp; <span class="reserved">this</span>.EqualityContract == that.EqualityContract
-        &amp;&amp; <span class="reserved">this</span>.X == that.X
-        &amp;&amp; <span class="reserved">this</span>.Y == that.Y;
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> GetHashCode() =&gt; ... X ... Y ... ;
+    protected virtual Type EqualityContract => typeof(Point);
+    public override bool Equals(object? other) =>
+        other is Point that
+        && this.EqualityContract == that.EqualityContract
+        && this.X == that.X
+        && this.Y == that.Y;
+    public override int GetHashCode() => ... X ... Y ... ;
 }
-</code></pre>
+```
 
 `EqualityContract` プロパティを用意しているのは、
 対称性の確保のため。
@@ -124,18 +124,18 @@ aliases: []
 単に `GetType()` メソッドで型判定しないのは、
 以下のような、追加のメンバーを持っていない派生クラスは互いに一致判定できるようにです。
 
-<pre class="source" title="派生クラスの一致">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">value</span> <span class="reserved">int</span> Id { <span class="reserved">get</span>; }
+    public value int Id { get; }
 }
 
-<span class="comment">// 以下の2つの型は特に追加で value 修飾の付いたメンバーを持っていないので、</span>
-<span class="comment">// Id さえ一致していれば互いに Equals 判定できる。</span>
-<span class="comment">// EqualityContract はどちらも typeof(Base) を返す。</span>
-<span class="reserved">class</span> <span class="type">Derived1</span> : Base { }
-<span class="reserved">class</span> <span class="type">Derived2</span> : Base { }
-</code></pre>
+// 以下の2つの型は特に追加で value 修飾の付いたメンバーを持っていないので、
+// Id さえ一致していれば互いに Equals 判定できる。
+// EqualityContract はどちらも typeof(Base) を返す。
+class Derived1 : Base { }
+class Derived2 : Base { }
+```
 
 #### value types
 
@@ -147,17 +147,17 @@ aliases: []
 
 長らく、以下のようなコードの冗長性が嫌だという話がずっと言われ続けています。
 
-<pre class="source" title="冗長なコード">
-<code><span class="comment">// プロパティ、コンストラクター引数、代入の左右の4か所で同じ名前を書くのが冗長</span>
-<span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Person</span>
+```csharp
+// プロパティ、コンストラクター引数、代入の左右の4か所で同じ名前を書くのが冗長
+public abstract class Person
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Person</span>(<span class="reserved">string</span> name)
+    public string Name { get; }
+    public Person(string name)
     {
         Name = name;
     }
 }
-</code></pre>
+```
 
 これを、最終的には `class Person(string Name);` くらいまで縮めたいというのが Records の肝なんですが、これも、いくつかの段階に分けて考えようとしているみたいです。
 
@@ -166,60 +166,60 @@ aliases: []
 まず、direct constructor parameters という案。
 以下のように、コンストラクター引数に対応するプロパティだけを書くという方式。
 
-<pre class="source" title="direct constructor parameters">
-<code><span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Person</span>
+```csharp
+public abstract class Person
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Person</span>(Name) <span class="comment">// 型名なしで、プロパティ名だけ指定</span>
+    public string Name { get; }
+    public Person(Name) // 型名なしで、プロパティ名だけ指定
     {
-        <span class="comment">// this.Name = Name 的なコードが追加される</span>
+        // this.Name = Name 的なコードが追加される
  
-        <span class="comment">// 追加で、値の検証コードとか書くのは自由にできる</span>
-        <span class="control">if</span> (Name <span class="reserved">is</span> <span class="reserved">null</span>) <span class="control">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(Name));
+        // 追加で、値の検証コードとか書くのは自由にできる
+        if (Name is null) throw new ArgumentNullException(nameof(Name));
     }
 }
-</code></pre>
+```
 
 #### primary constructors
 
 次が primary constructors で、以下のように、クラス宣言の行に直接引数を書けるようにするもの。
 検証コードの類は「`()` なしのコンストラクター」みたいな構文が提案されています。
 
-<pre class="source" title="primary constructors">
-<code><span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Person</span>(<span class="reserved">string</span> name)
+```csharp
+public abstract class Person(string name)
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; } = name;
+    public string Name { get; } = name;
  
-    <span class="reserved">public</span> <span class="type">Person</span> <span class="comment">// () なしのコンストラクター構文</span>
+    public Person // () なしのコンストラクター構文
     {
-        <span class="comment">// primary constructor に対する検証コードはここに書く</span>
-        <span class="reserved">if</span> (name <span class="reserved">is</span> <span class="reserved">null</span>) <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(Name));
+        // primary constructor に対する検証コードはここに書く
+        if (name is null) throw new ArgumentNullException(nameof(Name));
     }
 }
-</code></pre>
+```
 
 primary constructors は先ほどの direct constructor parameters と相乗効果あり。
 
-<pre class="source" title="primary constructors + direct constructor parameters">
-<code><span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Person</span>(Name) <span class="comment">// primary constructors + direct constructor parameters</span>
+```csharp
+public abstract class Person(Name) // primary constructors + direct constructor parameters
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; }
+    public string Name { get; }
  
-    <span class="reserved">public</span> <span class="type">Person</span>
+    public Person
     {
-        <span class="reserved">if</span> (Name <span class="reserved">is</span> <span class="reserved">null</span>) <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(Name));
+        if (Name is null) throw new ArgumentNullException(nameof(Name));
     }
 }
-</code></pre>
+```
 
 #### primary constructor member declarations
 
 プロパティと direct constructor parameters の重複も避けたいということで、さらに踏み込んだ文法として primary constructor member declarations があります。
 primary constructor の引数の部分に直接メンバー宣言を書いてしまうもの。
 
-<pre class="source" title="direct constructor parameters">
-<code><span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Person</span>(<span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; });
-</code></pre>
+```csharp
+public abstract class Person(public string Name { get; });
+```
 
 ### Improvements for object inititalizers
 
@@ -232,31 +232,31 @@ immutable が重宝されるこのご時世にはつらいと言われていま�
 
 オブジェクト初期化子では書き換えられるけど、それ以外の場所では書き換え不能という意味で、set の代わりに init アクセサーを持つプロパティ(init-only properties)を認めようというもの。
 
-<pre class="source" title="init アクセサー">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+public class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int X { get; init; }
+    public int Y { get; init; }
 }
  
-<span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span> { X = 5, Y = 3 }; <span class="comment">// OK</span>
-p.Y = 7; <span class="comment">// エラー。初期化子以外での Y の書き換えは認めない</span>
-</code></pre>
+var p = new Point { X = 5, Y = 3 }; // OK
+p.Y = 7; // エラー。初期化子以外での Y の書き換えは認めない
+```
 
 #### validation accessors for auto-properties
 
 「get だけ[自動実装](../../../../study/csharp/oop/oo_property.md#auto)して、set 内の検証コードは普通に書きたい」ということがあるので、それを認めようかという話。
 
-<pre class="source" title="validation accessors">
-<code><span class="reserved">public</span> <span class="reserved">string</span> Name
+```csharp
+public string Name
 {
-    <span class="comment">// get の実装を省略</span>
-    <span class="reserved">get</span>;
+    // get の実装を省略
+    get;
  
-    <span class="comment">// set には検証コードだけ書く</span>
-    <span class="reserved">set</span> { <span class="control">if</span> (<span class="reserved">value</span> <span class="reserved">is</span> <span class="reserved">null</span>) <span class="control">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(Name)); }
+    // set には検証コードだけ書く
+    set { if (value is null) throw new ArgumentNullException(nameof(Name)); }
 }
-</code></pre>
+```
 
 前述の init アクセサーでも同様。
 
@@ -272,9 +272,9 @@ p.Y = 7; <span class="comment">// エラー。初期化子以外での Y の書�
 immutable な型のインスタンスに対して、非破壊な書き換え(non-destructive mutation)、すなわち、「コピーを作って一部のメンバーだけ書き換えたインスタンスを作りたい」ということが結構あります。
 これに対して、以下のような with 構文を導入したいという話は前々からありました。
 
-<pre class="source" title="with 構文">
-<code><span class="reserved">var</span> <span class="variable">p2</span> = p1 <span class="reserved">with</span> { X = 4 };
-</code></pre>
+```csharp
+var p2 = p1 with { X = 4 };
+```
 
 問題は、この with 構文をどう解釈(どうコード生成)すべきかという点です。
 
@@ -283,59 +283,59 @@ immutable な型のインスタンスに対して、非破壊な書き換え(non
 with は、以下のような `With` メソッドとそれの呼び出しに展開しようという案になっています。
 `With` メソッドの生成トリガーにするために、クラスには data 修飾を求めようという話も。
 
-<pre class="source" title="With メソッドの生成元には data 修飾を付ける">
-<code><span class="reserved">public</span> <span class="reserved">data</span> <span class="reserved">class</span> <span class="type">Point</span>(X, Y)
+```csharp
+public data class Point(X, Y)
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    public int X { get; }
+    public int Y { get; }
 }
-<span class="reserved">var</span> p2 = p1 <span class="reserved">with</span> { Y = 2 };
-</code></pre>
+var p2 = p1 with { Y = 2 };
+```
 
 以下のように展開されます。
 
-<pre class="source" title="data class, with 構文の展開結果">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Point</span>(X, Y)
+```csharp
+public class Point(X, Y)
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    public int X { get; }
+    public int Y { get; }
  
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">Point</span> <span class="method">With</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>) =&gt; <span class="reserved">new</span> <span class="type">Point</span>(<span class="variable">X</span>, <span class="variable">Y</span>);
+    public virtual Point With(int X, int Y) => new Point(X, Y);
 }
-<span class="reserved">var</span> p2 = p1.<span class="method">With</span>(p1.X, 2);
-</code></pre>
+var p2 = p1.With(p1.X, 2);
+```
 
 この案では、どのプロパティがどのコンストラクター引数と対応しているのかがわかっていないといけないので、data class には前述の primary constructor が必須みたいです。
 
 virtual なファクトリ メソッドを必要とするのは、以下のように、派生型のメンバーのコピーがちゃんと働くようにするためです。
 
-<pre class="source" title="data class の派生">
-<code><span class="reserved">public</span> <span class="reserved">data</span> <span class="reserved">class</span> <span class="type">Person</span>(Name)
+```csharp
+public data class Person(Name)
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; }
+    public string Name { get; }
 }
-<span class="reserved">public</span> <span class="reserved">data</span> <span class="reserved">class</span> <span class="type">Student</span>(ID) : <span class="type">Person</span>
+public data class Student(ID) : Person
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> ID { <span class="reserved">get</span>; }
+    public int ID { get; }
 }
-</code></pre>
+```
 
 以下のように展開されます。
 
-<pre class="source" title="data class の派生の展開結果">
-<code><span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Person</span>(Name)
+```csharp
+public abstract class Person(Name)
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">Person</span> <span class="method">With</span>(<span class="reserved">string</span> <span class="variable">Name</span>) =&gt; <span class="reserved">new</span> <span class="type">Person</span>()
+    public string Name { get; }
+    public virtual Person With(string Name) => new Person()
 }
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Student</span>(ID) : <span class="type">Person</span>
+public class Student(ID) : Person
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> ID { <span class="reserved">get</span>; }
+    public int ID { get; }
  
-    <span class="reserved">public</span> <span class="reserved">sealed</span> <span class="reserved">override</span> <span class="type">Person</span> <span class="method">With</span>(<span class="reserved">string</span> <span class="variable">Name</span>) =&gt; <span class="method">With</span>(<span class="variable">Name</span>, <span class="reserved">this</span>.ID);
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">Student</span> <span class="method">With</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="reserved">int</span> <span class="variable">ID</span>) =&gt; <span class="reserved">new</span> <span class="type">Student</span>(<span class="variable">Name</span>, <span class="variable">ID</span>);
+    public sealed override Person With(string Name) => With(Name, this.ID);
+    public virtual Student With(string Name, int ID) => new Student(Name, ID);
 }
-</code></pre>
+```
 
 #### Auto-generated deconstructors
 
@@ -351,9 +351,9 @@ data class はもう常に前述の「primary constructor member declarations」
 
 要するに、以下のような書き方で、
 
-<pre class="source" title="data class + primary constructor member declarations">
-<code><span class="reserved">public</span> <span class="reserved">data</span> <span class="reserved">class</span> <span class="type">Point</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
-</code></pre>
+```csharp
+public data class Point(int X, int Y);
+```
 
 プロパティ `public int X { get; }` と `public int Y { get; }` を生成したいという話に。
 

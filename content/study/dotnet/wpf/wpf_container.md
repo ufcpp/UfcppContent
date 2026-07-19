@@ -34,36 +34,36 @@ Canvas の左上からの相対座標を直接指定して子要素を配置し�
 座標は、以下のように、Canvas.Left, Canvas.Top を使って指定します。
 
 
-<pre class="xsource" title="Canvas の例">
-<code><span class="bracket">&lt;</span><span class="element">Canvas</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span>
-  <span class="attribute">Background</span><span class="attvalue">="LightGray"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<Canvas
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200"
+  Background="LightGray"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span>
-    <span class="attribute">Canvas.Left</span><span class="attvalue">="5"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="5"</span>
-    <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span>
-    <span class="attribute">Text</span><span class="attvalue">="text 1"</span> <span class="attribute">Background</span><span class="attvalue">="#ffffcc"</span>/<span class="bracket">&gt;</span>
+  <TextBox
+    Canvas.Left="5" Canvas.Top="5"
+    Width="90" Height="90"
+    Text="text 1" Background="#ffffcc"/>
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span>
-    <span class="attribute">Canvas.Left</span><span class="attvalue">="5"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="105"</span>
-    <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span>
-    <span class="attribute">Text</span><span class="attvalue">="text 2"</span> <span class="attribute">Background</span><span class="attvalue">="#ffccff"</span>/<span class="bracket">&gt;</span>
+  <TextBox
+    Canvas.Left="5" Canvas.Top="105"
+    Width="90" Height="90"
+    Text="text 2" Background="#ffccff"/>
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span>
-    <span class="attribute">Canvas.Left</span><span class="attvalue">="105"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="5"</span>
-    <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span>
-    <span class="attribute">Text</span><span class="attvalue">="text 3"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffff"</span>/<span class="bracket">&gt;</span>
+  <TextBox
+    Canvas.Left="105" Canvas.Top="5"
+    Width="90" Height="90"
+    Text="text 3" Background="#ccffff"/>
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span>
-    <span class="attribute">Canvas.Left</span><span class="attvalue">="105"</span> <span class="attribute">Canvas.Top</span><span class="attvalue">="105"</span>
-    <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span>
-    <span class="attribute">Text</span><span class="attvalue">="text 4"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffcc"</span>/<span class="bracket">&gt;</span>
+  <TextBox
+    Canvas.Left="105" Canvas.Top="105"
+    Width="90" Height="90"
+    Text="text 4" Background="#ccffcc"/>
 
-<span class="bracket">&lt;</span>/<span class="element">Canvas</span><span class="bracket">&gt;</span>
-</code></pre>
+</Canvas>
+```
 <figure>
 	[![Canvas の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_canvas.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_canvas.png)
 	<figcaption>Canvas の例</figcaption>
@@ -77,23 +77,23 @@ StackPanel による配置はいたってシンプルで、
 上から順に、幅いっぱいに詰め込んでいくだけです。
 
 
-<pre class="xsource" title="StackPanel の例">
-<code><span class="bracket">&lt;</span><span class="element">StackPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span>
-  <span class="attribute">Background</span><span class="attvalue">="LightGray"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<StackPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200"
+  Background="LightGray"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="1"</span> <span class="attribute">Background</span><span class="attvalue">="#ffffcc"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="2"</span> <span class="attribute">Background</span><span class="attvalue">="#ffccff"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="3"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffff"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="4"</span> <span class="attribute">Background</span><span class="attvalue">="#ffcccc"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="5"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffcc"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="6"</span> <span class="attribute">Background</span><span class="attvalue">="#ccccff"</span>/<span class="bracket">&gt;</span>
+  <TextBox Text="1" Background="#ffffcc"/>
+  <TextBox Text="2" Background="#ffccff"/>
+  <TextBox Text="3" Background="#ccffff"/>
+  <TextBox Text="4" Background="#ffcccc"/>
+  <TextBox Text="5" Background="#ccffcc"/>
+  <TextBox Text="6" Background="#ccccff"/>
 
-<span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</StackPanel>
+```
 <figure>
 	[![StackPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanel.png)
 	<figcaption>StackPanel の例</figcaption>
@@ -104,23 +104,23 @@ StackPanel による配置はいたってシンプルで、
 左から右に並べることもできます。
 
 
-<pre class="xsource" title="StackPanel（左から右） の例">
-<code><span class="bracket">&lt;</span><span class="element">StackPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span>
-  <span class="attribute">Background</span><span class="attvalue">="LightGray"</span> <span class="attribute">Orientation</span><span class="attvalue">="Horizontal"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<StackPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200"
+  Background="LightGray" Orientation="Horizontal"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="1"</span> <span class="attribute">Background</span><span class="attvalue">="#ffffcc"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="2"</span> <span class="attribute">Background</span><span class="attvalue">="#ffccff"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="3"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffff"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="4"</span> <span class="attribute">Background</span><span class="attvalue">="#ffcccc"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="5"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffcc"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="6"</span> <span class="attribute">Background</span><span class="attvalue">="#ccccff"</span>/<span class="bracket">&gt;</span>
+  <TextBox Text="1" Background="#ffffcc"/>
+  <TextBox Text="2" Background="#ffccff"/>
+  <TextBox Text="3" Background="#ccffff"/>
+  <TextBox Text="4" Background="#ffcccc"/>
+  <TextBox Text="5" Background="#ccffcc"/>
+  <TextBox Text="6" Background="#ccccff"/>
 
-<span class="bracket">&lt;</span>/<span class="element">StackPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</StackPanel>
+```
 <figure>
 	[![StackPanel（左から右） の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanelh.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanelh.png)
 	<figcaption>StackPanel（左から右） の例</figcaption>
@@ -137,29 +137,29 @@ WrapPanel がリサイズされた場合、
 折り返し位置が変化します。
 
 
-<pre class="xsource" title="WrapPanel の例">
-<code><span class="bracket">&lt;</span><span class="element">WrapPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span>
-  <span class="attribute">Background</span><span class="attvalue">="LightGray"</span> <span class="attribute">Orientation</span><span class="attvalue">="Horizontal"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<WrapPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200"
+  Background="LightGray" Orientation="Horizontal"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="1"</span> <span class="attribute">Background</span><span class="attvalue">="#ffffcc"</span>
-    <span class="attribute">Width</span><span class="attvalue">="30"</span> <span class="attribute">Height</span><span class="attvalue">="20"</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="2"</span> <span class="attribute">Background</span><span class="attvalue">="#ffccff"</span>
-    <span class="attribute">Width</span><span class="attvalue">="90"</span> <span class="attribute">Height</span><span class="attvalue">="50"</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="3"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffff"</span>
-    <span class="attribute">Width</span><span class="attvalue">="40"</span> <span class="attribute">Height</span><span class="attvalue">="80"</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="4"</span> <span class="attribute">Background</span><span class="attvalue">="#ffcccc"</span>
-    <span class="attribute">Width</span><span class="attvalue">="50"</span> <span class="attribute">Height</span><span class="attvalue">="30"</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="5"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffcc"</span>
-    <span class="attribute">Width</span><span class="attvalue">="80"</span> <span class="attribute">Height</span><span class="attvalue">="90"</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="6"</span> <span class="attribute">Background</span><span class="attvalue">="#ccccff"</span>
-    <span class="attribute">Width</span><span class="attvalue">="20"</span> <span class="attribute">Height</span><span class="attvalue">="60"</span> <span class="attribute">Margin</span><span class="attvalue">="5"</span>/<span class="bracket">&gt;</span>
+  <TextBox Text="1" Background="#ffffcc"
+    Width="30" Height="20" Margin="5"/>
+  <TextBox Text="2" Background="#ffccff"
+    Width="90" Height="50" Margin="5"/>
+  <TextBox Text="3" Background="#ccffff"
+    Width="40" Height="80" Margin="5"/>
+  <TextBox Text="4" Background="#ffcccc"
+    Width="50" Height="30" Margin="5"/>
+  <TextBox Text="5" Background="#ccffcc"
+    Width="80" Height="90" Margin="5"/>
+  <TextBox Text="6" Background="#ccccff"
+    Width="20" Height="60" Margin="5"/>
 
-<span class="bracket">&lt;</span>/<span class="element">WrapPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</WrapPanel>
+```
 <figure>
 	[![WrapPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_wrappanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_wrappanel.png)
 	<figcaption>WrapPanel の例</figcaption>
@@ -179,23 +179,23 @@ DockPanel がリサイズされた場合、
 右上に広告欄、右下に本文を表示したりといったようなレイアウトにしたいときに使います。
 
 
-<pre class="xsource" title="DockPanel の例">
-<code><span class="bracket">&lt;</span><span class="element">DockPanel</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span>
-  <span class="attribute">Background</span><span class="attvalue">="LightGray"</span>
-  <span class="bracket">&gt;</span>
+```xml
+<DockPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200"
+  Background="LightGray"
+  >
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="1"</span> <span class="attribute">Background</span><span class="attvalue">="#ffffcc"</span> <span class="attribute">DockPanel.Dock</span><span class="attvalue">="Top"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="2"</span> <span class="attribute">Background</span><span class="attvalue">="#ffccff"</span> <span class="attribute">DockPanel.Dock</span><span class="attvalue">="Left"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="3"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffff"</span> <span class="attribute">DockPanel.Dock</span><span class="attvalue">="Right"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="4"</span> <span class="attribute">Background</span><span class="attvalue">="#ffcccc"</span> <span class="attribute">DockPanel.Dock</span><span class="attvalue">="Bottom"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="5"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffcc"</span> <span class="attribute">DockPanel.Dock</span><span class="attvalue">="Left"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="6"</span> <span class="attribute">Background</span><span class="attvalue">="#ccccff"</span> <span class="attribute">DockPanel.Dock</span><span class="attvalue">="Right"</span>/<span class="bracket">&gt;</span>
+  <TextBox Text="1" Background="#ffffcc" DockPanel.Dock="Top"/>
+  <TextBox Text="2" Background="#ffccff" DockPanel.Dock="Left"/>
+  <TextBox Text="3" Background="#ccffff" DockPanel.Dock="Right"/>
+  <TextBox Text="4" Background="#ffcccc" DockPanel.Dock="Bottom"/>
+  <TextBox Text="5" Background="#ccffcc" DockPanel.Dock="Left"/>
+  <TextBox Text="6" Background="#ccccff" DockPanel.Dock="Right"/>
 
-<span class="bracket">&lt;</span>/<span class="element">DockPanel</span><span class="bracket">&gt;</span>
-</code></pre>
+</DockPanel>
+```
 <figure>
 	[![DockPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_dockpanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_dockpanel.png)
 	<figcaption>DockPanel の例</figcaption>
@@ -214,39 +214,39 @@ Grid を使うと、
 <code>Grid.Row</code>, <code>Grid.Column</code> 属性で指定します（行、列の番号は 0 から始まる）。
 
 
-<pre class="xsource" title="Grid の例">
-<code><span class="bracket">&lt;</span><span class="element">Grid</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-  <span class="attribute">xmlns:x</span><span class="attvalue">="http://schemas.microsoft.com/winfx/2006/xaml"</span>
-  <span class="attribute">Width</span><span class="attvalue">="200"</span> <span class="attribute">Height</span><span class="attvalue">="200"</span>
-  <span class="attribute">Background</span><span class="attvalue">="LightGray"</span>
-  <span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Grid.ColumnDefinitions</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ColumnDefinition</span> <span class="attribute">Width</span><span class="attvalue">="60"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ColumnDefinition</span> <span class="attribute">Width</span><span class="attvalue">="60"</span> /<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">ColumnDefinition</span> <span class="attribute">Width</span><span class="attvalue">="60"</span> /<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Grid.ColumnDefinitions</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">Grid.RowDefinitions</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="60"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="60"</span>/<span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">RowDefinition</span> <span class="attribute">Height</span><span class="attvalue">="60"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span>/<span class="element">Grid.RowDefinitions</span><span class="bracket">&gt;</span>
+```xml
+<Grid
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="200" Height="200"
+  Background="LightGray"
+  >
+  <Grid.ColumnDefinitions>
+    <ColumnDefinition Width="60"/>
+    <ColumnDefinition Width="60" />
+    <ColumnDefinition Width="60" />
+  </Grid.ColumnDefinitions>
+  <Grid.RowDefinitions>
+    <RowDefinition Height="60"/>
+    <RowDefinition Height="60"/>
+    <RowDefinition Height="60"/>
+  </Grid.RowDefinitions>
 
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="1"</span> <span class="attribute">Background</span><span class="attvalue">="#ffffcc"</span>
-    <span class="attribute">Grid.Row</span><span class="attvalue">="1"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="2"</span> <span class="attribute">Background</span><span class="attvalue">="#ffccff"</span>
-    <span class="attribute">Grid.Row</span><span class="attvalue">="0"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="2"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="3"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffff"</span>
-    <span class="attribute">Grid.Row</span><span class="attvalue">="2"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="0"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="4"</span> <span class="attribute">Background</span><span class="attvalue">="#ffcccc"</span>
-    <span class="attribute">Grid.Row</span><span class="attvalue">="0"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="0"</span> <span class="attribute">Grid.RowSpan</span><span class="attvalue">="2"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="5"</span> <span class="attribute">Background</span><span class="attvalue">="#ccffcc"</span>
-    <span class="attribute">Grid.Row</span><span class="attvalue">="2"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="1"</span> <span class="attribute">Grid.ColumnSpan</span><span class="attvalue">="2"</span>/<span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">TextBox</span> <span class="attribute">Text</span><span class="attvalue">="6"</span> <span class="attribute">Background</span><span class="attvalue">="#ccccff"</span>
-    <span class="attribute">Grid.Row</span><span class="attvalue">="1"</span> <span class="attribute">Grid.Column</span><span class="attvalue">="2"</span>/<span class="bracket">&gt;</span>
+  <TextBox Text="1" Background="#ffffcc"
+    Grid.Row="1" Grid.Column="1"/>
+  <TextBox Text="2" Background="#ffccff"
+    Grid.Row="0" Grid.Column="2"/>
+  <TextBox Text="3" Background="#ccffff"
+    Grid.Row="2" Grid.Column="0"/>
+  <TextBox Text="4" Background="#ffcccc"
+    Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"/>
+  <TextBox Text="5" Background="#ccffcc"
+    Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"/>
+  <TextBox Text="6" Background="#ccccff"
+    Grid.Row="1" Grid.Column="2"/>
 
-<span class="bracket">&lt;</span>/<span class="element">Grid</span><span class="bracket">&gt;</span>
-</code></pre>
+</Grid>
+```
 <figure>
 	[![Grid の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_grid.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_grid.png)
 	<figcaption>Grid の例</figcaption>

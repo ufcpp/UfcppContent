@@ -39,31 +39,31 @@ Proposal: "data" classes for C# #1667](https://github.com/dotnet/csharplang/pull
 
 印象としては、[匿名型](../../../../study/csharp/oop/oo_class.md#anonymous)の延長で、ちゃんとしたクラス・構造体に昇格させたいとい時に使うものな感じです。
 
-<pre class="source" title="data クラス">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// class に data 修飾子を付ける</span>
-<span class="reserved"><em>data</em> class</span> <span class="type">Point</span>
+// class に data 修飾子を付ける
+data class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    public int X { get; }
+    public int Y { get; }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 匿名型</span>
-        <span class="reserved">var</span> p1 = <span class="reserved">new</span> { X = 1, Y = 2 };
+        // 匿名型
+        var p1 = new { X = 1, Y = 2 };
 
-        <span class="comment">// data クラス</span>
-        <span class="reserved">var</span> p2 = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
+        // data クラス
+        var p2 = new Point { X = 1, Y = 2 };
 
-        <span class="comment">// 比較とかが自動的に作られる</span>
-        <span class="type">Console</span>.WriteLine(p2 == <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 });
+        // 比較とかが自動的に作られる
+        Console.WriteLine(p2 == new Point { X = 1, Y = 2 });
     }
 }
-</code></pre>
+```
 
 ### 対象となるフィールド/プロパティ
 
@@ -81,32 +81,32 @@ private なものや、自動実装でないものは除外されます。
 例えば上記の例では、`X`, `Y` の2つのプロパティは get-only ですが、`new Point { X = 1, Y = 2 }` という書き方が許されます。
 これを認めるために、get-only プロパティを、実際には以下のようにコード生成する予定だそうです。
 
-<pre class="source" title="get-only プロパティでオブジェクト初期化子を使うためのトリック">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+class Point
 {
-    <span class="comment">// &lt;&gt; から始まる名前は、通常の C# コードでは書けない。</span>
-    <span class="comment">// 通常は使えない名前を使うことで、C# コードからは読み書きさせない。</span>
-    <span class="comment">// (コンパイラー生成のコードからだけ読み書きする。)</span>
-    <span class="reserved">private</span> <span class="reserved">int</span> &lt;&gt;X;
-    <span class="reserved">public</span> <span class="reserved">int</span> X =&gt; &lt;&gt;X;
+    // <> から始まる名前は、通常の C# コードでは書けない。
+    // 通常は使えない名前を使うことで、C# コードからは読み書きさせない。
+    // (コンパイラー生成のコードからだけ読み書きする。)
+    private int <>X;
+    public int X => <>X;
 
-    <span class="reserved">private</span> <span class="reserved">int</span> &lt;&gt;Y;
-    <span class="reserved">public</span> <span class="reserved">int</span> Y =&gt; &lt;&gt;Y;
+    private int <>Y;
+    public int Y => <>Y;
 
-    <span class="comment">// 以下、Equals や GetHashCode なども生成</span>
+    // 以下、Equals や GetHashCode なども生成
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// コンパイラーはオブジェクト初期化子を以下のように展開</span>
-        <span class="reserved">var</span> p2 = <span class="reserved">new</span> <span class="type">Point</span>();
-        p2.&lt;&gt;X = 1;
-        p2.&lt;&gt;Y = 2;
+        // コンパイラーはオブジェクト初期化子を以下のように展開
+        var p2 = new Point();
+        p2.<>X = 1;
+        p2.<>Y = 2;
     }
 }
-</code></pre>
+```
 
 ## 名前付きタプル
 
@@ -114,26 +114,26 @@ private なものや、自動実装でないものは除外されます。
 
 以下のように、クラス名に続けてタプルみたいなものを書くことで、タプルに名前が付きます。
 
-<pre class="source" title="名前付きタプル">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 型名の後ろにタプル的なものを書く</span>
-<span class="reserved">class</span> <span class="type">Point</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
+// 型名の後ろにタプル的なものを書く
+class Point(int X, int Y);
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// タプル</span>
-        <span class="reserved">var</span> p1 = (X: 1, Y: 2);
+        // タプル
+        var p1 = (X: 1, Y: 2);
 
-        <span class="comment">// 名前付きタプル</span>
-        <span class="reserved">var</span> p2 = <span class="reserved">new</span> Point(1, 2);
-        <span class="type">Console</span>.WriteLine(p2.X);
-        <span class="type">Console</span>.WriteLine(p2.Y);
+        // 名前付きタプル
+        var p2 = new Point(1, 2);
+        Console.WriteLine(p2.X);
+        Console.WriteLine(p2.Y);
     }
 }
-</code></pre>
+```
 
 見ての通り、コンストラクターとプロパティが生成されます。
 また、タプルと同様、比較、ハッシュ値計算や、`Deconstruct` メソッドなども生成されるそうです。

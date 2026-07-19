@@ -15,9 +15,9 @@ aliases: []
 
 以下のコード、実行環境によって出力結果が変わります。
 
-<pre class="source" title="DateTime の ToString がカルチャー依存">
-<code><span class="type">Console</span>.<span class="method">WriteLine<span class="type">(<span class="reserved">new</span> <span class="type">DateTime</span>(2021, 8, 22));
-</code></pre>
+```csharp
+Console.WriteLine(new DateTime(2021, 8, 22));
+```
 
 日本語 Windows 環境だと `2021/08/22 0:00:00` と表示されると思いますが、
 OS 設定でカルチャーを変更すると別の書式になります。
@@ -119,10 +119,10 @@ Blazor では、
 
 以下のようなコードを書くと、北米フォーマットになります。
 
-<pre class="source" title="Invariant = 北米">
-<code><span class="reserved">using</span> System.Globalization;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">new</span> <span class="type">DateTime</span>(2021, 8, 22).<span class="method">ToString</span>(<span class="type">CultureInfo</span>.InvariantCulture));
-</code></pre>
+```csharp
+using System.Globalization;
+Console.WriteLine(new DateTime(2021, 8, 22).ToString(CultureInfo.InvariantCulture));
+```
 
 90年代の IT 業界にはあるあるだったんですけどね、「北米がデフォルト」な動作。
 Java なんかでも、`println(new Date())` すると `Sun Aug 22 08:18:22 UTC 2021` とかになりますよね、たぶん。

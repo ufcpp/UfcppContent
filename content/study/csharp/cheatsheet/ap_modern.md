@@ -119,13 +119,13 @@ C# 2.0 で 「[ジェネリック](../oop/sp2_generics.md#generics)」 が導入
 
 C# では、いわゆる匿名関数を作るための構文として、2種類のものを持っています。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">// 匿名メソッド式（C# 2.0～）</span>
-Func&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f1 = <span class="reserved">delegate</span>(<span class="reserved">int</span> x) { <span class="reserved">return</span> x * x; };
+```csharp
+// 匿名メソッド式（C# 2.0～）
+Func<int, int> f1 = delegate(int x) { return x * x; };
 
-<span class="comment">// ラムダ式（C# 3.0～）</span>
-Func&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f2 = x =&gt; x * x;
-</code></pre>
+// ラムダ式（C# 3.0～）
+Func<int, int> f2 = x => x * x;
+```
 
 
 匿名メソッド式でできることは、全てラムダ式でもできます。
@@ -164,20 +164,20 @@ APM は、IAsyncResult を返す/受け取る、Begin/End メソッドのペア�
 
 例えば、WebRequest クラス（System.Net 名前空間）は、APM 型の非同期 API を持っています。
 
-<pre class="source" title="APM 型の API の利用例" lang="">
-<code><span class="reserved">var</span> req = <span class="type">WebRequest</span>.Create(<span class="literal">"http://ufcpp.net/study/csharp/"</span>);
-req.BeginGetResponse(ar =&gt;
+```csharp
+var req = WebRequest.Create("http://ufcpp.net/study/csharp/");
+req.BeginGetResponse(ar =>
 {
-    <span class="reserved">var</span> res = (ar.AsyncState <span class="reserved">as</span> <span class="type">WebRequest</span>).EndGetResponse(ar);
+    var res = (ar.AsyncState as WebRequest).EndGetResponse(ar);
 
-    <span class="reserved">string</span> result = <span class="reserved">null</span>;
-    <span class="reserved">using</span>(<span class="reserved">var</span> reader = <span class="reserved">new</span> <span class="type">StreamReader</span>(res.GetResponseStream()))
+    string result = null;
+    using(var reader = new StreamReader(res.GetResponseStream()))
     {
         result = reader.ReadToEnd();
     }
-    <span class="type">Console</span>.WriteLine(result);
+    Console.WriteLine(result);
 }, req);
-</code></pre>
+```
 
 
 また、C# 2.0 の頃には、EAP（Event-based Asynchronous Pattern）という書き方が流行りました。
@@ -186,18 +186,17 @@ EAP は、結果をイベントで返してもらうものです。
 
 例えば、WebClient クラス（System.Net 名前空間）が、EAP 型の非同期 API を持っています。
 
-<pre class="source" title="EAP 型の API の利用例" lang="">
-<code><span class="reserved">var</span> c = <span class="reserved">new</span> <span class="type">WebClient</span> { Encoding = <span class="type">Encoding</span>.UTF8 };
+```csharp
+var c = new WebClient { Encoding = Encoding.UTF8 };
 
-c.DownloadStringCompleted += (sender, args) =&gt;
+c.DownloadStringCompleted += (sender, args) =>
 {
-    <span class="reserved">var</span> result = args.Result;
-    <span class="type">Console</span>.WriteLine(result);
+    var result = args.Result;
+    Console.WriteLine(result);
 };
 
-c.DownloadStringAsync(<span class="reserved">new</span> <span class="type">Uri</span>(<span class="literal">"http://ufcpp.net/study/csharp/"</span>));
-
-</code></pre>
+c.DownloadStringAsync(new Uri("http://ufcpp.net/study/csharp/"));
+```
 
 
 
@@ -212,40 +211,40 @@ APM や EAP では、複数の非同期処理をつないで、1つの非同期 
 
 例えば、WebRequest クラスのメソッドにも、TAP 版が用意されます。
 
-<pre class="source" title="TAP 型 API の利用例" lang="">
-<code><span class="reserved">var</span> req = <span class="type">WebRequest</span>.Create(<span class="literal">"http://ufcpp.net/study/csharp/"</span>);
+```csharp
+var req = WebRequest.Create("http://ufcpp.net/study/csharp/");
 req.GetResponseAsync()
-    .ContinueWith(t =&gt;
+    .ContinueWith(t =>
     {
-        <span class="reserved">var</span> res = t.Result;
+        var res = t.Result;
 
-        <span class="reserved">string</span> result = <span class="reserved">null</span>;
-        <span class="reserved">using</span> (<span class="reserved">var</span> reader = <span class="reserved">new</span> <span class="type">StreamReader</span>(res.GetResponseStream()))
+        string result = null;
+        using (var reader = new StreamReader(res.GetResponseStream()))
         {
             result = reader.ReadToEnd();
         }
-        <span class="type">Console</span>.WriteLine(result);
+        Console.WriteLine(result);
     });
-</code></pre>
+```
 
 
 C# 5.0 では、さらに、この手の非同期処理を、同期版と同じ構造のままで書ける、async メソッド/await 演算子という機能が追加されます。
 上記の例を、async メソッドを使って書き直すと、以下のようになります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> AsyncSample()
+```csharp
+private static async Task AsyncSample()
 {
-    <span class="reserved">var</span> req = <span class="type">WebRequest</span>.Create(<span class="literal">"http://ufcpp.net/study/csharp/"</span>);
-    <span class="reserved">var</span> res = <span class="reserved">await</span> req.GetResponseAsync();
+    var req = WebRequest.Create("http://ufcpp.net/study/csharp/");
+    var res = await req.GetResponseAsync();
 
-    <span class="reserved">string</span> result = <span class="reserved">null</span>;
-    <span class="reserved">using</span> (<span class="reserved">var</span> reader = <span class="reserved">new</span> <span class="type">StreamReader</span>(res.GetResponseStream()))
+    string result = null;
+    using (var reader = new StreamReader(res.GetResponseStream()))
     {
         result = reader.ReadToEnd();
     }
-    <span class="type">Console</span>.WriteLine(result);
+    Console.WriteLine(result);
 }
-</code></pre>
+```
 
 
 
@@ -273,30 +272,30 @@ C# 5.0 では、さらに、この手の非同期処理を、同期版と同じ�
 
 例えば、コンソールから数値を読み込んで、二乗の計算して、コンソールに出力するプログラムを、一気にかくと以下のようになります。
 
-<pre class="source" title="コンソールから数値を読み込んで、二乗の計算して、コンソールに出力" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">while</span> (<span class="reserved">true</span>)
+        while (true)
         {
-            <span class="reserved">var</span> line = <span class="type">Console</span>.ReadLine();
+            var line = Console.ReadLine();
 
-            <span class="reserved">if</span> (<span class="reserved">string</span>.IsNullOrWhiteSpace(line))
-                <span class="reserved">break</span>;
+            if (string.IsNullOrWhiteSpace(line))
+                break;
 
-            <span class="reserved">int</span> x;
-            <span class="reserved">if</span> (!<span class="reserved">int</span>.TryParse(line, <span class="reserved">out</span> x))
-                <span class="reserved">break</span>;
+            int x;
+            if (!int.TryParse(line, out x))
+                break;
 
-            <span class="reserved">int</span> y = x * x;
-            <span class="type">Console</span>.WriteLine(<span class="literal">"入力の二乗: {0}"</span>, y);
+            int y = x * x;
+            Console.WriteLine("入力の二乗: {0}", y);
         }
     }
 }
-</code></pre>
+```
 
 
 この処理を、ある程度分割したいとします。
@@ -308,53 +307,53 @@ C# 5.0 では、さらに、この手の非同期処理を、同期版と同じ�
 
 C# 1.0 の頃は、「[イテレーター](../data/sp2_iterator.md#iterator)」構文も 「[LINQ](../data/sp3_linq.md#linq)」 もなく、以下のように書きがちでした。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> inputs = ReadIntFromConsole();
-        <span class="reserved">var</span> mapped = Square(inputs);
+        var inputs = ReadIntFromConsole();
+        var mapped = Square(inputs);
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> y <span class="reserved">in</span> mapped)
+        foreach (var y in mapped)
         {
-            <span class="type">Console</span>.WriteLine(<span class="literal">"入力の二乗: {0}"</span>, y);
+            Console.WriteLine("入力の二乗: {0}", y);
         }
     }
 
-    <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; ReadIntFromConsole()
+    static IEnumerable<int> ReadIntFromConsole()
     {
-        <span class="reserved">var</span> list = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-        <span class="reserved">while</span> (<span class="reserved">true</span>)
+        var list = new List<int>();
+        while (true)
         {
-            <span class="reserved">var</span> line = <span class="type">Console</span>.ReadLine();
+            var line = Console.ReadLine();
 
-            <span class="reserved">if</span> (<span class="reserved">string</span>.IsNullOrWhiteSpace(line))
-                <span class="reserved">break</span>;
+            if (string.IsNullOrWhiteSpace(line))
+                break;
 
-            <span class="reserved">int</span> x;
-            <span class="reserved">if</span> (!<span class="reserved">int</span>.TryParse(line, <span class="reserved">out</span> x))
-                <span class="reserved">break</span>;
+            int x;
+            if (!int.TryParse(line, out x))
+                break;
 
             list.Add(x);
         }
-        <span class="reserved">return</span> list;
+        return list;
     }
 
-    <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Square(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; source)
+    static IEnumerable<int> Square(IEnumerable<int> source)
     {
-        <span class="reserved">var</span> list = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> source)
+        var list = new List<int>();
+        foreach (var x in source)
         {
             list.Add(x * x);
         }
-        <span class="reserved">return</span> list;
+        return list;
     }
 }
-</code></pre>
+```
 
 
 余計な List を作っています。データの量が多くなってくると、無駄に多くのメモリを使うことになります。
@@ -364,42 +363,42 @@ C# 1.0 の頃は、「[イテレーター](../data/sp2_iterator.md#iterator)」�
 
 イテレーター構文と LINQ を使うことで、余計な一時リストをなくせます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Linq;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> inputs = ReadIntFromConsole();
-        <span class="reserved">var</span> mapped = inputs.Select(x =&gt; x * x); <span class="comment">// LINQ</span>
+        var inputs = ReadIntFromConsole();
+        var mapped = inputs.Select(x => x * x); // LINQ
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> y <span class="reserved">in</span> mapped)
+        foreach (var y in mapped)
         {
-            <span class="type">Console</span>.WriteLine(<span class="literal">"入力の二乗: {0}"</span>, y);
+            Console.WriteLine("入力の二乗: {0}", y);
         }
     }
 
-    <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; ReadIntFromConsole()
+    static IEnumerable<int> ReadIntFromConsole()
     {
-        <span class="reserved">while</span> (<span class="reserved">true</span>)
+        while (true)
         {
-            <span class="reserved">var</span> line = <span class="type">Console</span>.ReadLine();
+            var line = Console.ReadLine();
 
-            <span class="reserved">if</span> (<span class="reserved">string</span>.IsNullOrWhiteSpace(line))
-                <span class="reserved">break</span>;
+            if (string.IsNullOrWhiteSpace(line))
+                break;
 
-            <span class="reserved">int</span> x;
-            <span class="reserved">if</span> (!<span class="reserved">int</span>.TryParse(line, <span class="reserved">out</span> x))
-                <span class="reserved">break</span>;
+            int x;
+            if (!int.TryParse(line, out x))
+                break;
 
-            <span class="reserved">yield</span> <span class="reserved">return</span> x; <span class="comment">// イテレーター構文</span>
+            yield return x; // イテレーター構文
         }
     }
 }
-</code></pre>
+```
 
 
 参考:
@@ -417,35 +416,34 @@ C# 1.0 の頃は、「[イテレーター](../data/sp2_iterator.md#iterator)」�
 データ列に対して、前から順に1要素ずつ読む操作だけしかしないことが多いです。
 そういう場合、List&lt;T&gt; クラスや配列ではなく、IEnumerable&lt;T&gt; インターフェイスを使うようにしましょう。
 
-<pre class="source" title="悪い例" lang="">
-<code><span class="comment">// 【×】これだと、中身を書き換えられる</span>
-<span class="reserved">static</span> <span class="reserved">readonly</span> <span class="reserved">int</span>[] SampleData = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5, };
+```csharp
+// 【×】これだと、中身を書き換えられる
+static readonly int[] SampleData = new[] { 1, 2, 3, 4, 5, };
 
-<span class="comment">// 【×】メソッド中で読み取りにしか使っていないのに int[] で受け取っている</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Output(<span class="reserved">int</span>[] data)
+// 【×】メソッド中で読み取りにしか使っていないのに int[] で受け取っている
+static void Output(int[] data)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+    foreach (var x in data)
     {
-        <span class="type">Console</span>.WriteLine(x);
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 
-<pre class="source" title="良い例" lang="">
-<code><span class="comment">// 【○】読み取りのみなら、IEnumerable に</span>
-<span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; SampleData = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5, };
+```csharp
+// 【○】読み取りのみなら、IEnumerable に
+static readonly IEnumerable<int> SampleData = new[] { 1, 2, 3, 4, 5, };
 
-<span class="comment">// 【○】同上、IEnumerable に</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Output(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; data)
+// 【○】同上、IEnumerable に
+static void Output(IEnumerable<int> data)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+    foreach (var x in data)
     {
-        <span class="type">Console</span>.WriteLine(x);
+        Console.WriteLine(x);
     }
 }
-
-</code></pre>
+```
 
 
 
@@ -469,19 +467,19 @@ C# 3.0/.NET 3.5 で 「[LINQ](../data/sp3_linq.md#linq)」 が導入されたこ
 .NET 3.5 で、XDocument クラスが追加されました。
 IEnumerable&lt;XElement&gt; で要素一覧を読み出せるので、LINQ to Objects が使えます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> doc = <span class="type">XDocument</span>.Load(filename);
-<span class="reserved">var</span> ns = doc.Root.Name.Namespace;
+```csharp
+var doc = XDocument.Load(filename);
+var ns = doc.Root.Name.Namespace;
 
-<span class="reserved">var</span> titles =
-    <span class="reserved">from</span> x <span class="reserved">in</span> doc.Root.Elements(ns + <span class="literal">"section"</span>)
-    <span class="reserved">select</span> x.Attribute(<span class="literal">"title"</span>).Value;
+var titles =
+    from x in doc.Root.Elements(ns + "section")
+    select x.Attribute("title").Value;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> title <span class="reserved">in</span> titles)
+foreach (var title in titles)
 {
-    <span class="type">Console</span>.WriteLine(title);
+    Console.WriteLine(title);
 }
-</code></pre>
+```
 
 
 
@@ -492,15 +490,15 @@ IEnumerable&lt;XElement&gt; で要素一覧を読み出せるので、LINQ to Ob
 
 後からの変更に備えて、ただフィールドを読み書きするだけのプロパティを作ることがあります。
 
-<pre class="source" title="フィールドを読み書きするだけのプロパティ" lang="">
-<code><span class="reserved">private</span> <span class="reserved">int</span> _x;
+```csharp
+private int _x;
 
-<span class="reserved">public</span> <span class="reserved">int</span> X
+public int X
 {
-    <span class="reserved">get</span> { <span class="reserved">return</span> _x; }
-    <span class="reserved">set</span> { _x = <span class="reserved">value</span>; }
+    get { return _x; }
+    set { _x = value; }
 }
-</code></pre>
+```
 
 
 こうしておけば、後から処理を足すことになって中身を修正しても、
@@ -518,16 +516,16 @@ IEnumerable&lt;XElement&gt; で要素一覧を読み出せるので、LINQ to Ob
 この面倒を解消するために、C# 3.0 で、自動実装プロパティというものが導入されました。
 以下のように、get; set; とだけ書くと、上記のような、フィールドと、フィールド読み書きするだけのプロパティが自動生成されます。
 
-<pre class="source" title="自動実装プロパティ" lang="">
-<code><span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-</code></pre>
+```csharp
+public int X { get; set; }
+```
 
 
 また、外部からは読み取り専用なプロパティを作るのにも重宝します。
 
-<pre class="source" title="読み取り専用の自動実装プロパティ" lang="">
-<code><span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">private set</span>; }
-</code></pre>
+```csharp
+public int X { get; private set; }
+```
 
 
 
@@ -566,9 +564,9 @@ var が使われないことも多いです。
 
 C# ではあまりないですが、例えば、具体的な型ではなく、インターフェイスの変数を作りたい場合があります。
 
-<pre class="source" title="明示的にインターフェイスを使う" lang="">
-<code><span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; data = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
-</code></pre>
+```csharp
+IEnumerable<int> data = new[] { 1, 2, 3, 4, 5 };
+```
 
 
 
@@ -578,19 +576,19 @@ C# ではあまりないですが、例えば、具体的な型ではなく、�
 
 C# 4.0 で、引数に既定値を設定できるようになりました。
 
-<pre class="source" title="引数の既定値" lang="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    X(); <span class="comment">// X(0, 0) と同じ意味。</span>
-    X(x: 1); <span class="comment">// X(1, 0) と同じ意味。</span>
-    X(y: 1); <span class="comment">// X(0, 1) と同じ意味。</span>
+    X(); // X(0, 0) と同じ意味。
+    X(x: 1); // X(1, 0) と同じ意味。
+    X(y: 1); // X(0, 1) と同じ意味。
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> X(<span class="reserved">int</span> x = 0, <span class="reserved">int</span> y = 0)
+static void X(int x = 0, int y = 0)
 {
-    <span class="type">Console</span>.WriteLine(<span class="literal">"{0}, {1}"</span>, x, y);
+    Console.WriteLine("{0}, {1}", x, y);
 }
-</code></pre>
+```
 
 
 
@@ -605,17 +603,17 @@ C# 4.0 で、引数に既定値を設定できるようになりました。
 
 もし、値を変える可能性があるなら、既定値は与えず、メソッドのオーバーロードで対処します。
 
-<pre class="source" title="引数の既定値相当のことを、オーバーロードで実現" lang="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> X()
+```csharp
+static void X()
 {
-    X(0, 0); <span class="comment">// これなら、バージョニングの問題を起こさず、値を変えれる</span>
+    X(0, 0); // これなら、バージョニングの問題を起こさず、値を変えれる
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> X(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+static void X(int x, int y)
 {
-    <span class="type">Console</span>.WriteLine(<span class="literal">"{0}, {1}"</span>, x, y);
+    Console.WriteLine("{0}, {1}", x, y);
 }
-</code></pre>
+```
 
 
 また、問題が起きるのはメソッド定義側と利用側が異なるアセンブリの場合なので、

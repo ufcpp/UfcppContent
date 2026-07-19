@@ -31,20 +31,21 @@ aliases:
 整数は System.Int32
 実数は System.Double になるっぽいです。
 
-<pre class="console" title="数値の型">
-<span class="prompt">&gt; </span> (1).GetType().FullName
+```console
+>  (1).GetType().FullName
 System.Int32
-<span class="prompt">&gt; </span> (1.1).GetType().FullName
+>  (1.1).GetType().FullName
 System.Double
-</pre>
+```
 
 
 整数は、通常はもちろん10進数で書きますが、
 0x を頭に付けると16進数になります。
 
-<pre class="console" title="16進数リテラル">
-<span class="prompt">&gt; </span> 0xff
-255</pre>
+```console
+>  0xff
+255
+```
 
 
 整数値なんだけど double で保持したい場合、
@@ -52,10 +53,10 @@ System.Double
 1. とすれば OK。
 小数点の後ろの 0 は省略可能。
 
-<pre class="console" title="double 型リテラル">
-<span class="prompt">&gt; </span> (1.).GetType().FullName
+```console
+>  (1.).GetType().FullName
 System.Double
-</pre>
+```
 
 
 double は科学表記も可能です。
@@ -66,18 +67,18 @@ double は科学表記も可能です。
           <sup><span class="normal">6</span></sup>
         </span> の意味になる。）
 
-<pre class="console" title="double の科学表記">
-<span class="prompt">&gt; </span> 1.234e6
+```console
+>  1.234e6
 1234000
-</pre>
+```
 
 
 それから、1l とか 1L（語尾に l, L）で long になります。
 
-<pre class="console" title="long 型リテラル">
-<span class="prompt">&gt; </span> (1L).GetType().FullName
+```console
+>  (1L).GetType().FullName
 System.Int64
-</pre>
+```
 
 
 あと、
@@ -101,14 +102,14 @@ System.Int64
         </span> = 1073741824）
 を表す 1kb, 1mb, 1gb という特殊な定数もあります。
 
-<pre class="console" title="バイト定数">
-<span class="prompt">&gt; </span> 1kb
+```console
+>  1kb
 1024
-<span class="prompt">&gt; </span> 1mb
+>  1mb
 1048576
-<span class="prompt">&gt; </span> 1gb
+>  1gb
 1073741824
-</pre>
+```
 
 
 
@@ -120,32 +121,32 @@ System.Int64
 この辺りは C 言語や C# と同じです。
 ++ と -- に後置きと前置きがある辺りも同じです。
 
-<pre class="console" title="+ - * / %">
-<span class="prompt">&gt; </span> 5 + 2
+```console
+>  5 + 2
 7
-<span class="prompt">&gt; </span> 5 - 2
+>  5 - 2
 3
-<span class="prompt">&gt; </span> 5 * 2
+>  5 * 2
 10
-<span class="prompt">&gt; </span> 5 / 2
+>  5 / 2
 2.5
-<span class="prompt">&gt; </span> 5 % 2
+>  5 % 2
 1
-</pre>
+```
 
 
-<pre class="console" title="++ --">
-<span class="prompt">&gt; </span> $a = 1
-<span class="prompt">&gt; </span> $b = ++$a
-<span class="prompt">&gt; </span> $a,$b
+```console
+>  $a = 1
+>  $b = ++$a
+>  $a,$b
 2
 2
-<span class="prompt">&gt; </span> $a = 1
-<span class="prompt">&gt; </span> $b = $a++
-<span class="prompt">&gt; </span> $a,$b
+>  $a = 1
+>  $b = $a++
+>  $a,$b
 2
 1
-</pre>
+```
 
 
 ここで、割り算結果の型に関してですが、
@@ -153,29 +154,30 @@ System.Int64
 割り切れないときは勝手に double になるようです。
 まあ、流石に 2.5 * 2 が整数にはなったりはしません。
 
-<pre class="console" title="割り算結果の型">
-<span class="prompt">&gt; </span> (5 / 2).GetType().Name
+```console
+>  (5 / 2).GetType().Name
 Double
-<span class="prompt">&gt; </span> (4 / 2).GetType().Name
+>  (4 / 2).GetType().Name
 Int32
-<span class="prompt">&gt; </span> (5 / 2 * 2).GetType().Name
+>  (5 / 2 * 2).GetType().Name
 Double
-</pre>
+```
 
 
 あと、int の演算の結果が int で表現できる範囲を超えた場合、
 勝手に double に変換されるようです。
 （long なら表現できる桁であっても、double になる。）
 
-<pre class="console" title="桁あふれ">
-<span class="prompt">&gt; </span> 1gb * 1gb
+```console
+>  1gb * 1gb
 1.15292150460685E+18
-<span class="prompt">&gt; </span> [long]1gb * 1gb
+>  [long]1gb * 1gb
 1152921504606846976
-<span class="prompt">&gt; </span> (1gb * 1gb).GetType().Name
+>  (1gb * 1gb).GetType().Name
 Double
-<span class="prompt">&gt; </span> ([long]1gb * 1gb).GetType().Name
-Int64</pre>
+>  ([long]1gb * 1gb).GetType().Name
+Int64
+```
 
 
 ちなみに、
@@ -183,18 +185,18 @@ double → int への変換時には、四捨五入されます。
 （挙動は System.Math.Round() メソッドと同じで、
 いわゆる偶数丸め（round to even）。）
 
-<pre class="console" title="double → int">
-<span class="prompt">&gt; </span> [int]1.49
+```console
+>  [int]1.49
 1
-<span class="prompt">&gt; </span> [int]1.5
+>  [int]1.5
 2
-<span class="prompt">&gt; </span> [int]2.49
+>  [int]2.49
 2
-<span class="prompt">&gt; </span> [int]2.5
+>  [int]2.5
 2
-<span class="prompt">&gt; </span> [int]2.51
+>  [int]2.51
 3
-</pre>
+```
 
 
 
@@ -217,11 +219,11 @@ C 系統の言語でいうところの、
 PowerShell では &lt; とかが他に特別な意味を持つので、
 このような形になっています。
 
-<pre class="console" title="比較演算子">
-<span class="prompt">&gt; </span> $a = 1
-<span class="prompt">&gt; </span> if($a -eq 1) {echo '$a equals 1'}
+```console
+>  $a = 1
+>  if($a -eq 1) {echo '$a equals 1'}
 $a equals 1
-</pre>
+```
 
 
 
@@ -232,14 +234,14 @@ $a equals 1
 がそれぞれ、
 ビット反転、ビットごとの AND、ビットごとの OR、ビットごとの XOR です。
 
-<pre class="console" title="ビットごとの論理演算">
-<span class="prompt">&gt; </span> 1 -bor 2 -bor 3 -bor 4
+```console
+>  1 -bor 2 -bor 3 -bor 4
 7
-<span class="prompt">&gt; </span> 0x1234 -band 0xff
+>  0x1234 -band 0xff
 52
-<span class="prompt">&gt; </span> 0x0034
+>  0x0034
 52
-</pre>
+```
 
 
 -and や -or 演算子（論理値の演算子）との違いに注意してください。
@@ -277,24 +279,24 @@ $true, $false があります。
 このうち、! と -not は同じ意味です。
 -not -and -or は、まあ、名前どおり、論理否定、論理 AND、論理 OR です。
 
-<pre class="console" title="論理演算">
-<span class="prompt">&gt; </span> $true -and $true
+```console
+>  $true -and $true
 True
-<span class="prompt">&gt; </span> $true -and $false
+>  $true -and $false
 False
-<span class="prompt">&gt; </span> $false -and $false
+>  $false -and $false
 False
-<span class="prompt">&gt; </span>  $true -or $true
+>   $true -or $true
 True
-<span class="prompt">&gt; </span>  $true -or $false
+>   $true -or $false
 True
-<span class="prompt">&gt; </span>  $false -or $false
+>   $false -or $false
 False
-<span class="prompt">&gt; </span> -not $true
+>  -not $true
 False
-<span class="prompt">&gt; </span> -not $false
+>  -not $false
 True
-</pre>
+```
 
 
 PowerShell では、他の型から bool への自動型変換があるので、

@@ -35,9 +35,9 @@ Program Databaseは、実行ファイルのどの辺りが、ソースコード�
 
 Unityについてくるバージョンのpdb2mdb(Unityインストール フォルダー以下、 Editor\Data\MonoBleedingEdge\lib\mono\4.0\pdb2mdb.exe にある)とか、[NuGet Gallaryから取れるバージョン](https://www.nuget.org/packages/Mono.pdb2mdb)だと、
 
-<pre>
+```console
 Unknown custom metadata item kind: 6
-</pre>
+```
 
 とかいうエラーを吐いて停止。
 

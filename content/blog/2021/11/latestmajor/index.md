@@ -74,32 +74,32 @@ Major か LatestMajor なら動かせるはずですが、
 Roll Forward オプションの指定の仕方はいくつかあるみたいです。
 dotnet コマンドに[直接オプションを書く](https://docs.microsoft.com/ja-jp/dotnet/core/tools/dotnet#runtime-options)方法もありますし、
 
-<pre class="console">
-<code>dotnet run --roll-forward LatestMajor
-</code></pre>
+```console
+dotnet run --roll-forward LatestMajor
+```
 
 (ただ、`dotnet run` はこのオプションを受け付けるものの、`dotnet test` は受け付けないらしい？)
 
 [global.json に書いておく](https://docs.microsoft.com/ja-jp/dotnet/core/tools/global-json?tabs=netcore3x#rollforward)のでもいいそうですし、
 
-<pre class="source">
-<code>{
+```json
+{
   "sdk": {
     "version": "6.0.100",
     "rollForward": "latestMajor"
   }
 }
-</code></pre>
+```
 
 [環境変数で `DOTNET_ROLL_FORWARD` を設定しておく](https://docs.microsoft.com/ja-jp/dotnet/core/tools/dotnet-environment-variables#dotnet_roll_forward)のでもいいそうです。
 
 今回のシナリオ(CI)だと、たぶん環境変数を設定するのがよくて、
 例えば GitHub Actions の build.yml に以下の行を足せばいいということになります。
 
-<pre class="source">
-<code>env:
+```csharp
+env:
   DOTNET_ROLL_FORWARD: latestMajor
-</code></pre>
+```
 
 ### 実例
 

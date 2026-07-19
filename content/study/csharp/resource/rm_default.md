@@ -32,23 +32,23 @@ C++ を例に挙げてみましょう。
 C++では、`new[]` で確保したばかりで初期化していないメモリ領域がどうなっているかは未定義(コンパイラーの裁量任せ)になっています。
 以下のようなコードを見てください。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">#include</span> <span class="literal">&lt;stdio.h&gt;</span>
+```cpp
+#include <stdio.h>
 
-<span class="reserved">void</span> main()
+void main()
 {
-    <span class="reserved">int</span>* x = <span class="reserved">new int</span>[1];
-    x[0] = 0xFFFFFFFF; <span class="comment">// ちゃんと初期化</span>
-    printf(<span class="literal">"%08x\n"</span>, x[0]);
+    int* x = new int[1];
+    x[0] = 0xFFFFFFFF; // ちゃんと初期化
+    printf("%08x\n", x[0]);
 
-    <span class="reserved">int</span>* px = x;
-    <span class="reserved">delete</span> x;
-    printf(<span class="literal">"%08x\n"</span>, px[0]); <span class="comment">// 削除済みの領域にアクセス</span>
+    int* px = x;
+    delete x;
+    printf("%08x\n", px[0]); // 削除済みの領域にアクセス
 
-    <span class="reserved">int</span>* y = <span class="reserved">new int</span>[1];
-    printf(<span class="literal">"%08x\n"</span>, y[0]); <span class="comment">// 未初期化</span>
+    int* y = new int[1];
+    printf("%08x\n", y[0]); // 未初期化
 }
-</code></pre>
+```
 
 
 この時、ちゃんと初期化してから使っている1つ目の printf 以外は、値がどうなっているか不定です。
@@ -74,11 +74,9 @@ Debugビルド時とReleaseビルド時で挙動が違います。
 	<tr>
 		<th>初期化済み</th>
 		<td markdown="1">
-<pre class="source" title="未初期化領域を読む" lang="">
-<code><span class="reserved">int</span>* x = <span class="reserved">new int</span>[1];
+<pre class="source" title="未初期化領域を読む" lang=""><code class="language-csharp">int* x = new int[1];
 x[0] = 0xFFFFFFFF;
-printf(<span class="literal">"%08x\n"</span>, x[0]);
-</code></pre>
+printf(&quot;%08x\n&quot;, x[0]);</code></pre>
 
 </td>
 		<td markdown="1">ffffffff</td>
@@ -89,11 +87,9 @@ printf(<span class="literal">"%08x\n"</span>, x[0]);
 	<tr>
 		<th>削除済み</th>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span>* px = x;
-<span class="reserved">delete</span> x;
-printf(<span class="literal">"%08x\n"</span>, px[0]);
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">int* px = x;
+delete x;
+printf(&quot;%08x\n&quot;, px[0]);</code></pre>
 
 </td>
 		<td markdown="1">dddddddd</td>
@@ -104,11 +100,9 @@ printf(<span class="literal">"%08x\n"</span>, px[0]);
 	<tr>
 		<th>未初期化</th>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code>    <span class="reserved">int</span>* y = <span class="reserved">new int</span>[1];
-    printf(<span class="literal">"%08x\n"</span>, y[0]);
-}
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">    int* y = new int[1];
+    printf(&quot;%08x\n&quot;, y[0]);
+}</code></pre>
 
 </td>
 		<td markdown="1">cdcdcdcd</td>
@@ -152,52 +146,52 @@ printf(<span class="literal">"%08x\n"</span>, px[0]);
 
 以下に、既定値の例を示します(この例ではクラスのフィールドを明示的に初期化せず使うことで既定値を得ています)。
 
-<pre class="source" title="既定値の例">
-<code><span class="comment">// 初期化せずにフィールドを読んでみる(既定値が入っている)</span>
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">DefaultValues</span>();
+```csharp
+// 初期化せずにフィールドを読んでみる(既定値が入っている)
+var a = new DefaultValues();
 
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a</span><span class="operator">.</span><span class="field">i</span>);         <span class="comment">// 0</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a</span><span class="operator">.</span><span class="field">x</span>);         <span class="comment">// 0.0</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>((<span class="reserved">int</span>)<span class="variable">a</span><span class="operator">.</span><span class="field">c</span>);    <span class="comment">// '\0' (ヌル文字)は表示できないので数値化して表示</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a</span><span class="operator">.</span><span class="field">b</span>);         <span class="comment">// False</span>
-<span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">a</span><span class="operator">.</span><span class="field">s</span> <span class="operator">==</span> <span class="reserved">null</span>); <span class="comment">// null は表示できないので比較で。True になる</span>
+Console.WriteLine(a.i);         // 0
+Console.WriteLine(a.x);         // 0.0
+Console.WriteLine((int)a.c);    // '\0' (ヌル文字)は表示できないので数値化して表示
+Console.WriteLine(a.b);         // False
+Console.WriteLine(a.s == null); // null は表示できないので比較で。True になる
 
-<span class="reserved">class</span> <span class="type">DefaultValues</span>
+class DefaultValues
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">i</span>;
-    <span class="reserved">public</span> <span class="reserved">double</span> <span class="field">x</span>;
-    <span class="reserved">public</span> <span class="reserved">char</span> <span class="field">c</span>;
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="field">b</span>;
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="field">s</span>;
+    public int i;
+    public double x;
+    public char c;
+    public bool b;
+    public string s;
 }
-</code></pre>
+```
 
 0 埋めなのは、主にパフォーマンス上の理由です。
 (未定義動作よりはマシなので)何か決まった値で初期化するとするなら 0 が一番低コストです。
 配列などで大きめのメモリ領域を確保した際でも、0 埋めならそこまで大きなコストをかけずに初期化できます。
 
-<pre class="source" title="巨大配列の 0 埋めの例">
-<code><span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="comment">// 16 MB の巨大領域。</span>
-<span class="comment">// 要素1個1個は初期化していないので、全部に既定値が入ってる。</span>
-<span class="reserved">var</span> <span class="variable">points</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">Vector4</span>[<span class="number">1024</span> <span class="operator">*</span> <span class="number">1024</span>];
+// 16 MB の巨大領域。
+// 要素1個1個は初期化していないので、全部に既定値が入ってる。
+var points = new Vector4[1024 * 1024];
 
-<span class="comment">// 中身が全部 0 なことを確認してみる。</span>
-<span class="comment">// (無理やり byte 配列扱いして、1 byte ずつ確認。)</span>
-<span class="reserved">var</span> <span class="variable">bytes</span> <span class="operator">=</span> <span class="type">MemoryMarshal</span><span class="operator">.</span><span class="method">AsBytes</span>&lt;<span class="type struct">Vector4</span>&gt;(<span class="variable">points</span>);
+// 中身が全部 0 なことを確認してみる。
+// (無理やり byte 配列扱いして、1 byte ずつ確認。)
+var bytes = MemoryMarshal.AsBytes<Vector4>(points);
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">v</span> <span class="control">in</span> <span class="variable">bytes</span>)
+foreach (var v in bytes)
 {
-    <span class="control">if</span> (<span class="variable">v</span> <span class="operator">!=</span> <span class="number">0</span>)
-        <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="string">&quot;絶対通らないはず&quot;</span>);
+    if (v != 0)
+        Console.WriteLine("絶対通らないはず");
 }
 
-<span class="reserved">struct</span> <span class="type struct">Vector4</span>
+struct Vector4
 {
-    <span class="reserved">public</span> <span class="reserved">float</span> <span class="field">X</span>, <span class="field">Y</span>, <span class="field">Z</span>, <span class="field">W</span>;
+    public float X, Y, Z, W;
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="word-default">余談: default という英単語</a>
 
@@ -224,23 +218,23 @@ C# 2.0 で「[ジェネリック](../oop/sp2_generics.md#generics)」が導入�
 どんな型でも一律既定値を作れる構文が必要になりました。
 以下のような場面で困りました。
 
-<pre class="source" title="" lang="">
-<code><span class="type">T</span> X&lt;<span class="type">T</span>&gt;()
+```csharp
+T X<T>()
 {
-    <span class="reserved">return</span> <span class="input">????</span>; <span class="comment">// T の既定値を作りたいけども、null とか 0 とかは書けない</span>
+    return ????; // T の既定値を作りたいけども、null とか 0 とかは書けない
 }
-</code></pre>
+```
 
 <h5 class="version version2">Ver. 2.0</h5>
 
 そこで、ジェネリックと同時に入った仕様が、`default` キーワードを使った既定値の作成機能です。
 
-<pre class="source" title="" lang="">
-<code><span class="type">T</span> X&lt;<span class="type">T</span>&gt;()
+```csharp
+T X<T>()
 {
-    <span class="reserved">return</span> <span class="reserved">default</span>(<span class="type">T</span>); <span class="comment">// 型に応じて、null とか 0 とかになる</span>
+    return default(T); // 型に応じて、null とか 0 とかになる
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="default-constructor">default(T) と構造体のコンストラクター</a>
 
@@ -252,42 +246,42 @@ C# 2.0 で「[ジェネリック](../oop/sp2_generics.md#generics)」が導入�
 しかし、C# 2.0 以降、`default(T)` で既定値を作れる仕様が入ったので、実は、「C# の構造体には引数なしのコンストラクターが定義できない」って仕様は今となっては不要だったりします。
 つまり、以下のよう使い分けれていいはずです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">void</span> X&lt;<span class="type">T</span>&gt;()
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>()
+```csharp
+void X<T>()
+    where T : new()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">T</span>();    <span class="comment">// この場合はコンストラクターが呼ばれて欲しい</span>
-    <span class="reserved">var</span> y = <span class="reserved">default</span>(<span class="type">T</span>); <span class="comment">// こいつは既定値(0 埋め)</span>
+    var x = new T();    // この場合はコンストラクターが呼ばれて欲しい
+    var y = default(T); // こいつは既定値(0 埋め)
 }
-</code></pre>
+```
 
 <h5 class="version version10">Ver. 10.0</h5>
 
 この現状を鑑みて、
 C# 10 から構造体に引数なしのコンストラクターを定義できるようになりました。
 
-<pre class="source" title="C# 10 で引数なしコンストラクターが書けるようになって、new T() と default(T) が別の意味に">
-<code><span class="comment">// new T() は S(1, 2) に、</span>
-<span class="comment">// default(T) は S(0, 0) になる。</span>
-<span class="method">WriteNewAndDefault</span>&lt;<span class="type struct">S</span>&gt;();
+```csharp
+// new T() は S(1, 2) に、
+// default(T) は S(0, 0) になる。
+WriteNewAndDefault<S>();
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">WriteNewAndDefault</span>&lt;<span class="type param">T</span>&gt;()
-    <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">new</span>()
+static void WriteNewAndDefault<T>()
+    where T : new()
 {
-    <span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type param">T</span>();    <span class="comment">// この場合はコンストラクターが呼ばれるようになった。</span>
-    <span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="reserved">default</span>(<span class="type param">T</span>); <span class="comment">// こいつは既定値(0 埋め)。</span>
+    var x = new T();    // この場合はコンストラクターが呼ばれるようになった。
+    var y = default(T); // こいつは既定値(0 埋め)。
 
-    <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">x</span>);
-    <span class="type">Console</span><span class="operator">.</span><span class="method">WriteLine</span>(<span class="variable">y</span>);
+    Console.WriteLine(x);
+    Console.WriteLine(y);
 }
 
-<span class="reserved">struct</span> <span class="type struct">S</span>
+struct S
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">X</span>, <span class="field">Y</span>;
-    <span class="reserved">public</span> <span class="type struct">S</span>() <span class="operator">=&gt;</span> (<span class="field">X</span>, <span class="field">Y</span>) <span class="operator">=</span> (<span class="number">1</span>, <span class="number">2</span>);
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="string">$&quot;</span><span class="string">S(</span>{<span class="field">X</span>}<span class="string">, </span>{<span class="field">Y</span>}<span class="string">)</span><span class="string">&quot;</span>;
+    public int X, Y;
+    public S() => (X, Y) = (1, 2);
+    public override string ToString() => $"S({X}, {Y})";
 }
-</code></pre>
+```
 
 ちなみに、引数なしコンストラクターの仕様は C# 6 で一度検討されたんですが、その時にはいくつかバグを踏んでしまって撤回されました。
 この時踏んだバグは以下のようなものです。
@@ -306,29 +300,29 @@ C# 10 から構造体に引数なしのコンストラクターを定義でき�
 例えば、既定値をよく使う割に型名が長くてうっとおしいものの代表格に、`CancellationToken`構造体(`System.Threading`名前空間)があります。
 以下のような感じのコードを書くことが結構あったりします。
 
-<pre class="source" title="CancellationTokenの規定値をdefault(T)で作る例">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> DefaultExpression(<span class="type">CancellationToken</span> c = <span class="reserved">default</span>(<span class="type">CancellationToken</span>))
+```csharp
+static async Task DefaultExpression(CancellationToken c = default(CancellationToken))
 {
-    <span class="reserved">while</span> (c != <span class="reserved">default</span>(<span class="type">CancellationToken</span>) &amp;&amp; !c.IsCancellationRequested)
+    while (c != default(CancellationToken) && !c.IsCancellationRequested)
     {
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(1000);
-        <span class="type">Console</span>.WriteLine(<span class="string">"."</span>);
+        await Task.Delay(1000);
+        Console.WriteLine(".");
     }
 }
-</code></pre>
+```
 
 これに対して、C# 7.1では、以下のように書き直せます。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> DefaultExpression(<span class="type">CancellationToken</span> c = <em><span class="reserved">default</span></em>)
+```csharp
+static async Task DefaultExpression(CancellationToken c = default)
 {
-    <span class="reserved">while</span> (c != <em><span class="reserved">default</span></em> &amp;&amp; !c.IsCancellationRequested)
+    while (c != default && !c.IsCancellationRequested)
     {
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(1000);
-        <span class="type">Console</span>.WriteLine(<span class="string">"."</span>);
+        await Task.Delay(1000);
+        Console.WriteLine(".");
     }
 }
-</code></pre>
+```
 
 1行目の引数の既定値と、3行目の `!=`演算子の右側に`default`とだけ書かれています。
 いずれも、引数`c`の型から`CancellationToken`構造体であることが推論できるので、`(CancellationToken)`の部分を省略できます。
@@ -357,21 +351,21 @@ C# には定数(`readonly` の意味じゃなく、`const`)しか受け付けな
 C# 11 では、構造体でもフィールドの明示的な初期化が不要になりました。
 クラスと同じく、明示的に代入しなかったフィールド・自動プロパティには既定値が入ります。
 
-<pre class="source" title="構造体のフィールドが自動的に 0 初期化されるように">
-<code><span class="reserved">struct</span> <span class="type struct">Sample</span>
+```csharp
+struct Sample
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; } <span class="operator">=</span> <span class="number">1</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Z</span> { <span class="reserved">get</span>; }
+    public int X { get; } = 1;
+    public int Y { get; }
+    public string? Z { get; }
 
-    <span class="comment">// X には初期化子が付いてるので元々 OK。</span>
-    <span class="comment">// C# 11 では Y, Z に何も入れなくても自動的に 0/null 初期化されるように。</span>
-    <span class="reserved">public</span> <span class="type struct">Sample</span>() { }
+    // X には初期化子が付いてるので元々 OK。
+    // C# 11 では Y, Z に何も入れなくても自動的に 0/null 初期化されるように。
+    public Sample() { }
 
-    <span class="comment">// C# 11 では Y に何も入れなくても大丈夫。0 に。</span>
-    <span class="reserved">public</span> <span class="type struct">Sample</span>(<span class="reserved">string</span> <span class="variable local">z</span>) <span class="operator">=&gt;</span> <span class="property">Z</span> <span class="operator">=</span> <span class="variable local">z</span>;
+    // C# 11 では Y に何も入れなくても大丈夫。0 に。
+    public Sample(string z) => Z = z;
 }
-</code></pre>
+```
 
 今となっては「構造体の場合はフィールドの明示的な初期化が必須」という制限は、「出どころを誰も覚えていない」というレベルだったそうです。
 おそらくは、「構造体のフィールドはローカル変数的に扱う」みたいな空気感だと思われます。

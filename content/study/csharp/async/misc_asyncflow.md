@@ -72,45 +72,45 @@ C# 5.0を使えない状況下で非同期処理を書くことになった場�
 
 以下のように書けます。
 
-<pre class="source" title="同期的にダイアログ表示" lang="">
-<code><span class="reserved">private bool</span> CheckBlocking()
+```csharp
+private bool CheckBlocking()
 {
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check1.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check1.IsChecked ?? false)
     {
-        <span class="reserved">var</span> result = <span class="type">Dialog</span>.ShowDialog(<span class="literal">"確認 1"</span>, <span class="literal">"1つ目の確認作業"</span>);
-        <span class="reserved">if</span> (!result) <span class="reserved">return false</span>;
+        var result = Dialog.ShowDialog("確認 1", "1つ目の確認作業");
+        if (!result) return false;
     }
 
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check2.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check2.IsChecked ?? false)
     {
-        <span class="reserved">var</span> result = <span class="type">Dialog</span>.ShowDialog(<span class="literal">"確認 2"</span>, <span class="literal">"2つ目の確認作業"</span>);
-        <span class="reserved">if</span> (!result) <span class="reserved">return false</span>;
+        var result = Dialog.ShowDialog("確認 2", "2つ目の確認作業");
+        if (!result) return false;
     }
 
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check3.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check3.IsChecked ?? false)
     {
-        <span class="reserved">var</span> result = <span class="type">Dialog</span>.ShowDialog(<span class="literal">"確認 3"</span>, <span class="literal">"3つ目の確認作業"</span>);
-        <span class="reserved">if</span> (!result) <span class="reserved">return false</span>;
+        var result = Dialog.ShowDialog("確認 3", "3つ目の確認作業");
+        if (!result) return false;
     }
 
-    <span class="reserved">return true</span>;
+    return true;
 }
-</code></pre>
+```
 
 
 問題は、非同期に書かざるを得ない場合です。Silverlightなんかはそうですし、最近実際に困ったのは[Unity](http://unity3d.com/)での話。
 
 その「実際の話」では、ダイアログを表示するためのAPIが、引数にコールバック用のデリゲートを渡すタイプのAPIでした。
 
-<pre class="source" title="" lang="">
-<code><span class="inactive">/// &lt;summary&gt;
-///</span><span class="comment"> コールバック型の非同期ダイアログ表示。</span>
-<span class="inactive">/// &lt;/summary&gt;
-/// &lt;param name="title"&gt;</span><span class="comment">ダイアログのタイトル文字列。</span><span class="inactive">&lt;/param&gt;
-/// &lt;param name="message"&gt;</span><span class="comment">ダイアログの本文。</span><span class="inactive">&lt;/param&gt;
-/// &lt;param name="onClose"&gt;</span><span class="comment">コールバック（OK が押されたら true、Cancel が押されたら false を渡す）。</span><span class="inactive">&lt;/param&gt;</span>
-<span class="reserved">public static void</span> BeginShowDialog(<span class="reserved">string</span> title, <span class="reserved">string</span> message, <span class="type">Action</span>&lt;<span class="reserved">bool</span>&gt; onClose)
-</code></pre>
+```csharp
+/// <summary>
+/// コールバック型の非同期ダイアログ表示。
+/// </summary>
+/// <param name="title">ダイアログのタイトル文字列。</param>
+/// <param name="message">ダイアログの本文。</param>
+/// <param name="onClose">コールバック（OK が押されたら true、Cancel が押されたら false を渡す）。</param>
+public static void BeginShowDialog(string title, string message, Action<bool> onClose)
+```
 
 
 で、これを使ってダイアログを表示する部分ですが、チーム開発の「後から継ぎ足し」の結果、気が付けば、以下のようなコードが出来上がっていました。
@@ -118,83 +118,83 @@ C# 5.0を使えない状況下で非同期処理を書くことになった場�
 <span class="expand-button" title="展開/折畳">（クリックしてソースコードを表示（割と見るに堪えないので初期状態を非表示に））</span>
 <div class="expand-panel" markdown="1" title="（クリックしてソースコードを表示（割と見るに堪えないので初期状態を非表示に））">
     
-<pre class="source" title="コールバック型 API で無理な制御フローを書いた例" lang="">
-<code><span class="reserved">private void</span> BeginCheck(<span class="type">Action</span>&lt;<span class="reserved">bool</span>&gt; onComplete)
+```csharp
+private void BeginCheck(Action<bool> onComplete)
 {
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check1.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check1.IsChecked ?? false)
     {
-        <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 1"</span>, <span class="literal">"1つ目の確認作業"</span>, result =&gt;
+        Dialog.BeginShowDialog("確認 1", "1つ目の確認作業", result =>
         {
-            <span class="reserved">if</span> (!result)
+            if (!result)
             {
-                onComplete(<span class="reserved">false</span>);
-                <span class="reserved">return</span>;
+                onComplete(false);
+                return;
             }
 
-            <span class="reserved">if</span> (<span class="reserved">this</span>.Check2.IsChecked ?? <span class="reserved">false</span>)
+            if (this.Check2.IsChecked ?? false)
             {
-                <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 2"</span>, <span class="literal">"2つ目の確認作業"</span>, result2 =&gt;
+                Dialog.BeginShowDialog("確認 2", "2つ目の確認作業", result2 =>
                 {
-                    <span class="reserved">if</span> (!result2)
+                    if (!result2)
                     {
-                        onComplete(<span class="reserved">false</span>);
-                        <span class="reserved">return</span>;
+                        onComplete(false);
+                        return;
                     }
 
-                    <span class="reserved">if</span> (<span class="reserved">this</span>.Check3.IsChecked ?? <span class="reserved">false</span>)
+                    if (this.Check3.IsChecked ?? false)
                     {
-                        <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 3"</span>, <span class="literal">"3つ目の確認作業"</span>, result3 =&gt;
+                        Dialog.BeginShowDialog("確認 3", "3つ目の確認作業", result3 =>
                         {
                             onComplete(result3);
                         });
                     }
-                    <span class="reserved">else</span>
-                        onComplete(<span class="reserved">true</span>);
+                    else
+                        onComplete(true);
                 });
             }
-            <span class="reserved">else if</span> (<span class="reserved">this</span>.Check3.IsChecked ?? <span class="reserved">false</span>)
+            else if (this.Check3.IsChecked ?? false)
             {
-                <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 3"</span>, <span class="literal">"3つ目の確認作業"</span>, result3 =&gt;
+                Dialog.BeginShowDialog("確認 3", "3つ目の確認作業", result3 =>
                 {
                     onComplete(result3);
                 });
             }
-            <span class="reserved">else</span>
-                onComplete(<span class="reserved">true</span>);
+            else
+                onComplete(true);
         });
     }
-    <span class="reserved">else if</span> (<span class="reserved">this</span>.Check2.IsChecked ?? <span class="reserved">false</span>)
+    else if (this.Check2.IsChecked ?? false)
     {
-        <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 2"</span>, <span class="literal">"2つ目の確認作業"</span>, result =&gt;
+        Dialog.BeginShowDialog("確認 2", "2つ目の確認作業", result =>
         {
-            <span class="reserved">if</span> (!result)
+            if (!result)
             {
-                onComplete(<span class="reserved">false</span>);
-                <span class="reserved">return</span>;
+                onComplete(false);
+                return;
             }
 
-            <span class="reserved">if</span> (<span class="reserved">this</span>.Check3.IsChecked ?? <span class="reserved">false</span>)
+            if (this.Check3.IsChecked ?? false)
             {
-                <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 3"</span>, <span class="literal">"3つ目の確認作業"</span>, result3 =&gt;
+                Dialog.BeginShowDialog("確認 3", "3つ目の確認作業", result3 =>
                 {
                     onComplete(result);
                 });
             }
-            <span class="reserved">else</span>
-                onComplete(<span class="reserved">true</span>);
+            else
+                onComplete(true);
         });
     }
-    <span class="reserved">else if</span> (<span class="reserved">this</span>.Check3.IsChecked ?? <span class="reserved">false</span>)
+    else if (this.Check3.IsChecked ?? false)
     {
-        <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 3"</span>, <span class="literal">"3つ目の確認作業"</span>, result3 =&gt;
+        Dialog.BeginShowDialog("確認 3", "3つ目の確認作業", result3 =>
         {
             onComplete(result3);
         });
     }
-    <span class="reserved">else</span>
-        onComplete(<span class="reserved">true</span>);
+    else
+        onComplete(true);
 }
-</code></pre>
+```
 
 
     
@@ -216,14 +216,14 @@ Taskクラスを返す非同期APIを用意して、await演算子を使うだ�
 
 コールバックを渡すタイプのAPIだとawait演算子を使えないので、まずはTaskクラス（System.Threading.Tasks名前空間）を返すタイプのAPIに変換します。以下のようになります。
 
-<pre class="source" title="Task クラスを返すタイプの API" lang="">
-<code><span class="reserved">public static</span> <span class="type">Task</span>&lt;<span class="reserved">bool</span>&gt; ShowDialogAsync(<span class="reserved">string</span> title, <span class="reserved">string</span> message)
+```csharp
+public static Task<bool> ShowDialogAsync(string title, string message)
 {
-    <span class="reserved">var</span> tcs = <span class="reserved">new</span> <span class="type">TaskCompletionSource</span>&lt;<span class="reserved">bool</span>&gt;();
-    BeginShowDialog(title, message, result =&gt; { tcs.TrySetResult(result); });
-    <span class="reserved">return</span> tcs.Task;
+    var tcs = new TaskCompletionSource<bool>();
+    BeginShowDialog(title, message, result => { tcs.TrySetResult(result); });
+    return tcs.Task;
 }
-</code></pre>
+```
 
 
 （単純化のため、例外処理をさぼっています）
@@ -235,30 +235,30 @@ Taskクラス自体は.NET Framework 4の頃からあるので、それ以降の
 
 そして、ダイアログを表示する部分は以下のように書きます。
 
-<pre class="source" title="非同期メソッド（await 演算子）を使ったダイアログ表示フロー" lang="">
-<code><span class="reserved">private <em>async</em></span> <span class="type"><em>Task</em></span>&lt;<span class="reserved">bool</span>&gt; Check<em>Async</em>()
+```csharp
+private async Task<bool> CheckAsync()
 {
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check1.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check1.IsChecked ?? false)
     {
-        <span class="reserved">var</span> result = <span class="reserved"><em>await</em></span> <span class="type">Dialog</span>.ShowDialog<em>Async</em>(<span class="literal">"確認 1"</span>, <span class="literal">"1つ目の確認作業"</span>);
-        <span class="reserved">if</span> (!result) <span class="reserved">return false</span>;
+        var result = await Dialog.ShowDialogAsync("確認 1", "1つ目の確認作業");
+        if (!result) return false;
     }
 
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check2.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check2.IsChecked ?? false)
     {
-        <span class="reserved">var</span> result = <span class="reserved"><em>await</em></span> <span class="type">Dialog</span>.ShowDialog<em>Async</em>(<span class="literal">"確認 2"</span>, <span class="literal">"2つ目の確認作業"</span>);
-        <span class="reserved">if</span> (!result) <span class="reserved">return false</span>;
+        var result = await Dialog.ShowDialogAsync("確認 2", "2つ目の確認作業");
+        if (!result) return false;
     }
 
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check3.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check3.IsChecked ?? false)
     {
-        <span class="reserved">var</span> result = <span class="reserved"><em>await</em></span> <span class="type">Dialog</span>.ShowDialog<em>Async</em>(<span class="literal">"確認 3"</span>, <span class="literal">"3つ目の確認作業"</span>);
-        <span class="reserved">if</span> (!result) <span class="reserved">return false</span>;
+        var result = await Dialog.ShowDialogAsync("確認 3", "3つ目の確認作業");
+        if (!result) return false;
     }
 
-    <span class="reserved">return true</span>;
+    return true;
 }
-</code></pre>
+```
 
 
 同期呼び出しの場合と比べて、背景色を変えて強調している部分だけが変化しています。
@@ -284,63 +284,63 @@ C# 5.0以前、割と常套手段として知られていたのが、イテレ�
 
 上記の例を、この手法を使って書き直すと、以下のようになります。
 
-<pre class="source" title="イテレーターを使った非同期処理の例" lang="">
-<code><span class="reserved">private void</span> BeginCheckWithIterator(<span class="type">Action</span>&lt;<span class="reserved">bool</span>&gt; onComplete)
+```csharp
+private void BeginCheckWithIterator(Action<bool> onComplete)
 {
-    <span class="reserved">var</span> e = CheckIterator(onComplete).GetEnumerator();
+    var e = CheckIterator(onComplete).GetEnumerator();
 
-    <span class="type">Action</span> a = <span class="reserved">null</span>;
+    Action a = null;
 
-    a = () =&gt;
+    a = () =>
     {
-        <span class="reserved">if</span> (!e.MoveNext()) <span class="reserved">return</span>;
+        if (!e.MoveNext()) return;
         e.Current(a);
     };
 
     a();
 }
 
-<span class="reserved">private</span> <span class="type">IEnumerable</span>&lt;<span class="type">Action</span>&lt;<span class="type">Action</span>&gt;&gt; CheckIterator(<span class="type">Action</span>&lt;<span class="reserved">bool</span>&gt; onComplete)
+private IEnumerable<Action<Action>> CheckIterator(Action<bool> onComplete)
 {
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check1.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check1.IsChecked ?? false)
     {
-        <span class="reserved">bool</span> result = <span class="reserved">false</span>;
-        <span class="reserved">yield return</span> callback =&gt; <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 1"</span>, <span class="literal">"1つ目の確認作業"</span>, r =&gt; { result = r; callback(); });
+        bool result = false;
+        yield return callback => Dialog.BeginShowDialog("確認 1", "1つ目の確認作業", r => { result = r; callback(); });
 
-        <span class="reserved">if</span> (!result)
+        if (!result)
         {
-            onComplete(<span class="reserved">false</span>);
-            <span class="reserved">yield break</span>;
+            onComplete(false);
+            yield break;
         }
     }
 
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check2.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check2.IsChecked ?? false)
     {
-        <span class="reserved">bool</span> result = <span class="reserved">false</span>;
-        <span class="reserved">yield return</span> callback =&gt; <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 2"</span>, <span class="literal">"2つ目の確認作業"</span>, r =&gt; { result = r; callback(); });
+        bool result = false;
+        yield return callback => Dialog.BeginShowDialog("確認 2", "2つ目の確認作業", r => { result = r; callback(); });
 
-        <span class="reserved">if</span> (!result)
+        if (!result)
         {
-            onComplete(<span class="reserved">false</span>);
-            <span class="reserved">yield break</span>;
+            onComplete(false);
+            yield break;
         }
     }
 
-    <span class="reserved">if</span> (<span class="reserved">this</span>.Check3.IsChecked ?? <span class="reserved">false</span>)
+    if (this.Check3.IsChecked ?? false)
     {
-        <span class="reserved">bool</span> result = <span class="reserved">false</span>;
-        <span class="reserved">yield return</span> callback =&gt; <span class="type">Dialog</span>.BeginShowDialog(<span class="literal">"確認 3"</span>, <span class="literal">"3つ目の確認作業"</span>, r =&gt; { result = r; callback(); });
+        bool result = false;
+        yield return callback => Dialog.BeginShowDialog("確認 3", "3つ目の確認作業", r => { result = r; callback(); });
 
-        <span class="reserved">if</span> (!result)
+        if (!result)
         {
-            onComplete(<span class="reserved">false</span>);
-            <span class="reserved">yield break</span>;
+            onComplete(false);
+            yield break;
         }
     }
 
-    onComplete(<span class="reserved">true</span>);
+    onComplete(true);
 }
-</code></pre>
+```
 
 
 行数は増えてしまっていますが、パターンとして、

@@ -33,16 +33,16 @@ C# で関数ポインター的なものというと[デリゲート](../../../..
 
 元々の案だと以下のような構文を考えていたんですが、これだと他の構文と不明瞭で、結構先までソースコードを先読みしないといけないのが負担になりすぎるとのこと。
 
-<pre class="source" title="関数ポインター(旧案)">
-<code><span class="reserved">func</span>*(<span class="reserved">int</span>, <span class="reserved">int</span>)
-</code></pre>
+```csharp
+func*(int, int)
+```
 
 なので、以下のような構文にしたいとのこと。
 既存の文法では `*<` が連続することがないので、これなら構文解析が楽というのが主な理由。
 
-<pre class="source" title="関数ポインター(新案)">
-<code><span class="reserved">func</span>*&lt;<span class="reserved">void</span>&gt;
-</code></pre>
+```csharp
+func*<void>
+```
 
 あと、この機能はネイティブ相互運用のためのものなので、関数の呼び出し規約
 (引数や戻り値をメモリ上やレジスター中にどう並べて受け渡しするか)
@@ -54,12 +54,12 @@ C# で関数ポインター的なものというと[デリゲート](../../../..
 
 特に要望として大きいのが整数と null を混在させたときに `int?` などとして扱ってほしいというもの。
 
-<pre class="source" title="int と null の共通型">
-<code><span class="comment">// 以下のいずれも int? になってほしいけど、現状はコンパイル エラーに</span>
-<span class="reserved">var</span> x = b ? 1 : <span class="reserved">null</span>;
-<span class="reserved">var</span> y = b <span class="reserved">switch</span> { <span class="reserved">true</span> =&gt; 1, <span class="reserved">false</span> =&gt; <span class="reserved">null</span> };
-<span class="reserved">var</span> z = <span class="reserved">new</span>[] { 1, <span class="reserved">null</span> };
-</code></pre>
+```csharp
+// 以下のいずれも int? になってほしいけど、現状はコンパイル エラーに
+var x = b ? 1 : null;
+var y = b switch { true => 1, false => null };
+var z = new[] { 1, null };
+```
 
 他にも、共通の基底クラスから派生している型 `A : Base` と `B : Base` があったとき、これらを並べたら `Base` として扱ってほしいという話もあります。
 で、C# 9.0 では、ちゃんと 1 と null の共通型を `int?` と認識できるようにするつもりで作業が進んでいます。
@@ -67,11 +67,11 @@ C# で関数ポインター的なものというと[デリゲート](../../../..
 この問題に対する解決策としては「Common Type」の他に、Target-Typed 型推論というものもあります。
 C# 8.0 で入りたての `swtich` 式だけはこの Target-Typed 型推論を行っていて、たとえば以下のコードはコンパイル可能です。
 
-<pre class="source" title="switch 式の Target-Typed 型推論">
-<code><span class="comment">// switch 式に限り、以下の書き方はコンパイルできる。</span>
-<span class="comment">// 変数の型から推論(terget-typed 型推論)</span>
-<span class="reserved">int</span>? targetTyped = b <span class="reserved">switch</span> { <span class="reserved">true</span> =&gt; 1, <span class="reserved">false</span> =&gt; <span class="reserved">null</span> };
-</code></pre>
+```csharp
+// switch 式に限り、以下の書き方はコンパイルできる。
+// 変数の型から推論(terget-typed 型推論)
+int? targetTyped = b switch { true => 1, false => null };
+```
 
 で、今上がっている議題は以下のような感じ。
 
@@ -87,11 +87,11 @@ C# 8.0 で入りたての `swtich` 式だけはこの Target-Typed 型推論を�
 
 C# 8.0 だと、以下のようなコードを書くと null 警告が出ます。
 
-<pre class="source" title="MaybeNull が働いてない">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-[<span class="reserved">return</span>: MaybeNull]
-T M&lt;<span class="type">T</span>&gt;() =&gt; <span class="reserved">default</span>;
-</code></pre>
+```csharp
+#nullable enable
+[return: MaybeNull]
+T M<T>() => default;
+```
 
 [`MaybeNull` 属性](../../../../study/csharp/resource/nullablereferencetype.md#annotation-attributes)を付けると「たとえ非 null であるとされる型であっても null 許容に上書き」みたいな挙動になるものです。
 ただ、現状、この属性は「メソッドの外向け」にしか機能していなくて、
@@ -110,10 +110,10 @@ T M&lt;<span class="type">T</span>&gt;() =&gt; <span class="reserved">default</s
 [`const`](../../../../study/csharp/start/sp_const.md#const) な文字列リテラルだけを使って[文字列補間](../../../../study/csharp/start/st_string.md#string-interpolation)をする場合、
 その結果も `const` 扱いできるようにしようという話。
 
-<pre class="source" title="定数文字列補間">
-<code><span class="reserved">const</span> <span class="reserved">string</span> A = <span class="string">"abc"</span>;
-<span class="reserved">const</span> <span class="reserved">string</span> B = <span class="string">$"</span>{A}<span class="string">123"</span>; <span class="comment">// 今はエラーに。これを認めたい。</span>
-</code></pre>
+```csharp
+const string A = "abc";
+const string B = $"{A}123"; // 今はエラーに。これを認めたい。
+```
 
 ちなみに、数値の場合は書式によってはカルチャーの影響を受ける(小数点がコンマだったり、3桁区切りがピリオドだったりする言語が結構ある)ので、
 `{}` 内に書けるのは `const string` だけになりそう。
@@ -130,19 +130,19 @@ T M&lt;<span class="type">T</span>&gt;() =&gt; <span class="reserved">default</s
 今までこれができなかった理由は、型パターンと定数パターンが競合するからで、優先度を決めないといけません。
 例えば以下のように、型名にも `X` があって、定数にも `X` があるとき、パターン中の `X` はどちらになるかという話。
 
-<pre class="source" title="型 X と定数 X">
-<code><span class="reserved">class</span> <span class="type">X</span> { }
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class X { }
+class A
 {
-    <span class="reserved">const</span> <span class="reserved">int</span> X = 0;
+    const int X = 0;
 
-    <span class="reserved">int</span> M(<span class="reserved">object</span> x) =&gt; x <span class="reserved">switch</span>
+    int M(object x) => x switch
     {
-        X =&gt; 0,
-        <span class="reserved">_</span> =&gt; 1,
+        X => 0,
+        _ => 1,
     };
 }
-</code></pre>
+```
 
 既存コードを壊さないようにするには以下のようにするしかなく、ちょっと残念感はあるものの、これで行くことになりそう。
 
@@ -154,19 +154,19 @@ T M&lt;<span class="type">T</span>&gt;() =&gt; <span class="reserved">default</s
 Target-Typed な推論は、型の決定だけじゃなくて、メンバー名のルックアップにも使えるんじゃないかという話。
 要するに、以下のようなコードを認めるようにしようという話です。
 
-<pre class="source" title="Target-Typed なメンバー ルックアップ">
-<code><span class="reserved">enum</span> <span class="type">E</span> { A, B }
+```csharp
+enum E { A, B }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">int</span> M(E e) =&gt; e <span class="reserved">switch</span>
+    int M(E e) => e switch
     {
-        A =&gt; 1, <span class="comment">// 今だと、E.A と書かないとダメ</span>
-        B =&gt; 2, <span class="comment">// 同じく、E.B</span>
-        <span class="reserved">_</span> =&gt; 3,
+        A => 1, // 今だと、E.A と書かないとダメ
+        B => 2, // 同じく、E.B
+        _ => 3,
     };
 }
-</code></pre>
+```
 
 enum だけじゃなくて、クラスの静的メンバーのルックアップでも同様。
 特に、同じく C# 9.0 で Discriminated Union (後述)も考えているので、そのためにもこの機能は役立ちそうとのこと。
@@ -179,12 +179,12 @@ F# に同名の機能があるやつ。
 
 「いずれかの型」は、オブジェクト指向言語としては利便性を抜きにすれば単に「派生クラス」でできたりするんですが。
 
-<pre class="source" title="派生で「いずれか」を表現">
-<code><span class="comment">// Base 型は A もしくは B のいずれかである</span>
-<span class="reserved">class</span> <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">A</span> : Base { }
-<span class="reserved">class</span> <span class="type">B</span> : Base { }
-</code></pre>
+```csharp
+// Base 型は A もしくは B のいずれかである
+class Base { }
+class A : Base { }
+class B : Base { }
+```
 
 問題は2つ
 
@@ -197,24 +197,24 @@ F# に同名の機能があるやつ。
 ということで、その Records に合わせた文法で、網羅性も考慮に入れた構文として、以下のような案が出ています。
 enum class ですって。
 
-<pre class="source" title="enum class">
-<code><span class="reserved">enum</span> <span class="reserved">class</span> <span class="type">Shape</span>
+```csharp
+enum class Shape
 {
-    <span class="type">Rectangle</span>(<span class="reserved">float</span> Width, <span class="reserved">float</span> Length),
-    <span class="type">Circle</span>(<span class="reserved">float</span> Radius),
+    Rectangle(float Width, float Length),
+    Circle(float Radius),
 }
-</code></pre>
+```
 
 ちなみに、以下のような感じで解釈されます。
 (`data class` は Records で提案されている構文。)
 
-<pre class="source" title="enum class = 入れ子の data class">
-<code><span class="reserved">partial</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">Shape</span>
+```csharp
+partial abstract class Shape
 {
-    <span class="reserved">public data class</span> <span class="type">Rectangle</span>(<span class="reserved">float</span> Width, <span class="reserved">float</span> Length) : Shape,
-    <span class="reserved">public data class</span> <span class="type">Circle</span>(<span class="reserved">float</span> Radius) : Shape
+    public data class Rectangle(float Width, float Length) : Shape,
+    public data class Circle(float Radius) : Shape
 }
-</code></pre>
+```
 
 まあ、ほぼ F# の Discriminated Union 総統の機能です。
 

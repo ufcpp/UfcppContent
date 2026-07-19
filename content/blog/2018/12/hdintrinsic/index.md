@@ -36,21 +36,21 @@ C# は、これら C や C++ と比較してどこがボトルネックでしょ
 例えば、32ビット整数の中から、特定のビットだけを抜き出すことを考えてみます。
 普通に C# で書くと以下のような感じ。
 
-<pre class="source" title="uint 中の特定のビットを抜き出し">
-<code><span class="reserved">struct</span> <span class="type">SingleView</span>
+```csharp
+struct SingleView
 {
-    <span class="reserved">public</span> <span class="reserved">uint</span> Value;
+    public uint Value;
  
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;</span><span class="inactive">summary</span><span class="inactive">&gt;</span>
-    <span class="inactive">///</span><span class="comment"> Value のうち、23～31ビット目の値を抜き出す。</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/</span><span class="inactive">summary</span><span class="inactive">&gt;</span>
-    <span class="reserved">public</span> <span class="reserved">uint</span> Exponent
+    /// <summary>
+    /// Value のうち、23～31ビット目の値を抜き出す。
+    /// </summary>
+    public uint Exponent
     {
-        <span class="reserved">get</span> =&gt; (Value &amp; 0x7F800000) &gt;&gt; 23;
-        <span class="reserved">set</span> =&gt; Value = (<span class="reserved">uint</span>)((Value &amp; ~0x7F800000) | ((<span class="reserved">value</span> &lt;&lt; 23) &amp; 0x7F800000));
+        get => (Value & 0x7F800000) >> 23;
+        set => Value = (uint)((Value & ~0x7F800000) | ((value << 23) & 0x7F800000));
     }
 }
-</code></pre>
+```
 
 AND とか OR とかシフト演算がいくつか必要です。
 
@@ -88,11 +88,11 @@ intrinsic というのは固有の、内在的な、内因的な、本質的な�
 `mmintrin.h` とかで検索してもらうとサンプル コードがすぐに見つかると思います。
 以下のような感じで、普通の C++ コードを書くと、それが特定の Intel CPU 命令に置き換わります。
 
-<pre class="source" title="C++ での Intel Intrisics">
-<code><span class="reserved">#include</span> <span class="string">&lt;immintrin.h&gt;</span>
-<span class="comment">// 中略</span>
-<span class="type">__m128</span> c = _mm_mul_ps(a, b);
-</code></pre>
+```cpp
+#include <immintrin.h>
+// 中略
+__m128 c = _mm_mul_ps(a, b);
+```
 
 いわゆる SIMD 演算というやつで、
 複数の積和演算を1命令で実行するので、うまく使えば数値計算が4～8倍速くなったりします。
@@ -121,24 +121,24 @@ MyGet (daily ビルド用の CI サーバー)からのみ取得できます。
 
 例えば、最初に出した「特定のビットだけを抜き出す」コードは以下のように書けます。
 
-<pre class="source" title="System.Runtime.Intrinsics">
-<code><span class="reserved">using</span> System.Runtime.Intrinsics.X86;
+```csharp
+using System.Runtime.Intrinsics.X86;
  
-<span class="reserved">struct</span> <span class="type">SingleView</span>
+struct SingleView
 {
-    <span class="reserved">public</span> <span class="reserved">uint</span> Value;
+    public uint Value;
  
-    <span class="reserved">public</span> <span class="reserved">uint</span> Exponent
+    public uint Exponent
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">if</span> (<span class="type">Bmi1</span>.IsSupported) <span class="reserved">return</span> <span class="type">Bmi1</span>.BitFieldExtract(Value, 23, 8);
-            <span class="reserved">else</span> <span class="reserved">return</span> (Value &amp; 0x7F800000) &gt;&gt; 23;
+            if (Bmi1.IsSupported) return Bmi1.BitFieldExtract(Value, 23, 8);
+            else return (Value & 0x7F800000) >> 23;
         }
-        <span class="comment">// set 割愛</span>
+        // set 割愛
     }
 }
-</code></pre>
+```
 
 他にも、先ほど挙げた Intel Intrinsics 相当のメソッドもあります。
 

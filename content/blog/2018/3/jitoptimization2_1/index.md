@@ -17,27 +17,27 @@ aliases: []
 
 とある構造体、例えば以下のようなものがあったとします。
 
-<pre class="source">
-<code><span class="reserved">struct</span> <span class="type">X</span> : IDisposable
+```csharp
+struct X : IDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">bool</span> IsDisposed;
-    <span class="reserved">void</span> IDisposable.Dispose() =&gt; IsDisposed = <span class="reserved">true</span>;
+    public bool IsDisposed;
+    void IDisposable.Dispose() => IsDisposed = true;
 }
-</code></pre>
+```
 
 この構造体 `X` の `Dispose` メソッドを呼び出すにあたって、
 以下の3つのうち、一番高速なのはどれでしょう。
 
-<pre class="source">
-<code>    <span class="comment">// (1) インターフェイス引数で受け取って呼ぶ</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Interface(IDisposable x) =&gt; x.Dispose();
+```csharp
+    // (1) インターフェイス引数で受け取って呼ぶ
+    public static void Interface(IDisposable x) => x.Dispose();
 
-    <span class="comment">// (2) X のまま受け取って、メソッド内でインターフェイスにキャストして呼ぶ</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> NonGeneric(X x) =&gt; ((IDisposable)x).Dispose();
+    // (2) X のまま受け取って、メソッド内でインターフェイスにキャストして呼ぶ
+    public static void NonGeneric(X x) => ((IDisposable)x).Dispose();
 
-    <span class="comment">// (3) ジェネリックなメソッドで受け取って呼ぶ</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Generic&lt;<span class="type">T</span>&gt;(T x) <span class="reserved">where</span> T : IDisposable =&gt; x.Dispose();
-</code></pre>
+    // (3) ジェネリックなメソッドで受け取って呼ぶ
+    public static void Generic<T>(T x) where T : IDisposable => x.Dispose();
+```
 
 ## 解答
 
@@ -80,12 +80,12 @@ Merge 日時を見ての通り、まあ、結構前からだったみたいな�
 
 どうも、値渡しの時にしか上記の最適化が効いていなくて、「参照渡しでも同じこと効くようにしないとダメだろ」っていう不具合報告が入ったみたいでして。
 
-<pre class="source">
-<code>    <span class="comment">// これは devirtualize される(去年の10月から)</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> NonGeneric(X x) =&gt; ((IDisposable)x).Dispose();
-    <span class="comment">// これは devirtualize し忘れてた(今出てるプルリクで治る)</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> NonGeneric(<span class="reserved">ref</span> X x) =&gt; ((IDisposable)x).Dispose();
-</code></pre>
+```csharp
+    // これは devirtualize される(去年の10月から)
+    public static void NonGeneric(X x) => ((IDisposable)x).Dispose();
+    // これは devirtualize し忘れてた(今出てるプルリクで治る)
+    public static void NonGeneric(ref X x) => ((IDisposable)x).Dispose();
+```
 
 [ref](../../../../study/csharp/resource/sp_ref.md#sec-byref) がらみ、
 「動作確認が漏れてて後から気付いて修正」みたいなのかなり多いんですよねぇ…

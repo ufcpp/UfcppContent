@@ -25,73 +25,73 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="source"></a>ソース
 
-<pre class="xsource" title="">
-<code><span class="bracket">&lt;</span><span class="element">source</span> <span class="attribute">xml:space</span><span class="attvalue">="preserve"</span> <span class="attribute">title</span><span class="attvalue">="C# ソースファイル"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">reserved</span><span class="bracket">&gt;</span>namespace<span class="bracket">&lt;/</span><span class="element">reserved</span><span class="bracket">&gt;</span> Test
+```xml
+<source xml:space="preserve" title="C# ソースファイル">
+<reserved>namespace</reserved> Test
 {
-  <span class="bracket">&lt;</span><span class="element">reserved</span><span class="bracket">&gt;</span>class<span class="bracket">&lt;/</span><span class="element">reserved</span><span class="bracket">&gt;</span> ConsoleApp1
+  <reserved>class</reserved> ConsoleApp1
   {
-    <span class="bracket">&lt;</span><span class="element">reserved</span><span class="bracket">&gt;</span>public static void<span class="bracket">&lt;/</span><span class="element">reserved</span><span class="bracket">&gt;</span> Main(<span class="bracket">&lt;</span><span class="element">reserved</span><span class="bracket">&gt;</span>string<span class="bracket">&lt;/</span><span class="element">reserved</span><span class="bracket">&gt;</span>[] args)
+    <reserved>public static void</reserved> Main(<reserved>string</reserved>[] args)
     {
-      <span class="bracket">&lt;</span><span class="element">comment</span><span class="bracket">&gt;</span>// お約束のあの文句を画面に表示。<span class="bracket">&lt;/</span><span class="element">comment</span><span class="bracket">&gt;</span>
-      Console.Write(<span class="bracket">&lt;</span><span class="element">string</span><span class="bracket">&gt;</span>"Hello World!\n"<span class="bracket">&lt;/</span><span class="element">string</span><span class="bracket">&gt;</span>);
+      <comment>// お約束のあの文句を画面に表示。</comment>
+      Console.Write(<string>"Hello World!\n"</string>);
     }
   }
 }
-<span class="bracket">&lt;/</span><span class="element">source</span><span class="bracket">&gt;</span>
+</source>
 
-<span class="bracket">&lt;</span><span class="element">xsource</span> <span class="attribute">xml:space</span><span class="attvalue">="preserve"</span> <span class="attribute">title</span><span class="attvalue">="XML"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;lt;?<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>xml<span class="bracket">&lt;/</span><span class="element">element</span><span class="bracket">&gt;</span> <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>version<span class="bracket">&lt;/</span><span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="1.0"<span class="bracket">&lt;/</span><span class="element">attvalue</span><span class="bracket">&gt;</span> <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>encoding<span class="bracket">&lt;/</span><span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="utf-8"<span class="bracket">&lt;/</span><span class="element">attvalue</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>?&amp;gt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;lt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>document<span class="bracket">&lt;/</span><span class="element">element</span><span class="bracket">&gt;</span> <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>title<span class="bracket">&lt;/</span><span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="ソースファイル"<span class="bracket">&lt;/</span><span class="element">attvalue</span><span class="bracket">&gt;</span> <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>xmlns<span class="bracket">&lt;/</span><span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="http://ufcpp.net/study/document"<span class="bracket">&lt;/</span><span class="element">attvalue</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;gt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;lt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>section<span class="bracket">&lt;/</span><span class="element">element</span><span class="bracket">&gt;</span> <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>title<span class="bracket">&lt;/</span><span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="概要"<span class="bracket">&lt;/</span><span class="element">attvalue</span><span class="bracket">&gt;</span> <span class="bracket">&lt;</span><span class="element">attribute</span><span class="bracket">&gt;</span>id<span class="bracket">&lt;/</span><span class="element">attribute</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">attvalue</span><span class="bracket">&gt;</span>="abst"<span class="bracket">&lt;/</span><span class="element">attvalue</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;gt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;lt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>p<span class="bracket">&lt;/</span><span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;gt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span>
+<xsource xml:space="preserve" title="XML">
+<symbol>&lt;?</symbol><element>xml</element> <attribute>version</attribute><attvalue>="1.0"</attvalue> <attribute>encoding</attribute><attvalue>="utf-8"</attvalue><symbol>?&gt;</symbol>
+<symbol>&lt;</symbol><element>document</element> <attribute>title</attribute><attvalue>="ソースファイル"</attvalue> <attribute>xmlns</attribute><attvalue>="http://ufcpp.net/study/document"</attvalue><symbol>&gt;</symbol>
+  <symbol>&lt;</symbol><element>section</element> <attribute>title</attribute><attvalue>="概要"</attvalue> <attribute>id</attribute><attvalue>="abst"</attvalue><symbol>&gt;</symbol>
+    <symbol>&lt;</symbol><element>p</element><symbol>&gt;</symbol>
       XML 用
-    <span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;lt;/<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>p<span class="bracket">&lt;/</span><span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;gt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;lt;/<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>section<span class="bracket">&lt;/</span><span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;gt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;lt;/<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">element</span><span class="bracket">&gt;</span>document<span class="bracket">&lt;/</span><span class="element">element</span><span class="bracket">&gt;</span><span class="bracket">&lt;</span><span class="element">symbol</span><span class="bracket">&gt;</span>&amp;gt;<span class="bracket">&lt;/</span><span class="element">symbol</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">xsource</span><span class="bracket">&gt;</span>
+    <symbol>&lt;/</symbol><element>p</element><symbol>&gt;</symbol>
+  <symbol>&lt;/</symbol><element>section</element><symbol>&gt;</symbol>
+<symbol>&lt;/</symbol><element>document</element><symbol>&gt;</symbol>
+</xsource>
 
-<span class="bracket">&lt;</span><span class="element">console</span> <span class="attribute">xml:space</span><span class="attvalue">="preserve"</span> <span class="attribute">title</span><span class="attvalue">="コンソール画面"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">prompt</span><span class="bracket">/&gt;</span><span class="bracket">&lt;</span><span class="element">input</span><span class="bracket">&gt;</span>csc Test.cs<span class="bracket">&lt;/</span><span class="element">input</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">prompt</span><span class="bracket">/&gt;</span><span class="bracket">&lt;</span><span class="element">input</span><span class="bracket">&gt;</span>Test.exe<span class="bracket">&lt;/</span><span class="element">input</span><span class="bracket">&gt;</span>
-Hello World!<span class="bracket">&lt;</span><span class="element">comment</span><span class="bracket">&gt;</span>お決まりのあれが表示される<span class="bracket">&lt;/</span><span class="element">comment</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">console</span><span class="bracket">&gt;</span>
-</code></pre>
+<console xml:space="preserve" title="コンソール画面">
+<prompt/><input>csc Test.cs</input>
+<prompt/><input>Test.exe</input>
+Hello World!<comment>お決まりのあれが表示される</comment>
+</console>
+```
 ちなみに、さすがに reserved とか commenet とかのタグは、
 ソースファイルから自動生成するためのプログラムを作って使っています。
 
 
 ## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
 
-<pre class="source" title="C# ソースファイル" lang="">
-<code><span class="reserved">namespace</span> Test
+```csharp
+namespace Test
 {
-  <span class="reserved">class</span> ConsoleApp1
+  class ConsoleApp1
   {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-      <span class="comment">// お約束のあの文句を画面に表示。</span>
-      Console.Write(<span class="literal">"Hello World!\n"</span>);
+      // お約束のあの文句を画面に表示。
+      Console.Write("Hello World!\n");
     }
   }
 }
-</code></pre>
+```
 
 
 
-<pre class="xsource" title="XML">
-<code><span class="bracket">&lt;?</span><span class="element">xml</span> <span class="attribute">version</span><span class="attvalue">="1.0"</span> <span class="attribute">encoding</span><span class="attvalue">="utf-8"</span><span class="bracket">?&gt;</span>
-<span class="bracket">&lt;</span><span class="element">document</span> <span class="attribute">title</span><span class="attvalue">="ソースファイル"</span> <span class="attribute">xmlns</span><span class="attvalue">="http://ufcpp.net/study/document"</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">section</span> <span class="attribute">title</span><span class="attvalue">="概要"</span> <span class="attribute">id</span><span class="attvalue">="abst"</span><span class="bracket">&gt;</span>
-    <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<document title="ソースファイル" xmlns="http://ufcpp.net/study/document">
+  <section title="概要" id="abst">
+    <p>
       XML 用
-    <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">section</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">document</span><span class="bracket">&gt;</span>
-</code></pre>
-<pre class="console" title="コンソール画面">
-<span class="prompt">&gt; </span><span class="input">csc Test.cs</span>
-<span class="prompt">&gt; </span><span class="input">Test.exe</span>
+    </p>
+  </section>
+</document>
+```
+```console
+> csc Test.cs
+> Test.exe
 Hello World!
-<span class="comment"># ↓ お決まりのあれが表示される</span>
-</pre>
+# ↓ お決まりのあれが表示される
+```

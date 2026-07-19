@@ -58,62 +58,62 @@ C# の型の中で、構造体とクラスは非常に似通った機能です�
 この<em>参照を持つ</em>というのがどういうことなのか説明するために、
 以下のような2つのコードについて考えてみましょう。
 
-<pre class="source" title="値型の代入" lang="">
-<code><span class="comment">// 値型(構造体は値型になる)</span>
-<span class="reserved">struct</span> Point
+```csharp
+// 値型(構造体は値型になる)
+struct Point
 {
-  <span class="reserved">public int</span> x, y;
+  public int x, y;
 
-  <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y){<span class="reserved">this</span>.x = x; <span class="reserved">this</span>.y = y;}
-  <span class="reserved">public override string</span> ToString()
+  public Point(int x, int y){this.x = x; this.y = y;}
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + <span class="reserved">this</span>.x.ToString() + <span class="literal">", "</span> + <span class="reserved">this</span>.y.ToString() + <span class="literal">")"</span>;
+    return "(" + this.x.ToString() + ", " + this.y.ToString() + ")";
   }
 }
 
-<span class="reserved">class</span> ValueTypeSample
+class ValueTypeSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"値型の場合"</span>);
-    Point a = <span class="reserved">new</span> Point(12, 5);
+    Console.Write("値型の場合");
+    Point a = new Point(12, 5);
     Point b = a;
     Point c = a;
-    Console.Write(<span class="literal">"a: {0}\nb: {1}\nc: {2}\n"</span>, a, b, c);
+    Console.Write("a: {0}\nb: {1}\nc: {2}\n", a, b, c);
     b.x = 0;
-    Console.Write(<span class="literal">"a: {0}\nb: {1}\nc: {2}\n"</span>, a, b, c);
+    Console.Write("a: {0}\nb: {1}\nc: {2}\n", a, b, c);
   }
 }
-</code></pre>
+```
 
 
-<pre class="source" title="参照型の代入" lang="">
-<code><span class="comment">// 参照型(クラスは参照型になる)</span>
-<span class="reserved">class</span> Point
+```csharp
+// 参照型(クラスは参照型になる)
+class Point
 {
-  <span class="reserved">public int</span> x, y;
+  public int x, y;
 
-  <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y){<span class="reserved">this</span>.x = x; <span class="reserved">this</span>.y = y;}
-  <span class="reserved">public override string</span> ToString()
+  public Point(int x, int y){this.x = x; this.y = y;}
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + <span class="reserved">this</span>.x.ToString() + <span class="literal">", "</span> + <span class="reserved">this</span>.y.ToString() + <span class="literal">")"</span>;
+    return "(" + this.x.ToString() + ", " + this.y.ToString() + ")";
   }
 }
 
-<span class="reserved">class</span> ReferenceTypeSample
+class ReferenceTypeSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"参照型の場合"</span>);
-    Point a = <span class="reserved">new</span> Point(12, 5);
+    Console.Write("参照型の場合");
+    Point a = new Point(12, 5);
     Point b = a;
     Point c = a;
-    Console.Write(<span class="literal">"a: {0}\nb: {1}\nc: {2}\n"</span>, a, b, c);
+    Console.Write("a: {0}\nb: {1}\nc: {2}\n", a, b, c);
     b.x = 0;
-    Console.Write(<span class="literal">"a: {0}\nb: {1}\nc: {2}\n"</span>, a, b, c);
+    Console.Write("a: {0}\nb: {1}\nc: {2}\n", a, b, c);
   }
 }
-</code></pre>
+```
 
 
 この2つのコードは、その大部分はまったく一緒で、
@@ -132,7 +132,7 @@ C# の型の中で、構造体とクラスは非常に似通った機能です�
 その後、<code>b</code>の値だけ変更し、再び画面に値を出力します。
 出力結果は以下のようになります。
 
-<pre class="console" title="">
+```console
 値型の場合
 a: (12, 5)
 b: (12, 5)
@@ -140,10 +140,10 @@ c: (12, 5)
 a: (12, 5)
 b: (0, 5)
 c: (12, 5)
-</pre>
+```
 
 
-<pre class="console" title="">
+```console
 参照型の場合
 a: (12, 5)
 b: (12, 5)
@@ -151,7 +151,7 @@ c: (12, 5)
 a: (0, 5)
 b: (0, 5)
 c: (0, 5)
-</pre>
+```
 
 
 値型(構造体)を用いたほうは<code>b</code>の値だけが変更され、
@@ -371,24 +371,24 @@ C#には組込み型、クラス、構造体など、さまざまな型があり
 ここでは、ベクトルの加算を例にとってみます。多少大き目のデータの例を出したいので、8元ベクトル(`double`型(8バイト)が8つで64バイト)で考えましょう。
 以下のような構造体になります。
 
-<pre class="source" title="8元ベクトルの例(値型かつ自己書き換え)">
-<code><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Vector</span>
+```csharp
+public struct Vector
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> A, B, C, D, E, F, G, H;
+    public double A, B, C, D, E, F, G, H;
 
-    <span class="reserved">public</span> Vector(<span class="reserved">double</span> a, <span class="reserved">double</span> b, <span class="reserved">double</span> c, <span class="reserved">double</span> d, <span class="reserved">double</span> e, <span class="reserved">double</span> f, <span class="reserved">double</span> g, <span class="reserved">double</span> h)
+    public Vector(double a, double b, double c, double d, double e, double f, double g, double h)
     {
         A = a;
-        <span class="comment">// 以下略。B～H</span>
+        // 以下略。B～H
     }
 
-    <span class="reserved">public</span> <span class="reserved">void</span> Add(<span class="reserved">ref</span> <span class="type">Vector</span> v)
+    public void Add(ref Vector v)
     {
         A += v.A;
-        <span class="comment">// 以下略。B～H</span>
+        // 以下略。B～H
     }
 }
-</code></pre>
+```
 
 説明のために不自然なデータ構造(8元ベクトルは実用途であまり使う機会はない)を使いましたが、
 同程度以上の個数の数値が詰まった型を作りたいことは結構あります。
@@ -400,80 +400,80 @@ C#には組込み型、クラス、構造体など、さまざまな型があり
 
 これに対して、以下のように、新しい値を作って返す実装も考えられます。
 
-<pre class="source" title="8元ベクトルの例(値型かつ書き換え不能)">
-<code><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Vector</span>
+```csharp
+public struct Vector
 {
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">double</span> A, B, C, D, E, F, G, H;
+    public readonly double A, B, C, D, E, F, G, H;
 
-    <span class="reserved">public</span> Vector(<span class="reserved">double</span> a, <span class="reserved">double</span> b, <span class="reserved">double</span> c, <span class="reserved">double</span> d, <span class="reserved">double</span> e, <span class="reserved">double</span> f, <span class="reserved">double</span> g, <span class="reserved">double</span> h)
+    public Vector(double a, double b, double c, double d, double e, double f, double g, double h)
     {
         A = a;
-        <span class="comment">// 以下略。B～H</span>
+        // 以下略。B～H
     }
 
-    <span class="reserved">public</span> <span class="type">Vector</span> Add(<span class="type">Vector</span> v) =&gt; <span class="reserved">new</span> <span class="type">Vector</span>(A + v.A, B + v.B, C + v.C, D + v.D, E + v.E, F + v.F, G + v.G, H + v.H);
+    public Vector Add(Vector v) => new Vector(A + v.A, B + v.B, C + v.C, D + v.D, E + v.E, F + v.F, G + v.G, H + v.H);
 }
-</code></pre>
+```
 
 新しい値を作って帰すところで、32バイトのデータのコピーが必要になるのでそれなりの負担が発生します。
 
 さらに、これら2つの実装を、あえてクラス(参照型)にしてみたものも用意しましょう。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Vector</span>
+```csharp
+public class Vector
 {
-    <span class="reserved">public</span> <span class="reserved">double</span> A, B, C, D, E, F, G, H;
+    public double A, B, C, D, E, F, G, H;
 
-    <span class="reserved">public</span> Vector() { }
+    public Vector() { }
 
-    <span class="reserved">public</span> Vector(<span class="reserved">double</span> a, <span class="reserved">double</span> b, <span class="reserved">double</span> c, <span class="reserved">double</span> d, <span class="reserved">double</span> e, <span class="reserved">double</span> f, <span class="reserved">double</span> g, <span class="reserved">double</span> h)
+    public Vector(double a, double b, double c, double d, double e, double f, double g, double h)
     {
         A = a;
-        <span class="comment">// 以下略。B～H</span>
+        // 以下略。B～H
     }
 
-    <span class="reserved">public</span> <span class="reserved">void</span> Add(<span class="type">Vector</span> v)
+    public void Add(Vector v)
     {
         A += v.A;
-        <span class="comment">// 以下略。B～H</span>
+        // 以下略。B～H
     }
 }
-</code></pre>
+```
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Vector</span>
+```csharp
+public class Vector
 {
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">double</span> A, B, C, D, E, F, G, H;
+    public readonly double A, B, C, D, E, F, G, H;
 
-    <span class="reserved">public</span> Vector() { }
+    public Vector() { }
 
-    <span class="reserved">public</span> Vector(<span class="reserved">double</span> a, <span class="reserved">double</span> b, <span class="reserved">double</span> c, <span class="reserved">double</span> d, <span class="reserved">double</span> e, <span class="reserved">double</span> f, <span class="reserved">double</span> g, <span class="reserved">double</span> h)
+    public Vector(double a, double b, double c, double d, double e, double f, double g, double h)
     {
         A = a;
-        <span class="comment">// 以下略。B～H</span>
+        // 以下略。B～H
     }
 
-    <span class="reserved">public</span> <span class="type">Vector</span> Add(<span class="type">Vector</span> v) =&gt; <span class="reserved">new</span> <span class="type">Vector</span>(A + v.A, B + v.B, C + v.C, D + v.D, E + v.E, F + v.F, G + v.G, H + v.H);
+    public Vector Add(Vector v) => new Vector(A + v.A, B + v.B, C + v.C, D + v.D, E + v.E, F + v.F, G + v.G, H + v.H);
 }
-</code></pre>
+```
 
 これらに対して、以下のような、ランダムな配列データの作成と、総和の計算を行います(これは「値型かつ自己書き換え」向けの実装です。他はちょっとずつコードが違います)。
 
-<pre class="source" title="ランダムな配列データの作成と、総和の計算">
-<code><comment></span><span class="comment">// ランダムに配列データの生成</span>
-<span class="reserved">public</span> <span class="type">Vector</span>[] GetSeries(<span class="type">Random</span> r, <span class="reserved">int</span> count) =&gt; <span class="type">Enumerable</span>.Range(0, count).Select(_ =&gt; GetRandom(r)).ToArray();
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Vector</span> GetRandom(<span class="type">Random</span> r) =&gt; Get(() =&gt; r.NextDouble(-1, 1));
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Vector</span> Get(<span class="type">Func</span>&lt;<span class="reserved">double</span>&gt; f) =&gt; <span class="reserved">new</span> <span class="type">Vector</span>(f(), f(), f(), f(), f(), f(), f(), f());
+```csharp
+// ランダムに配列データの生成
+public Vector[] GetSeries(Random r, int count) => Enumerable.Range(0, count).Select(_ => GetRandom(r)).ToArray();
+private static Vector GetRandom(Random r) => Get(() => r.NextDouble(-1, 1));
+private static Vector Get(Func<double> f) => new Vector(f(), f(), f(), f(), f(), f(), f(), f());
 
-<span class="comment">// 生成した配列の総和を求める</span>
-<span class="reserved">public</span> <span class="type">Vector</span> SeriesSum(<span class="type">Vector</span>[] seq)
+// 生成した配列の総和を求める
+public Vector SeriesSum(Vector[] seq)
 {
-    <span class="reserved">var</span> sum = <span class="reserved">new</span> <span class="type">Vector</span>();
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; seq.Length; i++)
-        sum.Add(<span class="reserved">ref</span> seq[i]);
-    <span class="reserved">return</span> sum;
+    var sum = new Vector();
+    for (int i = 0; i < seq.Length; i++)
+        sum.Add(ref seq[i]);
+    return sum;
 }
-</code></pre>
+```
 
 これで、5百万要素の配列生成・総和計算をしてみたところ、
 手元の環境(Core i7のデスクトップPC)での計測では、実行時間は以下のようになりました。

@@ -29,23 +29,23 @@ aliases:
 
 例えば、以下のようなコード([.NET 10 以降でだけ実行できます](file-based-app.md))を書いたとします。
 
-<pre class="source" title="C# 言語バージョン 11 を明示した C# コード">
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">property</span><span class="string"> LangVersion=11.0</span>
+```csharp
+#:property LangVersion=11.0
 
-<span class="comment">// C# 12 からの機能なので、C# 11 ではエラーになる。</span>
-<span class="reserved">int</span>[] <span class="variable">array</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
-</pre>
+// C# 12 からの機能なので、C# 11 ではエラーになる。
+int[] array = [1, 2, 3];
+```
 
 .NET 10 だと C# の規定のバージョンは 14 になりますが、
 `LangVersion` というものを明示しているので、このコードは C# 11 扱いでコンパイルされます。
 このコードはあえて C# 12 の機能を使っているので、当然、エラーになります。
 
-<pre class="console" title="C# 言語バージョン 11 を明示した C# コード">
-D:\src\app1&gt; dotnet .\app1.cs
-D:\src\app1\app1.cs(4,15): <span style="color:#FF8080">error CS9058</span>: 機能 'コレクション式' は C# 11.0 では使用できません。12.0 以上の言語バージョンをお使いください。
+```console
+D:\src\app1> dotnet .\app1.cs
+D:\src\app1\app1.cs(4,15): error CS9058: 機能 'コレクション式' は C# 11.0 では使用できません。12.0 以上の言語バージョンをお使いください。
 
-<span style="color:#FF8080">ビルドに失敗しました。ビルド エラーを修正して、もう一度実行してください。</span>
-</pre>
+ビルドに失敗しました。ビルド エラーを修正して、もう一度実行してください。
+```
 
 特に指定がない場合、基本的には「ターゲット フレームワークで指定した .NET と同世代のバージョン」になります
 ([ターゲット フレームワーク](#targetframework)については後述)。
@@ -114,33 +114,33 @@ C# コンパイラーのオプションで、言語バージョンを明示的�
 
 プロジェクト ファイル(拡張子が `csproj` のファイル)を直接書き換える場合、`PropertyGroup`の下に`LangVersion`タグを書きます(タグ内に書けるオプションの種類は後述します)。
 
-<pre class="xsource" title="LangVersion タグ">
-<span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>"<span class="attvalue">Microsoft.NET.Sdk</span>"<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFrameworks</span><span class="attvalue">&gt;</span>netcoreapp2.2<span class="attvalue">&lt;/</span><span class="element">TargetFrameworks</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>11<span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
+    <LangVersion>11</LangVersion>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</pre>
+</Project>
+```
 
 .NET 10 以降であれば[ファイル ベース実行](file-based-app.md)という機能を使って C# ファイル中で直接 `LangVersion` 指定することもできます。
 
-<pre class="source" title="ファイル ベース実行での LangVersion 指定の例">
-<span class="preprocess">#</span><span class="preprocess">:</span><span class="preprocess">property</span><span class="string"> LangVersion=11.0</span>
+```csharp
+#:property LangVersion=11.0
 
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;C# 11&quot;</span>);
-</pre>
+Console.WriteLine("C# 11");
+```
 
 古くは(.NET Framework の時代では)、`csc` というコマンド名で C# コンパイラーを直接呼び出していました。
 この `csc` を直接使う場合には、`-langversion`オプションを指定します
 (書けるオプションは上記の `LangVersion` タグと同じ)。
 
-<pre class="xsource" title="csc 直呼びの例">
-<code>csc -langversion:11 app1.cs
-</code></pre>
+```shell
+csc -langversion:11 app1.cs
+```
 
 `LangVersion` には以下の2通りのオプション指定ができます。
 
@@ -182,27 +182,27 @@ C# コンパイラーのオプションで、言語バージョンを明示的�
 
 例えば以下のようなコードをライブラリ配布することを考えます。
 
-<pre class="source" title="複数 TargetFramework にしたいコードの例">
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Class1</span>
+```csharp
+public class Class1
 {
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">string</span> <span class="field"><span class="static">_rawData</span></span> <span class="operator">=</span> <span class="string">&quot;example data some words with space separation&quot;</span>;
+    private static string _rawData = "example data some words with space separation";
 
-    <span class="comment">// field キーワードを使いたいから C# 14 にしたい。</span>
-    <span class="reserved">public</span> <span class="type">IEnumerable</span>&lt;<span class="type struct">KeyValuePair</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt; <span class="property">Counts</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">??=</span> <span class="method"><span class="static">GetCounts</span></span>(<span class="static"><span class="field">_rawData</span></span><span class="operator">.</span><span class="method">Split</span>(<span class="string">' '</span>));
+    // field キーワードを使いたいから C# 14 にしたい。
+    public IEnumerable<KeyValuePair<int, int>> Counts => field ??= GetCounts(_rawData.Split(' '));
 
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="type struct">KeyValuePair</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt; <span class="static"><span class="method">GetCounts</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">string</span>&gt; <span class="variable local">items</span>)
+    private static IEnumerable<KeyValuePair<int, int>> GetCounts(IEnumerable<string> items)
     {
-<span class="preprocess">#</span><span class="preprocess">if</span> NET9_0_OR_GREATER
-        <span class="comment">// .NET 9 以降ならこれが速い。</span>
-        <span class="control">return</span> <span class="variable local">items</span><span class="operator">.</span><span class="method">CountBy</span>(<span class="variable local">x</span> <span class="operator">=&gt;</span> <span class="variable local">x</span><span class="operator">.</span><span class="property">Length</span>);
-<span class="preprocess">#</span><span class="preprocess">else</span>
-<span class="excluded">        // .NET 8 以前でも動くようにしたいから残すけど、
+#if NET9_0_OR_GREATER
+        // .NET 9 以降ならこれが速い。
+        return items.CountBy(x => x.Length);
+#else
+        // .NET 8 以前でも動くようにしたいから残すけど、
         // このコードだと長いしだいぶ遅い。
-        return items.GroupBy(x =&gt; x.Length).Select(g =&gt; KeyValuePair.Create(g.Key, g.Count()));
-</span><span class="preprocess">#</span><span class="preprocess">endif</span>
+        return items.GroupBy(x => x.Length).Select(g => KeyValuePair.Create(g.Key, g.Count()));
+#endif
     }
 }
-</pre>
+```
 
 このコードには以下のような意図があります。
 
@@ -212,18 +212,18 @@ C# コンパイラーのオプションで、言語バージョンを明示的�
 
 この意図通りのプロジェクトを書くと以下のようになります。
 
-<pre class="xsource" title="LangVersion タグ">
-<span class="attvalue">&lt;</span><span class="element">Project</span> <span class="attribute">Sdk=</span><span class="attvalue">"Microsoft.NET.Sdk"</span><span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <span class="attvalue">&lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;</span><span class="element">TargetFrameworks</span><span class="attvalue">&gt;</span>net9.0;net5.0<span class="attvalue">&lt;/</span><span class="element">TargetFrameworks</span><span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>14<span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;</span><span class="element">ImplicitUsings</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">ImplicitUsings</span><span class="attvalue">&gt;</span>
-    <span class="attvalue">&lt;</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>
-  <span class="attvalue">&lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;net5.0</TargetFrameworks>
+    <LangVersion>14</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</pre>
+</Project>
+```
 
 この時 `LangVersion` を書かないと、
 「.NET 5 向けには C# 9、.NET 9 向けには C# 13 でコンパイル」みたいなことになります。

@@ -43,16 +43,16 @@ aliases:
 [コンストラクター](../oop/oo_construct.md)とは逆に、インスタンスが破棄されるときに呼び出されるのがファイナライザーです。
 ファイナライザーは以下のように、クラス名の前に <code>~</code> を付けた名前のメソッドを書くことで定義できます。
 
-<pre class="source" title="ファイナライザー例" lang="">
-<code><span class="reserved">class</span> SampleClass
+```csharp
+class SampleClass
 {
-  <span class="comment">// ↓これがファイナライザー</span>
+  // ↓これがファイナライザー
   ~SampleClass()
   {
-    <span class="comment">// インスタンスの破棄用のコードを書く</span>
+    // インスタンスの破棄用のコードを書く
   }
 }
-</code></pre>
+```
 
 
 ファイナライザーはコンストラクターと違って、引数を持つことができません。
@@ -64,44 +64,44 @@ aliases:
 いつインスタンスの破棄が行われるのかは分かりません。
 （C++ 言語に慣れている人は注意が必要。）
 
-<pre class="source" title="ファイナライザーが呼び出されるタイミングは分からない" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Test
+class Test
 {
-  <span class="reserved">public</span> Test()
+  public Test()
   {
-    Console.Write(<span class="literal">"Test クラスのコンストラクターが呼ばれました\n"</span>);
+    Console.Write("Test クラスのコンストラクターが呼ばれました\n");
   }
 
   ~Test()
   {
-    Console.Write(<span class="literal">"Test クラスのファイナライザーが呼ばれました\n"</span>);
+    Console.Write("Test クラスのファイナライザーが呼ばれました\n");
   }
 }
 
-<span class="reserved">class</span> DestructorSample
+class DestructorSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Console.Write(<span class="literal">"1\n"</span>);
-    Test t = <span class="reserved">new</span> Test(); <span class="comment">// ここで Test のコンストラクターが呼ばれる</span>
-    Console.Write(<span class="literal">"2\n"</span>);
-    t = <span class="reserved">null</span>;            <span class="comment">// ↑で作成したインスタンスはもう利用されなくなる
-                         // でも、ファイナライザーはまだ呼ばれない</span>
-    Console.Write(<span class="literal">"3\n"</span>);
+    Console.Write("1\n");
+    Test t = new Test(); // ここで Test のコンストラクターが呼ばれる
+    Console.Write("2\n");
+    t = null;            // ↑で作成したインスタンスはもう利用されなくなる
+                         // でも、ファイナライザーはまだ呼ばれない
+    Console.Write("3\n");
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 1
 Test クラスのコンストラクターが呼ばれました
 2
 3
 Test クラスのファイナライザーが呼ばれました
-</pre>
+```
 
 
 この例では、ファイナライザーはプログラムの終了時に呼び出されます(「[ガベージ コレクション](rm_gc.md#garbage-collection)」するときに呼ばれます)。

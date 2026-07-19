@@ -40,14 +40,14 @@ C#では、クラスと構造体に対してレイアウトのカスタマイズ
 
 例えば、以下のような構造体を書いたとします。A, C (`byte`型)が1バイト、B (`long`型)が8バイトのデータです。
 
-<pre class="source" title="アラインメント説明用のサンプル構造体">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">Sample</span>
+```csharp
+struct Sample
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    public byte A;
+    public long B;
+    public byte C;
 }
-</code></pre>
+```
 
 アラインメントの間隔はコンパイラーやCPUによって変わりますが、一例として、この構造体のメモリ レイアウトは以下のようになります。
 
@@ -61,61 +61,61 @@ C#では、クラスと構造体に対してレイアウトのカスタマイズ
 C#でも、[unsafe](sp_unsafe.md#unsafe)コードを使えば、構造体のレイアウトを調べることができます。
 以下のように、ポインターを使って、構造体の先頭と、各フィールドのアドレスの差を見れば、レイアウトがわかります。
 
-<pre class="source" title="ポインターを使ってレイアウトを調べるコード">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Sample</span>
+struct Sample
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    public byte A;
+    public long B;
+    public byte C;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> Main()
+    static unsafe void Main()
     {
-        <span class="reserved">var</span> a = <span class="reserved">default</span>(<span class="type">Sample</span>);
-        <span class="reserved">var</span> p = &amp;a;
-        <span class="reserved">var</span> pa = &amp;a.A;
-        <span class="reserved">var</span> pb = &amp;a.B;
-        <span class="reserved">var</span> pc = &amp;a.C;
+        var a = default(Sample);
+        var p = &a;
+        var pa = &a.A;
+        var pb = &a.B;
+        var pc = &a.C;
 
-        <span class="type">Console</span>.WriteLine(<span class="string">$@"サイズ: </span>{<span class="reserved">sizeof</span>(<span class="type">Sample</span>)}
-<span class="string">A: </span>{(<span class="reserved">long</span>)pa - (<span class="reserved">long</span>)p}
-<span class="string">B: </span>{(<span class="reserved">long</span>)pb - (<span class="reserved">long</span>)p}
-<span class="string">C: </span>{(<span class="reserved">long</span>)pc - (<span class="reserved">long</span>)p}
-<span class="string">"</span>);
+        Console.WriteLine($@"サイズ: {sizeof(Sample)}
+A: {(long)pa - (long)p}
+B: {(long)pb - (long)p}
+C: {(long)pc - (long)p}
+");
     }
 }
-</code></pre>
+```
 
 ただし、1つ注意があります。C#では、たとえunsafeコード内であっても、参照型のアドレスは取れないようになっています。
 そのため、参照型や、参照型を含んだ構造体の場合はレイアウトを調べられません。
 
-<pre class="source" title="参照型のアドレスは取れないので、レイアウトも調べられない">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Sample</span>
+struct Sample
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> I;
-    <span class="reserved">public</span> <span class="reserved">string</span> S;
+    public int I;
+    public string S;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> Main()
+    static unsafe void Main()
     {
-        <span class="reserved">var</span> a = <span class="reserved">default</span>(<span class="type">Sample</span>);
-        <span class="reserved">var</span> p = &amp;a;    <span class="comment">// コンパイル エラー: 参照型を含んだ構造体はアドレス取れない</span>
-        <span class="reserved">var</span> pi = &amp;a.I;
-        <span class="reserved">var</span> ps = &amp;a.S; <span class="comment">// コンパイル エラー: 参照型メンバーのアドレスは取れない</span>
+        var a = default(Sample);
+        var p = &a;    // コンパイル エラー: 参照型を含んだ構造体はアドレス取れない
+        var pi = &a.I;
+        var ps = &a.S; // コンパイル エラー: 参照型メンバーのアドレスは取れない
 
-        <span class="type">Console</span>.WriteLine((<span class="reserved">long</span>)pi - (<span class="reserved">long</span>)p);
-        <span class="type">Console</span>.WriteLine((<span class="reserved">long</span>)ps - (<span class="reserved">long</span>)p);
+        Console.WriteLine((long)pi - (long)p);
+        Console.WriteLine((long)ps - (long)p);
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="layout-kind"></a>レイアウトの指定
 
@@ -136,17 +136,17 @@ C#では、`StructLayout`属性(`System.Runtime.InteropServices`名前空間)を
 Sequentialレイアウトでは、複合型のフィールドは宣言した順序通りにレイアウトされます。
 `StructLayout`属性の引数に、`LayoutKind.Sequential`を渡します。
 
-<pre class="source" title="Sequentialレイアウトの例">
-<code><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Sequential)]
-<span class="reserved">struct</span> <span class="type">Sample</span>
+[StructLayout(LayoutKind.Sequential)]
+struct Sample
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    public byte A;
+    public long B;
+    public byte C;
 }
-</code></pre>
+```
 
 アラインメントの説明で挙げたのと同じ絵になりますが、このコードは以下のようなレイアウトになります。
 
@@ -163,41 +163,41 @@ Sequentialレイアウトでは、複合型のフィールドは宣言した順�
 
 Packを明示的に指定したい場合には、以下のように、`StructLayout`属性の`Pack`プロパティに数値を与えます。
 
-<pre class="source" title="StructLayout属性のPackプロパティを指定">
-<code><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Sequential, Pack = 8)]
-<span class="reserved">struct</span> <span class="type">Pack8</span>
+[StructLayout(LayoutKind.Sequential, Pack = 8)]
+struct Pack8
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    public byte A;
+    public long B;
+    public byte C;
 }
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Sequential, Pack = 4)]
-<span class="reserved">struct</span> <span class="type">Pack4</span>
+[StructLayout(LayoutKind.Sequential, Pack = 4)]
+struct Pack4
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    public byte A;
+    public long B;
+    public byte C;
 }
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Sequential, Pack = 2)]
-<span class="reserved">struct</span> <span class="type">Pack2</span>
+[StructLayout(LayoutKind.Sequential, Pack = 2)]
+struct Pack2
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    public byte A;
+    public long B;
+    public byte C;
 }
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Sequential, Pack = 1)]
-<span class="reserved">struct</span> <span class="type">Pack1</span>
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+struct Pack1
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    public byte A;
+    public long B;
+    public byte C;
 }
-</code></pre>
+```
 
 これで、以下のようなレイアウトになります。
 
@@ -213,17 +213,17 @@ Autoレイアウトでは、コンパイラー裁量でフィールドの順序�
 
 例えば、以下のような構造体を書いた場合を考えます。
 
-<pre class="source" title="Autoレイアウトの例">
-<code><reserved></span><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Auto, Pack = 8)]
-<span class="reserved">struct</span> <span class="type">Sample</span>
+[StructLayout(LayoutKind.Auto, Pack = 8)]
+struct Sample
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    public byte A;
+    public long B;
+    public byte C;
 }
-</code></pre>
+```
 
 この場合、
 `byte`型のフィールド2つを固めて後ろに持っていくことで、`long`型のBのアラインメントは揃えつつ、構造体のサイズを小さくします。
@@ -243,20 +243,20 @@ Autoレイアウトでは、コンパイラー裁量でフィールドの順序�
 
 例えば、以下のような構造体を書いた場合を考えます。
 
-<pre class="source" title="Explicitレイアウトの例">
-<code><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Explicit)]
-<span class="reserved">struct</span> <span class="type">Sample</span>
+[StructLayout(LayoutKind.Explicit)]
+struct Sample
 {
-    [<span class="type">FieldOffset</span>(1)]
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    [<span class="type">FieldOffset</span>(4)]
-    <span class="reserved">public</span> <span class="reserved">long</span> B;
-    [<span class="type">FieldOffset</span>(15)]
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    [FieldOffset(1)]
+    public byte A;
+    [FieldOffset(4)]
+    public long B;
+    [FieldOffset(15)]
+    public byte C;
 }
-</code></pre>
+```
 
 以下のような変な隙間が空いたレイアウトになります。
 
@@ -269,48 +269,48 @@ Explicitレイアウトを使うと、複数のフィールドの位置を重ね
 
 例えば、以下のようなことができます。
 
-<pre class="source" title="union的な使い方の例">
-<code><reserved></span><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System;
+using System.Runtime.InteropServices;
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Explicit)]
-<span class="reserved">struct</span> <span class="type">Union</span>
+[StructLayout(LayoutKind.Explicit)]
+struct Union
 {
-    [<span class="type">FieldOffset</span>(0)]
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
+    [FieldOffset(0)]
+    public byte A;
 
-    [<span class="type">FieldOffset</span>(1)]
-    <span class="reserved">public</span> <span class="reserved">byte</span> B;
+    [FieldOffset(1)]
+    public byte B;
 
-    [<span class="type">FieldOffset</span>(2)]
-    <span class="reserved">public</span> <span class="reserved">byte</span> C;
+    [FieldOffset(2)]
+    public byte C;
 
-    [<span class="type">FieldOffset</span>(3)]
-    <span class="reserved">public</span> <span class="reserved">byte</span> D;
+    [FieldOffset(3)]
+    public byte D;
 
-    [<span class="type">FieldOffset</span>(0)] <span class="comment">// A と一緒</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> N;
+    [FieldOffset(0)] // A と一緒
+    public int N;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Union</span> { N = 0x12345678 };
-        <span class="type">Console</span>.WriteLine(x.A.ToString(<span class="string">"x"</span>)); <span class="comment">// 78</span>
-        <span class="type">Console</span>.WriteLine(x.B.ToString(<span class="string">"x"</span>)); <span class="comment">// 56</span>
-        <span class="type">Console</span>.WriteLine(x.C.ToString(<span class="string">"x"</span>)); <span class="comment">// 34</span>
-        <span class="type">Console</span>.WriteLine(x.D.ToString(<span class="string">"x"</span>)); <span class="comment">// 12</span>
+        var x = new Union { N = 0x12345678 };
+        Console.WriteLine(x.A.ToString("x")); // 78
+        Console.WriteLine(x.B.ToString("x")); // 56
+        Console.WriteLine(x.C.ToString("x")); // 34
+        Console.WriteLine(x.D.ToString("x")); // 12
     }
 }
-</code></pre>
+```
 
-<pre class="console" title="実行結果">
-<code>78
+```console
+78
 56
 34
 12
-</code></pre>
+```
 
 `int`型のフィールド`N`に書き込んだ結果を、1バイト1バイト、個別に取り出しています。
 
@@ -335,64 +335,64 @@ Explicitレイアウトでフィールドの位置を重ねられることで、
 しかし、別の型のフィールドと重ねて、無理やり上書きすることで、他の値にできます。
 例えば以下のようなコードが書けます。
 
-<pre class="source" title="Explicitレイアウトの悪用例">
-<code><reserved></span><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System;
+using System.Runtime.InteropServices;
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Explicit)]
-<span class="reserved">struct</span> <span class="type">Union</span>
+[StructLayout(LayoutKind.Explicit)]
+struct Union
 {
-    [<span class="type">FieldOffset</span>(0)]
-    <span class="reserved">public</span> <span class="reserved">bool</span> Bool;
+    [FieldOffset(0)]
+    public bool Bool;
 
-    [<span class="type">FieldOffset</span>(0)] <span class="comment">// Bool と同じ場所</span>
-    <span class="reserved">public</span> <span class="reserved">byte</span> Byte;
+    [FieldOffset(0)] // Bool と同じ場所
+    public byte Byte;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        Write(<span class="reserved">false</span>);   <span class="comment">// False</span>
-        Write(<span class="reserved">true</span>);    <span class="comment">// True</span>
+        Write(false);   // False
+        Write(true);    // True
 
-        Write(Bool(0)); <span class="comment">// False … false と一緒</span>
-        Write(Bool(1)); <span class="comment">// True … true と一緒</span>
-        Write(Bool(2)); <span class="comment">// Other!</span>
+        Write(Bool(0)); // False … false と一緒
+        Write(Bool(1)); // True … true と一緒
+        Write(Bool(2)); // Other!
     }
 
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">bool</span> Bool(<span class="reserved">byte</span> value)
+    private static bool Bool(byte value)
     {
-        <span class="reserved">var</span> union = <span class="reserved">new</span> <span class="type">Union</span>();
+        var union = new Union();
         union.Byte = value;
-        <span class="reserved">return</span> union.Bool;
+        return union.Bool;
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Write(<span class="reserved">bool</span> x)
+    static void Write(bool x)
     {
-        <span class="reserved">switch</span> (x)
+        switch (x)
         {
-            <span class="reserved">case</span> <span class="reserved">true</span>:
-                <span class="type">Console</span>.WriteLine(<span class="string">"True"</span>);
-                <span class="reserved">break</span>;
-            <span class="reserved">case</span> <span class="reserved">false</span>:
-                <span class="type">Console</span>.WriteLine(<span class="string">"False"</span>);
-                <span class="reserved">break</span>;
-            <span class="reserved">default</span>:
-                <span class="type">Console</span>.WriteLine(<span class="string">"Other!"</span>);
-                <span class="reserved">break</span>;
+            case true:
+                Console.WriteLine("True");
+                break;
+            case false:
+                Console.WriteLine("False");
+                break;
+            default:
+                Console.WriteLine("Other!");
+                break;
         }
     }
 }
-</code></pre>
+```
 
-<pre class="console" title="実行結果">
-<code>False
+```console
+False
 True
 False
 True
 Other!
-</code></pre>
+```
 
 C#の`true`、`false`は、内部的にはそれぞれ1, 0の数値になっていることが分かります。
 そして、それ以外の数値を指定すると、`switch`の飛び先が変わります。
@@ -412,30 +412,30 @@ Explicitレイアウトには1つ制限があります。
 (C#の制限ではなくて、.NETランタイムの制限なので、実行時にしかエラーを拾えない。)
 例えば、以下のようなコードを書くと、`TypeLoadException`が発生します。
 
-<pre class="source" title="Explicitレイアウトで値と参照を重ねる例">
-<code><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-[<span class="type">StructLayout</span>(<span class="type">LayoutKind</span>.Explicit)]
-<span class="reserved">struct</span> <span class="type">Sample</span>
+[StructLayout(LayoutKind.Explicit)]
+struct Sample
 {
-    [<span class="type">FieldOffset</span>(0)]
-    <span class="reserved">public</span> <span class="reserved">int</span> A;
+    [FieldOffset(0)]
+    public int A;
 
-    <span class="comment">// 値と参照を同じ場所にレイアウト</span>
-    <span class="comment">// コンパイル エラーにはならない</span>
-    [<span class="type">FieldOffset</span>(0)]
-    <span class="reserved">public</span> <span class="reserved">object</span> B;
+    // 値と参照を同じ場所にレイアウト
+    // コンパイル エラーにはならない
+    [FieldOffset(0)]
+    public object B;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> Main()
+    static unsafe void Main()
     {
-        <span class="comment">// Sample 型に触れた瞬間、実行時エラーになる</span>
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Sample</span>();
+        // Sample 型に触れた瞬間、実行時エラーになる
+        var s = new Sample();
     }
 }
-</code></pre>
+```
 
 この制限は、[ガベージ コレクション](../../computer/essential-software/memorymanagement.md#garbage-collection)の都合です。
 ガベージ コレクションは、参照をたどって誰からも参照されていないオブジェクトを探索するわけですが、

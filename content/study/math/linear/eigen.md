@@ -414,7 +414,7 @@ r
 
 ## <a id="sec-generated-title-11"></a> <a id="power"></a>行列の冪、指数
 
-<pre>
+```text
 執筆予定
 
 Jordan cell
@@ -453,7 +453,7 @@ exp(A ＋ B) ＝ exp(A) ＋ exp(B)
 が成り立つ。
 対角行列 Λ の指数 exp(Λ) は簡単に計算可能。
 exp(N) も、冪級数の k 項目まで計算すれば OK。
-</pre>
+```
 
 ## <a id="sec-generated-title-12"></a> <a id="hk"></a>最小多項式とハミルトン・ケイリーの定理
 

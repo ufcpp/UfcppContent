@@ -38,47 +38,47 @@ aliases: []
 
 そしてしかも、これを「ソース ジェネレーターとかを使って裏でこっそり書き換えておきたい」とかやったときに、誰の主張が通ってしまうでしょうという問題。
 
-<pre class="source" title="一体どの主張が通ってしまうのか">
-<span class="reserved">using</span> System<span class="operator">.</span>Globalization;
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Globalization;
+using System.Runtime.CompilerServices;
 
-<span class="comment">// file: A.cs</span>
-<span class="reserved">class</span> <span class="type">Aさんの主張</span>
+// file: A.cs
+class Aさんの主張
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Init</span></span>()
+    [ModuleInitializer]
+    public static void Init()
     {
-        <span class="type">CultureInfo</span><span class="operator">.</span><span class="property"><span class="static">DefaultThreadCurrentCulture</span></span> <span class="operator">=</span> <span class="type">CultureInfo</span><span class="operator">.</span><span class="property"><span class="static">InvariantCulture</span></span>;
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
     }
 }
 
-<span class="comment">// file: B.cs</span>
-<span class="reserved">class</span> <span class="type">Bさんの主張</span>
+// file: B.cs
+class Bさんの主張
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Init</span></span>()
+    [ModuleInitializer]
+    public static void Init()
     {
-        <span class="type">CultureInfo</span><span class="operator">.</span><span class="property"><span class="static">DefaultThreadCurrentCulture</span></span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">CultureInfo</span>(<span class="string">&quot;ja-JP&quot;</span>);
+        CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("ja-JP");
     }
 }
 
-<span class="comment">// file: C.cs</span>
-<span class="reserved">class</span> <span class="type">Cさんの主張</span>
+// file: C.cs
+class Cさんの主張
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Init</span></span>()
+    [ModuleInitializer]
+    public static void Init()
     {
-        <span class="reserved">var</span> <span class="variable">c</span> <span class="operator">=</span> (<span class="type">CultureInfo</span>)<span class="type">CultureInfo</span><span class="operator">.</span><span class="property"><span class="static">InvariantCulture</span></span><span class="operator">.</span><span class="method">Clone</span>();
-        <span class="variable">c</span><span class="operator">.</span><span class="property">DateTimeFormat</span><span class="operator">.</span><span class="property">LongDatePattern</span> <span class="operator">=</span> <span class="string">&quot;yyyy'-'MM'-'dd&quot;</span>;
-        <span class="variable">c</span><span class="operator">.</span><span class="property">DateTimeFormat</span><span class="operator">.</span><span class="property">LongTimePattern</span> <span class="operator">=</span> <span class="string">&quot;HH':'mm':'ss&quot;</span>;
-        <span class="variable">c</span><span class="operator">.</span><span class="property">DateTimeFormat</span><span class="operator">.</span><span class="property">MonthDayPattern</span> <span class="operator">=</span> <span class="string">&quot;MM'-'dd&quot;</span>;
-        <span class="variable">c</span><span class="operator">.</span><span class="property">DateTimeFormat</span><span class="operator">.</span><span class="property">YearMonthPattern</span> <span class="operator">=</span> <span class="string">&quot;yyyy'-'MM&quot;</span>;
-        <span class="variable">c</span><span class="operator">.</span><span class="property">DateTimeFormat</span><span class="operator">.</span><span class="property">ShortDatePattern</span> <span class="operator">=</span> <span class="string">&quot;yyyy'-'MM'-'dd&quot;</span>;
-        <span class="variable">c</span><span class="operator">.</span><span class="property">DateTimeFormat</span><span class="operator">.</span><span class="property">ShortTimePattern</span> <span class="operator">=</span> <span class="string">&quot;HH':'mm':'ss&quot;</span>;
-        <span class="type">CultureInfo</span><span class="operator">.</span><span class="property"><span class="static">DefaultThreadCurrentCulture</span></span> <span class="operator">=</span> <span class="variable">c</span>;
+        var c = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+        c.DateTimeFormat.LongDatePattern = "yyyy'-'MM'-'dd";
+        c.DateTimeFormat.LongTimePattern = "HH':'mm':'ss";
+        c.DateTimeFormat.MonthDayPattern = "MM'-'dd";
+        c.DateTimeFormat.YearMonthPattern = "yyyy'-'MM";
+        c.DateTimeFormat.ShortDatePattern = "yyyy'-'MM'-'dd";
+        c.DateTimeFormat.ShortTimePattern = "HH':'mm':'ss";
+        CultureInfo.DefaultThreadCurrentCulture = c;
     }
 }
-</pre>
+```
 
 そしてこの話題から、「後だし優先といわれても、
 じゃあ、[モジュール初期化子](../../../../study/csharp/oop/moduleinitializer.md)の実行順序は決まっているの？」という話題になります。
@@ -110,33 +110,33 @@ C# の仕様書上は「reserved, but deterministic order」
 
 例えば以下のようなコードを1つのファイルに書いた場合、
 
-<pre class="source" title="複数のモジュール初期化子を1ファイルに並べる例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">class</span> <span class="type">Z</span>
+class Z
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Init1</span></span>() { }
+    [ModuleInitializer]
+    public static void Init1() { }
 
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Init2</span></span>() { }
+    [ModuleInitializer]
+    public static void Init2() { }
 }
 
-<span class="reserved">class</span> <span class="type">Y</span>
+class Y
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Init2</span></span>() { }
+    [ModuleInitializer]
+    public static void Init2() { }
 
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Init1</span></span>() { }
+    [ModuleInitializer]
+    public static void Init1() { }
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Init</span></span>() { }
+    [ModuleInitializer]
+    public static void Init() { }
 }
-</pre>
+```
 
 呼ばれるのは `Z.Init1`, `Z.Init2`, `Y.Init2`, `Y.Init1`, `A.Init` の順です。
 
@@ -162,27 +162,27 @@ C# の仕様書上は「reserved, but deterministic order」
 
 例えば以下のような2つのファイルを同じプロジェクトに含めた場合、
 
-<pre class="source" title="A.cs に書く">
-<span class="comment">// このコードを A.cs に書く</span>
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+// このコードを A.cs に書く
+using System.Runtime.CompilerServices;
 
-<span class="reserved">class</span> <span class="type">Z</span>
+class Z
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Init</span></span>() { }
+    [ModuleInitializer]
+    public static void Init() { }
 }
-</pre>
+```
 
-<pre class="source" title="Z.cs に書く">
-<span class="comment">// このコードを Z.cs に書く</span>
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+// このコードを Z.cs に書く
+using System.Runtime.CompilerServices;
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Init</span></span>() { }
+    [ModuleInitializer]
+    public static void Init() { }
 }
-</pre>
+```
 
 (型名とファイル名が逆なことに注意。)
 

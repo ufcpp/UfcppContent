@@ -62,41 +62,41 @@ C# 3.0 から[拡張メソッド](../../../../study/csharp/functional/sp3_extens
 ということで、改めて Extensions の話を。
 今、以下のような構文を足そうとしています。
 
-<pre class="source" title="extension 構文">
-<span class="comment">// 拡張の構文例。</span>
-<span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type">SomeExtension</span> <span class="reserved">for</span> <span class="type">SomeClass</span> : <span class="type">IEquatable</span>&lt;<span class="type">SomeExtension</span>&gt;
+```csharp
+// 拡張の構文例。
+implicit extension SomeExtension for SomeClass : IEquatable<SomeExtension>
 {
-    <span class="comment">// 追加したいメンバーを書く。</span>
+    // 追加したいメンバーを書く。
 
-    <span class="comment">// 1. 静的メンバーも書ける。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="property"><span class="static">Y</span></span> <span class="operator">=&gt;</span> <span class="property"><span class="static">X</span></span> <span class="operator">*</span> <span class="property"><span class="static">X</span></span>;
+    // 1. 静的メンバーも書ける。
+    public static int Y => X * X;
 
-    <span class="comment">// 2. メソッド以外も書ける。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span>
+    // 2. メソッド以外も書ける。
+    public int Property
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="method">GetValue</span>();
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="method">SetValue</span>(<span class="reserved">value</span>);
+        get => GetValue();
+        set => SetValue(value);
     }
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>] <span class="operator">=&gt;</span> <span class="method">GetValue</span>(<span class="variable local">index</span>);
+    public int this[int index] => GetValue(index);
 
-    <span class="comment">// 3. インターフェイスの実装を持てる。</span>
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type">SomeExtension</span><span class="operator">?</span> <span class="variable local">other</span>) <span class="operator">=&gt;</span> <span class="property">Property</span> <span class="operator">==</span> <span class="variable local">other</span><span class="operator">?</span><span class="operator">.</span><span class="property">Property</span>;
+    // 3. インターフェイスの実装を持てる。
+    public bool Equals(SomeExtension? other) => Property == other?.Property;
 }
 
-<span class="comment">// 拡張の対象の例。</span>
-<span class="reserved">class</span> <span class="type">SomeClass</span>
+// 拡張の対象の例。
+class SomeClass
 {
-    <span class="comment">// (中身は適当。)</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="field"><span class="static">X</span></span> <span class="operator">=</span> <span class="number">123</span>;
+    // (中身は適当。)
+    public static int X = 123;
 
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span>;
+    private int _value;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">GetValue</span>() <span class="operator">=&gt;</span> <span class="field">_value</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetValue</span>(<span class="reserved">int</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="field">_value</span> <span class="operator">=</span> <span class="variable local">value</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">GetValue</span>(<span class="reserved">int</span> <span class="variable local">index</span>) <span class="operator">=&gt;</span> <span class="field">_value</span> <span class="operator">*</span> <span class="variable local">index</span>;
+    public int GetValue() => _value;
+    public void SetValue(int value) => _value = value;
+    public int GetValue(int index) => _value * index;
 }
-</pre>
+```
 
 ちなみに、「インターフェイスの実装を持つ」には少し難題があって、
 C# 13 時点では入らない可能性がかなり高いです。
@@ -107,68 +107,68 @@ C# 13 時点では入らない可能性がかなり高いです。
 一時期は以下のような ref struct を使った実装になりそうだったんですが、
 この案は結局没になりました。
 
-<pre class="source" title="ref struct 案">
-<span class="reserved">var</span> <span class="variable">value</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">SomeStruct</span>();
-<span class="reserved">var</span> <span class="variable">extension</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">SomeExtension</span>(<span class="reserved">ref</span> <span class="variable">value</span>);
+```csharp
+var value = new SomeStruct();
+var extension = new SomeExtension(ref value);
 
-<span class="comment">// 拡張プロパティを呼び出す。</span>
-<span class="variable">extension</span><span class="operator">.</span><span class="property">Property</span> <span class="operator">=</span> <span class="number">123</span>;
+// 拡張プロパティを呼び出す。
+extension.Property = 123;
 
-<span class="comment">// ちゃんと元インスタンスに値が反映。</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">value</span><span class="operator">.</span><span class="method">GetValue</span>());
+// ちゃんと元インスタンスに値が反映。
+Console.WriteLine(value.GetValue());
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">SomeExtension</span>(<span class="reserved">ref</span> <span class="type struct">SomeStruct</span> <span class="variable local">@this</span>)
+ref struct SomeExtension(ref SomeStruct @this)
 {
-    <span class="reserved">ref</span> <span class="type struct">SomeStruct</span> <span class="field">@this</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">@this</span>;
+    ref SomeStruct @this = ref @this;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span>
+    public int Property
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">@this</span><span class="operator">.</span><span class="method">GetValue</span>(); <span class="comment">// ref で持ってるので、引数でもらった構造体に書き換えが反映される。</span>
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">@this</span><span class="operator">.</span><span class="method">SetValue</span>(<span class="reserved">value</span>);
+        get => @this.GetValue(); // ref で持ってるので、引数でもらった構造体に書き換えが反映される。
+        set => @this.SetValue(value);
     }
 }
 
-<span class="comment">// デモ用に構造体に変更。</span>
-<span class="reserved">struct</span> <span class="type struct">SomeStruct</span>
+// デモ用に構造体に変更。
+struct SomeStruct
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_value</span>;
+    private int _value;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">GetValue</span>() <span class="operator">=&gt;</span> <span class="field">_value</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetValue</span>(<span class="reserved">int</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="field">_value</span> <span class="operator">=</span> <span class="variable local">value</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">GetValue</span>(<span class="reserved">int</span> <span class="variable local">index</span>) <span class="operator">=&gt;</span> <span class="field">_value</span> <span class="operator">*</span> <span class="variable local">index</span>;
+    public int GetValue() => _value;
+    public void SetValue(int value) => _value = value;
+    public int GetValue(int index) => _value * index;
 }
-</pre>
+```
 
 この案に変わって、普通の構造体 + Unsafe.As を使う路線で考えているそうです。
 
-<pre class="source" title="Unsafe.As 案">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">value</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">SomeStruct</span>();
+var value = new SomeStruct();
 
-<span class="comment">// Unsafe.As を使って、value 値が入っているの場所を無理やり SomeExtension で解釈。</span>
-<span class="reserved">ref</span> <span class="reserved">var</span> <span class="variable">extension</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="type"><span class="static">Unsafe</span></span><span class="operator">.</span><span class="static"><span class="method">As</span></span>&lt;<span class="type struct">SomeStruct</span>, <span class="type struct">SomeExtension</span>&gt;(<span class="reserved">ref</span> <span class="variable">value</span>);
+// Unsafe.As を使って、value 値が入っているの場所を無理やり SomeExtension で解釈。
+ref var extension = ref Unsafe.As<SomeStruct, SomeExtension>(ref value);
 
-<span class="comment">// 拡張プロパティを呼び出す。</span>
-<span class="variable">extension</span><span class="operator">.</span><span class="property">Property</span> <span class="operator">=</span> <span class="number">123</span>;
+// 拡張プロパティを呼び出す。
+extension.Property = 123;
 
-<span class="comment">// extension の参照先が value なので、ちゃんと value が書き変わる。</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">value</span><span class="operator">.</span><span class="method">GetValue</span>());
+// extension の参照先が value なので、ちゃんと value が書き変わる。
+Console.WriteLine(value.GetValue());
 
-<span class="comment">// 普通の構造体。</span>
-<span class="reserved">struct</span> <span class="type struct">SomeExtension</span>
+// 普通の構造体。
+struct SomeExtension
 {
-    <span class="reserved">private</span> <span class="type struct">SomeStruct</span> <span class="field">@this</span>;
+    private SomeStruct @this;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span>
+    public int Property
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">@this</span><span class="operator">.</span><span class="method">GetValue</span>();
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">@this</span><span class="operator">.</span><span class="method">SetValue</span>(<span class="reserved">value</span>);
+        get => @this.GetValue();
+        set => @this.SetValue(value);
     }
 }
 
-<span class="comment">// SomeStruct は先ほどと同じ。</span>
-</pre>
+// SomeStruct は先ほどと同じ。
+```
 
 ## 型消去
 
@@ -181,30 +181,30 @@ Extensions は普通の型と同じように使えたりします。
 メソッドの引数などに拡張型を書くと、実際には「元の型 + 属性」(いわゆる「型消去」方式)になる予定です。
 例えば、以下のようなメソッドを書いたとして、
 
-<pre class="source" title="拡張型を引数に書く例">
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">Sum</span></span>(<span class="type struct">SomeExtension</span> <span class="variable local">a</span>, <span class="type">List</span>&lt;<span class="type struct">SomeExtension</span>&gt; <span class="variable local">b</span>)
+```csharp
+static int Sum(SomeExtension a, List<SomeExtension> b)
 {
-    <span class="reserved">var</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="variable local">a</span><span class="operator">.</span><span class="property">Property</span>;
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">b</span>) <span class="variable">sum</span> <span class="operator">+=</span> <span class="variable">x</span><span class="operator">.</span><span class="property">Property</span>;
-    <span class="control">return</span> <span class="variable">sum</span>;
+    var sum = a.Property;
+    foreach (var x in b) sum += x.Property;
+    return sum;
 }
-</pre>
+```
 
 以下のような類のコードに置き換わる予定です。
 
-<pre class="source" title="拡張型を引数に書く例の展開結果">
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">Sum</span></span>(
-    <span class="comment">// SomeExtension は属性の中にしか残らない。</span>
-    <span class="comment">// 元の、 SomeStruct に置き換わる。</span>
-    [<span class="type">Extension</span>(<span class="reserved">typeof</span>(<span class="type struct">SomeExtension</span>))] <span class="type struct">SomeStruct</span> <span class="variable local">a</span>,
-    [<span class="type">Extension</span>(<span class="reserved">typeof</span>(<span class="type struct">SomeExtension</span>))] <span class="type">List</span>&lt;<span class="type struct">SomeStruct</span>&gt; <span class="variable local">b</span>)
+```csharp
+static int Sum(
+    // SomeExtension は属性の中にしか残らない。
+    // 元の、 SomeStruct に置き換わる。
+    [Extension(typeof(SomeExtension))] SomeStruct a,
+    [Extension(typeof(SomeExtension))] List<SomeStruct> b)
 {
-    <span class="comment">// メンバーアクセスするところで Unsafe.As</span>
-    <span class="reserved">var</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="type"><span class="static">Unsafe</span></span><span class="operator">.</span><span class="method"><span class="static">As</span></span>&lt;<span class="type struct">SomeStruct</span>, <span class="type struct">SomeExtension</span>&gt;(<span class="reserved">ref</span> <span class="variable local">a</span>)<span class="operator">.</span><span class="property">Property</span>;
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">b</span>) <span class="variable">sum</span> <span class="operator">+=</span> <span class="static"><span class="type">Unsafe</span></span><span class="operator">.</span><span class="method"><span class="static">As</span></span>&lt;<span class="type struct">SomeStruct</span>, <span class="type struct">SomeExtension</span>&gt;(<span class="reserved">ref</span> <span class="static"><span class="type">Unsafe</span></span><span class="operator">.</span><span class="static"><span class="method">AsRef</span></span>(<span class="reserved">in</span> <span class="variable">x</span>))<span class="operator">.</span><span class="property">Property</span>;
-    <span class="control">return</span> <span class="variable">sum</span>;
+    // メンバーアクセスするところで Unsafe.As
+    var sum = Unsafe.As<SomeStruct, SomeExtension>(ref a).Property;
+    foreach (var x in b) sum += Unsafe.As<SomeStruct, SomeExtension>(ref Unsafe.AsRef(in x)).Property;
+    return sum;
 }
-</pre>
+```
 
 [変性](../../../../study/csharp/oop/sp4_variance.md)を持っていない `List<T>` で、
 `List<SomeStruct>` を `List<SomeExtension>` に変換する手段は通常全くありません。
@@ -223,176 +223,176 @@ Extensions は普通の型と同じように使えたりします。
 
 近い側優先:
 
-<pre class="source" title="基底クラスと同名のメンバー参照">
-<span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
+    public void M(int x) { }
 }
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">new</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
+    public new void M(int x) { }
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>()
+    public void M()
     {
-        <span class="comment">// 近い側優先なので、Derived.M が呼ばれる。</span>
-        <span class="method">M</span>(<span class="number">1</span>);
+        // 近い側優先なので、Derived.M が呼ばれる。
+        M(1);
     }
 }
-</pre>
+```
 
 もうちょっとわかりにくい例:
 
-<pre class="source" title="基底クラスと同名で、引数の型が違うメンバー参照">
-<span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable local">x</span>) { }
+    public void M(int x) { }
 }
 
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">new</span> <span class="reserved">void</span> <span class="method"><span class="warning" title="CS0109">M</span></span>(<span class="reserved">object</span> <span class="variable local">x</span>) { }
+    public new void M(object x) { }
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>()
+    public void M()
     {
-        <span class="comment">// わかりにくいけども、Derived.M(object) の方が呼ばれる。</span>
-        <span class="comment">// 引数の型を考えると Base.M(int) が呼ばれそうに見えるけども、そうはならない。</span>
-        <span class="comment">// (「元々はなかったけど後から Base の方に M(int) が追加された」みたいな状況で破壊的変更にならないようにするため。)</span>
-        <span class="method">M</span>(<span class="number">1</span>);
+        // わかりにくいけども、Derived.M(object) の方が呼ばれる。
+        // 引数の型を考えると Base.M(int) が呼ばれそうに見えるけども、そうはならない。
+        // (「元々はなかったけど後から Base の方に M(int) が追加された」みたいな状況で破壊的変更にならないようにするため。)
+        M(1);
     }
 }
-</pre>
+```
 
 ## メンバーのルックアップ(拡張同士)
 
 あと、既存の拡張メソッドには以下のような優先度があります。
 
-<pre class="source" title="インスタンス メソッド優先">
-<span class="reserved">namespace</span> Ex1
+```csharp
+namespace Ex1
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">AExtension</span></span>
+    static class AExtension
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> App1<span class="operator">.</span><span class="type">A</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;Extension in Ex1&quot;</span>);
+        public static void M(this App1.A _) => Console.WriteLine("Extension in Ex1");
     }
 }
 
-<span class="reserved">namespace</span> App1
+namespace App1
 {
-    <span class="reserved">class</span> <span class="type">A</span>
+    class A
     {
-        <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>() <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;Instance&quot;</span>);
+        public void M() => Console.WriteLine("Instance");
     }
 
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Main</span></span>()
+        public static void Main()
         {
-            <span class="comment">// インスタンス メソッド優先。</span>
-            <span class="reserved">new</span> <span class="type">A</span>()<span class="operator">.</span><span class="method">M</span>(); <span class="comment">// Instance</span>
+            // インスタンス メソッド優先。
+            new A().M(); // Instance
         }
     }
 }
-</pre>
+```
 
-<pre class="source" title="同じ名前空間内の拡張メソッド優先">
-<span class="reserved">namespace</span> Ex1
+```csharp
+namespace Ex1
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">AExtension</span></span>
+    static class AExtension
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> App1<span class="operator">.</span><span class="type">A</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;Extension in Ex1&quot;</span>);
+        public static void M(this App1.A _) => Console.WriteLine("Extension in Ex1");
     }
 }
 
-<span class="reserved">namespace</span> App1
+namespace App1
 {
-    <span class="reserved">class</span> <span class="type">A</span>;
+    class A;
 
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">AExtension</span></span>
+    static class AExtension
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="type">A</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;Extension in App1&quot;</span>);
+        public static void M(this A _) => Console.WriteLine("Extension in App1");
     }
 
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Main</span></span>()
+        public static void Main()
         {
-            <span class="comment">// 同じ名前空間内の拡張メソッド優先。</span>
-            <span class="reserved">new</span> <span class="type">A</span>()<span class="operator">.</span><span class="method">M</span>(); <span class="comment">// in App1</span>
+            // 同じ名前空間内の拡張メソッド優先。
+            new A().M(); // in App1
         }
     }
 }
-</pre>
+```
 
-<pre class="source" title="内側で using した方優先">
-<span class="reserved">using</span> Ex1;
+```csharp
+using Ex1;
 
-<span class="reserved">namespace</span> Ex1
+namespace Ex1
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">AExtension</span></span>
+    static class AExtension
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> App1<span class="operator">.</span><span class="type">A</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;Extension in Ex1&quot;</span>);
+        public static void M(this App1.A _) => Console.WriteLine("Extension in Ex1");
     }
 }
 
-<span class="reserved">namespace</span> Ex2
+namespace Ex2
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">AExtension</span></span>
+    static class AExtension
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> App1<span class="operator">.</span><span class="type">A</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;Extension in Ex1&quot;</span>);
+        public static void M(this App1.A _) => Console.WriteLine("Extension in Ex1");
     }
 }
 
-<span class="reserved">namespace</span> App1
+namespace App1
 {
-    <span class="reserved">using</span> Ex2;
+    using Ex2;
 
-    <span class="reserved">class</span> <span class="type">A</span>;
+    class A;
 
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Main</span></span>()
+        public static void Main()
         {
-            <span class="comment">// 内側で using した方優先。</span>
-            <span class="reserved">new</span> <span class="type">A</span>()<span class="operator">.</span><span class="method">M</span>(); <span class="comment">// in Ex2</span>
+            // 内側で using した方優先。
+            new A().M(); // in Ex2
         }
     }
 }
-</pre>
+```
 
-<pre class="source" title="優劣がない場合はコンパイル エラー">
-<span class="reserved">namespace</span> Ex1
+```csharp
+namespace Ex1
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">AExtension</span></span>
+    static class AExtension
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> App1<span class="operator">.</span><span class="type">A</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;Extension in Ex1&quot;</span>);
+        public static void M(this App1.A _) => Console.WriteLine("Extension in Ex1");
     }
 }
 
-<span class="reserved">namespace</span> Ex2
+namespace Ex2
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">AExtension</span></span>
+    static class AExtension
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> App1<span class="operator">.</span><span class="type">A</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;Extension in Ex1&quot;</span>);
+        public static void M(this App1.A _) => Console.WriteLine("Extension in Ex1");
     }
 }
 
-<span class="reserved">namespace</span> App1
+namespace App1
 {
-    <span class="reserved">using</span> Ex1;
-    <span class="reserved">using</span> Ex2;
+    using Ex1;
+    using Ex2;
 
-    <span class="reserved">class</span> <span class="type">A</span>;
+    class A;
 
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Main</span></span>()
+        public static void Main()
         {
-            <span class="comment">// 優劣がない場合はコンパイル エラー。</span>
-            <span class="reserved">new</span> <span class="type">A</span>()<span class="operator">.</span><span class="method"><span class="error" title="CS0121">M</span></span>();
+            // 優劣がない場合はコンパイル エラー。
+            new A().M();
         }
     }
 }
-</pre>
+```
 
 新しい拡張型でも同様のルールになると思われます。
 
@@ -400,41 +400,41 @@ Extensions は普通の型と同じように使えたりします。
 現状は「優劣つけない」という方向で検討されています。
 というか、新旧混在した時点でコンパイル エラーにしようかという話もあるみたいです。
 
-<pre class="source" title="優劣がない場合はコンパイル エラー">
-<span class="reserved">namespace</span> Ex1
+```csharp
+namespace Ex1
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">AExtension</span></span>
+    static class AExtension
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> App1<span class="operator">.</span><span class="type">A</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;old extension method&quot;</span>);
+        public static void M(this App1.A _) => Console.WriteLine("old extension method");
     }
 }
 
-<span class="reserved">namespace</span> Ex2
+namespace Ex2
 {
-    <span class="reserved">implicit</span> <span class="reserved">extension</span> <span class="type"><span class="static">AExtension</span></span> <span class="reserved">for</span> <span class="type">A</span>
+    implicit extension AExtension for A
     {
-        <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>() <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;new extension type&quot;</span>);
+        public void M() => Console.WriteLine("new extension type");
     }
 }
 
-<span class="reserved">namespace</span> App1
+namespace App1
 {
-    <span class="reserved">using</span> Ex1; <span class="comment">// これが外にあってもエラーにする案もあり</span>
-    <span class="reserved">using</span> Ex2;
+    using Ex1; // これが外にあってもエラーにする案もあり
+    using Ex2;
 
-    <span class="reserved">class</span> <span class="type">A</span>;
+    class A;
 
-    <span class="reserved">class</span> <span class="type">Program</span>
+    class Program
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Main</span></span>()
+        public static void Main()
         {
-            <span class="comment">// 優劣を付けない(コンパイル エラーになる)。</span>
-            <span class="comment">// 何なら新旧混在している時点でコンパイル エラーにする可能性濃厚。</span>
-            <span class="reserved">new</span> <span class="type">A</span>()<span class="operator">.</span><span class="method"><span class="error" title="CS0121">M</span></span>();
+            // 優劣を付けない(コンパイル エラーになる)。
+            // 何なら新旧混在している時点でコンパイル エラーにする可能性濃厚。
+            new A().M();
         }
     }
 }
-</pre>
+```
 
 ## インターフェイス実装
 
@@ -445,47 +445,47 @@ Extensions は普通の型と同じように使えたりします。
 
 インターフェイス実装に関する部分だけ残して、以下のようにしたとします。
 
-<pre class="source" title="拡張型でインターフェイス実装">
-<span class="reserved">var</span> <span class="variable">value</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">SomeClass</span> { <span class="field">Value</span> <span class="operator">=</span> <span class="number">1</span> };
-<span class="type struct">SomeExtension</span> <span class="variable">extension</span> <span class="operator">=</span> <span class="variable">value</span>;
+```csharp
+var value = new SomeClass { Value = 1 };
+SomeExtension extension = value;
 
-<span class="variable">extension</span><span class="operator">.</span><span class="method">Equals</span>(<span class="reserved">new</span> <span class="type">SomeClass</span> { <span class="field">Value</span> <span class="operator">=</span> <span class="number">1</span> });
+extension.Equals(new SomeClass { Value = 1 });
 
-<span class="reserved">explicit</span> <span class="reserved">extension</span> <span class="type">SomeExtension</span> <span class="reserved">for</span> <span class="type">SomeClass</span> : <span class="type">IEquatable</span>&lt;<span class="type">SomeExtension</span>&gt;
+explicit extension SomeExtension for SomeClass : IEquatable<SomeExtension>
 {
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type">SomeExtension</span><span class="operator">?</span> <span class="variable local">other</span>) <span class="operator">=&gt;</span> <span class="field">Value</span> <span class="operator">==</span> <span class="variable local">other</span><span class="operator">?</span><span class="operator">.</span><span class="field">Value</span>;
+    public bool Equals(SomeExtension? other) => Value == other?.Value;
 }
 
-<span class="reserved">class</span> <span class="type">SomeClass</span>
+class SomeClass
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">Value</span>;
+    public int Value;
 }
-</pre>
+```
 
 ラッパー構造体で展開するとしたら以下のようになります。
 
-<pre class="source" title="ラッパー構造体で展開">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">value</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">SomeClass</span> { <span class="field">Value</span> <span class="operator">=</span> <span class="number">1</span> };
-<span class="reserved">ref</span> <span class="reserved">var</span> <span class="variable">extension</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="type"><span class="static">Unsafe</span></span><span class="operator">.</span><span class="method"><span class="static">As</span></span>&lt;<span class="type">SomeClass</span>, <span class="type struct">SomeExtension</span>&gt;(<span class="reserved">ref</span> <span class="variable">value</span>);
+var value = new SomeClass { Value = 1 };
+ref var extension = ref Unsafe.As<SomeClass, SomeExtension>(ref value);
 
-<span class="reserved">var</span> <span class="variable">temp</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">SomeClass</span> { <span class="field">Value</span> <span class="operator">=</span> <span class="number">1</span> };
+var temp = new SomeClass { Value = 1 };
 
-<span class="comment">// こういう風に直接インターフェイス メンバーを呼ぶ分には特に問題なさげ。</span>
-<span class="variable">extension</span><span class="operator">.</span><span class="method">Equals</span>(<span class="static"><span class="type">Unsafe</span></span><span class="operator">.</span><span class="static"><span class="method">As</span></span>&lt;<span class="type">SomeClass</span>, <span class="type struct">SomeExtension</span>&gt;(<span class="reserved">ref</span> <span class="variable">temp</span>));
+// こういう風に直接インターフェイス メンバーを呼ぶ分には特に問題なさげ。
+extension.Equals(Unsafe.As<SomeClass, SomeExtension>(ref temp));
 
-<span class="reserved">struct</span> <span class="type struct">SomeExtension</span> : <span class="type">IEquatable</span>&lt;<span class="type struct">SomeExtension</span>&gt;
+struct SomeExtension : IEquatable<SomeExtension>
 {
-    <span class="reserved">private</span> <span class="type">SomeClass</span> <span class="field">Value</span>;
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type struct">SomeExtension</span> <span class="variable local">other</span>) <span class="operator">=&gt;</span> <span class="field">Value</span><span class="operator">.</span><span class="field">Value</span> <span class="operator">==</span> <span class="variable local">other</span><span class="operator">.</span><span class="field">Value</span><span class="operator">?</span><span class="operator">.</span><span class="field">Value</span>;
+    private SomeClass Value;
+    public bool Equals(SomeExtension other) => Value.Value == other.Value?.Value;
 }
 
-<span class="reserved">class</span> <span class="type">SomeClass</span>
+class SomeClass
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="field">Value</span>;
+    public int Value;
 }
-</pre>
+```
 
 この例はインターフェイス実装しているといっても、そもそもメンバーを直接呼んでいるので問題がないだけです。
 問題は以下の状況。
@@ -496,46 +496,46 @@ Extensions は普通の型と同じように使えたりします。
 まず、インターフェイス型の変数で受けてみましょう。
 `ReferenceEquals` や `is` 判定であまり期待通りとは言えない挙動を起こします。
 
-<pre class="source" title="インターフェイス型の変数で受けてみる">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">value</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">SomeClass</span> { <span class="field">Value</span> <span class="operator">=</span> <span class="number">1</span> };
-<span class="reserved">ref</span> <span class="reserved">var</span> <span class="variable">extension</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="static"><span class="type">Unsafe</span></span><span class="operator">.</span><span class="method"><span class="static">As</span></span>&lt;<span class="type">SomeClass</span>, <span class="type struct">SomeExtension</span>&gt;(<span class="reserved">ref</span> <span class="variable">value</span>);
+var value = new SomeClass { Value = 1 };
+ref var extension = ref Unsafe.As<SomeClass, SomeExtension>(ref value);
 
-<span class="comment">// インターフェイスに渡そうとすると、この実装だとボックス化が発生。</span>
-<span class="type">IEquatable</span>&lt;<span class="type struct">SomeExtension</span>&gt; <span class="variable">boxedExtension</span> <span class="operator">=</span> <span class="variable">extension</span>;
+// インターフェイスに渡そうとすると、この実装だとボックス化が発生。
+IEquatable<SomeExtension> boxedExtension = extension;
 
-<span class="comment">// インスタンスが一致しなくなる。</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="static"><span class="method">ReferenceEquals</span></span>(<span class="variable">value</span>, <span class="variable">boxedExtension</span>)); <span class="comment">// false</span>
+// インスタンスが一致しなくなる。
+Console.WriteLine(ReferenceEquals(value, boxedExtension)); // false
 
-<span class="comment">// ダウンキャストが失敗する。</span>
-<span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">boxedExtension</span> <span class="reserved">is</span> <span class="type">SomeClass</span>); <span class="comment">// false</span>
-</pre>
+// ダウンキャストが失敗する。
+Console.WriteLine(boxedExtension is SomeClass); // false
+```
 
 ジェネリク メソッドでは、以下のように、元の型と拡張型の両方の型情報を使う必要がでてきます。
 
-<pre class="source" title="ジェネリク メソッドに拡張型を渡す">
-<span class="reserved">var</span> <span class="variable">value</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">SomeClass</span> { <span class="field">Value</span> <span class="operator">=</span> <span class="number">1</span> };
-<span class="type">List</span>&lt;<span class="type">SomeClass</span>&gt; <span class="variable">list</span> <span class="operator">=</span> [<span class="reserved">new</span>() { <span class="field">Value</span> <span class="operator">=</span> <span class="number">2</span> }, <span class="reserved">new</span>() { <span class="field">Value</span> <span class="operator">=</span> <span class="number">1</span> }, <span class="reserved">new</span>() { <span class="field">Value</span> <span class="operator">=</span> <span class="number">0</span> }];
+```csharp
+var value = new SomeClass { Value = 1 };
+List<SomeClass> list = [new() { Value = 2 }, new() { Value = 1 }, new() { Value = 0 }];
 
-<span class="comment">// SomeClass のままだと IEquatable 制約を満たさなくて呼べない。</span>
-<span class="reserved">var</span> <span class="variable">i1</span> <span class="operator">=</span> <span class="method"><span class="static">IndexOf</span></span><span class="operator">&lt;</span><span class="error" title="CS0119"><span class="type">SomeClass</span></span><span class="operator">&gt;&gt;</span>(<span class="variable">list</span>, <span class="variable">value</span>);
+// SomeClass のままだと IEquatable 制約を満たさなくて呼べない。
+var i1 = IndexOf<SomeClass>>(list, value);
 
-<span class="comment">// これなら呼べるようになるはず。</span>
-<span class="comment">// ただ、list は List&lt;SomeClass&gt; なので、やっぱり型消去が必要。</span>
-<span class="comment">// 型引数が暗黙的に SomeClass と SomeExtension の2つに増えるような処理が必要。</span>
-<span class="reserved">var</span> <span class="variable">i2</span> <span class="operator">=</span> <span class="static"><span class="method">IndexOf</span></span>&lt;<span class="type struct">SomeExtension</span>&gt;(<span class="variable"><span class="error" title="CS1503">list</span></span>, <span class="error" title="CS1503"><span class="variable">value</span></span>);
+// これなら呼べるようになるはず。
+// ただ、list は List<SomeClass> なので、やっぱり型消去が必要。
+// 型引数が暗黙的に SomeClass と SomeExtension の2つに増えるような処理が必要。
+var i2 = IndexOf<SomeExtension>(list, value);
 
-<span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">IndexOf</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type">List</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">list</span>, <span class="type param">T</span> <span class="variable local">value</span>)
-    <span class="reserved">where</span> <span class="type param">T</span> : <span class="type">IEquatable</span>&lt;<span class="type param">T</span>&gt;
+static int IndexOf<T>(List<T> list, T value)
+    where T : IEquatable<T>
 {
-    <span class="comment">// 今の型システムだと T が通常の型か拡張型かを知るすべはなく、Unsafe.As 展開ができない。</span>
-    <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; <span class="variable">i</span> <span class="operator">&lt;</span> <span class="variable local">list</span><span class="operator">.</span><span class="property">Count</span>; <span class="variable">i</span><span class="operator">++</span>)
-        <span class="control">if</span> (<span class="variable local">list</span>[<span class="variable">i</span>]<span class="operator">.</span><span class="method">Equals</span>(<span class="variable local">value</span>))
-            <span class="control">return</span> <span class="variable">i</span>;
-    <span class="control">return</span> <span class="operator">-</span><span class="number">1</span>;
+    // 今の型システムだと T が通常の型か拡張型かを知るすべはなく、Unsafe.As 展開ができない。
+    for (int i = 0; i < list.Count; i++)
+        if (list[i].Equals(value))
+            return i;
+    return -1;
 }
-</pre>
+```
 
 いずれも、C# コンパイラー上のトリックでは問題を解消できなさそうで、
 .NET ランタイムの型システムに手を入れる必要が出てきそうです。

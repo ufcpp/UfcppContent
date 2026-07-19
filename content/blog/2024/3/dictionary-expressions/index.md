@@ -31,21 +31,21 @@ C# 13でのコレクション式関連、量が多いのでちょっとずつ取
 
 C# 12 でコレクション式が入りましたが、`Dictionary<TKey, TValue>` などのディクショナリ系の型に対しては使えませんでした。
 
-<pre class="source" title="ディクショナリに対するコレクション式">
-<span class="comment">// C# 12 でも空っぽのディクショナリは作れるのに…</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d</span> <span class="operator">=</span> [];
+```csharp
+// C# 12 でも空っぽのディクショナリは作れるのに…
+Dictionary<string, int> d = [];
 
-<span class="comment">// 要素があるものは書く手段がない(以下はいずれもエラー)。</span>
-<span class="comment">// スケジュールの都合で意図的に「C# 13 でやる」計画。</span>
+// 要素があるものは書く手段がない(以下はいずれもエラー)。
+// スケジュールの都合で意図的に「C# 13 でやる」計画。
 
-<span class="comment">// KeyValuePair とかタプルも受け付けず。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d1</span> <span class="operator">=</span> <span class="error" title="CS9215">[<span class="static"><span class="type">KeyValuePair</span></span><span class="operator">.</span><span class="method"><span class="static">Create</span></span>(<span class="string">&quot;&quot;</span>, <span class="number">1</span>)]</span>;
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d2</span> <span class="operator">=</span> <span class="error" title="CS9215">[<span class="error" title="CS0029">(<span class="string">&quot;&quot;</span>, <span class="number">1</span>)</span>]</span>;
+// KeyValuePair とかタプルも受け付けず。
+Dictionary<string, int> d1 = [KeyValuePair.Create("", 1)];
+Dictionary<string, int> d2 = [("", 1)];
 
-<span class="comment">// コレクション初期化子/オブジェクト初期化子みたいな構文も受け付けず。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d3</span> <span class="operator">=</span> [<span class="error" title="CS1001">{</span><span class="string">&quot;&quot;</span>, <span class="number">1</span><span class="error" title="CS1022"><span class="error" title="CS1003"><span class="error" title="CS1002">}</span></span></span><span class="error" title="CS1022">]</span>;
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d4</span> <span class="operator">=</span> [<span class="error" title="CS0131">[<span class="string">&quot;&quot;</span>]</span> <span class="operator">=</span> <span class="number">1</span>];
-</pre>
+// コレクション初期化子/オブジェクト初期化子みたいな構文も受け付けず。
+Dictionary<string, int> d3 = [{"", 1}];
+Dictionary<string, int> d4 = [[""] = 1];
+```
 
 C# 12 時点で[コレクション式](../../../../study/csharp/datatype/collection-expression.md)に対する背景と同じく、
 ディクショナリについても以下の需要が見込まれます。
@@ -73,13 +73,13 @@ C# 12 時点では後回しになりましたが、13候補としては有力で
 
 まだ構文をどうするかも決定ではないんですが、現状の最有力候補は `[key: value]` みたいな書き方です。
 
-<pre class="source" title="ディクショナリ式の候補文法">
-<span class="comment">// 「ディクショナリ式」の最有力候補の文法:</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d</span> <span class="operator">=</span> [
-    <span class="string">&quot;one&quot;</span>: <span class="number">1</span>,
-    <span class="string">&quot;two&quot;</span>: <span class="number">2</span>,
+```csharp
+// 「ディクショナリ式」の最有力候補の文法:
+Dictionary<string, int> d = [
+    "one": 1,
+    "two": 2,
     ];
-</pre>
+```
 
 もちろん、「JavaScript では `{}` を使うけども」みたいな別案もあるんですが、
 まあ、C# 12 のコレクション式に合わせて `[]` になると思われます。
@@ -87,27 +87,27 @@ C# 12 時点では後回しになりましたが、13候補としては有力で
 ちなみに、最初期には「`[]` の外でも `key: value` で `KeyValuePair` を作れるようにするべきか？」みたいな見当もありましたが、
 現状それには否定的で、 `[]` の中限定の構文になりそうです。
 
-<pre class="source" title="没案">
-<span class="comment">// 没案「KeyValuePair 式」。</span>
-<span class="type struct">KeyValuePair</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">kvp</span> <span class="operator">=</span> <span class="string">&quot;one&quot;</span>: <span class="number">1</span>;
-</pre>
+```csharp
+// 没案「KeyValuePair 式」。
+KeyValuePair<string, int> kvp = "one": 1;
+```
 
 ## 検討事項1: KeyValuePair を並べる
 
 ディクショナリ式中では、`key: value` みたいな形式のみを受け付けるか、それとも、`KeyValuePair` であれば直接書けるようにするかという話があります。
 
-<pre class="source" title="KeyValuePair を直接書けるようにする案">
-<span class="comment">// key: value のみ。これは問題ない。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d</span> <span class="operator">=</span> [<span class="string">&quot;one&quot;</span>: <span class="number">1</span>];
+```csharp
+// key: value のみ。これは問題ない。
+Dictionary<string, int> d = ["one": 1];
 
-<span class="reserved">var</span> <span class="variable">kvp</span> <span class="operator">=</span> <span class="type"><span class="static">KeyValuePair</span></span><span class="operator">.</span><span class="method"><span class="static">Create</span></span>(<span class="string">&quot;two&quot;</span>, <span class="number">2</span>);
+var kvp = KeyValuePair.Create("two", 2);
 
-<span class="comment">// KeyValuePair をいちいち展開する必要はあるかどうか。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d1</span> <span class="operator">=</span> [<span class="string">&quot;one&quot;</span>: <span class="number">1</span>,</span></span> <span class="variable">kvp</span><span class="operator">.</span><span class="property">Key</span>: <span class="variable">kvp</span><span class="operator">.</span><span class="property">Value</span>];
+// KeyValuePair をいちいち展開する必要はあるかどうか。
+Dictionary<string, int> d1 = ["one": 1, kvp.Key: kvp.Value];
 
-<span class="comment">// こう書きたい需要はある。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d2</span> <span class="operator">=</span> [<span class="string">&quot;one&quot;</span>: <span class="number">1</span>, <span class="variable">kvp</span>];
-</pre>
+// こう書きたい需要はある。
+Dictionary<string, int> d2 = ["one": 1, kvp];
+```
 
 `["one": 1, kvp]` と書けるようにする案には肯定的な人が多く、承認されそうです。
 
@@ -115,20 +115,20 @@ C# 12 時点では後回しになりましたが、13候補としては有力で
 
 検討事項1と似たような話ですが、`IEnumerable<KeyValuePair<TKey, TValue>>` とかをディクショナリ式中に含められるかという話もあります。
 
-<pre class="source" title="ディクショナリ式中で KeyValuePair のリストを Spread">
-<span class="reserved">var</span> <span class="variable">kvps</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="static"><span class="type">KeyValuePair</span></span><span class="operator">.</span><span class="static"><span class="method">Create</span></span>(<span class="string">&quot;two&quot;</span>, <span class="number">2</span>) };
+```csharp
+var kvps = new[] { KeyValuePair.Create("two", 2) };
 
-<span class="comment">// .. で展開すると KeyValuePair になるわけで、</span>
-<span class="comment">// KeyValuePair を認めるのなら、 ..(KeyValuePair のリスト) も認めたい。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d1</span> <span class="operator">=</span> [..<span class="variable">kvps</span>];
+// .. で展開すると KeyValuePair になるわけで、
+// KeyValuePair を認めるのなら、 ..(KeyValuePair のリスト) も認めたい。
+Dictionary<string, int> d1 = [..kvps];
 
-<span class="comment">// 混在も需要あり。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d2</span> <span class="operator">=</span> [<span class="string">&quot;one&quot;</span>: <span class="number">1</span>, ..><span class="variable">kvps</span>];
+// 混在も需要あり。
+Dictionary<string, int> d2 = ["one": 1, ..>kvps];
 
-<span class="comment">// 特に、「複数のディクショナリのマージ」みたいな用途で以下のように書きたい。</span>
-<span class="reserved">var</span> <span class="variable">kvps1</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="type"><span class="static">KeyValuePair</span></span><span class="operator">.</span><span class="static"><span class="method">Create</span></span>(<span class="string">&quot;three&quot;</span>, <span class="number">3</span>) };
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d3</span> <span class="operator">=</span> [..<span class="variable">kvps</span>, ..<span class="variable">kvps1</span>];
-</pre>
+// 特に、「複数のディクショナリのマージ」みたいな用途で以下のように書きたい。
+var kvps1 = new[] { KeyValuePair.Create("three", 3) };
+Dictionary<string, int> d3 = [..kvps, ..kvps1];
+```
 
 これも認める方向で検討されています。
 
@@ -137,13 +137,13 @@ C# 12 時点では後回しになりましたが、13候補としては有力で
 `[]` 中の `key: value` は「`KeyValuePair` を作るための簡易記法」みたいなものになっているわけですが、
 だったら以下のような「ディクショナリじゃないただのコレクションに対して使えるか」という話が出てきます。
 
-<pre class="source" title="KeyValuePair のリストに対してディクショナリ式">
-<span class="comment">// 「ディクショナリ式」の最有力候補の文法:</span>
-<span class="type">List</span>&lt;<span class="type">KeyValuePair</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;&gt; <span class="variable">d</span> <span class="operator">=</span> [
-    <span class="string">&quot;one&quot;</span>: <span class="number">1</span>,
-    <span class="string">&quot;two&quot;</span>: <span class="number">2</span>,
+```csharp
+// 「ディクショナリ式」の最有力候補の文法:
+List<KeyValuePair<string, int>> d = [
+    "one": 1,
+    "two": 2,
     ];
-</pre>
+```
 
 これも需要がそれなりにありそうです。
 .NET の BCL とか、 Roslyn 中のコードでもオプションとかをディクショナリではなくて `IEnumerable<KeyValuePair<TKey, TValue>>` 引数で受け取っているものがそれなりにあるそうで。
@@ -164,18 +164,18 @@ C# 12 時点では後回しになりましたが、13候補としては有力で
 
 あとは、`KeyValuePair` を特別扱いするとしても、暗黙の型変換を認めるかどうか。
 
-<pre class="source" title="">
-<span class="reserved">struct</span> <span class="type struct">Pair</span>&lt;<span class="type param">X</span>, <span class="type param">Y</span>&gt;(<span class="type param">X</span> <span class="variable local"><span class="warning" title="CS9113">x</span></span>, <span class="type param">Y</span> <span class="variable local"><span class="warning" title="CS9113">y</span></span>)
+```csharp
+struct Pair<X, Y>(X x, Y y)
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type struct">KeyValuePair</span>&lt;<span class="type param">X</span>, <span class="type param">Y</span>&gt;(<span class="type struct">Pair</span>&lt;<span class="type param">X</span>, <span class="type param">Y</span>&gt; <span class="variable local">pair</span>) <span class="operator">=&gt;</span> </span>..<span class="operator">.;
+    public static implicit operator KeyValuePair<X, Y>(Pair<X, Y> pair) => ...;
 }
 
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d</span> <span class="operator">=</span> 
+Dictionary<string, int> d = 
 [
-    <span class="reserved">new</span> <span class="type struct">Pair</span>(<span class="string">&quot;one&quot;</span>, <span class="number">1</span>),
-    .. <span class="reserved">new</span>[] { <span class="reserved">new</span> <span class="type struct">Pair</span>(<span class="string">&quot;two&quot;</span>, <span class="number">2</span>) }
+    new Pair("one", 1),
+    .. new[] { new Pair("two", 2) }
 ];
-</pre>
+```
 
 これについては結論はまだ出ていないみたいです。
 
@@ -184,10 +184,10 @@ C# 12 時点では後回しになりましたが、13候補としては有力で
 まず、ディクショナリ式ではキーの重複を認めるかどうかという話があります。
 例えば、`ToDictionary` なんかでは、キーが重複していると例外を出します。
 
-<pre class="source" title="ToDictionary はキーの重複ダメ">
-<span class="reserved">var</span> <span class="variable">d</span> <span class="operator">=</span> <span class="reserved">new</span>[] { (<span class="number">1</span>, <span class="number">10</span>), (<span class="number">1</span>, <span class="number">20</span>) }
-    <span class="operator">.</span><span class="method">ToDictionary</span>(<span class="variable local">x</span> <span class="operator">=&gt;</span> <span class="variable local">x</span><span class="operator">.</span><span class="field">Item1</span>); <span class="comment">// ArgumentException</span>
-</pre>
+```csharp
+var d = new[] { (1, 10), (1, 20) }
+    .ToDictionary(x => x.Item1); // ArgumentException
+```
 
 が、まあ、前述の2個のディクショナリをマージするようなケースでは重複を認める方がよかったりします。
 オプション指定とかだと「デフォルト設定と、ユーザーごとの設定をマージ、後で追加した方を優先」みたいな使い方を結構しますし。
@@ -201,35 +201,35 @@ C# 12 時点では後回しになりましたが、13候補としては有力で
 
 なので結局は「どういう動作にするか」は決めれなくて、「`Add` とインデクサーのどちらを使うか」という話になります。
 
-<pre class="source" title="ディクショナリ式の初期化はどちらにすべきか">
-<span class="comment">// Add で初期化。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d1</span> <span class="operator">=</span> <span class="reserved">new</span>();
-<span class="variable">d1</span><span class="operator">.</span><span class="method">Add</span>(<span class="string">&quot;a&quot;</span>, <span class="number">1</span>);
-<span class="variable">d1</span><span class="operator">.</span><span class="method">Add</span>(<span class="string">&quot;b&quot;</span>, <span class="number">2</span>);
+```csharp
+// Add で初期化。
+Dictionary<string, int> d1 = new();
+d1.Add("a", 1);
+d1.Add("b", 2);
 
-<span class="comment">// インデクサで初期化。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d2</span> <span class="operator">=</span> <span class="reserved">new</span>();
-<span class="variable">d2</span>[<span class="string">&quot;a&quot;</span>] <span class="operator">=</span> <span class="number">1</span>;
-<span class="variable">d2</span>[<span class="string">&quot;b&quot;</span>] <span class="operator">=</span> <span class="number">2</span>;
-</pre>
+// インデクサで初期化。
+Dictionary<string, int> d2 = new();
+d2["a"] = 1;
+d2["b"] = 2;
+```
 
 ちなみにこれらは、現状のコレクション初期化子・オブジェクト初期化子を使うと以下のように書けるやつです。
 
-<pre class="source" title="Dictionary に対するコレクション初期化子・オブジェクト初期化子">
-<span class="comment">// Add での初期化になるコレクション初期化子。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d1</span> <span class="operator">=</span> <span class="reserved">new</span>()
+```csharp
+// Add での初期化になるコレクション初期化子。
+Dictionary<string, int> d1 = new()
 {
-    { <span class="string">&quot;a&quot;</span>, <span class="number">1</span> },
-    { <span class="string">&quot;b&quot;</span>, <span class="number">2</span> }
+    { "a", 1 },
+    { "b", 2 }
 };
 
-<span class="comment">// インデクサでの初期化になるオブジェクト初期化子。</span>
-<span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt; <span class="variable">d2</span> <span class="operator">=</span> <span class="reserved">new</span>()
+// インデクサでの初期化になるオブジェクト初期化子。
+Dictionary<string, int> d2 = new()
 {
-    [<span class="string">&quot;a&quot;</span>] <span class="operator">=</span> <span class="number">1</span>,
-    [<span class="string">&quot;b&quot;</span>] <span class="operator">=</span> <span class="number">2</span>
+    ["a"] = 1,
+    ["b"] = 2
 };
-</pre>
+```
 
 `["a": 1, "b": 2]` はどちらになるかという話なわけですが、
 現状はインデクサー案が有力みたいです。

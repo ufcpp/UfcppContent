@@ -17,42 +17,42 @@ aliases: []
 
 コレクション初期化子ってのは、例えば以下のようなやつのことです。
 
-<pre class="source" title="コレクション初期化子">
-<code><span class="comment">// この、{} の部分がコレクション初期化子。</span>
-<span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; { 1, 2, 3, 4, 5 };
-</code></pre>
+```csharp
+// この、{} の部分がコレクション初期化子。
+var x = new List<int> { 1, 2, 3, 4, 5 };
+```
 
 このコレクション初期化を使える条件は、`Add` メソッドを持っていて、かつ、 `IEnumerable` を実装していることです。
 
 最低限の実装をしてみると、以下のような感じ。
 
-<pre class="source" title="コレクション初期化子の最低限の条件を満たす例">
-<code><span class="reserved">class</span> <span class="type">MyList</span> : <span class="type">IEnumerable</span>
+```csharp
+class MyList : IEnumerable
 {
-    <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; _list = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-    <span class="reserved">public</span> <span class="reserved">void</span> Add(<span class="reserved">int</span> value) =&gt; _list.Add(value);
-    <span class="reserved">public</span> <span class="type">IEnumerator</span> GetEnumerator() =&gt; _list.GetEnumerator();
+    List<int> _list = new List<int>();
+    public void Add(int value) => _list.Add(value);
+    public IEnumerator GetEnumerator() => _list.GetEnumerator();
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> ListSample()
+static void ListSample()
 {
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">MyList</span> { 1, 2, 3, 4, 5 };
+    var x = new MyList { 1, 2, 3, 4, 5 };
 
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> x)
-        <span class="type">Console</span>.WriteLine(item);
+    foreach (var item in x)
+        Console.WriteLine(item);
 }
-</code></pre>
+```
 
 この、コレクション初期化子は以下のように展開されます。
 
-<pre class="source" title="コレクション初期化子の展開結果">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">MyList</span>();
+```csharp
+var x = new MyList();
 x.Add(1);
 x.Add(2);
 x.Add(3);
 x.Add(4);
 x.Add(5);
-</code></pre>
+```
 
 ここで生じる疑問があります: `IEnumerable` の実装、要るの？
 
@@ -74,23 +74,23 @@ LINQもそうで、`Select`や`Where`など、所定のメソッドさえ持っ�
 
 まあ、問題になるとすると以下のような例ですかね。
 
-<pre class="source" title="コレクション初期化子の誤用の例">
-<code><span class="reserved">struct</span> <span class="type">Adder</span>
+```csharp
+struct Adder
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Add(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x + y;
+    public int Add(int x, int y) => x + y;
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> AdderSample()
+static void AdderSample()
 {
-    <span class="comment">// こういう誤用を防ぎたかったのかなという気はする</span>
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Adder</span>
+    // こういう誤用を防ぎたかったのかなという気はする
+    var x = new Adder
     {
         { 2, 1 },
         { 3, 4 },
         { 5, 9 },
     };
 }
-</code></pre>
+```
 
 `Add`メソッドだけを条件にしてしまうと、こういうコードが書けてしまう。
 で、この`Add`の呼ばれ方だと、何の役にも立たないわけです。
@@ -99,23 +99,23 @@ LINQもそうで、`Select`や`Where`など、所定のメソッドさえ持っ�
 もちろん、`IEnumerable`の実装を義務付けたところで、あえて濫用することはできます。
 例えば、以下のような書き方なら現在の仕様でもできます。
 
-<pre class="source" title="GetEnumeratorを空実装して無理やりコレクション初期化子を使う例">
-<code><span class="reserved">class</span> <span class="type">Accumulator</span> : <span class="type">IEnumerable</span>
+```csharp
+class Accumulator : IEnumerable
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Sum { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Add(<span class="reserved">int</span> value) =&gt; Sum += value;
+    public int Sum { get; set; }
+    public int Add(int value) => Sum += value;
 
-    <span class="comment">// 空実装してしまえば、コレクション初期化子の乱用可能</span>
-    <span class="reserved">public</span> <span class="type">IEnumerator</span> GetEnumerator() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">NotSupportedException</span>();
+    // 空実装してしまえば、コレクション初期化子の乱用可能
+    public IEnumerator GetEnumerator() => throw new NotSupportedException();
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> AccumulatorSample()
+static void AccumulatorSample()
 {
-    <span class="comment">// コレクションでもないんでもないけど、コレクション初期化子を使える</span>
-    <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">Accumulator</span> { 1, 2, 3, 4, 5 };
-    <span class="type">Console</span>.WriteLine(x.Sum); <span class="comment">// 15</span>
+    // コレクションでもないんでもないけど、コレクション初期化子を使える
+    var x = new Accumulator { 1, 2, 3, 4, 5 };
+    Console.WriteLine(x.Sum); // 15
 }
-</code></pre>
+```
 
 とりあえず空実装。
 

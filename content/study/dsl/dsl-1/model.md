@@ -30,7 +30,7 @@ DSL の「別言語を作ってから開発を始める」という部分、
 
 ## <a id="sec-generated-title-2"></a> <a id="numerical"></a>数値計算
 
-<pre>
+```text
 Fortress … 数値計算がターゲット
 
 - 数式をそのまま書ける
@@ -40,17 +40,17 @@ Fortress … 数値計算がターゲット
 - 並列計算
   - for ループが自動で並列化される
   - Parallel Do か Reduction かも自動で考えてくれてるっぽい
+```
 
-
-</pre><pre>
+```text
   - 内包的集合定義みたいな書式
-    [{X, Y} || X &lt;- A, Y &lt;- B, X + Y == 3]
+    [{X, Y} || X <- A, Y <- B, X + Y == 3]
 （この書き方は Erlang 式）
     ↑
     数学の記法に沿って書くなら、
     {(x, y) s.t. x ∈ A, y ∈ B, x+y=3}
     手続き型プログラミング言語で書くなら、
-    var list = new List&lt;Point&gt;();
+    var list = new List<Point>();
     foreach (var x in A)
       foreach (var y in B)
         if (x + y == 3)
@@ -60,7 +60,7 @@ Fortress … 数値計算がターゲット
     Σ[x ← 0:n] f(x)
     ↑
     IME 的なものが使えない・使いたくない場合、
-    SUM[x &lt;- 0:n] f(x)
+    SUM[x <- 0:n] f(x)
     という書き方も可能。
 
     下付き文字が []、上付き文字が ^ とか、対応ルールだけ覚えていれば、
@@ -94,11 +94,11 @@ Fortress … 数値計算がターゲット
     Fortress では
       =  使うと immutable 変数
       := 使うと mutable
-</pre>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="plan"></a>予定
 
-<pre>
+```text
 - BPEL
 
 ビジネスプロセス
@@ -164,4 +164,4 @@ Fortress … 数値計算がターゲット
 × 信号処理関係は汎用言語中のライブラリの方がよさげ
    OOP パラダイムとかなりマッチしてて、
    それよりも抽象度の高いモデルの必要性はあまり感じない
-</pre>
+```

@@ -117,14 +117,14 @@ Tuple がらみ、その後の状況(まだこれが最終決定じゃなく、�
 
 たぶん、
 
-<pre><code>
+```csharp
 public struct ValueTuple<T1, T2, T3>
 {
     public T1 Item1;
     public T2 Item2;
     public T3 Item3;
 }
-</code></pre>
+```
 
 みたいな型と属性で実現することになるはず。他の言語・古いC#からは`Items1`とかでメンバーアクセスすることになるけども、C# 7.0からはどう見えるべきか。混乱を避けるには`Items1`でのアクセスは隠すべきだろう。
 
@@ -132,9 +132,9 @@ public struct ValueTuple<T1, T2, T3>
 
 ↓こういう分解用の構文を用意すべきかどうか。
 
-<pre><code>
+```csharp
 (int sum, int count) = Tally(...);   
-</code></pre>
+```
 
 用意するならいくつか検討すべき疑問が残るものの、今のところその疑問を避けるべく、分解用の構文追加はしないでいる。
 

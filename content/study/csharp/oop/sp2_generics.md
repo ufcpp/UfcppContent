@@ -68,22 +68,22 @@ generics は「形容詞 + s」で名詞化している単語で、通常、s �
 例えば、2つの値の大きいほうをとる関数（静的メソッド）、Max を作りたいとします。
 <code>int</code>型に限定したものなら簡単に作れて、以下のようになります。
 
-<pre class="source" title="Max 関数(int限定版)" lang="">
-<code><span class="reserved">int</span> Max(<span class="reserved">int</span> x, <span class="reserved">int </span> y)
+```csharp
+int Max(int x, int  y)
 {
-  return x &gt; y ? x : y;
+  return x > y ? x : y;
 }
-</code></pre>
+```
 
 
 ところが、同じことを<code>double</code>型で行おうとすると、同じような関数をもう一つ追加してやる必要があります。
 
-<pre class="source" title="Max 関数(double限定版)" lang="">
-<code><span class="reserved">double</span> Max(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+```csharp
+double Max(double x, double y)
 {
-  return x &gt; y ? x : y;
+  return x > y ? x : y;
 }
-</code></pre>
+```
 
 
 この2つの関数は、引数の型が <code>int</code> から <code>double</code> に変わったところ意外はまったく同じコードになっています。
@@ -94,13 +94,13 @@ generics は「形容詞 + s」で名詞化している単語で、通常、s �
 必要に応じていろいろな型に対応した Max 関数を生成できます。
 Max 関数のジェネリック版は以下のようになります。
 
-<pre class="source" title="Max 関数(genereics 版)" lang="">
-<code><span class="reserved">public static</span> Type Max<em>&lt;Type&gt;</em>(Type a, Type b)
-  <span class="reserved">where</span> Type : IComparable
+```csharp
+public static Type Max<Type>(Type a, Type b)
+  where Type : IComparable
 {
-  <span class="reserved">return</span> a.CompareTo(b) &gt; 0 ? a : b;
+  return a.CompareTo(b) > 0 ? a : b;
 }
-</code></pre>
+```
 
 
 このように、
@@ -116,12 +116,12 @@ Max 関数のジェネリック版は以下のようになります。
 
 ジェネリック版の <code>Max</code> 関数は以下のようにして呼び出します。
 
-<pre class="source" title="generic メソッドの呼び出し例" lang="">
-<code><span class="reserved">int</span>    n1 = Max&lt;<span class="reserved">int</span>&gt;(5, 10);   <span class="comment">// int 版の Max を明示的に呼び出し</span>
-<span class="reserved">int</span>    n2 = Max(5, 10);        <span class="comment">// int 版の Max が自動的に生成される</span>
-<span class="reserved">double</span> x  = Max(5.0, 10.0);    <span class="comment">// double 版の Max が自動的に生成される</span>
-<span class="reserved">string</span> s  = Max(<span class="literal">"abc"</span>, <span class="literal">"cat"</span>); <span class="comment">// string 版の Max (辞書式順序で比較)</span>
-</code></pre>
+```csharp
+int    n1 = Max<int>(5, 10);   // int 版の Max を明示的に呼び出し
+int    n2 = Max(5, 10);        // int 版の Max が自動的に生成される
+double x  = Max(5.0, 10.0);    // double 版の Max が自動的に生成される
+string s  = Max("abc", "cat"); // string 版の Max (辞書式順序で比較)
+```
 
 
 
@@ -133,37 +133,37 @@ Max 関数のジェネリック版は以下のようになります。
 ここでは例としてスタックを考えて見ましょう。
 これも格納できる型を特定の型に限ったものは簡単に作成できます。
 
-<pre class="source" title="Stack クラス（int 限定版）" lang="">
-<code><span class="comment">// int 専用版スタッククラス
-// エラー処理とかはサボっています</span>
-<span class="reserved">class</span> StackInt
+```csharp
+// int 専用版スタッククラス
+// エラー処理とかはサボっています
+class StackInt
 {
-  <span class="reserved">int</span>[] buf;
-  <span class="reserved">int</span> top;
-  <span class="reserved">public</span> StackInt(<span class="reserved">int</span> max) { <span class="reserved">this</span>.buf = <span class="reserved">new int</span>[max]; <span class="reserved">this</span>.top = 0;}
-  <span class="reserved">public void</span> Push(<span class="reserved">int</span> val) { <span class="reserved">this</span>.buf[<span class="reserved">this</span>.top++] = val; }
-  <span class="reserved">public int</span> Pop(){ <span class="reserved">return this</span>.buf[--<span class="reserved">this</span>.top]; }
-  <span class="reserved">public int</span> Size{ <span class="reserved">get</span>{<span class="reserved">return this</span>.top; } }
-  <span class="reserved">public int</span> MaxSize{ <span class="reserved">get</span>{ <span class="reserved">return this</span>.buf.Length; } }
+  int[] buf;
+  int top;
+  public StackInt(int max) { this.buf = new int[max]; this.top = 0;}
+  public void Push(int val) { this.buf[this.top++] = val; }
+  public int Pop(){ return this.buf[--this.top]; }
+  public int Size{ get{return this.top; } }
+  public int MaxSize{ get{ return this.buf.Length; } }
 }
-</code></pre>
+```
 
 
 これを任意の型を格納できるように、ジェネリックを使って記述すると以下のようになります。
 
-<pre class="source" title="Stack クラス（generics 版）" lang="">
-<code><span class="comment">// generics 版スタッククラス</span>
-<span class="reserved">class</span> Stack<em>&lt;Type&gt;</em>
+```csharp
+// generics 版スタッククラス
+class Stack<Type>
 {
-  <em>Type</em>[] buf;
-  <span class="reserved">int</span> top;
-  <span class="reserved">public</span> Stack(<span class="reserved">int</span> max) { <span class="reserved">this</span>.buf = <span class="reserved">new</span> <em>Type</em>[max]; <span class="reserved">this</span>.top = 0;}
-  <span class="reserved">public void</span> Push(<em>Type</em> val) { <span class="reserved">this</span>.buf[<span class="reserved">this</span>.top++] = val; }
-  <span class="reserved">public</span> <em>Type</em> Pop(){ <span class="reserved">return this</span>.buf[--<span class="reserved">this</span>.top]; }
-  <span class="reserved">public int</span> Size{ <span class="reserved">get</span>{<span class="reserved">return this</span>.top; } }
-  <span class="reserved">public int</span> MaxSize{ <span class="reserved">get</span>{ <span class="reserved">return this</span>.buf.Length; } }
+  Type[] buf;
+  int top;
+  public Stack(int max) { this.buf = new Type[max]; this.top = 0;}
+  public void Push(Type val) { this.buf[this.top++] = val; }
+  public Type Pop(){ return this.buf[--this.top]; }
+  public int Size{ get{return this.top; } }
+  public int MaxSize{ get{ return this.buf.Length; } }
 }
-</code></pre>
+```
 
 
 元の int 限定版とほとんど変わりありません。
@@ -171,22 +171,22 @@ Max 関数のジェネリック版は以下のようになります。
 
 このジェネリック版の Stack クラスを参照するには、以下のように書きます。
 
-<pre class="source" title="generic クラスの参照" lang="">
-<code><span class="reserved">const int</span> SIZE = 5;
-Stack&lt;<span class="reserved">int</span>&gt;    si = <span class="reserved">new</span> Stack&lt;<span class="reserved">int</span>&gt;(SIZE);    <span class="comment">// int型を格納できるスタックになる</span>
-Stack&lt;<span class="reserved">double</span>&gt; sd = <span class="reserved">new</span> Stack&lt;<span class="reserved">double</span>&gt;(SIZE); <span class="comment">// double型を格納できるスタックになる</span>
+```csharp
+const int SIZE = 5;
+Stack<int>    si = new Stack<int>(SIZE);    // int型を格納できるスタックになる
+Stack<double> sd = new Stack<double>(SIZE); // double型を格納できるスタックになる
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=1; i&lt;=SIZE; ++i)
+for(int i=1; i<=SIZE; ++i)
 {
   si.Push(i);
   sd.Push(1.0/i);
 }
 
-<span class="reserved">while</span>(si.Size != 0)
+while(si.Size != 0)
 {
-  Console.Write(<span class="literal">"1/{0} = {1}\n"</span>, si.Pop(), sd.Pop());
+  Console.Write("1/{0} = {1}\n", si.Pop(), sd.Pop());
 }
-</code></pre>
+```
 
 
 
@@ -309,22 +309,22 @@ C# の「[配列](../structured/st_array.md#array)」や、
 例だけ見ても、もうほとんど分かるかと思いますが、
 C# では以下のようにしてジェネリックな（どんな型に対しても総称的に使える）クラス・メソッドを定義できます。
 
-<pre class="source" title="generic クラス" lang="">
-<code><span class="reserved">class</span> <span class="input">クラス名</span>&lt;型引数&gt;
-  <span class="reserved">where</span> <span class="input">型引数中の型が満たすべき条件</span>
+```csharp
+class クラス名<型引数>
+  where 型引数中の型が満たすべき条件
 {
-  <span class="input">クラス定義</span>
+  クラス定義
 }
-</code></pre>
+```
 
 
-<pre class="source" title="generic メソッド" lang="">
-<code><span class="input">アクセスレベル</span> <span class="input">戻り値の型</span> <span class="input">メソッド名</span>&lt;型引数&gt;(<span class="input">引数リスト</span>)
-  <span class="reserved">where</span> <span class="input">型引数中の型が満たすべき条件</span>
+```csharp
+アクセスレベル 戻り値の型 メソッド名<型引数>(引数リスト)
+  where 型引数中の型が満たすべき条件
 {
-  <span class="input">メソッド定義</span>
+  メソッド定義
 }
-</code></pre>
+```
 
 
 クラス名・メソッド名の後に続く <code>&lt;&gt;</code> の中の部分を<strong id="typeparam" class="keyword">型引数</strong>（type parameter）といい、
@@ -351,22 +351,22 @@ C# では以下のようにしてジェネリックな（どんな型に対し�
 一方で、`Max`メソッドのように何かを呼びたい場合は、それが何のメンバーなのかを示すため、
 後述する「インターフェイス制約」などが必要になります。
 
-<pre class="source" title="generic メソッド" lang="">
-<code><span class="comment">// 一番目の引数だけを帰す単純なメソッド。</span>
-<span class="reserved">static</span> Type First&lt;Type&gt;(Type a, Type b)
+```csharp
+// 一番目の引数だけを帰す単純なメソッド。
+static Type First<Type>(Type a, Type b)
 {
-  <span class="comment">// 特にメソッド呼び出し等はないのでこれは OK。</span>
-  <span class="reserved">return</span> a;
+  // 特にメソッド呼び出し等はないのでこれは OK。
+  return a;
 }
 
-<span class="comment">// 例で挙げた Max 関数。</span>
-<span class="comment">// where の部分を消してみる。</span>
-<span class="reserved">static</span> Type Max&lt;Type&gt;(Type a, Type b)
+// 例で挙げた Max 関数。
+// where の部分を消してみる。
+static Type Max<Type>(Type a, Type b)
 {
-  <span class="comment">// ↓Type 型 に CompareTo なんて定義されていないと怒られてエラーになる。</span>
-  <span class="reserved">return</span> a.CompareTo(b) &gt; 0 ? a : b;
+  // ↓Type 型 に CompareTo なんて定義されていないと怒られてエラーになる。
+  return a.CompareTo(b) > 0 ? a : b;
 }
-</code></pre>
+```
 
 この例の場合、以下のような「インターフェイス制約」というものを付けます。
 2つの値の比較したい場合、
@@ -375,15 +375,15 @@ C# では以下のようにしてジェネリックな（どんな型に対し�
 「`IComparable`を実装している任意の型に対して呼べるメソッド」が作れて、
 メソッド中では`IComparable`のメンバーを呼び出せるようになります。
 
-<pre class="source" title="Max 関数(genereics 版)" lang="">
-<code><span class="reserved">static</span> Type Max&lt;Type&gt;(Type a, Type b)
-  <em><span class="reserved">where</span> Type : IComparable</em>
+```csharp
+static Type Max<Type>(Type a, Type b)
+  where Type : IComparable
 {
-  <span class="comment">// ↑この制約条件のお陰で、
-  // ↓Type 型 は CompareTo を持っているというのが分かる。</span>
-  <span class="reserved">return</span> a.CompareTo(b) &gt; 0 ? a : b;
+  // ↑この制約条件のお陰で、
+  // ↓Type 型 は CompareTo を持っているというのが分かる。
+  return a.CompareTo(b) > 0 ? a : b;
 }
-</code></pre>
+```
 
 型引数 `T` に対する制約は、`where T : 制約` という書き方で指定します。
 C# で指定できる型制約には以下のようなものがあります。
@@ -424,16 +424,16 @@ C# で指定できる型制約には以下のようなものがあります。
 複数の型引数に対して制約を付けたい場合は `where` を複数並べます。
 また、1つの型引数に対して複数の制約を付けたい場合は `,` で制約を並べます。
 
-<pre class="source" title="複数の型引数に、複数の制約">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">X</span>&lt;<span class="type">TItem</span>, <span class="type">TList</span>&gt;
-    <span class="reserved">where</span> <span class="type">TItem</span> : <span class="reserved">class</span>, <span class="type">IEquatable</span>&lt;<span class="type">TItem</span>&gt;, <span class="reserved">new</span>()
-    <span class="reserved">where</span> <span class="type">TList</span> : <span class="reserved">struct</span>, <span class="type">IList</span>&lt;<span class="type">TItem</span>&gt;
+class X<TItem, TList>
+    where TItem : class, IEquatable<TItem>, new()
+    where TList : struct, IList<TItem>
 {
 }
-</code></pre>
+```
 
 上記の例のように、制約の中にさらにジェネリックな型(`IList<TItem>`など)を掛けますし、
 型引数も使えます(型引数である`TItem`が、制約の側にも出てきます)。
@@ -441,34 +441,34 @@ C# で指定できる型制約には以下のようなものがあります。
 ちなみに、互いに矛盾したり、意味が重複していて無駄な制約は同時には指定できません。
 具体的には、`class`、`struct`、基底型は同時には指定できません。
 
-<pre class="source" title="排他な制約">
-<code><span class="reserved">class</span> <span class="type">X</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span>, <span class="reserved"><span class="error">class</span></span> <span class="comment">// 「クラス、かつ、構造体」なんてことはあり得ない。エラーに</span>
+```csharp
+class X<T>
+    where T : struct, class // 「クラス、かつ、構造体」なんてことはあり得ない。エラーに
 {
 }
 
-<span class="reserved">class</span> <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">X</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="type">Base</span>, <span class="reserved"><span class="error">class</span></span> <span class="comment">// 基底クラスを持っている時点で参照型。エラーに</span>
+class Base { }
+class X<T>
+    where T : Base, class // 基底クラスを持っている時点で参照型。エラーに
 {
 }
-</code></pre>
+```
 
 また、`class`、`struct`、基底型の3つは、インターフェイス、`new()`の2つよりも前に書く必要があります。
 
-<pre class="source" title="制約の順序">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Ok</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> T : <span class="reserved">struct</span>, <span class="type">IDisposable</span> <span class="comment">// これは行ける</span>
+class Ok<T>
+    where T : struct, IDisposable // これは行ける
 {
 }
 
-<span class="reserved">class</span> <span class="type">Ng</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> T : <span class="type">IDisposable</span>, <span class="reserved"><span class="error">struct</span></span> <span class="comment">// こっちはダメ</span>
+class Ng<T>
+    where T : IDisposable, struct // こっちはダメ
 {
 }
-</code></pre>
+```
 
 
 #### <a id="sec-generated-title-10"></a> <a id="cs7.3"></a>C# 7.3 での追加
@@ -539,42 +539,43 @@ C# 8.0 で `notnull` 制約が増えました。
 `class` 制約や、基底クラス制約は「非 null」の意味になり、
 null 許容参照型を受け付けたい場合は制約に `?` を付けることになります。
 
-<pre class="source" title="null 許容参照型がらみの制約">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">using</span> System;
+```csharp
+#nullable enable
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">NotNull</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">notnull</span> { }
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Class</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span> { }
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">NullableClass</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span> ? { }
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">BaseType</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="type">Exception</span> { }
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">NullableBaseType</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="type">Exception</span>? { }
+    static void NotNull<T>() where T : notnull { }
+    static void Class<T>() where T : class { }
+    static void NullableClass<T>() where T : class ? { }
+    static void BaseType<T>() where T : Exception { }
+    static void NullableBaseType<T>() where T : Exception? { }
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// OK。警告もなし。</span>
-        <span class="method">NotNull</span>&lt;<span class="reserved">int</span>&gt;();
-        <span class="method">NotNull</span>&lt;<span class="reserved">string</span>&gt;();
-        <span class="method">Class</span>&lt;<span class="reserved">string</span>&gt;();
-        <span class="method">NullableClass</span>&lt;<span class="reserved">string</span>&gt;();
-        <span class="method">NullableClass</span>&lt;<span class="reserved">string</span>?&gt;();
-        <span class="method">BaseType</span>&lt;<span class="type">ArgumentException</span>&gt;();
-        <span class="method">NullableBaseType</span>&lt;<span class="type">ArgumentException</span>&gt;();
-        <span class="method">NullableBaseType</span>&lt;<span class="type">ArgumentException</span>?&gt;();
+        // OK。警告もなし。
+        NotNull<int>();
+        NotNull<string>();
+        Class<string>();
+        NullableClass<string>();
+        NullableClass<string?>();
+        BaseType<ArgumentException>();
+        NullableBaseType<ArgumentException>();
+        NullableBaseType<ArgumentException?>();
  
-        <span class="comment">// 警告。</span>
-        <span class="warning"><span class="method">Class</span>&lt;<span class="reserved">string</span>?&gt;</span>();
-        <span class="warning"><span class="method">BaseType</span>&lt;<span class="type">ArgumentException</span>?&gt;</span>();
-        <span class="warning"><span class="method">NotNull</span>&lt;<span class="reserved">int</span>?&gt;</span>();
-        <span class="warning"><span class="method">NotNull</span>&lt;<span class="reserved">string</span>?&gt;</span>();
+        // 警告。
+        Class<string?>();
+        BaseType<ArgumentException?>();
+        NotNull<int?>();
+        NotNull<string?>();
  
-        <span class="comment">// コンパイル エラー。</span>
-        <span class="error">Class&lt;<span class="reserved">int</span>&gt;</span>();
-        <span class="error">BaseType&lt;<span class="reserved">int</span>&gt;</span>();
+        // コンパイル エラー。
+        Class<int>();
+        BaseType<int>();
     }
 }
- </code></pre>
+ 
+```
 
 #### <a id="sec-generated-title-12"></a> <a id="new-constrants"></a>補足: new() 制約
 
@@ -582,17 +583,17 @@ null 許容参照型を受け付けたい場合は制約に `?` を付けるこ�
 
 例えば以下のように、`new T()`で要素を初期化しながら配列を作るなどの処理ができます。
 
-<pre class="source" title="new() の利用例">
-<code><span class="comment">// 既定値ではなく、new T() で要素を初期化しながら配列生成</span>
-<span class="reserved">static</span> <span class="type">T</span>[] Array&lt;<span class="type">T</span>&gt;(<span class="reserved">int</span> n)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>()
+```csharp
+// 既定値ではなく、new T() で要素を初期化しながら配列生成
+static T[] Array<T>(int n)
+    where T : new()
 {
-    <span class="reserved">var</span> array = <span class="reserved">new</span> <span class="type">T</span>[n];
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; array.Length; i++)
-        array[i] = <span class="reserved">new</span> <span class="type">T</span>(); <span class="comment">// new() 制約のおかげで空のコンストラクターを呼べる</span>
-    <span class="reserved">return</span> array;
+    var array = new T[n];
+    for (int i = 0; i < array.Length; i++)
+        array[i] = new T(); // new() 制約のおかげで空のコンストラクターを呼べる
+    return array;
 }
-</code></pre>
+```
 
 ただ、`new()`制約を使ったコンストラクター呼び出し`new T()`は、
 内部的には[`Activator`](https://docs.microsoft.com/ja-jp/dotnet/api/system.activator)を使った動的な処理になっています。
@@ -629,36 +630,32 @@ C# 13 で [`allows ref struct`](../resource/refstruct.md#ref-struct-interface) �
 <tr>
 <td>
 
-<pre class="source" title="制約あり">
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">int</span>&gt;();
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">object</span>&gt;();
-<span class="error" title="CS0310"><span class="method"><span class="static">M</span></span>&lt;<span class="reserved">string</span>&gt;</span>(); <span class="comment">// 書けなくなる。</span>
-<span class="error" title="CS0310"><span class="static"><span class="method">M</span></span>&lt;<span class="type">Uri</span>&gt;</span>();    <span class="comment">// 書けなくなる。</span>
+<pre class="source" title="制約あり"><code class="language-csharp">M&lt;int&gt;();
+M&lt;object&gt;();
+M&lt;string&gt;(); // 書けなくなる。
+M&lt;Uri&gt;();    // 書けなくなる。
 
-<span class="reserved">static</span> <span class="reserved">object</span> <span class="static"><span class="method">M</span></span>&lt;<span class="type param">T</span>&gt;()
-    <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">new</span>()
+static object M&lt;T&gt;()
+    where T : new()
 {
-    <span class="comment">// new T() が書ける。</span>
-    <span class="control">return</span> <span class="reserved">new</span> <span class="type param">T</span>();
-}
-</pre>
+    // new T() が書ける。
+    return new T();
+}</code></pre>
 
 </td>
 <td>
 
-<pre class="source" title="制約なし">
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">int</span>&gt;();
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">object</span>&gt;();
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">string</span>&gt;(); <span class="comment">// 書ける。</span>
-<span class="static"><span class="method">M</span></span>&lt;<span class="type">Uri</span>&gt;();    <span class="comment">// 書ける。</span>
+<pre class="source" title="制約なし"><code class="language-csharp">M&lt;int&gt;();
+M&lt;object&gt;();
+M&lt;string&gt;(); // 書ける。
+M&lt;Uri&gt;();    // 書ける。
 
-<span class="reserved">static</span> <span class="reserved">object</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;()
-    <span class="comment">// 制約なしの場合</span>
+static object M&lt;T&gt;()
+    // 制約なしの場合
 {
-    <span class="comment">// こっちが書けない。</span>
-    <span class="control">return</span> <span class="error" title="CS0304"><span class="reserved">new</span> <span class="type param">T</span>()</span>;
-}
-</pre>
+    // こっちが書けない。
+    return new T();
+}</code></pre>
 
 </td>
 </tr>
@@ -678,36 +675,32 @@ C# 13 で [`allows ref struct`](../resource/refstruct.md#ref-struct-interface) �
 <tr>
 <td>
 
-<pre class="source" title="アンチ制約あり">
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">int</span>&gt;();
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">object</span>&gt;();
-<span class="static"><span class="method">M</span></span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">string</span>&gt;&gt;();      <span class="comment">// 書ける。</span>
-<span class="static"><span class="method">M</span></span>&lt;<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt;&gt;(); <span class="comment">// 書ける。</span>
+<pre class="source" title="アンチ制約あり"><code class="language-csharp">M&lt;int&gt;();
+M&lt;object&gt;();
+M&lt;Span&lt;string&gt;&gt;();      // 書ける。
+M&lt;ReadOnlySpan&lt;int&gt;&gt;(); // 書ける。
 
-<span class="reserved">static</span> <span class="reserved">object</span><span class="operator">?</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;()
-    <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">allows</span> <span class="reserved">ref</span> <span class="reserved">struct</span>
+static object? M&lt;T&gt;()
+    where T : allows ref struct
 {
-    <span class="comment">// ref struct を object に渡せない。</span>
-    <span class="control">return</span> <span class="error" title="CS0029"><span class="error" title="CS0029"><span class="reserved">default</span>(<span class="type param">T</span>)</span></span>;
-}
-</pre>
+    // ref struct を object に渡せない。
+    return default(T);
+}</code></pre>
 
 </td>
 <td>
 
-<pre class="source" title="アンチ制約なし">
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">int</span>&gt;();
-<span class="method"><span class="static">M</span></span>&lt;<span class="reserved">object</span>&gt;();
-<span class="error" title="CS9244"><span class="method"><span class="static">M</span></span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">string</span>&gt;&gt;</span>();      <span class="comment">// 書けない。</span>
-<span class="error" title="CS9244"><span class="static"><span class="method">M</span></span>&lt;<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt;&gt;</span>(); <span class="comment">// 書けない。</span>
+<pre class="source" title="アンチ制約なし"><code class="language-csharp">M&lt;int&gt;();
+M&lt;object&gt;();
+M&lt;Span&lt;string&gt;&gt;();      // 書けない。
+M&lt;ReadOnlySpan&lt;int&gt;&gt;(); // 書けない。
 
-<span class="reserved">static</span> <span class="reserved">object</span><span class="operator">?</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;()
-    <span class="comment">// アンチ制約なしの場合</span>
+static object? M&lt;T&gt;()
+    // アンチ制約なしの場合
 {
-    <span class="comment">// 書けるようになる。</span>
-    <span class="control">return</span> <span class="reserved">default</span>(<span class="type param">T</span>);
-}
-</pre>
+    // 書けるようになる。
+    return default(T);
+}</code></pre>
 
 </td>
 </tr>
@@ -726,32 +719,32 @@ C# 13 時点でアンチ制約(= `allows` を使うもの)は `ref struct` だ�
 
 これまで、`where T : struct` 制約を指定すると null 許容値型を `T` に渡せなくなるという制約がありました。
 
-<pre class="source" title="where T : struct では null 許容値型を使えなくなる">
-<span class="comment">// struct 制約が付いていると null 許容型を指定できなくなる。</span>
-<span class="error" title="CS0453"><span class="static"><span class="method">M</span></span>&lt;<span class="reserved">int</span><span class="operator">?</span>&gt;</span>();
+```csharp
+// struct 制約が付いていると null 許容型を指定できなくなる。
+M<int?>();
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;()
-    <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">struct</span>
+static void M<T>()
+    where T : struct
 {
-    <span class="comment">// T = int? だとすると、T? が int?? になっちゃう。</span>
-    <span class="comment">// (.NET は「2重 nullable」を認めていない。)</span>
-    <span class="type param">T</span><span class="operator">?</span> <span class="variable"><span class="warning" title="CS0219">x</span></span> <span class="operator">=</span> <span class="reserved">null</span>;
+    // T = int? だとすると、T? が int?? になっちゃう。
+    // (.NET は「2重 nullable」を認めていない。)
+    T? x = null;
 }
-</pre>
+```
 
 そこで、`allows nullable` (仮)アンチ制約を導入してはどうかという案が出ています。
 
-<pre class="source" title="null 許容値型アンチ制約を追加する案">
-<span class="comment">// これができるようになってほしい。</span>
-<span class="static"><span class="method">M</span></span>&lt;<span class="reserved">int</span><span class="operator">?</span>&gt;();
+```csharp
+// これができるようになってほしい。
+M<int?>();
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>&lt;<span class="type param">T</span>&gt;()
-    <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">struct</span>, <span class="reserved">allows</span> <span class="reserved">nullable</span> <span class="comment">// 仮文法</span>
+static void M<T>()
+    where T : struct, allows nullable // 仮文法
 {
-    <span class="comment">// こっちにエラーを出す案。</span>
-    <span class="error"><span class="type param">T</span><span class="operator">?</span></span> <span class="variable"><span class="warning" title="CS0219">x</span></span> <span class="operator">=</span> <span class="reserved">null</span>;
+    // こっちにエラーを出す案。
+    T? x = null;
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-14"></a> <a id="instanciation"></a>インスタンス化
 
@@ -764,15 +757,15 @@ C# 13 時点でアンチ制約(= `allows` を使うもの)は `ref struct` だ�
 <code>class Stack&lt;int&gt;</code> というクラスを作ることを、
 「<code>int</code> で <code>Stack</code> をインスタンス化する」といいます。
 
-<pre class="source" title="generic クラスの参照" lang="">
-<code><span class="reserved">const int</span> SIZE = 5;
-Stack&lt;<span class="reserved">int</span>&gt;    si = <span class="reserved">new</span> Stack&lt;<span class="reserved">int</span>&gt;(SIZE);    <span class="comment">// Stack を int でインスタンス化</span>
-Stack&lt;<span class="reserved">double</span>&gt; sd = <span class="reserved">new</span> Stack&lt;<span class="reserved">double</span>&gt;(SIZE); <span class="comment">// Stack を double でインスタンス化</span>
+```csharp
+const int SIZE = 5;
+Stack<int>    si = new Stack<int>(SIZE);    // Stack を int でインスタンス化
+Stack<double> sd = new Stack<double>(SIZE); // Stack を double でインスタンス化
 
-<span class="reserved">int</span>    n = Max(5, 10);        <span class="comment">// Max を int でインスタンス化</span>
-<span class="reserved">double</span> x = Max(5.0, 10.0);    <span class="comment">// Max を double でインスタンス化</span>
-<span class="reserved">string</span> s = Max(<span class="literal">"abc"</span>, <span class="literal">"cat"</span>); <span class="comment">// Max を string でインスタンス化</span>
-</code></pre>
+int    n = Max(5, 10);        // Max を int でインスタンス化
+double x = Max(5.0, 10.0);    // Max を double でインスタンス化
+string s = Max("abc", "cat"); // Max を string でインスタンス化
+```
 
 
 
@@ -780,38 +773,38 @@ Stack&lt;<span class="reserved">double</span>&gt; sd = <span class="reserved">ne
 
 型引数は複数の型を含んでいてもかまいません。
 
-<pre class="source" title="複数の型を含む型引数" lang="">
-<code><span class="reserved">class</span> Pair<em>&lt;K, V&gt;</em>
+```csharp
+class Pair<K, V>
 {
   K key;
   V val;
 
-  <span class="reserved">public</span> K Key  { <span class="reserved">get</span>{<span class="reserved">return this</span>.key;} <span class="reserved">set</span>{<span class="reserved">this</span>.key = value;} }
-  <span class="reserved">public</span> V Value{ <span class="reserved">get</span>{<span class="reserved">return this</span>.val;} <span class="reserved">set</span>{<span class="reserved">this</span>.val = value;} }
+  public K Key  { get{return this.key;} set{this.key = value;} }
+  public V Value{ get{return this.val;} set{this.val = value;} }
 }
-</code></pre>
+```
 
 
 また、ジェネリッククラス・メソッド内では型引数を使って、
 他のジェネリッククラスのインスタンス化ができます。
 
-<pre class="source" title="型引数を使ってインスタンス化" lang="">
-<code><span class="reserved">class</span> TestGenerics
+```csharp
+class TestGenerics
 {
-  <span class="comment">// リスト中の要素を Console.Write で画面に出力。</span>
-  <span class="reserved">static void</span> Show&lt;Type&gt;(<em>System.Collections.Generic.IList&lt;Type&gt;</em> list)
+  // リスト中の要素を Console.Write で画面に出力。
+  static void Show<Type>(System.Collections.Generic.IList<Type> list)
   {
-    <span class="reserved">foreach</span>(Type x <span class="reserved">in</span> list)
-      Console.Write(<span class="literal">"{0}\n"</span>, x);
+    foreach(Type x in list)
+      Console.Write("{0}\n", x);
   }
 
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[] i = <span class="reserved">new int</span>[]{1, 2, 3, 4, 5};
+    int[] i = new int[]{1, 2, 3, 4, 5};
     Show(i);
   }
 }
-</code></pre>
+```
 
 
 
@@ -830,26 +823,26 @@ Stack&lt;<span class="reserved">double</span>&gt; sd = <span class="reserved">ne
 また、構造体に対しては、
 構造体の全てのメンバーに対して 0 または <code>null</code> で初期化したものを与えます。
 
-<pre class="source" title="既定値" lang="">
-<code><span class="reserved">class</span> TestGenerics
+```csharp
+class TestGenerics
 {
-  <span class="comment">// 配列を 0 または null で満たします。</span>
-  <span class="reserved">static void</span> FillWithDefault&lt;Type&gt;(Type[] array)
+  // 配列を 0 または null で満たします。
+  static void FillWithDefault<Type>(Type[] array)
   {
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;array.Length; ++i)
-      array[i] = <em><span class="reserved">default</span>(Type)</em>;
+    for(int i=0; i<array.Length; ++i)
+      array[i] = default(Type);
   }
 
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">int</span>[]    i = <span class="reserved">new int</span>[5];
-    <span class="reserved">string</span>[] s = <span class="reserved">new string</span>[5];
+    int[]    i = new int[5];
+    string[] s = new string[5];
 
     FillWithDefault(i);
     FillWithDefault(s);
   }
 }
-</code></pre>
+```
 
 
 
@@ -927,28 +920,28 @@ C# 4.0 から、ジェネリックの型引数に共変性・反変性を持た�
 
 例えば、以下のようなコードを書いたとします。単純なジェネリック クラスと、その利用側コードです。
 
-<pre class="source" title="単純なジェネリック クラスと、その利用例">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public class Wrapper<T>
 {
-    <span class="reserved">public</span> <span class="type">T</span> Value;
+    public T Value;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> i = <span class="reserved">new</span> <span class="type">Wrapper</span>&lt;<span class="reserved">int</span>&gt; { Value = 1 };
-        <span class="reserved">var</span> b = <span class="reserved">new</span> <span class="type">Wrapper</span>&lt;<span class="reserved">byte</span>&gt; { Value = 1 };
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Wrapper</span>&lt;<span class="reserved">string</span>&gt; { Value = <span class="string">"abc"</span> };
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">Wrapper</span>&lt;<span class="reserved">int</span>[]&gt; { Value = <span class="reserved">new</span>[] { 1, 2, 3 } };
+        var i = new Wrapper<int> { Value = 1 };
+        var b = new Wrapper<byte> { Value = 1 };
+        var s = new Wrapper<string> { Value = "abc" };
+        var a = new Wrapper<int[]> { Value = new[] { 1, 2, 3 } };
 
-        <span class="reserved">int</span> iv = i.Value;
-        <span class="reserved">byte</span> bv = b.Value;
-        <span class="reserved">string</span> sv = s.Value;
-        <span class="reserved">int</span>[] av = a.Value;
+        int iv = i.Value;
+        byte bv = b.Value;
+        string sv = s.Value;
+        int[] av = a.Value;
     }
 }
-</code></pre>
+```
 
 4つの型パラメーターを使っていて、そのうち、2つ(`int`と`byte`)は値型、残り2つ(`string`と`int[]`)は参照型です。
 
@@ -963,30 +956,30 @@ C++ではこの手法でジェネリックを実現しています。
 
 先ほどのコードを「全展開」で実装すると、以下のようなものに相当するコードが生成されます。
 
-<pre class="source" title="全展開">
-<code><comment></span><span class="comment">// 使った分だけそれぞれ別の型に展開</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper_int</span> { <span class="reserved">public</span> <span class="reserved">int</span> Value; }
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper_byte</span> { <span class="reserved">public</span> <span class="reserved">byte</span> Value; }
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper_string</span> { <span class="reserved">public</span> <span class="reserved">string</span> Value; }
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper_Array_int</span> { <span class="reserved">public</span> <span class="reserved">int</span>[] Value; }
+```csharp
+// 使った分だけそれぞれ別の型に展開
+public class Wrapper_int { public int Value; }
+public class Wrapper_byte { public byte Value; }
+public class Wrapper_string { public string Value; }
+public class Wrapper_Array_int { public int[] Value; }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> i = <span class="reserved">new</span> <span class="type">Wrapper_int</span> { Value = 1 };
-        <span class="reserved">var</span> b = <span class="reserved">new</span> <span class="type">Wrapper_byte</span> { Value = 1 };
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Wrapper_string</span> { Value = <span class="string">"abc"</span> };
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">Wrapper_Array_int</span> { Value = <span class="reserved">new</span>[] { 1, 2, 3 } };
+        var i = new Wrapper_int { Value = 1 };
+        var b = new Wrapper_byte { Value = 1 };
+        var s = new Wrapper_string { Value = "abc" };
+        var a = new Wrapper_Array_int { Value = new[] { 1, 2, 3 } };
 
-        <span class="comment">// キャストは不要</span>
-        <span class="reserved">int</span> iv = i.Value;
-        <span class="reserved">byte</span> bv = b.Value;
-        <span class="reserved">string</span> sv = s.Value;
-        <span class="reserved">int</span>[] av = a.Value;
+        // キャストは不要
+        int iv = i.Value;
+        byte bv = b.Value;
+        string sv = s.Value;
+        int[] av = a.Value;
     }
 }
-</code></pre>
+```
 
 このコードは、以下のようなメモリの使い方をします。
 
@@ -1008,42 +1001,42 @@ Javaではこの手法でジェネリックを実現しています。
 
 先ほどのコードを「型消去」で実装すると、以下のようなものに相当するコードが生成されます。
 
-<pre class="source" title="型消去">
-<code><comment></span><span class="comment">// object 型な1つのクラスに集約</span>
-<span class="comment">// 元の型情報を残さない = 型消去</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper</span> { <span class="reserved">public</span> <span class="reserved">object</span> Value; }
+```csharp
+// object 型な1つのクラスに集約
+// 元の型情報を残さない = 型消去
+public class Wrapper { public object Value; }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> i = <span class="reserved">new</span> <span class="type">Wrapper</span> { Value = <span class="reserved">new</span> <span class="type">Integer</span>(1) };
-        <span class="reserved">var</span> b = <span class="reserved">new</span> <span class="type">Wrapper</span> { Value = <span class="reserved">new</span> <span class="type">Byte</span>(1) };
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Wrapper</span> { Value = <span class="string">"abc"</span> };
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">Wrapper</span> { Value = <span class="reserved">new</span>[] { 1, 2, 3 } };
+        var i = new Wrapper { Value = new Integer(1) };
+        var b = new Wrapper { Value = new Byte(1) };
+        var s = new Wrapper { Value = "abc" };
+        var a = new Wrapper { Value = new[] { 1, 2, 3 } };
 
-        <span class="comment">// キャストが必要</span>
-        <span class="reserved">int</span> iv = ((<span class="type">Integer</span>)i.Value).Value;
-        <span class="reserved">byte</span> bv = ((<span class="type">Byte</span>)i.Value).Value;
-        <span class="reserved">string</span> sv = (<span class="reserved">string</span>)s.Value;
-        <span class="reserved">int</span>[] av = (<span class="reserved">int</span>[])a.Value;
+        // キャストが必要
+        int iv = ((Integer)i.Value).Value;
+        byte bv = ((Byte)i.Value).Value;
+        string sv = (string)s.Value;
+        int[] av = (int[])a.Value;
     }
 }
 
-<span class="comment">//↓こんな感じのクラスが標準ライブラリ中にある</span>
+//↓こんな感じのクラスが標準ライブラリ中にある
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Integer</span>
+public class Integer
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Value;
-    <span class="reserved">public</span> Integer(<span class="reserved">int</span> value) { Value = value; }
+    public int Value;
+    public Integer(int value) { Value = value; }
 }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Byte</span>
+public class Byte
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> Value;
-    <span class="reserved">public</span> Byte(<span class="reserved">byte</span> value) { Value = value; }
+    public byte Value;
+    public Byte(byte value) { Value = value; }
 }
-</code></pre>
+```
 
 このコードは、以下のようなメモリの使い方をします。
 
@@ -1067,34 +1060,34 @@ C#の実装は全展開と型消去の間くらいの手法になっています
 
 要するに、先ほどのコードから、以下のようなものに相当するコードが生成されます。
 
-<pre class="source" title="値型だけ展開">
-<code><comment></span><span class="comment">// 値型の場合: 使った分だけそれぞれ別の型に展開</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper_int</span> { <span class="reserved">public</span> <span class="reserved">int</span> Value; }
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper_byte</span> { <span class="reserved">public</span> <span class="reserved">byte</span> Value; }
+```csharp
+// 値型の場合: 使った分だけそれぞれ別の型に展開
+public class Wrapper_int { public int Value; }
+public class Wrapper_byte { public byte Value; }
 
-<span class="comment">// 参照型の場合、object 型な1つのクラスに集約</span>
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Wrapper</span> { <span class="reserved">public</span> <span class="reserved">object</span> Value; }
+// 参照型の場合、object 型な1つのクラスに集約
+public class Wrapper { public object Value; }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> i = <span class="reserved">new</span> <span class="type">Wrapper_int</span> { Value = 1 };
-        <span class="reserved">var</span> b = <span class="reserved">new</span> <span class="type">Wrapper_byte</span> { Value = 1 };
-        <span class="reserved">var</span> s = <span class="reserved">new</span> <span class="type">Wrapper</span> { Value = <span class="string">"abc"</span> };
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">Wrapper</span> { Value = <span class="reserved">new</span>[] { 1, 2, 3 } };
+        var i = new Wrapper_int { Value = 1 };
+        var b = new Wrapper_byte { Value = 1 };
+        var s = new Wrapper { Value = "abc" };
+        var a = new Wrapper { Value = new[] { 1, 2, 3 } };
 
-        <span class="comment">// 値型はキャスト不要</span>
-        <span class="reserved">int</span> iv = i.Value;
-        <span class="reserved">byte</span> bv = b.Value;
+        // 値型はキャスト不要
+        int iv = i.Value;
+        byte bv = b.Value;
 
-        <span class="comment">// 参照型</span>
-        <span class="comment">// (C#(.NET) の場合はこのキャストを取り除くような最適化もしてる)</span>
-        <span class="reserved">string</span> sv = (<span class="reserved">string</span>)s.Value;
-        <span class="reserved">int</span>[] av = (<span class="reserved">int</span>[])a.Value;
+        // 参照型
+        // (C#(.NET) の場合はこのキャストを取り除くような最適化もしてる)
+        string sv = (string)s.Value;
+        int[] av = (int[])a.Value;
     }
 }
-</code></pre>
+```
 
 このコードは、以下のようなメモリの使い方をします。
 
@@ -1119,15 +1112,15 @@ C#のジェネリックでは、メソッドなどのメンバーを参照する
 例えば、以下のようなコードでは、前者の書き方ではだめで、
 後者のように、`where`句を付けて初めてコンパイルできます。
 
-<pre class="source" title="ジェネリックな引数のメンバー参照">
-<code><span class="comment">// コンパイル エラー: T に Count プロパティがない</span>
-<span class="reserved">static</span> <span class="reserved">int</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) =&gt; x.Count;
+```csharp
+// コンパイル エラー: T に Count プロパティがない
+static int M<T>(T x) => x.Count;
 
-<span class="comment">// これなら大丈夫。IList.Count を参照できる</span>
-<span class="reserved">static</span> <span class="reserved">int</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x)
-    <span class="reserved">where</span> <span class="type">T</span> : System.Collections.<span class="type">IList</span>
-    =&gt; x.Count;
-</code></pre>
+// これなら大丈夫。IList.Count を参照できる
+static int M<T>(T x)
+    where T : System.Collections.IList
+    => x.Count;
+```
 
 インターフェイス制約で困ることになるのは、静的メソッドを呼べないことです。
 演算子も静的メソッドみたいなものなので呼べません。
@@ -1135,16 +1128,16 @@ C#のジェネリックでは、メソッドなどのメンバーを参照する
 (※ C# 11 以降は静的メソッド呼ぶ方法が追加されました。
 詳しくは「[インターフェイスの静的抽象メンバー](oo_interface.md#static-abstract)」で説明しています。)
 
-<pre class="source" title="ジェネリックを使うと静的メソッドを呼べない">
-<code><span class="comment">// interface 制約では静的メソッドを呼べない</span>
-<span class="comment">// なので、ジェネリックを使うと静的メソッドを呼ぶ手段がない</span>
-<span class="comment">// コンパイル エラーに</span>
-<span class="reserved">static</span> <span class="type">T</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) =&gt; <span class="type">T</span>.StaticMethod(x);
+```csharp
+// interface 制約では静的メソッドを呼べない
+// なので、ジェネリックを使うと静的メソッドを呼ぶ手段がない
+// コンパイル エラーに
+static T M<T>(T x) => T.StaticMethod(x);
 
-<span class="comment">// + (演算子)は実質的には静的メソッド</span>
-<span class="comment">// 演算子もコンパイル エラーに</span>
-<span class="reserved">static</span> <span class="type">T</span> Add&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="type">T</span> y) =&gt; x + y;
-</code></pre>
+// + (演算子)は実質的には静的メソッド
+// 演算子もコンパイル エラーに
+static T Add<T>(T x, T y) => x + y;
+```
 
 インターフェイス制約が必要なんだったら、インターフェイスをそのまま使えばいいと思うかもしれませんが、
 わざわざジェネリックにすることで実行性能的に有利になることがあります。
@@ -1152,46 +1145,46 @@ C#のジェネリックでは、メソッドなどのメンバーを参照する
 特に、構造体が絡むと顕著で、かなり実行性能に影響があります。
 例えば以下のコードを見てください。
 
-<pre class="source" title="構造体のボックス化を避けるためのジェネリック">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 無駄なヒープ確保をしないように構造体に</span>
-<span class="reserved">struct</span> <span class="type">Disposable</span> : <span class="type">IDisposable</span>
+// 無駄なヒープ確保をしないように構造体に
+struct Disposable : IDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> Dispose() { }
+    public void Dispose() { }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> WithInterface(<span class="type">IDisposable</span> x) =&gt; x.Dispose();
+    static void WithInterface(IDisposable x) => x.Dispose();
 
-    <span class="comment">// やってることは WithInterface を同じに見えて…</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> WithGenerics&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IDisposable</span>
-        =&gt; x.Dispose();
+    // やってることは WithInterface を同じに見えて…
+    static void WithGenerics<T>(T x)
+        where T : IDisposable
+        => x.Dispose();
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 構造体なので無駄なヒープ確保はしない</span>
-        <span class="reserved">default</span>(<span class="type">Disposable</span>).Dispose();
+        // 構造体なので無駄なヒープ確保はしない
+        default(Disposable).Dispose();
 
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 10000; i++)
+        for (int i = 0; i < 10000; i++)
         {
-            <span class="comment">// ところが、インターフェイスを介するとボックス化を起こす</span>
-            <span class="comment">// 無駄なヒープ確保に</span>
-            <span class="comment">// 1個や2個なら大したコストではないものの、何度も呼ばれるとさすがにつらい</span>
-            WithInterface(<span class="reserved">default</span>(<span class="type">Disposable</span>));
+            // ところが、インターフェイスを介するとボックス化を起こす
+            // 無駄なヒープ確保に
+            // 1個や2個なら大したコストではないものの、何度も呼ばれるとさすがにつらい
+            WithInterface(default(Disposable));
         }
 
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 10000; i++)
+        for (int i = 0; i < 10000; i++)
         {
-            <span class="comment">// ジェネリックを介するとボックス化が不要</span>
-            <span class="comment">// 繰り返し呼んでも平気</span>
-            WithGenerics(<span class="reserved">default</span>(<span class="type">Disposable</span>));
+            // ジェネリックを介するとボックス化が不要
+            // 繰り返し呼んでも平気
+            WithGenerics(default(Disposable));
         }
     }
 }
-</code></pre>
+```
 
 `IDisposable`インターフェイスを実装した`Disposable`という構造体を作って、この`Dispose`メソッドを呼ぶことを考えます。
 `IDisposable`インターフェイスなのは簡単に実装できるものを選んだというだけで、深い意味はありません。
@@ -1215,38 +1208,38 @@ C#のジェネリックでは値型を使ったときにコードを展開して
 たとえば、以下のような累算処理を考えてみます。
 `int`配列の全要素の和と積を求めるコードです。
 
-<pre class="source" title="累算処理">
-<code><span class="reserved">static</span> <span class="reserved">int</span> Sum(<span class="reserved">int</span>[] items)
+```csharp
+static int Sum(int[] items)
 {
-    <span class="reserved">var</span> sum = 0;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> items)
+    var sum = 0;
+    foreach (var item in items)
         sum = sum + item;
-    <span class="reserved">return</span> sum;
+    return sum;
 }
 
-<span class="reserved">static</span> <span class="reserved">int</span> Prod(<span class="reserved">int</span>[] items)
+static int Prod(int[] items)
 {
-    <span class="reserved">var</span> sum = 1;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> items)
+    var sum = 1;
+    foreach (var item in items)
         sum = sum * item;
-    <span class="reserved">return</span> sum;
+    return sum;
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> M()
+static void M()
 {
-    <span class="reserved">var</span> items = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    <span class="reserved">var</span> sum = Sum(items);
-    <span class="reserved">var</span> prod = Prod(items);
+    var items = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    var sum = Sum(items);
+    var prod = Prod(items);
 }
-</code></pre>
+```
 
 標準ライブラリにある`Aggregate`メソッド(`System.Linq.Enumerable`クラスの拡張メソッド)を使って以下のように書けはするんですが。
 これはこれで、デリゲート(インターフェイスと同程度の負担)を介することになります。
 
-<pre class="source" title="Aggregateを使って累算">
-<code><span class="reserved">var</span> sum = items.Aggregate(0, (x, y) =&gt; x + y);
-<span class="reserved">var</span> prod = items.Aggregate(1, (x, y) =&gt; x * y);
-</code></pre>
+```csharp
+var sum = items.Aggregate(0, (x, y) => x + y);
+var prod = items.Aggregate(1, (x, y) => x * y);
+```
 
 デリゲートやインターフェイスを介したメソッド呼び出しは、静的メソッドと比べるとほんの少し不利です。
 微々たるものですが、「ちりも積もれば」で、微々たる差を気にしないといけないこともあります。
@@ -1254,25 +1247,25 @@ C#のジェネリックでは値型を使ったときにコードを展開して
 そこで、値型のジェネリックが展開される性質を使ってみます。
 まず、以下のようなインターフェイスと構造体を作ります。
 
-<pre class="source" title="2項演算を表すインターフェイスと、和、積の構造体">
-<code><span class="reserved">interface</span> <span class="type">IBinaryOperator</span>&lt;<span class="type">T</span>&gt;
+```csharp
+interface IBinaryOperator<T>
 {
-    <span class="type">T</span> Zero { <span class="reserved">get</span>; }
-    <span class="type">T</span> Operate(<span class="type">T</span> x, <span class="type">T</span> y);
+    T Zero { get; }
+    T Operate(T x, T y);
 }
 
-<span class="reserved">struct</span> <span class="type">Add</span> : <span class="type">IBinaryOperator</span>&lt;<span class="reserved">int</span>&gt;
+struct Add : IBinaryOperator<int>
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Zero =&gt; 0;
-    <span class="reserved">public</span> <span class="reserved">int</span> Operate(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x + y;
+    public int Zero => 0;
+    public int Operate(int x, int y) => x + y;
 }
 
-<span class="reserved">struct</span> <span class="type">Mul</span> : <span class="type">IBinaryOperator</span>&lt;<span class="reserved">int</span>&gt;
+struct Mul : IBinaryOperator<int>
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Zero =&gt; 1;
-    <span class="reserved">public</span> <span class="reserved">int</span> Operate(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x * y;
+    public int Zero => 1;
+    public int Operate(int x, int y) => x * y;
 }
-</code></pre>
+```
 
 例えば、以下のように書けます。
 値型のジェネリックの展開によって、デリゲートやインターフェイスを介するよりも最適化が掛かりやすく、
@@ -1280,49 +1273,49 @@ C#のジェネリックでは値型を使ったときにコードを展開して
 (具体的にいうと、仮想メソッド呼び出しが消えて、小さいメソッドを最適化オプション付きで実行すると[インライン展開](../structured/miscinlining.md)も掛かります。
 この例はまさにそういう最適化が掛かって、ジェネリックなしの場合と比べて10倍以上速くなったりします。)
 
-<pre class="source" title="値型ジェネリックを使ったメソッド呼び出し">
-<code><span class="reserved">static</span> <span class="type">T</span> Sum&lt;<span class="type">T</span>, <span class="type">TOperator</span>&gt;(<span class="type">T</span>[] items, <span class="type">TOperator</span> op)
-    <span class="reserved">where</span> <span class="type">TOperator</span> : <span class="reserved">struct</span>, <span class="type">IBinaryOperator</span>&lt;<span class="type">T</span>&gt;
+```csharp
+static T Sum<T, TOperator>(T[] items, TOperator op)
+    where TOperator : struct, IBinaryOperator<T>
 {
-    <span class="reserved">var</span> sum = op.Zero;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> items)
+    var sum = op.Zero;
+    foreach (var item in items)
         sum = op.Operate(sum, item);
-    <span class="reserved">return</span> sum;
+    return sum;
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> M()
+static void M()
 {
-    <span class="reserved">var</span> items = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    <span class="comment">// ジェネリックを介せばボックス化を避けれる</span>
-    <span class="reserved">var</span> sum = Sum(items, <span class="reserved">default</span>(<span class="type">Add</span>));
-    <span class="reserved">var</span> prod = Sum(items, <span class="reserved">default</span>(<span class="type">Mul</span>));
+    var items = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    // ジェネリックを介せばボックス化を避けれる
+    var sum = Sum(items, default(Add));
+    var prod = Sum(items, default(Mul));
 }
-</code></pre>
+```
 
 もう1つ、違うバージョンを書いてみましょう。
 `default(Add)`とか、呼び出し側でダミーのインスタンスを作って引数として渡すのも無駄なので、
 これもメソッドの中でやってしまいましょう。
 
-<pre class="source" title="型引数だけを渡すバージョン">
-<code><span class="reserved">static</span> <span class="type">T</span> Sum&lt;<span class="type">T</span>, <span class="type">TOperator</span>&gt;(<span class="type">T</span>[] items)
-    <span class="reserved">where</span> <span class="type">TOperator</span> : <span class="reserved">struct</span>, <span class="type">IBinaryOperator</span>&lt;<span class="type">T</span>&gt;
+```csharp
+static T Sum<T, TOperator>(T[] items)
+    where TOperator : struct, IBinaryOperator<T>
 {
-    <span class="reserved">var</span> sum = <span class="reserved">default</span>(<span class="type">TOperator</span>).Zero;
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> item <span class="reserved">in</span> items)
-        sum = <span class="reserved">default</span>(<span class="type">TOperator</span>).Operate(sum, item);
-    <span class="comment">// ↑ メソッド内で default()</span>
-    <span class="comment">// 空の構造体なのでほぼノーコスト</span>
-    <span class="reserved">return</span> sum;
+    var sum = default(TOperator).Zero;
+    foreach (var item in items)
+        sum = default(TOperator).Operate(sum, item);
+    // ↑ メソッド内で default()
+    // 空の構造体なのでほぼノーコスト
+    return sum;
 }
 
-<span class="reserved">static</span> <span class="reserved">void</span> M()
+static void M()
 {
-    <span class="reserved">var</span> items = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    <span class="comment">// default(T) せず、型引数だけ書く</span>
-    <span class="reserved">var</span> sum = Sum&lt;<span class="reserved">int</span>, <span class="type">Add</span>&gt;(items);
-    <span class="reserved">var</span> prod = Sum&lt;<span class="reserved">int</span>, <span class="type">Mul</span>&gt;(items);
+    var items = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    // default(T) せず、型引数だけ書く
+    var sum = Sum<int, Add>(items);
+    var prod = Sum<int, Mul>(items);
 }
-</code></pre>
+```
 
 こういう、型引数の変更だけで動作を切り替える手法をポリシー パターン(policy pattern)とかポリシー ベース設計(policy based design)とか呼んだりします。
 ちなみに、C++のtemplateの場合はジェネリックに静的メソッドを呼べるので、C++では強引な手段を取らなくてもポリシー パターンを使いやすく、結構多用されます。

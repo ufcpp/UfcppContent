@@ -38,25 +38,25 @@ aliases: []
 
 例えば以下のようなコードを考えます。
 
-<pre class="source" title="インターフェイス越しかどうかの差">
-<code><span class="reserved">interface</span> <span class="type">IValue</span> { <span class="reserved">int</span> Value { <span class="reserved">get</span>; } }
-<span class="reserved">class</span> <span class="type">Impl</span> : <span class="type">IValue</span> { <span class="reserved">public</span> <span class="reserved">int</span> Value =&gt; 0; }
+```csharp
+interface IValue { int Value { get; } }
+class Impl : IValue { public int Value => 0; }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">VirtualCallBanchmark</span>
+public class VirtualCallBanchmark
 {
-    <span class="comment">// インターフェイス越し</span>
-    <span class="type">IValue</span> A { <span class="reserved">get</span>; } = <span class="reserved">new</span> <span class="type">Impl</span>();
+    // インターフェイス越し
+    IValue A { get; } = new Impl();
  
-    <span class="comment">// クラスを直公開</span>
-    <span class="type">Impl</span> B { <span class="reserved">get</span>; } = <span class="reserved">new</span> <span class="type">Impl</span>();
+    // クラスを直公開
+    Impl B { get; } = new Impl();
  
-    [<span class="type">Benchmark</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> Interface() =&gt; A.Value;
+    [Benchmark]
+    public int Interface() => A.Value;
  
-    [<span class="type">Benchmark</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> Class() =&gt; B.Value;
+    [Benchmark]
+    public int Class() => B.Value;
 }
-</code></pre>
+```
 
 `Interface`メソッドの方は`IValue`インターフェイス越しに`Value`プロパティを参照(仮想呼び出しになるので遅い)で、
 `Class`メソッドの方は具象型である`Impl`クラスを直接参照しています(仮想呼び出しが必要ないので速い)。
@@ -79,19 +79,19 @@ aliases: []
 
 以下のようなコードを書いた時、 .NET Core 2.0 以前と 2.1 以降で実行時間が大きく変わります。
 
-<pre class="source" title="devirtualization の例">
-<code><span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IX</span> { <span class="reserved">void</span> M(); }
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">X</span> : <span class="type">IX</span> { <span class="reserved">public</span> <span class="reserved">void</span> M() { } }
+```csharp
+public interface IX { void M(); }
+public class X : IX { public void M() { } }
 
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> M()
+    public void M()
     {
-        <span class="type">IX</span> x = <span class="reserved">new</span> <span class="type">X</span>();
+        IX x = new X();
         x.M();
     }
 }
-</code></pre>
+```
 
 基本的には、この例のように、メソッド内でさかのぼれば具体的な型がわかる場合にだけ devirtualization 最適化が掛かります。
 (この例の場合、`new X()`を呼んでいるところがすぐに見つかるので、`M`は`IX.M`の仮想呼び出しではなく、`X.M`を直接呼び出します。)
@@ -111,26 +111,26 @@ devirtualization が掛かれば、ボックス化のコストももろとも最
 
 以下のような構造体があったとします。
 
-<pre class="source" title="IDisposable を実装した構造体">
-<code><span class="reserved">struct</span> <span class="type">X</span> : <span class="type">IDisposable</span>
+```csharp
+struct X : IDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">bool</span> IsDisposed;
-    <span class="reserved">void</span> <span class="type">IDisposable</span>.Dispose() =&gt; IsDisposed = <span class="reserved">true</span>;
+    public bool IsDisposed;
+    void IDisposable.Dispose() => IsDisposed = true;
 }
-</code></pre>
+```
 
 で、この `Dispose` メソッドを以下のように呼び出してみます。
 
-<pre class="source" title="X 構造体の Dispose メソッド呼び出し">
-<code><span class="comment">// (1) インターフェイス引数で受け取って呼ぶ</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Interface(<span class="type">IDisposable</span> x) =&gt; x.Dispose();
+```csharp
+// (1) インターフェイス引数で受け取って呼ぶ
+public static void Interface(IDisposable x) => x.Dispose();
  
-<span class="comment">// (2) X のまま受け取って、メソッド内でインターフェイスにキャストして呼ぶ</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> NonGeneric(<span class="type">X</span> x) =&gt; ((<span class="type">IDisposable</span>)x).Dispose();
+// (2) X のまま受け取って、メソッド内でインターフェイスにキャストして呼ぶ
+public static void NonGeneric(X x) => ((IDisposable)x).Dispose();
  
-<span class="comment">// (3) ジェネリックなメソッドで受け取って呼ぶ</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Generic&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IDisposable</span> =&gt; x.Dispose();
-</code></pre>
+// (3) ジェネリックなメソッドで受け取って呼ぶ
+public static void Generic<T>(T x) where T : IDisposable => x.Dispose();
+```
 
 (1)と(3)に関しては今も昔も変わらず、(1)が遅くて(3)が速いです。(2)についてが .NET Core 2.0 以前か 2.1 以降かで変わります。
 
@@ -142,14 +142,14 @@ devirtualization が掛かれば、ボックス化のコストももろとも最
 ジェネリックな型のインスタンスに対して等値比較する際、
 `EqualityComparer<T>.Default`をよく使います。
 
-<pre class="source" title="EqualityComparer&lt;T&gt;.Default">
-<code><span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">EqualityComparer</span>&lt;<span class="type">T</span>&gt; : <span class="type">IEqualityComparer</span>, <span class="type">IEqualityComparer</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public abstract class EqualityComparer<T> : IEqualityComparer, IEqualityComparer<T>
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">EqualityComparer</span>&lt;<span class="type">T</span>&gt; Default { <span class="reserved">get</span>; } <span class="comment">// ← こいつ</span>
-    <span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">bool</span> Equals(<span class="type">T</span> x, <span class="type">T</span> y);
-    <span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">int</span> GetHashCode(<span class="type">T</span> obj);
+    public static EqualityComparer<T> Default { get; } // ← こいつ
+    public abstract bool Equals(T x, T y);
+    public abstract int GetHashCode(T obj);
 }
-</code></pre>
+```
 
 `EqualityComparer<T>.Default.Equals(x, y)`の呼び出しは、
 冒頭で出した`IValue.Value`の呼び出し同様、
@@ -166,10 +166,10 @@ devirtualization が掛かれば、ボックス化のコストももろとも最
 .NET Core 2.0 では 0.95ns、
 .NET Core 2.1 では 0.05ns と、1桁実行速度が違います。
 
-<pre class="source" title="EqualityComparer&lt;T&gt;.Default のベンチマーク">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">EqualityComparerDefaultBenchmark</span>
+```csharp
+public class EqualityComparerDefaultBenchmark
 {
-    [<span class="type">Benchmark</span>]
-    <span class="reserved">public</span> <span class="reserved">bool</span> IntEquals() =&gt; <span class="type">EqualityComparer</span>&lt;<span class="reserved">int</span>&gt;.Default.Equals(1, 2);
+    [Benchmark]
+    public bool IntEquals() => EqualityComparer<int>.Default.Equals(1, 2);
 }
-</code></pre>
+```

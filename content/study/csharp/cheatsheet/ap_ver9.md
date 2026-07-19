@@ -44,11 +44,11 @@ C# 9.0 で、レコード型(records)という新しい種類の型が追加さ�
 record (記録)という名前通り、データの読み書きに使うことを意図した型です。
 例えば以下のような書き方で、「`Name` という文字列と `Birthday` という日付」を読み書きできます。
 
-<pre class="source" title="record の例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">birthday</span>);
-</code></pre>
+record Person(string Name, DateTime birthday);
+```
 
 詳しくは「[レコード型](../datatype/record.md)」で説明します。
 
@@ -56,16 +56,16 @@ record (記録)という名前通り、データの読み書きに使うこと�
 
 以下のように `init` という新しいアクセサーを使って、「オブジェクト初期化子までは書き換え可能で、それ以降は書き換えできないプロパティ」を作れるようになりました。
 
-<pre class="source" title="オブジェクト初期化子でだけ書き換え可能">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-<span class="error"><span class="variable">p</span>.X</span> = 3; <span class="comment">// ダメ。</span>
+```csharp
+var p = new Point { X = 1, Y = 2 };
+p.X = 3; // ダメ。
  
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved"><em>init</em></span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved"><em>init</em></span>; }
+    public int X { get; init; }
+    public int Y { get; init; }
 }
-</code></pre>
+```
 
 `readonly` の制限が厳しすぎるので、問題ない範囲でちょっとだけ制限を緩めたもです。
 (歴史的経緯で `init` という新キーワードが使われていますが、もし C# をフルスクラッチで作り直せるなら `readonly` が最初から `init` 相当の仕様になっていたと思います。)
@@ -78,10 +78,10 @@ record (記録)という名前通り、データの読み書きに使うこと�
 
 例えばよくある「Hello World」であれば、単に以下のように書けるようになります。
 
-<pre class="source" title="トップ レベルに直接「Hello World」">
-<code><span class="reserved">using</span> System;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello World!&quot;</span>);
-</code></pre>
+```csharp
+using System;
+Console.WriteLine("Hello World!");
+```
 
 詳しくは「[トップ レベル ステートメント](../misc/miscentrypoint.md#top-level-statements)」で説明します。
 
@@ -90,15 +90,15 @@ record (記録)という名前通り、データの読み書きに使うこと�
 [C# 7.0](ap_ver7.md)から脈々と改善されてきた[パターン マッチング](../datatype/patterns.md)ですが、
 C# 9.0 でもいくつかのパターンが追加されています。
 
-<pre class="source" title="C# 9.0 でのパターン追加">
-<code><span class="comment">// not, and, or や、 &lt;, &lt;=, &gt;, &gt;= などのパターンが増えた。</span>
-<span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">uint</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="control">switch</span>
+```csharp
+// not, and, or や、 <, <=, >, >= などのパターンが増えた。
+int M(uint x) => x switch
 {
-    0 <span class="reserved">or</span> 2 <span class="reserved">or</span> 4 <span class="reserved">or</span> 6 <span class="reserved">or</span> 8 =&gt; 0,
-    1 <span class="reserved">or</span> 3 <span class="reserved">or</span> 5 <span class="reserved">or</span> 7 <span class="reserved">or</span> 9 =&gt; 1,
-    &gt;= 10 =&gt; -1,
+    0 or 2 or 4 or 6 or 8 => 0,
+    1 or 3 or 5 or 7 or 9 => 1,
+    >= 10 => -1,
 };
-</code></pre>
+```
 
 3世代かけてようやく当初予定(C# に追加すること自体は最初から決めていた機能)が全て入りました。
 当初から予定に入ってたのは、既存のいくつかのプログラミング言語が同様の文法を持っていて、
@@ -123,16 +123,16 @@ C# 9.0 で追加されているのは以下の3つです。
 特に、[`var`](../start/sp3_inference.md#type-inference) が使えず、
 型名が長い特に便利です。
 
-<pre class="source" title="フィールド初期化子で特に便利">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
  
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    <span class="comment">// フィールドに対しては var が使えない。
-    // 代わりに new 型推論を使うと便利なことがある(特に、型名が長い時)。</span>
-    <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="type">List</span>&lt;(<span class="reserved">int</span> x, <span class="reserved">int</span> y)&gt;&gt; _cache = <span class="reserved">new</span>();
+    // フィールドに対しては var が使えない。
+    // 代わりに new 型推論を使うと便利なことがある(特に、型名が長い時)。
+    Dictionary<string, List<(int x, int y)>> _cache = new();
 }
-</code></pre>
+```
 
 詳しくは「[ターゲットからの new 型推論](../oop/oo_construct.md#target-typed-new)」で説明します。
 
@@ -141,20 +141,20 @@ C# 9.0 で追加されているのは以下の3つです。
 条件演算子の第2・第3項がターゲット型からの型推論するようになりました。
 
 
-<pre class="source" title="">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">b</span>)
+```csharp
+void M(bool b)
 {
-    <span class="comment">// int? を明示するとコンパイルできる(var だとダメ)。</span>
-    <span class="reserved">int</span>? <span class="variable">i</span> = <span class="variable">b</span> ? 1 : <span class="reserved">null</span>;
+    // int? を明示するとコンパイルできる(var だとダメ)。
+    int? i = b ? 1 : null;
  
-    <span class="comment">// Base を明示するとコンパイルできる(var だとダメ)</span>
-    <span class="type">Base</span> <span class="variable">c</span> = <span class="variable">b</span> ? <span class="reserved">new</span> <span class="type">A</span>() : <span class="reserved">new</span> <span class="type">B</span>();
+    // Base を明示するとコンパイルできる(var だとダメ)
+    Base c = b ? new A() : new B();
 }
  
-<span class="reserved">class</span> <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">Base</span> { }
-</code></pre>
+class Base { }
+class A : Base { }
+class B : Base { }
+```
 
 詳しくは「[条件演算子のターゲット型推論](../structured/st_branch.md#terget-typed-conditional)」で説明します。
 「[型の決定](../start/misctyperesolution.md)」も参考にしてください。
@@ -166,19 +166,19 @@ C# 9.0 で追加されているのは以下の3つです。
 
 例えば以下のようなコードを書けるようになります。
 
-<pre class="source" title="仮想メソッド戻り値の共変性">
-<code><span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+class Base
 {
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">Base</span> <span class="method">Clone</span>() =&gt; <span class="reserved">new</span> <span class="type">Base</span>();
+    public virtual Base Clone() => new Base();
 }
  
-<span class="reserved">class</span> <span class="type">Derived</span> : <span class="type">Base</span>
+class Derived : Base
 {
-    <span class="comment">// これの戻り値が Base じゃなくてもよくなった。</span>
-    <span class="comment">// Derived は常に Base に安全に変換可能なので、 Base Clone() の override として Derived Clone() を使える。</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="type">Derived</span> <span class="method">Clone</span>() =&gt; <span class="reserved">new</span> <span class="type">Derived</span>();
+    // これの戻り値が Base じゃなくてもよくなった。
+    // Derived は常に Base に安全に変換可能なので、 Base Clone() の override として Derived Clone() を使える。
+    public override Derived Clone() => new Derived();
 }
-</code></pre>
+```
 
 詳しくは「[多態性/戻り値の共変性](../oop/oo_polymorphism.md#covariance)」で説明します。
 
@@ -198,31 +198,31 @@ C# 9.0 で追加されているのは以下の3つです。
 
 `/unsafe` オプション指定時限定ですが、ローカル変数の0初期化を抑止できるようになりました。
 
-<pre class="source" title="SkipLocalsInit 属性で0初期化抑止">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Text.Unicode;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+using System.Text.Unicode;
  
-<span class="method">m</span>(<span class="string">&quot;aあ</span><span style="color:#b776fb;">😀</span><span class="string">&quot;</span>);
+m("aあ😀");
  
-<span class="comment">// この属性を付けると stackalloc の要素の0初期化がなくなる。</span>
-[<span class="type">SkipLocalsInit</span>]
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> <span class="variable">s</span>)
+// この属性を付けると stackalloc の要素の0初期化がなくなる。
+[SkipLocalsInit]
+static void m(string s)
 {
-    <span class="comment">// UTF-16 の文字数に大して、UTF-8 のバイト数は最大でも3倍以内。</span>
-    <span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">buffer</span> = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="variable">s</span>.Length * 3];
-    <span class="type">Utf8</span>.<span class="method">FromUtf16</span>(<span class="variable">s</span>, <span class="variable">buffer</span>, <span class="reserved">out</span> <span class="reserved">_</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">bytesWritten</span>);
+    // UTF-16 の文字数に大して、UTF-8 のバイト数は最大でも3倍以内。
+    Span<byte> buffer = stackalloc byte[s.Length * 3];
+    Utf8.FromUtf16(s, buffer, out _, out var bytesWritten);
  
-    <span class="comment">// FromUtf16 の仕様上、bytesWritten バイト目までは必ず上書きされる。</span>
-    <span class="comment">// 上書きされた部分だけを使う分には0初期化は「余計なお世話」。</span>
-    <span class="reserved">var</span> <span class="variable">written</span> = <span class="variable">buffer</span>[..<span class="variable">bytesWritten</span>];
+    // FromUtf16 の仕様上、bytesWritten バイト目までは必ず上書きされる。
+    // 上書きされた部分だけを使う分には0初期化は「余計なお世話」。
+    var written = buffer[..bytesWritten];
  
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">b</span> <span class="control">in</span> <span class="variable">written</span>)
+    foreach (var b in written)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">b</span>);
+        Console.WriteLine(b);
     }
 }
-</code></pre>
+```
 
 詳しくは「[ローカル変数の0初期化抑止](../interop/sp_unsafe.md#skip-locals-init)」で説明します。
 
@@ -232,22 +232,22 @@ C# で関数ポインターを書けるようになりました。
 
 .NET の内部的にはこれまでも関数ポインターがあったんですが、 それを C# から効率的に呼ぶ手段がありませんでした。 これに対して、C# 9 では delegate* という記法で関数ポインターを扱えるようになりました。
 
-<pre class="source" title="関数ポインター構文の例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="comment">// 関数ポインターを nint で取得。</span>
-<span class="reserved">nint</span> <span class="variable">kernel32</span> <span class="operator">=</span> <span class="type"><span class="static">NativeLibrary</span></span><span class="operator">.</span><span class="static"><span class="method">Load</span></span>(<span class="string">&quot;kernel32.dll&quot;</span>);
-<span class="reserved">nint</span> <span class="variable">p</span> <span class="operator">=</span> <span class="type"><span class="static">NativeLibrary</span></span><span class="operator">.</span><span class="static"><span class="method">GetExport</span></span>(<span class="variable">kernel32</span>, <span class="string">&quot;Beep&quot;</span>);
+// 関数ポインターを nint で取得。
+nint kernel32 = NativeLibrary.Load("kernel32.dll");
+nint p = NativeLibrary.GetExport(kernel32, "Beep");
 
-<span class="reserved">unsafe</span>
+unsafe
 {
-    <span class="comment">// 「関数ポインター型」にキャストして使う。</span>
-    <span class="comment">// 構文的には delegate* から初めて、 &lt;&gt; の中に引数を戻り値の型を並べる。</span>
-    <span class="comment">// (戻り値の型が最後。Func&lt;&gt; 風。)</span>
-    <span class="reserved">var</span> <span class="variable">fp</span> <span class="operator">=</span> (<span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">uint</span>, <span class="reserved">uint</span>, <span class="reserved">int</span>&gt;)<span class="variable">p</span>;
-    <span class="variable">fp</span>(<span class="number">440</span>, <span class="number">1000</span>);
+    // 「関数ポインター型」にキャストして使う。
+    // 構文的には delegate* から初めて、 <> の中に引数を戻り値の型を並べる。
+    // (戻り値の型が最後。Func<> 風。)
+    var fp = (delegate*<uint, uint, int>)p;
+    fp(440, 1000);
 }
-</pre>
+```
 
 詳しくは「[関数ポインター](../interop/functionpointer.md)」で説明します。
 
@@ -256,30 +256,30 @@ C# で関数ポインターを書けるようになりました。
 `nint` と `nuint` というキーワードで、「CPU 依存の一番高速に扱える整数」が使えるようになりました。
 `nint` が符号付、`nuint` が符号なしです。
 
-<pre class="source" title="CPU 依存幅整数">
-<code><span class="reserved">nint</span> <span class="variable">x</span> = 0x1_0000;
-<span class="variable">x</span> = <span class="variable">x</span> * <span class="variable">x</span>;
+```csharp
+nint x = 0x1_0000;
+x = x * x;
 
-<span class="comment">// 32ビット CPU だと 0、64ビット CPU だと 100000000 になるはず。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">$&quot;</span>{<span class="variable">x</span>:<span class="string">X</span>}<span class="string">&quot;</span>);
+// 32ビット CPU だと 0、64ビット CPU だと 100000000 になるはず。
+Console.WriteLine($"{x:X}");
 
-<span class="reserved">unsafe</span>
+unsafe
 {
-    <span class="comment">// 32ビット CPU だと 4、64ビット CPU だと 8 になるはず。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">sizeof</span>(<span class="reserved">nint</span>));
+    // 32ビット CPU だと 4、64ビット CPU だと 8 になるはず。
+    Console.WriteLine(sizeof(nint));
 }
-</code></pre>
+```
 
 ちなみに、内部的には `IntPtr`、`UIntPtr` (いずれも `System` 名前空間)にコンパイルされています。
 そのため、以下のようなコードはコンパイル エラーになります(引数の型が同じ同名のメソッドが2つあるため)。
 
-<pre class="source" title="IntPtr と nint でのオーバーロードはできない">
-<code><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">void</span> <span class="method">M</span>(<span class="type">IntPtr</span> <span class="variable">x</span>) { }
-    <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">nint</span> <span class="variable">x</span>) { }
+    void M(IntPtr x) { }
+    void M(nint x) { }
 }
-</code></pre>
+```
 
 ただ、単純に 「`IntPtr`、`UIntPtr` に別名が付いた」というわけではなく、`+` などの演算子の挙動が違います。
 (※ C# 10 までの話。 [C# 11](ap_ver11.md#numeric-intptr) 以降は「`nint`、`nuint` は `IntPtr`、`UIntPtr` の別名 」という扱いになりました。)
@@ -308,13 +308,13 @@ C# 8.0 で入った [null 許容参照型](../resource/nullablereferencetype.md)
 
 ラムダ式の引数で、`_` を使った値の破棄ができるようになりました。
 
-<pre class="source" title="ラムダ式の引数で _ を破棄扱い">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Subscribe(<span class="type">INotifyPropertyChanged</span> source)
+```csharp
+static void Subscribe(INotifyPropertyChanged source)
 {
-    <span class="comment">// _ を破棄扱いして、2個以上並べられる</span>
-    source.PropertyChanged += (<span class="reserved">_</span>, <span class="reserved">_</span>) =&gt; { };
+    // _ を破棄扱いして、2個以上並べられる
+    source.PropertyChanged += (_, _) => { };
 }
-</code></pre>
+```
 
 詳細は「[値の破棄 - ラムダ式の引数](../datatype/declarationexpressions.md#lambda-discard)」で説明します。
 
@@ -323,17 +323,17 @@ C# 8.0 で入った [null 許容参照型](../resource/nullablereferencetype.md)
 匿名関数に対しても `static` 修飾子を付けれるようになりました。
 「外部の変数を捕獲しない」という意味になります。
 
-<pre class="source" title="静的匿名関数">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">int</span> <span class="variable">a</span> = 0;
+int a = 0;
  
-<span class="comment">// 以下の行は自身の引数しか使っていないので static にしても怒られない。</span>
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">ok</span> = <span class="reserved"><em>static</em></span> <span class="variable">x</span> =&gt; <span class="variable">x</span> * <span class="variable">x</span>;
+// 以下の行は自身の引数しか使っていないので static にしても怒られない。
+Func<int, int> ok = static x => x * x;
  
-<span class="comment">// 以下の行は外側のローカル変数 a を使ってしまったのでコンパイル エラー。</span>
-<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; <span class="variable">ng</span> = <span class="reserved"><em>static</em></span> <span class="variable">x</span> =&gt; <span class="variable"><span class="error">a</span></span> * <span class="variable">x</span>;
-</code></pre>
+// 以下の行は外側のローカル変数 a を使ってしまったのでコンパイル エラー。
+Func<int, int> ng = static x => a * x;
+```
 
 詳しくは「[静的匿名関数](../functional/fun_localfunctions.md#static-local-function)」で説明します。
 
@@ -341,31 +341,31 @@ C# 8.0 で入った [null 許容参照型](../resource/nullablereferencetype.md)
 
 [ローカル関数](../functional/fun_localfunctions.md#local-function)に属性を付けられるようになりました。
 
-<pre class="source" title="ローカル関数に属性を付ける">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+using System;
+using System.Diagnostics.CodeAnalysis;
  
-<span class="method">m</span>(<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>);
+m("", "");
  
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span>? <span class="variable">a</span>, <span class="reserved">string</span>? <span class="variable">b</span>)
+static void m(string? a, string? b)
 {
-    <span class="comment">// C# 9.0 からローカル関数に属性を付けれる。</span>
-    <span class="comment">// C# 8.0 の null 許容参照型がらみで特に有用。</span>
-    [<span class="reserved">return</span>: <span class="type">NotNullIfNotNull</span>(<span class="string">&quot;s&quot;</span>)]
-    <span class="reserved">string</span>? <span class="method">toLower</span>(<span class="reserved">string</span>? <span class="variable">s</span>) =&gt; <span class="variable">s</span>?.<span class="method">ToLower</span>();
+    // C# 9.0 からローカル関数に属性を付けれる。
+    // C# 8.0 の null 許容参照型がらみで特に有用。
+    [return: NotNullIfNotNull("s")]
+    string? toLower(string? s) => s?.ToLower();
  
-    <span class="control">if</span> (<span class="variable">a</span> <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span> &amp;&amp; <span class="variable">b</span> <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span>)
+    if (a is not null && b is not null)
     {
-        <span class="comment">// a, b の null 許容性が、NotNullIfNotNull 属性のおかげで al, bl に伝搬。</span>
-        <span class="reserved">string</span> <span class="variable">al</span> = <span class="method">toLower</span>(<span class="variable">a</span>);
-        <span class="reserved">string</span> <span class="variable">bl</span> = <span class="method">toLower</span>(<span class="variable">b</span>);
+        // a, b の null 許容性が、NotNullIfNotNull 属性のおかげで al, bl に伝搬。
+        string al = toLower(a);
+        string bl = toLower(b);
  
-        <span class="comment">// a, b が非 null なので、al, bl は非 null で確定済み。改めてのチェック不要。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">al</span>.<span class="method">GetHashCode</span>());
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">bl</span>.<span class="method">GetHashCode</span>());
+        // a, b が非 null なので、al, bl は非 null で確定済み。改めてのチェック不要。
+        Console.WriteLine(al.GetHashCode());
+        Console.WriteLine(bl.GetHashCode());
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-18"></a> <a id="extension-getenumerator"></a>拡張メソッドでの GetEnumerator 実装
 
@@ -385,27 +385,27 @@ C# 9.0 世代の C# コンパイラーにはソースコード生成(source gene
 それをソースコード生成で埋めてもらうという状況があり得ます。
 C# 9.0 ではそのための文法として、[`partial` キーワード](../oop/oo_class.md#partial_method)を再利用することにしました。
 
-<pre class="source" title="ソースコード生成で埋めてもらう前提の不完全なメソッドの例">
-<code><span class="comment">// (1) 手書き前提のコード</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+```csharp
+// (1) 手書き前提のコード
+partial class PartialClass
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">M</span>()
+    public void M()
     {
-        System.<span class="type">Console</span>.<span class="method">WriteLine</span>(
-            <span class="string">&quot;PreGeneratedMethod が呼ばれた直後&quot;</span>
-            + <span class="method">WantSourceGenerated</span>());
+        System.Console.WriteLine(
+            "PreGeneratedMethod が呼ばれた直後"
+            + WantSourceGenerated());
     }
  
-    <span class="comment">// C# コードが先にあって、これを元にソースコード生成してほしいメソッド。</span>
-    <span class="reserved">private</span> <span class="reserved">partial</span> <span class="reserved">string</span> <span class="method">WantSourceGenerated</span>();
+    // C# コードが先にあって、これを元にソースコード生成してほしいメソッド。
+    private partial string WantSourceGenerated();
 }
  
-<span class="comment">// (2) C# からのソースコード生成が前提のコード</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+// (2) C# からのソースコード生成が前提のコード
+partial class PartialClass
 {
-    <span class="reserved">private</span> <span class="reserved">partial</span> <span class="reserved">string</span> <span class="method">WantSourceGenerated</span>() =&gt; <span class="string">&quot;手書きはしづらしくて、ソースコード生成なら楽な文字列&quot;</span>;
+    private partial string WantSourceGenerated() => "手書きはしづらしくて、ソースコード生成なら楽な文字列";
 }
-</code></pre>
+```
 
 C# 2.0 の頃からある部分メソッドとの差は[アクセシビリティ](../oop/oo_conceal.md#level)修飾子の有無です。
 `private` などを付けるかどうかで「コード生成が先」か「手書きが先」かの用途が逆になります。
@@ -419,19 +419,19 @@ C# 2.0 の頃からある部分メソッドとの差は[アクセシビリティ
 
 以下のように、`ModuleInitilizer` 属性(`System.Runtime.CompilerServices` 名前空間)を付けた[静的メソッド](../oop/oo_static.md#stmethod)を書くと、それが必ず1回呼び出されるようになります。
 
-<pre class="source" title="ModuleInitialize 属性">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
  
-<span class="reserved">class</span> <span class="type">Sample</span>
+class Sample
 {
-    [<span class="type">ModuleInitializer</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Init</span>()
+    [ModuleInitializer]
+    public static void Init()
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;必ず1回だけ呼ばれる&quot;</span>);
+        Console.WriteLine("必ず1回だけ呼ばれる");
     }
 }
-</code></pre>
+```
 
 これをモジュール初期化子(module initializer)と呼びます。
 

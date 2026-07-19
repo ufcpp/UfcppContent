@@ -44,26 +44,26 @@ C# 14 では、`Span<T>` 構造体を言語構文的に特別扱いするよう�
 「一定範囲の読み書き」の説明に、まずは配列で例を示します。
 例えば以下のような書き方で、配列の一部分だけの読み書きができます。
 
-<pre class="source" title="配列の一部分だけを読み書きする例">
-<code><span class="comment">// 長さ 8 で配列作成</span>
-<span class="comment">// C# の仕様で、全要素 0 で作られる</span>
-<span class="reserved">var</span> array = <span class="reserved">new</span> <span class="reserved">int</span>[8];
+```csharp
+// 長さ 8 で配列作成
+// C# の仕様で、全要素 0 で作られる
+var array = new int[8];
 
-<span class="comment">// 配列の、2番目(0 始まりなので3要素目)から、3要素分の範囲</span>
-<span class="reserved">var</span> span = <span class="reserved">new</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;(array, 2, 3);
+// 配列の、2番目(0 始まりなので3要素目)から、3要素分の範囲
+var span = new Span<int>(array, 2, 3);
 
-<span class="comment">// その範囲だけを 1 に上書き</span>
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; span.Length; i++)
+// その範囲だけを 1 に上書き
+for (int i = 0; i < span.Length; i++)
 {
     span[i] = 1;
 }
 
-<span class="comment">// ちゃんと、2, 3, 4 番目だけが 1 になってる</span>
-<span class="reserved">foreach</span> (var x <span class="reserved">in</span> array)
+// ちゃんと、2, 3, 4 番目だけが 1 になってる
+foreach (var x in array)
 {
-    <span class="type">Console</span>.WriteLine(x); <span class="comment">// 0, 0, 1, 1, 1, 0, 0, 0</span>
+    Console.WriteLine(x); // 0, 0, 1, 1, 1, 0, 0, 0
 }
-</code></pre>
+```
 
 このコードで、以下のような書き換えが発生します。
 
@@ -71,9 +71,9 @@ C# 14 では、`Span<T>` 構造体を言語構文的に特別扱いするよう�
 
 `Span<T>`構造体を作る部分は、以下のように、拡張メソッドでも書けます。
 
-<pre class="source" title="配列に対する拡張メソッドで Span を作る">
-<code><span class="reserved">var</span> span = array.AsSpan().Slice(2, 3);
-</code></pre>
+```csharp
+var span = array.AsSpan().Slice(2, 3);
+```
 
 この`AsSpan`は、`System.SpanExtensions`クラスで定義されている拡張メソッドで、
 配列全体を指す `Span<T>` を作るものです。
@@ -81,12 +81,12 @@ C# 14 では、`Span<T>` 構造体を言語構文的に特別扱いするよう�
 
 ちなみに、読み書き両方可能な`Span<T>`に加えて、読み取り専用の`ReadOnlySpan<T>`構造体もあります。
 
-<pre class="source" title="読み取り専用の ReadOnlySpan">
-<code><span class="comment">// 読み取り専用版</span>
-<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; r = span;
-<span class="reserved">var</span> a = r[0]; <span class="comment">// 読み取りは OK</span>
-r[0] = 1;     <span class="comment">// 書き込みは NG</span>
-</code></pre>
+```csharp
+// 読み取り専用版
+ReadOnlySpan<int> r = span;
+var a = r[0]; // 読み取りは OK
+r[0] = 1;     // 書き込みは NG
+```
 
 配列に限って言えば、「配列の一部分を指す型」として、昔から`ArraySegment<T>`構造体(`System`名前空間)がありました。
 しかし、以下のような差があります。
@@ -99,45 +99,45 @@ r[0] = 1;     <span class="comment">// 書き込みは NG</span>
 `Span<T>`は、配列だけでなく、文字列、スタック上の領域、.NET 管理外のメモリ領域などいろいろな場所を指せます。
 以下のような使い方ができます。
 
-<pre class="source" title="Span でいろいろな場所を指す">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System;
+using System.Runtime.InteropServices;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 配列</span>
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; array = <span class="reserved">new</span> <span class="reserved">int</span>[8].AsSpan().Slice(2, 3);
+        // 配列
+        Span<int> array = new int[8].AsSpan().Slice(2, 3);
 
-        <span class="comment">// 文字列</span>
-        <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; str = <span class="string">"abcdefgh"</span>.AsReadOnlySpan().Slice(2, 3);
+        // 文字列
+        ReadOnlySpan<char> str = "abcdefgh".AsReadOnlySpan().Slice(2, 3);
 
-        <span class="comment">// スタック領域</span>
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; stack = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[8];
+        // スタック領域
+        Span<int> stack = stackalloc int[8];
 
-        <span class="reserved">unsafe</span>
+        unsafe
         {
-            <span class="comment">// .NET 管理外メモリ</span>
-            <span class="reserved">var</span> p = <span class="type">Marshal</span>.AllocHGlobal(<span class="reserved">sizeof</span>(<span class="reserved">int</span>) * 8);
-            <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; unmanaged = <span class="reserved">new</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;((<span class="reserved">int</span>*)p, 8);
+            // .NET 管理外メモリ
+            var p = Marshal.AllocHGlobal(sizeof(int) * 8);
+            Span<int> unmanaged = new Span<int>((int*)p, 8);
 
-            <span class="comment">// 他の言語との相互運用</span>
-            <span class="reserved">var</span> q = malloc((<span class="type">IntPtr</span>)(<span class="reserved">sizeof</span>(<span class="reserved">int</span>) * 8));
-            <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; interop = <span class="reserved">new</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;((<span class="reserved">int</span>*)q, 8);
+            // 他の言語との相互運用
+            var q = malloc((IntPtr)(sizeof(int) * 8));
+            Span<int> interop = new Span<int>((int*)q, 8);
 
-            <span class="type">Marshal</span>.FreeHGlobal(p);
+            Marshal.FreeHGlobal(p);
             free(q);
         }
     }
 
-    [<span class="type">DllImport</span>(<span class="string">"msvcrt.dll"</span>, CallingConvention = CallingConvention.Cdecl)]
-    <span class="reserved">static</span> <span class="reserved">extern</span> IntPtr malloc(IntPtr size);
+    [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+    static extern IntPtr malloc(IntPtr size);
 
-    [<span class="type">DllImport</span>(<span class="string">"msvcrt.dll"</span>, CallingConvention = CallingConvention.Cdecl)]
-    <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> free(IntPtr ptr);
+    [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+    static extern void free(IntPtr ptr);
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="by-reference"></a>部分参照
 
@@ -148,17 +148,17 @@ r[0] = 1;     <span class="comment">// 書き込みは NG</span>
 
 例えば以下のようなコードを書いたとします。
 
-<pre class="source" title="部分文字列の取り出し">
-<code><span class="reserved">var</span> s = <span class="string">"abcあいう亜以宇"</span>;
+```csharp
+var s = "abcあいう亜以宇";
 
-<span class="reserved">var</span> sub = s.Substring(3, 3);
-<span class="reserved">var</span> span = s.AsReadOnlySpan().Slice(3, 3);
+var sub = s.Substring(3, 3);
+var span = s.AsReadOnlySpan().Slice(3, 3);
 
-<span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 3; i++)
+for (int i = 0; i < 3; i++)
 {
-    <span class="type">Console</span>.WriteLine((sub[i], span[i])); <span class="comment">// あ、い、う が2つずつ表示される</span>
+    Console.WriteLine((sub[i], span[i])); // あ、い、う が2つずつ表示される
 }
-</code></pre>
+```
 
 `sub` (`Substring`メソッドを利用)と`span` (`Slice`メソッドを利用)はいずれも、「3番目から3つ分」の部分文字列を取り出しています。
 しかし、以下のように、`sub`ではコピーが発生し、`span`では発生しません。
@@ -176,48 +176,48 @@ C# だけでプログラムを作るにしてもポインターを使いたい�
 例えば以下のようなコードを考えます。
 [unsafe](../interop/sp_unsafe.md) を使うと速い処理の典型例として、一定範囲を 0 クリアする処理を、ポインターを使って書いています。
 
-<pre class="source" title="unsafe を使うと速い処理の典型例">
-<code><span class="comment">// unsafe を使うと速い処理の典型例として、一定範囲を 0 クリアする処理</span>
-<span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+// unsafe を使うと速い処理の典型例として、一定範囲を 0 クリアする処理
+class Program
 {
-    <span class="comment">// 作る側</span>
-    <span class="comment">// ライブラリを作る側としては別に unsafe コードがあっても不都合はそこまでない</span>
-    <span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> Clear(<span class="reserved">byte</span>* p, <span class="reserved">int</span> length)
+    // 作る側
+    // ライブラリを作る側としては別に unsafe コードがあっても不都合はそこまでない
+    static unsafe void Clear(byte* p, int length)
     {
-        <span class="reserved">var</span> last = p + length;
-        <span class="reserved">while</span> (p + 7 &lt; last)
+        var last = p + length;
+        while (p + 7 < last)
         {
-            *(<span class="reserved">ulong</span>*)p = 0;
+            *(ulong*)p = 0;
             p += 8;
         }
-        <span class="reserved">if</span> (p + 3 &lt; last)
+        if (p + 3 < last)
         {
-            *(<span class="reserved">uint</span>*)p = 0;
+            *(uint*)p = 0;
             p += 4;
         }
-        <span class="reserved">while</span> (p &lt; last)
+        while (p < last)
         {
             *p = 0;
             ++p;
         }
     }
 
-    <span class="comment">// 使う側</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    // 使う側
+    static void Main()
     {
-        <span class="reserved">var</span> array = <span class="reserved">new</span> <span class="reserved">byte</span>[256];
+        var array = new byte[256];
 
-        <span class="comment">// array をいろいろ書き換えた後、全要素 0 にクリアしたいとして</span>
+        // array をいろいろ書き換えた後、全要素 0 にクリアしたいとして
 
-        <span class="comment">// ライブラリを使う側に unsafe が必要なのは怖いし面倒</span>
-        <span class="reserved">unsafe</span>
+        // ライブラリを使う側に unsafe が必要なのは怖いし面倒
+        unsafe
         {
-            <span class="reserved">fixed</span> (<span class="reserved">byte</span>* p = array)
+            fixed (byte* p = array)
                 Clear(p, array.Length);
         }
     }
 }
-</code></pre>
+```
 
 コード中にも書いていますが、ここで問題になるのは、使う側に unsafe コードを強要する点です。
 ライブラリを作る側は作る人の責任で多少危険なコードも書けますが、
@@ -226,99 +226,99 @@ C# だけでプログラムを作るにしてもポインターを使いたい�
 
 そこで、通常、以下のようにいくつかのオーバーロードを増やすことになります。
 
-<pre class="source" title="unsafe を避けるためのオーバーロードいろいろ">
-<code><span class="comment">// 使う側に unsafe を求めないために要するオーバーロードいろいろ</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Clear(<span class="type">ArraySegment</span>&lt;<span class="reserved">byte</span>&gt; segment) =&gt; Clear(segment.Array, segment.Offset, segment.Count);
-<span class="reserved">static</span> <span class="reserved">void</span> Clear(<span class="reserved">byte</span>[] array, <span class="reserved">int</span> offset = 0) =&gt; Clear(array, offset, array.Length - offset);
-<span class="reserved">static</span> <span class="reserved">void</span> Clear(<span class="reserved">byte</span>[] array, <span class="reserved">int</span> offset, <span class="reserved">int</span> length)
+```csharp
+// 使う側に unsafe を求めないために要するオーバーロードいろいろ
+static void Clear(ArraySegment<byte> segment) => Clear(segment.Array, segment.Offset, segment.Count);
+static void Clear(byte[] array, int offset = 0) => Clear(array, offset, array.Length - offset);
+static void Clear(byte[] array, int offset, int length)
 {
-    <span class="reserved">unsafe</span>
+    unsafe
     {
-        <span class="reserved">fixed</span> (<span class="reserved">byte</span>* p = array)
+        fixed (byte* p = array)
         {
             Clear(p + offset, length);
         }
     }
 }
-</code></pre>
+```
 
 1セットくらいなら別にまだ平気なんですが、例えばコピー処理(コピー元とコピー先の2セット必要)とか、引数が増えるとかなり大変なことになります。
 
-<pre class="source" title="コピー元とコピー先の2つになることで面倒になる例">
-<code><span class="comment">// Clear は1つしか引数がないのでまだマシ。</span>
-<span class="comment">// コピー(コピー元とコピー先)とか、2つになるとだいぶ面倒に。</span>
+```csharp
+// Clear は1つしか引数がないのでまだマシ。
+// コピー(コピー元とコピー先)とか、2つになるとだいぶ面倒に。
 
-<span class="reserved">static</span> <span class="reserved">void</span> Copy(<span class="type">ArraySegment</span>&lt;<span class="reserved">byte</span>&gt; source, <span class="type">ArraySegment</span>&lt;<span class="reserved">byte</span>&gt; destination)
-    =&gt; Copy(source.Array, source.Offset, destination.Array, destination.Offset, source.Count);
-<span class="reserved">static</span> <span class="reserved">void</span> Copy(<span class="reserved">byte</span>[] source, <span class="reserved">int</span> sourceOffset, <span class="reserved">byte</span>[] destination, <span class="reserved">int</span> destinationOffset)
-    =&gt; Copy(source, sourceOffset, destination, destinationOffset, source.Length - sourceOffset);
-<span class="reserved">static</span> <span class="reserved">void</span> Copy(<span class="reserved">byte</span>[] source, <span class="reserved">int</span> sourceOffset, <span class="reserved">byte</span>[] destination, <span class="reserved">int</span> destinationOffset, <span class="reserved">int</span> length)
+static void Copy(ArraySegment<byte> source, ArraySegment<byte> destination)
+    => Copy(source.Array, source.Offset, destination.Array, destination.Offset, source.Count);
+static void Copy(byte[] source, int sourceOffset, byte[] destination, int destinationOffset)
+    => Copy(source, sourceOffset, destination, destinationOffset, source.Length - sourceOffset);
+static void Copy(byte[] source, int sourceOffset, byte[] destination, int destinationOffset, int length)
 {
-    <span class="reserved">unsafe</span>
+    unsafe
     {
-        <span class="reserved">fixed</span> (<span class="reserved">byte</span>* s = source)
-        <span class="reserved">fixed</span> (<span class="reserved">byte</span>* d = destination)
+        fixed (byte* s = source)
+        fixed (byte* d = destination)
         {
             Copy(s + sourceOffset, d + destinationOffset, length);
         }
     }
 }
-<span class="comment">// 他にも、利便性を求めるなら、</span>
-<span class="comment">// source, destination の片方だけが ArraySegment のパターンとか</span>
-<span class="comment">// 片方だけがポインターのパターンとか(組み合わせなのでパターンが多くなる)</span>
+// 他にも、利便性を求めるなら、
+// source, destination の片方だけが ArraySegment のパターンとか
+// 片方だけがポインターのパターンとか(組み合わせなのでパターンが多くなる)
 
-<span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> <span class="method">Copy</span>(<span class="reserved">byte</span>* <span class="variable">source</span>, <span class="reserved">byte</span>* <span class="variable">destination</span>, <span class="reserved">int</span> <span class="variable">length</span>)
+static unsafe void Copy(byte* source, byte* destination, int length)
 {
-    <span class="reserved">var</span> <span class="variable">last</span> = <span class="variable">source</span> + <span class="variable">length</span>;
-    <span class="control">while</span> (<span class="variable">source</span> + 7 &lt; <span class="variable">last</span>)
+    var last = source + length;
+    while (source + 7 < last)
     {
-        *(<span class="reserved">ulong</span>*)<span class="variable">destination</span> = *(<span class="reserved">ulong</span>*)<span class="variable">source</span>;
-        <span class="variable">source</span> += 8;
-        <span class="variable">destination</span> += 8;
+        *(ulong*)destination = *(ulong*)source;
+        source += 8;
+        destination += 8;
     }
-    <span class="control">if</span> (<span class="variable">source</span> + 3 &lt; <span class="variable">last</span>)
+    if (source + 3 < last)
     {
-        *(<span class="reserved">uint</span>*)<span class="variable">destination</span> = *(<span class="reserved">uint</span>*)<span class="variable">source</span>;
-        <span class="variable">source</span> += 4;
-        <span class="variable">destination</span> += 4;
+        *(uint*)destination = *(uint*)source;
+        source += 4;
+        destination += 4;
     }
-    <span class="control">while</span> (<span class="variable">source</span> &lt; <span class="variable">last</span>)
+    while (source < last)
     {
-        *<span class="variable">destination</span> = *<span class="variable">source</span>;
-        ++<span class="variable">source</span>;
-        ++<span class="variable">destination</span>;
+        *destination = *source;
+        ++source;
+        ++destination;
     }
 }
-</code></pre>
+```
 
 この問題に対して、`Span<T>`であれば、この構造体1つで配列でもポインターでも、その全体でも一部分でも受け取れるので、
 オーバーロードは1つで十分です。
 
-<pre class="source" title="Spanを使ってオーバーロードを減らす">
-<code><span class="comment">// 作る側</span>
-<span class="comment">// Span&lt;T&gt; なら配列でもポインターでも、その全体でも一部分でも受け取れる</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Clear(<span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; span)
+```csharp
+// 作る側
+// Span<T> なら配列でもポインターでも、その全体でも一部分でも受け取れる
+static void Clear(Span<byte> span)
 {
-    <span class="reserved">unsafe</span>
+    unsafe
     {
-        <span class="comment">// 結局内部的には unsafe にしてポインターを使った方が速い場合あり</span>
-        <span class="reserved">fixed</span> (<span class="reserved">byte</span>* pin = &amp;span.GetPinnableReference())
-        <span class="comment">// 注: C# 7.3 からは以下の書き方ができる</span>
-        <span class="comment">// fixed (byte* pin = span)</span>
+        // 結局内部的には unsafe にしてポインターを使った方が速い場合あり
+        fixed (byte* pin = &span.GetPinnableReference())
+        // 注: C# 7.3 からは以下の書き方ができる
+        // fixed (byte* pin = span)
         {
-            <span class="reserved">var</span> p = pin;
-            <span class="reserved">var</span> last = p + span.Length;
-            <span class="reserved">while</span> (p + 7 &lt; last)
+            var p = pin;
+            var last = p + span.Length;
+            while (p + 7 < last)
             {
-                *(<span class="reserved">ulong</span>*)p = 0;
+                *(ulong*)p = 0;
                 p += 8;
             }
-            <span class="reserved">if</span> (p + 3 &lt; last)
+            if (p + 3 < last)
             {
-                *(<span class="reserved">uint</span>*)p = 0;
+                *(uint*)p = 0;
                 p += 4;
             }
-            <span class="reserved">while</span> (p &lt; last)
+            while (p < last)
             {
                 *p = 0;
                 ++p;
@@ -327,17 +327,17 @@ C# だけでプログラムを作るにしてもポインターを使いたい�
     }
 }
 
-<span class="comment">// 使う側</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Main()
+// 使う側
+static void Main()
 {
-    <span class="reserved">var</span> array = <span class="reserved">new</span> <span class="reserved">byte</span>[256];
+    var array = new byte[256];
 
-    <span class="comment">// array をいろいろ書き換えた後、全要素 0 にクリアしたいとして</span>
+    // array をいろいろ書き換えた後、全要素 0 にクリアしたいとして
 
-    <span class="comment">// 呼ぶのがだいぶ楽</span>
+    // 呼ぶのがだいぶ楽
     Clear(array);
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="safe-stackalloc"></a>安全な stackalloc
 
@@ -349,25 +349,25 @@ C# の速度最適化のコツの1つに、「[ガベージ コレクション](
 データは一気に全体を見る必要はなく、一定サイズずつ(仮にここでは128バイトずつ)読んでは捨ててを繰り返せるものとします。
 これまでであれば、以下のように、そのサイズ分の配列を `new` して使うことになります。
 
-<pre class="source" title="読み出し用の一時配列を new する例">
-<code><span class="reserved">const</span> <span class="reserved">int</span> BufferSize = 128;
+```csharp
+const int BufferSize = 128;
 
-<span class="reserved">using</span> (<span class="reserved">var</span> f = <span class="type">File</span>.OpenRead(<span class="string">"test.data"</span>))
+using (var f = File.OpenRead("test.data"))
 {
-    <span class="reserved">var</span> rest = (<span class="reserved">int</span>)f.Length;
-    <span class="reserved">var</span> buffer = <span class="reserved">new</span> <span class="reserved">byte</span>[BufferSize];
+    var rest = (int)f.Length;
+    var buffer = new byte[BufferSize];
 
-    <span class="reserved">while</span> (<span class="reserved">true</span>)
+    while (true)
     {
-        <span class="reserved">var</span> read = f.Read(buffer, 0, Math.Min(rest, BufferSize));
+        var read = f.Read(buffer, 0, Math.Min(rest, BufferSize));
         rest -= read;
 
-        <span class="comment">// buffer に対して何か処理する</span>
+        // buffer に対して何か処理する
 
-        <span class="reserved">if</span> (rest == 0) <span class="reserved">break</span>;
+        if (rest == 0) break;
     }
 }
-</code></pre>
+```
 
 こういう場合に、これまでも、unsafe コードを使えば配列の `new` を避ける手段がありました。
 [`stackalloc`](../interop/sp_unsafe.md#stackalloc)というものを使って、スタック上に一時領域を確保できます。
@@ -380,88 +380,88 @@ C# の速度最適化のコツの1つに、「[ガベージ コレクション](
 このコードはunsafeなしでコンパイルできます。
 (※ .NET Core 2.1 で実行するか、他の環境では最新の [System.IO パッケージ](https://www.nuget.org/packages/System.IO/)の参照が必要です。現状ではプレビュー版のみ。)
 
-<pre class="source" title="Span を使って一時バッファーを stackalloc に変更">
-<code><span class="reserved">const</span> <span class="reserved">int</span> BufferSize = 128;
+```csharp
+const int BufferSize = 128;
 
-<span class="reserved">using</span> (<span class="reserved">var</span> f = <span class="type">File</span>.OpenRead(<span class="string">"test.data"</span>))
+using (var f = File.OpenRead("test.data"))
 {
-    <span class="reserved">var</span> rest = (<span class="reserved">int</span>)f.Length;
-    <span class="comment">// Span&lt;byte&gt; で受け取ることで、new (配列)を stackalloc (スタック確保)に変更できる</span>
-    <em><span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; buffer = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[BufferSize];</em>
+    var rest = (int)f.Length;
+    // Span<byte> で受け取ることで、new (配列)を stackalloc (スタック確保)に変更できる
+    Span<byte> buffer = stackalloc byte[BufferSize];
 
-    <span class="reserved">while</span> (<span class="reserved">true</span>)
+    while (true)
     {
-        <span class="comment">// Read(Span&lt;byte&gt;) が追加された</span>
-        <span class="reserved">var</span> read = f.Read(buffer);
+        // Read(Span<byte>) が追加された
+        var read = f.Read(buffer);
         rest -= read;
-        <span class="reserved">if</span> (rest == 0) <span class="reserved">break</span>;
+        if (rest == 0) break;
 
-        <span class="comment">// buffer に対して何か処理する</span>
+        // buffer に対して何か処理する
     }
 }
-</code></pre>
+```
 
 ただし、`Span<T>`相手であっても、`stackalloc`が使える型は[アンマネージ型](../interop/sp_unsafe.md#unmanaged-types)に限られます。
 クラスなどに対しては使えません。
 
-<pre class="source" title="">
-<code><span class="comment">// これはOK。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; i = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[4];
+```csharp
+// これはOK。
+Span<int> i = stackalloc int[4];
 
-<span class="comment">// こっちはダメ。</span>
-<span class="comment">// Span&lt;string&gt; は大丈夫だけど、stackalloc string はダメ。</span>
-<span class="type">Span</span>&lt;<span class="reserved">string</span>&gt; s = <span class="reserved">stackalloc</span> <span class="reserved"><span class="error">string</span></span>[4];
-</code></pre>
+// こっちはダメ。
+// Span<string> は大丈夫だけど、stackalloc string はダメ。
+Span<string> s = stackalloc string[4];
+```
 
 ちなみに、スタック上の領域確保は、あんまり大きなサイズにはできません。
 一般的には、多くても数キロバイト程度くらいまでしか使いません。
 そのため、確保したいバッファーのサイズに応じて、`stackalloc`と配列の`new`を切り替えたいと言ったこともあります。
 そこでC# 7.2 では、以下のように、条件演算子で`stackalloc`を使うこともできるようになっています。
 
-<pre class="source" title="条件 stackalloc">
-<code><span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; buffer = bufferSize &lt;= 128 ? <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[bufferSize] : <span class="reserved">new</span> <span class="reserved">byte</span>[bufferSize];
-</code></pre>
+```csharp
+Span<byte> buffer = bufferSize <= 128 ? stackalloc byte[bufferSize] : new byte[bufferSize];
+```
 
 また、unsafeが不要なことからもわかる通り、`Span<T>`との併用であれば`stackalloc`は安全です。
 以下のように、範囲チェックが掛かって、確保した分を越えての読み書きはできないようになっています。
 
-<pre class="source" title="Span + stackalloc は安全">
-<code><span class="comment">// Span 版 = safe</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Safe()
+```csharp
+// Span 版 = safe
+static void Safe()
 {
-    <span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; span = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[8];
+    Span<byte> span = stackalloc byte[8];
 
-    <span class="reserved">try</span>
+    try
     {
-        <span class="comment">// 8バイトしか確保していないのに、9要素目に書き込み</span>
+        // 8バイトしか確保していないのに、9要素目に書き込み
         span[8] = 1;
     }
-    <span class="reserved">catch</span>(IndexOutOfRangeException)
+    catch(IndexOutOfRangeException)
     {
-        <span class="comment">// ちゃんと例外が発生してここに来る</span>
-        Console.WriteLine(<span class="string">"span[8] はダメ"</span>);
+        // ちゃんと例外が発生してここに来る
+        Console.WriteLine("span[8] はダメ");
     }
 }
 
-<span class="comment">// ポインター版 = unsafe</span>
-<span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> Unsafe()
+// ポインター版 = unsafe
+static unsafe void Unsafe()
 {
-    <span class="reserved">byte</span>* p = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[8];
+    byte* p = stackalloc byte[8];
 
-    <span class="reserved">try</span>
+    try
     {
-        <span class="comment">// 8バイトしか確保していないのに、9要素目に書き込み</span>
+        // 8バイトしか確保していないのに、9要素目に書き込み
         p[8] = 1;
     }
-    <span class="reserved">catch</span> (Exception)
+    catch (Exception)
     {
-        <span class="comment">// ここには来ない！</span>
-        <span class="comment">// 結果、不正な場所に 1 が書き込まれてるはず(かなり危険)</span>
-        <span class="comment">// それも、エラーを拾う手段がないので気づきにくい</span>
-        <span class="reserved">throw</span>;
+        // ここには来ない！
+        // 結果、不正な場所に 1 が書き込まれてるはず(かなり危険)
+        // それも、エラーを拾う手段がないので気づきにくい
+        throw;
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="nested-stackalloc"></a>式中の stackalloc
 
@@ -470,47 +470,47 @@ C# の速度最適化のコツの1つに、「[ガベージ コレクション](
 C# 8.0 で、式中の任意の場所に `stackalloc` を書けるようになりました。
 例えば以下のような書き方ができます。
 
-<pre class="source" title="式中の任意の場所に stackalloc">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// Span を受け取る適当なメソッドを用意。</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">buf</span>) =&gt; 0;
+    // Span を受け取る適当なメソッドを用意。
+    static int M(Span<byte> buf) => 0;
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">len</span>)
+    static void M(int len)
     {
-        <span class="comment">// if の条件式中</span>
-        <span class="control">if</span> (<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[1] <span class="method">==</span> <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[1]) ;
-        <span class="method">M</span>(<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[1]);
+        // if の条件式中
+        if (stackalloc byte[1] == stackalloc byte[1]) ;
+        M(stackalloc byte[1]);
  
-        <span class="comment">// でもこれが今まではダメだった。</span>
-        <span class="comment">// C# 8.0 ではコンパイルできる。</span>
-        <span class="method">M</span>(<span class="variable">len</span> &gt; 512 ? <span class="reserved">new</span> <span class="reserved">byte</span>[<span class="variable">len</span>] : <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="variable">len</span>]);
+        // でもこれが今まではダメだった。
+        // C# 8.0 ではコンパイルできる。
+        M(len > 512 ? new byte[len] : stackalloc byte[len]);
  
-        <span class="comment">// こういう書き方は C# 8.0 以前からできてた。条件演算子だけ特別扱いしてたらしい。</span>
-        <span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">buf</span> = <span class="variable">len</span> &gt; 512 ? <span class="reserved">new</span> <span class="reserved">byte</span>[<span class="variable">len</span>] : <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="variable">len</span>];
+        // こういう書き方は C# 8.0 以前からできてた。条件演算子だけ特別扱いしてたらしい。
+        Span<byte> buf = len > 512 ? new byte[len] : stackalloc byte[len];
     }
  
-    <span class="comment">// フィールド初期化子の中でも書ける。</span>
-    <span class="reserved">int</span> a = <span class="method">M</span>(<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[8]);
+    // フィールド初期化子の中でも書ける。
+    int a = M(stackalloc byte[8]);
  
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">MAsync</span>()
+    static async Task MAsync()
     {
-        <span class="comment">// こういう入れ子の stackalloc の場合、非同期メソッド中でも書ける。</span>
-        <span class="method">M</span>(<span class="reserved">stackalloc</span> <span class="reserved">byte</span>[1]);
+        // こういう入れ子の stackalloc の場合、非同期メソッド中でも書ける。
+        M(stackalloc byte[1]);
  
-        <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Yield</span>();
+        await Task.Yield();
  
         {
-            <span class="comment">// これは C# 8.0 でもダメ。</span>
-            <span class="comment">// { } でくくってて(await をまたがない状態)もダメ。</span>
-            <span class="error"><span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt;</span> <span class="variable">buf</span> = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[1];
+            // これは C# 8.0 でもダメ。
+            // { } でくくってて(await をまたがない状態)もダメ。
+            Span<byte> buf = stackalloc byte[1];
         }
     }
 }
-</code></pre>
+```
 
 ただし、対象の型が `Span<T>` である必要があります。
 ポインターに対する `stackalloc` にはこれまで通り `T* p = stackalloc T[len]` の形でしか書けません。
@@ -535,27 +535,27 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 比較のために`ArraySegment<T>`の中身から説明しましょう。
 `ArraySegment<T>`は以下のようなメンバーを持った構造体です。
 
-<pre class="source" title="ArraySegment の中身">
-<code><span class="reserved">struct</span> <span class="type">ArraySegment</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct ArraySegment<T>
 {
-    <span class="type">T</span>[] Array;
-    <span class="reserved">int</span> Offset;
-    <span class="reserved">int</span> Count;
+    T[] Array;
+    int Offset;
+    int Count;
 }
-</code></pre>
+```
 
 ![ArraySegmentの中身](../../../../assets/media/1150/arraysegmentinternal.png)
 
 一方で、`Span<T>`構造体は、論理的には以下のようなメンバーを持った構造体です。
 (「論理的には」と断っているのは、これをそのまま書くことはできないため。)
 
-<pre class="source" title="Spanの中身(疑似コード。これをそのままは書けない)">
-<code><span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Span<T>
 {
-    <span class="reserved">ref</span> <span class="type">T</span> Reference;
-    <span class="reserved">int</span> Length;
+    ref T Reference;
+    int Length;
 }
-</code></pre>
+```
 
 ![Spanの中身](../../../../assets/media/1151/spaninternal.png)
 
@@ -578,13 +578,13 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 .NET Core 2.1 以降向けの `Span<T>` は以下のような構造になっています。
 ([coreclr レポジトリ内にソースコードがあります](https://github.com/dotnet/coreclr/blob/aae414026671e3dc1ccf0f308d351ac04cc746a4/src/mscorlib/shared/System/Span.cs#L29)。)
 
-<pre class="source" title="fast Span の中身">
-<code><span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Span<T>
 {
-    <span class="type">ByReference</span>&lt;<span class="type">T</span>&gt; _pointer;
-    <span class="reserved">int</span> _length;
+    ByReference<T> _pointer;
+    int _length;
 }
-</code></pre>
+```
 
 `ByReference<T>` が特殊対応部分です。
 ランタイム側で「この型は参照フィールドとして扱う」という特別扱いをすることで、所望の動作を得ています。
@@ -595,13 +595,13 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 その結果、`Span<T>` は「普通の」ref 構造体になりました。
 おおむね以下のような内容の構造体です。
 
-<pre class="source" title=".NET 7 以降の Span 構造体">
-<span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Span</span>&lt;<span class="type param">T</span>&gt;
+```csharp
+readonly ref struct Span<T>
 {
-    <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="type param">T</span> <span class="field">_reference</span>;
-    <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="field">_length</span>;
+    readonly ref T _reference;
+    readonly int _length;
 }
-</pre>
+```
 
 #### <a id="sec-generated-title-12"></a> <a id="slow-span"></a>slow Span (旧来のランタイム向けの Span<T>)
 
@@ -611,14 +611,14 @@ C# 7.3 時点でも、条件演算子の中でだけは `stackalloc` を書け�
 
 こちらは、概ね以下のような構造です。
 
-<pre class="source" title="slow Span の中身">
-<code><span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Span<T>
 {
-    <span class="type">Pinnable</span>&lt;<span class="type">T</span>&gt; _pinnable;
-    <span class="type">IntPtr</span> _byteOffset;
-    <span class="reserved">int</span> _length;
+    Pinnable<T> _pinnable;
+    IntPtr _byteOffset;
+    int _length;
 }
-</code></pre>
+```
 
 `Pinnable<T>`はただのクラスです。
 ガベージ コレクション管理下の参照と、管理外の参照を同列に扱えないからこういう構造になっています。
@@ -655,28 +655,28 @@ C# 7.2 の頃に `Span<T>` や `ReadOnlySpan<T>` が導入されて以来、
 C# 7.2 以降は `ReadOnlySpan<T>` 構造体を使って実装することが増えました。
 例えば以下のように、引数の型を `IEnumerable<T>` から `ReadOnlySpan<T>` に書き換えるだけで高速になるということが多々あります。
 
-<pre class="source" title="ReadOnlySpan 構造体を使うと高速になる">
-<span class="reserved">class</span> <span class="type">Overloads</span>
+```csharp
+class Overloads
 {
-    <span class="comment">// 昔からある伝統的な書き方。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>)
+    // 昔からある伝統的な書き方。
+    public static void M(IEnumerable<int> values)
     {
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">values</span>)
+        foreach (var x in values)
         {
-            <span class="comment">// 何か</span>
+            // 何か
         }
     }
 
-    <span class="comment">// C# 7.2 以降、全く同じ処理ならこっちの方が高速。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>)
+    // C# 7.2 以降、全く同じ処理ならこっちの方が高速。
+    public static void M(ReadOnlySpan<int> values)
     {
-        <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable local">values</span>)
+        foreach (var x in values)
         {
-            <span class="comment">// 同じ何か</span>
+            // 同じ何か
         }
     }
 }
-</pre>
+```
 
 .NET の標準ライブラリでは、例えば [`string.Join`](https://learn.microsoft.com/ja-jp/dotnet/api/system.string.join) メソッドなどがそうで、
 .NET 9 (C# 13 世代)くらいで `ReadOnlySpan<T>` 引数のオーバーロードが追加されたものが多いです。
@@ -688,88 +688,89 @@ C# 7.2 以降は `ReadOnlySpan<T>` 構造体を使って実装することが増
 
 1つ目、は拡張メソッド呼び出し:
 
-<pre class="source" title="拡張メソッド呼び出しができなかった例(C# 14 で解決)">
-<span class="error" title="CS1929"><span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">0</span>]</span><span class="operator">.</span><span class="method">M</span>();
-<span class="error" title="CS1929"><span class="string">&quot;&quot;</span></span><span class="operator">.</span><span class="method">M</span>();
+```csharp
+new int[0].M();
+"".M();
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">_</span>) { }
-}</pre>
+    public static void M(this ReadOnlySpan<int> _) { }
+    public static void M(this ReadOnlySpan<char> _) { }
+}
+```
 
 2つ目、ユーザー定義の型変換を介した呼び出し:
 
-<pre class="source" title="ユーザー定義の型変換ができなかった例(C# 14 で解決)">
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="error" title="CS1503"><span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">0</span>]</span>);
-<span class="static"><span class="type">X</span></span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="error" title="CS1503"><span class="string">&quot;&quot;</span></span>);
+```csharp
+X.M(new int[0]);
+X.M("");
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">A</span> <span class="variable local">_</span>) { }
+    public static void M(A _) { }
 }
 
-<span class="reserved">struct</span> <span class="type struct">A</span>
+struct A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type struct">A</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="reserved">default</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type struct">A</span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="reserved">default</span>;
+    public static implicit operator A(ReadOnlySpan<int> _) => default;
+    public static implicit operator A(ReadOnlySpan<char> _) => default;
 }
-</pre>
+```
 
 3つ目、ジェネリック型引数の型推論:
 
-<pre class="source" title="ジェネリック型推論ができなかった例(C# 14 で解決)">
-<span class="type"><span class="static">X</span></span><span class="operator">.</span><span class="method"><span class="static"><span class="error" title="CS0411">M</span></span></span>(<span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">0</span>]);
+```csharp
+X.M(new int[0]);
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">X</span></span>
+static class X
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type struct">ReadOnlySpan</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">_</span>) { }
+    public static void M<T>(ReadOnlySpan<T> _) { }
 }
-</pre>
+```
 
 また、単独ではエラーにならなくても、`IEnumerable<T>` 引数との混在でオーバーロード解決できなくなる例もあります。
 
-<pre class="source" title="IEnumerable と ReadOnlySpan の解決ができなかった例(C# 14 で解決)">
-<span class="reserved">int</span>[] <span class="variable">data</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] data = [1, 2, 3];
 
-<span class="type">Overloads</span><span class="operator">.</span><span class="method"><span class="static"><span class="error" title="CS0121">M</span></span></span>(<span class="variable">data</span>); <span class="comment">// 呼び分けができなくてコンパイル エラー(C# 13 まで)。</span>
-<span class="type">Overloads</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">data</span><span class="operator">.</span><span class="method">AsSpan</span>()); <span class="comment">// ReadOnlySpan&lt;int&gt; 版を呼びたければこう書く。</span>
+Overloads.M(data); // 呼び分けができなくてコンパイル エラー(C# 13 まで)。
+Overloads.M(data.AsSpan()); // ReadOnlySpan<int> 版を呼びたければこう書く。
 
-<span class="reserved">class</span> <span class="type">Overloads</span>
+class Overloads
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>) { } <span class="comment">// こっちの方が高速</span>
+    public static void M(IEnumerable<int> values) { }
+    public static void M(ReadOnlySpan<int> values) { } // こっちの方が高速
 }
-</pre>
+```
 
 ちなみに、[C# 12 で入ったコレクション式](../datatype/collection-expression.md#priority)や、
 [C# 13 で入った `params` コレクション](../structured/sp_params.md#params-collections)では、
 `T[]` や `IEnumerable<T>` よりも `Span<T>` や `ReadOnlySpan<T>` を優先的に選ぶように特別な処理が入っています。
 
-<pre class="source" title="コレクション式や params では ReadOnlySpan の優先度が高い">
-<span class="comment">// int[] を経由すると解決不能になるものの、</span>
-<span class="comment">// コレクション式や params を使った場合は ReadOnlySpan の優先度が高い扱い。</span>
-<span class="type">Overloads</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
-<span class="type">Overloads</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);
+```csharp
+// int[] を経由すると解決不能になるものの、
+// コレクション式や params を使った場合は ReadOnlySpan の優先度が高い扱い。
+Overloads.M([1, 2, 3]);
+Overloads.M(1, 2, 3);
 
-<span class="reserved">class</span> <span class="type">Overloads</span>
+class Overloads
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">params</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>)
+    public static void M(params IEnumerable<int> values)
     {
-        <span class="comment">// 何か</span>
+        // 何か
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">params</span> <span class="reserved">int</span>[] <span class="variable local">values</span>)
+    public static void M(params int[] values)
     {
-        <span class="comment">// 同じ何か</span>
+        // 同じ何か
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">params</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>) <span class="comment">// これが最優先。</span>
+    public static void M(params ReadOnlySpan<int> values) // これが最優先。
     {
-        <span class="comment">// 同じ何か</span>
+        // 同じ何か
     }
 }
-</pre>
+```
 
 この C# 13 で入ったコレクション式での特別扱いでもわかるように、
 今や `Span<T>` や `ReadOnlySpan<T>` が重要な地位を占めていて、
@@ -792,20 +793,20 @@ first-class になったことで、まず、
 前述の `IEnumerable<T>` との呼び分けができない問題も、C# 14 にするだけで解消して、
 `ReadOnlySpan<T>` 側が呼ばれるようになります。
 
-<pre class="source" title="C# 14 では ReadOnlySpan オーバーロードの優先度が上がった">
-<span class="reserved">int</span>[] <span class="variable">data</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] data = [1, 2, 3];
 
-<span class="type">Overloads</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>(<span class="variable">data</span>); <span class="comment">// C# 14 であればエラーにならない。</span>
+Overloads.M(data); // C# 14 であればエラーにならない。
 
-<span class="reserved">class</span> <span class="type">Overloads</span>
+class Overloads
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>) { }
+    public static void M(IEnumerable<int> values) { }
 
-    <span class="comment">// こっちの方が高速。</span>
-    <span class="comment">// C# 14 からオーバーロード解決で優先されるようになった。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>) { }
+    // こっちの方が高速。
+    // C# 14 からオーバーロード解決で優先されるようになった。
+    public static void M(ReadOnlySpan<int> values) { }
 }
-</pre>
+```
 
 [拡張メソッド](../functional/sp3_extension.md)の場合はオーバーロード解決のルールがちょっと違うんですが、
 「`ReadOnlySpan<T>` の方が有利なのに呼んでもらえなかった/呼べなかった」という問題はこちらにもありました。
@@ -814,20 +815,20 @@ first-class になったことで、まず、
 「ユーザー定義の変換なので拡張メソッドの解決に寄与しない」という扱いだったのが、
 C# 14 からは「コンパイラーが保証している変換で、優先的に拡張メソッドの解決に使われる」という扱いになります。
 
-<pre class="source" title="拡張メソッドでも ReadOnlySpan が特別扱いされるように">
-<span class="reserved">int</span>[] <span class="variable">data</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+```csharp
+int[] data = [1, 2, 3];
 
-<span class="comment">// C# 13 まで: IEnumerable の方が呼ばれる。</span>
-<span class="comment">//             (というか ReadOnlySpan の方しかないとコンパイル エラーになる。)</span>
-<span class="comment">// C# 14 から: ReadOnlySpan の方が呼ばれる。</span>
-<span class="variable">data</span><span class="operator">.</span><span class="method">M</span>();
+// C# 13 まで: IEnumerable の方が呼ばれる。
+//             (というか ReadOnlySpan の方しかないとコンパイル エラーになる。)
+// C# 14 から: ReadOnlySpan の方が呼ばれる。
+data.M();
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">Extensions</span></span>
+static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">values</span>) { } <span class="comment">// こっちが高速なのでこっちを読んでほしい。</span>
+    public static void M(this IEnumerable<int> values) { }
+    public static void M(this ReadOnlySpan<int> values) { } // こっちが高速なのでこっちを読んでほしい。
 }
-</pre>
+```
 
 ##### <a id="sec-generated-title-17"></a> <a id="covariance">ReadOnlySpan の共変性</a>
 
@@ -836,44 +837,44 @@ C# 14 からは「コンパイラーが保証している変換で、優先的�
 これが C# 13 まではできませんでした。
 C# 14 からはこれを受け付けます。
 
-<pre class="source" title="ReadOnlySpan の共変性">
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">string</span>&gt; <span class="variable">s</span> <span class="operator">=</span> [];
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">object</span>&gt; <span class="variable">span</span> <span class="operator">=</span> <span class="variable">s</span>; <span class="comment">// C# 13 ではエラー。</span>
-</pre>
+```csharp
+ReadOnlySpan<string> s = [];
+ReadOnlySpan<object> span = s; // C# 13 ではエラー。
+```
 
 ##### <a id="sec-generated-title-18"></a> <a id="read-only-span-over-span">Span よりも ReadOnlySpan の方を優先</a>
 
 ちなみに、`Span<T>` と `ReadOnlySpan<T>` の両方のオーバーロードがある場合、
 `ReadOnlySpan<T>` の方が優先されます。
 
-<pre class="source" title="ReadOnlySpan 優先">
-<span class="reserved">string</span>[] <span class="variable">s</span> <span class="operator">=</span> [];
+```csharp
+string[] s = [];
 
-<span class="comment">// ReadOnlySpan の方が優先。</span>
-<span class="variable">s</span><span class="operator">.</span><span class="method">M</span>();
+// ReadOnlySpan の方が優先。
+s.M();
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Extensions</span></span>
+static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;(<span class="reserved">this</span> <span class="type struct">Span</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;(<span class="reserved">this</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">_</span>) { } <span class="comment">// こちらが呼ばれる。</span>
+    public static void M<T>(this Span<T> _) { }
+    public static void M<T>(this ReadOnlySpan<T> _) { } // こちらが呼ばれる。
 }
-</pre>
+```
 
 これはパフォーマンス(どちらが高速か)の問題ではなく、
 こうしておかないとまた「[配列の共変性の地雷](../../../blog/2022/11/covariantarrayincident/index.md)を踏むから」という理由だそうです。
 
-<pre class="source" title="配列の共変性は結構な地雷">
-<span class="reserved">string</span>[] <span class="variable">s</span> <span class="operator">=</span> [];
-<span class="reserved">object</span>[] <span class="variable">o</span> <span class="operator">=</span> <span class="variable">s</span>; <span class="comment">// C# の配列は共変(歴史的経緯)。</span>
+```csharp
+string[] s = [];
+object[] o = s; // C# の配列は共変(歴史的経緯)。
 
-<span class="comment">// Span を優先するとこれが例外を起こしちゃう。</span>
-<span class="comment">// ReadOnlySpan&lt;object&gt; x = s; は合法。</span>
-<span class="comment">// Span&lt;object&gt; x = s; は実行時例外。</span>
-<span class="variable">o</span><span class="operator">.</span><span class="method">M</span>(); <span class="comment">// ReadOnlySpan&lt;object&gt; を優先しないとここで例外が出る。</span>
+// Span を優先するとこれが例外を起こしちゃう。
+// ReadOnlySpan<object> x = s; は合法。
+// Span<object> x = s; は実行時例外。
+o.M(); // ReadOnlySpan<object> を優先しないとここで例外が出る。
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">Ex</span></span>
+static class Ex
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="type struct">Span</span>&lt;<span class="reserved">object</span>&gt; <span class="variable local">_</span>) { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">object</span>&gt; <span class="variable local">_</span>) { }
+    public static void M(this Span<object> _) { }
+    public static void M(this ReadOnlySpan<object> _) { }
 }
-</pre>
+```

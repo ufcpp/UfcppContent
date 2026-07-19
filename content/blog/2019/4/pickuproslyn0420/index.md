@@ -63,10 +63,10 @@ C# によるプログラミング入門にも反映させてあります。
 
 以下のコードを書いたとき、 `c` の型はどうあるべきか
 
-<pre class="source" title="">
-<code><span class="reserved">int</span>? <span class="variable">b</span> = <span class="reserved">null</span>;
-<span class="reserved">var</span> <span class="variable">c</span> = <span class="variable">b</span> ??= 5;
-</code></pre>
+```csharp
+int? b = null;
+var c = b ??= 5;
+```
 
 - 今(16.1 Preview 1)の実装は `int?` になる
   - `b ??= 5` と `b = b ?? 5` が同じ意味になるように
@@ -90,13 +90,13 @@ C# によるプログラミング入門にも反映させてあります。
 - 匿名型のメンバーの nullability は追うべき？ → yes
 - 以下のコード、実装側で区別できなくて困らない？
 
-<pre class="source" title="">
-<code><span class="reserved">interface</span> <span class="type">I</span>
+```csharp
+interface I
 {
-    <span class="reserved">void</span> <span class="method">Foo</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> <span class="variable">value</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>;
-    <span class="reserved">void</span> <span class="method">Foo</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span>? <span class="variable">value</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span>;
+    void Foo<T>(T value) where T : class;
+    void Foo<T>(T? value) where T : struct;
 }
-</code></pre>
+```
 
 → 困る。実装側に `where` 制約を付けて区別できるようにしないといけない。
 

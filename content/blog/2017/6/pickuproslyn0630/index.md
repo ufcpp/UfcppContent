@@ -29,29 +29,29 @@ aliases: []
 
 どうもこれはプロトタイプ実装がすでに始まってるっぽい。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="comment">// よく言われる話で、bool なフラグがたくさん並ぶとどれがどれかわからない</span>
-    M(<span class="reserved">true</span>, <span class="reserved">true</span>, <span class="reserved">true</span>);
+    // よく言われる話で、bool なフラグがたくさん並ぶとどれがどれかわからない
+    M(true, true, true);
 
-    <span class="comment">// 名前付き引数には「オプションな引数を省略可能にする」という意味もあるけども</span>
-    M(isC: <span class="reserved">true</span>);
+    // 名前付き引数には「オプションな引数を省略可能にする」という意味もあるけども
+    M(isC: true);
 
-    <span class="comment">// どのフラグが何だったかを明記する意味でも使う</span>
-    M(isA: <span class="reserved">true</span>, isB: <span class="reserved">true</span>, isC: <span class="reserved">true</span>);
+    // どのフラグが何だったかを明記する意味でも使う
+    M(isA: true, isB: true, isC: true);
 
-    <span class="comment">// (これまで) 末尾の引数だけを名前付きにすることならできた</span>
-    M(<span class="reserved">true</span>, <span class="reserved">true</span>, isC: <span class="reserved">true</span>);
+    // (これまで) 末尾の引数だけを名前付きにすることならできた
+    M(true, true, isC: true);
 
-    <span class="comment">// (提案) それ以外の位置でも、一部分だけ名前付きにできるようにしたい</span>
-    M(isA: <span class="reserved">true</span>, <span class="reserved">true</span>, <span class="reserved">true</span>);
+    // (提案) それ以外の位置でも、一部分だけ名前付きにできるようにしたい
+    M(isA: true, true, true);
 }
 
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">bool</span> isA = <span class="reserved">false</span>, <span class="reserved">bool</span> isB = <span class="reserved">false</span>, <span class="reserved">bool</span> isC = <span class="reserved">false</span>)
+private static void M(bool isA = false, bool isB = false, bool isC = false)
 {
 }
-</code></pre>
+```
 
 ## どこででも拡張メソッドを定義
 
@@ -74,13 +74,13 @@ C# 7で、数値リテラルの数字と数字の間を `_` で区切れるよ�
 
 で、数字区切り(digit separator)の名前通り、ほんとに数字と数字の間にしか `_` を書けません。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">var</span> a = 1_2_3; <span class="comment">// OK</span>
-<span class="reserved">var</span> b = 0b1111_1111; <span class="comment">// OK</span>
-<span class="reserved">var</span> c = 0b_1111_1111; <span class="comment">// エラー。0b の直後に _ を書くのはダメ</span>
-<span class="reserved">var</span> d = 0xab_cd; <span class="comment">// OK</span>
-<span class="reserved">var</span> e = 0x_ab_cd; <span class="comment">// エラー。0x の直後に _ を書くのはダメ</span>
-</code></pre>
+```csharp
+var a = 1_2_3; // OK
+var b = 0b1111_1111; // OK
+var c = 0b_1111_1111; // エラー。0b の直後に _ を書くのはダメ
+var d = 0xab_cd; // OK
+var e = 0x_ab_cd; // エラー。0x の直後に _ を書くのはダメ
+```
 
 元々、`0b` や `0x` の直後にも `_` を書きたいという要望は多々あったんですが、
 「名前通りにしたい」、「数字区切りなのに数字でないところで区切れるようにはあんまりしたくない」みたいな雰囲気で、
@@ -96,56 +96,56 @@ C# 7ではこういう仕様になっています。
 
 C# 7で[分解](../../../../study/csharp/datatype/deconstruction.md)構文(deconstruction)が入りましたが、例えば以下のような場合を考えてみます。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> Point(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; (X, Y) = (x, y);
-    <span class="reserved">public</span> <span class="reserved">void</span> Deconstruct(<span class="reserved">out</span> <span class="reserved">int</span> x, <span class="reserved">out</span> <span class="reserved">int</span> y) =&gt; (x, y) = (X, Y);
+    public int X { get; }
+    public int Y { get; }
+    public Point(int x, int y) => (X, Y) = (x, y);
+    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> (x, y) = (1, 2);
+        var (x, y) = (1, 2);
 
-        <span class="comment">// ↑現状は一度 ValueTuple を作ってから、それぞれ x, yに代入するようなコードに展開される</span>
-        <span class="comment">//var t = new ValueTuple&lt;int, int&gt;(1, 2);</span>
-        <span class="comment">//var x = t.Item1;</span>
-        <span class="comment">//var y = t.Item2;</span>
+        // ↑現状は一度 ValueTuple を作ってから、それぞれ x, yに代入するようなコードに展開される
+        //var t = new ValueTuple<int, int>(1, 2);
+        //var x = t.Item1;
+        //var y = t.Item2;
 
-        <span class="comment">// でも、仕様上は以下のような状態に展開する最適化を認めてるし、実際将来的にそういうコード生成する可能性がある</span>
-        <span class="comment">//var x = 1;</span>
-        <span class="comment">//var y = 2;</span>
+        // でも、仕様上は以下のような状態に展開する最適化を認めてるし、実際将来的にそういうコード生成する可能性がある
+        //var x = 1;
+        //var y = 2;
 
-        <span class="comment">// だったら、var (x, y) = (1, 2); に ValueTuple は不要なはず</span>
+        // だったら、var (x, y) = (1, 2); に ValueTuple は不要なはず
 
-        <span class="reserved">var</span> (a, b) = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
+        var (a, b) = new Point(1, 2);
 
-        <span class="comment">// ↑この場合は完全にタプルは要らないはず</span>
-        <span class="comment">// 以下のようなコードに展開される(どこにも ValueTuple は出てこない)</span>
-        <span class="comment">//var p = new Point(1, 2);</span>
-        <span class="comment">//int a, b;</span>
-        <span class="comment">//p.Deconstruct(out a, out b);</span>
+        // ↑この場合は完全にタプルは要らないはず
+        // 以下のようなコードに展開される(どこにも ValueTuple は出てこない)
+        //var p = new Point(1, 2);
+        //int a, b;
+        //p.Deconstruct(out a, out b);
 
-        <span class="comment">// にもかかわらず、現状、分解を使っただけで ValueTuple (.NET 4.7以上、もしくは、System.ValueTuple パッケージの参照)が求められる</span>
+        // にもかかわらず、現状、分解を使っただけで ValueTuple (.NET 4.7以上、もしくは、System.ValueTuple パッケージの参照)が求められる
     }
 }
-</code></pre>
+```
 
 現状だと、不要なはずの `ValueTuple` が求められます。
 
 これは、将来的に以下のような構文を認めるために、分解とタプル構築の内部表現を統一したのの余波です。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">var</span> t = (<span class="reserved">var</span> x, <span class="reserved">var</span> y) = (1, 2);
+```csharp
+var t = (var x, var y) = (1, 2);
 
-<span class="comment">// ↑これは、↓これと同じ意味</span>
-<span class="comment">// (var x, var y) = (1, 2);</span>
-<span class="comment">// var t = (x, y);</span>
-</code></pre>
+// ↑これは、↓これと同じ意味
+// (var x, var y) = (1, 2);
+// var t = (x, y);
+```
 
 ですが、まあ、利用者としては不要なはずのパッケージ参照が必要になるというのは気分がいいものではありません。
 実際「バグ報告」扱いで報告が入ってしまっている状況。

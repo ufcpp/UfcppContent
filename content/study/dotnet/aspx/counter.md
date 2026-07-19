@@ -58,23 +58,23 @@ count\total.txt というファイルに書くことにします。
 
 例えば、以下のような感じのコードを Global.asax.cs（Global.asax のコードビハインド）のクラス中に追加します。
 
-<pre class="source" title="Global.asax.cs に追加" lang="">
-<code><span class="reserved">string</span> GetTotalCount()
+```csharp
+string GetTotalCount()
 {
-  <span class="reserved">string</span> filename = Request.PhysicalApplicationPath +
-    <span class="literal">@"\count\total.txt"</span>;
+  string filename = Request.PhysicalApplicationPath +
+    @"\count\total.txt";
 
   Application.Lock();
 
-  <span class="reserved">int</span> num;
-  <span class="reserved">using</span> (FileStream fs = <span class="reserved">new</span> FileStream(
+  int num;
+  using (FileStream fs = new FileStream(
     filename, FileMode.OpenOrCreate,
     FileAccess.ReadWrite, FileShare.None))
   {
-    StreamReader sr = <span class="reserved">new</span> StreamReader(fs);
-    <span class="reserved">string</span> line = sr.ReadLine();
+    StreamReader sr = new StreamReader(fs);
+    string line = sr.ReadLine();
 
-    <span class="reserved">if</span> (<span class="reserved">string</span>.IsNullOrEmpty(line) || !<span class="reserved">int</span>.TryParse(line, <span class="reserved">out</span> num))
+    if (string.IsNullOrEmpty(line) || !int.TryParse(line, out num))
     {
       num = 0;
     }
@@ -83,26 +83,26 @@ count\total.txt というファイルに書くことにします。
 
     fs.Seek(0, SeekOrigin.Begin);
 
-    StreamWriter sw = <span class="reserved">new</span> StreamWriter(fs);
+    StreamWriter sw = new StreamWriter(fs);
     sw.WriteLine(line);
     sw.Flush();
   }
   Application.UnLock();
 
-  <span class="reserved">return</span> num.ToString();
+  return num.ToString();
 }
 
-<span class="reserved">protected void</span> Session_Start(Object sender, EventArgs e)
+protected void Session_Start(Object sender, EventArgs e)
 {
-  <span class="reserved">if</span> (CheckExcludeList())
-    <span class="reserved">return</span>;
+  if (CheckExcludeList())
+    return;
 
   AddAccessLog();
 
-  <span class="reserved">string</span> count = GetTotalCount();
-  Session[<span class="literal">"TotalCount"</span>] = count;
+  string count = GetTotalCount();
+  Session["TotalCount"] = count;
 }
-</code></pre>
+```
 
 
 この例中、最後の行の Session["TotalCount"] = count; なんですが、
@@ -127,47 +127,47 @@ Response.Cookies でサーバから送り返す Cookie を設定します。
 ということで、
 「[ログの記録](logging.md#logging)」で作った AddAccessLog メソッドを以下のように書き換えます。
 
-<pre class="source" title="AddAccessLog を修正" lang="">
-<code><span class="reserved">void</span> AddAccessLog(<span class="reserved">string</span> count)
+```csharp
+void AddAccessLog(string count)
 {
-      <span class="reserved">string</span> basePath = Request.PhysicalApplicationPath + <span class="literal">@"\accesslog\"</span>;
+      string basePath = Request.PhysicalApplicationPath + @"\accesslog\";
       DateTime now = DateTime.Now;
-      <span class="reserved">string</span> filename = basePath
-        + <span class="reserved">string</span>.Format(<span class="literal">"{0}{1:00}.csv"</span>, now.Year, now.Month);
+      string filename = basePath
+        + string.Format("{0}{1:00}.csv", now.Year, now.Month);
 
-<em>  <span class="reserved">string</span> prev;
-  <span class="reserved">if</span> (Request.Cookies[<span class="literal">"PREV"</span>] != <span class="reserved">null</span>)
-    prev = Request.Cookies[<span class="literal">"PREV"</span>].Value;
-  <span class="reserved">else</span>
+  string prev;
+  if (Request.Cookies["PREV"] != null)
+    prev = Request.Cookies["PREV"].Value;
+  else
     prev = count;
 
-  Response.Cookies[<span class="literal">"PREV"</span>].Value = count;</em>
+  Response.Cookies["PREV"].Value = count;
 
   Application.Lock();
 
-  <span class="reserved">using</span> (StreamWriter sw = <span class="reserved">new</span> StreamWriter(filename, <span class="reserved">true</span>))
+  using (StreamWriter sw = new StreamWriter(filename, true))
   {
-    sw.Write(<span class="literal">"\""</span> + DateTime.Now.ToString() + <span class="literal">"\","</span>);
-    sw.Write(<span class="literal">"\""</span> +
+    sw.Write("\"" + DateTime.Now.ToString() + "\",");
+    sw.Write("\"" +
       System.Net.Dns.GetHostEntry(Request.UserHostName).HostName +
-      <span class="literal">"\","</span>);
-    sw.Write(<span class="literal">"\""</span> + Request.UserAgent + <span class="literal">"\","</span>);
-    sw.Write(<span class="literal">"\""</span> + Request.Url + <span class="literal">"\","</span>);
-    sw.Write(<span class="literal">"\""</span> + Request.UrlReferrer + <span class="literal">"\"\n"</span>);
+      "\",");
+    sw.Write("\"" + Request.UserAgent + "\",");
+    sw.Write("\"" + Request.Url + "\",");
+    sw.Write("\"" + Request.UrlReferrer + "\"\n");
   }
   Application.UnLock();
 }
 
-<span class="reserved">protected void</span> Session_Start(Object sender, EventArgs e)
+protected void Session_Start(Object sender, EventArgs e)
 {
-  <span class="reserved">if</span> (CheckExcludeList())
-    <span class="reserved">return</span>;
+  if (CheckExcludeList())
+    return;
 
-  <span class="reserved">string</span> count = GetTotalCount();
+  string count = GetTotalCount();
   Session["count"] = count;
   AddAccessLog(count);
 }
-</code></pre>
+```
 
 
 
@@ -179,26 +179,26 @@ Web フォーム（.aspx）ページ中に表示するのは非常に簡単で�
 1番簡単な方法でいうと、カウント数を表示したい位置に以下の1行を書くだけ。
 
 
-<pre class="xsource" title="カウント数の表示">
-<code>&lt;%= Session["count"] %&gt;
-</code></pre>
+```xml
+<%= Session["count"] %>
+```
 例えば、以下のような感じ。
 
 
-<pre class="xsource" title="Default.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">Language</span><span class="attvalue">="C#"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page Language="C#" %>
 
-<span class="bracket">&lt;</span><span class="element">html</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">head</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">title</span><span class="bracket">&gt;</span>テストページ<span class="bracket">&lt;/</span><span class="element">title</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">head</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
-    総アクセス数: <span class="bracket">&lt;%</span>= Session["count"] <span class="bracket">%&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+<html>
+<head>
+  <title>テストページ</title>
+</head>
+<body>
+  <p>
+    総アクセス数: <%= Session["count"] %>
+  </p>
+</body>
+</html>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="image"></a>画像カウンタ
 
@@ -211,28 +211,28 @@ Page_Load イベントハンドラに以下のようなコードを書きます�
 （画像の作り方に関してはほんの一例。
 要点は強調表示している4行。）
 
-<pre class="source" title="画像カウンタ" lang="">
-<code><span class="reserved">private void</span> Page_Load(<span class="reserved">object</span> sender, System.EventArgs e)
+```csharp
+private void Page_Load(object sender, System.EventArgs e)
 {
-  <span class="reserved">string</span> text = (<span class="reserved">string</span>)Session[<span class="literal">"TotalCount"</span>];
-  text = text.PadLeft(7, <span class="literal">'0'</span>);
-  Font font = <span class="reserved">new</span> Font(<span class="literal">"ＭＳ ゴシック"</span>, 15);
+  string text = (string)Session["TotalCount"];
+  text = text.PadLeft(7, '0');
+  Font font = new Font("ＭＳ ゴシック", 15);
 
-  Bitmap bitmap = <span class="reserved">new</span> Bitmap(75, 20);
+  Bitmap bitmap = new Bitmap(75, 20);
   Graphics graphics = Graphics.FromImage(bitmap); 
 
   graphics.FillRectangle(Brushes.White, 0, 0, 75 , 20);
   graphics.DrawString(text, font, Brushes.Black,0,2);
 
-<em>  Response.ClearContent();
-  Response.ContentType = <span class="literal">"image/gif"</span>;
+  Response.ClearContent();
+  Response.ContentType = "image/gif";
   bitmap.Save(Response.OutputStream, ImageFormat.Gif);
-  Response.End();</em>
+  Response.End();
 
   graphics.Dispose();
   bitmap.Dispose(); 
 }
-</code></pre>
+```
 
 
 .aspx ファイル中に何を書いていようと、
@@ -245,12 +245,12 @@ Response.ClearContent() メソッドを呼び出すことで、
 （ここでは、これのファイル名は Counter.aspx としておきます。）
 
 
-<pre class="xsource" title="Counter.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">language</span><span class="attvalue">="c#"</span> <span class="bracket">%&gt;</span>
-<span class="bracket">&lt;%@ </span><span class="element">import</span> <span class="attribute">Namespace</span><span class="attvalue">="System.Drawing.Imaging"</span> <span class="bracket">%&gt;</span>
-<span class="bracket">&lt;%@ </span><span class="element">import</span> <span class="attribute">Namespace</span><span class="attvalue">="System.Drawing"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page language="c#" %>
+<%@ import Namespace="System.Drawing.Imaging" %>
+<%@ import Namespace="System.Drawing" %>
 
-<span class="bracket">&lt;</span><span class="element">script</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<script runat="server">
 
 private void Page_Load(object sender, System.EventArgs e)
 {
@@ -273,34 +273,34 @@ private void Page_Load(object sender, System.EventArgs e)
   bitmap.Dispose(); 
 }
 
-<span class="bracket">&lt;/</span><span class="element">script</span><span class="bracket">&gt;</span>
-</code></pre>
+</script>
+```
 この画像カウンタを呼び出す HTML 側には以下のような感じで &lt;img&gt; タグを書きます。
 
 
-<pre class="xsource" title="カウンタ利用側の HTML">
-<code><span class="bracket">&lt;</span><span class="element">html</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">head</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">title</span><span class="bracket">&gt;</span>テストページ<span class="bracket">&lt;/</span><span class="element">title</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">head</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+```html
+<html>
+<head>
+  <title>テストページ</title>
+</head>
+<body>
+  <p>
     総アクセス数: 
-    <span class="bracket">&lt;</span><span class="element">img</span> <span class="attribute">src</span><span class="attvalue">="Counter.aspx"</span> <span class="attribute">width</span><span class="attvalue">="75"</span> <span class="attribute">height</span><span class="attvalue">="20"</span><span class="bracket">/&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+    <img src="Counter.aspx" width="75" height="20"/>
+  </p>
+</body>
+</html>
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="js"></a>おまけ（JavaScript 版）
 
 同じ理屈で、JavaScript カウンタにしたりもできます。
 
 
-<pre class="xsource" title="JsCounter.aspx">
-<code><span class="bracket">&lt;%@ </span><span class="element">Page</span> <span class="attribute">language</span><span class="attvalue">="c#"</span> <span class="bracket">%&gt;</span>
+```html
+<%@ Page language="c#" %>
 
-<span class="bracket">&lt;</span><span class="element">script</span> <span class="attribute">runat</span><span class="attvalue">="server"</span><span class="bracket">&gt;</span>
+<script runat="server">
 
 private void Page_Load(object sender, System.EventArgs e)
 {
@@ -310,22 +310,22 @@ private void Page_Load(object sender, System.EventArgs e)
   Response.Output.Write("document.write(" + text + ");");
 }
 
-<span class="bracket">&lt;/</span><span class="element">script</span><span class="bracket">&gt;</span>
-</code></pre>
+</script>
+```
 これを JsCounter.aspx という名前で保存したとすると、
 呼び出し側の HTML では以下のような書きます。
 
 
-<pre class="xsource" title="JavaScript カウンタ利用側の HTML">
-<code><span class="bracket">&lt;</span><span class="element">html</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">head</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">title</span><span class="bracket">&gt;</span>テストページ<span class="bracket">&lt;/</span><span class="element">title</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">head</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">body</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;</span><span class="element">p</span><span class="bracket">&gt;</span>
+```html
+<html>
+<head>
+  <title>テストページ</title>
+</head>
+<body>
+  <p>
     総アクセス数: 
-    <span class="bracket">&lt;</span><span class="element">script</span> <span class="attribute">type</span><span class="attvalue">="text/javascript"</span> <span class="attribute">src</span><span class="attvalue">="JsCounter.aspx"</span><span class="bracket">&gt;</span><span class="bracket">&lt;/</span><span class="element">script</span><span class="bracket">&gt;</span>
-  <span class="bracket">&lt;/</span><span class="element">p</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">body</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;/</span><span class="element">html</span><span class="bracket">&gt;</span>
-</code></pre>
+    <script type="text/javascript" src="JsCounter.aspx"></script>
+  </p>
+</body>
+</html>
+```

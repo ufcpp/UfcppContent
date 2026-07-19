@@ -246,12 +246,12 @@ x + y みたいな演算子適用が主。
 
 ※2 クエリ式、ラムダ式、代入は同列で、例えば、以下のような C# コードを書けます。
 
-<pre class="source" title="クエリ式、ラムダ式、代入を含む式" lang="">
-<code><span class="reserved">int</span> sum = 0;
-<span class="type">Func</span>&lt;<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt;&gt; q = () =&gt;
-  <span class="reserved">from</span> x <span class="reserved">in</span> <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 }
-  <span class="reserved">select</span> sum += x;
-</code></pre>
+```csharp
+int sum = 0;
+Func<IEnumerable<int>> q = () =>
+  from x in new[] { 1, 2, 3, 4, 5 }
+  select sum += x;
+```
 
 
 
@@ -268,31 +268,31 @@ x + y みたいな演算子適用が主。
 演算子のオペランドは、演算子の優先順位や結合規則によらず、常に左から順に評価されます。
 例えば、以下のように、画面への出力を伴うメソッド Echo を呼ぶと、2, 3, 4 の順で出力されます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> Echo(<span class="reserved">int</span> x)
+    static int Echo(int x)
     {
-        <span class="type">Console</span>.WriteLine(x);
-        <span class="reserved">return</span> x;
+        Console.WriteLine(x);
+        return x;
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> s = Echo(2) + Echo(3) * Echo(4);
-        <span class="comment">// 演算子の優先順位に関係なく、Echo(2) → Echo(3) → Echo(4) の順に呼ばれる</span>
+        var s = Echo(2) + Echo(3) * Echo(4);
+        // 演算子の優先順位に関係なく、Echo(2) → Echo(3) → Echo(4) の順に呼ばれる
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 2
 3
 4
-</pre>
+```
 
 
 
@@ -312,11 +312,9 @@ x + y みたいな演算子適用が主。
 		<td markdown="1" rowspan="2">宣言</td>
 		<td markdown="1">ローカル変数</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span> x;
-<span class="reserved">string</span> s = <span class="literal">"sample"</span>;
-<span class="reserved">var</span> a = 10;
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">int x;
+string s = &quot;sample&quot;;
+var a = 10;</code></pre>
 
 </td>
 		<td markdown="1">「[変数と式](../start/st_variable.md)」</td>
@@ -324,10 +322,8 @@ x + y みたいな演算子適用が主。
 	<tr>
 		<td markdown="1">ローカル定数</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">const</span> <span class="reserved">int</span> x = 100;
-<span class="reserved">const</span> <span class="reserved">double</span> e = 2.71828;
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">const int x = 100;
+const double e = 2.71828;</code></pre>
 
 </td>
 		<td markdown="1">「[定数](../start/sp_const.md)」</td>
@@ -335,10 +331,8 @@ x + y みたいな演算子適用が主。
 	<tr>
 		<td markdown="1" colspan="2">式</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code>x = 1 + 2;
-<span class="type">Math</span>.Sin(1);
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">x = 1 + 2;
+Math.Sin(1);</code></pre>
 
 </td>
 		<td markdown="1">式単体。 「式;」。「[変数と式](../start/st_variable.md)」「[式](#expression)」</td>
@@ -346,16 +340,14 @@ x + y みたいな演算子適用が主。
 	<tr>
 		<td markdown="1" colspan="2">オーバーフローのチェック</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">checked</span>
+<pre class="source" title="" lang=""><code class="language-csharp">checked
 {
-    <span class="reserved">int</span> z = x * y;
+    int z = x * y;
 }
-<span class="reserved">unchecked</span>
+unchecked
 {
-    <span class="reserved">int</span> z = x * y;
-}
-</code></pre>
+    int z = x * y;
+}</code></pre>
 
 </td>
 		<td markdown="1">「[オーバーフローのチェック](../start/sp_checked.md)」</td>
@@ -364,9 +356,7 @@ x + y みたいな演算子適用が主。
 		<td markdown="1" rowspan="2">条件分岐</td>
 		<td markdown="1">if 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">if</span> (条件) { } <span class="reserved">else</span> { }
-</code></pre>
+<pre class="source" title="" lang=""><code class="language-csharp">if (条件) { } else { }</code></pre>
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[if 文](../structured/st_branch.md#if)」</td>
@@ -374,15 +364,13 @@ x + y みたいな演算子適用が主。
 	<tr>
 		<td markdown="1">switch 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">switch</span>(値)
+<pre class="source" title="" lang=""><code class="language-csharp">switch(値)
 {
-    <span class="reserved">case</span> 0:
-        <span class="reserved">break</span>;
-    <span class="reserved">default</span>:
-        <span class="reserved">break</span>;
-}
-</code></pre>
+    case 0:
+        break;
+    default:
+        break;
+}</code></pre>
 
 </td>
 		<td markdown="1">「[switch 文](../structured/st_branch.md#switch)」</td>
@@ -391,13 +379,11 @@ x + y みたいな演算子適用が主。
 		<td markdown="1" rowspan="4">反復処理</td>
 		<td markdown="1">while 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span> n = 10;
-<span class="reserved">while</span> (n &gt; 0)
+<pre class="source" title="" lang=""><code class="language-csharp">int n = 10;
+while (n &gt; 0)
 {
     --n;
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[while 文](../structured/st_loop.md#while)」</td>
@@ -405,13 +391,11 @@ x + y みたいな演算子適用が主。
 	<tr>
 		<td markdown="1">do 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">string</span> s;
-<span class="reserved">do</span>
+<pre class="source" title="" lang=""><code class="language-csharp">string s;
+do
 {
-    s = <span class="type">Console</span>.ReadLine();
-} <span class="reserved">while</span> (s.Length == 0);
-</code></pre>
+    s = Console.ReadLine();
+} while (s.Length == 0);</code></pre>
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[do-while 文](../structured/st_loop.md#dowhile)」</td>
@@ -419,12 +403,10 @@ x + y みたいな演算子適用が主。
 	<tr>
 		<td markdown="1">for 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 10; i++)
+<pre class="source" title="" lang=""><code class="language-csharp">for (int i = 0; i &lt; 10; i++)
 {
 
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[for 文](../structured/st_loop.md#for)」</td>
@@ -432,13 +414,11 @@ x + y みたいな演算子適用が主。
 	<tr>
 		<td markdown="1">foreach 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">var</span> array = <span class="reserved">new</span>[] { 1, 2, 3 };
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> array)
+<pre class="source" title="" lang=""><code class="language-csharp">var array = new[] { 1, 2, 3 };
+foreach (var x in array)
 {
 
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">「[制御フロー](../structured/st_control.md)」「[foreach文](../structured/st_loop.md#foreach)」「[foreach](../data/sp_foreach.md)」</td>
@@ -447,16 +427,14 @@ x + y みたいな演算子適用が主。
 		<td markdown="1" rowspan="2">反復の中断</td>
 		<td markdown="1">break 文</td>
 		<td markdown="1" rowspan="2">
-<pre class="source" title="" lang="">
-<code><span class="reserved">while</span> (<span class="reserved">true</span>)
+<pre class="source" title="" lang=""><code class="language-csharp">while (true)
 {
-    <span class="reserved">if</span> (nothingToDo)
-        <span class="reserved">continue</span>;
+    if (nothingToDo)
+        continue;
 
-    <span class="reserved">if</span> (!isActive)
-        <span class="reserved">break</span>;
-}
-</code></pre>
+    if (!isActive)
+        break;
+}</code></pre>
 
 </td>
 		<td markdown="1">「[反復処理](../structured/st_loop.md)」</td>
@@ -468,16 +446,14 @@ x + y みたいな演算子適用が主。
 	<tr>
 		<td markdown="1" colspan="2">goto 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">while</span> (<span class="reserved">true</span>)
+<pre class="source" title="" lang=""><code class="language-csharp">while (true)
 {
-    <span class="reserved">while</span> (<span class="reserved">true</span>)
+    while (true)
     {
-        <span class="reserved">goto</span> LOOP_END;
+        goto LOOP_END;
     }
 }
-LOOP_END: ;
-</code></pre>
+LOOP_END: ;</code></pre>
 
 </td>
 		<td markdown="1">「[goto 文](../structured/st_branch.md#goto)」</td>
@@ -485,12 +461,10 @@ LOOP_END: ;
 	<tr>
 		<td markdown="1" colspan="2">return 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span> Add(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+<pre class="source" title="" lang=""><code class="language-csharp">int Add(int x, int y)
 {
-    <span class="reserved">return</span> x + y;
-}
-</code></pre>
+    return x + y;
+}</code></pre>
 
 </td>
 		<td markdown="1">「[関数](../structured/st_function.md)」</td>
@@ -498,15 +472,13 @@ LOOP_END: ;
 	<tr>
 		<td markdown="1" colspan="2">yield 文</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; ZeroTo(<span class="reserved">int</span> x)
+<pre class="source" title="" lang=""><code class="language-csharp">IEnumerable&lt;int&gt; ZeroTo(int x)
 {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt;= x; i++)
+    for (int i = 0; i &lt;= x; i++)
     {
-        <span class="reserved">yield</span> <span class="reserved">return</span> i;
+        yield return i;
     }
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">「[イテレーター](../data/sp2_iterator.md)」</td>
@@ -514,17 +486,15 @@ LOOP_END: ;
 	<tr>
 		<td markdown="1" colspan="2">例外処理</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">try</span>
+<pre class="source" title="" lang=""><code class="language-csharp">try
 {
 }
-<span class="reserved">catch</span> (<span class="type">IOException</span>)
+catch (IOException)
 {
 }
-<span class="reserved">finally</span>
+finally
 {
-}
-</code></pre>
+}</code></pre>
 
 </td>
 		<td markdown="1">「[例外処理](../structured/oo_exception.md)」</td>
@@ -532,12 +502,10 @@ LOOP_END: ;
 	<tr>
 		<td markdown="1" colspan="2">リソース破棄</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> (<span class="reserved">var</span> r = <span class="type">File</span>.OpenText(<span class="literal">"a.txt"</span>))
+<pre class="source" title="" lang=""><code class="language-csharp">using (var r = File.OpenText(&quot;a.txt&quot;))
 {
-    <span class="reserved">var</span> s = r.ReadLine();
-}
-</code></pre>
+    var s = r.ReadLine();
+}</code></pre>
 
 </td>
 		<td markdown="1">「[リソースの破棄](../resource/oo_dispose.md)」</td>
@@ -545,16 +513,14 @@ LOOP_END: ;
 	<tr>
 		<td markdown="1" colspan="2">ロック</td>
 		<td markdown="1">
-<pre class="source" title="" lang="">
-<code><span class="reserved">object</span> syncObj = <span class="reserved">new</span> <span class="reserved">object</span>();
-<span class="type">Parallel</span>.ForEach(data, x =&gt;
+<pre class="source" title="" lang=""><code class="language-csharp">object syncObj = new object();
+Parallel.ForEach(data, x =&gt;
 {
-    <span class="reserved">lock</span> (syncObj)
+    lock (syncObj)
     {
         sum += x;
     }
-});
-</code></pre>
+});</code></pre>
 
 </td>
 		<td markdown="1">「[lock 文](../async/sp_thread.md#lock)」</td>

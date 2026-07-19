@@ -40,10 +40,10 @@ dynamic キーワードを使うことで、動的型付け変数を定義でき
 使い方としては var （C# 3.0 で追加された型推論）と似ています。
 しかしながら、あくまで型推論である var と違って、dynamic で宣言した変数の型は「動的型」になります。
 
-<pre class="source" title="dynamic 型" lang="">
-<code><span class="reserved">var</span> sx = 1;     <span class="comment">// sx の型は int 型</span>
-<span class="reserved">dynamic</span> dx = 1; <span class="comment">// dx の型は dynamic 型</span>
-</code></pre>
+```csharp
+var sx = 1;     // sx の型は int 型
+dynamic dx = 1; // dx の型は dynamic 型
+```
 
 
 通常、C# （3.0 以前）のような静的型付け言語では、
@@ -52,12 +52,12 @@ dynamic キーワードを使うことで、動的型付け変数を定義でき
 例えば、以下のようなコードを書くと、
 「'object' に 'X' の定義が含まれていません」というようなエラーが生じます。
 
-<pre class="source" title="object 型には X というプロパティはありません" lang="">
-<code><span class="reserved">static object</span> GetX(<span class="reserved">object</span> obj)
+```csharp
+static object GetX(object obj)
 {
-  <span class="reserved">return</span> obj.X;
+  return obj.X;
 }
-</code></pre>
+```
 
 
 実際に obj 変数に何の型が入っているかには関係なく、キャストで型を変えない限り、
@@ -65,12 +65,12 @@ obj は object 型のメンバーにしかアクセスできません。
 
 一方、C# 4.0 では、dynamic 型を使うことで、以下のようなコードが書けるようになりました。
 
-<pre class="source" title="dynamic 型なら、" lang="">
-<code><span class="reserved">static dynamic</span> GetX(<span class="reserved">dynamic</span> obj)
+```csharp
+static dynamic GetX(dynamic obj)
 {
-  <span class="reserved">return</span> obj.X;
+  return obj.X;
 }
-</code></pre>
+```
 
 
 obj が本当に X という名前のプロパティを持っているかどうかは、
@@ -129,74 +129,74 @@ DLL や COM 内のクラス・関数を（必要になったときに、必要�
 
 例えば、以下のようなライブラリコード（lib.cs）を書いたとします。
 
-<pre class="source" title="lib.cs" lang="">
-<code><span class="reserved">public class</span> Calculator
+```csharp
+public class Calculator
 {
-    <span class="reserved">public int</span> Add(<span class="reserved">int</span> x, <span class="reserved">int</span> y) { <span class="reserved">return</span> x + y; }
-    <span class="reserved">public int</span> Sub(<span class="reserved">int</span> x, <span class="reserved">int</span> y) { <span class="reserved">return</span> x - y; }
-    <span class="reserved">public int</span> Mul(<span class="reserved">int</span> x, <span class="reserved">int</span> y) { <span class="reserved">return</span> x * y; }
-    <span class="reserved">public int</span> Div(<span class="reserved">int</span> x, <span class="reserved">int</span> y) { <span class="reserved">return</span> x / y; }
+    public int Add(int x, int y) { return x + y; }
+    public int Sub(int x, int y) { return x - y; }
+    public int Mul(int x, int y) { return x * y; }
+    public int Div(int x, int y) { return x / y; }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="lib.cs のコンパイル">
-<span class="prompt">&gt; </span>csc /t:library lib.cs
-</pre>
+```console
+> csc /t:library lib.cs
+```
 
 
 このライブラリを使って、以下のようなプログラム（sample.cs）を作ったとします。
 
-<pre class="source" title="sample.cs" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Program
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> calc = <span class="reserved">new</span> Calculator();
+        var calc = new Calculator();
         Console.WriteLine(calc.Add(1, 2));
     }
 }
-</code></pre>
+```
 
 
 このコードをコンパイルするためには、以下のように、/r オプションで DLL の参照を行う必要があります。
 
-<pre class="console" title="lib.cs のコンパイル">
-<span class="prompt">&gt; </span>csc /t:exe /r:lib.dll sample.cs
-</pre>
+```console
+> csc /t:exe /r:lib.dll sample.cs
+```
 
 
 これに対して、遅延バインドというのは、必要になるまで DLL をロードしないことを言います。
 3.0 以前の C# では、遅延バインドをしようと思うと、「[リフレクション](sp_reflection.md#reflection)」を使って、
 以下のようなまどろっこしい書き方が必要でした。
 
-<pre class="source" title="late.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reflection;
+```csharp
+using System;
+using System.Reflection;
 
-<span class="reserved">class</span> Program
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> lib = Assembly.LoadWithPartialName(<span class="literal">"lib"</span>);
-        <span class="reserved">var</span> type = lib.GetType(<span class="literal">"Calculator"</span>);
-        <span class="reserved">var</span> calc = Activator.CreateInstance(type);
+        var lib = Assembly.LoadWithPartialName("lib");
+        var type = lib.GetType("Calculator");
+        var calc = Activator.CreateInstance(type);
 
-        <span class="reserved">var</span> add = type.GetMethod(<span class="literal">"Add"</span>);
-        Console.WriteLine(<em>add.Invoke(calc, <span class="reserved">new object</span>[] { 1, 2 })</em>);
+        var add = type.GetMethod("Add");
+        Console.WriteLine(add.Invoke(calc, new object[] { 1, 2 }));
     }
 }
-</code></pre>
+```
 
 
 こうすると、コンパイル時に lib.dll を参照する必要がなく、
 以下のようにしてコンパイル可能です。
 
-<pre class="console" title="lib.cs のコンパイル">
-<span class="prompt">&gt; </span>csc /t:exe sample.cs
-</pre>
+```console
+> csc /t:exe sample.cs
+```
 
 
 （ただし、実行時に、プログラム本体と同じフォルダに lib.dll が置いてある必要があります。）
@@ -204,22 +204,22 @@ DLL や COM 内のクラス・関数を（必要になったときに、必要�
 3.0 までのリフレクションを使った書き方に対して、
 C# 4.0 の dynamic を使うと、add.Invoke の部分を簡素化できて、以下のように書けます。
 
-<pre class="source" title="late.cs" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reflection;
+```csharp
+using System;
+using System.Reflection;
 
-<span class="reserved">class</span> Program
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> lib = Assembly.LoadWithPartialName(<span class="literal">"lib"</span>);
-        <span class="reserved">var</span> type = lib.GetType(<span class="literal">"Calculator"</span>);
-        <span class="reserved">dynamic</span> calc = Activator.CreateInstance(type);
+        var lib = Assembly.LoadWithPartialName("lib");
+        var type = lib.GetType("Calculator");
+        dynamic calc = Activator.CreateInstance(type);
 
-        Console.WriteLine(<em>calc.Add(1, 2)</em>);
+        Console.WriteLine(calc.Add(1, 2));
     }
 }
-</code></pre>
+```
 
 
 
@@ -234,27 +234,27 @@ dynamic 型を使うことで、IronPython などの、DLR 上に実装された
 例えば、以下のような Python コードを書いて、
 helloworld.py という名前で保存したとします。
 
-<pre class="source" title="helloworld.py （Python で Hello World）" lang="">
-<code>def welcome(name):
+```python
+def welcome(name):
 	return "Hello '" + name + "' from IronPython"      
-</code></pre>
+```
 
 
 この Python コードを呼び出すための C# コードは以下のようになります。
 
-<pre class="source" title="C# から Python コードを呼び出す" lang="">
-<code>ScriptRuntime py = Python.CreateRuntime();
-<span class="reserved">dynamic</span> helloworld = py.UseFile(<span class="literal">"helloworld.py"</span>);
+```csharp
+ScriptRuntime py = Python.CreateRuntime();
+dynamic helloworld = py.UseFile("helloworld.py");
 
-<span class="reserved">var</span> ret = (<span class="reserved">string</span>)helloworld.welcome(<span class="literal">"ufcpp"</span>);
+var ret = (string)helloworld.welcome("ufcpp");
 
 Console.WriteLine(ret);
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 Hello 'ufcpp' from IronPython
-</pre>
+```
 
 
 このコードの実行には、IronPython が必要です。
@@ -286,27 +286,27 @@ C# 3.0 以前なら、
 
 例えば、以下のような構造体を用意します。
 
-<pre class="source" title="X と Y を持つ構造体" lang="">
-<code><span class="reserved">struct</span> Point2D
+```csharp
+struct Point2D
 {
-    <span class="reserved">public int</span> X, Y;
+    public int X, Y;
 
-    <span class="reserved">public override string</span> ToString()
+    public override string ToString()
     {
-        <span class="reserved">return string</span>.Format(<span class="literal">"2D: ({0}, {1})"</span>, X, Y);
+        return string.Format("2D: ({0}, {1})", X, Y);
     }
 }
 
-<span class="reserved">struct</span> Point3D
+struct Point3D
 {
-    <span class="reserved">public int</span> X, Y, Z;
+    public int X, Y, Z;
 
-    <span class="reserved">public override string</span> ToString()
+    public override string ToString()
     {
-        <span class="reserved">return string</span>.Format(<span class="literal">"3D: ({0}, {1}, {2})"</span>, X, Y, Z);
+        return string.Format("3D: ({0}, {1}, {2})", X, Y, Z);
     }
 }
-</code></pre>
+```
 
 
 プロパティ Z は Point3D しか持っていませんが、
@@ -316,62 +316,62 @@ X と Y なら両方のクラスが持っています。
 
 ということで、これらの型を使って以下のようなことができます。
 
-<pre class="source" title="X, Y という名前のメンバーさえ持っていれば型を問わない" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Program
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        Console.WriteLine(Sum(<span class="reserved">new</span> Point2D { X = 1, Y = 2 }));
-        Console.WriteLine(Sum(<span class="reserved">new</span> Point3D { X = 1, Y = 2, Z = 3 }));
-        Console.WriteLine(Sum(<span class="reserved">new</span> { X = 1, Y = 2 }));
+        Console.WriteLine(Sum(new Point2D { X = 1, Y = 2 }));
+        Console.WriteLine(Sum(new Point3D { X = 1, Y = 2, Z = 3 }));
+        Console.WriteLine(Sum(new { X = 1, Y = 2 }));
     }
 
-    <span class="reserved">static int</span> Sum(<span class="reserved">dynamic</span> obj)
+    static int Sum(dynamic obj)
     {
-        <span class="reserved">return</span> (<span class="reserved">int</span>)(obj.X + obj.Y);
+        return (int)(obj.X + obj.Y);
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 3
 3
 3
-</pre>
+```
 
 
-<pre class="source" title="同じ名前のメンバーを持つ型から値をコピー" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> Program
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        Console.WriteLine(Convert(<span class="reserved">new</span> Point3D { X = 1, Y = 2, Z = 3 }));
-        Console.WriteLine(Convert(<span class="reserved">new</span> { X = 1, Y = 2 }));
-        Console.WriteLine(Convert(<span class="reserved">new</span> { X = 1, Y = 2, Z = 3 }));
+        Console.WriteLine(Convert(new Point3D { X = 1, Y = 2, Z = 3 }));
+        Console.WriteLine(Convert(new { X = 1, Y = 2 }));
+        Console.WriteLine(Convert(new { X = 1, Y = 2, Z = 3 }));
     }
 
-    <span class="reserved">static</span> Point2D Convert(<span class="reserved">dynamic</span> obj)
+    static Point2D Convert(dynamic obj)
     {
-        <span class="reserved">return new</span> Point2D
+        return new Point2D
         {
             X = obj.X,
             Y = obj.Y,
         };
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 2D: (1, 2)
 2D: (1, 2)
 2D: (1, 2)
-</pre>
+```
 
 
 
@@ -383,17 +383,17 @@ X と Y なら両方のクラスが持っています。
 例えば、スキーマが特に決まっていない XML や JSON など読み書きが少々面倒だったりします。
 XML にアクセスするのにも、以下のようなコードが必要になります。
 
-<pre class="source" title="LINQ to XML" lang="">
-<code><span class="reserved">var</span> doc = XDocument.Parse(<span class="literal">@"
-&lt;Point&gt;
-    &lt;X&gt;1&lt;/X&gt;
-    &lt;Y&gt;2&lt;/Y&gt;
-&lt;/Point&gt;
-"</span>);
+```csharp
+var doc = XDocument.Parse(@"
+<Point>
+    <X>1</X>
+    <Y>2</Y>
+</Point>
+");
 
-Console.WriteLine(doc.Element(<span class="literal">"Point"</span>).Element(<span class="literal">"X"</span>).Value);
-Console.WriteLine(doc.Element(<span class="literal">"Point"</span>).Element(<span class="literal">"Y"</span>).Value);
-</code></pre>
+Console.WriteLine(doc.Element("Point").Element("X").Value);
+Console.WriteLine(doc.Element("Point").Element("Y").Value);
+```
 
 
 可能なら <code>doc.Point.X</code> というような形式で要素にアクセスしたいところですが、
@@ -416,17 +416,17 @@ dynamic を使うと、
 
 例えば、上述のコードは以下のような書き直すことができます。
 
-<pre class="source" title="dynamic を使った XML の読み出し" lang="">
-<code><span class="reserved">dynamic</span> doc = <span class="reserved">new</span> <span class="type">DynamicXml</span>(<span class="type">XDocument</span>.Parse(<span class="literal">@"
-&lt;Point&gt;
-    &lt;X&gt;1&lt;/X&gt;
-    &lt;Y&gt;2&lt;/Y&gt;
-&lt;/Point&gt;
-"</span>));
+```csharp
+dynamic doc = new DynamicXml(XDocument.Parse(@"
+<Point>
+    <X>1</X>
+    <Y>2</Y>
+</Point>
+"));
 
-<span class="type">Console</span>.WriteLine(<em>doc.X</em>);
-<span class="type">Console</span>.WriteLine(<em>doc.Y</em>);
-</code></pre>
+Console.WriteLine(doc.X);
+Console.WriteLine(doc.Y);
+```
 
 
 参考：
@@ -444,29 +444,29 @@ C# の「[ジェネリック](../oop/sp2_generics.md#generics)」は、メソッ
 それで何が問題になるかというと、静的メソッド（特に演算子）が呼べないこと。
 例えば、以下のようなコードはどうあがいても実現できません。
 
-<pre class="source" title="ジェネリクスでは普通にやってたら operator を使えない" lang="">
-<code>T Sum T (IEnumerable&lt;T&gt; list)
+```csharp
+T Sum T (IEnumerable<T> list)
 {
-    T sum = <span class="reserved">default</span>(T);
-    <span class="reserved">foreach</span>(<span class="reserved">var</span> x <span class="reserved">in</span> list)
-    sum += x; <span class="comment">// ジェネリック型に対して + は使えない。</span>
-    <span class="reserved">return</span> sum;
+    T sum = default(T);
+    foreach(var x in list)
+    sum += x; // ジェネリック型に対して + は使えない。
+    return sum;
 }
-</code></pre>
+```
 
 
 で、少しキャストとかが必要になりますが、
 dynamic を使うと一応、静的メソッド呼び出しが可能になります。
 
-<pre class="source" title="ジェネリクスで operator を使いたい" lang="">
-<code>T Sum T (IEnumerable&lt;T&gt; list)
+```csharp
+T Sum T (IEnumerable<T> list)
 {
-    <span class="reserved">dynamic</span> sum = <span class="reserved">default</span>(T);
-    <span class="reserved">foreach</span>(<span class="reserved">var</span> x <span class="reserved">in</span> list)
-    sum += x; <span class="comment">// ジェネリック型に対して + は使えないけど、1回 dynamic 型に代入すればできる。</span>
-    <span class="reserved">return</span> (T)sum;
+    dynamic sum = default(T);
+    foreach(var x in list)
+    sum += x; // ジェネリック型に対して + は使えないけど、1回 dynamic 型に代入すればできる。
+    return (T)sum;
 }
-</code></pre>
+```
 
 
 ただし、dynamic の仕組み上、普通の + 演算子呼び出しと比べると少しパフォーマンスが悪いので、

@@ -41,9 +41,9 @@ aliases:
 LaTeXで<code>\vector</code>というと、<ruby><rb>AB</rb><rt>→</rt><rp>(IE5でしか見れないけど許してね)</rp></ruby>というような感じの文字の上に矢印が乗っかったものになります。
 太字イタリック体のベクトルを書くには自分でマクロ定義してやる必要があります。
 
-<pre class="source" title="" lang="">
-<code>\def\Vec#1{\mbox{\boldmath $#1$}}
-</code></pre>
+```csharp
+\def\Vec#1{\mbox{\boldmath $#1$}}
+```
 
 
 
@@ -60,9 +60,9 @@ LaTeXだとめんどくさいからついつい、
 なんて書いちゃうんですが、こうすると微分のdがイタリック体になってしまいます。
 少々めんどくさいのですが、
 
-<pre class="source" title="" lang="">
-<code>\def\diff{\mathrm d}
-</code></pre>
+```csharp
+\def\diff{\mathrm d}
+```
 
 
 と言うのを定義して
@@ -71,9 +71,9 @@ LaTeXだとめんどくさいからついつい、
 ちなみに、数学定数(指数関数の底eとか虚数単位i)もブロック体で書いたほうがいいことになってます。
 ついでに、dx/dtをいちいち<code>\frac{\diff x}{\diff t}</code>と書くのが面倒なときは
 
-<pre class="source" title="" lang="">
-<code>\def\ddt#1{\frac{\diff #1}{\diff t}}
-</code></pre>
+```csharp
+\def\ddt#1{\frac{\diff #1}{\diff t}}
+```
 
 
 というのを定義しておいて<code>\ddt{x}</code>とすれば楽でいいかも。
@@ -83,10 +83,10 @@ LaTeXだとめんどくさいからついつい、
 
 ラプラス変換とかフーリエ変換の記号を出したいとき、要するに筆記体をかければ言い訳ですが、そのためには<code>\cal</code>という命令を使います。
 
-<pre class="source" title="" lang="">
-<code>\def\laplace#1#2{{\cal L}\left[#1\right]\left(#2\right)}
+```csharp
+\def\laplace#1#2{{\cal L}\left[#1\right]\left(#2\right)}
 \def\fourier#1#2{{\cal F}\left[#1\right]\left(#2\right)}
-</code></pre>
+```
 
 
 
@@ -94,10 +94,10 @@ LaTeXだとめんどくさいからついつい、
 
 角度(45°とか)や温度(21℃とか)を表示したいとき、まあ、全角文字の°とか℃を使っちゃえばすむんですが、一応LaTeXで書こうってことで
 
-<pre class="source" title="" lang="">
-<code>\def\degree{\kern-.2em\r{}\kern-.3em}
+```csharp
+\def\degree{\kern-.2em\r{}\kern-.3em}
 \def\degC{\kern-.2em\r{}\kern-.3em C}
-</code></pre>
+```
 
 
 
@@ -105,9 +105,9 @@ LaTeXだとめんどくさいからついつい、
 
 重積分を書くとき、普通に<code>\int\int_Df(x,y)\diff x\diff y</code>と書くと積分記号の間のスペースが空きすぎてちょっと不恰好です。そこで
 
-<pre class="source" title="" lang="">
-<code>\def\dint{\int\!\!\!\int}
-</code></pre>
+```csharp
+\def\dint{\int\!\!\!\int}
+```
 
 
 というなマクロを定義して<code>\dint_Df(x,y)\diff x\diff y</code>とします。
@@ -124,11 +124,11 @@ LaTeXではグラフィックスを扱うためのマクロが用意されてい
 画像を貼り付けるためにはgraphicxスタイルファイルを使います。
 画像を貼り付けるためのマクロは<code>includegraphics</code>です。
 
-<pre class="source" title="" lang="">
-<code>\usepackage{graphicx}
+```csharp
+\usepackage{graphicx}
 
 \includegraphics{test.bmp}
-</code></pre>
+```
 
 
 画像の表示の仕方はDVIウェアに依存します。
@@ -141,8 +141,8 @@ susieプラグインさえあればPNGやPBMなどさまざまな形式の画像
 
 colorスタイルファイルを使えばLaTeX文書をカラー化できます。
 
-<pre class="source" title="" lang="">
-<code>\usepackage{color}
+```csharp
+\usepackage{color}
 % 自分で色を定義することも出来る
 \ifx\color@rgb\@undefined\else
   \definecolor{keyword}{rgb}{0,0,1}
@@ -154,7 +154,7 @@ colorスタイルファイルを使えばLaTeX文書をカラー化できます�
 {\color{keyword}class}
 {\color{string}"string"}
 {\color{comment}/* comment */}
-</code></pre>
+```
 
 
 
@@ -163,8 +163,8 @@ colorスタイルファイルを使えばLaTeX文書をカラー化できます�
 LaTeXでfigure環境やtable環境を使うと、適切と思われる位置に図表が勝手に移動されてしまいます。
 まあ、そのほうがいいときも多いでしょうが、どうしても指定した位置に図表を表示したいときにはhereスタイルファイルを使いましょう。(here.styが必要)
 
-<pre class="source" title="" lang="">
-<code>\usepackage{here}
+```csharp
+\usepackage{here}
 
 \begin{figure}[H]
 % 図
@@ -173,7 +173,7 @@ LaTeXでfigure環境やtable環境を使うと、適切と思われる位置に�
 \begin{table}[H]
 % 表
 \end{table}
-</code></pre>
+```
 
 
 

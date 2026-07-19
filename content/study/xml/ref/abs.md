@@ -26,31 +26,34 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;abs&gt;絶対値記号内の式&lt;/abs&gt;
-</pre>
+```xml
+<abs>絶対値記号内の式</abs>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;int/&gt;&lt;inv&gt;x&lt;/inv&gt;&lt;d/&gt;x = &lt;log/&gt;&lt;abs&gt;x&lt;/abs&gt; + C
-</pre><div class="math"><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>x</td></tr></table><span class="normal">d</span>x = <span class="normal">log</span><span class="normal">|</span>x<span class="normal">|</span> + C
+```xml
+<int/><inv>x</inv><d/>x = <log/><abs>x</abs> + C
+```
+<div class="math"><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub"></td></tr></table><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>x</td></tr></table><span class="normal">d</span>x = <span class="normal">log</span><span class="normal">|</span>x<span class="normal">|</span> + C
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:abs"&gt;
-  &lt;span class="normal"&gt;|&lt;/span&gt;
-  &lt;xsl:apply-templates/&gt;
-  &lt;span class="normal"&gt;|&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+```xml
+<xsl:template match="ufcpp:abs">
+  <span class="normal">|</span>
+  <xsl:apply-templates/>
+  <span class="normal">|</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.normal
+```css
+span.normal
 {
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

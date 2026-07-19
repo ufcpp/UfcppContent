@@ -85,35 +85,35 @@ null 自体はなくせないものの、少なくとも「意図して null を
 
 これを、以下のように表現してみましょう。
 
-<pre class="source" title="この後の例で使うクラス">
-<span class="comment">// 武器装備欄</span>
-<span class="reserved">class</span> <span class="type">WeaponSlots</span>
+```csharp
+// 武器装備欄
+class WeaponSlots
 {
-    <span class="comment">// 空欄のところには null を入れる</span>
-    <span class="reserved">public</span> <span class="type">Weapon</span><span class="operator">?</span> <span class="property">Weapon1</span> { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Weapon</span><span class="operator">?</span> <span class="property">Weapon2</span> { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Weapon</span><span class="operator">?</span> <span class="property">Weapon3</span> { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Weapon</span><span class="operator">?</span> <span class="property">Weapon4</span> { <span class="reserved">get</span>; }
+    // 空欄のところには null を入れる
+    public Weapon? Weapon1 { get; }
+    public Weapon? Weapon2 { get; }
+    public Weapon? Weapon3 { get; }
+    public Weapon? Weapon4 { get; }
 }
 
-<span class="comment">// 武器</span>
-<span class="reserved">class</span> <span class="type">Weapon</span>
+// 武器
+class Weapon
 {
-    <span class="comment">// 基礎攻撃力</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Attack</span> { <span class="reserved">get</span>; }
+    // 基礎攻撃力
+    public int Attack { get; }
 
-    <span class="comment">// 画像の URL</span>
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">ImagePath</span> { <span class="reserved">get</span>; }
+    // 画像の URL
+    public string? ImagePath { get; }
 
-    <span class="comment">// パラメーターを for 列挙できるように</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">parameterIndex</span>] <span class="operator">=&gt;</span> <span class="variable local">parameterIndex</span> <span class="control">switch</span>
+    // パラメーターを for 列挙できるように
+    public int this[int parameterIndex] => parameterIndex switch
     {
-        <span class="number">0</span> <span class="operator">=&gt;</span> <span class="property">Attack</span>,
-        <span class="comment">// 実際は他のパラメーター種別もあるとして…</span>
-        <span class="reserved">_</span> <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">IndexOutOfRangeException</span>(),
+        0 => Attack,
+        // 実際は他のパラメーター種別もあるとして…
+        _ => throw new IndexOutOfRangeException(),
     };
 }
-</pre>
+```
 
 
 
@@ -136,80 +136,81 @@ null 自体はなくせないものの、少なくとも「意図して null を
 
 この処理は、以下のように書くこともできます。
 
-<pre class="source" title="null が来たら null を返す例(if-else)">
-<span class="reserved">static</span> <span class="reserved">string</span><span class="operator">?</span> <span class="method"><span class="static">M</span></span>(<span class="type">Weapon</span><span class="operator">?</span> <span class="variable local">w</span>)
+```csharp
+static string? M(Weapon? w)
 {
-    <span class="control">if</span> (<span class="variable local">w</span> <span class="operator">==</span> <span class="reserved">null</span>) <span class="control">return</span> <span class="reserved">null</span>;
-    <span class="control">else</span> <span class="control">return</span> <span class="variable local">w</span><span class="operator">.</span><span class="property">ImagePath</span>;
+    if (w == null) return null;
+    else return w.ImagePath;
 }
-</pre>
+```
 
 あるいはこれと全く同じコードを条件演算子を使って以下のように書いたりします。
 
-<pre class="source" title="null が来たら null を返す例(条件演算子)">
-<span class="reserved">static</span> <span class="reserved">string</span><span class="operator">?</span> <span class="method"><span class="static">M</span></span>(<span class="type">Weapon</span><span class="operator">?</span> <span class="variable local">w</span>)
+```csharp
+static string? M(Weapon? w)
 {
-    <span class="control">return</span> <span class="variable local">w</span> <span class="operator">==</span> <span class="reserved">null</span> <span class="operator">?</span> <span class="reserved">null</span> <span class="operator">:</span> <span class="variable local">w</span><span class="operator">.</span><span class="property">ImagePath</span>;
+    return w == null ? null : w.ImagePath;
 }
-</pre>
+```
 
 この類の「null が来たら null を返す」という処理はそれなりに頻出します。
 そこで、もっと楽に書けるように、C# 6.0 で<strong id="key-null-conditional" class="keyword">null条件演算子</strong>(null conditional operator)と言うものが導入されました。
 null条件演算子は、メンバー アクセスのための `.` の代わりに `?.` を使うことで「null が来たら null を返す」という挙動をします。
 すなわち、以下のコードで、先ほどと同じ挙動をします。
 
-<pre class="source" title="null 条件演算子の例">
-<span class="reserved">static</span> <span class="reserved">string</span> <span class="method"><span class="static">M</span></span>(<span class="type">Weapon</span><span class="operator">?</span> w) =&gt; <em>w?.ImagePath</em>;
-</pre>
+```csharp
+static string M(Weapon? w) => w?.ImagePath;
+```
 
 ### <a id="sec-generated-title-5"></a> <a id="null-conditional-indexer">インデクサーに対するnull条件演算子</a>
 
 インデクサーの前にも、`?`を付けることでnull条件付きにできます。
 
-<pre class="source" title="null 条件インデクサーの例">
-<span class="reserved">static</span> <span class="reserved">int</span><span class="operator">?</span> <span class="method"><span class="static">M</span></span>(<span class="type">WeaponSlots</span> <span class="variable local">w</span>) <span class="operator">=&gt;</span> <span class="variable local">w</span><span class="operator">.</span><span class="property">Weapon1</span><span class="operator">?</span>[<span class="number">0</span>];
-</pre>
+```csharp
+static int? M(WeaponSlots w) => w.Weapon1?[0];
+```
 
 これは以下のようなコードとほぼ同じ意味になります。
 
-<pre class="source" title="null 条件インデクサーの例と同じ意味のコード">
-<span class="reserved">static</span> <span class="reserved">int</span><span class="operator">?</span> <span class="method"><span class="static">M</span></span>(<span class="type">WeaponSlots</span> <span class="variable local">w</span>)
+```csharp
+static int? M(WeaponSlots w)
 {
-    <span class="reserved">var</span> <span class="variable">w1</span> <span class="operator">=</span> <span class="variable local">w</span><span class="operator">.</span><span class="property">Weapon1</span>;
-    <span class="control">if</span> (<span class="variable">w1</span> <span class="operator">==</span> <span class="reserved">null</span>) <span class="control">return</span> <span class="reserved">null</span>;
-    <span class="control">else</span> <span class="control">return</span> <span class="variable">w1</span>[<span class="number">0</span>];
-}</pre>
+    var w1 = w.Weapon1;
+    if (w1 == null) return null;
+    else return w1[0];
+}
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="null-conditional-to-nullable">補足: null許容型に対するnull条件演算子</a>
 
 null 条件演算子 `?.` を使えば、[null許容型](sp2_nullable.md)のメンバー アクセスが少し楽になります。
 例えば以下のコードでは、`x` の行はコンパイル エラーになりますが、`y` の行は OK です。
 
-<pre class="source" title="">
-<span class="comment">// さっきと違って Weapon が構造体</span>
-<span class="reserved">struct</span> <span class="type">Weapon</span>
+```csharp
+// さっきと違って Weapon が構造体
+struct Weapon
 {
-    <span class="comment">// 基礎攻撃力</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Attack { <span class="reserved">get</span>; }
+    // 基礎攻撃力
+    public int Attack { get; }
 
-    <span class="comment">// 画像の URL</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> ImagePath { <span class="reserved">get</span>; }
+    // 画像の URL
+    public string ImagePath { get; }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// Weapon を構造体にしたので、null が使いたければ null 許容型にする(? を付ける)</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Weapon</span>? w)
+    // Weapon を構造体にしたので、null が使いたければ null 許容型にする(? を付ける)
+    static void M(Weapon? w)
     {
-        <span class="comment">// null 許容型に対して直接 . でメンバー アクセスはできない。</span>
-        <span class="comment">// (. でアクセスできるのは Nullable&lt;T&gt; 構造体の HasValue や Value などのメンバーだけ)</span>
-        <span class="reserved">var</span> x = w.<span class="error">ImagePath</span>;
+        // null 許容型に対して直接 . でメンバー アクセスはできない。
+        // (. でアクセスできるのは Nullable<T> 構造体の HasValue や Value などのメンバーだけ)
+        var x = w.ImagePath;
 
-        <span class="comment">// ?. なら使える。</span>
-        <span class="reserved">var</span> y = <em>w?.ImagePath</em>;
+        // ?. なら使える。
+        var y = w?.ImagePath;
     }
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="void-null-conditional">null じゃないときだけメソッド呼び出し</a>
 
@@ -219,35 +220,35 @@ null 条件演算子 `?.` は戻り値がない(戻り値が `void` の)メソ�
 例えば、`WeaponSlots` にも `Weapon` にも `Dispose` メソッドを用意したとして、
 `WeaponSlots` は `Weapon1` などが null じゃないときだけその `Dispose` を呼ぶとしたい場合、以下のように書けます。
 
-<pre class="source" title="null じゃないときだけメソッド呼び出しする例">
-<span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>()
+```csharp
+public void Dispose()
 {
-    <span class="property">Weapon1</span><span class="operator">?</span><span class="operator">.</span><span class="method">Dispose</span>();
-    <span class="property">Weapon2</span><span class="operator">?</span><span class="operator">.</span><span class="method">Dispose</span>();
-    <span class="property">Weapon3</span><span class="operator">?</span><span class="operator">.</span><span class="method">Dispose</span>();
-    <span class="property">Weapon4</span><span class="operator">?</span><span class="operator">.</span><span class="method">Dispose</span>();
+    Weapon1?.Dispose();
+    Weapon2?.Dispose();
+    Weapon3?.Dispose();
+    Weapon4?.Dispose();
 }
-</pre>
+```
 
 これは以下のようなコードとほぼ同じ意味です。
 
-<pre class="source" title="null じゃないときだけメソッド呼び出しする例とほぼ同じ意味のコード">
-<span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>()
+```csharp
+public void Dispose()
 {
-    <span class="control">if</span> (<span class="property">Weapon1</span> <span class="operator">!=</span> <span class="reserved">null</span>) <span class="property">Weapon1</span><span class="operator">.</span><span class="method">Dispose</span>();
-    <span class="control">if</span> (<span class="property">Weapon2</span> <span class="operator">!=</span> <span class="reserved">null</span>) <span class="property">Weapon2</span><span class="operator">.</span><span class="method">Dispose</span>();
-    <span class="control">if</span> (<span class="property">Weapon3</span> <span class="operator">!=</span> <span class="reserved">null</span>) <span class="property">Weapon3</span><span class="operator">.</span><span class="method">Dispose</span>();
-    <span class="control">if</span> (<span class="property">Weapon4</span> <span class="operator">!=</span> <span class="reserved">null</span>) <span class="property">Weapon4</span><span class="operator">.</span><span class="method">Dispose</span>();
+    if (Weapon1 != null) Weapon1.Dispose();
+    if (Weapon2 != null) Weapon2.Dispose();
+    if (Weapon3 != null) Weapon3.Dispose();
+    if (Weapon4 != null) Weapon4.Dispose();
 }
-</pre>
+```
 
 戻り値はないので、以下のようなコードは書けません。
 
-<pre class="source" title="void の ?. 結果は void">
-<span class="comment">// void の ?. 結果は void。</span>
-<span class="comment">// 何の値も返って来ず、変数に受けたりはできない。</span>
-<span class="reserved">var</span> <span class="error" title="CS0815"><span class="variable">x</span> <span class="operator">=</span> <span class="property">Weapon1</span><span class="operator">?</span><span class="operator">.</span><span class="method">Dispose</span>()</span>;
-</pre>
+```csharp
+// void の ?. 結果は void。
+// 何の値も返って来ず、変数に受けたりはできない。
+var x = Weapon1?.Dispose();
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="null-conditional-delegate">補足: デリゲートの呼び出し</a>
 
@@ -258,17 +259,17 @@ null 条件演算子 `?.` は戻り値がない(戻り値が `void` の)メソ�
 ただ、デリゲートは `d()` のような呼び方の他に、`d.Invoke()` と言う呼び方もできるので、
 こちらなら null 条件演算子 `?.` が使えます。
 
-<pre class="source" title="デリゲートに対するnull条件演算子の例">
-<span class="reserved">using</span> System<span class="operator">.</span>ComponentModel;
+```csharp
+using System.ComponentModel;
 
-<span class="reserved">class</span> <span class="type">Bindable</span> : <span class="type">INotifyPropertyChanged</span>
+class Bindable : INotifyPropertyChanged
 {
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">PropertyChangedEventHandler</span><span class="operator">?</span> PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    <span class="reserved">protected</span> <span class="reserved">void</span> <span class="method">OnPropertyChanged</span>(<span class="type">PropertyChangedEventArgs</span> <span class="variable local">args</span>)
-        <span class="operator">=&gt;</span> <em>PropertyChanged<span class="operator">?</span><span class="operator">.</span><span class="method">Invoke</span>(<span class="reserved">this</span>, <span class="variable local">args</span>)</em>;
+    protected void OnPropertyChanged(PropertyChangedEventArgs args)
+        => PropertyChanged?.Invoke(this, args);
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="null-conditional-assignment">null じゃないときだけ代入</a>
 
@@ -282,13 +283,13 @@ C# 14 では、[代入](../start/st_operator.md#substitute)
 「`Weapon1` が null じゃないときだけ `Attack` の値を10に更新」と、
 「`Weapon2` が null じゃないときだけ `Weapon1.Attack` の値を加える」という処理になります。
 
-<pre class="source" title="null 条件代入の例">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">UpdateWaepon</span></span>(<span class="type">WeaponSlots</span> <span class="variable local">slots</span>)
+```csharp
+static void UpdateWaepon(WeaponSlots slots)
 {
-    <span class="variable local">slots</span><span class="operator">.</span><span class="property">Weapon1</span><span class="operator">?</span><span class="operator">.</span><span class="property">Attack</span> <span class="operator">=</span> <span class="number">10</span>;
-    <span class="variable local">slots</span><span class="operator">.</span><span class="property">Weapon2</span><span class="operator">?</span><span class="operator">.</span><span class="property">Attack</span> <span class="operator">+=</span> <span class="variable local">slots</span><span class="operator">.</span><span class="property">Weapon1</span><span class="operator">?</span><span class="operator">.</span><span class="property">Attack</span> <span class="operator">??</span> <span class="number">0</span>;
+    slots.Weapon1?.Attack = 10;
+    slots.Weapon2?.Attack += slots.Weapon1?.Attack ?? 0;
 }
-</pre>
+```
 
 `a?.X = value;` みたいに書くと、
 ぱっと見では `(a?.X) = value;` みたいな意味合いにも見えて変な感じ(この解釈だと `null = value;` みたいな結果になってしまうので違う)なので賛否両論はある文法なんですが、
@@ -298,147 +299,147 @@ C# 14 では、[代入](../start/st_operator.md#substitute)
 
 いくつか例を挙げるために以下のようなクラスを考えてみます。
 
-<pre class="source" title="null 条件代入の例に使うためのクラス">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="type">A</span><span class="operator">?</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public A? X { get; set; }
 }
-</pre>
+```
 
 まずはシンプルな1段だけの例で、`a?.X = new();` を考えてみます。
 以下のコードは、
 
-<pre class="source" title="a?.X = ...">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">a</span>)
+```csharp
+static void M(A? a)
 {
-    <span class="variable local">a</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="reserved">new</span>();
+    a?.X = new();
 }
-</pre>
+```
 
 以下のコードとほぼ同じ意味になります。
 
-<pre class="source" title="a?.X = ... とほぼ同じ意味のコード">
-<span class="method"><span class="static">M</span></span>(<span class="reserved">null</span>);
+```csharp
+M(null);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">a</span>)
+static void M(A? a)
 {
-    <span class="control">if</span> (<span class="variable local">a</span> <span class="operator">!=</span> <span class="reserved">null</span>)
+    if (a != null)
     {
-        <span class="variable local">a</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="reserved">new</span>();
+        a.X = new();
     }
 }
-</pre>
+```
 
 `?.` の段数を増やすと単純に `if` の段数が増えます。
 例えば以下のコードは、
 
-<pre class="source" title="a?.X?.X?.X = ...">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">a</span>)
+```csharp
+static void M(A? a)
 {
-    <span class="variable local">a</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="reserved">new</span>();
+    a?.X?.X?.X = new();
 }
-</pre>
+```
 
 以下のような意味になります。
 
-<pre class="source" title="a?.X?.X?.X = ... とほぼ同じ意味のコード">
-<span class="static"><span class="method">M</span></span>(<span class="reserved">null</span>);
+```csharp
+M(null);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">a</span>)
+static void M(A? a)
 {
-    <span class="control">if</span> (<span class="variable local">a</span> <span class="operator">!=</span> <span class="reserved">null</span>)
+    if (a != null)
     {
-        <span class="reserved">var</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="variable local">a</span><span class="operator">.</span><span class="property">X</span>;
-        <span class="control">if</span> (<span class="variable">a1</span> <span class="operator">!=</span> <span class="reserved">null</span>)
+        var a1 = a.X;
+        if (a1 != null)
         {
-            <span class="reserved">var</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="variable">a1</span><span class="operator">.</span><span class="property">X</span>;
-            <span class="control">if</span> (<span class="variable">a2</span> <span class="operator">!=</span> <span class="reserved">null</span>)
+            var a2 = a1.X;
+            if (a2 != null)
             {
-                <span class="variable">a2</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="reserved">new</span>();
+                a2.X = new();
             }
         }
     }
 }
-</pre>
+```
 
 代入が複数並んでいる場合も考えてみます。
 対比として先に通常の代入の例を書きますが、例えば以下のようなコードを書いた場合、
 
-<pre class="source" title="通常の代入 a.X = b.X = ...">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">A</span> <span class="variable local">a</span>, <span class="type">A</span> <span class="variable local">b</span>)
+```csharp
+static void M(A a, A b)
 {
-    <span class="variable local">a</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="variable local">b</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="reserved">new</span>();
+    a.X = b.X = new();
 }
-</pre>
+```
 
 おおむね以下のようなコードと同じように、`=` の左側の代入(この例の場合、`b.X` の方への代入)が先に実行されます。
 
-<pre class="source" title="a.X = b.X = ... とほぼ同じ意味のコード">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">A</span> <span class="variable local">a</span>, <span class="type">A</span> <span class="variable local">b</span>)
+```csharp
+static void M(A a, A b)
 {
-    <span class="reserved">var</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
-    <span class="variable local">b</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="variable">a1</span>;
-    <span class="variable local">a</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="variable">a1</span>;
+    var a1 = new A();
+    b.X = a1;
+    a.X = a1;
 }
-</pre>
+```
 
 これに対して、null 条件代入の例として以下のようなコードを書いた場合、
 
-<pre class="source" title="null 条件代入 a?.X = b?.X = ...">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">a</span>, <span class="type">A</span><span class="operator">?</span> <span class="variable local">b</span>)
+```csharp
+static void M(A? a, A? b)
 {
-    <span class="variable local">a</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="variable local">b</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="reserved">new</span>();
+    a?.X = b?.X = new();
 }
-</pre>
+```
 
 おおむね以下のような意味になります
 (「`a` を null チェック → `b` を null チェック → `b.X` への代入 → `a.X` への代入」みたいな順)。
 
-<pre class="source" title="a?.X = b?.X = ... とほぼ同じ意味のコード">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">a</span>, <span class="type">A</span><span class="operator">?</span> <span class="variable local">b</span>)
+```csharp
+static void M(A? a, A? b)
 {
-    <span class="control">if</span> (<span class="variable local">a</span> <span class="operator">!=</span> <span class="reserved">null</span>) <span class="comment">// a の null チェック</span>
+    if (a != null) // a の null チェック
     {
-        <span class="type">A</span><span class="operator">?</span> <span class="variable">a1</span>;
+        A? a1;
 
-        <span class="control">if</span> (<span class="variable local">b</span> <span class="operator">==</span> <span class="reserved">null</span>) <span class="comment">// b の null チェック</span>
+        if (b == null) // b の null チェック
         {
-            <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">null</span>; 
+            a1 = null; 
         }
-        <span class="control">else</span>
+        else
         {
-            <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span>();
-            <span class="variable local">b</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="variable">a1</span>; <span class="comment">// b への代入</span>
+            a1 = new A();
+            b.X = a1; // b への代入
         }
 
-        <span class="variable local">a</span><span class="operator">.</span><span class="property">X</span> <span class="operator">=</span> <span class="variable">a1</span>; <span class="comment">// a への代入</span>
+        a.X = a1; // a への代入
     }
 }
-</pre>
+```
 
 ちなみに、null 条件代入は[インデクサー](../oop/oo_indexer.md)や[イベント](../functional/sp_event.md)に対しても使えます。
 
-<pre class="source" title="インデクサー、イベントに対する null 条件演算子の例">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">A</span><span class="operator">?</span> <span class="variable local">a</span>)
+```csharp
+static void M(A? a)
 {
-    <span class="comment">// if (a != null) a[0] = 10; とほぼ同じ。</span>
-    <span class="variable local">a</span><span class="operator">?</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="number">10</span>;
+    // if (a != null) a[0] = 10; とほぼ同じ。
+    a?[0] = 10;
 
-    <span class="comment">// if (a != null) a.Event += () =&gt; { }; とほぼ同じ。</span>
-    <span class="variable local">a</span><span class="operator">?</span><span class="operator">.</span>Event <span class="operator">+=</span> () <span class="operator">=&gt;</span> { };
+    // if (a != null) a.Event += () => { }; とほぼ同じ。
+    a?.Event += () => { };
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>]
+    public int this[int index]
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="number">0</span>;
-        <span class="reserved">set</span> { }
+        get => 0;
+        set { }
     }
 
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">Action</span><span class="operator">?</span> Event;
+    public event Action? Event;
 }
-</pre>
+```
 
 
 ## <a id="sec-generated-title-10"></a> <a id="null-coalesce">null合体演算子(null が来たら何か適当な有効な値で埋める)</a>
@@ -451,35 +452,35 @@ C# 14 では、[代入](../start/st_operator.md#substitute)
 例えば以下のように書けるでしょう。
 (ここでは`LoadImage(string path)`という名前で画像を読み込むメソッドがあるものして説明します。)
 
-<pre class="source" title="null の時に所定の値に差し替える例">
-<span class="reserved">const</span> <span class="reserved">string</span> <span class="static"><span class="constant">EmptyWeaponSlotImagePath</span></span> <span class="operator">=</span> <span class="string">&quot;EmptyWeaponSlot.png&quot;</span>;
+```csharp
+const string EmptyWeaponSlotImagePath = "EmptyWeaponSlot.png";
 
-<span class="reserved">static</span> <span class="type">Image</span> <span class="static"><span class="method">LoadWeaponImage</span></span>(<span class="reserved">string</span><span class="operator">?</span> <span class="variable local">imagePath</span>)
+static Image LoadWeaponImage(string? imagePath)
 {
-    <span class="reserved">string</span> <span class="variable">path</span>;
-    <span class="control">if</span> (<span class="variable local">imagePath</span> <span class="operator">==</span> <span class="reserved">null</span>) <span class="variable">path</span> <span class="operator">=</span> <span class="constant">EmptyWeaponSlotImagePath</span>;
-    <span class="control">else</span> <span class="variable">path</span> <span class="operator">=</span> <span class="variable local">imagePath</span>;
+    string path;
+    if (imagePath == null) path = EmptyWeaponSlotImagePath;
+    else path = imagePath;
 
-    <span class="control">return</span> <span class="method"><span class="static">LoadImage</span></span>(<span class="variable">path</span>);
+    return LoadImage(path);
 }
 
-<span class="reserved">static</span> <span class="type">Image</span> <span class="method"><span class="static">LoadImage</span></span>(<span class="reserved">string</span> <span class="variable local">path</span>)
+static Image LoadImage(string path)
 {
-    <span class="comment">// 画像読み込み処理(省略、ここでは仮に new Image() を返す)</span>
-    <span class="control">return</span> <span class="reserved">new</span> <span class="type">Image</span>();
+    // 画像読み込み処理(省略、ここでは仮に new Image() を返す)
+    return new Image();
 }
-</pre>
+```
 
 前節と同様、この「null の時に所定の値に差し替える」と言う処理も頻出です。
 こちらは C# 2.0で、<strong id="key-null-coalesce" class="keyword">null合体演算子</strong>(null coalescing operator)と言うものが導入されました。
 以下のように、`??`で、左側に元の値、右側に差し替えたい値を書きます。
 
-<pre class="source" title="null合体演算子の例">
-<span class="reserved">static</span> <span class="type">Image</span> <span class="static"><span class="method">LoadWeaponImage</span></span>(<span class="reserved">string</span><span class="operator">?</span> <span class="variable local">imagePath</span>)
+```csharp
+static Image LoadWeaponImage(string? imagePath)
 {
-    <span class="control">return</span> <span class="static"><span class="method">LoadImage</span></span>(<span class="variable local">imagePath</span> <span class="operator">??</span> <span class="constant">EmptyWeaponSlotImagePath</span>);
+    return LoadImage(imagePath ?? EmptyWeaponSlotImagePath);
 }
-</pre>
+```
 
 ちなみに、[別のページ](sp2_nullable.md#coalesce-translation)でも書いていますが、coalesce を「合体」と訳すのはちょっとわかりにくいかもしれません。
 coalesce には「(折れた骨が)融合・癒着する」と言うような意味があって、
@@ -494,87 +495,88 @@ null合体演算子の場合は左側がnullでなかったら、右側を評価
 
 例えば、プロパティやメソッドがどこまで呼ばれたのかを確認するためのログ表示を仕込んだ以下のようなクラスを用意します。
 
-<pre class="source" title="短絡評価の確認用の型">
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">Extension</span></span>
+```csharp
+static class Extension
 {
-    <span class="comment">// null な変数に対しても a.M(i) で例外を起こさず呼べる拡張メソッド。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="type">A</span><span class="operator">?</span> <span class="variable local">s</span>, <span class="reserved">int</span> <span class="variable local">i</span>)
+    // null な変数に対しても a.M(i) で例外を起こさず呼べる拡張メソッド。
+    public static void M(this A? s, int i)
     {
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;A.M(int)&quot;</span>);
+        Console.WriteLine("A.M(int)");
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="reserved">int</span> <span class="variable local">i</span>)
+    public static int M(this int i)
     {
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;int.M()&quot;</span>);
-        <span class="control">return</span> <span class="variable local">i</span>;
+        Console.WriteLine("int.M()");
+        return i;
     }
 }
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="type">A</span><span class="operator">?</span> <span class="property">X</span>
+    public A? X
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="comment">// プロパティが読まれたことを確認するためだけのログ表示。</span>
-            <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;X&quot;</span>);
-            <span class="control">return</span> <span class="reserved">field</span>;
+            // プロパティが読まれたことを確認するためだけのログ表示。
+            Console.WriteLine("X");
+            return field;
         }
-        <span class="reserved">set</span>;
+        set;
     }
 }
-</pre>
+```
 
 これに対して3通りの呼び出し方をしてみましょう。
 まず、非 null しかない場合、`?.` から先がすべて呼ばれます。
 
-<pre class="source" title="">
-<span class="comment">// 変数も、その X も非 null の場合</span>
-<span class="reserved">var</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span> { <span class="property">X</span> <span class="operator">=</span> <span class="reserved">new</span>() };
+```csharp
+// 変数も、その X も非 null の場合
+var a1 = new A { X = new() };
 
-<span class="comment">// X も呼ばれ、M も呼ばれる。</span>
-<span class="comment">// X, int.M(), A.M(int) の3行表示される。</span>
-<span class="variable">a1</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span><span class="operator">?</span><span class="operator">.</span><span class="method">M</span>(<span class="number">1</span><span class="operator">.</span><span class="method">M</span>());
-</pre>
+// X も呼ばれ、M も呼ばれる。
+// X, int.M(), A.M(int) の3行表示される。
+a1?.X?.M(1.M());
+```
 
-<pre class="console">
+```console
 X
 int.M()
 A.M(int)
-</pre>
+```
 
 続いて、変数は非 null、その `X` は null の場合、
 `X?.` の後ろが呼ばれなくなります。
 この時、引数の評価(この例の場合、`1.M()` の部分)も消えます。
 
-<pre class="source" title="X が null の場合">
-<span class="comment">// 変数は非 null、その X は null の場合</span>
-<span class="reserved">var</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">A</span> { <span class="property">X</span> <span class="operator">=</span> <span class="reserved">null</span> };
+```csharp
+// 変数は非 null、その X は null の場合
+var a2 = new A { X = null };
 
-<span class="comment">// a1 は 非 null → X は呼ばれる</span>
-<span class="comment">// その X は null → M は呼ばれない</span>
-<span class="comment">// M を呼ばなくていいならその引数の 1.M() 自体呼ばれない</span>
-<span class="comment">// X の1行だけ表示される。</span>
-<span class="variable">a2</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span><span class="operator">?</span><span class="operator">.</span><span class="method">M</span>(<span class="number">1</span><span class="operator">.</span><span class="method">M</span>());
-</pre>
+// a1 は 非 null → X は呼ばれる
+// その X は null → M は呼ばれない
+// M を呼ばなくていいならその引数の 1.M() 自体呼ばれない
+// X の1行だけ表示される。
+a2?.X?.M(1.M());
+```
 
-<pre class="console">
+```console
 X
-</pre>
+```
 
 最後に、根本がすでに null の場合、すべて呼ばれなくなります。
 
-<pre class="source" title="">
-<span class="comment">// 変数自体が null の場合</span>
-<span class="type">A</span><span class="operator">?</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="reserved">null</span>;
+```csharp
+// 変数自体が null の場合
+A? a3 = null;
 
-<span class="comment">// a3 が null の時点で X もその先も呼ばれない</span>
-<span class="comment">// 何も表示されない。</span>
-<span class="variable">a3</span><span class="operator">?</span><span class="operator">.</span><span class="property">X</span><span class="operator">?</span><span class="operator">.</span><span class="method">M</span>(<span class="number">1</span><span class="operator">.</span><span class="method">M</span>());
-</pre>
+// a3 が null の時点で X もその先も呼ばれない
+// 何も表示されない。
+a3?.X?.M(1.M());
+```
 
-<pre class="console">
-</pre>
+```console
+
+```
 
 
 
@@ -593,67 +595,67 @@ null を使う場面の例としてよく挙げられるものの1つに、キ�
 例えば以下のように書いたりします。
 [リフレクション](../dynamic/sp_reflection.md)を使った例ですが、リフレクションは重たいので取得した値はキャッシュしておきたいです。
 
-<pre class="source" title="リフレクションは重たいのでキャッシュしたい">
-<span class="reserved">using</span> System;
-<span class="reserved">using</span> System.ComponentModel;
-<span class="reserved">using</span> System.Reflection;
+```csharp
+using System;
+using System.ComponentModel;
+using System.Reflection;
 
-<span class="comment">// System.Type から、自分のプログラムで使う属性とかを抽出するためのクラス</span>
-<span class="reserved">class</span> <span class="type">TypeInfo</span>
+// System.Type から、自分のプログラムで使う属性とかを抽出するためのクラス
+class TypeInfo
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">Type</span>  _type;
-    <span class="reserved">public</span> TypeInfo(<span class="type">Type</span> type) =&gt; _type = type;
+    private readonly Type  _type;
+    public TypeInfo(Type type) => _type = type;
 
-    <span class="comment">// 必ずしも使わないものとする。使うときにだけ属性を読みたい。</span>
-    <span class="comment">// リフレクションは重たいので、1回呼んだらキャッシュしておきたい。</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> Description
+    // 必ずしも使わないものとする。使うときにだけ属性を読みたい。
+    // リフレクションは重たいので、1回呼んだらキャッシュしておきたい。
+    public string Description
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">if</span> (_description == <span class="reserved">null</span>)
+            if (_description == null)
             {
-                <span class="reserved">var</span> desc = _type.<span class="method">GetCustomAttribute</span>&lt;<span class="type">DescriptionAttribute</span>&gt;();
-                _description = desc?.Description ?? <span class="string">""</span>;
+                var desc = _type.GetCustomAttribute<DescriptionAttribute>();
+                _description = desc?.Description ?? "";
             }
-            <span class="reserved">return</span> _description;
+            return _description;
         }
     }
-    <span class="reserved">private</span> <span class="reserved">string</span><span class="operator">?</span> _description;
+    private string? _description;
 }
-</pre>
+```
 
 こういう場合、以下のように、 `??` を使ってもっと短縮して書くこともできます。
 1行だけにできるので、[`=>`](../cheatsheet/ap_ver7.md#throw-expression) を使えたりもします。
 
-<pre class="source" title="?? でキャッシュを簡単化">
-<span class="reserved">public</span> <span class="reserved">string</span> Description =&gt; _description = _description ?? _type.<span class="method">GetCustomAttribute</span>&lt;<span class="type">DescriptionAttribute</span>&gt;()?.Description ?? <span class="string">""</span>;
-</pre>
+```csharp
+public string Description => _description = _description ?? _type.GetCustomAttribute<DescriptionAttribute>()?.Description ?? "";
+```
 
 ただ、この例はちょっと1行に詰め込みすぎではあるので、`??`から後ろは別途メソッド化する方が読みやすくていいでしょう。
 
-<pre class="source" title="?? の後ろがあまりに長いのはちょっと読みづらいので修正">
-<span class="reserved">public</span> <span class="reserved">string</span> Description =&gt; _description = _description ?? <span class="method">GetDescription</span>();
-<span class="reserved">private</span> <span class="reserved">string</span> <span class="method">GetDescription</span>() =&gt; _type.<span class="method">GetCustomAttribute</span>&lt;<span class="type">DescriptionAttribute</span>&gt;()?.Description ?? <span class="string">""</span>;
-</pre>
+```csharp
+public string Description => _description = _description ?? GetDescription();
+private string GetDescription() => _type.GetCustomAttribute<DescriptionAttribute>()?.Description ?? "";
+```
 
 <h5 class="version version8">Ver. 8.0</h5>
 
 C# 8.0 で入った[`??=` 演算子](sp2_nullable.md#null-coalescing-assignment)は、こういうキャッシュ用途で使うのに特に便利です。
 上記の例は以下のように書くことができます。
 
-<pre class="source" title="??= を使ったバージョン">
-<span class="reserved">public</span> <span class="reserved">string</span> Description =&gt; _description ??= <span class="method">GetDescription</span>();
-</pre>
+```csharp
+public string Description => _description ??= GetDescription();
+```
 
 <h5 class="version version14">Ver. 14</h5>
 
 ちなみに、この手のコードに対しては C# 14 で導入された [field キーワード](../oop/oo_property.md#field-keyword)が有効で、
 C# 14 以降では以下のような書き方ができます。
 
-<pre class="source" title="??= と field キーワードを使ったバージョン">
-<span class="comment">// (_description フィールドを用意する必要なし。)</span>
-<span class="reserved">public</span> <span class="reserved">string</span> Description =&gt; <span class="reserved">field</span> ??= <span class="method">GetDescription</span>();
-</pre>
+```csharp
+// (_description フィールドを用意する必要なし。)
+public string Description => field ??= GetDescription();
+```
 
 ## <a id="sec-generated-title-13"></a> <a id="null-branch">nullを読み飛ばす</a>
 
@@ -662,32 +664,32 @@ C# 14 以降では以下のような書き方ができます。
 
 単純に null が来たら飛ばすだけでいいので、要は、以下のような `if` を書きます。
 
-<pre class="source" title="null が来たら何もしない例">
-<span class="reserved">void</span> <span class="method">ShowImage</span>(<span class="type">Weapon</span><span class="operator">?</span> <span class="variable local">w</span>)
+```csharp
+void ShowImage(Weapon? w)
 {
-    <span class="reserved">var</span> <span class="variable">imageUrl</span> <span class="operator">=</span> <span class="variable local">w</span><span class="operator">?</span><span class="operator">.</span><span class="property">ImagePath</span>;
+    var imageUrl = w?.ImagePath;
 
-    <span class="control">if</span> (<span class="variable">imageUrl</span> <span class="operator">!=</span> <span class="reserved">null</span>)
+    if (imageUrl != null)
     {
-        <span class="type">Canvas</span><span class="operator">.</span><span class="static"><span class="method">Draw</span></span>(<span class="method"><span class="static">LoadImage</span></span>(<span class="variable">imageUrl</span>));
+        Canvas.Draw(LoadImage(imageUrl));
     }
 }
-</pre>
+```
 
 <h5 class="version version7">Ver. 7.0</h5>
 
 また、C# 7.0で導入された[パターン マッチング](../datatype/typeswitch.md#null-check)は、この手の null 判定のためにも使えます。
 例えば先ほどのコードは以下のように書くこともできます。
 
-<pre class="source" title="パターン マッチングを使ったnull判定の例">
-<span class="reserved">void</span> ShowImage(<span class="type">Weapon</span><span class="operator">?</span> w)
+```csharp
+void ShowImage(Weapon? w)
 {
-    <span class="reserved">if</span> (w?.ImagePath <em><span class="reserved">is</span> <span class="reserved">string</span> imageUrl</em>)
+    if (w?.ImagePath is string imageUrl)
     {
-        <span class="type">Canvas</span><span class="operator">.</span><span class="static"><span class="method">Draw</span></span>(<span class="method"><span class="static">LoadImage</span></span>(<span class="variable">imageUrl</span>));
+        Canvas.Draw(LoadImage(imageUrl));
     }
 }
-</pre>
+```
 
 ちなみに、`is var` ([`var`パターン](../datatype/patterns.md#var)と言って、[`is T`](../datatype/patterns.md#declaration) とは別扱い)を使った場合、nullチェックはされません。
 `var` は何でも受け取れる構文で、null も受け付けます。
@@ -697,12 +699,12 @@ C# 14 以降では以下のような書き方ができます。
 C# 8.0 では、[再帰パターン](../datatype/patterns.md#recursive) の `{}` が暗黙的に null チェックも含んでいることを使って、手短に null チェックができます
 (参考: [非 null マッチング](../datatype/patterns.md#non-null))。
 
-<pre class="source" title="is 演算子での非 null チェック">
-<span class="reserved">string</span><span class="operator">?</span> <span class="variable">s</span> = <span class="reserved">null</span>;
+```csharp
+string? s = null;
  
-<span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">var</span> <span class="reserved">_</span>) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;ここは通る&quot;</span>);
-<span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> { }) <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;ここは通らない&quot;</span>);
-</pre>
+if (s is var _) Console.WriteLine("ここは通る");
+if (s is { }) Console.WriteLine("ここは通らない");
+```
 
 ## <a id="sec-generated-title-14"></a> <a id="non-null">null を完全に認めない</a>
 
@@ -720,92 +722,93 @@ C# 8.0 でこの仕様が入る予定ですが、現時点(C# 7.3)では残念�
 
 C# 7.3 以前の場合、せめて、引数に対してnull判定をして、nullだったら例外を出すということをよくやります。
 
-<pre class="source" title="引数に対してnull判定を行う例">
-<span class="reserved">class</span> <span class="type">Canvas</span>
+```csharp
+class Canvas
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> Draw(<span class="type">Image</span> image)
+    public void Draw(Image image)
     {
-        <span class="reserved">if</span> (image == <span class="reserved">null</span>)
+        if (image == null)
         {
-            <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(image));
+            throw new ArgumentNullException(nameof(image));
         }
 
-        <span class="comment">// 描画処理</span>
+        // 描画処理
     }
 }
-</pre>
+```
 
 <h5 class="version version7">Ver. 7.0</h5>
 
 ちなみに、C# 7.0では[`throw`式](../structured/oo_exception.md#throwexpr)といって、`??`の右側に`throw`を書けるようになったので、以下のような書き方でnull判定を行うこともできます。
 
-<pre class="source" title="throw 式で null 判定する例">
-<span class="reserved">class</span> <span class="type">Canvas</span>
+```csharp
+class Canvas
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> Draw(<span class="type">Image</span> image)
+    public void Draw(Image image)
     {
-        image = image ?? <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(image));
+        image = image ?? throw new ArgumentNullException(nameof(image));
 
-        <span class="comment">// 描画処理</span>
+        // 描画処理
     }
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-15"></a> <a id="user-defined-null">余談: 自称 null</a>
 
 混乱の元なのでおすすめはしませんが、[演算子を自作](../oop/oo_operator.md)して、「null を自称できる型」を作ることができます。
 例えば以下のようなものです。
 
-<pre class="source" title="null を自称できる型の例">
-<span class="comment">// null じゃないのに this == null が成り立ってしまうかなりタチが悪いクラス</span>
-<span class="reserved">class</span> <span class="type">FalseNullable</span>
+```csharp
+// null じゃないのに this == null が成り立ってしまうかなりタチが悪いクラス
+class FalseNullable
 {
-    <span class="comment">// 動作確認用</span>
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Name</span> { <span class="reserved">get</span>; }
+    // 動作確認用
+    public string? Name { get; }
 
-    <span class="comment">// 自身が null でなくても、中身が null だったら null を自称する</span>
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="property">IsNull</span> <span class="operator">=&gt;</span> <span class="property">Name</span> <span class="operator">==</span> <span class="reserved">null</span>;
+    // 自身が null でなくても、中身が null だったら null を自称する
+    public bool IsNull => Name == null;
 
-    <span class="comment">// 自称 null</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">FalseNullable</span> <span class="field"><span class="static">Null</span></span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">FalseNullable</span>();
+    // 自称 null
+    public static readonly FalseNullable Null = new FalseNullable();
 
-    <span class="reserved">public</span> <span class="type">FalseNullable</span>() <span class="operator">=&gt;</span> <span class="property">Name</span> <span class="operator">=</span> <span class="reserved">null</span>;
-    <span class="reserved">public</span> <span class="type">FalseNullable</span>(<span class="reserved">string</span> <span class="variable local">name</span>) <span class="operator">=&gt;</span> <span class="property">Name</span> <span class="operator">=</span> <span class="variable local">name</span>;
+    public FalseNullable() => Name = null;
+    public FalseNullable(string name) => Name = name;
 
-    <span class="comment">// IsNull が true のとき、null とも一致</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="operator">==</span>(<span class="type">FalseNullable</span><span class="operator">?</span> <span class="variable local">x</span>, <span class="type">FalseNullable</span><span class="operator">?</span> <span class="variable local">y</span>)
-        <span class="operator">=&gt;</span> <span class="static"><span class="method">ReferenceEquals</span></span>(<span class="variable local">x</span>, <span class="variable local">y</span>)
-        <span class="operator">||</span> (<span class="variable local">y</span> <span class="reserved">is</span> <span class="reserved">null</span> <span class="operator">&amp;&amp;</span> <span class="variable local"><span class="warning" title="CS8602">x</span></span><span class="operator">.</span><span class="property">IsNull</span>)
-        <span class="operator">||</span> (<span class="variable local">x</span> <span class="reserved">is</span> <span class="reserved">null</span> <span class="operator">&amp;&amp;</span> <span class="variable local"><span class="warning" title="CS8602">y</span></span><span class="operator">.</span><span class="property">IsNull</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> <span class="operator">!=</span>(<span class="type">FalseNullable</span><span class="operator">?</span> <span class="variable local">x</span>, <span class="type">FalseNullable</span><span class="operator">?</span> <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="operator">!</span>(<span class="variable local">x</span> == <span class="variable local">y</span>);
+    // IsNull が true のとき、null とも一致
+    public static bool operator ==(FalseNullable? x, FalseNullable? y)
+        => ReferenceEquals(x, y)
+        || (y is null && x.IsNull)
+        || (x is null && y.IsNull);
+    public static bool operator !=(FalseNullable? x, FalseNullable? y) => !(x == y);
 
-    <span class="comment">// 自称 null のときは &quot;null&quot; と表示</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span><span class="operator">?</span> <span class="method">ToString</span>() <span class="operator">=&gt;</span> <span class="property">IsNull</span> <span class="operator">?</span> <span class="string">&quot;null&quot;</span> <span class="operator">:</span> <span class="property">Name</span>;
-}</pre>
+    // 自称 null のときは "null" と表示
+    public override string? ToString() => IsNull ? "null" : Name;
+}
+```
 
 タチが悪いことに、この型には「真の null」(`null`)と「自称 null」(`FalseNullable.Null`)があります。
 真のnullと自称nullで、`is`演算子や`??`演算子の挙動が変わります。
 例えば、上記のクラスに対して以下のような処理を書いたとします。
 
-<pre class="source" title="自称 null に対する挙動の差を示す例">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Write</span></span>(<span class="type">FalseNullable</span><span class="operator">?</span> <span class="variable local">x</span>)
+```csharp
+static void Write(FalseNullable? x)
 {
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">x</span>);
+    Console.WriteLine(x);
 
-    <span class="comment">// == 演算子呼び出し。自称 null でも true になる。</span>
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable local">x</span> == <span class="reserved">null</span>);
+    // == 演算子呼び出し。自称 null でも true になる。
+    Console.WriteLine(x == null);
 
-    <span class="comment">// これは == を呼ばない。真の null の時だけ true になる。</span>
-    <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable local">x</span> <span class="reserved">is</span> <span class="reserved">null</span>);
+    // これは == を呼ばない。真の null の時だけ true になる。
+    Console.WriteLine(x is null);
 
-    <span class="comment">// == 呼ばない。自称 null の時には &quot;null&quot; と出る。</span>
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable local">x</span> <span class="operator">??</span> <span class="reserved">new</span> <span class="type">FalseNullable</span>(<span class="string">&quot;coalescing value&quot;</span>));
+    // == 呼ばない。自称 null の時には "null" と出る。
+    Console.WriteLine(x ?? new FalseNullable("coalescing value"));
 
-    <span class="comment">// わざと null 参照。これも、例外になるのは真の null の時だけ</span>
-    <span class="control">try</span> { <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="warning" title="CS8602"><span class="variable local">x</span></span><span class="operator">.</span><span class="property">Name</span>); }
-    <span class="control">catch</span> { <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;NullReferenceException&quot;</span>); }
+    // わざと null 参照。これも、例外になるのは真の null の時だけ
+    try { Console.WriteLine(x.Name); }
+    catch { Console.WriteLine("NullReferenceException"); }
 }
-</pre>
+```
 
 
 `==` では、ユーザー定義の`==`演算子が呼ばれて、自称nullが`x == null`を満たします。
@@ -814,19 +817,19 @@ C# 7.3 以前の場合、せめて、引数に対してnull判定をして、nul
 `x.Name`がnull参照例外になるのも真のnullの時だけになります。
 例えば以下のような呼び出しをすると、
 
-<pre class="source" title="上記のメソッドの呼び出し例">
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;=== 真の null ===&quot;</span>);
-<span class="method"><span class="static">Write</span></span>(<span class="reserved">null</span>);
+```csharp
+Console.WriteLine("=== 真の null ===");
+Write(null);
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;=== 自称 null ===&quot;</span>);
-<span class="method"><span class="static">Write</span></span>(<span class="type">FalseNullable</span><span class="operator">.</span><span class="static"><span class="field">Null</span></span>);
+Console.WriteLine("=== 自称 null ===");
+Write(FalseNullable.Null);
 
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;=== 非 null ===&quot;</span>);
-<span class="static"><span class="method">Write</span></span>(<span class="reserved">new</span> <span class="type">FalseNullable</span>(<span class="string">&quot;non-null&quot;</span>)); 
-</pre>
+Console.WriteLine("=== 非 null ===");
+Write(new FalseNullable("non-null")); 
+```
 
 以下のような結果になります。
-<pre class="console" title="上記のメソッドの呼び出し例">
+```console
 === 真の null ===
 
 True
@@ -845,6 +848,6 @@ False
 False
 non-null
 non-null
-</pre>
+```
 
 かなり気持ち悪い挙動を起こしますので、「null を自称できる型」を作るのはよっぽどのことがない限り辞めた方がいいでしょう。

@@ -51,26 +51,22 @@ XAML で書いたビューに加えて、ロジックが必要な部分には C#
 以下のような XML でビューを記述します。
 
 
-<pre class="xsource" title="XAML の例">
-<code><span class="attvalue">&lt;</span><span class="element">Grid</span><span class="attvalue">&gt;
-    &lt;</span><span class="element">Button</span><span class="attribute">
-         Content</span><span class="attvalue">="hello"</span><span class="attribute">
-         Click</span><span class="attvalue">="Button_Click" /&gt;
-&lt;/</span><span class="element">Grid</span><span class="attvalue">&gt;</span>
-</code></pre></td>
+<pre class="xsource" title="XAML の例"><code class="language-xml">&lt;Grid&gt;
+    &lt;Button
+         Content=&quot;hello&quot;
+         Click=&quot;Button_Click&quot; /&gt;
+&lt;/Grid&gt;</code></pre></td>
 		<td markdown="1">
 
 ##### <a id="sec-generated-title-4"></a>C
 
 イベント処理などを行う場合は C# で記述します。
 
-<pre class="source" title="C# でイベント処理" lang="">
-<code><span class="reserved">private void</span> Button_Click(
-    <span class="reserved">object</span> sender, <span class="type">RoutedEventArgs</span> e)
+<pre class="source" title="C# でイベント処理" lang=""><code class="language-csharp">private void Button_Click(
+    object sender, RoutedEventArgs e)
 {
-    <span class="type">MessageBox</span>.Show(<span class="literal">"初めての Silverlight"</span>);
-}
-</code></pre>
+    MessageBox.Show(&quot;初めての Silverlight&quot;);
+}</code></pre>
 
 </td>
 	</tr>
@@ -138,15 +134,15 @@ BAML をローディングするためのコードが含まれています。
 作成した xap ファイルを HTML ページ中に埋め込むには object タグを使います。
 
 
-<pre class="xsource" title="xap ファイルを HTML ファイル中に埋め込み">
-<code><span class="attvalue">&lt;</span><span class="element">object</span> <span class="attribute">data</span><span class="attvalue">=</span>"<span class="attvalue">data:application/x-silverlight-2,</span>" <span class="attribute">type</span><span class="attvalue">=</span>"<span class="attvalue">application/x-silverlight-2</span>"<span class="attvalue">&gt;
-    &lt;</span><span class="element">param</span> <span class="attribute">name</span><span class="attvalue">=</span>"<span class="attvalue">source</span>" <span class="attribute">value</span><span class="attvalue">=</span>"<span class="attvalue">SilverlightApplication1.xap</span>"<span class="attvalue">/&gt;
-    &lt;</span><span class="element">param</span> <span class="attribute">name</span><span class="attvalue">=</span>"<span class="attvalue">onError</span>" <span class="attribute">value</span><span class="attvalue">=</span>"<span class="attvalue">onSilverlightError</span>"<span class="attvalue"> /&gt;
-    &lt;</span><span class="element">param</span> <span class="attribute">name</span><span class="attvalue">=</span>"<span class="attvalue">background</span>" <span class="attribute">value</span><span class="attvalue">=</span>"<span class="attvalue">white</span>"<span class="attvalue"> /&gt;
-    &lt;</span><span class="element">param</span> <span class="attribute">name</span><span class="attvalue">=</span>"<span class="attvalue">minRuntimeVersion</span>" <span class="attribute">value</span><span class="attvalue">=</span>"<span class="attvalue">4.0.50303.0</span>"<span class="attvalue"> /&gt;
-    &lt;</span><span class="element">param</span> <span class="attribute">name</span><span class="attvalue">=</span>"<span class="attvalue">autoUpgrade</span>" <span class="attribute">value</span><span class="attvalue">=</span>"<span class="attvalue">true</span>"<span class="attvalue"> /&gt;
-&lt;/</span><span class="element">object</span><span class="attvalue">&gt;</span>
-</code></pre>
+```html
+<object data="data:application/x-silverlight-2," type="application/x-silverlight-2">
+    <param name="source" value="SilverlightApplication1.xap"/>
+    <param name="onError" value="onSilverlightError" />
+    <param name="background" value="white" />
+    <param name="minRuntimeVersion" value="4.0.50303.0" />
+    <param name="autoUpgrade" value="true" />
+</object>
+```
 
 ## <a id="sec-generated-title-10"></a> <a id="vtree"></a>Visual Tree
 
@@ -154,16 +150,16 @@ Silverlight でビューの作成に使える視覚要素（ボタンなどの�
 例えば、以下のような XAML を書くと、
 
 
-<pre class="xsource" title="階層的な XAML の例">
-<code><span class="attvalue">&lt;</span><span class="element">Canvas</span><span class="attribute"> Width</span><span class="attvalue">="400"</span><span class="attribute"> Height</span><span class="attvalue">="300"&gt;
-    &lt;</span><span class="element">Rectangle</span><span class="attribute"> Canvas.Left</span><span class="attvalue">="30"</span><span class="attribute"> Canvas.Top</span><span class="attvalue">="30"</span><span class="attribute"> Width</span><span class="attvalue">="50"</span><span class="attribute"> Height</span><span class="attvalue">="50"</span><span class="attribute"> Fill</span><span class="attvalue">="Black"/&gt;
+```xml
+<Canvas Width="400" Height="300">
+    <Rectangle Canvas.Left="30" Canvas.Top="30" Width="50" Height="50" Fill="Black"/>
 
-    &lt;</span><span class="element">Canvas</span><span class="attribute"> Canvas.Left</span><span class="attvalue">="100"</span><span class="attribute"> Canvas.Top</span><span class="attvalue">="50"</span><span class="attribute"> Width</span><span class="attvalue">="200"</span><span class="attribute"> Height</span><span class="attvalue">="200"</span><span class="attribute"> Background</span><span class="attvalue">="Gray"&gt;
-        &lt;</span><span class="element">Rectangle</span><span class="attribute"> Canvas.Left</span><span class="attvalue">="30"</span><span class="attribute"> Canvas.Top</span><span class="attvalue">="30"</span><span class="attribute"> Width</span><span class="attvalue">="50"</span><span class="attribute"> Height</span><span class="attvalue">="50"</span><span class="attribute"> Fill</span><span class="attvalue">="Blue"/&gt;
-        &lt;</span><span class="element">Rectangle</span><span class="attribute"> Canvas.Left</span><span class="attvalue">="130"</span><span class="attribute"> Canvas.Top</span><span class="attvalue">="30"</span><span class="attribute"> Width</span><span class="attvalue">="50"</span><span class="attribute"> Height</span><span class="attvalue">="50"</span><span class="attribute"> Fill</span><span class="attvalue">="Green"/&gt;
-    &lt;/</span><span class="element">Canvas</span><span class="attvalue">&gt;
-&lt;/</span><span class="element">Canvas</span><span class="attvalue">&gt;</span>
-</code></pre>
+    <Canvas Canvas.Left="100" Canvas.Top="50" Width="200" Height="200" Background="Gray">
+        <Rectangle Canvas.Left="30" Canvas.Top="30" Width="50" Height="50" Fill="Blue"/>
+        <Rectangle Canvas.Left="130" Canvas.Top="30" Width="50" Height="50" Fill="Green"/>
+    </Canvas>
+</Canvas>
+```
 <figure>
 	[![視覚要素の階層構造](../../../../assets/media/ufcpp2000/dotnet/fig/hierarchy.png)](../../../../assets/media/ufcpp2000/dotnet/fig/hierarchy.png)
 	<figcaption>視覚要素の階層構造</figcaption>

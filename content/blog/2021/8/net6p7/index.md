@@ -60,76 +60,76 @@ aliases: []
 
 C# には元々、確実な代入ルールってのがあって、「未初期化変数から未定義な値を取り出す」みたいなことはできない仕様になっています。
 
-<pre class="source" title="未初期化変数を触らせない">
-<code><span class="reserved">int</span> x;
+```csharp
+int x;
 
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="error">x</span>); <span class="comment">// コンパイルエラー</span>
+Console.WriteLine(x); // コンパイルエラー
 
-<span class="control">if</span> (<span class="reserved">int</span>.<span class="method">TryParse</span>(<span class="type">Console</span>.<span class="method">ReadLine</span>(), <span class="reserved">out</span> x))
+if (int.TryParse(Console.ReadLine(), out x))
 {
-    <span class="comment">// ここでは x が初期化済みな保証があるのでエラーが消える。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(x);
+    // ここでは x が初期化済みな保証があるのでエラーが消える。
+    Console.WriteLine(x);
 }
-</code></pre>
+```
 
 これのためのフロー解析に改善の余地があることが周知の事実で長らく手つかずだったんですが、それが C# 10.0 でちょっと改善します。
 
 これまで [`?.`](../../../../study/csharp/resource/rm_nullusage.md#null-conditional) とか [`??`](../../../../study/csharp/resource/rm_nullusage.md#null-coalesce) とか [`? : `](../../../../study/csharp/start/st_operator.md#condition) が絡むときの解析が甘くて、過剰にエラーになっていました。
 それが緩和されて、例えば、以下のようなコードがコンパイルできるようになっています。
 
-<pre class="source" title="?. が絡むときの確実な代入判定の改善例">
-<code><span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-m(<span class="reserved">null</span>);
-m(<span class="reserved">new</span> R&lt;<span class="reserved">string</span>&gt;(<span class="reserved">null</span>));
-m(<span class="reserved">new</span> R&lt;<span class="reserved">string</span>&gt;(<span class="string">"abc"</span>));
+m(null);
+m(new R<string>(null));
+m(new R<string>("abc"));
 
-<span class="reserved">void</span> m(R&lt;<span class="reserved">string</span>&gt;? x)
+void m(R<string>? x)
 {
-    <span class="reserved">if</span> (x?.TryGetValue(<span class="reserved">out</span> var v) == <span class="reserved">true</span>) <span class="comment">// ここの var v の definite assignment 判定が改善された。</span>
+    if (x?.TryGetValue(out var v) == true) // ここの var v の definite assignment 判定が改善された。
     {
-        Console.WriteLine(v.Length); <span class="comment">// 前までこの行がエラーになってた(C# 10.0 から OK に)。</span>
+        Console.WriteLine(v.Length); // 前までこの行がエラーになってた(C# 10.0 から OK に)。
     }
-    <span class="reserved">else</span>
+    else
     {
-        Console.WriteLine(<span class="string">"null"</span>);
+        Console.WriteLine("null");
     }
 }
 
-<span class="reserved">record</span> <span class="reserved">class</span> <span class="type">R</span>&lt;<span class="type">T</span>&gt;(T? Value)
+record class R<T>(T? Value)
 {
-    <span class="reserved">public</span> <span class="reserved">bool</span> TryGetValue([NotNullWhen(<span class="reserved">true</span>)] <span class="reserved">out</span> T value)
+    public bool TryGetValue([NotNullWhen(true)] out T value)
     {
-        <span class="reserved">if</span>(Value <span class="reserved">is</span> { } v)
+        if(Value is { } v)
         {
             value = v;
-            <span class="reserved">return</span> <span class="reserved">true</span>;
+            return true;
         }
-        <span class="reserved">else</span>
+        else
         {
-            value = <span class="reserved">default</span>!;
-            <span class="reserved">return</span> <span class="reserved">false</span>;
+            value = default!;
+            return false;
         }
     }
 }
-</code></pre>
+```
 
 ### <a id="property-pattern"> Extended property patterns</a>
 
 [プロパティ パターン](../../../../study/csharp/datatype/patterns.md#property)で、
 多段のメンバーを `.` でつないでマッチングできるようになりました。
 
-<pre class="source" title="多段プロパティ パターン">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">A</span>(<span class="reserved">new</span> <span class="type">B</span>(<span class="string">"a"</span>));
+```csharp
+var x = new A(new B("a"));
 
-<span class="control">if</span> (x <span class="reserved">is</span> <span class="type">A</span> { <em>X.Value.Length</em>: 1 })
+if (x is A { X.Value.Length: 1 })
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"len 1"</span>);
+    Console.WriteLine("len 1");
 }
 
-<span class="reserved">record</span> <span class="type">A</span>(<span class="type">B</span> X);
-<span class="reserved">record</span> <span class="type">B</span>(<span class="reserved">string</span> Value);
-</code></pre>
+record A(B X);
+record B(string Value);
+```
 
 ### <a id="interpolated-string"> Interpolated string improvements</a>
 
@@ -137,26 +137,26 @@ m(<span class="reserved">new</span> R&lt;<span class="reserved">string</span>&gt
 
 以下のようなコードがあったとして、
 
-<pre class="source" title="文字列補間の例">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">m</span>(1, 2, 3, 4));
+```csharp
+Console.WriteLine(m(1, 2, 3, 4));
 
-<span class="reserved">string</span> m(<span class="reserved">int</span> a, <span class="reserved">int</span> b, <span class="reserved">int</span> c, <span class="reserved">int</span> d) =&gt; <span class="string">$"</span>{a}<span class="string">.</span>{b}<span class="string">.</span>{c}<span class="string">.</span>{d}<span class="string">"</span>;
-</code></pre>
+string m(int a, int b, int c, int d) => $"{a}.{b}.{c}.{d}";
+```
 
 これまでは `string.Format("{0}.{1}.{2}.{3}", new object[] { a, b, c, d })` に展開されていました。
 それが、所定の条件を満たせば(普通にやってれば .NET 6 をターゲットにして C# 10.0 でコンパイルすると)、以下のようなコードに変化します。
 
-<pre class="source" title="パフォーマンス改善結果">
-<code><span class="reserved">var</span> h = <span class="reserved">new</span> System.Runtime.CompilerServices.<span class="type">DefaultInterpolatedStringHandler</span>(3, 4);
-h.<span class="method">AppendFormatted</span>(a);
-h.<span class="method">AppendLiteral</span>(<span class="string">"."</span>);
-h.<span class="method">AppendFormatted</span>(b);
-h.<span class="method">AppendLiteral</span>(<span class="string">"."</span>);
-h.<span class="method">AppendFormatted</span>(c);
-h.<span class="method">AppendLiteral</span>(<span class="string">"."</span>);
-h.<span class="method">AppendFormatted</span>(d);
-<span class="reserved">return</span> h.<span class="method">ToStringAndClear</span>();
-</code></pre>
+```csharp
+var h = new System.Runtime.CompilerServices.DefaultInterpolatedStringHandler(3, 4);
+h.AppendFormatted(a);
+h.AppendLiteral(".");
+h.AppendFormatted(b);
+h.AppendLiteral(".");
+h.AppendFormatted(c);
+h.AppendLiteral(".");
+h.AppendFormatted(d);
+return h.ToStringAndClear();
+```
 
 ちなみに、C# コンパイラーのレベルで頑張っていることなので再コンパイルが必要です。
 これに関しては「既存のコンパイル済みプログラムを .NET 6 で動かすだけで速くなる」みたいなことはないです。
@@ -165,30 +165,30 @@ h.<span class="method">AppendFormatted</span>(d);
 
 いままで:
 
-<pre class="source" title="{} 名前空間">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Linq;
-<span class="reserved">using</span> System.Text;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-<span class="reserved">namespace</span> ConsoleApp1
+namespace ConsoleApp1
 {
-    <span class="reserved">class</span> <span class="type">A</span>
+    class A
     {
     }
 }
-</code></pre>
+```
 
 これから:
 
-<pre class="source" title="1行名前空間">
-<code><span class="reserved">namespace</span> ConsoleApp1;
+```csharp
+namespace ConsoleApp1;
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
 }
-</code></pre>
+```
 
 「たかが1インデント」と言われてたやつなんですが…
 まあ確かにこの1インデントが深い言語の方が、今となっては少なく。
@@ -199,37 +199,37 @@ h.<span class="method">AppendFormatted</span>(d);
 
 構造体のフィールドでも非 null 保証とかがやりやすくなります。
 
-<pre class="source" title="構造体の引数なしコンストラクターの例">
-<code><span class="reserved">struct</span> <span class="type">A</span>
+```csharp
+struct A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> S { <span class="reserved">get</span>; } = <span class="string">"abc"</span>; <span class="comment">// 前まで初期化子を書けなかった</span>
+    public string S { get; } = "abc"; // 前まで初期化子を書けなかった
 }
 
-<span class="reserved">struct</span> <span class="type">B</span>
+struct B
 {
-    <span class="reserved">public</span> <span class="reserved">int</span>[] Array { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">B</span>() =&gt; Array = <span class="reserved">new</span> <span class="reserved">int</span>[4]; <span class="comment">// 前まで B() を書けなかった</span>
+    public int[] Array { get; }
+    public B() => Array = new int[4]; // 前まで B() を書けなかった
 }
-</code></pre>
+```
 
 まあ、`default` からは逃げられないんですが…
 
-<pre class="source" title="参照型の null 問題と同程度にやっかいな default 問題">
-<code><span class="comment">// これは大丈夫。引数なしコンストラクターで new int[] されてる。</span>
-Array4 a = <span class="reserved">new</span>();
+```csharp
+// これは大丈夫。引数なしコンストラクターで new int[] されてる。
+Array4 a = new();
 Console.WriteLine(a[0]);
 
-<span class="comment">// default は引数なしコンストラクターを呼ばない。</span>
-a = <span class="reserved">default</span>;
-Console.WriteLine(a[0]); <span class="comment">// ぬるぽ</span>
+// default は引数なしコンストラクターを呼ばない。
+a = default;
+Console.WriteLine(a[0]); // ぬるぽ
 
-<span class="reserved">struct</span> <span class="type">Array4</span>
+struct Array4
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span>[] _array;
-    <span class="reserved">public</span> <span class="type">Array4</span>() =&gt; _array = <span class="reserved">new</span> <span class="reserved">int</span>[4];
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] =&gt; _array[index];
+    private readonly int[] _array;
+    public Array4() => _array = new int[4];
+    public int this[int index] => _array[index];
 }
-</code></pre>
+```
 
 ### <a id="caller-expression"> Caller expression attribute</a>
 
@@ -237,19 +237,19 @@ Console.WriteLine(a[0]); <span class="comment">// ぬるぽ</span>
 
 `CallerArgumentExpression` 属性で、「引数に渡した式」を取れるようになります。
 
-<pre class="source" title="CallerArgumentExpression の例">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="method">m</span>(2 * 3 * 4); <span class="comment">// 2 * 3 * 4 = 24</span>
+m(2 * 3 * 4); // 2 * 3 * 4 = 24
 
-<span class="reserved">var</span> (x, y, z) = (1, 2, 3);
-<span class="method">m</span>(x + y + z); <span class="comment">// x + y + z = 6</span>
+var (x, y, z) = (1, 2, 3);
+m(x + y + z); // x + y + z = 6
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">int</span> result, [<span class="type">CallerArgumentExpression</span>(<span class="string">"result"</span>)] <span class="reserved">string</span>? expression = <span class="reserved">null</span>)
+static void m(int result, [CallerArgumentExpression("result")] string? expression = null)
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">$"</span>{expression}<span class="string"> = </span>{result}<span class="string">"</span>);
+    Console.WriteLine($"{expression} = {result}");
 }
-</code></pre>
+```
 
 主にロギング用途になると思います。
 
@@ -257,15 +257,15 @@ Console.WriteLine(a[0]); <span class="comment">// ぬるぽ</span>
 
 .NET 6 Preview 6 時点で以下のようなコードは書けていたんですが。
 
-<pre class="source" title="Delegate にラムダ式を代入">
-<code><span class="type">Delegate</span> f = <span class="reserved">int</span> (<span class="reserved">int</span> x) =&gt; x * x;
-</code></pre>
+```csharp
+Delegate f = int (int x) => x * x;
+```
 
 Prevew 7 から以下のようなコードも書けるようになりました。
 
-<pre class="source" title="ラムダ式の自然な型を自動決定">
-<code><span class="reserved">var</span> f = <span class="reserved">int</span> (<span class="reserved">int</span> x) =&gt; x * x;
-</code></pre>
+```csharp
+var f = int (int x) => x * x;
+```
 
 この場合、`f` の型は `Func<int, int>` になります。
 `System.Action` か `System.Func` が使える場合にはそれを、
@@ -273,13 +273,13 @@ Prevew 7 から以下のようなコードも書けるようになりました�
 
 デリゲートの仕様上、以下のような挙動をするのでその点には注意が必要です。
 
-<pre class="source" title="ラムダ式の自然な型の罠の例">
-<code><span class="comment">// これは target-typed 型決定で、Predicate&lt;int&gt; になる(コンパイル可)。</span>
-m(x =&gt; x == 0);
+```csharp
+// これは target-typed 型決定で、Predicate<int> になる(コンパイル可)。
+m(x => x == 0);
 
-<span class="comment">// 一方で、これは f の型が Func&lt;int, bool&gt; になる。</span>
-<span class="reserved">var</span> f = (<span class="reserved">int</span> x) =&gt; x == 0;
-m(<span class="error">f</span>); <span class="comment">// Func&lt;int, bool&gt; を Predicate&lt;int&gt; に変換でしません(コンパイル エラー)。</span>
+// 一方で、これは f の型が Func<int, bool> になる。
+var f = (int x) => x == 0;
+m(f); // Func<int, bool> を Predicate<int> に変換でしません(コンパイル エラー)。
 
-<span class="reserved">static</span> <span class="reserved">void</span> m(Predicate&lt;<span class="reserved">int</span>&gt; f) { }
-</code></pre>
+static void m(Predicate<int> f) { }
+```

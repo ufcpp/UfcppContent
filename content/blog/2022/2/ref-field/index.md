@@ -31,13 +31,13 @@ aliases: []
 
 [C# 7.2](../../../../study/csharp/cheatsheet/ap_ver7_2.md) の頃に入った [`Span<T>` 構造体](../../../../study/csharp/resource/span.md)ですが、理屈上は以下のような構造体です。
 
-<pre class="source" title="Span&lt;T&gt; の理屈上の中身">
-<code><span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt;
+```csharp
+readonly ref struct Span<T>
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <em><span class="reserved">ref</span> <span class="type">T</span> <span class="method">_field</span></em>;
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> _length;
+    private readonly ref T _field;
+    private readonly int _length;
 }
-</code></pre>
+```
 
 配列とか、`stackalloc` で確保したメモリ領域の先頭を `ref` で持っています。
 
@@ -54,22 +54,22 @@ aliases: []
 
 ということで、C# 10.0 / .NET 6 時点での `Span<T>` の中身は概ね以下のようになっています。
 
-<pre class="source" title=".NET 6 時点の Span&lt;T&gt; の理屈上の中身">
-<code><span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public readonly ref struct Span<T>
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">ByReference</span>&lt;<span class="type">T</span>&gt; _pointer;
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> _length;
+    private readonly ByReference<T> _pointer;
+    private readonly int _length;
 }
 
-<span class="reserved">internal</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">ByReference</span>&lt;<span class="type">T</span>&gt;
+internal readonly ref struct ByReference<T>
 {
-    <span class="comment">// 形式上こんな定義が入っているものの、ランタイム内で特殊処理して ref T に置き換えてる。</span>
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">IntPtr</span> _value;
+    // 形式上こんな定義が入っているものの、ランタイム内で特殊処理して ref T に置き換えてる。
+    private readonly IntPtr _value;
 
-    [<span class="type">Intrinsic</span>]
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> Value =&gt; <span class="control">throw</span> <span class="reserved">new</span> <span class="type">PlatformNotSupportedException</span>();
+    [Intrinsic]
+    public ref T Value => throw new PlatformNotSupportedException();
 }
-</code></pre>
+```
 
 ## ref がらみの改善
 

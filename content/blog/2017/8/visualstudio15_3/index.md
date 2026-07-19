@@ -52,11 +52,11 @@ C# 7.1の機能自体は、[6月のPreview 2の時点](../../6/vs2017u3p2/index.
 
 になるみたいです。csproj に以下の行を無差別に追加してしまいたい。
 
-<pre class="xsource" title="">
-<code><span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>latest<span class="attvalue">&lt;/</span><span class="element">LangVersion</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+```
 
 ## .NET IDE の機能強化
 

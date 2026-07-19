@@ -58,36 +58,36 @@ LINQ to SQL を例に説明します。
 
 例えば、C# で以下のようなクエリ式を書いたとします。
 
-<pre class="source" title="LINQ to SQL クエリ" lang="">
-<code><span class="reserved">var</span> context = <span class="reserved">new</span> CharacterContext(<span class="literal">"characters.sdf"</span>);
+```csharp
+var context = new CharacterContext("characters.sdf");
 
 System.Linq.IQueryable q =
-    <span class="reserved">from</span> c <span class="reserved">in</span> context.Characters
-    <span class="reserved">join</span> cv <span class="reserved">in</span> context.CvList on c.CharacterVoiceId equals cv.ID
-    <span class="reserved">select new</span>
+    from c in context.Characters
+    join cv in context.CvList on c.CharacterVoiceId equals cv.ID
+    select new
     {
         Name = c.姓 + c.名,
         Info = c.Infomation,
         Supplement = c.Supplement,
         CharacterVoice = cv.姓 + cv.名,
     };
-</code></pre>
+```
 
 
 IQueryable には Expression プロパティがあって、
 これを使って、クエリ式 → 式木の構築結果を取得することができます。
 
-<pre class="source" title="IQueryable.Expression の例" lang="">
-<code>System.Linq.Expressions.Expression e = q.Expression;
+```csharp
+System.Linq.Expressions.Expression e = q.Expression;
 Console.Write(e);
-</code></pre>
+```
 
 
-<pre class="console" title="出力">
-Table(Character).Join(Table(CharacterVoice), c =&gt; c.CharacterVoiceId, cv =&gt; cv.I
-D, (c, cv) =&gt; new &lt;&gt;f__AnonymousType0`4(Name = (c.姓 + c.名), Info = c.Infomatio
+```console
+Table(Character).Join(Table(CharacterVoice), c => c.CharacterVoiceId, cv => cv.I
+D, (c, cv) => new <>f__AnonymousType0`4(Name = (c.姓 + c.名), Info = c.Infomatio
 n, Supplement = c.Supplement, CharacterVoice = (cv.姓 + cv.名)))
-</pre>
+```
 
 
 テキストだといまいちわかりづらいと思うので、
@@ -105,15 +105,15 @@ IQueryable を実装する LINQ プロバイダでほぼ共通の処理です。
 で、LINQ to SQL では、この式木を解析して、
 以下のような SQL 文に変換します。
 
-<pre class="source" title="変換結果の SQL 文" lang="">
-<code>SELECT
+```sql
+SELECT
     [t0].[姓] + [t0].[名] AS [Name],
     [t0].[学籍番号等] AS [Info],
     [t0].[補足] AS [Supplement],
     [t1].[姓] + [t1].[名] AS [CharacterVoice]
 FROM [Characters] AS [t0], [CvList] AS [t1]
 WHERE [t0].[cv] = [t1].[ID]
-</code></pre>
+```
 
 
 
@@ -121,29 +121,29 @@ WHERE [t0].[cv] = [t1].[ID]
 
 IQueryable および IQueryProvider は以下のようなインターフェースです。
 
-<pre class="source" title="IQueryable インターフェース" lang="">
-<code><span class="reserved">public interface</span> IQueryable : IEnumerable
+```csharp
+public interface IQueryable : IEnumerable
 {
-  Type ElementType { <span class="reserved">get</span>; }
-  Expression Expression { <span class="reserved">get</span>; }
-  IQueryProvider Provider { <span class="reserved">get</span>; }
+  Type ElementType { get; }
+  Expression Expression { get; }
+  IQueryProvider Provider { get; }
 }
 
-<span class="reserved">public interface</span> IQueryable&lt;T&gt; : IEnumerable&lt;T&gt;, IQueryable, IEnumerable
+public interface IQueryable<T> : IEnumerable<T>, IQueryable, IEnumerable
 {
 }
-</code></pre>
+```
 
 
-<pre class="source" title="IQueryProvider インターフェース" lang="">
-<code><span class="reserved">public interface</span> IQueryProvider
+```csharp
+public interface IQueryProvider
 {
   IQueryable CreateQuery(Expression expression);
-  IQueryable&lt;TElement&gt; CreateQuery&lt;TElement&gt;(Expression expression);
-  <span class="reserved">object</span> Execute(Expression expression);
-  TResult Execute&lt;TResult&gt;(Expression expression);
+  IQueryable<TElement> CreateQuery<TElement>(Expression expression);
+  object Execute(Expression expression);
+  TResult Execute<TResult>(Expression expression);
 } 
-</code></pre>
+```
 
 
 IQueryable の方は特別な処理をしているわけではなく、
@@ -192,53 +192,52 @@ QueryProvider クラスの時点で「クエリ式 → 式木の構築」の部�
 
 （foreach したりには使えないけども、Expression を作るのには使える。）
 
-<pre class="source" title="QueryProvider を継承。独自処理一切なし。" lang="">
-<code><span class="reserved">public class</span> TestProvider : QueryProvider
+```csharp
+public class TestProvider : QueryProvider
 {
-    <span class="reserved">public override string</span> GetQueryText(Expression expression)
+    public override string GetQueryText(Expression expression)
     {
-        <span class="reserved">return string</span>.Empty;
+        return string.Empty;
     }
 
-    <span class="reserved">public override object</span> Execute(Expression expression)
+    public override object Execute(Expression expression)
     {
-        <span class="reserved">return null</span>;
+        return null;
     }
 
-    <span class="reserved">public static</span> IQueryable&lt;T&gt; CreateQueryable&lt;T&gt;()
+    public static IQueryable<T> CreateQueryable<T>()
     {
-        <span class="reserved">return new</span> Query&lt;T&gt;(<span class="reserved">new</span> TestProvider());
+        return new Query<T>(new TestProvider());
     }
 }
-</code></pre>
+```
 
 
 とりあえず、これを使って QueryProvider クラスの挙動を確認してみましょう。
 以下のようなコードを実行してみます。
 
-<pre class="source" title="QueryProvider クラスの挙動の確認" lang="">
-<code><span class="reserved">var</span> q1 = TestProvider.CreateQueryable&lt;<span class="reserved">int</span>&gt;();
-Console.Write(<span class="literal">"{0}\n"</span>, q1.Expression);
+```csharp
+var q1 = TestProvider.CreateQueryable<int>();
+Console.Write("{0}\n", q1.Expression);
 
-<span class="reserved">var</span> q2 = q1.Where(x =&gt; x &gt; 10);
-Console.Write(<span class="literal">"{0}\n"</span>, q2.Expression);
+var q2 = q1.Where(x => x > 10);
+Console.Write("{0}\n", q2.Expression);
 
-<span class="reserved">var</span> q3 = q2.OrderBy(x =&gt; x);
-Console.Write(<span class="literal">"{0}\n"</span>, q3.Expression);
+var q3 = q2.OrderBy(x => x);
+Console.Write("{0}\n", q3.Expression);
 
-<span class="reserved">var</span> q4 = q3.Select(x =&gt; x * x);
-Console.Write(<span class="literal">"{0}\n"</span>, q4.Expression);
-</code></pre>
+var q4 = q3.Select(x => x * x);
+Console.Write("{0}\n", q4.Expression);
+```
 
 
 実行結果は以下の通り。
 
-<pre class="console" title="実行結果">
-
-.Where(x =&gt; (x &gt; 10))
-.Where(x =&gt; (x &gt; 10)).OrderBy(x =&gt; x)
-.Where(x =&gt; (x &gt; 10)).OrderBy(x =&gt; x).Select(x =&gt; (x * x))        
-</pre>
+```console
+.Where(x => (x > 10))
+.Where(x => (x > 10)).OrderBy(x => x)
+.Where(x => (x > 10)).OrderBy(x => x).Select(x => (x * x))        
+```
 
 
 要するに、Where, Select, OrderBy などの拡張メソッドを通るたびに、
@@ -250,12 +249,12 @@ IQueryable.Expression の中身が追記されています。
 実のところ、QueryProvider クラスの CreateQuery メソッドは、
 引数で与えられた式木をそのまま Query クラスに流しているだけだったりします。
 
-<pre class="source" title="QueryProvider.CreateQuery の実装" lang="">
-<code>IQueryable&lt;S&gt; IQueryProvider.CreateQuery&lt;S&gt;(Expression expression)
+```csharp
+IQueryable<S> IQueryProvider.CreateQuery<S>(Expression expression)
 {
-    <span class="reserved">return new</span> Query&lt;S&gt;(<span class="reserved">this</span>, expression);
+    return new Query<S>(this, expression);
 }
-</code></pre>
+```
 
 
 で、実際に「クエリ式 → 式木の構築」を担っているのは、
@@ -263,22 +262,22 @@ System.Linq.Queryable 中で定義された Select や Where 拡張メソッド�
 
 例えば、System.Linq.Queryable.Where の中身は概ね以下のようになっているようです。
 
-<pre class="source" title="Where メソッドの中身" lang="">
-<code><span class="reserved">public static</span> IQueryable&lt;T&gt; Where&lt;T&gt;(
-  <span class="reserved">this</span> IQueryable&lt;T&gt; q,
-  Expression&lt;Func&lt;T, <span class="reserved">bool</span>&gt;&gt; pred)
+```csharp
+public static IQueryable<T> Where<T>(
+  this IQueryable<T> q,
+  Expression<Func<T, bool>> pred)
 {
   MethodInfo generic = (MethodInfo)MethodBase.GetCurrentMethod();
-  MethodInfo method = generic.MakeGenericMethod(<span class="reserved">typeof</span>(T));
+  MethodInfo method = generic.MakeGenericMethod(typeof(T));
 
-  <span class="reserved">return</span> q.Provider.CreateQuery&lt;T&gt;(
+  return q.Provider.CreateQuery<T>(
     Expression.Call(
       method,
       q.Expression,
       Expression.Quote(pred)
       ));
 }
-</code></pre>
+```
 
 
 引数 q の持っている式木に、

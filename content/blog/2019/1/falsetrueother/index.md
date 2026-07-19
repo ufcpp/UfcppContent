@@ -15,17 +15,17 @@ aliases: []
 
 これまで(C# 7.3 まで)、C# の `switch` ステートメントで `bool` 型を使う場合、以下のように、`default` 句が必須になることが多々ありました。
 
-<pre class="source" title="true, false, default...">
-<code><span class="reserved">static</span> <span class="reserved">int</span> <span class="method">X</span>(<span class="reserved">bool</span> <span class="variable">b</span>)
+```csharp
+static int X(bool b)
 {
-    <span class="control">switch</span> (<span class="variable">b</span>)
+    switch (b)
     {
-        <span class="control">case</span> <span class="reserved">false</span>: <span class="control">return</span> 0;
-        <span class="control">case</span> <span class="reserved">true</span>: <span class="control">return</span> 1;
-        <span class="control">default</span>: <span class="control">return</span> -1;
+        case false: return 0;
+        case true: return 1;
+        default: return -1;
     }
 }
-</code></pre>
+```
 
 `bool` 型には `false` と `true` しかないはずなのにこれはおかしいと言われ続けていたんですが、C# 8.0 では `default` 句が要らなくなるというか、`default` 句を絶対に通らなくなるよう、コード生成の仕方を変更するみたいです。
 
@@ -65,46 +65,46 @@ aliases: []
 
 具体的にはいくつか書き方があるんですが、1つ目は素直にポインターを使うもの。
 
-<pre class="source" title="ポインターを使って変な bool を作る">
-<code><span class="reserved">unsafe</span> <span class="reserved">bool</span> toBool(<span class="reserved">byte</span> b) =&gt; *((<span class="reserved">bool</span>*)&amp;b);
+```csharp
+unsafe bool toBool(byte b) => *((bool*)&b);
 Console.WriteLine(toBool(2));
-</code></pre>
+```
 
 もう1つは、[`Unsafe` クラス](../../../2018/12/unsafe/index.md)を使う書き方。
 これもまあ、書き方が違うだけでポインターと大差ないです。
 
-<pre class="source" title="Unsafe クラスを使って変な bool を作る">
-<code><span class="reserved">bool</span> toBool(<span class="reserved">byte</span> b) =&gt; Unsafe.As&lt;<span class="reserved">byte</span>, <span class="reserved">bool</span>&gt;(<span class="reserved">ref</span> b);
+```csharp
+bool toBool(byte b) => Unsafe.As<byte, bool>(ref b);
 Console.WriteLine(toBool(2));
-</code></pre>
+```
 
 最後に、`StructLayout` を使う(C 言語の union 風な使い方する)方法。
 `LayoutKind.Explicit` は、ポインター並みに変なことができちゃう機能なので、
 そもそも unsafe コードなしで使えること自体が疑問視されていたりもします。
 要するに、実質 unsafe。
 
-<pre class="source" title="LayoutKind.Explicit を使って変な bool を作る">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="reserved">bool</span> toBool(<span class="reserved">byte</span> b)
+    bool toBool(byte b)
     {
-        Union u = <span class="reserved">default</span>;
+        Union u = default;
         u.Byte = b;
-        <span class="reserved">return</span> u.Boolean;
+        return u.Boolean;
     }
 
     Console.WriteLine(toBool(2));
 }
 
 [StructLayout(LayoutKind.Explicit)]
-<span class="reserved">private</span> <span class="reserved">struct</span> <span class="type">Union</span>
+private struct Union
 {
     [FieldOffset(0)]
-    <span class="reserved">public</span> <span class="reserved">byte</span> Byte;
+    public byte Byte;
     [FieldOffset(0)]
-    <span class="reserved">public</span> <span class="reserved">bool</span> Boolean;
+    public bool Boolean;
 }
-</code></pre>
+```
 
 ## 0 でも 1 でもない bool を使うとどうなるか
 
@@ -126,33 +126,33 @@ C# の `if` ステートメントはこの命令(もしくはその逆の [brfal
 「0 以外の値」は全て `true` 扱いになります。
 実際、前述の方法で作った「中身が2の`bool`値」を `if` に渡すと `true` 側に分岐します。
 
-<pre class="source" title="中身が2のboolは、if 中では true 扱い">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Pointer</span>
+class Pointer
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">unsafe</span> <span class="reserved">bool</span> toBool(<span class="reserved">byte</span> b) =&gt; *((<span class="reserved">bool</span>*)&amp;b);
+        unsafe bool toBool(byte b) => *((bool*)&b);
 
-        Branch(<span class="reserved">false</span>);     <span class="comment">// if (false)</span>
-        Branch(<span class="reserved">true</span>);      <span class="comment">// if (true)</span>
-        Branch(toBool(2)); <span class="comment">// if (true)</span>
+        Branch(false);     // if (false)
+        Branch(true);      // if (true)
+        Branch(toBool(2)); // if (true)
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Branch(<span class="reserved">bool</span> b)
+    static void Branch(bool b)
     {
-        <span class="reserved">if</span> (b) Console.WriteLine(<span class="string">"if (true)"</span>);
-        <span class="reserved">else</span> Console.WriteLine(<span class="string">"if (false)"</span>);
+        if (b) Console.WriteLine("if (true)");
+        else Console.WriteLine("if (false)");
     }
 }
-</code></pre>
+```
 
-<pre class="console" title="中身が2のboolは、if 中では true 扱い">
-<code>if (false)
+```console
+if (false)
 if (true)
 if (true)
-</code></pre>
+```
 
 ### C# 7.3 までの switch ステートメント
 
@@ -164,32 +164,32 @@ if (true)
 これが、冒頭のコードで `default` 句が必須になる理由です。
 [実際、`case true` を通らないようなコード](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2019/BoolExhaustiveness/BoolOtherThan01/Program.cs)を書けます。
 
-<pre class="source" title="case false も case true も通らない bool 値">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main()
+```csharp
+static void Main()
 {
-    <span class="comment">// 0 → false</span>
-    <span class="comment">// 1 → true</span>
-    <span class="comment">// それ以外 → if (b) は通るんだけど、switch (b) { case true: } は通らない(C# 7.3 までは)変な値になる。</span>
-    <span class="reserved">for</span> (<span class="reserved">byte</span> i = 0; i &lt; 3; i++)
+    // 0 → false
+    // 1 → true
+    // それ以外 → if (b) は通るんだけど、switch (b) { case true: } は通らない(C# 7.3 までは)変な値になる。
+    for (byte i = 0; i < 3; i++)
     {
-        Console.WriteLine(<span class="string">$"value = </span>{i}<span class="string">"</span>);
+        Console.WriteLine($"value = {i}");
         Branch(Pointer(i));
         Branch(UnsafeAs(i));
         Branch(UnionStruct(i));
     }
 }
 
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-<span class="inactive">///</span><span class="comment"> false (0) の時は何も表示されない。</span>
-<span class="inactive">///</span><span class="comment"> true (1) の時は if(b) switch(b) の両方が表示される。</span>
-<span class="inactive">///</span><span class="comment"> 「それ以外の値」を作って渡すと、if(b) だけが表示される。</span>
-<span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-<span class="reserved">static</span> <span class="reserved">void</span> Branch(<span class="reserved">bool</span> b)
+/// <summary>
+/// false (0) の時は何も表示されない。
+/// true (1) の時は if(b) switch(b) の両方が表示される。
+/// 「それ以外の値」を作って渡すと、if(b) だけが表示される。
+/// </summary>
+static void Branch(bool b)
 {
-    <span class="reserved">if</span> (b) Console.WriteLine(<span class="string">"    if(b)"</span>);
-    <span class="reserved">switch</span> (b) { <span class="reserved">case</span> <span class="reserved">true</span>: Console.WriteLine(<span class="string">"    switch(b)"</span>); <span class="reserved">break</span>; }
+    if (b) Console.WriteLine("    if(b)");
+    switch (b) { case true: Console.WriteLine("    switch(b)"); break; }
 }
-</code></pre>
+```
 
 ### 型 switch
 
@@ -197,67 +197,67 @@ if (true)
 
 C# 7.0 から入った、[パターン マッチングを使った `switch`](../../../../study/csharp/datatype/typeswitch.md#switch)(いやゆる「型 switch」)の場合には brtrue 命令が使われるようになって、[`if` ステートメントと同じ挙動になります](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2019/BoolExhaustiveness/BoolOtherThan01/TypeSwitch.cs)。
 
-<pre class="source" title="型 switch は brtrue と同じ挙動">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">TypeSwitch</span>
+class TypeSwitch
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
         Branch(0);
         Branch(1);
         Branch(2);
     }
 
-    <span class="reserved">static</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> Branch(<span class="reserved">byte</span> x)
+    static unsafe void Branch(byte x)
     {
-        <span class="reserved">var</span> b = *((<span class="reserved">bool</span>*)&amp;x);
+        var b = *((bool*)&x);
 
-        Console.WriteLine(<span class="string">$"value = </span>{x}<span class="string">"</span>);
-        Console.Write(<span class="string">"    traditional switch: "</span>);
-        <span class="reserved">switch</span> (b)
+        Console.WriteLine($"value = {x}");
+        Console.Write("    traditional switch: ");
+        switch (b)
         {
-            <span class="reserved">case</span> <span class="reserved">false</span>:
-                Console.WriteLine(<span class="string">"false"</span>);
-                <span class="reserved">break</span>;
-            <span class="reserved">case</span> <span class="reserved">true</span>:
-                Console.WriteLine(<span class="string">"true"</span>);
-                <span class="reserved">break</span>;
-            <span class="reserved">default</span>:
-                <span class="comment">// 0でも1でもないbool値の時にここに来る</span>
-                Console.WriteLine(<span class="string">"other"</span>);
-                <span class="reserved">break</span>;
+            case false:
+                Console.WriteLine("false");
+                break;
+            case true:
+                Console.WriteLine("true");
+                break;
+            default:
+                // 0でも1でもないbool値の時にここに来る
+                Console.WriteLine("other");
+                break;
         }
 
-        Console.Write(<span class="string">"    type switch: "</span>);
-        <span class="reserved">switch</span> (b)
+        Console.Write("    type switch: ");
+        switch (b)
         {
-            <span class="reserved">case</span> <span class="reserved">false</span> <em><span class="reserved">when</span> <span class="reserved">true</span></em>:
-                Console.WriteLine(<span class="string">"false"</span>);
-                <span class="reserved">break</span>;
-            <span class="reserved">case</span> <span class="reserved">true</span>:
-                Console.WriteLine(<span class="string">"true"</span>);
-                <span class="reserved">break</span>;
-            <span class="reserved">default</span>:
-                <span class="comment">// 絶対ここは通らない</span>
-                Console.WriteLine(<span class="string">"other"</span>);
-                <span class="reserved">break</span>;
+            case false when true:
+                Console.WriteLine("false");
+                break;
+            case true:
+                Console.WriteLine("true");
+                break;
+            default:
+                // 絶対ここは通らない
+                Console.WriteLine("other");
+                break;
         }
     }
 }
-</code></pre>
+```
 
-<pre class="console" title="型 switch は brtrue と同じ挙動">
-<code>value = 0
+```console
+value = 0
     traditional switch: false
     type switch: false
 value = 1
     traditional switch: true
     type switch: true
 value = 2
-    traditional switch: <em>other</em>
+    traditional switch: other
     type switch: true
-</code></pre>
+```
 
 
 ### マーシャリング
@@ -266,52 +266,52 @@ value = 2
 
 例えば、以下のような Rust コードを lib.dll 中で定義しておいて、
 
-<pre class="source" title="8ビット整数値を素通しする Rust 関数">
-<code>#[no_mangle]
-<span class="reserved">pub extern fn</span> <span class="method">id</span>(<span class="variable">x</span>: <span class="type">i8</span>) -> <span class="type">i8</span> { <span class="variable">x</span> }
-</code></pre>
+```rust
+#[no_mangle]
+pub extern fn id(x: i8) -> i8 { x }
+```
 
 これを C# 側から以下のように呼び出します。
 
-<pre class="source" title="id 関数を C# から呼び出し">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System;
+using System.Runtime.InteropServices;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="comment">// 素通し。当然、2。</span>
-        <span class="reserved">byte</span> a = Id(2);
+        // 素通し。当然、2。
+        byte a = Id(2);
         Console.WriteLine(a);
 
-        <span class="comment">// 素通しじゃなくて、bool で値を受け取り。true。</span>
-        <span class="reserved">bool</span> b = ToBool(2);
+        // 素通しじゃなくて、bool で値を受け取り。true。
+        bool b = ToBool(2);
         Console.WriteLine(b);
 
-        <span class="reserved">unsafe</span>
+        unsafe
         {
-            <span class="comment">// 内部表現を見てみると、1 になってる。</span>
-            <span class="reserved">byte</span> b1 = *(<span class="reserved">byte</span>*)&amp;b;
+            // 内部表現を見てみると、1 になってる。
+            byte b1 = *(byte*)&b;
             Console.WriteLine(b1);
         }
     }
 
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> rust 側の id 関数は i8 を素通しするだけ。</span>
-    <span class="inactive">///</span><span class="comment"> それを DllImport で呼んでるので、このメソッドも素通し。</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-    [DllImport(<span class="string">"lib.dll"</span>, EntryPoint = <span class="string">"id"</span>)]
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">byte</span> Id(<span class="reserved">byte</span> x);
+    /// <summary>
+    /// rust 側の id 関数は i8 を素通しするだけ。
+    /// それを DllImport で呼んでるので、このメソッドも素通し。
+    /// </summary>
+    [DllImport("lib.dll", EntryPoint = "id")]
+    private static extern byte Id(byte x);
 
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> マーシャリングで、byte な戻り値を bool で受け取ることができる。</span>
-    <span class="inactive">///</span><span class="comment"> ただ、この場合、素通しではなくて、ちゃんと 戻り値 != 0 で bool に変換されているみたい。</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-    [DllImport(<span class="string">"lib.dll"</span>, EntryPoint = <span class="string">"id"</span>)]
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">bool</span> ToBool(<span class="reserved">byte</span> x);
+    /// <summary>
+    /// マーシャリングで、byte な戻り値を bool で受け取ることができる。
+    /// ただ、この場合、素通しではなくて、ちゃんと 戻り値 != 0 で bool に変換されているみたい。
+    /// </summary>
+    [DllImport("lib.dll", EntryPoint = "id")]
+    private static extern bool ToBool(byte x);
 }
-</code></pre>
+```
 
 `id`関数の戻り値は `i8` (C# でいう `sbyte`)ですが、マーシャリング時に `bool` への変換をしてくれます。
 変換の仕方は、`!= 0` になっているみたいで、「0 でない値」だったら普通の `true` (内部的に1の`bool`値)が返ってきます。
@@ -327,35 +327,35 @@ value = 2
 
 また、C# 8.0 では [`switch` 式](../../../2018/12/cs8switchexpr/index.md)も入るので、網羅性のチェック(「`true` と `false` で全パターン網羅している」という判定)をしたい需要が高まったので、ついに折れて、`bool` に対する `switch` の挙動を変えることにしたみたいです。
 
-<pre class="source" title="bool に対する switch の仕様変更">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        Console.WriteLine(X(<span class="reserved">false</span>)); <span class="comment">// -1</span>
-        Console.WriteLine(X(<span class="reserved">true</span>)); <span class="comment">// 1</span>
+        Console.WriteLine(X(false)); // -1
+        Console.WriteLine(X(true)); // 1
 
-        <span class="reserved">unsafe</span>
+        unsafe
         {
-            <span class="reserved">byte</span> x = 2;
-            <span class="reserved">bool</span> y = *(<span class="reserved">bool</span>*)&amp;x;
-            Console.WriteLine(X(y)); <span class="comment">// C# 7.0 までは 0 だった。C# 8.0 で 1 になるように。</span>
+            byte x = 2;
+            bool y = *(bool*)&x;
+            Console.WriteLine(X(y)); // C# 7.0 までは 0 だった。C# 8.0 で 1 になるように。
         }
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span> X(<span class="reserved">bool</span> b)
+    static int X(bool b)
     {
-        <span class="reserved">switch</span> (b)
+        switch (b)
         {
-            <span class="reserved">case</span> <span class="reserved">false</span>: <span class="reserved">return</span> -1;
-            <span class="reserved">case</span> <span class="reserved">true</span>: <span class="reserved">return</span> 1;
-            <span class="reserved">default</span>: <span class="reserved">return</span> 0;     <span class="comment">// C# 7.0 までは何も言われなかった。C# 8.0 で「到達できないコード」警告出るように。</span>
+            case false: return -1;
+            case true: return 1;
+            default: return 0;     // C# 7.0 までは何も言われなかった。C# 8.0 で「到達できないコード」警告出るように。
         }
     }
 }
-</code></pre>
+```
 
 内部的には `if` 相当のコードへの置き換えです。
 

@@ -58,8 +58,8 @@ PowerShell のコマンドは
 
 例えば、以下のようになります。
 
-<pre class="console" title="Cmdlet の例">
-<span class="prompt">&gt; </span> Get-Command more
+```console
+>  Get-Command more
 
 CommandType     Name         Definition
 -----------     ----         ----------
@@ -67,14 +67,14 @@ Function        more         param([string[]]$paths);  if(($paths -ne $null) ...
 Application     more.com     C:\Windows\system32\more.com
 Application     more.exe     C:\cygwin\bin\more.exe
 
-<span class="prompt">&gt; </span> Get-Alias -Name p* -Exclude ps
+>  Get-Alias -Name p* -Exclude ps
 
 CommandType     Name         Definition
 -----------     ----         ----------
 Alias           popd         Pop-Location
 Alias           pushd        Push-Location
 Alias           pwd          Get-Location
-</pre>
+```
 
 
 
@@ -86,15 +86,15 @@ Alias           pwd          Get-Location
 PowerShell でも、（他の多くのシェルがそうであるように）
 | 記号を使って2つのコマンドをパイプラインでつなぐことができます。
 
-<pre class="console" title="Cmdlet の例">
-<span class="prompt">&gt; </span> Get-ChildItem | Select-Object {$_.Name}
+```console
+>  Get-ChildItem | Select-Object {$_.Name}
 
 $_.Name
 -------
 doc
 sample
 test.ps1
-</pre>
+```
 
 
 ここで、他のシェルと大きく異なるのは、

@@ -43,58 +43,58 @@ aliases:
 
 [https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/HeapSort.cs](https://github.com/ufcpp/UfcppSample/blob/master/Chapters/Algorithm/Sort/HeapSort.cs)
 
-<pre class="source" title="ヒープソート" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// ヒープソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;</span>
-<span class="reserved">public static void</span> HeapSort&lt;T&gt;(T[] a)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+public static void HeapSort<T>(T[] a)
+  where T : IComparable<T>
 {
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = 1; i &lt; a.Length; ++i)
+  for (int i = 1; i < a.Length; ++i)
     MakeHeap(a, i);
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = a.Length - 1; i &gt;= 0; --i)
+  for (int i = a.Length - 1; i >= 0; --i)
     a[i] = PopHeap(a, i);
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 配列をヒープ化する。
 /// n - 1 番目までの要素は既にヒープ化されていることを仮定して、
 /// n 番目の要素をヒープに追加。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="n"&gt;要素数&lt;/param&gt;</span>
-<span class="reserved">static void</span> MakeHeap&lt;T&gt;(T[] a, <span class="reserved">int</span> n)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="n">要素数</param>
+static void MakeHeap<T>(T[] a, int n)
+  where T : IComparable<T>
 {
-  <span class="reserved">while</span> (n != 0)
+  while (n != 0)
   {
-    <span class="reserved">int</span> i = (n - 1) / 2;
-    <span class="reserved">if</span> (a[n].CompareTo(a[i]) &gt; 0) Swap(<span class="reserved">ref</span> a[n], <span class="reserved">ref</span> a[i]);
+    int i = (n - 1) / 2;
+    if (a[n].CompareTo(a[i]) > 0) Swap(ref a[n], ref a[i]);
     n = i;
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// ヒープから最大値を取り出す。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="n"&gt;要素数 - 1&lt;/param&gt;
-/// &lt;returns&gt;取り出した最大値&lt;/returns&gt;</span>
-<span class="reserved">static</span> T PopHeap&lt;T&gt;(T[] a, <span class="reserved">int</span> n)
-  <span class="reserved">where</span> T : IComparable&lt;T&gt;
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="n">要素数 - 1</param>
+/// <returns>取り出した最大値</returns>
+static T PopHeap<T>(T[] a, int n)
+  where T : IComparable<T>
 {
   T max = a[0];
 
   a[0] = a[n];
 
-  <span class="reserved">for</span> (<span class="reserved">int</span> i=0, j; (j = 2 * i + 1) &lt; n; )
+  for (int i=0, j; (j = 2 * i + 1) < n; )
   {
-    <span class="reserved">if</span> ((j != n - 1) &amp;&amp; (a[j].CompareTo(a[j + 1]) &lt; 0)) j++;
-    <span class="reserved">if</span> (a[i].CompareTo(a[j]) &lt; 0) Swap(<span class="reserved">ref</span> a[i], <span class="reserved">ref</span> a[j]);
+    if ((j != n - 1) && (a[j].CompareTo(a[j + 1]) < 0)) j++;
+    if (a[i].CompareTo(a[j]) < 0) Swap(ref a[i], ref a[j]);
     i = j;
   }
 
-  <span class="reserved">return</span> max;
+  return max;
 }
-</code></pre>
+```

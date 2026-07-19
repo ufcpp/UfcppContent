@@ -26,21 +26,21 @@ using alias は、using ディレクティブを書くときに `using T = Syste
 
 まず、以下のコードであれば現状でもコンパイルできるんですが…
 
-<pre class="source" title="現状の C# でも書ける using alias">
-<span class="reserved">using</span> <span class="type">List</span> <span class="operator">=</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic<span class="operator">.</span><span class="type">List</span>&lt;<span class="reserved">int</span>&gt;;
-<span class="reserved">using</span> <span class="type">ListA</span> <span class="operator">=</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic<span class="operator">.</span><span class="type">List</span>&lt;<span class="reserved">int</span>[]&gt;;
-<span class="reserved">using</span> <span class="type">ListN</span> <span class="operator">=</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic<span class="operator">.</span><span class="type">List</span>&lt;<span class="reserved">int</span><span class="operator">?</span>&gt;;
-<span class="reserved">using</span> <span class="type">ListT</span> <span class="operator">=</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic<span class="operator">.</span><span class="type">List</span>&lt;(<span class="reserved">int</span>, <span class="reserved">int</span>)&gt;;
-</pre>
+```csharp
+using List = System.Collections.Generic.List<int>;
+using ListA = System.Collections.Generic.List<int[]>;
+using ListN = System.Collections.Generic.List<int?>;
+using ListT = System.Collections.Generic.List<(int, int)>;
+```
 
 そのくせ以下のコードはコンパイルできません。
 
-<pre class="source" title="現状ではコンパイルできない using alias">
-<span class="reserved">using</span> <span class="type">Primitive</span> <span class="operator">=</span>  <span class="reserved"><span class="error" title="CS1001">int</span></span>;
-<span class="reserved">using</span> <span class="type">Array</span> <span class="operator">=</span> <span class="reserved"><span class="error" title="CS1001"><span class="error" title="CS1002">int</span></span></span>[<span class="error" title="CS0116">]</span>;
-<span class="reserved">using</span> <span class="type">Nullable</span> <span class="operator">=</span> <span class="error" title="CS1002"><span class="reserved">int</span></span><span class="error" title="CS0116"><span class="operator">?</span></span>;
-<span class="reserved">using</span> <span class="type">Tuple</span> <span class="operator">=</span> <span class="error" title="CS1002">(</span><span class="reserved"><span class="error" title="CS1525">int</span></span>, <span class="reserved"><span class="error" title="CS1525">int</span></span>);
-</pre>
+```csharp
+using Primitive =  int;
+using Array = int[];
+using Nullable = int?;
+using Tuple = (int, int);
+```
 
 要するに、ジェネリック型引数なら制限がほとんどないのに、トップレベルの時にだけ、以下のものを書けないという制限がありました。
 
@@ -59,12 +59,12 @@ using alias は、using ディレクティブを書くときに `using T = Syste
 `int` とか `int?` とかに対応するだけなら大した変更は要らないみたいです。
 [構文的には1行書き変わるだけ](https://github.com/dotnet/csharplang/blob/main/proposals/using-alias-types.md)。
 
-<pre>
+```text
 using_alias_directive
 -    : 'using' identifier '=' namespace_or_type_name ';'
 +    : 'using' identifier '=' (namespace_name | type) ';'
     ;
-</pre>
+```
 
 たぶん、「元々 using 専用に特殊処理していたけども、普通の型名参照と同じものに置き換える」みたいな感じでしょうか。
 
@@ -77,10 +77,10 @@ using_alias_directive
 まあ、今でも、`typeof(string)` は書けても `typeof(string?)` とは書けないので、
 それと同じです。
 
-<pre class="source" title="トップレベルの NRT">
-<span class="reserved">using</span> <span class="type">List</span> <span class="operator">=</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic<span class="operator">.</span><span class="type">List</span>&lt;<span class="reserved">string</span><span class="operator">?</span>&gt;; <span class="comment">// これは OK。</span>
-<span class="reserved">using</span> <span class="type">S</span> <span class="operator">=</span> <span class="error"><span class="reserved">string</span><span class="operator">?</span></span>; <span class="comment">// これはダメ。</span>
-</pre>
+```csharp
+using List = System.Collections.Generic.List<string?>; // これは OK。
+using S = string?; // これはダメ。
+```
 
 ## ポインター
 
@@ -90,19 +90,19 @@ using_alias_directive
 
 これに対しては結局、`using unsafe` という構文を導入するみたいです。
 
-<pre class="source" title="using unsafe">
-<span class="reserved">using</span> <span class="reserved">unsafe</span> <span class="type">T</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">*</span>;
-<span class="reserved">using</span> <span class="reserved">unsafe</span> <span class="type">F</span> <span class="operator">=</span> <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">void</span>&gt;;
-</pre>
+```csharp
+using unsafe T = int*;
+using unsafe F = delegate*<int, int, void>;
+```
 
 ## 今後の課題: 型引数
 
 [エイリアスをジェネリックにして型引数を持たせたい](https://github.com/dotnet/csharplang/issues/1239)という話もあります。
 以下のような、エイリアスの右辺にも `<T>` を付けたいというやつ。
 
-<pre class="source" title="エイリアスに &lt;T&gt; を付けたい">
-<span class="reserved">using</span> <span class="type">List</span>&lt;<span class="type">T</span>&gt; <span class="operator">=</span> System<span class="operator">.</span>Collections<span class="operator">.</span>Generic<span class="operator">.</span><span class="type">List</span>&lt;<span class="type">T</span>&gt;;
-</pre>
+```csharp
+using List<T> = System.Collections.Generic.List<T>;
+```
 
 これはこれで要望はあって、Backlog (すぐに手を付けるほどの優先度にはない)とはいえ、
 Champion (C# チームの担当がついてる状態)にはなっています。

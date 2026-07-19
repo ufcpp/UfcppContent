@@ -62,22 +62,22 @@ aliases: []
 
 [throw 式](../../../../study/csharp/structured/oo_exception.md#throwexpr)と同じ文脈で、`return`, `break`, `continue`も認めてもいいのではないかという話。(補足: throw 式が使える文脈ってのは、以下のように、`=>`とか`??`とか`?:`の後ろです。)
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Action</span> a = () =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>(); <span class="comment">// =&gt; の後ろ</span>
+        Action a = () => throw new Exception(); // => の後ろ
     }
 
-    <span class="reserved">static</span> <span class="reserved">int</span> F(<span class="reserved">int</span>? n) =&gt; n ?? <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>(); <span class="comment">// ?? の後ろ</span>
-    <span class="reserved">static</span> <span class="reserved">int</span> F(<span class="reserved">bool</span> b) =&gt; b ? 1 : <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>(); <span class="comment">// ?: の2、3項目</span>
+    static int F(int? n) => n ?? throw new Exception(); // ?? の後ろ
+    static int F(bool b) => b ? 1 : throw new Exception(); // ?: の2、3項目
 
-    <span class="reserved">static</span> <span class="reserved">int</span> F() =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>(); <span class="comment">// =&gt; の後ろ</span>
+    static int F() => throw new Exception(); // => の後ろ
 }
-</code></pre>
+```
 
 throw式の実装の時点でreturn式とかは要望がでていましたし、
 6月くらいには[Design Meeting](https://github.com/dotnet/csharplang/blob/master/meetings/2017/LDM-2017-06-27.md)の議題に挙がってたみたいですが、

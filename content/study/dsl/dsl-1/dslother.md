@@ -93,9 +93,9 @@ XML なんかは、理念的にはこの折中案。
 例えば、何らかの数値を設定ファイルに記録してあったとします。
 テキスト形式の場合、読み出しは以下のような感じになります。
 
-<pre class="source" title="テキスト形式のファイルから数値を読み出し" lang="">
-<code><span class="reserved">int</span> x = <span class="reserved">int</span>.Parse(reader.ReadLine());
-</code></pre>
+```csharp
+int x = int.Parse(reader.ReadLine());
+```
 
 
 これでも簡単な例（1つの行に1つの数値しかかかれてないという前提）なんですが、
@@ -105,9 +105,9 @@ Parse では「文字列を解析して数値に変換」というような処�
 
 一方、バイナリ形式で保存するなら、以下のような感じ。
 
-<pre class="source" title="バイナリ形式のファイルから数値を読み出し" lang="">
-<code><span class="reserved">int</span> x = reader.ReadInt32();
-</code></pre>
+```csharp
+int x = reader.ReadInt32();
+```
 
 
 こちらは、4バイト読み出すだけ。
@@ -160,7 +160,7 @@ Parse では「文字列を解析して数値に変換」というような処�
 
 Microsoft のゲーム開発環境 [XNA](http://www.microsoft.com/japan/msdn/xna/) は、
 コンテントパイプラインという仕組みを持っています。
-<pre>
+```text
       （書きかけ）
       - XNA の Content Pipeline
 
@@ -180,11 +180,12 @@ Microsoft のゲーム開発環境 [XNA](http://www.microsoft.com/japan/msdn/xna
       XNA 開発の便利なところは、1, 2 のところを作って、
       Visual Studio のプロパティウィンドから作ったモジュールが登録できて、
       特に Makefile の類を書かなくても1→3の処理ができること。
-    </pre>
+    
+```
 
 ## <a id="sec-generated-title-9"></a> <a id="language_workbench"></a>言語ワークベンチ
 
-<pre>
+```text
       （書きかけ）
 
       ・ビジュアル言語 VS テキスト言語
@@ -198,7 +199,8 @@ Microsoft のゲーム開発環境 [XNA](http://www.microsoft.com/japan/msdn/xna
 
 
       汎用のテキスト言語 ＋ ビジュアル DSL の混在開発
-    </pre>
+    
+```
 言語ワークベンチ …
 intentional programming。
 テキスト形式のソースファイルを基本とするんじゃなくて、
@@ -243,49 +245,49 @@ intentional programming。
 
 ハッシュテーブルによる表現
 
-<pre class="source" title="ハッシュテーブルによるステートマシンの表現" lang="">
-<code>fsm[<span class="reserved">new</span> Pair(State.A, Event.a)] = <span class="reserved">new</span> Pair(State.A, x);
-fsm[<span class="reserved">new</span> Pair(State.A, Event.b)] = <span class="reserved">new</span> Pair(State.B, y);
-fsm[<span class="reserved">new</span> Pair(State.A, Event.d)] = <span class="reserved">new</span> Pair(State.C, u);
+```csharp
+fsm[new Pair(State.A, Event.a)] = new Pair(State.A, x);
+fsm[new Pair(State.A, Event.b)] = new Pair(State.B, y);
+fsm[new Pair(State.A, Event.d)] = new Pair(State.C, u);
 
-fsm[<span class="reserved">new</span> Pair(State.B, Event.a)] = <span class="reserved">new</span> Pair(State.A, w);
-fsm[<span class="reserved">new</span> Pair(State.B, Event.b)] = <span class="reserved">new</span> Pair(State.B, x);
-fsm[<span class="reserved">new</span> Pair(State.B, Event.c)] = <span class="reserved">new</span> Pair(State.C, z);
+fsm[new Pair(State.B, Event.a)] = new Pair(State.A, w);
+fsm[new Pair(State.B, Event.b)] = new Pair(State.B, x);
+fsm[new Pair(State.B, Event.c)] = new Pair(State.C, z);
 
-fsm[<span class="reserved">new</span> Pair(State.C, Event.b)] = <span class="reserved">new</span> Pair(State.A, u);
-fsm[<span class="reserved">new</span> Pair(State.C, Event.c)] = <span class="reserved">new</span> Pair(State.C, z);
-fsm[<span class="reserved">new</span> Pair(State.C, Event.d)] = <span class="reserved">new</span> Pair(State.B, u);
-</code></pre>
+fsm[new Pair(State.C, Event.b)] = new Pair(State.A, u);
+fsm[new Pair(State.C, Event.c)] = new Pair(State.C, z);
+fsm[new Pair(State.C, Event.d)] = new Pair(State.B, u);
+```
 
 
 switch 文による表現
 
-<pre class="source" title="switch 文によるステートマシンの表現" lang="">
-<code><span class="reserved">switch</span>(currentState)
+```csharp
+switch(currentState)
 {
-<span class="reserved">case</span> State.A:
-  <span class="reserved">switch</span>(<span class="reserved">event</span>)
+case State.A:
+  switch(event)
   {
-  <span class="reserved">case</span> Event.a: x(); currentState = State.A; <span class="reserved">break</span>;
-  <span class="reserved">case</span> Event.b: y(); currentState = State.B; <span class="reserved">break</span>;
-  <span class="reserved">case</span> Event.d: u(); currentState = State.C; <span class="reserved">break</span>;
+  case Event.a: x(); currentState = State.A; break;
+  case Event.b: y(); currentState = State.B; break;
+  case Event.d: u(); currentState = State.C; break;
   }
-  <span class="reserved">break</span>;
-<span class="reserved">case</span> State.B:
-  <span class="reserved">switch</span>(<span class="reserved">event</span>)
+  break;
+case State.B:
+  switch(event)
   {
-  <span class="reserved">case</span> Event.a: w(); currentState = State.A; <span class="reserved">break</span>;
-  <span class="reserved">case</span> Event.b: x(); currentState = State.B; <span class="reserved">break</span>;
-  <span class="reserved">case</span> Event.c: z(); currentState = State.C; <span class="reserved">break</span>;
+  case Event.a: w(); currentState = State.A; break;
+  case Event.b: x(); currentState = State.B; break;
+  case Event.c: z(); currentState = State.C; break;
   }
-  <span class="reserved">break</span>;
-<span class="reserved">case</span> State.C:
-  <span class="reserved">switch</span>(<span class="reserved">event</span>)
+  break;
+case State.C:
+  switch(event)
   {
-  <span class="reserved">case</span> Event.b: u(); currentState = State.A; <span class="reserved">break</span>;
-  <span class="reserved">case</span> Event.c: z(); currentState = State.C; <span class="reserved">break</span>;
-  <span class="reserved">case</span> Event.d: u(); currentState = State.B; <span class="reserved">break</span>;
+  case Event.b: u(); currentState = State.A; break;
+  case Event.c: z(); currentState = State.C; break;
+  case Event.d: u(); currentState = State.B; break;
   }
-  <span class="reserved">break</span>;
+  break;
 }
-</code></pre>
+```

@@ -58,33 +58,31 @@ aliases: []
 
 元:
 
-<pre class="xsource" title="WPF プロジェクト(Windows 向け .NET プロジェクト) 修正前">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk.<em>WindowsDesktop</em></span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>WinExe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFrameworks</span><span class="attvalue">&gt;</span>netcoreapp3.1<span class="attvalue">&lt;/</span><span class="element">TargetFrameworks</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">UseWPF</span><span class="attvalue">&gt;</span>true<span class="attvalue">&lt;/</span><span class="element">UseWPF</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-
-</code></pre>
+</Project>
+```
 
 後:
 
-<pre class="xsource" title="WPF プロジェクト(Windows 向け .NET プロジェクト) 修正後">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>WinExe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net5.0<em>-windows</em><span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">UseWPF</span><span class="attvalue">&gt;</span>true<span class="attvalue">&lt;/</span><span class="element">UseWPF</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-
-</code></pre>
+</Project>
+```
 
 ### 警告がアグレッシブに追加される
 
@@ -101,42 +99,42 @@ C# はこれまで警告の追加も破壊的変更になりうるというこ�
 
 .NET 5.0 をターゲットにしたいし、C# 9.0 の新機能も使いたいけども警告だけは増やしたくないという人は、以下の2つのオプションを csproj に追加してください。
 
-<pre class="xsource" title="警告レベルを昔のまま維持するためのオプション">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">EnableNETAnalyzers</span><span class="attvalue">&gt;</span>false<span class="attvalue">&lt;/</span><span class="element">EnableNETAnalyzers</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">AnalysisLevel</span><span class="attvalue">&gt;</span>4.0<span class="attvalue">&lt;/</span><span class="element">AnalysisLevel</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <AnalysisLevel>4.0</AnalysisLevel>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 ちなみに、自分が踏んだ「追加警告」は以下のような警告だけでした(CS8881 の追加)。
 
-<pre class="source" title=".NET 5.0 にすると増える警告">
-<code><span class="comment">// エラーにならなくなってた条件</span>
-<span class="comment">// - X と Y が別 DLL (別 csproj)</span>
-<span class="comment">// - X が参照型だけを含む</span>
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">X</span>&lt;<span class="type">T</span>&gt;
+```csharp
+// エラーにならなくなってた条件
+// - X と Y が別 DLL (別 csproj)
+// - X が参照型だけを含む
+public struct X<T>
 {
-    <span class="reserved">private</span> <span class="reserved">string</span> _x;
+    private string _x;
 }
 
-<span class="reserved">struct</span> <span class="type">Y</span>
+struct Y
 {
-    <span class="type">X</span>&lt;<span class="reserved">int</span>&gt; _x;
+    X<int> _x;
  
-    <span class="reserved">public</span> <span class="type">Y</span>(<span class="reserved">bool</span> <span class="variable">x</span>)
+    public Y(bool x)
     {
-        <span class="comment">// 一定の条件下で、 _x を初期化しなくてもエラーが出なかった。</span>
-        <span class="comment">// C# 9.0 (AnalysisLevel 5.0) では警告だけは出るようになった。</span>
-        <span class="control">if</span> (<span class="variable">x</span>) <span class="control"><span class="warning">return</span></span>;
+        // 一定の条件下で、 _x を初期化しなくてもエラーが出なかった。
+        // C# 9.0 (AnalysisLevel 5.0) では警告だけは出るようになった。
+        if (x) return;
  
-        _x = <span class="reserved">new</span> <span class="type">X</span>&lt;<span class="reserved">int</span>&gt;();
+        _x = new X<int>();
     }
 }
-</code></pre>
+```
 
 ### ICU (International Components for Unicode) 化
 
@@ -167,19 +165,19 @@ C# はこれまで警告の追加も破壊的変更になりうるというこ�
 
 日本語 Windows がやっている余計なお世話として有名なのが、「いまだに ¥ 記号と `\` (逆スラッシュ)を同一視する」というのがあります。
 
-<pre class="source" title="ja-jp カルチャーでの破壊的変更">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Globalization;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Globalization;
+using System.Threading;
  
-<span class="reserved">var</span> <span class="variable">s1</span> = <span class="string">@&quot;</span><span style="color:#b776fb;">\</span><span class="string">&quot;</span>;
-<span class="reserved">var</span> <span class="variable">s2</span> = <span class="string">&quot;¥&quot;</span>;
+var s1 = @"\";
+var s2 = "¥";
  
-<span class="reserved">var</span> <span class="variable">culture</span> = <span class="type">CultureInfo</span>.<span class="method">GetCultureInfo</span>(<span class="string">&quot;ja-jp&quot;</span>);
-<span class="type">Thread</span>.CurrentThread.CurrentCulture = <span class="variable">culture</span>;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s1</span>.<span class="method">Contains</span>(<span class="variable">s2</span>)); <span class="comment">// CurrentCulture 非依存。今までもこれからも False。</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s1</span>.<span class="method">IndexOf</span>(<span class="variable">s2</span>)); <span class="comment">// CurrentCulture 依存。今まで 0。これから -1。</span>
-</code></pre>
+var culture = CultureInfo.GetCultureInfo("ja-jp");
+Thread.CurrentThread.CurrentCulture = culture;
+Console.WriteLine(s1.Contains(s2)); // CurrentCulture 非依存。今までもこれからも False。
+Console.WriteLine(s1.IndexOf(s2)); // CurrentCulture 依存。今まで 0。これから -1。
+```
 
 昔、逆スラッシュのコード(U+005C)は国ごとに解釈を変えてもいいという扱いになっていて、
 日本語では¥(円記号)、韓国語では₩(ウォン記号)に使っていたという時代の名残りです。
@@ -194,14 +192,14 @@ C# はこれまで警告の追加も破壊的変更になりうるというこ�
 ICU では CR LF は「分割不可」らしく、CR LF と LF は別文字扱いになっています。
 NLS はこの処理をしていないので、以下のコードは NLS と ICU で結果が変わります。
 
-<pre class="source" title="改行の扱いの変化">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">var</span> <span class="variable">s1</span> = <span class="string">&quot;</span><span style="color:#b776fb;">\r\n</span><span class="string">&quot;</span>;
-<span class="reserved">var</span> <span class="variable">s2</span> = <span class="string">&quot;</span><span style="color:#b776fb;">\n</span><span class="string">&quot;</span>;
+var s1 = "\r\n";
+var s2 = "\n";
  
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s1</span>.<span class="method">IndexOf</span>(<span class="variable">s2</span>)); <span class="comment">// NLS だと 1。ICU だと -1。</span>
-</code></pre>
+Console.WriteLine(s1.IndexOf(s2)); // NLS だと 1。ICU だと -1。
+```
 
 #### 対処法
 
@@ -212,20 +210,20 @@ NLS はこの処理をしていないので、以下のコードは NLS と ICU 
 
 NLS に戻すなら、csproj に以下の設定を追加します。
 
-<pre class="xsource" title="国際化対応を .NET 5.0 でも NLS でやるためのオプション">
-<code><span class="attvalue">  &lt;</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">RuntimeHostConfigurationOption</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>&quot;<span class="attvalue">System.Globalization.UseNls</span>&quot;<span class="attvalue"> </span><span class="attribute">Value</span><span class="attvalue">=</span>&quot;<span class="attvalue">true</span>&quot;<span class="attvalue"> /&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Globalization.UseNls" Value="true" />
+  </ItemGroup>
+```
 
 一方、カルチャー依存するようなメソッドは大体、第2引数にオプション指定できるので、それを `Ordinal` にしてしまえばカルチャー問題は踏まなくなります。
 
-<pre class="xsource" title="Ordinal 推奨">
-<code><span class="xsl">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#1f377f;">s1</span>.<span style="color:#74531f;">IndexOf</span>(<span style="color:#1f377f;">s2</span>)); <span class="comment">// CurrentCulture になってるのが問題</span>
-<span class="xsl">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#1f377f;">s1</span>.<span style="color:#74531f;">IndexOf</span>(<span style="color:#1f377f;">s2</span>, <span class="xsl">StringComparison</span>.CurrentCulture)); <span class="comment">// \ と ￥ の問題を踏む</span>
-<span class="xsl">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#1f377f;">s1</span>.<span style="color:#74531f;">IndexOf</span>(<span style="color:#1f377f;">s2</span>, <span class="xsl">StringComparison</span>.InvariantCulture)); <span class="comment">// \r\n と \n の問題を踏む</span>
-<span class="xsl">Console</span>.<span style="color:#74531f;">WriteLine</span>(<span style="color:#1f377f;">s1</span>.<span style="color:#74531f;">IndexOf</span>(<span style="color:#1f377f;">s2</span>, <span class="xsl">StringComparison</span>.Ordinal)); <span class="comment">// カルチャー依存したくなければこれを指定すればいい</span>
-</code></pre>
+```xml
+Console.WriteLine(s1.IndexOf(s2)); // CurrentCulture になってるのが問題
+Console.WriteLine(s1.IndexOf(s2, StringComparison.CurrentCulture)); // \ と ￥ の問題を踏む
+Console.WriteLine(s1.IndexOf(s2, StringComparison.InvariantCulture)); // \r\n と \n の問題を踏む
+Console.WriteLine(s1.IndexOf(s2, StringComparison.Ordinal)); // カルチャー依存したくなければこれを指定すればいい
+```
 
 「デフォルトが `CurrentCulture` なことが問題」とは認識されていて、
 近いうちにこの手の API に対して `StringComparison` を指定していなかった場合に警告を出すようなアナライザーを提供しようかという話になっていたりもします。

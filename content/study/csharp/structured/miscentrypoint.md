@@ -35,12 +35,12 @@ C# では、`Main`という名前の関数が自動的にエントリーポイ�
 `Main`の引数と戻り値は、以下のいずれかである必要があります。
 これ以外のオーバーロードはエントリーポイントになりません。
 
-<pre class="source" title="Main の引数と戻り値">
-<code><span class="reserved">static</span> <span class="reserved">int</span> Main()
-<span class="reserved">static</span> <span class="reserved">int</span> Main(<span class="reserved">string</span>[] args)
-<span class="reserved">static</span> <span class="reserved">void</span> Main()
-<span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
-</code></pre>
+```csharp
+static int Main()
+static int Main(string[] args)
+static void Main()
+static void Main(string[] args)
+```
 
 (ただし、後述しますが、C# 7.1 からは戻り値として`Task`クラスが使えるようになりました。)
 
@@ -79,41 +79,41 @@ GUI アプリや Web アプリでは、`Main`関数を書かない場合があ�
 
 C# 7.1で、以下のように、`Main`関数の戻り値に`Task`クラス(`System.Threading.Tasks`名前空間)を使えるようになりました。
 
-<pre class="source" title="Main関数の引数と戻り値(C# 7.1 から)">
-<code><span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; Main()
-<span class="reserved">static</span> <span class="type">Task</span>&lt;<span class="reserved">int</span>&gt; Main(<span class="reserved">string</span>[] args)
-<span class="reserved">static</span> <span class="type">Task</span> Main()
-<span class="reserved">static</span> <span class="type">Task</span> Main(<span class="reserved">string</span>[] args)
-</code></pre>
+```csharp
+static Task<int> Main()
+static Task<int> Main(string[] args)
+static Task Main()
+static Task Main(string[] args)
+```
 
 もちろん、[非同期メソッド](../async/sp5_async.md)を使えるようにするためです。
 例えば以下のような`Main`関数が、ちゃんとエントリーポイントとして認識されます。
 
-<pre class="source" title="非同期Mainの例">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> Main()
+```csharp
+static async Task Main()
 {
-    <span class="reserved">for</span> (<span class="reserved">int</span> i = 10; i &gt; 0; i--)
+    for (int i = 10; i > 0; i--)
     {
-        <span class="type">Console</span>.WriteLine(i);
-        <span class="reserved">await</span> <span class="type">Task</span>.Delay(1000);
+        Console.WriteLine(i);
+        await Task.Delay(1000);
     }
 
-    <span class="type">Console</span>.WriteLine(<span class="string">"done."</span>);
+    Console.WriteLine("done.");
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-7"></a> <a id="internal-async-main"></a>非同期 Main の仕組み
 
 ちなみに、この機能は、コンパイラーが通常の(`void`/`int`戻り値の)エントリーポイントを別途自動生成することで実現しています。
 例えば、先ほどの例のように、`Task Main()`を書くと、追加で以下のような関数が作られ、これが実際のエントリーポイントとして機能します。
 
-<pre class="source" title="非同期Mainから自動生成される通常のMain">
-<code><span class="comment">// 実際には &lt;Main&gt; というような、C# で本来使えない名前で生成される</span>
-<span class="reserved">static</span> <span class="reserved">void</span> _Main_(<span class="reserved">string</span>[] args)
+```csharp
+// 実際には <Main> というような、C# で本来使えない名前で生成される
+static void _Main_(string[] args)
 {
     Main().GetAwaiter().GetResult();
 }
-</code></pre>
+```
 
 中身は`GetAwaiter().GetResult()`を呼んでいるだけです。
 
@@ -124,14 +124,14 @@ C# 7.1で、以下のように、`Main`関数の戻り値に`Task`クラス(`Sys
 
 C# 7.1 では、通常の(`void`/`int`戻り値の)`Main`関数がある場合、そちらだけをエントリーポイント扱いします。
 
-<pre class="source" title="Main の優先度">
-<code><span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+```csharp
+static void Main(string[] args)
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">"こちらがエントリーポイント扱い"</span>);
+    Console.WriteLine("こちらがエントリーポイント扱い");
 }
 
-<span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> Main()
+static async Task Main()
 {
-    <span class="type">Console</span>.WriteLine(<span class="string">"void Main(string[]) がある限り、こちらは呼ばれない"</span>);
+    Console.WriteLine("void Main(string[]) がある限り、こちらは呼ばれない");
 }
-</code></pre>
+```

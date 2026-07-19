@@ -45,25 +45,25 @@ C# 9.0 時点では仕様を詰め切れていなくて「9.0 リリース後に
 
 レコード型は、以下のように `record` キーワードを使って宣言する新しい型で、
 
-<pre class="source" title="record 型宣言">
-<code><span class="reserved">record</span> <span class="type">Point</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>);
-</code></pre>
+```csharp
+record Point(int X, int Y);
+```
 
 内部的には以下のようなクラスの生成になります。
 
-<pre class="source" title="Point レコードからのクラス生成">
-<code><span class="reserved">class</span> <span class="type">Point</span>
+```csharp
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="type">Point</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>) <span class="comment">// X, Y プロパティに代入</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">Y</span>) <span class="comment">// X, Y プロパティから値取得</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="reserved">object</span>? <span class="variable">obj</span>) <span class="comment">// X, Y の値の比較</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> <span class="method">GetHashCode</span>() <span class="comment">// X, Y からハッシュ値生成</span>
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>() <span class="comment">// Point { X = ... } の書式で文字列化</span>
-    <span class="reserved">public</span> <span class="type">Point</span> <span class="method">Clone</span>() <span class="comment">// shallow コピー (実際には通常の C# から参照できない名前で生成)</span>
+    public int X { get; init; }
+    public int Y { get; init; }
+    public Point(int X, int Y) // X, Y プロパティに代入
+    public void Deconstruct(out int X, out int Y) // X, Y プロパティから値取得
+    public override bool Equals(object? obj) // X, Y の値の比較
+    public override int GetHashCode() // X, Y からハッシュ値生成
+    public override string ToString() // Point { X = ... } の書式で文字列化
+    public Point Clone() // shallow コピー (実際には通常の C# から参照できない名前で生成)
 }
-</code></pre>
+```
 
 いくつかのとらえ方がありますが、以下のようなものとして説明されます。
 
@@ -76,35 +76,35 @@ C# 9.0 時点では仕様を詰め切れていなくて「9.0 リリース後に
 わかりやすくまずいのは例えば以下のような場合。
 ハッシュ値が変わってしまうことで `HashSet` や `Dictionary` の挙動を壊します。
 
-<pre class="source" title="値比較を持っている参照型は immutable でないとまずい">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
  
-<span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
+var p = new Point { X = 1, Y = 2 };
  
-<span class="comment">// HashSet (ハッシュ値で等値比較してる)にインスタンスを渡す</span>
-<span class="type">HashSet</span>&lt;<span class="type">Point</span>&gt; <span class="variable">set</span> = <span class="reserved">new</span>();
-<span class="variable">set</span>.<span class="method">Add</span>(<span class="variable">p</span>);
+// HashSet (ハッシュ値で等値比較してる)にインスタンスを渡す
+HashSet<Point> set = new();
+set.Add(p);
  
-<span class="comment">// その後、値を書き換え</span>
-<span class="variable">p</span>.X = 3;
+// その後、値を書き換え
+p.X = 3;
  
-<span class="comment">// ハッシュ値が変わってしまってるので判定が狂う</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">set</span>.<span class="method">Contains</span>(<span class="variable">p</span>)); <span class="comment">// false</span>
+// ハッシュ値が変わってしまってるので判定が狂う
+Console.WriteLine(set.Contains(p)); // false
  
-<span class="comment">// Remove もできなくなる</span>
-<span class="variable">set</span>.<span class="method">Remove</span>(<span class="variable">p</span>);
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">set</span>.Count); <span class="comment">// Remove できてないので 1 が返る</span>
+// Remove もできなくなる
+set.Remove(p);
+Console.WriteLine(set.Count); // Remove できてないので 1 が返る
  
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type">Point</span> <span class="variable">other</span>) =&gt; (X, Y) == (<span class="variable">other</span>.X, <span class="variable">other</span>.Y);
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="reserved">object</span>? <span class="variable">obj</span>) =&gt; <span class="variable">obj</span> <span class="reserved">is</span> <span class="type">Point</span> <span class="variable">other</span> &amp;&amp; <span class="method">Equals</span>(<span class="variable">other</span>);
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> <span class="method">GetHashCode</span>() =&gt; X ^ Y;
+    public int X { get; set; }
+    public int Y { get; set; }
+    public bool Equals(Point other) => (X, Y) == (other.X, other.Y);
+    public override bool Equals(object? obj) => obj is Point other && Equals(other);
+    public override int GetHashCode() => X ^ Y;
 }
-</code></pre>
+```
 
 レコード型から生成されるクラスの例に `init` というキーワードが入っていますが、
 これも C# 9.0 の新機能で、プロパティがオブジェクト初期化子までは書き換え可能、その後は書き換え不能になるという機能です。
@@ -114,32 +114,32 @@ C# 9.0 時点では仕様を詰め切れていなくて「9.0 リリース後に
 - get-only プロパティ (`int X { get; }` みたいなの): コンストラクター内でだけ書き換えできる
 - init プロパティ (`int X { get; init; }` みたいなの): コンストラクター内とオブジェクト初期化子でだけ書き換えできる
 
-<pre class="source" title="init プロパティ">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span>
+```csharp
+var p = new Point
 {
-    Settable = 1, <span class="comment">// OK</span>
-    <span class="error">GetOnly</span> = 1,  <span class="comment">// ✖</span>
-    Init = 1,     <span class="comment">// OK</span>
+    Settable = 1, // OK
+    GetOnly = 1,  // ✖
+    Init = 1,     // OK
 };
  
-<span class="variable">p</span>.Settable = 1; <span class="comment">// OK</span>
-<span class="error"><span class="variable">p</span>.GetOnly</span> = 1; <span class="comment">// ✖</span>
-<span class="error"><span class="variable">p</span>.Init</span> = 1; <span class="comment">// ✖</span>
+p.Settable = 1; // OK
+p.GetOnly = 1; // ✖
+p.Init = 1; // ✖
  
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Settable { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> GetOnly { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Init { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int Settable { get; set; }
+    public int GetOnly { get; }
+    public int Init { get; init; }
  
-    <span class="reserved">public</span> <span class="type">Point</span>()
+    public Point()
     {
-        Settable = 1; <span class="comment">// OK</span>
-        GetOnly = 1;  <span class="comment">// OK</span>
-        Init = 1;     <span class="comment">// OK</span>
+        Settable = 1; // OK
+        GetOnly = 1;  // OK
+        Init = 1;     // OK
     }
 }
-</code></pre>
+```
 
 というものです。
 C# の場合、[初期化子](../../../../study/csharp/oop/oo_construct.md#member_initializer)が C# 3.0 からの後付けなせいでちょっと使いにくかったんですが、その改善案になります。
@@ -149,17 +149,17 @@ shallow コピーを作ってからそのコピーの方を書き換えるとい
 これに関しても C# 9.0 で「`with` 式」という新しい文法が追加されていて、
 以下のような書き方でコピー＆ `init` プロパティの書き換えができます。
 
-<pre class="source" title="with 式で immutable データの書き換え(コピー後にプロパティ書き換え)">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
-<span class="reserved">var</span> <span class="variable">p2</span> = <span class="variable">p1</span> <span class="reserved">with</span> { X = 3 };
+var p1 = new Point(1, 2);
+var p2 = p1 with { X = 3 };
  
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">p1</span>); <span class="comment">// Point { X = 1, Y = 2 } (元のまま)</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">p2</span>); <span class="comment">// Point { X = 3, Y = 2 } (新インスタンスで X が書き換わってる)</span>
+Console.WriteLine(p1); // Point { X = 1, Y = 2 } (元のまま)
+Console.WriteLine(p2); // Point { X = 3, Y = 2 } (新インスタンスで X が書き換わってる)
  
-<span class="reserved">record</span> Point(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>);
-</code></pre>
+record Point(int X, int Y);
+```
 
 ## C# 10.0 に持ち越されたレコード関連議題
 
@@ -258,39 +258,39 @@ record struct (仮) と、(仮) を付けて書いていたのは、具体的な
 必然的に以下のような書き方になって、コンストラクター呼び出しには引数順序に意味があるので、
 これを「位置によるレコード」(positional record)と呼んだりします。
 
-<pre class="source" title="positional record">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span>(1, 2);
-</code></pre>
+```csharp
+var p = new Point(1, 2);
+```
 
 これに対して、init プロパティだけを書いて、
 
-<pre class="source" title="プライマリ コンストラクターは使わず init プロパティを定義">
-<code><span class="reserved">record</span> <span class="type">Point</span>
+```csharp
+record Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int X { get; init; }
+    public int Y { get; init; }
 }
-</code></pre>
+```
 
 オブジェクト初期化子を前提にした書き方をすることもできます。
 こちらはプロパティ名指定が必須で、逆に順序には意味がなくなるので、「名前によるレコード」(nominal record)と呼んだりします。
 
-<pre class="source" title="nominal record">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 1, Y = 2 };
-</code></pre>
+```csharp
+var p = new Point { X = 1, Y = 2 };
+```
 
 これはこれで便利なんですが、レコード型の「プレーンなデータを簡潔に書けるようにする」という目的からすると、
 `public int X { get; init; } `という書き方はちょっと煩雑過ぎます。
 
 そこで提案されているのが `data` メンバーで、以下のようなコードから `public int X { get; init; } ` をコンパイラー生成したいというものです。
 
-<pre class="source" title="data キーワードで nominal record を定義">
-<code><span class="reserved">record</span> <span class="type">Point</span>
+```csharp
+record Point
 {
-    <span class="reserved">data</span> <span class="reserved">int</span> X;
-    <span class="reserved">data</span> <span class="reserved">int</span> Y;
+    data int X;
+    data int Y;
 }
-</code></pre>
+```
 
 この案自体はちょっと前からあって、単純に案が出たのがギリギリ過ぎて C# 9.0 には入れなかったという状態です。
 
@@ -314,26 +314,26 @@ record struct (仮) と、(仮) を付けて書いていたのは、具体的な
 
 - [discriminated union](https://github.com/dotnet/csharplang/discussions/2962) を考えるとき、例1みたいなのには魅力を感じるけども、例2みたいなのはいまいちで、だったら `data` メンバーはそんなに「求めていたもの」じゃない
 
-<pre class="source" title="単一行 discriminated union">
-<code><span class="comment">// 例1: discriminated union (仮) として単一行メンバーなら書きたいモチベーションになる</span>
-<span class="reserved">record</span> <span class="type">Union</span>
+```csharp
+// 例1: discriminated union (仮) として単一行メンバーなら書きたいモチベーションになる
+record Union
 {
-    <span class="type">A</span>;
-    <span class="type">B</span>(<span class="reserved">int</span> <span class="variable">X</span>);
+    A;
+    B(int X);
 }
-</code></pre>
+```
 
-<pre class="source" title="単一行 discriminated union">
-<code><span class="comment">// 例2: data メンバーを使って書く場合複数行に。これは魅力的か？</span>
-<span class="reserved">record</span> <span class="type">Union</span>
+```csharp
+// 例2: data メンバーを使って書く場合複数行に。これは魅力的か？
+record Union
 {
-    <span class="type">A</span>;
-    <span class="type">B</span>
+    A;
+    B
     {
-        <span class="reserved">data int</span> <span class="variable">X</span>;
+        data int X;
     }
 }
-</code></pre>
+```
 
 - [required property](https://github.com/dotnet/csharplang/issues/3630) を考えるとき、`data` メンバーが required (オブジェクト初期化子で値を渡すことが必須)かどうかを変更できる追加のキーワードが必要(なので、記述が短くならないか、もしくは、`data` とは別のさらに追加のキーワードが必要)
 - 通常のクラスにもプライマリ コンストラクターを定義できるように当たって、`class X(int X, data int Y)` みたいな書き方で、「`X` は単なるパラメーター、`Y` はレコードと同じくパラメーターからのプロパティなどの生成を行う」みたいなキーワードにしたいという案もある

@@ -22,26 +22,26 @@ C# 9.0 で、レコード型(records)という新しい種類の型が追加さ�
 record (記録)という名前通り、データの読み書きに使うことを意図した型です。
 例えば以下のような書き方で、「`Name` という文字列と `Birthday` という日付」を読み書きできます。
 
-<pre class="source" title="record の例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>);
-</code></pre>
+record Person(string Name, DateTime Birthday);
+```
 
 ## <a id="sec-generated-title-2"></a> <a id="data-centric">データが主役のプログラミング</a>
 
 プログラミングをしていると、データが主役・データが中心になる場面がちらほらあります。
 「データが主役」(data centric)というのは、例えば以下のように、「`Name` という文字列と、`Birthday` という日付を持っている」というような「何の型がどういうデータを記録しているか」という情報が強い意味を持つような場面です。
 
-<pre class="source" title="「Name, Birthday フィールドを持っている」と言うこと自体が強い意味を持つ例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Person</span>
+class Person
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name;
-    <span class="reserved">public</span> <span class="type">DateTime</span> Birthday;
+    public string Name;
+    public DateTime Birthday;
 }
-</code></pre>
+```
 
 [オブジェクト指向](../oop/oo_about.md)ではこれと真逆の考え方をしたりします。
 「[実装の隠ぺい](../oop/oo_conceal.md)」などで書いていますが、
@@ -52,12 +52,12 @@ record (記録)という名前通り、データの読み書きに使うこと�
 ところが、データを保存・復元したり、ネットワーク越しに送受信したり、GUI で表示・編集する場合、結局「どういうデータをどういう形式で持っているか」という内部的な情報がそのまま必要になったりします。
 例えば上記の `Person` 型であれば、以下のような JSON 形式で保存して、これを読み書きしたりすることが結構あると思います。
 
-<pre class="source" title="Person 型を JSON で保存">
-<code>{
+```json
+{
   "name": "天馬飛雄",
   "birthday": "2003/04/07"
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-3"></a> <a id="data-boilerplate">ボイラープレートなコード</a>
 
@@ -65,35 +65,35 @@ record (記録)という名前通り、データの読み書きに使うこと�
 これを「C# のお作法的に好ましい書き方」で書こうとすると実は結構なコード量を書く必要があります。
 例えば以下のようなコードになります。
 
-<pre class="source" title="Person をお作法通りに書く場合">
-<code><span class="reserved">class</span> <span class="type">Person</span> : <span class="type">IEquatable</span>&lt;<span class="type">Person</span>&gt;
+```csharp
+class Person : IEquatable<Person>
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="type">DateTime</span> Birthday { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public string Name { get; init; }
+    public DateTime Birthday { get; init; }
  
-    <span class="reserved">public</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">name</span>, <span class="type">DateTime</span> <span class="variable">birthday</span>)
+    public Person(string name, DateTime birthday)
     {
         Name = name;
         Birthday = birthday;
     }
  
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type">Person</span>? <span class="variable">other</span>)
-        =&gt; other <span class="reserved">is</span> { } person &amp;&amp;
-            Name == person.Name &amp;&amp;
+    public bool Equals(Person? other)
+        => other is { } person &&
+            Name == person.Name &&
             Birthday == person.Birthday;
  
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="reserved">object</span>? <span class="variable">obj</span>)
-        =&gt; obj <span class="reserved">is</span> <span class="type">Person</span> <span class="variable">person</span> &amp;&amp;
-            Name == person.Name &amp;&amp;
+    public override bool Equals(object? obj)
+        => obj is Person person &&
+            Name == person.Name &&
             Birthday == person.Birthday;
  
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> <span class="method">GetHashCode</span>()
-        =&gt; HashCode.Combine(Name, Birthday);
+    public override int GetHashCode()
+        => HashCode.Combine(Name, Birthday);
  
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>()
-        =&gt; <span class="string">$&quot;Person {{ Name = </span>{Name}<span class="string">, Birthday = </span>{Birthday}<span class="string"> }}&quot;</span>;
+    public override string ToString()
+        => $"Person {{ Name = {Name}, Birthday = {Birthday} }}";
 }
-</code></pre>
+```
 
 このコードで書いているのは以下のようなものです。
 
@@ -117,9 +117,9 @@ record (記録)という名前通り、データの読み書きに使うこと�
 このボイラープレート問題を解決するために、データ中心の型向けの新しい構文として導入されたのが<strong id="key-record" class="keyword">レコード型</strong>です。
 最も短い書き方をすると、例えば以下のようになります。
 
-<pre class="source" title="record の例">
-<code><span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>);
-</code></pre>
+```csharp
+record Person(string Name, DateTime Birthday);
+```
 
 クラスとの差は以下の2点です。
 
@@ -129,13 +129,13 @@ record (記録)という名前通り、データの読み書きに使うこと�
 
 ちなみに、「プライマリ コンストラクター」(後述)は使わずに、以下のように書くこともできます。
 
-<pre class="source" title="プライマリ コンストラクターは使わず、単に class を record に変えた書き方の例">
-<code><span class="reserved">record</span> <span class="type">Person</span>
+```csharp
+record Person
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="type">DateTime</span> Birthday { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public string Name { get; init; }
+    public DateTime Birthday { get; init; }
 }
-</code></pre>
+```
 
 どちらの書き方でも、`record` キーワードを使って定義した型に対しては、
 以下のようなものが自動生成されます。
@@ -159,76 +159,76 @@ record (記録)という名前通り、データの読み書きに使うこと�
 C# コンパイラーのバージョンによって微妙に異なるコードになったりはしますが、
 意味的にはほぼこのままのコードになります。)
 
-<pre class="source" title="レコード型からコンパイラー生成されるクラスの例">
-<code><span class="reserved">class</span> <span class="type">Person</span> : IEquatable&lt;Person&gt;
+```csharp
+class Person : IEquatable<Person>
 {
-    <span class="reserved">protected</span> <span class="reserved">virtual</span> Type EqualityContract =&gt; <span class="reserved">typeof</span>(<span class="type">Person</span>);
+    protected virtual Type EqualityContract => typeof(Person);
  
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="type">DateTime</span> Birthday { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public string Name { get; init; }
+    public DateTime Birthday { get; init; }
 
-    <span class="reserved">public</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>)
+    public Person(string Name, DateTime Birthday)
     {
-        <span class="reserved">this</span>.Name = Name;
-        <span class="reserved">this</span>.Birthday = Birthday;
+        this.Name = Name;
+        this.Birthday = Birthday;
     }
     
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">string</span> <span class="variable">Name</span>, <span class="reserved">out</span> <span class="type">DateTime</span> <span class="variable">Birthday</span>)
+    public void Deconstruct(out string Name, out DateTime Birthday)
     {
-        Name = <span class="reserved">this</span>.Name;
-        Birthday = <span class="reserved">this</span>.Birthday;
+        Name = this.Name;
+        Birthday = this.Birthday;
     }
 
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">string</span> <span class="method">ToString</span>()
+    public override string ToString()
     {
-        StringBuilder <span class="variable">stringBuilder</span> = <span class="reserved">new</span> StringBuilder();
-        stringBuilder.Append(<span class="string">&quot;Person&quot;</span>);
-        stringBuilder.Append(<span class="string">&quot; { &quot;</span>);
-        <span class="control">if</span> (PrintMembers(stringBuilder))
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.Append("Person");
+        stringBuilder.Append(" { ");
+        if (PrintMembers(stringBuilder))
         {
-            stringBuilder.Append(<span class="string">&quot; &quot;</span>);
+            stringBuilder.Append(" ");
         }
-        stringBuilder.Append(<span class="string">&quot;}&quot;</span>);
-        <span class="control">return</span> stringBuilder.ToString();
+        stringBuilder.Append("}");
+        return stringBuilder.ToString();
     }
  
-    <span class="reserved">protected</span> <span class="reserved">virtual</span> <span class="reserved">bool</span> <span class="method">PrintMembers</span>(StringBuilder <span class="variable">builder</span>)
+    protected virtual bool PrintMembers(StringBuilder builder)
     {
-        builder.Append(<span class="string">&quot;Name&quot;</span>);
-        builder.Append(<span class="string">&quot; = &quot;</span>);
-        builder.Append((<span class="reserved">object</span>)Name);
-        builder.Append(<span class="string">&quot;, &quot;</span>);
-        builder.Append(<span class="string">&quot;Birthday&quot;</span>);
-        builder.Append(<span class="string">&quot; = &quot;</span>);
+        builder.Append("Name");
+        builder.Append(" = ");
+        builder.Append((object)Name);
+        builder.Append(", ");
+        builder.Append("Birthday");
+        builder.Append(" = ");
         builder.Append(Birthday.ToString());
-        <span class="control">return</span> <span class="reserved">true</span>;
+        return true;
     }
  
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> !=(<span class="type">Person</span> <span class="variable">r1</span>, <span class="type">Person</span> <span class="variable">r2</span>) =&gt; !(r1 == r2);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> <span class="reserved">operator</span> ==(<span class="type">Person</span> <span class="variable">r1</span>, <span class="type">Person</span> <span class="variable">r2</span>) =&gt; (<span class="reserved">object</span>)r1 == r2 || (r1 <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span> &amp;&amp; r1.Equals(r2));
+    public static bool operator !=(Person r1, Person r2) => !(r1 == r2);
+    public static bool operator ==(Person r1, Person r2) => (object)r1 == r2 || (r1 is not null && r1.Equals(r2));
  
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">int</span> <span class="method">GetHashCode</span>()
-        =&gt; (<span class="type">EqualityComparer</span>&lt;Type&gt;.Default.GetHashCode(EqualityContract) * -1521134295
-        + <span class="type">EqualityComparer</span>&lt;<span class="reserved">string</span>&gt;.Default.GetHashCode(Name)) * -1521134295
-        + <span class="type">EqualityComparer</span>&lt;<span class="type">DateTime</span>&gt;.Default.GetHashCode(Birthday);
+    public override int GetHashCode()
+        => (EqualityComparer<Type>.Default.GetHashCode(EqualityContract) * -1521134295
+        + EqualityComparer<string>.Default.GetHashCode(Name)) * -1521134295
+        + EqualityComparer<DateTime>.Default.GetHashCode(Birthday);
  
-    <span class="reserved">public</span> <span class="reserved">override</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="reserved">object</span> <span class="variable">obj</span>) =&gt; Equals(obj <span class="reserved">as</span> <span class="type">Person</span>);
+    public override bool Equals(object obj) => Equals(obj as Person);
  
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type">Person</span> <span class="variable">other</span>)
-        =&gt; (<span class="reserved">object</span>)other != <span class="reserved">null</span>
-        &amp;&amp; EqualityContract == other.EqualityContract
-        &amp;&amp; <span class="type">EqualityComparer</span>&lt;<span class="reserved">string</span>&gt;.Default.Equals(Name, other.Name)
-        &amp;&amp; <span class="type">EqualityComparer</span>&lt;<span class="type">DateTime</span>&gt;.Default.Equals(Birthday, other.Birthday);
+    public virtual bool Equals(Person other)
+        => (object)other != null
+        && EqualityContract == other.EqualityContract
+        && EqualityComparer<string>.Default.Equals(Name, other.Name)
+        && EqualityComparer<DateTime>.Default.Equals(Birthday, other.Birthday);
  
-    <span class="reserved">public</span> <span class="reserved">virtual</span> <span class="type">Person</span> <span class="method">Clone</span>() =&gt; <span class="reserved">new</span> Person(<span class="reserved">this</span>);
+    public virtual Person Clone() => new Person(this);
  
-    <span class="reserved">protected</span> <span class="type">Person</span>(<span class="type">Person</span> <span class="variable">original</span>)
+    protected Person(Person original)
     {
         Name = original.Name;
         Birthday = original.Birthday;
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="equality">等値判定</a>
 
@@ -240,21 +240,21 @@ C# コンパイラーのバージョンによって微妙に異なるコード�
 悪名高いものとして、[`NaN`](https://docs.microsoft.com/ja-jp/dotnet/api/system.double.nan) ([Not a Number](https://ja.wikipedia.org/wiki/NaN))は `==` と `Equals` の結果が違ったりするので、
 「`double` で直接比較」と「レコード型で1段包んで比較」の結果が変わったりします。
 
-<pre class="source" title="== も内部的には Equals を呼ぶ仕様">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">double</span> <span class="variable">nan</span> = <span class="reserved">double</span>.NaN;
+double nan = double.NaN;
  
-Console.WriteLine(nan == nan); <span class="comment">// 常に false を返す。</span>
-Console.WriteLine(nan.Equals(nan)); <span class="comment">// こっちは true だったりする。</span>
+Console.WriteLine(nan == nan); // 常に false を返す。
+Console.WriteLine(nan.Equals(nan)); // こっちは true だったりする。
  
-<span class="reserved">var</span> <span class="variable">recordNan</span> = <span class="reserved">new</span> Double(nan);
+var recordNan = new Double(nan);
  
-Console.WriteLine(recordNan == recordNan); <span class="comment">// true</span>
-Console.WriteLine(recordNan.Equals(recordNan)); <span class="comment">// true</span>
+Console.WriteLine(recordNan == recordNan); // true
+Console.WriteLine(recordNan.Equals(recordNan)); // true
  
-<span class="reserved">record</span> <span class="type">Double</span>(<span class="reserved">double</span> <span class="variable">Value</span>);
-</code></pre>
+record Double(double Value);
+```
 
 ちなみに、等値判定を `EqualityComparer<T>.Default` 越しにやっている都合で、レコード型のプロパティやフィールドに型引数にできない型(例えば[ポインター](../interop/sp_unsafe.md#pointer)や[ref 構造体](../resource/refstruct.md)など)は使えません。`unsafe record R(int* P);` はコンパイル エラーになります。
 
@@ -266,10 +266,10 @@ C# 9.0 (レコード型の最初のバージョン)では、レコード型は�
 これに対して C# 10.0 では[値型](../resource/oo_reference.md#valtype)も選べるようにしました。
 そのため、以下のように、`record class` と `record struct` というキーワードで書き分けができるようになりました。
 
-<pre class="source" title="C# 10.0 の record class と record struct">
-<code><span class="reserved">record</span> <span class="reserved">class</span> <span class="type">Reference</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>); <span class="comment">// record だけ書いた場合こちらと同じ意味</span>
-<span class="reserved">record</span> <span class="reserved">struct</span> <span class="type">Value</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>);
-</code></pre>
+```csharp
+record class Reference(int X, int Y); // record だけ書いた場合こちらと同じ意味
+record struct Value(int X, int Y);
+```
 
 ちなみに、C# 9.0 の頃からある `record` だけを使う書き方と、C# 10.0 で追加された `record class` という書き方は全く同じ意味になります。
 (レコード型の思想としては、一番よく使う書き方を極力短く書けるようにしたいというものがあって、
@@ -287,27 +287,27 @@ C# 9.0 (レコード型の最初のバージョン)では、レコード型は�
 また、構造体の場合、mutable (最初に作ったタイミング以外でも好きなタイミングでメンバーを書き換え可能)であっても `record class` ほど問題は起こしません。
 なので、`record struct` (だけ書く)だと、mutable なプロパティが生成されます。
 
-<pre class="source" title="record class と record struct からの生成物">
-<code><span class="comment">// class の場合、X, Y から生成されるプロパティは</comment>
-<span class="comment">// public int X { get; <em>init;</em> }</comment>
-<span class="comment">// public int Y { get; <em>init;</em> }</comment>
-<span class="reserved">record</span> <span class="reserved">class</span> <span class="type">RecordClass</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
+```csharp
+// class の場合、X, Y から生成されるプロパティは
+// public int X { get; init; }
+// public int Y { get; init; }
+record class RecordClass(int X, int Y);
 
-<span class="comment">// struct の場合は、</comment>
-<span class="comment">// public int X { get; <em>set;</em> }</comment>
-<span class="comment">// public int Y { get; <em>set;</em> }</comment>
-<span class="reserved">record</span> <span class="reserved">struct</span> <span class="type">RecordStruct</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
-</code></pre>
+// struct の場合は、
+// public int X { get; set; }
+// public int Y { get; set; }
+record struct RecordStruct(int X, int Y);
+```
 
 構造体には [`readonly` 修飾](../resource/readonlyness.md#readonly-struct)を付けることができるので、immutable (書き換え不能)な `record struct` を作りたければ `readonly record struct` と書きます。
 この場合は `record class` と同じようなプロパティが生成されます。
 
-<pre class="source" title="readonly record struct からの生成物">
-<code><span class="comment">// readonly struct の場合は、</comment>
-<span class="comment">// public int X { get; <em>init;</em> }</comment>
-<span class="comment">// public int Y { get; <em>init;</em> }</comment>
-<span class="reserved">readonly record</span> <span class="reserved">struct</span> <span class="type">ReadOnlyRecordStruct</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
-</code></pre>
+```csharp
+// readonly struct の場合は、
+// public int X { get; init; }
+// public int Y { get; init; }
+readonly record struct ReadOnlyRecordStruct(int X, int Y);
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="anonymous-type">レコード型と匿名型</a>
 
@@ -320,29 +320,29 @@ C# は既存機能と新機能の整合性を極力取るように頑張って�
 例えば以下のようなコードがあったとします。
 これは「とりあえず型名は付けずに匿名(タプル)でコードを書いてみた」みたいな状態です。
 
-<pre class="source" title="まずタプルでコードを書いてみた状態">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">var</span> <span class="variable">p</span> = (X: 1, Y: 2); <span class="comment">// これはタプル</span>
-var (<span class="variable">x</span>, <span class="variable">y</span>) = p;
-Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * </span>{y}<span class="string"> = </span>{x * y}<span class="string">&quot;</span>);
-</code></pre>
+var p = (X: 1, Y: 2); // これはタプル
+var (x, y) = p;
+Console.WriteLine($"{x} * {y} = {x * y}");
+```
 
 ここで、`X, Y` のペアに `Point` という名前を付けたいとして、そのためにレコード型を使ったとします。
 
-<pre class="source" title="">
-<code><span class="reserved">record</span> <span class="type">Point</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>);
-</code></pre>
+```csharp
+record Point(int X, int Y);
+```
 
 先ほどのコードには、`new Point` を足すだけで「匿名の型から名前付きの型に移行」ができます。
 
-<pre class="source" title="new Point を足すだけで名前付きの型に移行">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span>(X: 1, Y: 2); <span class="comment">// これで名前付きになった</span>
-var (<span class="variable">x</span>, <span class="variable">y</span>) = p;
-Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * </span>{y}<span class="string"> = </span>{x * y}<span class="string">&quot;</span>);
-</code></pre>
+var p = new Point(X: 1, Y: 2); // これで名前付きになった
+var (x, y) = p;
+Console.WriteLine($"{x} * {y} = {x * y}");
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="vs-normal-struct">レコード型と構造体</a>
 
@@ -373,9 +373,9 @@ Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * 
 
 先ほど、レコード型の最も短い書き方として以下のような例を挙げました。
 
-<pre class="source" title="record の例">
-<code><span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>);
-</code></pre>
+```csharp
+record Person(string Name, DateTime Birthday);
+```
 
 この、型名の直後に `()` でコンストラクター引数を並べる書き方を<strong id="key-primary-constructor" class="keyword">プライマリ コンストラクター</strong>と言います。
 
@@ -384,25 +384,25 @@ Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * 
 [前述](#record-to-class)の「レコード型から生成されるクラスの例」で挙げたコードのうち、
 以下のものは「プライマリ コンストラクターからの生成物」になります。
 
-<pre class="source" title="レコード型からコンパイラー生成されるクラスの例">
-<code><span class="reserved">class</span> <span class="type">Person</span>
+```csharp
+class Person
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="type">DateTime</span> Birthday { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public string Name { get; init; }
+    public DateTime Birthday { get; init; }
 
-    <span class="reserved">public</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>)
+    public Person(string Name, DateTime Birthday)
     {
-        <span class="reserved">this</span>.Name = Name;
-        <span class="reserved">this</span>.Birthday = Birthday;
+        this.Name = Name;
+        this.Birthday = Birthday;
     }
     
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">string</span> <span class="variable">Name</span>, <span class="reserved">out</span> <span class="type">DateTime</span> <span class="variable">Birthday</span>)
+    public void Deconstruct(out string Name, out DateTime Birthday)
     {
-        Name = <span class="reserved">this</span>.Name;
-        Birthday = <span class="reserved">this</span>.Birthday;
+        Name = this.Name;
+        Birthday = this.Birthday;
     }
 }
-</code></pre>
+```
 
 残りの `Equals` や `PrintMember` などについては、プライマリ コンストラクターの有無にかかわらず、
 レコード型であれば常にコンパイラー生成されます。
@@ -411,47 +411,47 @@ Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * 
 ちなみに、プライマリ コンストラクターの引数は、以下のように、
 他のメンバーの初期化子や、メソッドの中身で参照することもできます。
 
-<pre class="source" title="プライマリ コンストラクターの引数を初期化子などから参照する例">
-<code><span class="reserved">record</span> <span class="type">X</span>(<span class="reserved">int</span> <span class="variable">Value</span>)
+```csharp
+record X(int Value)
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Squared { <span class="reserved">get</span>; } = Value * Value;
-    <span class="reserved">public</span> <span class="reserved">int</span> Cubed { <span class="reserved">get</span>; } = Value * Value * Value;
-    <span class="reserved">public</span> <span class="reserved">double</span> <span class="method">GetSqrt</span>() =&gt; Math.Sqrt(Value);
+    public int Squared { get; } = Value * Value;
+    public int Cubed { get; } = Value * Value * Value;
+    public double GetSqrt() => Math.Sqrt(Value);
 }
-</code></pre>
+```
 
 また「プライマリ」(primary: 一番の、最優先の)の名前の通り、
 このコンストラクターは特別というか、「手書きで他のコンストラクターを書き足す場合、必ずプライマリ コンストラクターが呼ばれるようにしなければならない」という強い制約が掛かります。
 例えば以下のコードはコンパイル エラーを起こします。
 
-<pre class="source" title="プライマリ コンストラクターを呼んでいなくてエラーになる例">
-<code><span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>)
+```csharp
+record Person(string Name, DateTime Birthday)
 {
-    <span class="comment">// プライマリ コンストラクターを呼んでいないのでコンパイル エラーになる。</span>
-    <span class="reserved">public</span> <span class="type">Person</span>() { }
+    // プライマリ コンストラクターを呼んでいないのでコンパイル エラーになる。
+    public Person() { }
 }
-</code></pre>
+```
 
 以下のように `this` 初期化子を足せばコンパイルできるようになります。
 
-<pre class="source" title="this 初期化子でプライマリ コンストラクターを呼ぶ例">
-<code><span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>)
+```csharp
+record Person(string Name, DateTime Birthday)
 {
-    <span class="comment">// これならエラーにはならない。</span>
-    <span class="comment">// (&quot;&quot; や default をとりあえず入れてしまう行為の良し悪しは置いておいて…)</span>
-    <span class="reserved">public</span> <span class="type">Person</span>() : <span class="reserved">this</span>(<span class="string">&quot;&quot;</span>, <span class="reserved">default</span>(<span class="type">DateTime</span>)) { }
+    // これならエラーにはならない。
+    // ("" や default をとりあえず入れてしまう行為の良し悪しは置いておいて…)
+    public Person() : this("", default(DateTime)) { }
 }
-</code></pre>
+```
 
 ちなみに、プライマリ コンストラクターの引数に [`in`](../resource/sp_ref.md#in) と [`params`](../structured/sp_params.md) を付けることはできます(その引数からプロパティの生成もされます)が、[`ref`](../resource/sp_ref.md#sec-byref) と [`out`](../resource/sp_ref.md#out) は付けれません。
 
-<pre class="source" title="プライマリ コンストラクター引数に対する in/params">
-<code><span class="comment">// in と params は受け付ける。</span>
-<span class="reserved">public</span> <span class="reserved">record</span> <span class="type">Record</span>(<span class="reserved">in</span> <span class="reserved">int</span> X, <span class="reserved">params</span> <span class="reserved">int</span>[] Y);
+```csharp
+// in と params は受け付ける。
+public record Record(in int X, params int[] Y);
 
-<span class="comment">// ちなみに、 ref と out はダメ。</span>
-<span class="reserved">public</span> <span class="reserved">record</span> <span class="type">Record2</span>(<span class="reserved"><span class="error">ref</span></span> <span class="reserved">int</span> X, <span class="reserved"><span class="error">out</span></span> <span class="reserved">int</span> Y);
-</code></pre>
+// ちなみに、 ref と out はダメ。
+public record Record2(ref int X, out int Y);
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="primary-constructor-attribute">プライマリ コンストラクター引数への属性付与</a>
 
@@ -463,33 +463,33 @@ Console.WriteLine(<span class="string">$&quot;</span>{x}<span class="string"> * 
 コンパイラー生成されるプロパティやフィールドに対しても、
 以下のような書き方で属性を付けることができます。
 
-<pre class="source" title="プライマリ コンストラクターから生成されるプロパティ、フィールドに属性を付ける例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Reflection;
+```csharp
+using System;
+using System.Reflection;
  
-<span class="reserved">var</span> <span class="variable">t</span> = <span class="reserved">typeof</span>(X);
+var t = typeof(X);
  
-<span class="comment">// parameter</span>
-Console.WriteLine(t.GetConstructor(<span class="reserved">new</span>[] { <span class="reserved">typeof</span>(<span class="reserved">int</span>) }).GetParameters()[0].GetCustomAttribute&lt;A&gt;().Name);
+// parameter
+Console.WriteLine(t.GetConstructor(new[] { typeof(int) }).GetParameters()[0].GetCustomAttribute<A>().Name);
  
-<span class="comment">// property</span>
-Console.WriteLine(t.GetProperty(<span class="string">&quot;Value&quot;</span>).GetCustomAttribute&lt;A&gt;().Name);
+// property
+Console.WriteLine(t.GetProperty("Value").GetCustomAttribute<A>().Name);
  
-<span class="comment">// field</span>
-Console.WriteLine(t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)[0].GetCustomAttribute&lt;A&gt;().Name);
+// field
+Console.WriteLine(t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)[0].GetCustomAttribute<A>().Name);
  
-<span class="reserved">record</span> <span class="type">X</span>(
-    [A(<span class="string">&quot;parameter&quot;</span>)]
-    [<span class="reserved"><em>property</em></span>: A(<span class="string">&quot;property&quot;</span>)]
-    [<span class="reserved"><em>field</em></span>: A(<span class="string">&quot;field&quot;</span>)]
-    <span class="reserved">int</span> <span class="variable">Value</span>);
+record X(
+    [A("parameter")]
+    [property: A("property")]
+    [field: A("field")]
+    int Value);
  
-<span class="reserved">class</span> <span class="type">A</span> : Attribute
+class A : Attribute
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">A</span>(<span class="reserved">string</span> <span class="variable">name</span>) =&gt; Name = name;
+    public string Name { get; }
+    public A(string name) => Name = name;
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-13"></a> <a id="manual-override">生成物の上書き</a>
 
@@ -502,26 +502,26 @@ Console.WriteLine(t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)[0]
 例えば、文字列の比較で大文字・小文字を無視したい場合、`Equals` メソッドなどを以下のように書き加えることでできます。
 (例と言うことで `Equals` のみを書きますが、実際は `GetHashCode` などの書き足しも必要です。)
 
-<pre class="source" title="Equals をカスタマイズする例">
-<code><span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>)
+```csharp
+record Person(string Name, DateTime Birthday)
 {
-    <span class="reserved">bool</span> <span class="type">IEquatable</span>&lt;<span class="type">Person</span>&gt;.<span class="method">Equals</span>(<span class="type">Person</span>? <span class="variable">other</span>)
-        =&gt; <span class="variable">other</span> <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">null</span>
-        &amp;&amp; Name.Equals(<span class="variable">other</span>.Name, <em><span class="type">StringComparison</span>.OrdinalIgnoreCase</em>)
-        &amp;&amp; Birthday == <span class="variable">other</span>.Birthday;
+    bool IEquatable<Person>.Equals(Person? other)
+        => other is not null
+        && Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase)
+        && Birthday == other.Birthday;
 }
-</code></pre>
+```
 
 他の例として、本来あまり好ましくはないんですが、プロパティを書き換え可能にしてしまいたい場合、
 以下のようにプロパティを手書きで足してしまうことでできます。
 
-<pre class="source" title="生成されるプロパティのカスタマイズする例">
-<code><span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>)
+```csharp
+record Person(string Name, DateTime Birthday)
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved"><em>set</em></span>; } = Name;
-    <span class="reserved">public</span> <span class="type">DateTime</span> Birthday { <span class="reserved">get</span>; <span class="reserved"><em>set</em></span>; } = Birthday;
+    public string Name { get; set; } = Name;
+    public DateTime Birthday { get; set; } = Birthday;
 }
-</code></pre>
+```
 
 ちなみに、この場合、「`Name` 引数を `Name` プロパティに自動代入する」みたいな処理は掛からないので注意が必要です。
 上記の例で `Name { get; } = Name;` としているように、明示的な初期化が必要になります。
@@ -536,12 +536,12 @@ C# 9.0 時点では、プライマリ コンストラクター引数からの生
 例えば以下のコードは C# 10.0 から有効なコードになります。
 (C# 9.0 時代は「(生成物の)プロパティ `X` と(手書きの)フィールド `X` が名前衝突してる」というエラーになっていました。)
 
-<pre class="source" title="フィールドでプライマリ コンストラクター引数から生成されるはずだったプロパティを上書きする例">
-<code><span class="reserved">record</span> <span class="type">R</span>(<span class="reserved">int</span> X)
+```csharp
+record R(int X)
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X = X;
+    public int X = X;
 }
-</code></pre>
+```
 
 `record struct` を導入するにあたって、
 「クラスと違って、構造体では public フィールドを使うことがそれなりに需要としてある」
@@ -555,36 +555,36 @@ C# 9.0 時点では、プライマリ コンストラクター引数からの生
 レコード型はクラスと同じく[継承](../oop/oo_inherit.md)ができます。
 例えば以下のように書けます。
 
-<pre class="source" title="レコード型の継承">
-<code><span class="reserved">record</span> <span class="type">Base</span>;
-<span class="reserved">record</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable">N</span>) : Base;
-<span class="reserved">record</span> <span class="type">B</span>(<span class="reserved">string</span> <span class="variable">S</span>) : Base;
-</code></pre>
+```csharp
+record Base;
+record A(int N) : Base;
+record B(string S) : Base;
+```
 
 ちなみに、基底クラスがプライマリ コンストラクターを持っている場合、
 派生クラスからそのプライマリ コンストラクターの呼び出しが必要です。
 以下のように、基底クラス名の後ろに `()` を付けることで呼び出せます。
 
-<pre class="source" title="基底クラスのプライマリ コンストラクター呼び出しの例">
-<code><span class="reserved">record</span> <span class="type">Base</span>(<span class="reserved">int</span> <span class="variable">X</span>);
+```csharp
+record Base(int X);
  
-<span class="comment">// Base(int X) を呼んでいないのでエラーになる。</span>
-<span class="reserved">record</span> <span class="error"><span class="type">Error1</span></span>(<span class="reserved">int</span> <span class="variable">X</span>) : Base;
+// Base(int X) を呼んでいないのでエラーになる。
+record Error1(int X) : Base;
  
-<span class="comment">// コンパイルできる例1: 引数を伝搬。</span>
-<span class="reserved">record</span> <span class="type">Ok1</span>(<span class="reserved">int</span> <span class="variable">X</span>) : Base(X);
+// コンパイルできる例1: 引数を伝搬。
+record Ok1(int X) : Base(X);
  
-<span class="comment">// コンパイルできる例2: 引数に何らかの既定値を与える。</span>
-<span class="reserved">record</span> <span class="type">Ok2</span>() : Base(1);
+// コンパイルできる例2: 引数に何らかの既定値を与える。
+record Ok2() : Base(1);
  
-<span class="comment">// コンパイルできる例3: 引数を伝搬しつつ、プロパティ Y を追加。</span>
-<span class="comment">// (この場合、X は Base.X が優先されて、Ok3.X はコンパイラー生成されない。)</span>
-<span class="reserved">record</span> <span class="type">Ok3</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>) : Base(X);
+// コンパイルできる例3: 引数を伝搬しつつ、プロパティ Y を追加。
+// (この場合、X は Base.X が優先されて、Ok3.X はコンパイラー生成されない。)
+record Ok3(int X, int Y) : Base(X);
  
-<span class="comment">// Ok2 と似たようなものだけど、これはコンパイルできない。</span>
-<span class="comment">// コンパイラーの実装都合で () が必要。</span>
-<span class="reserved">record</span> <span class="error"><span class="type">Error2</span></span> : Base(1);
-</code></pre>
+// Ok2 と似たようなものだけど、これはコンパイルできない。
+// コンパイラーの実装都合で () が必要。
+record Error2 : Base(1);
+```
 
 また、将来的なことを言うと、以下のような話もあります。
 
@@ -598,15 +598,15 @@ C# 9.0 時点では、プライマリ コンストラクター引数からの生
 
 例えば以下のコードの出力結果は false です。
 
-<pre class="source" title="(既定動作では)レコード型の == は型判定を含んでいる">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// 同じ値を持っていても型が違うと「不一致」扱い。</span>
-Console.WriteLine(<span class="reserved">new</span> Base(1) == <span class="reserved">new</span> Derived(1)); <span class="comment">// false</span>
+// 同じ値を持っていても型が違うと「不一致」扱い。
+Console.WriteLine(new Base(1) == new Derived(1)); // false
  
-<span class="reserved">record</span> <span class="type">Base</span>(<span class="reserved">int</span> <span class="variable">X</span>);
-<span class="reserved">record</span> <span class="type">Derived</span>(<span class="reserved">int</span> <span class="variable">X</span>) : Base(X);
-</code></pre>
+record Base(int X);
+record Derived(int X) : Base(X);
+```
 
 コンパイラー生成物の `Equals` 等が `EqualityContract == other.EqualityContract` みたいなコードを含んでいるのはこのためです。
 ちなみに、ちゃんと `new Base(x).Equals(new Derived(y))` と `new Derived(y).Equals(new Base(x))` の結果が一致するように作られています。
@@ -614,18 +614,18 @@ Console.WriteLine(<span class="reserved">new</span> Base(1) == <span class="rese
 
 逆に、型は無視してプロパティの一致だけで等価判定してほしい場合、以下のように `EqualityContract` を手書き追加すればできます。
 
-<pre class="source" title="EqualityContract の手書きで挙動をカスタマイズする例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// EqualityContract で typeof(Base) を返すことで「一致」扱いに変わる。</span>
-Console.WriteLine(<span class="reserved">new</span> Base(1) == <span class="reserved">new</span> Derived(1)); <span class="comment">// true</span>
+// EqualityContract で typeof(Base) を返すことで「一致」扱いに変わる。
+Console.WriteLine(new Base(1) == new Derived(1)); // true
  
-<span class="reserved">record</span> <span class="type">Base</span>(<span class="reserved">int</span> <span class="variable">X</span>);
-<span class="reserved">record</span> <span class="type">Derived</span>(<span class="reserved">int</span> <span class="variable">X</span>) : Base(X)
+record Base(int X);
+record Derived(int X) : Base(X)
 {
-    <span class="reserved">protected</span> <span class="reserved">override</span> Type EqualityContract =&gt; <span class="reserved">typeof</span>(Base);
+    protected override Type EqualityContract => typeof(Base);
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-16"></a> <a id="with">with 式</a>
 
@@ -637,16 +637,16 @@ immutable なデータに対しても、「データの一部分だけを書き�
 C# 8.0 以前の書き方でいうと、以下のようなコードを書くことになります。
 (が、1つ問題があって、実際には C# 8.0 で完全にこれと同じことは実現できません。)
 
-<pre class="source" title="クローンしてから部分書き換え">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> <span class="type">Person</span>(<span class="string">&quot;天馬飛雄&quot;</span>, <span class="reserved">new</span>(2003, 4, 7));
+var p1 = new Person("天馬飛雄", new(2003, 4, 7));
  
-<span class="reserved">var</span> <span class="variable">p2</span> = p1.Clone();
-<span class="error">p2.Name</span> = <span class="string">&quot;鉄腕アトム&quot;</span>;
+var p2 = p1.Clone();
+p2.Name = "鉄腕アトム";
  
-<span class="reserved">record</span> <span class="type">Person</span>(<span class="reserved">string</span> <span class="variable">Name</span>, <span class="type">DateTime</span> <span class="variable">Birthday</span>);
-</code></pre>
+record Person(string Name, DateTime Birthday);
+```
 
 このコードなんですが、(immutable というお作法上)「`Name` は書き換え不能」で作られているはずです。
 その書き換え不能プロパティを書き換えないといけないので、C# 8.0 でこれと同様のコードは書けません。
@@ -655,10 +655,10 @@ C# 8.0 以前の書き方でいうと、以下のようなコードを書くこ�
 C# 9.0 ではどうしたかと言うと、`with` 式という構文を追加しました。
 これが内部的に上記の「まずクローンして、クローン直後のインスタンスの一部分を書き換える」という処理に展開されます。
 
-<pre class="source" title="with 式で immutable データの一部分を書き換え">
-<code><span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> <span class="type">Person</span>(<span class="string">&quot;天馬飛雄&quot;</span>, <span class="reserved">new</span>(2003, 4, 7));
-<span class="reserved">var</span> <span class="variable">p2</span> = p1 <span class="reserved">with</span> { Name = <span class="string">&quot;鉄腕アトム&quot;</span> };
-</code></pre>
+```csharp
+var p1 = new Person("天馬飛雄", new(2003, 4, 7));
+var p2 = p1 with { Name = "鉄腕アトム" };
+```
 
 とりあえず以下のように覚えてください。
 
@@ -667,17 +667,17 @@ C# 9.0 ではどうしたかと言うと、`with` 式という構文を追加し
 
 ちなみに、`with { } ` だけ書く(「一部書き換え」はしない)のでもクローンになります。
 
-<pre class="source" title="with { } でクローン">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> Point(1, 2);
-<span class="reserved">var</span> <span class="variable">p2</span> = p1 <span class="reserved">with</span> { }; <span class="comment">// p1 のクローンが作られる</span>
+var p1 = new Point(1, 2);
+var p2 = p1 with { }; // p1 のクローンが作られる
  
-Console.WriteLine(p1 == p2); <span class="comment">// 持ってる値的には等しいので true。</span>
-Console.WriteLine(ReferenceEquals(p1, p2)); <span class="comment">// クローン(別インスタンス)ができてるのでこちらは false。</span>
+Console.WriteLine(p1 == p2); // 持ってる値的には等しいので true。
+Console.WriteLine(ReferenceEquals(p1, p2)); // クローン(別インスタンス)ができてるのでこちらは false。
  
-<span class="reserved">record</span> <span class="type">Point</span>(<span class="reserved">int</span> <span class="variable">X</span>, <span class="reserved">int</span> <span class="variable">Y</span>);
-</code></pre>
+record Point(int X, int Y);
+```
 
 また、C# 9.0 時点ではクローン用のメソッドを `with` 式以外から呼ぶ手段はありません。
 (`<Clone>$` みたいな通常の C# コードでは書けないような変な名前でクローン メソッドが生成されています。
@@ -703,20 +703,20 @@ C# 9.0 時点では、`with` 式はレコード型に対してしか使えませ
 
 [匿名型](../start/sp3_inference.md#anonymous):
 
-<pre class="source" title="匿名型に対する with 式">
-<code><span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> { X = 1, Y = 2 };
-<span class="reserved">var</span> <span class="variable">p2</span> = p1 <span class="reserved">with</span> { X = 3 };
-</code></pre>
+```csharp
+var p1 = new { X = 1, Y = 2 };
+var p2 = p1 with { X = 3 };
+```
 
 任意の[構造体](../resource/rm_struct.md):
 
-<pre class="source" title="構造体に対する with 式">
-<code><span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> Point { X = 1, Y = 2 };
-<span class="reserved">var</span> <span class="variable">p2</span> = p1 <span class="reserved">with</span> { X = 3 };
+```csharp
+var p1 = new Point { X = 1, Y = 2 };
+var p2 = p1 with { X = 3 };
  
-<span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Point</span>
+readonly struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int X { get; init; }
+    public int Y { get; init; }
 }
-</code></pre>
+```

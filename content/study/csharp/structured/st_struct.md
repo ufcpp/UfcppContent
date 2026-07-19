@@ -53,21 +53,21 @@ C# の場合、複合型には
 
 まず、クラスの定義は以下の通り。
 
-<pre class="source" title="クラスの定義" lang="">
-<code><span class="reserved">class</span> <span class="input">クラス名</span>
+```csharp
+class クラス名
 {
-  <span class="input">クラスのメンバー</span>
+  クラスのメンバー
 }
-</code></pre>
+```
 
 一方、構造体の定義は以下のようなります。`class`キーワードの代わりに`struct`キーワードを使う以外はクラスとほぼ同じです。
 
-<pre class="source" title="構造体の定義" lang="">
-<code><span class="reserved">struct</span> <span class="input">構造体名</span>
+```csharp
+struct 構造体名
 {
-  <span class="input">構造体のメンバー</span>
+  構造体のメンバー
 }
-</code></pre>
+```
 
 クラスと構造体の違いについては別項([構造体](../resource/rm_struct.md))で説明します。
 当面は、<em>ほとんどの場合クラスを使っておけばいい</em>とだけ覚えておいてください。
@@ -81,66 +81,66 @@ C# の場合、複合型には
 
 フィールドは、以下のように、クラスや構造体の中に変数宣言を書くような書式で定義します。
 
-<pre class="source" title="フィールドの定義" lang="">
-<code><span class="reserved">class</span> <span class="input">クラス名</span>
+```csharp
+class クラス名
 {
-    <span class="input">フィールドの型</span> <span class="input">フィールド名</span>;
+    フィールドの型 フィールド名;
 }
-</code></pre>
+```
 
 例えば、先ほどの例の名前と年齢と住所を一まとめにした構造体を定義したければ、以下のように書きます。
 構造体の名前は Person にでもしておきましょう。
 
-<pre class="source" title="個人情報クラス" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">public string</span> name;    <span class="comment">// 名前</span>
-  <span class="reserved">public uint</span>   age;     <span class="comment">// 年齢</span>
-  <span class="reserved">public string</span> address; <span class="comment">// 住所</span>
+  public string name;    // 名前
+  public uint   age;     // 年齢
+  public string address; // 住所
 }
-</code></pre>
+```
 
 <code>public</code> というキーワードについては「[実装の隠蔽](../oop/oo_conceal.md)」で説明します。
 
 このクラスを利用するときには以下のようにします。
 
-<pre class="source" title="個人情報構造体の利用" lang="">
-<code>Person p = <span class="reserved">new</span> Person(); <span class="comment">// string とか配列と同じような感じで宣言＆初期化</span>
+```csharp
+Person p = new Person(); // string とか配列と同じような感じで宣言＆初期化
 
-<span class="comment">// 「 . 」 を使って各メンバーにアクセスする
-// 構造体変数名.メンバー名</span>
-p.name    = <span class="literal">"ちゆ"</span>;
+// 「 . 」 を使って各メンバーにアクセスする
+// 構造体変数名.メンバー名
+p.name    = "ちゆ";
 p.age     = 12;
-p.address = <span class="literal">"http://www.tiyu.to"</span>;
-</code></pre>
+p.address = "http://www.tiyu.to";
+```
 
 複合型、特にクラスの機能の詳細については、「[オブジェクト指向](../index.md#oop)」で説明して行きます。
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-<pre class="source" title="構造体のサンプル" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわすクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Point
+/// </summary>
+class Point
 {
-  <span class="reserved">public double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">public double</span> y; <span class="comment">// y 座標</span>
+  public double x; // x 座標
+  public double y; // y 座標
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="reserved">class</span> StructSample
+class StructSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Point p1 = <span class="reserved">new</span> Point();
-    Point p2 = <span class="reserved">new</span> Point();
+    Point p1 = new Point();
+    Point p2 = new Point();
 
     p1.x = 100;
     p1.y = 0;
@@ -148,25 +148,25 @@ p.address = <span class="literal">"http://www.tiyu.to"</span>;
     p2.x = 400;
     p2.y = 400;
 
-    Console.Write(<span class="literal">"{0} と {1} の間の距離は {2}"</span>, p1, p2, Distance(p1, p2));
+    Console.Write("{0} と {1} の間の距離は {2}", p1, p2, Distance(p1, p2));
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 2点間の距離を求める
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">static double</span> Distance(Point p1, Point p2)
+  /// </summary>
+  static double Distance(Point p1, Point p2)
   {
-    <span class="reserved">double</span> dx = p1.x - p2.x;
-    <span class="reserved">double</span> dy = p1.y - p2.y;
-    <span class="reserved">return</span> Math.Sqrt(dx*dx + dy*dy);
+    double dx = p1.x - p2.x;
+    double dy = p1.y - p2.y;
+    return Math.Sqrt(dx*dx + dy*dy);
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 (100, 0) と (400, 400) の間の距離は 500
-</pre>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="anonymous"></a>匿名の複合型
 
@@ -177,19 +177,19 @@ C# 3.0 からは[匿名型](../start/sp3_inference.md#anonymous)、
 C# 7.0 からは[タプル](../datatype/tuples.md)という機能が追加されて、
 `struct`や`class`などを定義しなくても複合型を書けるようになりました。
 
-<pre class="source" title="匿名型">
-<code><span class="comment">// 匿名型</span>
-<span class="comment">// new { } 内に値を並べる</span>
-<span class="reserved">var</span> x = <span class="reserved">new</span> { p.name, p.age };
-</code></pre>
+```csharp
+// 匿名型
+// new { } 内に値を並べる
+var x = new { p.name, p.age };
+```
 
-<pre class="source" title="タプル">
-<code><span class="reserved">var</span> p = <span class="reserved">new</span> Point();
+```csharp
+var p = new Point();
 
-<span class="comment">// タプル</span>
-<span class="comment">// () 内に値を並べる</span>
-<span class="reserved">var</span> q = (Math.Sqrt(p.X * p.X + p.Y * p.Y), Math.Atan2(p.Y, p.X));
-</code></pre>
+// タプル
+// () 内に値を並べる
+var q = (Math.Sqrt(p.X * p.X + p.Y * p.Y), Math.Atan2(p.Y, p.X));
+```
 
 匿名型とタプルの違いについては「[名前のない複合型](st_anonymoustype.md)」で説明します。
 ## <a id="exercise"></a>演習問題
@@ -202,63 +202,63 @@ C# 7.0 からは[タプル](../datatype/tuples.md)という機能が追加され
 
 また、作成した構造体に、三角形の面積を求めるメンバー関数 <code>GetArea</code>を追加せよ。
 
-<pre class="source" title="GetArea 仕様" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 三角形の面積を求める。
-/// &lt;/summary&gt;
-/// &lt;returns&gt;面積&lt;/returns&gt;</span>
-<span class="reserved">public double</span> GetArea()
-</code></pre>
+/// </summary>
+/// <returns>面積</returns>
+public double GetArea()
+```
 
 
 
 #### 解答例 1
 
 
-<pre class="source" title="Triangle 構造体" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元の点をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Point
+/// </summary>
+struct Point
 {
-  <span class="reserved">public double</span> x; <span class="comment">// x 座標</span>
-  <span class="reserved">public double</span> y; <span class="comment">// y 座標</span>
+  public double x; // x 座標
+  public double y; // y 座標
 
-  <span class="reserved">public override string</span> ToString()
+  public override string ToString()
   {
-    <span class="reserved">return</span> <span class="literal">"("</span> + x + <span class="literal">", "</span> + y + <span class="literal">")"</span>;
+    return "(" + x + ", " + y + ")";
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 2次元空間上の三角形をあらわす構造体
-/// &lt;/summary&gt;</span>
-<span class="reserved">struct</span> Triangle
+/// </summary>
+struct Triangle
 {
-  <span class="reserved">public</span> Point a;
-  <span class="reserved">public</span> Point b;
-  <span class="reserved">public</span> Point c;
+  public Point a;
+  public Point b;
+  public Point c;
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 三角形の面積を求める。
-  /// &lt;/summary&gt;
-  /// &lt;returns&gt;面積&lt;/returns&gt;</span>
-  <span class="reserved">public double</span> GetArea()
+  /// </summary>
+  /// <returns>面積</returns>
+  public double GetArea()
   {
-    <span class="reserved">double</span> abx, aby, acx, acy;
+    double abx, aby, acx, acy;
     abx = b.x - a.x;
     aby = b.y - a.y;
     acx = c.x - a.x;
     acy = c.y - a.y;
-    <span class="reserved">return</span> 0.5 * Math.Abs(abx * acy - acx * aby);
+    return 0.5 * Math.Abs(abx * acy - acx * aby);
   }
 }
 
-<span class="reserved">class</span> Test
+class Test
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
     Triangle t;
     t.a.x = 0;
@@ -267,7 +267,7 @@ C# 7.0 からは[タプル](../datatype/tuples.md)という機能が追加され
     t.b.y = 4;
     t.c.x = 4;
     t.c.y = 3;
-    Console.Write(<span class="literal">"{0}\n"</span>, t.GetArea());
+    Console.Write("{0}\n", t.GetArea());
   }
 }
-</code></pre>
+```

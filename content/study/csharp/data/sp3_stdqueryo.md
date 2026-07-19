@@ -79,22 +79,22 @@ Count、LongCount、Sum、Min、Max、Average、Aggregate
 これらの説明は次節以降で行っていきます。
 その際、例として以下のようなデータを使います。
 
-<pre class="source" title="サンプルデータ" lang="">
-<code><span class="reserved">var</span> a = <span class="reserved">new</span>[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 };
-<span class="reserved">var</span> b = <span class="reserved">new</span>[] { 0, 2, 4, 6, 8, 10, 12 };
-</code></pre>
+```csharp
+var a = new[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 };
+var b = new[] { 0, 2, 4, 6, 8, 10, 12 };
+```
 
 
 また、結果の出力用に、以下のような補助関数を使います。
 
-<pre class="source" title="出力用の補助関数" lang="">
-<code><span class="reserved">static void</span> Show&lt;T&gt;(IEnumerable&lt;T&gt; a)
+```csharp
+static void Show<T>(IEnumerable<T> a)
 {
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> a)
-    Console.Write(<span class="literal">"{0} "</span>, x);
-  Console.Write(<span class="literal">"\n"</span>);
+  foreach (var x in a)
+    Console.Write("{0} ", x);
+  Console.Write("\n");
 }
-</code></pre>
+```
 
 
 
@@ -127,20 +127,20 @@ Take、Skip、TakeWhile、SkipWhile
 
 使用例を以下に示します。
 
-<pre class="source" title="パーティション分割演算子の例" lang="">
-<code>Show(a.Take(5));
+```csharp
+Show(a.Take(5));
 Show(a.Skip(5));
-Show(a.TakeWhile(x =&gt; x != 2));
-Show(a.SkipWhile(x =&gt; x != 2));
-</code></pre>
+Show(a.TakeWhile(x => x != 2));
+Show(a.SkipWhile(x => x != 2));
+```
 
 
-<pre class="console" title="実行結果">
+```console
 0 0 1 1 2
 2 3 3 4 4
 0 0 1 1
 2 2 3 3 4 4
-</pre>
+```
 
 
 
@@ -148,14 +148,14 @@ Show(a.SkipWhile(x =&gt; x != 2));
 
 Concat で、2つのシーケンスを連結できます。
 
-<pre class="source" title="連結演算子の例" lang="">
-<code>Show(a.Concat(b));
-</code></pre>
+```csharp
+Show(a.Concat(b));
+```
 
 
-<pre class="console" title="実行結果">
+```console
 0 0 1 1 2 2 3 3 4 4 0 2 4 6 8 10 12
-</pre>
+```
 
 
 ちなみに、Concat や、後述する Union などは拡張メソッドなので、
@@ -169,14 +169,14 @@ Concat で、2つのシーケンスを連結できます。
 
 Reverse で、シーケンスの中身の順序を真逆にできます。
 
-<pre class="source" title="順序付け演算子の例" lang="">
-<code>Show(a.Reverse());
-</code></pre>
+```csharp
+Show(a.Reverse());
+```
 
 
-<pre class="console" title="実行結果">
+```console
 4 4 3 3 2 2 1 1 0 0
-</pre>
+```
 
 
 
@@ -206,20 +206,20 @@ Distinct、Union、Intersect、Except の4つの
 </table>
 
 
-<pre class="source" title="セット演算子の例" lang="">
-<code>Show(a.Distinct());
+```csharp
+Show(a.Distinct());
 Show(a.Union(b));
 Show(a.Intersect(b));
 Show(a.Except(b));
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 0 1 2 3 4
 0 1 2 3 4 6 8 10 12
 0 2 4
 1 3
-</pre>
+```
 
 
 注： 数学的な意味での集合は要素の重複を認めません。
@@ -237,12 +237,12 @@ Show(a.Except(b));
 シーケンスをそれぞれ、
 IEnumeragle&lt;T&gt;、配列、List&lt;T&gt; に変換します。
 
-<pre class="source" title="型変換" lang="">
-<code><span class="reserved">var</span> a = <span class="reserved">new</span>[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 };
-IEnumerable&lt;<span class="reserved">int</span>&gt; a1 = a.Distinct().AsEnumerable();
-<span class="reserved">int</span>[] a2            = a.Distinct().ToArray();
-List&lt;<span class="reserved">int</span>&gt; a3        = a.Distinct().ToList();
-</code></pre>
+```csharp
+var a = new[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 };
+IEnumerable<int> a1 = a.Distinct().AsEnumerable();
+int[] a2            = a.Distinct().ToArray();
+List<int> a3        = a.Distinct().ToList();
+```
 
 
 AsEnumerable は、この例のような場合だとあまり役に立ちませんが、
@@ -252,27 +252,27 @@ AsEnumerable が as なのに、ToArray や ToList が to を使っているの�
 as の方は遅延評価、to の方はその場での評価になります。
 例えば、以下のようなコードを実行したとします。
 
-<pre class="source" title="As 系と To 系の違い" lang="">
-<code>Func&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; hook = x =&gt;
+```csharp
+Func<int, int> hook = x =>
 {
-  Console.Write(<span class="literal">"{0}"</span>, x);
-  <span class="reserved">return</span> x;
+  Console.Write("{0}", x);
+  return x;
 };
 
-Console.Write(<span class="literal">"AsEnumerable\n"</span>);
-Console.Write(<span class="literal">"before "</span>);
-<span class="reserved">var</span> a1 = a.Select(hook).AsEnumerable();
-Console.Write(<span class="literal">" middle "</span>);
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> a1) ;
-Console.Write(<span class="literal">" after\n\n"</span>);
+Console.Write("AsEnumerable\n");
+Console.Write("before ");
+var a1 = a.Select(hook).AsEnumerable();
+Console.Write(" middle ");
+foreach (var x in a1) ;
+Console.Write(" after\n\n");
 
-Console.Write(<span class="literal">"ToList\n"</span>);
-Console.Write(<span class="literal">"before "</span>);
-<span class="reserved">var</span> a2 = a.Select(hook).ToList();
-Console.Write(<span class="literal">" middle "</span>);
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> a2) ;
-Console.Write(<span class="literal">" after\n\n"</span>);
-</code></pre>
+Console.Write("ToList\n");
+Console.Write("before ");
+var a2 = a.Select(hook).ToList();
+Console.Write(" middle ");
+foreach (var x in a2) ;
+Console.Write(" after\n\n");
+```
 
 
 上半分と下半分は、AsEnumerable と ToList の部分以外はほぼ同じコードですが、
@@ -280,13 +280,13 @@ Console.Write(<span class="literal">" after\n\n"</span>);
 前者は foreach の行で初めて hook が実行され、
 後者は ToList の時点で実行されます。
 
-<pre class="console" title="実行結果">
+```console
 AsEnumerable
-before  middle <em>0011223344</em> after
+before  middle 0011223344 after
 
 ToList
-before <em>0011223344</em> middle  after
-</pre>
+before 0011223344 middle  after
+```
 
 
 
@@ -296,65 +296,65 @@ ToDictionary と ToLookup は、シーケンスを辞書（キーと値のペア
 ToDictionary は Dictionary（1つのキーに対して1つの値を持つ）を、
 ToLookup は Lookup型（1つのキーに対して複数の値（1つの IEnumerable）を持つ辞書）の値を返します。
 
-<pre class="source" title="辞書化の例" lang="">
-<code><span class="reserved">var</span> list = <span class="reserved">new</span>[] {
-  <span class="reserved">new</span> { Name = <span class="literal">"糸色望"</span>, CV = <span class="literal">"神谷浩史"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"風浦可符香"</span>, CV = <span class="literal">"野中藍"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"大草麻菜実"</span>, CV = <span class="literal">"井上喜久子"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"音無芽留"</span>, CV = <span class="literal">"？？？？"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"加賀愛"</span>, CV = <span class="literal">"後藤沙緒里"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"木津千里"</span>, CV = <span class="literal">"井上麻里奈"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"木村カエレ"</span>, CV = <span class="literal">"小林ゆう"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"小節あびる"</span>, CV = <span class="literal">"後藤邑子"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"小森霧"</span>, CV = <span class="literal">"谷井あすか"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"関内・マリア・太郎"</span>, CV = <span class="literal">"沢城みゆき"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"常月まとい"</span>, CV = <span class="literal">"真田アサミ"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"日塔奈美"</span>, CV = <span class="literal">"新谷良子"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"藤吉晴美"</span>, CV = <span class="literal">"松来未祐"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"三珠真夜"</span>, CV = <span class="literal">"谷井あすか"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"久藤准"</span>, CV = <span class="literal">"水島大宙"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"新井智恵"</span>, CV = <span class="literal">"矢島晶子"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"臼井影郎"</span>, CV = <span class="literal">"上田陽司"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"隣の女子大生"</span>, CV = <span class="literal">"野中藍"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"万世橋わたる"</span>, CV = <span class="literal">"上田陽司"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"甚六先生"</span>, CV = <span class="literal">"上田陽司"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"糸色景"</span>, CV = <span class="literal">"子安武人"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"糸色命"</span>, CV = <span class="literal">"神谷浩史"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"糸色倫"</span>, CV = <span class="literal">"矢島晶子"</span> },
-  <span class="reserved">new</span> { Name = <span class="literal">"糸色交"</span>, CV = <span class="literal">"矢島晶子"</span> },
+```csharp
+var list = new[] {
+  new { Name = "糸色望", CV = "神谷浩史" },
+  new { Name = "風浦可符香", CV = "野中藍" },
+  new { Name = "大草麻菜実", CV = "井上喜久子" },
+  new { Name = "音無芽留", CV = "？？？？" },
+  new { Name = "加賀愛", CV = "後藤沙緒里" },
+  new { Name = "木津千里", CV = "井上麻里奈" },
+  new { Name = "木村カエレ", CV = "小林ゆう" },
+  new { Name = "小節あびる", CV = "後藤邑子" },
+  new { Name = "小森霧", CV = "谷井あすか" },
+  new { Name = "関内・マリア・太郎", CV = "沢城みゆき" },
+  new { Name = "常月まとい", CV = "真田アサミ" },
+  new { Name = "日塔奈美", CV = "新谷良子" },
+  new { Name = "藤吉晴美", CV = "松来未祐" },
+  new { Name = "三珠真夜", CV = "谷井あすか" },
+  new { Name = "久藤准", CV = "水島大宙" },
+  new { Name = "新井智恵", CV = "矢島晶子" },
+  new { Name = "臼井影郎", CV = "上田陽司" },
+  new { Name = "隣の女子大生", CV = "野中藍" },
+  new { Name = "万世橋わたる", CV = "上田陽司" },
+  new { Name = "甚六先生", CV = "上田陽司" },
+  new { Name = "糸色景", CV = "子安武人" },
+  new { Name = "糸色命", CV = "神谷浩史" },
+  new { Name = "糸色倫", CV = "矢島晶子" },
+  new { Name = "糸色交", CV = "矢島晶子" },
 };
 
-<span class="reserved">var</span> dicByName = list.ToDictionary(x =&gt; x.Name);
-Console.Write(<span class="literal">"{0}\n"</span>, dicByName[<span class="literal">"日塔奈美"</span>].CV);
-Console.Write(<span class="literal">"{0}\n"</span>, dicByName[<span class="literal">"小節あびる"</span>].CV);
+var dicByName = list.ToDictionary(x => x.Name);
+Console.Write("{0}\n", dicByName["日塔奈美"].CV);
+Console.Write("{0}\n", dicByName["小節あびる"].CV);
 
-<span class="reserved">var</span> lookupByCV = list.ToLookup(x =&gt; x.CV);
-Show(lookupByCV[<span class="literal">"矢島晶子"</span>].Select(x =&gt; x.Name));
-Show(lookupByCV[<span class="literal">"神谷浩史"</span>].Select(x =&gt; x.Name));
-</code></pre>
+var lookupByCV = list.ToLookup(x => x.CV);
+Show(lookupByCV["矢島晶子"].Select(x => x.Name));
+Show(lookupByCV["神谷浩史"].Select(x => x.Name));
+```
 
 
-<pre class="console" title="実行結果">
+```console
 新谷良子
 後藤邑子
 新井智恵 糸色倫 糸色交
 糸色望 糸色命
-</pre>
+```
 
 
 ToLookup を使えば、例えば、名前の1文字目を使ったインデックスを作ったりといったことも出来ます。
 
-<pre class="source" title="ToLookup の例2" lang="">
-<code><span class="reserved">var</span> lookupByFirstChar = list.Select(x =&gt; x.Name).ToLookup(x =&gt; x[0]);
-Show(lookupByFirstChar[<span class="literal">'糸'</span>]);
-Show(lookupByFirstChar[<span class="literal">'小'</span>]);
-</code></pre>
+```csharp
+var lookupByFirstChar = list.Select(x => x.Name).ToLookup(x => x[0]);
+Show(lookupByFirstChar['糸']);
+Show(lookupByFirstChar['小']);
+```
 
 
-<pre class="console" title="実行結果">
+```console
 糸色望 糸色景 糸色命 糸色倫 糸色交
 小節あびる 小森霧
-</pre>
+```
 
 
 
@@ -365,31 +365,31 @@ Cast はすべての要素のキャストを試みます。
 キャストに失敗した場合は例外が発生します。
 一方、OfType は、変換可能な要素だけを抽出します。
 
-<pre class="source" title="Cast, OfType の例" lang="">
-<code><span class="reserved">var</span> numList = <span class="reserved">new object</span>[] {
+```csharp
+var numList = new object[] {
   1, 1.1, 2, 2.2, 3, 3.3
 };
 
-<span class="reserved">var</span> miscList = <span class="reserved">new object</span>[] {
-  0, <span class="literal">"test 1"</span>, 1, 3.14, <span class="literal">"test 2"</span>, 2.72,
-  <span class="reserved">new</span> List&lt;<span class="reserved">int</span>&gt;(),
-  <span class="reserved">new</span> Stack&lt;<span class="reserved">int</span>&gt;(),
-  <span class="reserved">new</span> Queue&lt;<span class="reserved">int</span>&gt;()
+var miscList = new object[] {
+  0, "test 1", 1, 3.14, "test 2", 2.72,
+  new List<int>(),
+  new Stack<int>(),
+  new Queue<int>()
 };
 
-Show(numList.Cast&lt;<span class="reserved">int</span>&gt;());
-<span class="comment">// Show(miscList.Cast&lt;int&gt;()); // 例外発生</span>
+Show(numList.Cast<int>());
+// Show(miscList.Cast<int>()); // 例外発生
 
-Show(numList.OfType&lt;<span class="reserved">int</span>&gt;());
-Show(miscList.OfType&lt;IEnumerable&lt;<span class="reserved">int</span>&gt;&gt;().Select(x =&gt; x.GetType().Name));
-</code></pre>
+Show(numList.OfType<int>());
+Show(miscList.OfType<IEnumerable<int>>().Select(x => x.GetType().Name));
+```
 
 
-<pre class="console" title="実行結果">
+```console
 1 1 2 2 3 3
 1 2 3
 List`1 Stack`1 Queue`1
-</pre>
+```
 
 
 <code>.OfType&lt;T&gt;()</code> は
@@ -400,22 +400,22 @@ List`1 Stack`1 Queue`1
 
 SequenceEqual で、2つのシーケンスの中身が（順序も含めて）一致するかどうかを調べられます。
 
-<pre class="source" title="SequenceEqualの例" lang="">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span>[] { 0, 3, 1, 2 };
-<span class="reserved">var</span> y = <span class="reserved">new</span>[] { 0, 3, 1, 2 };
-<span class="reserved">var</span> z = <span class="reserved">new</span>[] { 1, 2, 3 };
+```csharp
+var x = new[] { 0, 3, 1, 2 };
+var y = new[] { 0, 3, 1, 2 };
+var z = new[] { 1, 2, 3 };
 
-Console.Write(<span class="literal">"{0}\n"</span>, x.SequenceEqual(y));
-Console.Write(<span class="literal">"{0}\n"</span>, y.SequenceEqual(z));
-Console.Write(<span class="literal">"{0}\n"</span>, z.SequenceEqual(x));
-</code></pre>
+Console.Write("{0}\n", x.SequenceEqual(y));
+Console.Write("{0}\n", y.SequenceEqual(z));
+Console.Write("{0}\n", z.SequenceEqual(x));
+```
 
 
-<pre class="console" title="実行結果">
+```console
 True
 False
 False
-</pre>
+```
 
 
 
@@ -455,30 +455,30 @@ OrDefault が付かないもの、
 もし条件を満たす要素が1つもなければ規定値
 （例えば、数値型なら 0、参照型なら null）を返します。
 
-<pre class="source" title="要素演算子の例" lang="">
-<code><span class="reserved">var</span> list = <span class="reserved">new</span>[] {
-  <span class="reserved">new</span> { X = 0, Y = 0 },
-  <span class="reserved">new</span> { X = 0, Y = 1 },
-  <span class="reserved">new</span> { X = 0, Y = 2 },
-  <span class="reserved">new</span> { X = 1, Y = 0 },
-  <span class="reserved">new</span> { X = 1, Y = 1 },
-  <span class="reserved">new</span> { X = 1, Y = 2 },
-  <span class="reserved">new</span> { X = 2, Y = 0 },
+```csharp
+var list = new[] {
+  new { X = 0, Y = 0 },
+  new { X = 0, Y = 1 },
+  new { X = 0, Y = 2 },
+  new { X = 1, Y = 0 },
+  new { X = 1, Y = 1 },
+  new { X = 1, Y = 2 },
+  new { X = 2, Y = 0 },
 };
 
-Console.Write(<span class="literal">"{0}\n"</span>, list.First(p =&gt; p.X == 0));
-<span class="comment">// Console.Write("{0}\n", list.First(p =&gt; p.X == 3)); // 例外発生</span>
-Console.Write(<span class="literal">"{0}\n"</span>, list.Last(p =&gt; p.X == 1));
-Console.Write(<span class="literal">"{0}\n"</span>, list.Single(p =&gt; p.X == 2));
-<span class="comment">// Console.Write("{0}\n", list.Single(p =&gt; p.X == 0)); // 例外発生</span>
-</code></pre>
+Console.Write("{0}\n", list.First(p => p.X == 0));
+// Console.Write("{0}\n", list.First(p => p.X == 3)); // 例外発生
+Console.Write("{0}\n", list.Last(p => p.X == 1));
+Console.Write("{0}\n", list.Single(p => p.X == 2));
+// Console.Write("{0}\n", list.Single(p => p.X == 0)); // 例外発生
+```
 
 
-<pre class="console" title="実行結果">
+```console
 { X = 0, Y = 0 }
 { X = 1, Y = 2 }
 { X = 2, Y = 0 }
-</pre>
+```
 
 
 First、Last、Single には引数を持たないバージョンもあって、
@@ -486,10 +486,10 @@ First、Last、Single には引数を持たないバージョンもあって、
 引数なしの Single は、シーケンスがただ1つの要素からなるときにはその要素の値を返し、
 そうでなければ例外を発生させます。
 
-<pre class="source" title="引数なしの Single" lang="">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span>[] { 0 }.Single();    <span class="comment">// x == 0</span>
-<span class="reserved">var</span> y = <span class="reserved">new</span>[] { 0, 1 }.Single(); <span class="comment">// 例外発生</span>
-</code></pre>
+```csharp
+var x = new[] { 0 }.Single();    // x == 0
+var y = new[] { 0, 1 }.Single(); // 例外発生
+```
 
 
 
@@ -515,26 +515,25 @@ First、Last、Single には引数を持たないバージョンもあって、
 </table>
 
 
-<pre class="source" title="生成演算子の例" lang="">
-<code>Show(Enumerable.Range(5, 3));
-Show(Enumerable.Repeat(<span class="literal">"abc"</span>, 3));
-Show(Enumerable.Empty&lt;<span class="reserved">int</span>&gt;());
-</code></pre>
+```csharp
+Show(Enumerable.Range(5, 3));
+Show(Enumerable.Repeat("abc", 3));
+Show(Enumerable.Empty<int>());
+```
 
 
-<pre class="console" title="実行結果">
+```console
 5 6 7
 abc abc abc
-
-</pre>
+```
 
 
 例えば、Range を使って任意個数の乱数列を生成したりできます。
 
-<pre class="source" title="乱数列生成の例" lang="">
-<code>Random rnd = <span class="reserved">new</span> Random();
-<span class="reserved">var</span> randomSeq = Enumerable.Range(0, 100).Select(x =&gt; rnd.NextDouble());
-</code></pre>
+```csharp
+Random rnd = new Random();
+var randomSeq = Enumerable.Range(0, 100).Select(x => rnd.NextDouble());
+```
 
 
 
@@ -560,17 +559,17 @@ Any、All、Contains は、
 </table>
 
 
-<pre class="source" title="限定子の例" lang="">
-<code>Func&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; isEven = x =&gt; (x &amp; 1) == 0;
+```csharp
+Func<int, bool> isEven = x => (x & 1) == 0;
 
-Console.Write(<span class="literal">"{0}\n"</span>, a.Any(isEven)); <span class="comment">// a は偶数も含むので true</span>
-Console.Write(<span class="literal">"{0}\n"</span>, b.Any(isEven)); <span class="comment">// b は偶数を含むので true</span>
+Console.Write("{0}\n", a.Any(isEven)); // a は偶数も含むので true
+Console.Write("{0}\n", b.Any(isEven)); // b は偶数を含むので true
 
-Console.Write(<span class="literal">"{0}\n"</span>, a.All(isEven)); <span class="comment">// a は奇数を含むので false</span>
-Console.Write(<span class="literal">"{0}\n"</span>, b.All(isEven)); <span class="comment">// b は全て偶数なので true</span>
+Console.Write("{0}\n", a.All(isEven)); // a は奇数を含むので false
+Console.Write("{0}\n", b.All(isEven)); // b は全て偶数なので true
 
-Console.Write(<span class="literal">"{0}\n"</span>, a.Contains(0)); <span class="comment">// a は 0 を含むので true</span>
-</code></pre>
+Console.Write("{0}\n", a.Contains(0)); // a は 0 を含むので true
+```
 
 
 
@@ -613,17 +612,17 @@ Console.Write(<span class="literal">"{0}\n"</span>, a.Contains(0)); <span class=
 
 list.Aggregate(func); は、以下のコードと同じ結果を得ます。
 
-<pre class="source" title="Aggregate の処理内容" lang="">
-<code><span class="reserved">static</span> T Aggregate&lt;T&gt;(IEnumerable&lt;T&gt; list, Func&lt;T, T, T&gt; func)
+```csharp
+static T Aggregate<T>(IEnumerable<T> list, Func<T, T, T> func)
 {
-  <span class="reserved">var</span> acc = list.First();
-  <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> list.Skip(1))
+  var acc = list.First();
+  foreach (var x in list.Skip(1))
   {
     acc = func(acc, x);
   }
-  <span class="reserved">return</span> acc;
+  return acc;
 }
-</code></pre>
+```
 
 
 したがって、
@@ -636,31 +635,31 @@ list.Aggregate(func); は、以下のコードと同じ結果を得ます。
 なので、
 例えば、以下のようなコードを書くと、<em>foreach ループを5回まわすことになります</em>。
 
-<pre class="source" title="集計演算子の例" lang="">
-<code><span class="reserved">var</span> num = a.Count();
-<span class="reserved">var</span> min = a.Min();
-<span class="reserved">var</span> max = a.Max();
-<span class="reserved">var</span> ave = a.Average();
-<span class="reserved">var</span> sum = a.Sum();
-</code></pre>
+```csharp
+var num = a.Count();
+var min = a.Min();
+var max = a.Max();
+var ave = a.Average();
+var sum = a.Sum();
+```
 
 
 そのため、
 以下のようなコードと比べると、圧倒的に動作速度が遅くなります。
 （筆者の環境では約10倍の差。）
 
-<pre class="source" title="自力で集計。ループを1つに。" lang="">
-<code><span class="reserved">var</span> num = 0;
-<span class="reserved">var</span> min = <span class="reserved">int</span>.MaxValue;
-<span class="reserved">var</span> max = <span class="reserved">int</span>.MinValue;
-<span class="reserved">var</span> sum = 0;
+```csharp
+var num = 0;
+var min = int.MaxValue;
+var max = int.MinValue;
+var sum = 0;
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> a)
+foreach (var x in a)
 {
   ++num;
-  <span class="reserved">if</span> (min &gt; x) min = x;
-  <span class="reserved">if</span> (max &lt; x) max = x;
+  if (min > x) min = x;
+  if (max < x) max = x;
   sum += x;
 }
-<span class="reserved">double</span> ave = sum / (<span class="reserved">double</span>)num;
-</code></pre>
+double ave = sum / (double)num;
+```

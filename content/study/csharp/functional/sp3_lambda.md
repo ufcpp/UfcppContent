@@ -66,33 +66,33 @@ C# 3.0 の開発者も、「もし、ラムダ式が先に導入されていれ�
 
 C# 2.0 までの匿名メソッドは、例えば、以下のような書き方をしていました。
 
-<pre class="source" title="C# 2.0 の匿名メソッド" lang="">
-<code><span class="reserved">delegate</span>(<span class="reserved">int</span> n)
+```csharp
+delegate(int n)
 {
-  <span class="reserved">return</span> n &gt; <span class="literal">0</span>;
+  return n > 0;
 }
-</code></pre>
+```
 
 
 この匿名メソッドをラムダ式を使って書き直すと、以下のようになります。
 
-<pre class="source" title="ラムダ式" lang="">
-<code>(<span class="reserved">int</span> n) =&gt; { <span class="reserved">return</span> n &gt; <span class="literal">0</span>; };
-</code></pre>
+```csharp
+(int n) => { return n > 0; };
+```
 
 
 {} の中身が単文の場合には、{} と return も省略できます。
 
-<pre class="source" title="ラムダ式" lang="">
-<code>(<span class="reserved">int</span> n) =&gt; n &gt; <span class="literal">0</span>;
-</code></pre>
+```csharp
+(int n) => n > 0;
+```
 
 
 要するに、記法としては、以下のようになります。
 
-<pre class="source" title="ラムダ式の記法" lang="">
-<code><span class="input">引数リスト</span> =&gt; <span class="input">式</span>
-</code></pre>
+```csharp
+引数リスト => 式
+```
 
 
 ちなみに、文脈的に引数の型が明らかな場合、
@@ -100,9 +100,9 @@ C# 2.0 までの匿名メソッドは、例えば、以下のような書き方�
 （var と似たような型推定機能が働く。）
 例えば、以下のようなデリゲートがあるとき、
 
-<pre class="source" title="デリゲート Pred" lang="">
-<code><span class="reserved">delegate bool</span> <span class="type">Pred</span>(<span class="reserved">int</span> n);
-</code></pre>
+```csharp
+delegate bool Pred(int n);
+```
 
 
 このデリゲートに対する代入式中にラムダ式を書く場合、
@@ -110,9 +110,9 @@ C# 2.0 までの匿名メソッドは、例えば、以下のような書き方�
 int を省略して以下のように書くことができます。
 （n の型はコンパイラが推論してくれます。）
 
-<pre class="source" title="引数の型推定" lang="">
-<code><span class="type">Pred</span> p = <em>n =&gt; n &gt; <span class="literal">0</span></em>;
-</code></pre>
+```csharp
+Pred p = n => n > 0;
+```
 
 
 あと、いちいちデリゲートを定義するのは面倒なので、
@@ -121,23 +121,23 @@ Func は「[ジェネリック](../oop/sp2_generics.md#generics)」を使って�
 例えば、上述の例の Pred デリゲートのように、
 int 型の引数を1つとって、bool 型を返すようなデリゲートを以下のように表現できます。
 
-<pre class="source" title="Func デリゲート" lang="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt;
-</code></pre>
+```csharp
+Func<int, bool>
+```
 
 
 式が複数になる場合は省略せずに {} でくくります。
 （この場合は、{} の中身は匿名デリゲートと同じ書き方をする。return も書く必要あり。）
 
-<pre class="source" title="ラムダ式（複文）" lang="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>&gt; f =
-  (x, y) =&gt;
+```csharp
+Func<int, int, int> f =
+  (x, y) =>
   {
-    <span class="reserved">int</span> sum = x + y;
-    <span class="reserved">int</span> prod = x * y;
-    <span class="reserved">return</span> sum * prod;
+    int sum = x + y;
+    int prod = x * y;
+    return sum * prod;
   };
-</code></pre>
+```
 
 
 
@@ -157,12 +157,12 @@ int 型の引数を1つとって、bool 型を返すようなデリゲートを�
 Expression 型の変数に代入すると、式木データとして扱うことができ、
 以下のように式中の項を取り出したりといった操作が可能です。
 
-<pre class="source" title="ラムダ式をデータとして扱う" lang="">
-<code><span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt;&gt; e = n =&gt; n &gt; <span class="literal">0</span>;
-<span class="type">BinaryExpression</span> lt = (<span class="type">BinaryExpression</span>)e.Body;
-<span class="type">ParameterExpression</span> en = (<span class="type">ParameterExpression</span>)lt.Left;
-<span class="type">ConstantExpression</span> zero = (<span class="type">ConstantExpression</span>)lt.Right;
-</code></pre>
+```csharp
+Expression<Func<int, bool>> e = n => n > 0;
+BinaryExpression lt = (BinaryExpression)e.Body;
+ParameterExpression en = (ParameterExpression)lt.Left;
+ConstantExpression zero = (ConstantExpression)lt.Right;
+```
 
 
 インタプリタ型の関数型言語には、実行コードとデータを区別しないものがあって、
@@ -176,19 +176,19 @@ C# では「実行コードとデータを区別しない」というわけに�
 式木にできるのは、単文の（{} を使わない）ラムダ式だけです。
 以下の例では、1つ目のラムダ式はコンパイル可能ですが、2つ目はエラーになります。
 
-<pre class="source" title="{} を使って書いたラムダ式は式木にできない" lang="">
-<code><span class="comment">// ↓ これは OK</span>
-<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt;&gt; p = n =&gt; n &gt; <span class="literal">0</span>;
+```csharp
+// ↓ これは OK
+Expression<Func<int, bool>> p = n => n > 0;
 
-<span class="comment">// ↓ これは「式木に変換できません」と怒られる</span>
-<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt; f =
-  (x, y) =&gt;
+// ↓ これは「式木に変換できません」と怒られる
+Expression<Func<int, int, int>> f =
+  (x, y) =>
   {
-      <span class="reserved">int</span> sum = x + y;
-      <span class="reserved">int</span> prod = x * y;
-      <span class="reserved">return</span> sum * prod;
+      int sum = x + y;
+      int prod = x * y;
+      return sum * prod;
   };
-</code></pre>
+```
 
 
 要するに、単文で書けるものしか式木にできません。
@@ -202,25 +202,25 @@ for や while などの制御構文は式木にできません。
 
 例えば、以下のようなクエリ式を書いたとすると、
 
-<pre class="source" title="LINQ to SQL の例" lang="">
-<code><span class="reserved">var</span> q =
-  <span class="reserved">from</span> c <span class="reserved">in</span> db
-  <span class="reserved">where</span> c.City == <span class="literal">"London"</span>
-  <span class="reserved">select new</span> {c.City};
+```csharp
+var q =
+  from c in db
+  where c.City == "London"
+  select new {c.City};
 
-<span class="reserved">foreach</span> (<span class="reserved">var</span> city <span class="reserved">in</span> q)
-  <span class="input">...</span>
-</code></pre>
+foreach (var city in q)
+  ...
+```
 
 
 db.Where や db.Select では、
 データベースサーバに対して以下のような SQL を発行するしくみになっています。
 
-<pre class="source" title="上述のクエリ式から作られる SQL 文" lang="">
-<code>SELECT TOP 1 [t0].[City]
+```sql
+SELECT TOP 1 [t0].[City]
 FROM [Customers] AS [t0]
 WHERE [t0].[City] = @p0
-</code></pre>
+```
 
 
 こういう動作は、<code>c.City == "London"</code> の部分をデリゲート（要するに実行コード）として受け取っていてはできません。式木データとして受け取って、その中身を見ながら SQL 文を作ります。
@@ -233,18 +233,18 @@ WHERE [t0].[City] = @p0
 C# 3.0 では、オブジェクトの初期化を以下のような記法でできるようになりました。
 このような記法を<strong id="objectinit" class="keyword">オブジェクト初期化子</strong> （object initializer）と呼びます。
 
-<pre class="source" title="オブジェクト初期化子" lang="">
-<code><span class="type">Point</span> p = <span class="reserved">new</span> <span class="type">Point</span>{ X = <span class="literal">0</span>, Y = <span class="literal">1</span> };
-</code></pre>
+```csharp
+Point p = new Point{ X = 0, Y = 1 };
+```
 
 
 ちなみに、このコードの実行結果は以下のようなコードと等価です。
 
-<pre class="source" title="オブジェクト初期化子" lang="">
-<code><span class="type">Point</span> p = <span class="reserved">new</span> <span class="type">Point</span>();
-p.X = <span class="literal">0</span>;
-p.Y = <span class="literal">1</span>;
-</code></pre>
+```csharp
+Point p = new Point();
+p.X = 0;
+p.Y = 1;
+```
 
 
 この等価なコードを見ればわかると思いますが、
@@ -256,40 +256,40 @@ p.Y = <span class="literal">1</span>;
 プロパティへの値の代入を単文で書けるようになります。
 これで何が嬉しいかというと、<em>クラスのメンバー変数の初期化や、式木への代入が可能になります</em>。
 
-<pre class="source" title="式木への代入時のオブジェクト初期化子" lang="">
-<code><span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="type">Point</span>&gt;&gt; f = () =&gt; <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">0</span> };
-<span class="comment">// ↑式木には単文のラムダ式しか代入できない。
+```csharp
+Expression<Func<Point>> f = () => new Point { X = 0, Y = 0 };
+// ↑式木には単文のラムダ式しか代入できない。
 
-// 要するに、以下のような書き方はコンパイルエラーになる。</span>
-<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="type">Point</span>&gt;&gt; f = () =&gt;
+// 要するに、以下のような書き方はコンパイルエラーになる。
+Expression<Func<Point>> f = () =>
 {
-  <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span>();
-  p.X = <span class="literal">0</span>;
-  p.Y = <span class="literal">0</span>;
-  <span class="reserved">return</span> p;
+  var p = new Point();
+  p.X = 0;
+  p.Y = 0;
+  return p;
 }
-</code></pre>
+```
 
 
-<pre class="source" title="クラスのメンバー変数初期化時のオブジェクト初期化子" lang="">
-<code><span class="reserved">class</span> <span class="type">Triangle</span>
+```csharp
+class Triangle
 {
-    <span class="reserved">public</span> <span class="type">Point</span> A = <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">0</span> };
-    <span class="reserved">public</span> <span class="type">Point</span> B = <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">0</span> };
-    <span class="reserved">public</span> <span class="type">Point</span> C = <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">1</span> };
-    <span class="comment">// ↑メンバー変数の初期化に複文は書けないの。</span>
+    public Point A = new Point { X = 0, Y = 0 };
+    public Point B = new Point { X = 1, Y = 0 };
+    public Point C = new Point { X = 0, Y = 1 };
+    // ↑メンバー変数の初期化に複文は書けないの。
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-7"></a> <a id="trailing-comma"></a>末尾コンマ
 
 オブジェクト初期化子では、[配列の初期化子](../structured/st_array.md#use)と同様に、末尾のコンマはあってもなくてもかまいません。
 以下の2行は同じ意味になります。
 
-<pre class="source" title="初期化子の末尾コンマ">
-<code><span class="reserved">var</span> <span class="variable">p1</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 0, Y = 1 };
-<span class="reserved">var</span> <span class="variable">p2</span> = <span class="reserved">new</span> <span class="type">Point</span> { X = 0, Y = 1<em>,</em> };
-</code></pre>
+```csharp
+var p1 = new Point { X = 0, Y = 1 };
+var p2 = new Point { X = 0, Y = 1, };
+```
 
 これは、後述するコレクション初期化子やインデックス初期化子でも同様です。
 
@@ -298,20 +298,20 @@ p.Y = <span class="literal">1</span>;
 また、コレクションの初期化を以下のような記法でできるようになりました。
 こちらは<strong id="collectioninit" class="keyword">コレクション初期化子</strong>（collection initializer）と呼びます。
 
-<pre class="source" title="コレクション初期化子" lang="">
-<code>List&lt;<span class="reserved">int</span>&gt; list = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; {<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>};
-</code></pre>
+```csharp
+List<int> list = new List<int> {1, 2, 3};
+```
 
 
 要するに、配列と同じような初期化記法を、任意のコレクションクラス（System.Collections.IEnumerable インターフェースを実装していて、Add メソッドを持つクラス）に対して行うことができます。
 ちなみに、このコードは以下のようなコードと等価です。
 
-<pre class="source" title="コレクション初期化子" lang="">
-<code><span class="type">List</span>&lt;<span class="reserved">int</span>&gt; list = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-list.Add(<span class="literal">1</span>);
-list.Add(<span class="literal">2</span>);
-list.Add(<span class="literal">3</span>);
-</code></pre>
+```csharp
+List<int> list = new List<int>();
+list.Add(1);
+list.Add(2);
+list.Add(3);
+```
 
 
 このようなリスト型のコレクションだけでなく、
@@ -319,24 +319,24 @@ IDictionary&lt;TKey,TValue&gt; のような辞書クラスに対しても、
 以下のような記法で初期化ができます。
 （この場合、2引数の Add メソッドが呼ばれます。）
 
-<pre class="source" title="コレクション初期化子" lang="">
-<code><span class="reserved">var</span> map = Dictionary&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;
+```csharp
+var map = Dictionary<string, int>
 {
-  { <span class="literal">"One"</span>, <span class="literal">1</span> },
-  { <span class="literal">"Two"</span>, <span class="literal">2</span> },
-  { <span class="literal">"Three"</span>, <span class="literal">3</span> },
-  { <span class="literal">"Four"</span>, <span class="literal">4</span> },
+  { "One", 1 },
+  { "Two", 2 },
+  { "Three", 3 },
+  { "Four", 4 },
 };
-</code></pre>
+```
 
 <h5 class="version version12">Ver. 12</h5>
 
 C# 12 からはコレクション初期化子に代わって、以下のようにコレクションを作ることができるようになりました。
 これをコレクション式といいます。
 
-<pre class="source" title="">
-<span class="reserved">int</span>[] <span class="variable">a</span> <span class="operator">=</span> [<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>];
-</pre>
+```csharp
+int[] a = [1, 3, 5, 7, 9];
+```
 
 コレクション初期化子との差や、コレクション式のメリットなどは「[コレクション式](../datatype/collection-expression.md)」で説明します。
 
@@ -351,99 +351,99 @@ C# 6.0 から、[オブジェクト初期化子](#object-initializer)に、イ�
 
 例えば `Dictionary`(`System.Collections.Generic`名前空間)に対して以下のような書き方ができます。
 
-<pre class="source" title="インデックス初期化子の例">
-<code><span class="reserved">var</span> <span class="variable">dic</span> = <span class="reserved">new</span> <span class="type">Dictionary</span>&lt;<span class="reserved">string</span>, <span class="reserved">int</span>&gt;
+```csharp
+var dic = new Dictionary<string, int>
 {
-    [<span class="string">&quot;one&quot;</span>] = 1,
-    [<span class="string">&quot;two&quot;</span>] = 2,
+    ["one"] = 1,
+    ["two"] = 2,
 };
-</code></pre>
+```
 
 プロパティへの代入とインデクサーへの代入を混在させることもできます。
 
-<pre class="source" title="初期化子内でのプロパティとインデクサーの混在">
-<code><span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+class Sample
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public string Name { get; set; }
  
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">string</span> <span class="variable">key</span>]
+    public int this[string key]
     {
-        <span class="reserved">get</span> { <span class="control">return</span> 0; }
-        <span class="reserved">set</span> { }
+        get { return 0; }
+        set { }
     }
 }
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">s</span> = <span class="reserved">new</span> <span class="type">Sample</span>
+        var s = new Sample
         {
-            Name = <span class="string">&quot;sample&quot;</span>,
-            [<span class="string">&quot;X&quot;</span>] = 1,
-            [<span class="string">&quot;Y&quot;</span>] = 2,
+            Name = "sample",
+            ["X"] = 1,
+            ["Y"] = 2,
         };
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="recursive"></a>再帰初期化
 
 ちなみに、再帰的な構造を持ったクラスの初期化もできます。
 
-<pre class="source" title="再帰的なオブジェクト初期化子" lang="">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Point</span>
+class Point
 {
-    <span class="reserved">public double</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public double</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public double X { get; set; }
+    public double Y { get; set; }
 }
 
-<span class="reserved">class</span> <span class="type">Color</span>
+class Color
 {
-    <span class="reserved">public byte</span> R { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public byte</span> G { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public byte</span> B { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public byte R { get; set; }
+    public byte G { get; set; }
+    public byte B { get; set; }
 }
 
-<span class="reserved">class</span> <span class="type">Geometry</span>
+class Geometry
 {
-    <span class="reserved">public</span> <span class="type">List</span>&lt;<span class="type">Point</span>&gt; Vertices = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="type">Point</span>&gt;();
-    <span class="reserved">public</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; Indices = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
+    public List<Point> Vertices = new List<Point>();
+    public List<int> Indices = new List<int>();
 }
 
-<span class="reserved">class</span> <span class="type">Model</span>
+class Model
 {
-    <span class="reserved">public</span> <span class="type">Geometry</span> Geometry = <span class="reserved">new</span> <span class="type">Geometry</span>();
-    <span class="reserved">public</span> <span class="type">Color</span> Color = <span class="reserved">new</span> <span class="type">Color</span>();
+    public Geometry Geometry = new Geometry();
+    public Color Color = new Color();
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="type">Model</span> m = <span class="reserved">new</span> <span class="type">Model</span>
+        Model m = new Model
         {
-            Color = { R = <span class="literal">128</span>, G = <span class="literal">128</span>, B = <span class="literal">128</span> },
+            Color = { R = 128, G = 128, B = 128 },
             Geometry =
             {
                 Vertices =
                 {
-                    <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">0</span>},
-                    <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">0</span>},
-                    <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">1</span>},
-                    <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">1</span>},
+                    new Point { X = 0, Y = 0},
+                    new Point { X = 1, Y = 0},
+                    new Point { X = 1, Y = 1},
+                    new Point { X = 0, Y = 1},
                 },
-                Indices = { <span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">0</span>, <span class="literal">2</span>, <span class="literal">3</span> },
+                Indices = { 0, 1, 2, 0, 2, 3 },
             },
         };
 
-        <span class="comment">//Model m = new Model();
-        //m.Color.R = 128;</span>
+        //Model m = new Model();
+        //m.Color.R = 128;
     }
 }
-</code></pre>
+```
 
 
 ただし、再帰的な初期化をするためには、メンバーが参照型（class）である必要があります。
@@ -453,41 +453,41 @@ C# 6.0 から、[オブジェクト初期化子](#object-initializer)に、イ�
 また、この記法ででの初期化は、以下のようなコードと等価で、Color、Geometry、Indices などに対してインスタンスを new してくれたりはしないので注意が必要です。
 コンストラクターもしくはメンバー初期化子での初期化が必要です。
 
-<pre class="source" title="再起初期化子の解釈結果" lang="">
-<code>        <span class="type">Model</span> m = <span class="reserved">new</span> <span class="type">Model</span>();
-        <span class="comment">// ↓ m = new Model() の時点で Color が初期化されていないと NullReferenceException。</span>
-        m.Color.R = <span class="literal">128</span>;
-        m.Color.G = <span class="literal">128</span>;
-        m.Color.B = <span class="literal">128</span>;
-        m.Geometry.Vertices.Add(<span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">0</span> });
-        m.Geometry.Vertices.Add(<span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">0</span> });
-        m.Geometry.Vertices.Add(<span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">1</span> });
-        m.Geometry.Vertices.Add(<span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">1</span> });
-        m.Geometry.Indices.Add(<span class="literal">0</span>);
-        m.Geometry.Indices.Add(<span class="literal">1</span>);
-        m.Geometry.Indices.Add(<span class="literal">2</span>);
-        m.Geometry.Indices.Add(<span class="literal">0</span>);
-        m.Geometry.Indices.Add(<span class="literal">2</span>);
-        m.Geometry.Indices.Add(<span class="literal">3</span>);
-</code></pre>
+```csharp
+        Model m = new Model();
+        // ↓ m = new Model() の時点で Color が初期化されていないと NullReferenceException。
+        m.Color.R = 128;
+        m.Color.G = 128;
+        m.Color.B = 128;
+        m.Geometry.Vertices.Add(new Point { X = 0, Y = 0 });
+        m.Geometry.Vertices.Add(new Point { X = 1, Y = 0 });
+        m.Geometry.Vertices.Add(new Point { X = 1, Y = 1 });
+        m.Geometry.Vertices.Add(new Point { X = 0, Y = 1 });
+        m.Geometry.Indices.Add(0);
+        m.Geometry.Indices.Add(1);
+        m.Geometry.Indices.Add(2);
+        m.Geometry.Indices.Add(0);
+        m.Geometry.Indices.Add(2);
+        m.Geometry.Indices.Add(3);
+```
 
 
 さもなくば、以下のように、おとなしく new を書きましょう。
 
-<pre class="source" title="おとなしく new を明示的に書く" lang="">
-<code>        <span class="type">Model</span> m = <span class="reserved">new</span> <span class="type">Model</span>
+```csharp
+        Model m = new Model
         {
-            Color = <span class="reserved">new</span> <span class="type">Color</span> { R = <span class="literal">128</span>, G = <span class="literal">128</span>, B = <span class="literal">128</span> },
-            Geometry = <span class="reserved">new</span> <span class="type">Geometry</span>
+            Color = new Color { R = 128, G = 128, B = 128 },
+            Geometry = new Geometry
             {
-                Vertices = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="type">Point</span>&gt;
+                Vertices = new List<Point>
                 {
-                    <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">0</span>},
-                    <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">0</span>},
-                    <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">1</span>, Y = <span class="literal">1</span>},
-                    <span class="reserved">new</span> <span class="type">Point</span> { X = <span class="literal">0</span>, Y = <span class="literal">1</span>},
+                    new Point { X = 0, Y = 0},
+                    new Point { X = 1, Y = 0},
+                    new Point { X = 1, Y = 1},
+                    new Point { X = 0, Y = 1},
                 },
-                Indices = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; { <span class="literal">0</span>, <span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">0</span>, <span class="literal">2</span>, <span class="literal">3</span> },
+                Indices = new List<int> { 0, 1, 2, 0, 2, 3 },
             },
         };
-</code></pre>
+```

@@ -56,15 +56,15 @@ UTF-16 には4バイト使って表現する文字があるんですが、
 
 分かりやすいのは以下のような文字列。この例だと ‰ (パーミル記号)が〠 (顔郵便マーク)に化けています。
 
-<pre class="source" title="UTF-16 から1バイト削るとかやっちゃダメ">
-<code><span class="reserved">using</span> System.Text;
+```csharp
+using System.Text;
 
-<span class="comment">// UTF-16 (Little Endian) だと…</span>
-<span class="reserved">var</span> <span class="variable">s1</span> = <span class="string">&quot;‰‰&quot;</span>; <span class="comment">// 30 20 30 20</span>
-<span class="reserved">var</span> <span class="variable">b</span> = <span class="type">Encoding</span>.Unicode.<span class="method">GetBytes</span>(<span class="variable">s1</span>);
-<span class="reserved">var</span> <span class="variable">s2</span> = <span class="type">Encoding</span>.Unicode.<span class="method">GetString</span>(<span class="variable">b</span>[1..^1]); <span class="comment">// 20 30</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s2</span>); <span class="comment">// 〠 (U+3020)</span>
-</code></pre>
+// UTF-16 (Little Endian) だと…
+var s1 = "‰‰"; // 30 20 30 20
+var b = Encoding.Unicode.GetBytes(s1);
+var s2 = Encoding.Unicode.GetString(b[1..^1]); // 20 30
+Console.WriteLine(s2); // 〠 (U+3020)
+```
 
 他にも、2バイト目に ASCII 文字を含む文字なんかも地雷です。
 2バイト目(UTF-16 Little Endian だとすると上位バイト)が 5C (ASCII だと \ 記号)の文字とかはなかなかやばい地雷を踏めます。
@@ -75,14 +75,14 @@ C 言語みたいに \ 記号に特別な意味がある言語がありますん
 
 C 言語だと、行末に \ を置くと「改行コードを無視して次の行とつなぐ」みたいに意味になるので、 `//局` みたいなコメントを書いて、UTF-16 で保存して、文字コード指定なし(今時だいたいのコンパイラーで UTF-8 扱い)でコンパイルするとコメントの後ろの行が消えます。
 
-<pre class="source" title="UTF-16 から1バイト削るとかやっちゃダメ">
-<code><span class="reserved">#include</span> <span class="string">&lt;stdio.h&gt;</span>
+```cpp
+#include <stdio.h>
 
-<span class="reserved">void</span> <span class="method">main</span>()
-{<span class="comment">//局
-    printf("Hello World"); // なぜか表示されない</span>
+void main()
+{//局
+    printf("Hello World"); // なぜか表示されない
 }
-</code></pre>
+```
 
 ## UTF-8 の逆転敗北(主に絵文字のせい)
 

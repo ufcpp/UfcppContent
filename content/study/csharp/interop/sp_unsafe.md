@@ -76,17 +76,17 @@ C++では、変数の宣言するとき、
 逆に、ポインターの参照先の値を読み書きするには、
 ポインター変数の前に `*` を付けます。
 
-<pre class="source" title="ポインターの宣言、アドレス取り出し(C++)" lang="">
-<code><span class="comment">// 注: C++ です。</span>
+```csharp
+// 注: C++ です。
 
-<span class="reserved">int</span>* p; <span class="comment">// ポインターの宣言</span>
-<span class="reserved">int</span> n = 30;
+int* p; // ポインターの宣言
+int n = 30;
 
-p = &amp;n;     <span class="comment">// ポインター p に n のアドレスを代入</span>
-cout &lt;&lt; *p; <span class="comment">// p の参照先 (n) の値 (30) を読み出す</span>
-*p = 20;    <span class="comment">// p の参照先 (n) の値を 20 に書き換える</span>
-cout &lt;&lt; n;  <span class="comment">// n は 20 に書き換わっている</span>
-</code></pre>
+p = &n;     // ポインター p に n のアドレスを代入
+cout << *p; // p の参照先 (n) の値 (30) を読み出す
+*p = 20;    // p の参照先 (n) の値を 20 に書き換える
+cout << n;  // n は 20 に書き換わっている
+```
 
 
 このように、ポインターを使うことで他の変数を参照することが出来ます。
@@ -147,24 +147,24 @@ C# では <em>unsafe キーワード</em>を用いて宣言されたメソッド
 そのメソッド内でポインターを使用できるようになります。
 また、<code>unsafe{}</code> と言うように、ブロックの手前に unsafe キーワードを付けることで、そのブロック内部でのポインター使用が可能になります。
 
-<pre class="source" title="unsafe メソッド、unsafe ブロックの例" lang="">
-<code><span class="reserved">unsafe void</span> UnsafeMethod()
+```csharp
+unsafe void UnsafeMethod()
 {
-  <span class="comment">// unsafe メソッド。</span>
-  <span class="comment">// ポインターが使用可能。</span>
+  // unsafe メソッド。
+  // ポインターが使用可能。
 }
 
-<span class="reserved">void</span> SafeMethod()
+void SafeMethod()
 {
-  <span class="comment">// ポインター使用不可。</span>
+  // ポインター使用不可。
 
-  <span class="reserved">unsafe</span>
+  unsafe
   {
-    <span class="comment">// unsafe ブロック。</span>
-    <span class="comment">// ブロック内でのみポインター使用可能。</span>
+    // unsafe ブロック。
+    // ブロック内でのみポインター使用可能。
   }
 }
-</code></pre>
+```
 
 
 さらに、プログラム内で unsafe キーワードを使用するためには、
@@ -176,16 +176,16 @@ C# ではこのような強い制限を設けています。
 
 ちなみに、C# コンパイラーのオプションは `/unsafe` ですが、csproj ファイルに書くタグとしては `AllowUnsafeBlocks` という名前になっています。
 
-<pre class="xsource" title="AllowUnsafeBlocks オプション">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net5.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element"><em>AllowUnsafeBlocks</em></span><span class="attvalue">&gt;</span>true<span class="attvalue">&lt;/</span><span class="element">AllowUnsafeBlocks</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="managed-pointer"></a>補足: managed ポインター
 
@@ -209,86 +209,86 @@ managed ポインターと unmanaged ポインターを相互に変換できた�
 「GCによるトラッキング」のも兼ねて、実際に変換を行うコードを示しましょう。
 (このコードの実行には [Unsafe パッケージ](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/)が必要です。)
 
-<pre class="source" title="managed/unmanaged ポインターの強制変換の例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+using static System.Console;
 
-<span class="comment">// C# の参照型が内部的にどうなっているか試してみるために、フィールド1個だけのクラスを用意。</span>
-<span class="reserved">class</span> <span class="type">X</span>
+// C# の参照型が内部的にどうなっているか試してみるために、フィールド1個だけのクラスを用意。
+class X
 {
-    <span class="comment">// フィールドが1個だけなので、順序に悩む必要なし。</span>
-    <span class="comment">// クラスの場合、フィールドが複数あるとき、並び順はコンパイラーが自由に変えていい仕様になってるので注意。</span>
-    <span class="comment">// (StructLayout 属性を付けて制御はできる。)</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Value;
+    // フィールドが1個だけなので、順序に悩む必要なし。
+    // クラスの場合、フィールドが複数あるとき、並び順はコンパイラーが自由に変えていい仕様になってるので注意。
+    // (StructLayout 属性を付けて制御はできる。)
+    public int Value;
 }
 
-<span class="reserved">unsafe</span> <span class="reserved">class</span> <span class="type">Program</span>
+unsafe class Program
 {
-    <span class="comment">// 参照型変数が指す先のヒープのアドレスを取得。</span>
-    <span class="comment">// Unsafe クラスは、C# では絶対に書けない処理をやってくれる(中身は IL assebler 実装)。</span>
-    <span class="comment">// C# の unsafe コード以上に unsafe なことができるやべーやつ。</span>
-    <span class="comment">// IL は案外がばがばで、C# コンパイラーのレベルで安全性を保証してることが結構ある。</span>
-    <span class="reserved">static</span> <span class="reserved">ulong</span> AsUnmanaged&lt;<span class="type">T</span>&gt;(<span class="type">T</span> r) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span> =&gt; (<span class="reserved">ulong</span>)<span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="type">IntPtr</span>&gt;(<span class="reserved">ref</span> r);
+    // 参照型変数が指す先のヒープのアドレスを取得。
+    // Unsafe クラスは、C# では絶対に書けない処理をやってくれる(中身は IL assebler 実装)。
+    // C# の unsafe コード以上に unsafe なことができるやべーやつ。
+    // IL は案外がばがばで、C# コンパイラーのレベルで安全性を保証してることが結構ある。
+    static ulong AsUnmanaged<T>(T r) where T : class => (ulong)Unsafe.As<T, IntPtr>(ref r);
 
-    <span class="comment">// 同上、ref が指す先のアドレスを取得。</span>
-    <span class="reserved">static</span> <span class="reserved">ulong</span> AsUnmanaged&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> r) =&gt; (<span class="reserved">ulong</span>)<span class="type">Unsafe</span>.AsPointer(<span class="reserved">ref</span> r);
+    // 同上、ref が指す先のアドレスを取得。
+    static ulong AsUnmanaged<T>(ref T r) => (ulong)Unsafe.AsPointer(ref r);
         
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// GC 誘発用に無駄オブジェクトを無駄に大量生成。</span>
-        <span class="reserved">void</span> GenerageGarbage()
+        // GC 誘発用に無駄オブジェクトを無駄に大量生成。
+        void GenerageGarbage()
         {
-            <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 1000000; i++) { <span class="reserved">var</span> dummy = <span class="reserved">new</span> <span class="reserved">object</span>(); }
+            for (int i = 0; i < 1000000; i++) { var dummy = new object(); }
         }
 
         GenerageGarbage();
 
-        <span class="reserved">var</span> x = <span class="reserved">new</span> <span class="type">X</span> { Value = 12345678 };
-        <span class="reserved">ref</span> var r = <span class="reserved">ref</span> x.Value;
+        var x = new X { Value = 12345678 };
+        ref var r = ref x.Value;
 
-        <span class="comment">// 通常ではない手段(Unsafe クラス)を使って、managed ポインターを無理やり unmanaged ポインター化。</span>
-        <span class="reserved">var</span> addressOfX = AsUnmanaged(x);
-        <span class="reserved">var</span> addressOfValue = AsUnmanaged(<span class="reserved">ref</span> r);
+        // 通常ではない手段(Unsafe クラス)を使って、managed ポインターを無理やり unmanaged ポインター化。
+        var addressOfX = AsUnmanaged(x);
+        var addressOfValue = AsUnmanaged(ref r);
 
         WriteLine((addressOfX, addressOfValue));
 
         GenerageGarbage();
-        <span class="type">GC</span>.Collect(0, <span class="type">GCCollectionMode</span>.Forced);
-        WriteLine(<span class="string">"--- ここで GC 発生 ---"</span>);
+        GC.Collect(0, GCCollectionMode.Forced);
+        WriteLine("--- ここで GC 発生 ---");
 
-        <span class="comment">// 無理やり数値化した方のアドレスまでは追えないので、当然、前のアドレスのまま。</span>
-        <span class="comment">// もう無効なアドレスなので、ここに対して読み書きするとクラッシュ・セキュリティ ホールの原因になる。</span>
-        WriteLine(<span class="string">"unmanaged "</span> + (addressOfX, addressOfValue));
+        // 無理やり数値化した方のアドレスまでは追えないので、当然、前のアドレスのまま。
+        // もう無効なアドレスなので、ここに対して読み書きするとクラッシュ・セキュリティ ホールの原因になる。
+        WriteLine("unmanaged " + (addressOfX, addressOfValue));
 
-        <span class="comment">// GC 発生後、アドレスが変わってる。</span>
-        <span class="comment">// 大体は前に移動しているはずなので、値が小さくなってる。</span>
-        WriteLine(<span class="string">"managed   "</span> + (AsUnmanaged(x), AsUnmanaged(<span class="reserved">ref</span> r)));
+        // GC 発生後、アドレスが変わってる。
+        // 大体は前に移動しているはずなので、値が小さくなってる。
+        WriteLine("managed   " + (AsUnmanaged(x), AsUnmanaged(ref r)));
 
-        <span class="reserved">fixed</span> (<span class="reserved">int</span>* p = &amp;x.Value)
+        fixed (int* p = &x.Value)
         {
-            <span class="comment">// fixed している間はどれだけゴミを出そうが x は移動しない。</span>
+            // fixed している間はどれだけゴミを出そうが x は移動しない。
             GenerageGarbage();
-            <span class="type">GC</span>.Collect(0, <span class="type">GCCollectionMode</span>.Forced);
-            WriteLine(<span class="string">"--- ここで GC 発生(fixed) ---"</span>);
+            GC.Collect(0, GCCollectionMode.Forced);
+            WriteLine("--- ここで GC 発生(fixed) ---");
 
-            <span class="comment">// fixe 直前と変わってないはず。</span>
-            WriteLine(<span class="string">"managed   "</span> + (AsUnmanaged(x), AsUnmanaged(<span class="reserved">ref</span> r)));
+            // fixe 直前と変わってないはず。
+            WriteLine("managed   " + (AsUnmanaged(x), AsUnmanaged(ref r)));
         }
     }
 }
-</code></pre>
+```
 
 実行すると、一例ですが以下のようになります(数値は毎回変わります)。
 
-<pre class="console">
-<code>(2349487527640, 2349487527648)
+```console
+(2349487527640, 2349487527648)
 --- ここで GC 発生 ---
 unmanaged (2349487527640, 2349487527648)
 managed   (2349484335496, 2349484335504)
 --- ここで GC 発生(fixed) ---
 managed   (2349484335496, 2349484335504)
-</code></pre>
+```
 
 `AsUnmanaged`メソッドが変換処理に当たります。
 
@@ -341,35 +341,35 @@ C# では、C++ 言語と似た文法でポインターを使用できます。
 
 ちなみに、`&` を アドレス取得式(address-of expression)、`*` を間接参照式(pointer indirection expression)と呼びます。
 
-<pre class="source" title="ポインターの使用例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> UnsafeTest
+class UnsafeTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <em><span class="reserved">unsafe</span></em>
+    unsafe
     {
-      <span class="reserved">int</span> n;
-      <span class="reserved">int</span>* pn = &amp;n;        <span class="comment">// n のアドレスをポインター pn に代入。</span>
-      <span class="reserved">byte</span>* p = (<span class="reserved">byte</span>*)pn; <span class="comment">// 違う型のポインターに無理やり代入可能。</span>
+      int n;
+      int* pn = &n;        // n のアドレスをポインター pn に代入。
+      byte* p = (byte*)pn; // 違う型のポインターに無理やり代入可能。
 
-      *p = 0x78; <span class="comment">// n の最初の1バイト目に 0x78 を代入</span>
+      *p = 0x78; // n の最初の1バイト目に 0x78 を代入
       ++p;
-      *p = 0x56; <span class="comment">// n の2バイト目に 0x56 を代入</span>
+      *p = 0x56; // n の2バイト目に 0x56 を代入
       ++p;
-      *p = 0x34; <span class="comment">// n の3バイト目に 0x34 を代入</span>
+      *p = 0x34; // n の3バイト目に 0x34 を代入
       ++p;
-      *p = 0x12; <span class="comment">// n の4バイト目に 0x12 を代入</span>
+      *p = 0x12; // n の4バイト目に 0x12 を代入
 
-      Console.Write(<span class="literal">"{0:x}\n"</span>, n); <span class="comment">// n の値を16進数で表示。</span>
+      Console.Write("{0:x}\n", n); // n の値を16進数で表示。
     }
   }
 }
-</code></pre>
-<pre class="console" title="">
+```
+```console
 12345678
-</pre>
+```
 
 また、ポインターには `->` というポインター専用演算子と、配列と同じ `[]` によるアクセスが使えます。
 
@@ -380,46 +380,46 @@ C# では、C++ 言語と似た文法でポインターを使用できます。
 
 例えば以下のように使います。
 
-<pre class="source" title="ポインター用演算子">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Point</span>
+struct Point
 {
-    <span class="reserved">public</span> <span class="reserved">short</span> X;
-    <span class="reserved">public</span> <span class="reserved">short</span> Y;
+    public short X;
+    public short Y;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    unsafe static void Main()
     {
-        <span class="reserved">var</span> p = <span class="reserved">new</span> <span class="type">Point</span>();
+        var p = new Point();
 
-        <span class="comment">// アンマネージ型の変数にはポインターを使える</span>
-        <span class="comment">// &amp; でアドレス取得(ポインター化)</span>
-        <span class="comment">// 型推論(var)も効く</span>
-        <span class="reserved">var</span> pp = &amp;p;
+        // アンマネージ型の変数にはポインターを使える
+        // & でアドレス取得(ポインター化)
+        // 型推論(var)も効く
+        var pp = &p;
 
-        <span class="comment">// int 型のポインターに無理やり代入</span>
-        <span class="comment">// p のある位置に無理やり int の値を書き込み</span>
-        <span class="reserved">int</span>* pi = (<span class="reserved">int</span>*)pp;
+        // int 型のポインターに無理やり代入
+        // p のある位置に無理やり int の値を書き込み
+        int* pi = (int*)pp;
         *pi = 0x00010002;
 
-        <span class="comment">// -&gt; で構造体のポインターのメンバーにアクセス</span>
-        <span class="type">Console</span>.WriteLine(pp-&gt;X); <span class="comment">// (*pp).X と同じ意味 = 2</span>
-        <span class="type">Console</span>.WriteLine(pp-&gt;Y); <span class="comment">// (*pp).Y と同じ意味 = 1</span>
+        // -> で構造体のポインターのメンバーにアクセス
+        Console.WriteLine(pp->X); // (*pp).X と同じ意味 = 2
+        Console.WriteLine(pp->Y); // (*pp).Y と同じ意味 = 1
 
-        <span class="comment">// byte 型のポインターに無理やり代入</span>
-        <span class="reserved">byte</span>* pb = (<span class="reserved">byte</span>*)pp;
+        // byte 型のポインターに無理やり代入
+        byte* pb = (byte*)pp;
 
-        <span class="comment">// ポインターには配列と同じように [] が使える</span>
-        <span class="type">Console</span>.WriteLine(pb[0]); <span class="comment">// *(pb + 0) と同じ意味 = 2</span>
-        <span class="type">Console</span>.WriteLine(pb[1]); <span class="comment">// *(pb + 1) と同じ意味 = 0</span>
-        <span class="type">Console</span>.WriteLine(pb[2]); <span class="comment">// *(pb + 2) と同じ意味 = 1</span>
-        <span class="type">Console</span>.WriteLine(pb[3]); <span class="comment">// *(pb + 3) と同じ意味 = 0</span>
+        // ポインターには配列と同じように [] が使える
+        Console.WriteLine(pb[0]); // *(pb + 0) と同じ意味 = 2
+        Console.WriteLine(pb[1]); // *(pb + 1) と同じ意味 = 0
+        Console.WriteLine(pb[2]); // *(pb + 2) と同じ意味 = 1
+        Console.WriteLine(pb[3]); // *(pb + 3) と同じ意味 = 0
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="unsafe-using">unsafe 型に対する using エイリアス</a>
 
@@ -431,10 +431,10 @@ C# 12 で [using エイリアスで使える型が増えました](../structured
 ただし、これらの型は unsafe な型なので、unsafe 修飾子を必要とします。
 そのため、using ディレクティブにも unsafe 修飾を付けます(以下のように、using の後ろに unsafe を書きます)。
 
-<pre class="source" title="unsafe 型に対する using エイリアス">
-<span class="reserved">using</span> <span class="reserved">unsafe</span> <span class="type struct">Pointer</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">*</span>;
-<span class="reserved">using</span> <span class="reserved">unsafe</span> <span class="type struct">FuncPointer</span> <span class="operator">=</span> <span class="reserved">delegate</span><span class="operator">*</span>&lt;<span class="reserved">int</span>, <span class="reserved">void</span>&gt;;
-</pre>
+```csharp
+using unsafe Pointer = int*;
+using unsafe FuncPointer = delegate*<int, void>;
+```
 
 ## <a id="sec-generated-title-10"></a> <a id="stackalloc"></a>スタック上への配列の確保(stackalloc)
 
@@ -444,9 +444,9 @@ C# で通常使用している配列はヒープ領域にメモリを確保し�
 
 スタック上への配列確保は以下に示すように、 <code>stackalloc</code> キーワードを用いて行います。
 
-<pre class="source" title="stackalloc" lang="">
-<code><span class="input">型名</span>* <span class="input">変数名</span> = <span class="reserved">stackalloc</span> <span class="input">型名</span>[<span class="input">配列長</span>];
-</code></pre>
+```csharp
+型名* 変数名 = stackalloc 型名[配列長];
+```
 
 
 変数の型が <code>型名[]</code> から <code>型名*</code> に、
@@ -455,54 +455,54 @@ C# で通常使用している配列はヒープ領域にメモリを確保し�
 
 ##### <a id="sec-generated-title-11"></a>サンプル
 
-<pre class="source" title="stackalloc の例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> UnsafeTest
+class UnsafeTest
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">unsafe</span>
+    unsafe
     {
-      <span class="reserved">const int</span> N = 10;
-      <span class="reserved">const int</span> MAX = 99;
-      <span class="reserved">int</span>* x = <em><span class="reserved">stackalloc int</span>[N]</em>; <span class="comment">// 配列をスタック上に確保</span>
-      Random rand = <span class="reserved">new</span> Random();
+      const int N = 10;
+      const int MAX = 99;
+      int* x = stackalloc int[N]; // 配列をスタック上に確保
+      Random rand = new Random();
 
-      <span class="comment">// 配列 x に乱数を代入</span>
-      <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;N; ++i)
+      // 配列 x に乱数を代入
+      for(int i=0; i<N; ++i)
       {
         x[i] = rand.Next(MAX);
-        Console.Write(<span class="literal">"{0}, "</span>, x[i]);
+        Console.Write("{0}, ", x[i]);
       }
       Console.Write('\n');
 
-      <span class="comment">// 配列 x を整列</span>
-      <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;N; ++i)
-        <span class="reserved">for</span>(<span class="reserved">int</span> j=i+1; j&lt;N; ++j)
-          <span class="reserved">if</span>(x[i] &gt; x[j])
+      // 配列 x を整列
+      for(int i=0; i<N; ++i)
+        for(int j=i+1; j<N; ++j)
+          if(x[i] > x[j])
           {
-            <span class="reserved">int</span> tmp = x[i];
+            int tmp = x[i];
             x[i] = x[j];
             x[j] = tmp;
           }
 
-      <span class="comment">// 整列結果を出力</span>
-      <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;N; ++i)
+      // 整列結果を出力
+      for(int i=0; i<N; ++i)
       {
-        Console.Write(<span class="literal">"{0}, "</span>, x[i]);
+        Console.Write("{0}, ", x[i]);
       }
       Console.Write('\n');
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 56, 67, 82, 23, 86, 78, 27, 92, 39, 13,
 13, 23, 27, 39, 56, 67, 78, 82, 86, 92,
-</pre>
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="safe-stackalloc"></a>安全な stackalloc
 
@@ -513,17 +513,17 @@ unsafe なしで `stackalloc` 演算子を使うことができるようにな�
 といっても、unsafe なしで危険なことができるわけではありません。
 安全性は`Span<T>`構造体が保証してくれます。
 
-<pre class="source" title="安全な stackalloc">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; s = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[5];
+        Span<int> s = stackalloc int[5];
     }
 }
-</code></pre>
+```
 
 詳しくは、「[安全な stackalloc](../resource/span.md#safe-stackalloc)」で説明します。
 
@@ -534,95 +534,95 @@ unsafe なしで `stackalloc` 演算子を使うことができるようにな�
 C# 7.3から、`stackalloc`に対して、配列と同じような初期化子を使えるようになりました。
 配列同様、初期化子中の要素の型からの推論も効きます。
 
-<pre class="source" title="">
-<code><span class="comment">// 初期化子。{ } を使って初期値を与えられる。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x1 = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[3] { 0xEF, 0xBB, 0xBF };
+```csharp
+// 初期化子。{ } を使って初期値を与えられる。
+Span<int> x1 = stackalloc int[3] { 0xEF, 0xBB, 0xBF };
 
-<span class="comment">// 初期化子があるとき、サイズは省略可能。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x2 = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[] { 0xEF, 0xBB, 0xBF };
+// 初期化子があるとき、サイズは省略可能。
+Span<int> x2 = stackalloc int[] { 0xEF, 0xBB, 0xBF };
 
-<span class="comment">// 初期化子から推論できるときは型名も省略可能。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x3 = <span class="reserved">stackalloc</span>[] { 0xEF, 0xBB, 0xBF };
-</code></pre>
+// 初期化子から推論できるときは型名も省略可能。
+Span<int> x3 = stackalloc[] { 0xEF, 0xBB, 0xBF };
+```
 
 ### <a id="sec-generated-title-14"></a> <a id="loop"></a>注意: ループ中の stackalloc
 
 `stackalloc` で確保したスタック領域は、実は関数を抜けるまで解放されません。
 例えば以下のようにループ中で `stackalloc` を使うと結構あっさり stack overflow (要はメモリ不足)を起こします。
 
-<pre class="source" title="ループ中の stackalloc が原因で stack overflow">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; <span class="variable">i</span> &lt; 1000; <span class="variable">i</span>++)
+        for (int i = 0; i < 1000; i++)
         {
-            <span class="comment">// ループの中でしか使ってないけど、実際に解放されるのは Main を抜けるタイミングだったり。</span>
-            <span class="comment">// (確保は毎ループで起きる。)</span>
-            <span class="comment">// ループを繰り返してるうちに stack overflow を起こす。</span>
-            <span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">_</span> = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[10000];
+            // ループの中でしか使ってないけど、実際に解放されるのは Main を抜けるタイミングだったり。
+            // (確保は毎ループで起きる。)
+            // ループを繰り返してるうちに stack overflow を起こす。
+            Span<byte> _ = stackalloc byte[10000];
         }
     }
 }
-</code></pre>
+```
 
 特に、C# 8.0 では[式中の stackalloc](../resource/span.md#nested-stackalloc) が認められて気軽に書きやすくなったので注意が必要です。
 
 解決方法ですが、関数を抜ければ解放されるので、以下のようにローカル関数を1個挟むだけでよかったりします。
 
-<pre class="source" title="ループ中で stackalloc を使いたい場合は別関数(ローカル関数可)を挟む">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; <span class="variable">i</span> &lt; 1000; <span class="variable">i</span>++)
+        for (int i = 0; i < 1000; i++)
         {
-            <span class="comment">// 別関数を挟めば大丈夫(ローカル関数でも可)</span>
-            <span class="method">loopBody</span>();
+            // 別関数を挟めば大丈夫(ローカル関数でも可)
+            loopBody();
  
-            <span class="reserved">void</span> <span class="method">loopBody</span>()
+            void loopBody()
             {
-                <span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">_</span> = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[10000];
+                Span<byte> _ = stackalloc byte[10000];
             }
         }
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-15"></a> <a id="sizeof"></a>sizeof 演算子
 
 unsafe コード内では、sizeof 演算子で構造体の領域サイズを取得できます。
 （通常（unsafe コードの外では）、sizeof 演算子でサイズを取得できるのは int や char など、C# の規格上サイズが決まっている数値型のみです。）
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">unsafe</span> <span class="reserved">struct</span> <span class="type">X</span>
+    unsafe struct X
     {
-        <span class="reserved">byte</span> x;
-        <span class="reserved">int</span> y;
+        byte x;
+        int y;
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">unsafe</span>
+        unsafe
         {
-            <span class="type">Console</span>.WriteLine(<span class="reserved">sizeof</span>(<span class="type">X</span>));
+            Console.WriteLine(sizeof(X));
         }
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 8
-</pre>
+```
 
 
 構造体のメンバーのレイアウトは、必ずしも隙間なく並ぶわけではなく、
@@ -640,24 +640,24 @@ CPU の種類によって、最適な間隔は変わります。）
 そのための構文として、C# には `fixed` ステートメントというものがあります。
 `fixed` ステートメントは以下のような形で書かれます。
 
-<pre class="source" title="fixed ステートメント" lang="">
-<code><span class="reserved">fixed</span>(<span class="input">型名</span>* <span class="input">変数名</span> = <span class="input">アドレス取得式</span>) <span class="input">実行したい文</span>
-</code></pre>
+```csharp
+fixed(型名* 変数名 = アドレス取得式) 実行したい文
+```
 
 
 `fixed` ステートメント中でアドレスを取得したオブジェクトは GC で移動されなくなり、
 アドレスが変化しないことが保証されます。
 例えば、参照型のメンバーのアドレスをポインターに代入する場合、以下のようにします。
 
-<pre class="source" title="fixed ステートメントの例" lang="">
-<code><span class="comment">// Complex クラスは re, im というdouble 型のメンバーを持っているものとする。</span>
-<span class="type">Complex</span> c = new <span class="type">Complex</span>(1, 0);
-<em><span class="reserved">fixed</span>(<span class="reserved">double</span>* p = &amp;c.re)</em>
+```csharp
+// Complex クラスは re, im というdouble 型のメンバーを持っているものとする。
+Complex c = new Complex(1, 0);
+fixed(double* p = &c.re)
 {
   *p = 10;
 }
-<span class="type">Console</span>.Write(<span class="literal">"({0}, {1})\n"</span>, c.re, c.im); <span class="comment">// (10, 0) と表示される</span>
-</code></pre>
+Console.Write("({0}, {1})\n", c.re, c.im); // (10, 0) と表示される
+```
 
 ちなみに、C# では、配列と文字列に対して、`fixed`ステートメントを使うことで、
 配列・文字列の先頭要素・文字のアドレスを取得することができます。
@@ -667,37 +667,37 @@ CPU の種類によって、最適な間隔は変わります。）
 `fixed`ステートメント中で、
 配列をポインターに暗黙的に変換することができます。
 
-<pre class="source" title="ポインターを介して配列を操作" lang="">
-<code><span class="reserved">int</span>[] array = <span class="reserved">new int</span>[10];
-<span class="reserved">fixed</span> (<span class="reserved">int</span>* p = array)
+```csharp
+int[] array = new int[10];
+fixed (int* p = array)
 {
 }
-</code></pre>
+```
 
 例えば以下のように、ポインター`px`を介して配列 `array` の内容を書き換えられます。
 
-<pre class="source" title="fixed で配列をポインター越しに書き換える例">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    unsafe static void Main()
     {
-        <span class="reserved">var</span> array = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 };
+        var array = new[] { 1, 2, 3, 4, 5 };
 
-        <span class="comment">// 配列 x をポインター px に代入する。</span>
-        <span class="reserved">fixed</span> (<span class="reserved">int</span>* px = array)
+        // 配列 x をポインター px に代入する。
+        fixed (int* px = array)
         {
-            <span class="comment">// ポインターを介して配列 x の内容を変更。</span>
-            <span class="reserved">for</span> (<span class="reserved">int</span>* p = px; p != px + array.Length; ++p)
+            // ポインターを介して配列 x の内容を変更。
+            for (int* p = px; p != px + array.Length; ++p)
                 *p = (*p) * (*p);
         }
 
-        <span class="comment">// 結果出力。</span>
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; array.Length; ++i)
-            System.<span class="type">Console</span>.Write(<span class="string">"{0} "</span>, array[i]);
-        <span class="comment">// 1 4 9 16 25 と表示される。</span>
+        // 結果出力。
+        for (int i = 0; i < array.Length; ++i)
+            System.Console.Write("{0} ", array[i]);
+        // 1 4 9 16 25 と表示される。
     }
 }
-</code></pre>
+```
 
 この場合、`&`演算子は必要ありません。
 ほぼ `&array[0]` (先頭要素のアドレスの取得)と同じ意味ですが、1点だけ、空配列の時に以下のような差があります。
@@ -705,61 +705,61 @@ CPU の種類によって、最適な間隔は変わります。）
 - `array`からの変換の場合、空配列を渡すと 0 (null ポインター)が得られる
 - `&array[0]`の場合、空配列を渡すと IndexOutOfRange 例外が発生する
 
-<pre class="source" title="空配列に対する fixed">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using System;
+using static System.Console;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    unsafe static void Main()
     {
-        <span class="reserved">var</span> array = <span class="reserved">new</span> <span class="reserved">int</span>[0]; <span class="comment">// 空っぽ</span>
+        var array = new int[0]; // 空っぽ
 
-        <span class="reserved">fixed</span> (<span class="reserved">int</span>* p = array) WriteLine((<span class="reserved">ulong</span>)p); <span class="comment">// 0</span>
+        fixed (int* p = array) WriteLine((ulong)p); // 0
 
-        <span class="reserved">try</span>
+        try
         {
-            <span class="comment">// この書き方だと今度は例外になる。</span>
-            <span class="reserved">fixed</span> (<span class="reserved">int</span>* p = &amp;array[0]) WriteLine((<span class="reserved">ulong</span>)p);
+            // この書き方だと今度は例外になる。
+            fixed (int* p = &array[0]) WriteLine((ulong)p);
         }
-        <span class="reserved">catch</span> (<span class="type">IndexOutOfRangeException</span>)
+        catch (IndexOutOfRangeException)
         {
-            WriteLine(<span class="string">"IndexOutOfRangeException"</span>);
+            WriteLine("IndexOutOfRangeException");
         }
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-18"></a> <a id="string"></a>文字列
 
 配列と同様に、文字列に対しても `fixed` ステートメントが使えます。
 この場合は先頭1文字の場所のアドレスが得られます。
 
-<pre class="source" title="string に対する fixed の例">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.<span class="type">Console</span>;
+```csharp
+using static System.Console;
 
-<span class="reserved">unsafe</span> <span class="reserved">class</span> <span class="type">Program</span>
+unsafe class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> s = <span class="string">"abcde"</span>;
-        <span class="reserved">fixed</span> (<span class="reserved">char</span>* p = s)
+        var s = "abcde";
+        fixed (char* p = s)
         {
-            <span class="comment">// 1行に1文字ずつ a b c d e が表示される</span>
-            <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; s.Length; i++)
+            // 1行に1文字ずつ a b c d e が表示される
+            for (int i = 0; i < s.Length; i++)
                 WriteLine(s[i]);
         }
 
-        <span class="comment">// ちなみに、string の場合は空文字列でも有効なアドレスが返ってくる</span>
-        <span class="reserved">var</span> empty = <span class="string">""</span>;
-        <span class="reserved">fixed</span> (<span class="reserved">char</span>* p = empty)
+        // ちなみに、string の場合は空文字列でも有効なアドレスが返ってくる
+        var empty = "";
+        fixed (char* p = empty)
         {
-            WriteLine((<span class="reserved">ulong</span>)p);  <span class="comment">// 非 0</span>
-            WriteLine((<span class="reserved">int</span>)p[0]); <span class="comment">// 常に '\0' が入ってる</span>
+            WriteLine((ulong)p);  // 非 0
+            WriteLine((int)p[0]); // 常に '\0' が入ってる
         }
     }
 }
-</code></pre>
+```
 
 ちなみに、.NET の文字列は、内部的には以下のような構造になっています。
 
@@ -782,23 +782,23 @@ CPU の種類によって、最適な間隔は変わります。）
 .NET の文字列(`string`)は、通常は書き換えできません。
 しかし、unsafe を使ってポインター越しになら書き換えできてしまいます。
 
-<pre class="source" title="ポインターを使った文字列の書き換え">
-<code><span class="reserved">unsafe</span> <span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+unsafe class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> s = <span class="string">"abcde"</span>;
+        var s = "abcde";
 
-        <span class="reserved">fixed</span>(<span class="reserved">char</span>* p = s)
+        fixed(char* p = s)
         {
-            <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++)
-                p[i] = (<span class="reserved">char</span>)(i + <span class="string">'1'</span>);
+            for (int i = 0; i < 5; i++)
+                p[i] = (char)(i + '1');
         }
 
-        System.<span class="type">Console</span>.WriteLine(s); <span class="comment">// 12345</span>
+        System.Console.WriteLine(s); // 12345
     }
 }
-</code></pre>
+```
 
 ほとんどの場合、文字列を書き換えるのはバグの原因にこそなれど何の利益もないんですが、
 「桁数がわかっている数値を整形して文字列化したい」といったときなど、新規に文字列を作るときに利用価値があったりします。
@@ -819,40 +819,40 @@ CPU の種類によって、最適な間隔は変わります。）
 そこで、C# 7.3では、所定のパターンを満たす型に対して `fixed` ステートメントが使えるようになりました。
 以下のように、`GetPinnableReference`という名前のメソッドを用意すれば使えます。
 
-<pre class="source" title="ユーザー定義型に対する fixed ステートメント">
-<code><span class="comment">// ただの配列のラッパー</span>
-<span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Array</span>&lt;<span class="type">T</span>&gt;
+```csharp
+// ただの配列のラッパー
+readonly struct Array<T>
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">T</span>[] _array;
-    <span class="reserved">public</span> Array(<span class="reserved">int</span> length) =&gt; _array = <span class="reserved">new</span> <span class="type">T</span>[length];
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] =&gt; <span class="reserved">ref</span> _array[index];
-    <span class="reserved">public</span> <span class="reserved">int</span> Length =&gt; _array.Length;
+    private readonly T[] _array;
+    public Array(int length) => _array = new T[length];
+    public ref T this[int index] => ref _array[index];
+    public int Length => _array.Length;
 
-    <span class="comment">// このメソッドがあれば fixed ステートメントを使えるようになる</span>
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> GetPinnableReference() =&gt; <span class="reserved">ref</span> _array[0];
+    // このメソッドがあれば fixed ステートメントを使えるようになる
+    public ref T GetPinnableReference() => ref _array[0];
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">Array</span>&lt;<span class="reserved">int</span>&gt;(5);
+        var a = new Array<int>(5);
 
-        <span class="reserved">unsafe</span>
+        unsafe
         {
-            <span class="comment">// fixed (int* p = &amp;a.GetPinnableReference()) に展開される。</span>
-            <span class="reserved">fixed</span> (<span class="reserved">int</span>* p = a)
+            // fixed (int* p = &a.GetPinnableReference()) に展開される。
+            fixed (int* p = a)
             {
-                <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++)
+                for (int i = 0; i < 5; i++)
                     p[i] = i;
             }
         }
 
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; 5; i++)
-            System.<span class="type">Console</span>.WriteLine(a[i]);
+        for (int i = 0; i < 5; i++)
+            System.Console.WriteLine(a[i]);
     }
 }
-</code></pre>
+```
 
 配列や文字列に対しても、C# コンパイラーが特殊処理するのではなく、
 `GetPinnableReference`メソッドを用意して上記のパターンに展開したいという話もあります。
@@ -860,22 +860,22 @@ CPU の種類によって、最適な間隔は変わります。）
 ちなみに、[配列の時の特殊処理](#array)、すなわち「空配列だったら 0 (null ポインター)を返す」と同じ結果にしたければ、`GetPinnableReference`を以下のように書く必要があります。
 (現状、[`Unsafe`クラス](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/)が必須です。)
 
-<pre class="source" title="null ポインター相当の ref を返す方法">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// ただの配列のラッパー</span>
-<span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Array</span>&lt;<span class="type">T</span>&gt;
+// ただの配列のラッパー
+readonly struct Array<T>
 {
-    <span class="comment">// 中略</span>
+    // 中略
 
-    <span class="reserved">public</span> <span class="reserved">unsafe</span> <span class="reserved">ref</span> <span class="type">T</span> GetPinnableReference()
+    public unsafe ref T GetPinnableReference()
     {
-        <span class="reserved">var</span> a = _array;
-        <span class="reserved">if</span> (a.Length == 0) <span class="reserved">return</span> <span class="reserved">ref</span> <span class="type">Unsafe</span>.AsRef&lt;<span class="type">T</span>&gt;(<span class="reserved">null</span>);
-        <span class="reserved">else</span> <span class="reserved">return</span> <span class="reserved">ref</span> a[0];
+        var a = _array;
+        if (a.Length == 0) return ref Unsafe.AsRef<T>(null);
+        else return ref a[0];
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-21"></a> <a id="fixed-buffer"></a>固定長バッファ
 
@@ -888,19 +888,19 @@ C 言語の配列風の固定長バッファを定義できるようになりま
 通常の C# の配列と異なり、型名[] ではなく、
 変数名[要素数] と書きます。
 
-<pre class="source" title="固定長バッファ" lang="">
-<code>[System.Runtime.InteropServices.StructLayout(
+```csharp
+[System.Runtime.InteropServices.StructLayout(
   System.Runtime.InteropServices.LayoutKind.Sequential,
   Pack=1)]
-<span class="reserved">unsafe struct</span> Header
+unsafe struct Header
 {
-  <span class="reserved">public</span> Int16 Source;
-  <span class="reserved">public</span> Int16 Destination;
-  <span class="reserved">public</span> Byte  Type;
-  <em><span class="reserved">fixed byte</span> reserved[3];</em>
-  <span class="reserved">public</span> Int32 Data;
+  public Int16 Source;
+  public Int16 Destination;
+  public Byte  Type;
+  fixed byte reserved[3];
+  public Int32 Data;
 }
-</code></pre>
+```
 
 
 固定長配列は、主に unmanaged コードとの相互運用時に用いられます。
@@ -937,34 +937,34 @@ unsafeコードが名前通りunsafe(安全でない)なところを、一例出
 ですが、unsafeコードを使うと、文字列を書き換えれてしまいます。
 例えば以下のようなコードが書けます。
 
-<pre class="source" title="unsafeコードで文字列の書き換え">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// C# の string は書き換えできないはず</span>
-        <span class="reserved">var</span> s1 = <span class="string">"-----"</span>;
+        // C# の string は書き換えできないはず
+        var s1 = "-----";
 
-        <span class="comment">// 参照型なので、同じインスタンスを見てる</span>
-        <span class="comment">// 書き換えれないからこそ、インスタンスの共有が安全</span>
-        <span class="reserved">var</span> s2 = s1;
+        // 参照型なので、同じインスタンスを見てる
+        // 書き換えれないからこそ、インスタンスの共有が安全
+        var s2 = s1;
 
-        <span class="comment">// 実際には、C# の string は書き換えれる</span>
-        <span class="reserved">unsafe</span>
+        // 実際には、C# の string は書き換えれる
+        unsafe
         {
-            <span class="reserved">fixed</span> (<span class="reserved">char</span>* c = s1)
+            fixed (char* c = s1)
             {
-                c[2] = <span class="string">'X'</span>;
+                c[2] = 'X';
             }
         }
 
-        <span class="type">Console</span>.WriteLine(s1); <span class="comment">// --X--</span>
-        <span class="type">Console</span>.WriteLine(s2); <span class="comment">// 同じものを見てるので、こちらにも書き換えの影響が出てて --X--</span>
+        Console.WriteLine(s1); // --X--
+        Console.WriteLine(s2); // 同じものを見てるので、こちらにも書き換えの影響が出てて --X--
     }
 }
-</code></pre>
+```
 
 無制限にやられてしますと結構怖いコードです。
 このように、unsafeコードの利用には注意が必要です。|
@@ -980,71 +980,71 @@ unsafeコードが名前通りunsafe(安全でない)なところを、一例出
 しかし、C# 7.3では、`unmanaged`という型制約が増えて、
 ジェネリック型引数に対してもポインターなどを使えるようになりました。
 
-<pre class="source" title="">
-<code><span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> MemSet0&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> T x)
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved"><em>unmanaged</em></span>
+```csharp
+unsafe static void MemSet0<T>(ref T x)
+    where T : unmanaged
 {
-    <span class="comment">// 今まではこの T* が許されなかった。</span>
-    <span class="comment">// たとえ、Point みたいにポインター化可能な型で MemSet0&lt;Point&gt; を呼んだとしてもダメ。</span>
-    <span class="comment">// unmanaged  制約のおかげで、ポインター化可能になった。</span>
-    <span class="reserved">fixed</span> (T* p = &amp;x)
+    // 今まではこの T* が許されなかった。
+    // たとえ、Point みたいにポインター化可能な型で MemSet0<Point> を呼んだとしてもダメ。
+    // unmanaged  制約のおかげで、ポインター化可能になった。
+    fixed (T* p = &x)
     {
-        <span class="reserved">var</span> b = (<span class="reserved">byte</span>*)p;
-        <span class="reserved">var</span> size = <span class="reserved">sizeof</span>(<span class="type">T</span>);
-        <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; size; i++)
+        var b = (byte*)p;
+        var size = sizeof(T);
+        for (int i = 0; i < size; i++)
         {
             b[i] = 0;
         }
     }
 }
-</code></pre>
+```
 
 `Span<T>`構造体を使った安全な`stackalloc`でも同様に、`unmanaged`制約が有効です。
 
-<pre class="source" title="">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">SafeStackalloc</span>&lt;<span class="type">T</span>&gt;()
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">unmanaged</span>
+```csharp
+static void SafeStackalloc<T>()
+    where T : unmanaged
 {
-    <span class="comment">// unmanaged 制約必須。</span>
-    <span class="type">Span</span>&lt;<span class="type">T</span>&gt; span = <span class="reserved">stackalloc</span> <span class="type">T</span>[4];
+    // unmanaged 制約必須。
+    Span<T> span = stackalloc T[4];
 }
-</code></pre>
+```
 
 これらは、ちゃんと呼び出し側で制約のチェックが行われます。
 
-<pre class="source" title="unmanaged 制約">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System;
+using System.Collections.Generic;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">SafeStackalloc</span>&lt;<span class="type">T</span>&gt;()
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">unmanaged</span>
+    static void SafeStackalloc<T>()
+        where T : unmanaged
     {
-        <span class="type">Span</span>&lt;<span class="type">T</span>&gt; span = <span class="reserved">stackalloc</span> <span class="type">T</span>[4];
+        Span<T> span = stackalloc T[4];
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// OK</span>
-        <span class="method">SafeStackalloc</span>&lt;<span class="reserved">int</span>&gt;(); <span class="comment">// 値型</span>
-        <span class="method">SafeStackalloc</span>&lt;<span class="type">DateTime</span>&gt;(); <span class="comment">// 値型だけを含む構造体</span>
+        // OK
+        SafeStackalloc<int>(); // 値型
+        SafeStackalloc<DateTime>(); // 値型だけを含む構造体
 
-        <span class="comment">// 以下はNG</span>
-        <span class="error"><span class="method">SafeStackalloc</span>&lt;<span class="reserved">string</span>&gt;</span>(); <span class="comment">// 参照型</span>
+        // 以下はNG
+        SafeStackalloc<string>(); // 参照型
 
-        <span class="comment">// 残念なことに C# 7.3 以前ではジェネリックな型が NG (8.0 で改善)</span>
-        <span class="error"><span class="method">SafeStackalloc</span>&lt;<span class="type">KeyValuePair</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt;</span>();
-        <span class="error"><span class="method">SafeStackalloc</span>&lt;<span class="type">Wrap</span>&lt;<span class="reserved">int</span>&gt;&gt;</span>();
+        // 残念なことに C# 7.3 以前ではジェネリックな型が NG (8.0 で改善)
+        SafeStackalloc<KeyValuePair<int, int>>();
+        SafeStackalloc<Wrap<int>>();
     }
 
-    <span class="reserved">struct</span> <span class="type">Wrap</span>&lt;<span class="type">T</span>&gt;
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">unmanaged</span>
+    struct Wrap<T>
+        where T : unmanaged
     {
-        <span class="reserved">public</span> <span class="type">T</span> Value;
+        public T Value;
     }
 }
-</code></pre>
+```
 
 1つ注意すべきは、ジェネリックな型を再帰的に追えるようになるのは C# 8.0 以降です。
 C# 7.3 では `Wrap<int>` みたいな、`unmanaged` 制約を満たしているはずの型であってもアンマネージ型と認識できません。
@@ -1058,48 +1058,48 @@ C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネ�
 
 前節の例の末尾2行もコンパイルできるようになっています。
 
-<pre class="source" title="unmanaged 制約の緩和">
-<code>        <span class="comment">// C# 7.3 ではダメだったけど、8.0 では OK</span>
-        <span class="method">SafeStackalloc</span>&lt;<span class="type">KeyValuePair</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt;();
-        <span class="method">SafeStackalloc</span>&lt;<span class="type">Wrap</span>&lt;<span class="reserved">int</span>&gt;&gt;();
-</code></pre>
+```csharp
+        // C# 7.3 ではダメだったけど、8.0 では OK
+        SafeStackalloc<KeyValuePair<int, int>>();
+        SafeStackalloc<Wrap<int>>();
+```
 
 以下のように、ポインターも使えます。
 
-<pre class="source" title="ジェネリックな構造体に対するポインター">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    unsafe static void Main()
     {
-        <span class="reserved">var</span> <span class="variable">kv</span> = <span class="reserved">new</span> <span class="type">KeyValuePair</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;(1, 2);
-        <span class="type">KeyValuePair</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;* <span class="variable">pkv</span> = &amp;<span class="variable">kv</span>;
+        var kv = new KeyValuePair<int, int>(1, 2);
+        KeyValuePair<int, int>* pkv = &kv;
  
-        <span class="reserved">var</span> <span class="variable">wi</span> = <span class="reserved">new</span> <span class="type">Wrap</span>&lt;<span class="reserved">int</span>&gt; { Value = 1 };
-        <span class="type">Wrap</span>&lt;<span class="reserved">int</span>&gt;* <span class="variable">pwi</span> = &amp;<span class="variable">wi</span>;
+        var wi = new Wrap<int> { Value = 1 };
+        Wrap<int>* pwi = &wi;
     }
  
-    <span class="reserved">struct</span> <span class="type">Wrap</span>&lt;<span class="type">T</span>&gt;
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">unmanaged</span>
+    struct Wrap<T>
+        where T : unmanaged
     {
-        <span class="reserved">public</span> <span class="type">T</span> Value;
+        public T Value;
     }
 }
-</code></pre>
+```
 
 何段入れ子になっていても大丈夫です。
 ちゃんと、すべてがアンマネージかどうかを調べてくれます。
 
-<pre class="source" title="">
-<code><span class="comment">// 何段入れ子になっていても大丈夫</span>
-<span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span> <span class="type">KeyValuePair</span>&lt;(<span class="reserved">float</span>, <span class="reserved">bool</span>), <span class="type">Wrap</span>&lt;<span class="reserved">int</span>&gt;&gt;((1, <span class="reserved">true</span>), <span class="reserved">new</span> <span class="type">Wrap</span>&lt;<span class="reserved">int</span>&gt;());
-<span class="reserved">var</span> <span class="variable">px</span> = &amp;<span class="variable">x</span>;
+```csharp
+// 何段入れ子になっていても大丈夫
+var x = new KeyValuePair<(float, bool), Wrap<int>>((1, true), new Wrap<int>());
+var px = &x;
  
-<span class="comment">// ただし、その中に1つでもマネージな型(参照型)が含まれているとダメ</span>
-<span class="reserved">var</span> <span class="variable">y</span> = <span class="reserved">new</span> <span class="type">KeyValuePair</span>&lt;(<span class="reserved">float</span>, <span class="reserved"><em>string</em></span>), <span class="type">Wrap</span>&lt;<span class="reserved">int</span>&gt;&gt;((1, <span class="string">&quot;&quot;</span>), <span class="reserved">new</span> <span class="type">Wrap</span>&lt;<span class="reserved">int</span>&gt;());
-<span class="reserved">var</span> <span class="variable">py</span> = <span class="error">&amp;<span class="variable">y</span></span>;
-</code></pre>
+// ただし、その中に1つでもマネージな型(参照型)が含まれているとダメ
+var y = new KeyValuePair<(float, string), Wrap<int>>((1, ""), new Wrap<int>());
+var py = &y;
+```
 
 ## <a id="sec-generated-title-26"></a> <a id="skip-locals-init"></a>ローカル変数の0初期化抑止
 
@@ -1107,32 +1107,32 @@ C# 8.0 では、ジェネックな構造体に対して再帰的にアンマネ�
 
 C# では通常、[未初期化](../resource/rm_default.md#uninitialized)のままの変数を読むことはできません。
 
-<pre class="source" title="未初期化エラー">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// ローカル変数には初期化が必須。</span>
-<span class="reserved">int</span> <span class="variable">x</span> = 1;
+// ローカル変数には初期化が必須。
+int x = 1;
  
-<span class="comment">// 初期化されていないものを読もうとするとコンパイル エラー。</span>
-<span class="reserved">int</span> <span class="variable">y</span>;
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="error"><span class="variable">y</span></span>);
-</code></pre>
+// 初期化されていないものを読もうとするとコンパイル エラー。
+int y;
+Console.WriteLine(y);
+```
 
 ただ、[`stackalloc`](#stackalloc)を使った場合、その要素までは初期化が必須にはなりません。
 この時、通常は、未初期化領域を参照してしまわないように、 .NET ランタイムが「規定値(0)で埋める」という処理を行っています。
 
-<pre class="source" title="stackalloc の中身の0初期化">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// スタック上に4要素の int を確保。</span>
-<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[4];
+// スタック上に4要素の int を確保。
+Span<int> span = stackalloc int[4];
  
-<span class="comment">// 4要素すべて0で自動的に初期化されている状態になる。</span>
-<span class="control">for</span> (<span class="reserved">int</span> <span class="variable">i</span> = 0; <span class="variable">i</span> &lt; <span class="variable">span</span>.Length; <span class="variable">i</span>++)
+// 4要素すべて0で自動的に初期化されている状態になる。
+for (int i = 0; i < span.Length; i++)
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">span</span>[<span class="variable">i</span>]); <span class="comment">// 0</span>
+    Console.WriteLine(span[i]); // 0
 }
-</code></pre>
+```
 
 本項で説明している unsafe 機能の目的は、「パフォーマンス優先で、安全性はプログラマーが頑張るからコンパイラーは余計なことをしないでくれ」というものです。
 なので、この `stackalloc` に対する0初期化も「余計なコスト」になるので避けたいことがあります。
@@ -1140,72 +1140,72 @@ C# では通常、[未初期化](../resource/rm_default.md#uninitialized)のま�
 (かつ、何かミスがあったときに未初期化領域を参照してしまうのは「自己責任」と割り切れる)
 場合、0初期化は無駄です。
 
-<pre class="source" title="0初期化が「余計なお世話」な状況">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Text.Unicode;
+```csharp
+using System;
+using System.Text.Unicode;
  
-<span class="method">m</span>(<span class="string">&quot;aあ</span><span style="color:#b776fb;">😀</span><span class="string">&quot;</span>);
+m("aあ😀");
  
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> <span class="variable">s</span>)
+static void m(string s)
 {
-    <span class="comment">// UTF-16 の文字数に大して、UTF-8 のバイト数は最大でも3倍以内。</span>
-    <span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">buffer</span> = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="variable">s</span>.Length * 3];
-    <span class="type">Utf8</span>.<span class="method">FromUtf16</span>(<span class="variable">s</span>, <span class="variable">buffer</span>, <span class="reserved">out</span> <span class="reserved">_</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">bytesWritten</span>);
+    // UTF-16 の文字数に大して、UTF-8 のバイト数は最大でも3倍以内。
+    Span<byte> buffer = stackalloc byte[s.Length * 3];
+    Utf8.FromUtf16(s, buffer, out _, out var bytesWritten);
  
-    <span class="comment">// FromUtf16 の仕様上、bytesWritten バイト目までは必ず上書きされる。</span>
-    <span class="comment">// 上書きされた部分だけを使う分には0初期化は「余計なお世話」。</span>
-    <span class="reserved">var</span> <span class="variable">written</span> = <span class="variable">buffer</span>[..<span class="variable">bytesWritten</span>];
+    // FromUtf16 の仕様上、bytesWritten バイト目までは必ず上書きされる。
+    // 上書きされた部分だけを使う分には0初期化は「余計なお世話」。
+    var written = buffer[..bytesWritten];
  
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">b</span> <span class="control">in</span> <span class="variable">written</span>)
+    foreach (var b in written)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">b</span>);
+        Console.WriteLine(b);
     }
 }
-</code></pre>
+```
 
 C# 9.0 で、unsafe 限定で、この0初期化をスキップできるようになりました。
 メソッドに `SkipLocalsInit` 属性 (`System.Runtime.CompilerServices` 名前空間)を付けるだけです。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Text.Unicode;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+using System.Text.Unicode;
  
-<span class="method">m</span>(<span class="string">&quot;aあ</span><span style="color:#b776fb;">😀</span><span class="string">&quot;</span>);
+m("aあ😀");
  
-[<span class="type">SkipLocalsInit</span>]
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> <span class="variable">s</span>)
+[SkipLocalsInit]
+static void m(string s)
 {
-    <span class="comment">// この buffer は中身が0初期化されない。</span>
-    <span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">buffer</span> = <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="variable">s</span>.Length * 3];
+    // この buffer は中身が0初期化されない。
+    Span<byte> buffer = stackalloc byte[s.Length * 3];
  
-    <span class="comment">// 以下、先ほどと同じコードは省略。</span>
+    // 以下、先ほどと同じコードは省略。
 }
-</code></pre>
+```
 
 ただ、本当に unsafe なので、`/unsafe` オプション(`AllowUnsafeBlock`)が必須です。
 現状、ポインターや[ネイティブ相互運用](sp_pinvoke.md)を使わずに未初期化領域を参照できてしまう唯一の機能になります。
 例えば、以下のようなコードを書くと「不定な値」が返ってきます。
 
-<pre class="source" title="SkipLocalsInit で不定な値を取得">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
  
-<span class="method">m</span>();
+m();
  
-[<span class="type">SkipLocalsInit</span>]
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">m</span>()
+[SkipLocalsInit]
+static void m()
 {
-    <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span> = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[4];
+    Span<int> span = stackalloc int[4];
  
-    <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">span</span>)
+    foreach (var x in span)
     {
-        <span class="comment">// ここで何の値が表示されるかは未定義。</span>
-        <span class="comment">// Debug ビルドだと0が返ってきたりするものの、Release ビルドだと毎回違う値が返ってきたり。</span>
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">x</span>);
+        // ここで何の値が表示されるかは未定義。
+        // Debug ビルドだと0が返ってきたりするものの、Release ビルドだと毎回違う値が返ってきたり。
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 ちなみに、`SkipLocalsInit` 属性はクラスやモジュールに付けることができて、
 その場合、クラス内・モジュール内全部のメソッドの0初期化が抑止されます。
@@ -1231,18 +1231,18 @@ C# 11 から、マネージ型のポインターを使えるようになりま�
 `T*` や `R*` みたいなポインター型を書いたり、
 それらの変数 `x` に対して `&x` でアドレス取得できるようになりました。
 
-<pre class="source" title="マネージ型のポインター型/アドレス取得">
-<span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="reserved">string</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;
-    <span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="number">4</span>];
+    string s = "";
+    Span<byte> x = stackalloc byte[4];
 
-    <span class="comment">// 以下のような型、アドレス取得はこれまではエラーになっていた。</span>
-    <span class="comment">// (C# 11 以降も警告にはなる。多少の緩和があった。)</span>
-    <span class="warning" title="CS8500"><span class="reserved">string</span><span class="operator">*</span></span> <span class="variable">ps</span> <span class="operator">=</span> <span class="warning" title="CS8500"><span class="operator">&amp;</span><span class="variable">s</span></span>;
-    <span class="warning" title="CS8500"><span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt;<span class="operator">*</span></span> <span class="variable">px</span> <span class="operator">=</span> <span class="warning" title="CS8500"><span class="operator">&amp;</span><span class="variable">x</span></span>;
+    // 以下のような型、アドレス取得はこれまではエラーになっていた。
+    // (C# 11 以降も警告にはなる。多少の緩和があった。)
+    string* ps = &s;
+    Span<byte>* px = &x;
 }
-</pre>
+```
 
 C# 11以降でも警告になることからわかる通り、割かし危険度の高い機能です。
 (コンパイラーチェックが効かないプログラマー裁量での)安全性を保つためにはかなりの注意を要するため、

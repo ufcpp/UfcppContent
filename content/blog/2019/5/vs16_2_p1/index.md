@@ -65,41 +65,41 @@ C# 8.0 的には、16.1 の方と以下の差があります。
 
 `X(ct1).WithCancellation(ct2)` みたいなのを書いたときの挙動が変わります。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Main</span>()
+    static async Task Main()
     {
-        <span class="reserved">var</span> <span class="variable">c1</span> = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>();
-        <span class="reserved">var</span> <span class="variable">c2</span> = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>();
+        var c1 = new CancellationTokenSource();
+        var c2 = new CancellationTokenSource();
  
-        <span class="comment">// キャンセルなし</span>
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="method">X</span>()) ;
+        // キャンセルなし
+        await foreach (var x in X()) ;
  
-        <span class="comment">// AscynEnumerable 生成時に c1 が渡る</span>
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="method">X</span>(<span class="variable">c1</span>.Token)) ;
+        // AscynEnumerable 生成時に c1 が渡る
+        await foreach (var x in X(c1.Token)) ;
  
-        <span class="comment">// GetAsyncEnumerator 時に c2 が渡る</span>
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="method">X</span>().<span class="method">WithCancellation</span>(<span class="variable">c2</span>.Token)) ;
+        // GetAsyncEnumerator 時に c2 が渡る
+        await foreach (var x in X().WithCancellation(c2.Token)) ;
  
-        <span class="comment">// 旧挙動: c2 だけが渡る</span>
-        <span class="comment">// 新挙動: c1, c2 の両方が渡る。内部で CreateLinkedTokenSource</span>
-        <span class="reserved">await</span> <span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="method">X</span>(<span class="variable">c1</span>.Token).<span class="method">WithCancellation</span>(<span class="variable">c2</span>.Token)) ;
+        // 旧挙動: c2 だけが渡る
+        // 新挙動: c1, c2 の両方が渡る。内部で CreateLinkedTokenSource
+        await foreach (var x in X(c1.Token).WithCancellation(c2.Token)) ;
     }
  
-    <span class="comment">// 新挙動: EnumeratorCancellation 属性付きの引数は1個に限る</span>
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="method">X</span>([<span class="type">EnumeratorCancellation</span>]<span class="type">CancellationToken</span> <span class="variable">ct</span> = <span class="reserved">default</span>)
+    // 新挙動: EnumeratorCancellation 属性付きの引数は1個に限る
+    static async IAsyncEnumerable<int> X([EnumeratorCancellation]CancellationToken ct = default)
     {
-        <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Yield</span>();
-        <span class="control">yield</span> <span class="control">break</span>;
+        await Task.Yield();
+        yield break;
     }
 }
-</code></pre>
+```
 
 ### base(T) 削除
 
@@ -113,35 +113,35 @@ C# コンパイラーだけでできる実装方法だと不満だそうで、 .
 
 式のど真ん中に `stackalloc` を書けるようになりました。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading.Tasks;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">int</span> <span class="method">M</span>(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">span</span>) =&gt; 0;
+    static int M(Span<int> span) => 0;
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// 引数にも書けたり</span>
-        <span class="method">M</span>(<span class="reserved">stackalloc</span> <span class="reserved">int</span>[1]);
+        // 引数にも書けたり
+        M(stackalloc int[1]);
  
-        <span class="comment">// 式のどこにでも書ける</span>
-        <span class="control">if</span> (<span class="reserved">stackalloc</span> <span class="reserved">int</span>[1] <span class="method">==</span> <span class="reserved">stackalloc</span> <span class="reserved">int</span>[1]) { }
+        // 式のどこにでも書ける
+        if (stackalloc int[1] == stackalloc int[1]) { }
     }
  
-    <span class="comment">// フィールド初期化子内にも書けたり</span>
-    <span class="reserved">int</span> x = <span class="method">M</span>(<span class="reserved">stackalloc</span> <span class="reserved">int</span>[1]);
+    // フィールド初期化子内にも書けたり
+    int x = M(stackalloc int[1]);
  
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">Async</span>()
+    static async Task Async()
     {
-        <span class="comment">// 式中に書くなら、非同期メソッド内でも stackalloc が書ける</span>
-        <span class="method">M</span>(<span class="reserved">stackalloc</span> <span class="reserved">int</span>[1]);
+        // 式中に書くなら、非同期メソッド内でも stackalloc が書ける
+        M(stackalloc int[1]);
  
-        <span class="reserved">await</span> <span class="type">Task</span>.<span class="method">Yield</span>();
+        await Task.Yield();
     }
 }
-</code></pre>
+```
 
 ぶっちゃけ、[再帰パターン](../../../../study/csharp/cheatsheet/ap_ver8.md#recursive-pattern)のついでだそうです。
 再帰パターンの導入で[参照として返せるものの判定](../../../../study/csharp/resource/sp_ref.md#flow-analysis)が複雑になったらしく、

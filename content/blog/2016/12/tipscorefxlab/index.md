@@ -57,43 +57,43 @@ Slices (切れ端、断片)という名前は歴史的経緯のようです。
 
 `Span<T>`構造体の持つ機能を単純化して書くと、以下のようなコードと同類の機能を提供するものです。
 
-<pre class="source" title="単純化したSpan">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">Span</span>
+```csharp
+struct Span
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span>[] _data;
-    <span class="reserved">public</span> <span class="reserved">int</span> _offset;
-    <span class="comment">// 本来は範囲チェックも必要なので length も必要</span>
+    public byte[] _data;
+    public int _offset;
+    // 本来は範囲チェックも必要なので length も必要
 
-    <span class="reserved">public</span> Span(<span class="reserved">byte</span>[] data, <span class="reserved">int</span> offset = 0)
+    public Span(byte[] data, int offset = 0)
     {
         _data = data;
         _offset = offset;
     }
 
-    <span class="comment">// C# 7登場に合わせて ref uint に変更予定</span>
-    <span class="reserved">public</span> <span class="reserved">unsafe</span> <span class="reserved">uint</span> <span class="reserved">this</span>[<span class="reserved">int</span> index]
+    // C# 7登場に合わせて ref uint に変更予定
+    public unsafe uint this[int index]
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="reserved">fixed</span> (<span class="reserved">byte</span>* p = _data)
+            fixed (byte* p = _data)
             {
-                <span class="reserved">var</span> q = (<span class="reserved">uint</span>*)(p + _offset);
-                <span class="reserved">return</span> q[index];
+                var q = (uint*)(p + _offset);
+                return q[index];
             }
         }
-        <span class="reserved">set</span>
+        set
         {
-            <span class="reserved">fixed</span> (<span class="reserved">byte</span>* p = _data)
+            fixed (byte* p = _data)
             {
-                <span class="reserved">var</span> q = (<span class="reserved">uint</span>*)(p + _offset);
-                q[index] = <span class="reserved">value</span>;
+                var q = (uint*)(p + _offset);
+                q[index] = value;
             }
         }
     }
 
-    <span class="reserved">public</span> <span class="type">Span</span> Slice(<span class="reserved">int</span> startIndex) =&gt; <span class="reserved">new</span> <span class="type">Span</span>(_data, startIndex + _offset);
+    public Span Slice(int startIndex) => new Span(_data, startIndex + _offset);
 }
-</code></pre>
+```
 
 この単純化して示せている部分で言うと、`Span`の機能は以下の通りです。
 
@@ -114,43 +114,43 @@ Slices (切れ端、断片)という名前は歴史的経緯のようです。
 
 まあ、とにかく、以下の例のようなことが、そこそこ高パフォーマンスで実行できます。
 
-<pre class="source" title="Spanの利用例">
-<code><reserved></span><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Data</span>
+struct Data
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> A;
-    <span class="reserved">public</span> <span class="reserved">byte</span> B;
-    <span class="reserved">public</span> <span class="reserved">short</span> C;
-    <span class="reserved">public</span> <span class="reserved">int</span> D;
+    public byte A;
+    public byte B;
+    public short C;
+    public int D;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="comment">// データ書き込み用のバッファーを byte 配列で用意</span>
-        <span class="reserved">var</span> data = <span class="reserved">new</span> <span class="reserved">byte</span>[24];
+        // データ書き込み用のバッファーを byte 配列で用意
+        var data = new byte[24];
 
-        <span class="comment">// byte のまま書き込み</span>
-        <span class="reserved">var</span> b = <span class="reserved">new</span> <span class="type">Span</span>&lt;<span class="reserved">byte</span>&gt;(data);
+        // byte のまま書き込み
+        var b = new Span<byte>(data);
         b[0] = 1;
         b[1] = 2;
 
-        <span class="comment">// short を書き込み</span>
-        <span class="reserved">var</span> s = b.Slice(2).Cast&lt;<span class="reserved">byte</span>, <span class="reserved">ushort</span>&gt;();
+        // short を書き込み
+        var s = b.Slice(2).Cast<byte, ushort>();
         s[0] = 0x0403;
         s[1] = 0x0605;
         s[2] = 0x0807;
 
-        <span class="comment">// int</span>
-        <span class="reserved">var</span> i = s.Slice(3).Cast&lt;<span class="reserved">ushort</span>, <span class="reserved">uint</span>&gt;();
+        // int
+        var i = s.Slice(3).Cast<ushort, uint>();
         i[0] = 0x0C0B0A09;
         i[1] = 0x100F0E0D;
 
-        <span class="comment">// 構造体</span>
-        <span class="reserved">var</span> l = i.Slice(2).Cast&lt;<span class="reserved">uint</span>, <span class="type">Data</span>&gt;();
-        l[0] = <span class="reserved">new</span> <span class="type">Data</span>
+        // 構造体
+        var l = i.Slice(2).Cast<uint, Data>();
+        l[0] = new Data
         {
             A = 0x11,
             B = 0x12,
@@ -158,11 +158,11 @@ Slices (切れ端、断片)という名前は歴史的経緯のようです。
             D = 0x18171615,
         };
 
-        <span class="comment">// 1～24が並ぶはず</span>
-        <span class="type">Console</span>.WriteLine(<span class="reserved">string</span>.Join(<span class="string">" "</span>, data));
+        // 1～24が並ぶはず
+        Console.WriteLine(string.Join(" ", data));
     }
 }
-</code></pre>
+```
 
 ### 構造体の読み書き
 

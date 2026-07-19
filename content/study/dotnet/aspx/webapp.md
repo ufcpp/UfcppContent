@@ -21,7 +21,7 @@ aliases:
 ## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
 
 （書きかけ）
-<pre>
+```text
 ラウンドトリップ
 - CGI プログラムなんかだと、
   - 次の処理に必要な情報は一度全部 HTML に書き出しておく
@@ -62,8 +62,7 @@ Web アプリケーションの状態
     ↓
     - 別の Web アプリ(仮想ディレクトリ)間でのデータ共有は無理
       - それをしたい場合は、ファイルや Cookie、DB サーバを介して
-
-</pre>
+```
 
 ## <a id="sec-generated-title-2"></a> <a id="d43e13"></a>
 

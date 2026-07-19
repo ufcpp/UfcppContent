@@ -319,7 +319,7 @@ a<sub>N</sub><span class="paren" style="font-size:em;">)</span></div>
 
 ## <a id="sec-generated-title-8"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 |AB| ＝ |A| |B| とかの性質を
 
 |A x| ＝ |det A| |x|
@@ -329,4 +329,4 @@ a<sub>N</sub><span class="paren" style="font-size:em;">)</span></div>
 det A ≠ 0
 ⇔
 A の各列ベクトルが独立
-</pre>
+```

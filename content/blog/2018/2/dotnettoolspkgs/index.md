@@ -36,13 +36,13 @@ aliases: []
 
 `csproj` の `PropertyGroup` に、[以下のような行](https://github.com/ufcpp/UfcppSample/blob/master/Demo/2018/DotNetGlobalTools/cszip/cszip.csproj#L6)を足せばいいらしい。
 
-```
+```xml
     <PackAsTool>true</PackAsTool>
 ```
 
 ただ、現状、Visual Studio の方はまだ対応していなくて、これを入れたプロジェクトをビルドしてもそのままだとパッケージは作られません。`dotnet pack`コマンドを手打ちする必要があります。
 
-```
+```shell
 dotnet pack -c release cszip/cszip.csproj
 ```
 
@@ -52,7 +52,7 @@ dotnet pack -c release cszip/cszip.csproj
 
 `dotnet install tool` コマンドでインストールできます。
 
-```
+```shell
 dotnet install tool -g cszip --configfile .\nuget.config
 ```
 
@@ -67,7 +67,7 @@ NuGet を使ってパッケージを取ってきて、ユーザー フォルダ�
 `.dotnet/tools` にはパスが通っているので、作ったコマンド ライン アプリがどこからでも呼べるようになっています。
 普通にコマンドをたたけば呼べます。
 
-```
+```shell
 cszip packages sample.zip
 ```
 

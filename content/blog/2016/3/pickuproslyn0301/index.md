@@ -24,19 +24,19 @@ aliases: []
 
 簡単に言うと、例えば以下のようなクラスがあったとき、
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Person</span>
+```csharp
+public class Person
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> FirstName { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span> LastName { <span class="reserved">get</span>; }
+    public string FirstName { get; }
+    public string LastName { get; }
 
-    <span class="reserved">public</span> Person(<span class="reserved">string</span> firstName, <span class="reserved">string</span> lastName)
+    public Person(string firstName, string lastName)
     {
         FirstName = firstName;
         LastName = lastName;
     }
 }
-</code></pre>
+```
 
 コンストラクター第1引数の`firstName`とプロパティの`FirstName`には1対1の対応があります。同様に第2に引数`lastName`とプロパティ`LastName`もです。
 こういう、1対1の関係を、(先頭の1文字の大小の差は無視して)名前をベースに調べて、
@@ -62,15 +62,15 @@ position-to-propertyマッチを使う3つの新機能は以下の通りです�
 
 先ほど出した`Person`クラスみたいなimmutableなオブジェクト(プロパティがget-onlyで、値の書き換え不能)を初期化したい場合、コンストラクター引数に値を渡す必要があります。でも、オブジェクト初期化子構文を使っての初期化を行いたいことがあります。なので、
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">new</span> <span class="type">Person</span> { FirstName = <span class="string">"Mickey"</span>, LastName = <span class="string">"Mouse"</span> }
-</code></pre>
+```csharp
+new Person { FirstName = "Mickey", LastName = "Mouse" }
+```
 
 というコードを、
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">new</span> <span class="type">Person</span>(<span class="string">"Mickey"</span>, <span class="string">"Mouse"</span>)
-</code></pre>
+```csharp
+new Person("Mickey", "Mouse")
+```
 
 に置き換えようという機能を提供したい。
 
@@ -82,15 +82,15 @@ immutableなオブジェクトは、値の変更も面倒になります。書�
 
 以下のような書き方で、
 
-<pre class="source" title="">
-<code>p <span class="reserved">with</span>  { FirstName = <span class="string">"Minney"</span> }
-</code></pre>
+```csharp
+p with  { FirstName = "Minney" }
+```
 
 以下のようなコードを生成します。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">new</span> <span class="type">Person</span>(<span class="string">"Minney"</span>, p.LastName)
-</code></pre>
+```csharp
+new Person("Minney", p.LastName)
+```
 
 こちらも同様に、プロパティに対応する引数を知る必要があります。
 
@@ -98,9 +98,9 @@ immutableなオブジェクトは、値の変更も面倒になります。書�
 
 C# 7に向けて実装中のパターン マッチング機能で、以下のようなコードが書けます。
 
-<pre class="source" title="">
-<code>p <span class="reserved">is</span> <span class="type">Person</span>(<span class="string">"Mickey"</span>, *)
-</code></pre>
+```csharp
+p is Person("Mickey", *)
+```
 
 これは、`p`の型が`Person`かつ、`FirstName`が`"Mickey"`ということを調べる式です。
 
@@ -108,15 +108,15 @@ C# 7に向けて実装中のパターン マッチング機能で、以下のよ
 
 こういう書き方は位置指定のパターン(positional pattern、あるいは、position-based pattern)といって、コンストラクターの逆操作です。
 
-<pre class="source" title="">
-<code>p <span class="reserved">is</span> <span class="type">Person</span>(<span class="string">"Mickey"</span>, *) ⇔ <span class="reserved">new</span> <span class="type">Person</span>(<span class="string">"Mickey"</span>, <span class="string">"..."</span>)
-</code></pre>
+```csharp
+p is Person("Mickey", *) ⇔ new Person("Mickey", "...")
+```
 
 一方、以下のようにプロパティ指定でのパターン(property pattern)もあって、こちらはオブジェクト初期化子の逆操作になります。
 
-<pre class="source" title="">
-<code>p <span class="reserved">is</span> <span class="type">Person</span> { FirstName <span class="reserved">is</span> <span class="string">"Mickey"</span> } ⇔ <span class="reserved">new</span> <span class="type">Person</span> { FirstName = <span class="string">"Mickey"</span> }
-</code></pre>
+```csharp
+p is Person { FirstName is "Mickey" } ⇔ new Person { FirstName = "Mickey" }
+```
 
 そして再三になりますが、この位置指定のパターンにもposition-to-propertyマッチが必要になります。
 

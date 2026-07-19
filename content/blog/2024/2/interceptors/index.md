@@ -30,31 +30,31 @@ aliases: []
 .NET が標準で提供しているやつだと `GeneratedRegex` とか。
 partial メソッドに属性を付けて、メソッドの中身をコード生成しています。
 
-<pre class="source" title="GeneratedRegex">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Reg</span>
+```csharp
+partial class Reg
 {
-    <span class="comment">// この属性を付けた partial メソッドに対して、</span>
-    <span class="comment">// Sytem.Text.RegularExpressions.Generator でコード生成してる。</span>
-    [<span class="type">GeneratedRegex</span>(<span class="string">@&quot;\d+&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="type">Regex</span> <span class="method"><span class="static">Digits</span></span>();
+    // この属性を付けた partial メソッドに対して、
+    // Sytem.Text.RegularExpressions.Generator でコード生成してる。
+    [GeneratedRegex(@"\d+")]
+    public static partial Regex Digits();
 }
-</pre>
+```
 
 これで困るのは、**メソッドの呼び出し箇所ごとに違う実装をコード生成したい場合**です。
 
 一例として以下のようなコードを考えます。
 要は「const string を `Parse` するならコンパイル時に全部やっちゃえるのでは」という話。
 
-<pre class="source" title="呼び出し箇所ごとに別コード生成したいものの例">
-<span class="reserved">using</span> <span class="reserved">static</span> System<span class="operator">.</span><span class="static"><span class="type">Console</span></span>;
+```csharp
+using static System.Console;
 
-<span class="comment">// const string の Parse はコンパイル時にできるのでは。</span>
-<span class="static"><span class="method">WriteLine</span></span>(<span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">Parse</span></span>(<span class="string">&quot;123&quot;</span>));
-<span class="static"><span class="method">WriteLine</span></span>(<span class="reserved">int</span><span class="operator">.</span><span class="static"><span class="method">Parse</span></span>(<span class="string">&quot;456&quot;</span>));
+// const string の Parse はコンパイル時にできるのでは。
+WriteLine(int.Parse("123"));
+WriteLine(int.Parse("456"));
 
-<span class="comment">// こういうのは無理として。</span>
-<span class="static"><span class="method">WriteLine</span></span>(<span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">Parse</span></span>(<span class="method"><span class="static">ReadLine</span></span>()<span class="operator">!</span>));
-</pre>
+// こういうのは無理として。
+WriteLine(int.Parse(ReadLine()!));
+```
 
 int だと「最初から `123` と書け」と言われればそれまでなので役に立ちませんが、
 例えば [`BigInteger`](https://learn.microsoft.com/ja-jp/dotnet/api/system.numerics.biginteger) とかなら意味がありそうです。
@@ -68,30 +68,30 @@ C# 12 時点でプレビュー機能として実装されていて、後述す�
 先ほどのコードが F:/src/ConsoleApp1/ConsoleApp1/Program.cs というパスのファイルに書かれているものとして、
 以下のようなコードを作ります(Source Generator で作ること前提)。
 
-<pre class="source" title="インターセプターの例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">namespace</span> ConsoleApp1
+namespace ConsoleApp1
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">Interceptors</span></span>
+    static class Interceptors
     {
-        [<span class="type">InterceptsLocation</span>(<span class="string">&quot;F:/src/ConsoleApp1/ConsoleApp1/Program.cs&quot;</span>, <span class="number">4</span>, <span class="number">15</span>)]
-        <span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">Parse123</span></span>(<span class="reserved">string</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="number">123</span>;
+        [InterceptsLocation("F:/src/ConsoleApp1/ConsoleApp1/Program.cs", 4, 15)]
+        internal static int Parse123(string _) => 123;
 
-        [<span class="type">InterceptsLocation</span>(<span class="string">&quot;F:/src/ConsoleApp1/ConsoleApp1/Program.cs&quot;</span>, <span class="number">5</span>, <span class="number">15</span>)]
-        <span class="reserved">internal</span> <span class="reserved">static</span> <span class="reserved">int</span> <span class="static"><span class="method">Parse456</span></span>(<span class="reserved">string</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="number">456</span>;
+        [InterceptsLocation("F:/src/ConsoleApp1/ConsoleApp1/Program.cs", 5, 15)]
+        internal static int Parse456(string _) => 456;
     }
 }
 
-<span class="reserved">namespace</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices
+namespace System.Runtime.CompilerServices
 {
-    [<span class="type">AttributeUsage</span>(<span class="type">AttributeTargets</span><span class="operator">.</span>Method, <span class="property">AllowMultiple</span> <span class="operator">=</span> <span class="reserved">true</span>)]
-    <span class="reserved">file</span> <span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">InterceptsLocationAttribute</span> : <span class="type">Attribute</span>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    file sealed class InterceptsLocationAttribute : Attribute
     {
-        <span class="reserved">public</span> <span class="type">InterceptsLocationAttribute</span>(<span class="reserved">string</span> <span class="variable local">filePath</span>, <span class="reserved">int</span> <span class="variable local">line</span>, <span class="reserved">int</span> <span class="variable local">column</span>) { }
+        public InterceptsLocationAttribute(string filePath, int line, int column) { }
     }
 }
-</pre>
+```
 
 `InterceptsLocation` 属性が付いたメソッドで、属性で指定したファイル・行・列にあるメソッド呼び出しを乗っ取ります。
 
@@ -103,16 +103,16 @@ C# 12 時点でプレビュー機能として実装されていて、後述す�
 という挙動。
 その結果、Program.cs の内容は以下のものに置き換わったものとしてコンパイルされます。
 
-<pre class="source" title="インターセプターの適用結果">
-<span class="reserved">using</span> <span class="reserved">static</span> System<span class="operator">.</span><span class="static"><span class="type">Console</span></span>;
+```csharp
+using static System.Console;
 
-<span class="comment">// const string の Parse はコンパイル時にできるのでは。</span>
-<span class="static"><span class="method">WriteLine</span></span>(<span class="type">Interceptors</span><span class="operator">.</span><span class="method"><span class="static">Parse123</span></span>(<span class="string">&quot;123&quot;</span>));
-<span class="static"><span class="method">WriteLine</span></span>(<span class="type">Interceptors</span><span class="operator">.</span><span class="static"><span class="method">Parse456</span></span>(<span class="string">&quot;456&quot;</span>));
+// const string の Parse はコンパイル時にできるのでは。
+WriteLine(Interceptors.Parse123("123"));
+WriteLine(Interceptors.Parse456("456"));
 
-<span class="comment">// こういうのは無理として。</span>
-<span class="static"><span class="method">WriteLine</span></span>(<span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">Parse</span></span>(<span class="method"><span class="static">ReadLine</span></span>()<span class="operator">!</span>));
-</pre>
+// こういうのは無理として。
+WriteLine(int.Parse(ReadLine()!));
+```
 
 ちなみに、ファイル指定がフルパスなのが気持ち悪すぎていまいち取り上げる気になれず、今までブログ化していなかったり。
 後述しますが、フルパスだと困るであろうことは課題として認識されていて、C# 13 正式リリースまでには対処が入ると思います。
@@ -173,41 +173,41 @@ Git とかで他人と共有すると、他の人のパスは F:/users/UserName/
 もしくは、ファイル パスに依存すること自体をやめて、何らかの抽象的な「location specifier (場所指定子)」を受け付ける仕組みを用意するという案も出ています。
 まずは `InterceptsLocation` 属性に以下のコンストラクター追加。
 
-<pre class="source" title="locationSpecifier 引数のコンストラクター">
-<span class="reserved">namespace</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+namespace System.Runtime.CompilerServices;
 
-[<span class="type">AttributeUsage</span>(<span class="type">AttributeTargets</span><span class="operator">.</span>Method, <span class="property">AllowMultiple</span> <span class="operator">=</span> <span class="reserved">true</span>)]
-<span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">InterceptsLocationAttribute</span> : <span class="type">Attribute</span>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+sealed class InterceptsLocationAttribute : Attribute
 {
-    <span class="reserved">public</span> <span class="type">InterceptsLocationAttribute</span>(<span class="reserved">string</span> <span class="variable local">filePath</span>, <span class="reserved">int</span> <span class="variable local">line</span>, <span class="reserved">int</span> <span class="variable local">column</span>) { }
-    <em><span class="reserved">public</span> <span class="type">InterceptsLocationAttribute</span>(<span class="reserved">string</span> <span class="variable local">locationSpecifier</span>) { }</em>
+    public InterceptsLocationAttribute(string filePath, int line, int column) { }
+    public InterceptsLocationAttribute(string locationSpecifier) { }
 }
-</pre>
+```
 
 一例として以下のように、何らかの書式で「ソースコードの場所」がわかる文字列を指定。
 
-<pre class="source" title="locationSpecifier 指定のインターセプター">
-<span class="reserved">class</span> <span class="type">Interceptors</span>
+```csharp
+class Interceptors
 {
-    [<span class="type">InterceptsLocation</span>(<span class="string">&quot;v1:../../src/MyFile.cs(12,34)&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Interceptor</span>() { }
+    [InterceptsLocation("v1:../../src/MyFile.cs(12,34)")]
+    public void Interceptor() { }
 }
-</pre>
+```
 
 独特な書式を覚えるのは大変でしょうが、
 幸い、インターセプターは Source Generator 用の機能なわけで、
 Source Generator 作者向けに location specifier を取得できる API を同時に提供するつもりだそうです
 (なので独特な書式を覚える必要はないはず)。
 
-<pre class="source" title="location specifier を取得できる API の追加">
-<span class="reserved">namespace</span> Microsoft<span class="operator">.</span>CodeAnalysis;
+```csharp
+namespace Microsoft.CodeAnalysis;
 
-<span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type struct">SourceProductionContext</span>
+public readonly struct SourceProductionContext
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">AddSource</span>(<span class="reserved">string</span> <span class="variable local">hintName</span>, <span class="reserved">string</span> <span class="variable local">source</span>);
-    <em><span class="reserved">public</span> <span class="reserved">string</span> <span class="method">GetInterceptsLocationSpecifier</span>(<span class="type">InvocationExpressionSyntax</span> <span class="variable local">intercepted</span>, <span class="reserved">string</span> <span class="variable local">interceptorFileHintName</span>);</em>
+    public void AddSource(string hintName, string source);
+    public string GetInterceptsLocationSpecifier(InvocationExpressionSyntax intercepted, string interceptorFileHintName);
 }
-</pre>
+```
 
 Roslyn の構文木ノードを受け取って、
 そこに相当する specifier を返してもらって、

@@ -66,60 +66,60 @@ aliases:
 従って、バケットソートのプログラムは非常に簡単になり、
 以下のようになります。
 
-<pre class="source" title="バケットソート（int 版）" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// [0, max] の範囲の整数をバケットソート。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="max"&gt;配列 a 中の最大値&lt;/param&gt;</span>
-<span class="reserved">public static void</span> BucketSort(<span class="reserved">int</span>[] a, <span class="reserved">int</span> max)
+/// </summary>
+/// <param name="a">対象の配列</param>
+/// <param name="max">配列 a 中の最大値</param>
+public static void BucketSort(int[] a, int max)
 {
-  <span class="comment">// バケツを用意</span>
-  <span class="reserved">int</span>[] bucket = <span class="reserved">new int</span>[max + 1];
+  // バケツを用意
+  int[] bucket = new int[max + 1];
 
-  <span class="comment">// バケツに値を入れる</span>
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i) ++bucket[a[i]];
+  // バケツに値を入れる
+  for (int i = 0; i < a.Length; ++i) ++bucket[a[i]];
 
-  <span class="comment">// バケツ中の値の結合</span>
-  <span class="reserved">for</span> (<span class="reserved">int</span> j = 0, i = 0; j &lt; bucket.Length; ++j)
-    <span class="reserved">for</span> (<span class="reserved">int</span> k = bucket[j]; k != 0; --k, ++i)
+  // バケツ中の値の結合
+  for (int j = 0, i = 0; j < bucket.Length; ++j)
+    for (int k = bucket[j]; k != 0; --k, ++i)
       a[i] = j;
 }
-</code></pre>
+```
 
 
 これに対して、例えば、整数をキーとするデータ構造をソートするなら、
 （キーが同じ値でも、キー以外のデータが異なる可能性があるので）
 「キーの値が x の要素を入れるバケツ」を「[連結リスト](../collection/col_blist.md#linked)」などを使って実装する必要があります。
 
-<pre class="source" title="バケットソート（任意のデータ構造対象）" lang="">
-<code><span class="reserved">using</span> System.Collections.Generic;
+```csharp
+using System.Collections.Generic;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// [0, max] の範囲の整数をキーに持つデータ構造をバケットソート。
-/// &lt;/summary&gt;
-/// &lt;typeparam name="T"&gt;値の型&lt;/typeparam&gt;
-/// &lt;param name="a"&gt;対象の配列&lt;/param&gt;
-/// &lt;param name="max"&gt;キーの最大値&lt;/param&gt;</span>
-<span class="reserved">public static void</span> BucketSort&lt;T&gt;(KeyValuePair&lt;<span class="reserved">int</span>, T&gt;[] a, <span class="reserved">int</span> max)
+/// </summary>
+/// <typeparam name="T">値の型</typeparam>
+/// <param name="a">対象の配列</param>
+/// <param name="max">キーの最大値</param>
+public static void BucketSort<T>(KeyValuePair<int, T>[] a, int max)
 {
-  <span class="comment">// バケツを用意</span>
-  List&lt;T&gt;[] bucket = <span class="reserved">new</span> List&lt;T&gt;[max + 1];
+  // バケツを用意
+  List<T>[] bucket = new List<T>[max + 1];
 
-  <span class="comment">// バケツに値を入れる</span>
-  <span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; a.Length; ++i)
+  // バケツに値を入れる
+  for (int i = 0; i < a.Length; ++i)
   {
-    <span class="reserved">if</span> (bucket[a[i].Key] == <span class="reserved">null</span>) bucket[a[i].Key] = <span class="reserved">new</span> List&lt;T&gt;();
+    if (bucket[a[i].Key] == null) bucket[a[i].Key] = new List<T>();
     bucket[a[i].Key].Add(a[i].Value);
   }
 
-  <span class="comment">// バケツ中の値の結合</span>
-  <span class="reserved">for</span> (<span class="reserved">int</span> j = 0, i = 0; j &lt; bucket.Length; ++j)
-   <span class="reserved">if</span>(bucket[j] != <span class="reserved">null</span>)
-     <span class="reserved">foreach</span> (T val <span class="reserved">in</span> bucket[j])
-       a[i++] = <span class="reserved">new</span> KeyValuePair&lt;<span class="reserved">int</span>, T&gt;(j, val);
+  // バケツ中の値の結合
+  for (int j = 0, i = 0; j < bucket.Length; ++j)
+   if(bucket[j] != null)
+     foreach (T val in bucket[j])
+       a[i++] = new KeyValuePair<int, T>(j, val);
 }
-</code></pre>
+```
 
 
 <code>KeyValuePair</code> や <code>List</code> は、

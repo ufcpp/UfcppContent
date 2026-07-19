@@ -51,34 +51,34 @@ dynamic の用途の1つとして、多重ディスパッチというものを�
 
 実装例を挙げると以下のような感じ。
 
-<pre class="source" title="Shape の実装例" lang="">
-<code><span class="reserved">interface</span> <span class="type">Shape</span>
+```csharp
+interface Shape
 {
-    <span class="reserved">double</span> GetArea();
+    double GetArea();
 }
 
-<span class="reserved">class</span> <span class="type">Rectangle</span> : <span class="type">Shape</span>
+class Rectangle : Shape
 {
-    <span class="reserved">public double</span> 幅 = <span class="literal">0</span>;
-    <span class="reserved">public double</span> 高さ = <span class="literal">0</span>;
-    <span class="reserved">public double</span> GetArea() { <span class="reserved">return</span> 幅 * 高さ; }
+    public double 幅 = 0;
+    public double 高さ = 0;
+    public double GetArea() { return 幅 * 高さ; }
 }
 
-<span class="reserved">class</span> <span class="type">Circle</span> : <span class="type">Shape</span>
+class Circle : Shape
 {
-    <span class="reserved">public double</span> 半径 = <span class="literal">0</span>;
-    <span class="reserved">public double</span> GetArea() { <span class="reserved">return</span> <span class="type">Math</span>.PI * 半径 * 半径; }
+    public double 半径 = 0;
+    public double GetArea() { return Math.PI * 半径 * 半径; }
 }
-</code></pre>
+```
 
 
 で、以下のように、仮想メソッド呼び出しをします。
 
-<pre class="source" title="仮想メソッド呼び出し" lang="">
-<code><span class="type">Shape</span> s;
-<span class="comment">// どこかで s に Rectangle もしくは Circle を代入。</span>
+```csharp
+Shape s;
+// どこかで s に Rectangle もしくは Circle を代入。
 s.GetArea();
-</code></pre>
+```
 
 
 GetArea は仮想メソッドなので、s.GetArea() の呼び出しは、実際には s の動的な型情報に基づいて、
@@ -103,20 +103,20 @@ C# や C++ などの言語では、このディスパッチ処理を「[仮想�
 「[仮想関数テーブル](../oop/oo_vftable.md#vftable)」という仕組みに乗っかるだけが動的ディスパッチの実現方法ではありません。
 例えば、以下のようなコードを書くことで動的ディスパッチを実現できます。
 
-<pre class="source" title="自前で動的ディスパッチする" lang="">
-<code><span class="reserved">static class</span> <span class="type">ShapeMethods</span>
+```csharp
+static class ShapeMethods
 {
-    <span class="reserved">public static double</span> GetArea(<span class="reserved">this</span> <span class="type">Shape</span> s)
+    public static double GetArea(this Shape s)
     {
-        <span class="reserved">if</span> (s <span class="reserved">is</span> <span class="type">Rectangle</span>) <span class="reserved">return</span> GetArea((<span class="type">Rectangle</span>)s);
-        <span class="reserved">if</span> (s <span class="reserved">is</span> <span class="type">Circle</span>) <span class="reserved">return</span> GetArea((<span class="type">Circle</span>)s);
-        <span class="reserved">throw new</span> <span class="type">ArgumentException</span>();
+        if (s is Rectangle) return GetArea((Rectangle)s);
+        if (s is Circle) return GetArea((Circle)s);
+        throw new ArgumentException();
     }
 
-    <span class="reserved">static double</span> GetArea(<span class="type">Rectangle</span> x) { <span class="reserved">return</span> x.幅 * x.高さ; }
-    <span class="reserved">static double</span> GetArea(<span class="type">Circle</span> x) { <span class="reserved">return</span> <span class="type">Math</span>.PI * x.半径 * x.半径; }
+    static double GetArea(Rectangle x) { return x.幅 * x.高さ; }
+    static double GetArea(Circle x) { return Math.PI * x.半径 * x.半径; }
 }
-</code></pre>
+```
 
 
 まあ、見てのとおりです。
@@ -157,33 +157,33 @@ C# や C++ などの言語では、このディスパッチ処理を「[仮想�
 
 ということで、やむを得ず、先ほどのような「自前ディスパッチ」の仕組みを作ります。
 
-<pre class="source" title="多重ディスパッチ" lang="">
-<code><span class="reserved">public static bool</span> Contains(<span class="reserved">this</span> <span class="type">Shape</span> s, <span class="type">Shape</span> t)
+```csharp
+public static bool Contains(this Shape s, Shape t)
 {
-    <span class="reserved">if</span> (s <span class="reserved">is</span> <span class="type">Rectangle</span> &amp;&amp; t <span class="reserved">is</span> <span class="type">Rectangle</span>) <span class="reserved">return</span> Contains((<span class="type">Rectangle</span>)s, (<span class="type">Rectangle</span>)t);
-    <span class="reserved">if</span> (s <span class="reserved">is</span> <span class="type">Rectangle</span> &amp;&amp; t <span class="reserved">is</span> <span class="type">Circle</span>) <span class="reserved">return</span> Contains((<span class="type">Rectangle</span>)s, (<span class="type">Circle</span>)t);
-    <span class="reserved">if</span> (s <span class="reserved">is</span> <span class="type">Circle</span> &amp;&amp; t <span class="reserved">is</span> <span class="type">Rectangle</span>) <span class="reserved">return</span> Contains((<span class="type">Circle</span>)s, (<span class="type">Rectangle</span>)t);
-    <span class="reserved">if</span> (s <span class="reserved">is</span> <span class="type">Circle</span> &amp;&amp; t <span class="reserved">is</span> <span class="type">Circle</span>) <span class="reserved">return</span> Contains((<span class="type">Circle</span>)s, (<span class="type">Circle</span>)t);
-    <span class="reserved">throw new</span> <span class="type">ArgumentException</span>();
+    if (s is Rectangle && t is Rectangle) return Contains((Rectangle)s, (Rectangle)t);
+    if (s is Rectangle && t is Circle) return Contains((Rectangle)s, (Circle)t);
+    if (s is Circle && t is Rectangle) return Contains((Circle)s, (Rectangle)t);
+    if (s is Circle && t is Circle) return Contains((Circle)s, (Circle)t);
+    throw new ArgumentException();
 }
 
-<span class="reserved">static bool</span> Contains(<span class="type">Rectangle</span> s, <span class="type">Rectangle</span> t)
+static bool Contains(Rectangle s, Rectangle t)
 {
-    <span class="reserved">return</span> s.幅 &gt; t.幅 &amp;&amp; s.高さ &gt; t.高さ;
+    return s.幅 > t.幅 && s.高さ > t.高さ;
 }
-<span class="reserved">static bool</span> Contains(<span class="type">Rectangle</span> s, <span class="type">Circle</span> t)
+static bool Contains(Rectangle s, Circle t)
 {
-    <span class="reserved">return</span> s.幅 * s.幅 + s.高さ * s.高さ &gt; t.半径 * t.半径 * <span class="literal">4</span>;
+    return s.幅 * s.幅 + s.高さ * s.高さ > t.半径 * t.半径 * 4;
 }
-<span class="reserved">static bool</span> Contains(<span class="type">Circle</span> s, <span class="type">Rectangle</span> t)
+static bool Contains(Circle s, Rectangle t)
 {
-    <span class="reserved">return</span> s.半径 * s.半径 * <span class="literal">4</span> &gt; t.幅 * t.幅 + t.高さ * t.高さ;
+    return s.半径 * s.半径 * 4 > t.幅 * t.幅 + t.高さ * t.高さ;
 }
-<span class="reserved">static bool</span> Contains(<span class="type">Circle</span> s, <span class="type">Circle</span> t)
+static bool Contains(Circle s, Circle t)
 {
-    <span class="reserved">return</span> s.半径 &gt; t.半径;
+    return s.半径 > t.半径;
 }
-</code></pre>
+```
 
 
 （ちなみに、こういう場合、Visitor パターンっていう実装手法もあって、
@@ -203,40 +203,40 @@ Visitor パターンを使った多重ディスパッチはあまりきれいな
 
 そこで C# 4.0 の dynamic を使ってみましょう。
 
-<pre class="source" title="dynamic を使った多重ディスパッチ" lang="">
-<code><span class="comment">//public static bool Contains(this Shape s, Shape t)
+```csharp
+//public static bool Contains(this Shape s, Shape t)
 //{
-//    if (s is Rectangle &amp;&amp; t is Rectangle) return Contains((Rectangle)s, (Rectangle)t);
-//    if (s is Rectangle &amp;&amp; t is Circle) return Contains((Rectangle)s, (Circle)t);
-//    if (s is Circle &amp;&amp; t is Rectangle) return Contains((Circle)s, (Rectangle)t);
-//    if (s is Circle &amp;&amp; t is Circle) return Contains((Circle)s, (Circle)t);
+//    if (s is Rectangle && t is Rectangle) return Contains((Rectangle)s, (Rectangle)t);
+//    if (s is Rectangle && t is Circle) return Contains((Rectangle)s, (Circle)t);
+//    if (s is Circle && t is Rectangle) return Contains((Circle)s, (Rectangle)t);
+//    if (s is Circle && t is Circle) return Contains((Circle)s, (Circle)t);
 //    throw new ArgumentException();
 //}
 // ↑before
-// ↓after</span>
-<em><span class="reserved">public static bool</span> Contains(<span class="reserved">this</span> <span class="type">Shape</span> s, <span class="type">Shape</span> t)
+// ↓after
+public static bool Contains(this Shape s, Shape t)
 {
-    <span class="reserved">return</span> Contains((<span class="reserved">dynamic</span>)s, (<span class="reserved">dynamic</span>)t);
+    return Contains((dynamic)s, (dynamic)t);
 }
-<span class="reserved">static bool</span> Contains(<span class="reserved">dynamic</span> s, <span class="reserved">dynamic</span> t) { <span class="reserved">return</span> Contains(s, t); }</em>
+static bool Contains(dynamic s, dynamic t) { return Contains(s, t); }
 
-<span class="reserved">static bool</span> Contains(<span class="type">Rectangle</span> s, <span class="type">Rectangle</span> t)
+static bool Contains(Rectangle s, Rectangle t)
 {
-    <span class="reserved">return</span> s.幅 &gt; t.幅 &amp;&amp; s.高さ &gt; t.高さ;
+    return s.幅 > t.幅 && s.高さ > t.高さ;
 }
-<span class="reserved">static bool</span> Contains(<span class="type">Rectangle</span> s, <span class="type">Circle</span> t)
+static bool Contains(Rectangle s, Circle t)
 {
-    <span class="reserved">return</span> s.幅 * s.幅 + s.高さ * s.高さ &gt; t.半径 * t.半径 * <span class="literal">4</span>;
+    return s.幅 * s.幅 + s.高さ * s.高さ > t.半径 * t.半径 * 4;
 }
-<span class="reserved">static bool</span> Contains(<span class="type">Circle</span> s, <span class="type">Rectangle</span> t)
+static bool Contains(Circle s, Rectangle t)
 {
-    <span class="reserved">return</span> s.半径 * s.半径 * <span class="literal">4</span> &gt; t.幅 * t.幅 + t.高さ * t.高さ;
+    return s.半径 * s.半径 * 4 > t.幅 * t.幅 + t.高さ * t.高さ;
 }
-<span class="reserved">static bool</span> Contains(<span class="type">Circle</span> s, <span class="type">Circle</span> t)
+static bool Contains(Circle s, Circle t)
 {
-    <span class="reserved">return</span> s.半径 &gt; t.半径;
+    return s.半径 > t.半径;
 }
-</code></pre>
+```
 
 
 ソースコード全体も以下に置いておきます。

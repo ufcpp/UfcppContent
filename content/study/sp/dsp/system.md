@@ -20,9 +20,9 @@ aliases:
 
 ## <a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
 
-<pre>
+```text
 入力→[システム]→出力
-</pre>
+```
 システムあるいは系（system）
 信号 <span class="math">x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span> を入力して、
 <span class="math">y<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="font-size:em;">)</span></span> という信号を得るようなブラックボックス。
@@ -197,7 +197,7 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 
 ## <a id="sec-generated-title-9"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
   通常、微分方程式(離散信号の場合、差分方程式)で表される。
 
   線形時不変システムに対しては、フーリエ変換を用いた解析が極めて有効。
@@ -227,4 +227,4 @@ x<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 
 ↑
 ラプラス変換領域や、Z変換領域で表した H(s) や H(z) などを伝達関数と呼ぶ。
-</pre>
+```

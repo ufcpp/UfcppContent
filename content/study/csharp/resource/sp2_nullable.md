@@ -45,10 +45,10 @@ C# 8.0 では、[参照型](oo_reference.md#valtype)についても `?` の有�
 <strong id="nullableType" class="keyword">null 許容型</strong>(nullable type)は、値型の型名の後ろに <code>?</code> を付ける事で、元の型の値または <code>null</code> の値を取れる型になるというものです。
 <code>int</code> 型で例に取ると、以下のような書き方が出来ます。
 
-<pre class="source" title="null 許容型の例" lang="">
-<code><span class="reserved">int</span>? x = 123;
-<span class="reserved">int</span>? y = <span class="reserved">null</span>;
-</code></pre>
+```csharp
+int? x = 123;
+int? y = null;
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="non-nullable"></a>null 非許容型
 
@@ -77,10 +77,10 @@ C# 8.0 で、null 許容参照型と呼ばれる新しい機能が入って参�
 コンパイル結果的には、`Nullable<T>`構造体(`System`名前空間) と等価になります。
 例えば、以下の2つの変数x と y は全く同じ型の変数になります。
 
-<pre class="source" title="T? と Nullable&lt;T&gt;">
-<code><reserved></span><span class="reserved">int</span>? x;
-<span class="type">Nullable</span>&lt;<span class="reserved">int</span>&gt; y;
-</code></pre>
+```csharp
+int? x;
+Nullable<int> y;
+```
 
 ちなみに、[リフレクション](../dynamic/sp_reflection.md#reflection)で型情報を取り出そうとした場合、null許容型は`Nullable<T>`構造体に見えます。
 
@@ -115,25 +115,25 @@ C# 8.0 で、null 許容参照型と呼ばれる新しい機能が入って参�
 <code>T</code> → <code>T?</code> の変換は常に可能で、
 以下のようなコードの下2行は等価になります。
 
-<pre class="source" title="int → int?" lang="">
-<code><span class="reserved">int</span>? x;
+```csharp
+int? x;
 x = 123;
-x = <span class="reserved">new int</span>?(123); <span class="comment">// x = 123; と等価。</span>
-</code></pre>
+x = new int?(123); // x = 123; と等価。
+```
 
 
 その逆、
 <code>T?</code> → <code>T</code> の変換は、`HasValue` が `true` のときのみ可能で、
 `HasValue` が `false` の時には `InvalidOperationException` がスローされます。
 
-<pre class="source" title="int? → int" lang="">
-<code><span class="reserved">int</span>? x = 123;
-<span class="reserved">int</span>? y = <span class="reserved">null</span>;
-<span class="reserved">int</span> z;
+```csharp
+int? x = 123;
+int? y = null;
+int z;
 
-z = (<span class="reserved">int</span>)x; <span class="comment">// OK。</span>
-z = (<span class="reserved">int</span>)y; <span class="comment">// 例外が発生。</span>
-</code></pre>
+z = (int)x; // OK。
+z = (int)y; // 例外が発生。
+```
 
 
 
@@ -248,11 +248,11 @@ null 許容型には、`??` 演算という特殊な演算子を使えます。
 この`??`演算子は<strong id="nullableType" class="keyword">null合体演算子</strong><sup>※</sup>と呼ばれ、
 値が <code>null</code> かどうかを判別し、<code>null</code> の場合には別の値を割り当てる演算子です。
 
-<pre class="source" title="?? 演算子" lang="">
-<code><span class="comment">// x, y は int? 型の変数</span>
-<span class="reserved">int</span>? z = x ?? y; <span class="comment">// x != null ? x : y</span>
-<span class="reserved">int</span> i = z ?? -1; <span class="comment">// z != null ? z.Value : -1</span>
-</code></pre>
+```csharp
+// x, y は int? 型の変数
+int? z = x ?? y; // x != null ? x : y
+int i = z ?? -1; // z != null ? z.Value : -1
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="coalesce-translation"></a><sup>※</sup> coalesce
 
@@ -268,13 +268,13 @@ C# 8.0 では、null合体演算子 (`??`)も複合代入に使えるように�
 
 例えば以下のような書き方ができます。
 
-<pre class="source" title="null 合体代入">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span> s = <span class="reserved">null</span>)
+```csharp
+static void M(string s = null)
 {
-    s <em>??=</em> <span class="string">"default string"</span>;
-    <span class="type">Console</span>.WriteLine(s);
+    s ??= "default string";
+    Console.WriteLine(s);
 }
-</code></pre>
+```
 
 意味としては、`if (s == null) s = ...;` と同じになります。[キャッシュ用途](rm_nullusage.md#cache)に便利だったりします。
 
@@ -285,38 +285,38 @@ C# では、代入や複合代入自体も式になっています。
 `var z = (y += x);` という意味で評価されます。
 この時、ほとんどの場合、`y += x` の部分の結果の型は `y` の型になります。
 
-<pre class="source" title="複合代入の結果の型">
-<code><span class="reserved">byte</span> <span class="variable">x</span> = 1;
-<span class="reserved">byte</span> <span class="variable">y</span> = 2;
-<span class="reserved">var</span> <span class="variable">z</span> = (<span class="variable">y</span> += <span class="variable">x</span>); <span class="comment">// こう書くと y が byte なので z も byte に。</span>
-<span class="reserved">var</span> <span class="variable">w</span> = <span class="variable">y</span> + <span class="variable">x</span>;    <span class="comment">// この場合は int だったりする。C# の int 未満の整数の足し算結果は int になる。</span>
-</code></pre>
+```csharp
+byte x = 1;
+byte y = 2;
+var z = (y += x); // こう書くと y が byte なので z も byte に。
+var w = y + x;    // この場合は int だったりする。C# の int 未満の整数の足し算結果は int になる。
+```
 
 この点に関して、null 合体代入は例外的な挙動をします。
 というのも、`??` の最大の目的は「null だった時に何か有効な値に差し替える」というものなので、結果の型は非 null であってほしい場合がほとんどです。
 なので、`y ??= x` の結果の型は `y` の側ではなく、`x` の側から推論されます。
 
-<pre class="source" title="null 合体代入の戻り値は右辺から推論される">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
-<span class="reserved">string</span>? <span class="variable">s1</span> = <span class="reserved">null</span>;
-<span class="reserved">string</span> <span class="variable">s2</span> = <span class="variable">s1</span> ??= <span class="string">&quot;&quot;</span>; <span class="comment">// s1 に ? が付いていても、s1 ??= &quot;&quot; の結果は string。</span>
+```csharp
+#nullable enable
+string? s1 = null;
+string s2 = s1 ??= ""; // s1 に ? が付いていても、s1 ??= "" の結果は string。
  
-<span class="reserved">int</span>? <span class="variable">i1</span> = <span class="reserved">null</span>;
-<span class="reserved">int</span> <span class="variable">i2</span> = <span class="variable">i1</span> ??= 0; <span class="comment">// i1 に ? が付いていても、i1 ??= 0 の結果は int。</span>
+int? i1 = null;
+int i2 = i1 ??= 0; // i1 に ? が付いていても、i1 ??= 0 の結果は int。
  
-<span class="reserved">float</span>? <span class="variable">f1</span> = <span class="reserved">null</span>;
-<span class="reserved">float</span>? <span class="variable">f2</span> = <span class="reserved">null</span>;
-<span class="reserved">float</span>? <span class="variable">f3</span> = <span class="variable">f2</span> ??= <span class="variable">f1</span>; <span class="comment">// 右辺も null 許容なら結果の方も null 許容。</span>
-</code></pre>
+float? f1 = null;
+float? f2 = null;
+float? f3 = f2 ??= f1; // 右辺も null 許容なら結果の方も null 許容。
+```
 
 [キャッシュ用途](rm_nullusage.md#cache)で以下のような書き方をよくするため、こういう型決定ルールになっていないと使いにくくなります。
 
-<pre class="source" title="??= の結果からは ? が消えてほしい">
-<code><span class="reserved">public</span> <span class="type">T</span> Property =&gt; _cache ??= <span class="method">GetValue</span>();
-<span class="reserved">private</span> <span class="type">T</span>? _cache;
+```csharp
+public T Property => _cache ??= GetValue();
+private T? _cache;
  
-<span class="reserved">private</span> <span class="type">T</span> <span class="method">GetValue</span>()
+private T GetValue()
 {
-    <span class="comment">// 計算に時間がかかる処理</span>
+    // 計算に時間がかかる処理
 }
-</code></pre>
+```

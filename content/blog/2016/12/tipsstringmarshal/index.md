@@ -29,64 +29,64 @@ aliases: []
 
 変換なしでというか、ポインターがそのまま渡ります。例えば、以下のようなネイティブ コードがあったとします。受け取った文字列をすべて「a」の文字で上書きしてしまう関数です。
 
-<pre class="source" title="C#から呼び出したいC++コード">
-<code><span class="reserved">extern</span> <span class="string">"C"</span>
+```cpp
+extern "C"
 {
-    <span class="comment">// UTF-16 null終端文字列</span>
-    <span class="reserved">__declspec</span>(<span class="reserved">dllexport</span>) <span class="reserved">void</span> <span class="reserved">__stdcall</span> FillA16(<span class="reserved">wchar_t</span>* <span class="inactive">str</span>)
+    // UTF-16 null終端文字列
+    __declspec(dllexport) void __stdcall FillA16(wchar_t* str)
     {
-        <span class="reserved">for</span> (<span class="reserved">auto</span> p = <span class="inactive">str</span>; *p; p++)
+        for (auto p = str; *p; p++)
         {
-            *p = <span class="string">L'a'</span>;
+            *p = L'a';
         }
     }
 
-    <span class="comment">// ANSI null終端文字列</span>
-    <span class="reserved">__declspec</span>(<span class="reserved">dllexport</span>) <span class="reserved">void</span> <span class="reserved">__stdcall</span> FillA8(<span class="reserved">char</span>* <span class="inactive">str</span>)
+    // ANSI null終端文字列
+    __declspec(dllexport) void __stdcall FillA8(char* str)
     {
-        <span class="reserved">for</span> (<span class="reserved">auto</span> p = <span class="inactive">str</span>; *p; p++)
+        for (auto p = str; *p; p++)
         {
-            *p = <span class="string">'a'</span>;
+            *p = 'a';
         }
     }
 }
-</code></pre>
+```
 
 これを呼び出すC#コードは以下のようになります。
 
-<pre class="source" title="C++コードを呼び出すC#">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System;
+using System.Runtime.InteropServices;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 対 UTF-16。無変換で(ポインター渡しで)呼び出せる。</span>
-    <span class="comment">// CharSetで指定している「Unicode」はUTF-16のこと。</span>
-    [<span class="type">DllImport</span>(<span class="string">"Win32Dll.dll"</span>, CharSet = <span class="type">CharSet</span>.Unicode)]
-    <span class="reserved">extern</span> <span class="reserved">static</span> <span class="reserved">void</span> FillA16(<span class="reserved">string</span> s);
+    // 対 UTF-16。無変換で(ポインター渡しで)呼び出せる。
+    // CharSetで指定している「Unicode」はUTF-16のこと。
+    [DllImport("Win32Dll.dll", CharSet = CharSet.Unicode)]
+    extern static void FillA16(string s);
 
-    <span class="comment">// 対 ASCII。変換が必要。</span>
-    [<span class="type">DllImport</span>(<span class="string">"Win32Dll.dll"</span>, CharSet = <span class="type">CharSet</span>.Ansi)]
-    <span class="reserved">extern</span> <span class="reserved">static</span> <span class="reserved">void</span> FillA8(<span class="reserved">string</span> s);
+    // 対 ASCII。変換が必要。
+    [DllImport("Win32Dll.dll", CharSet = CharSet.Ansi)]
+    extern static void FillA8(string s);
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    public static void Main()
     {
-        <span class="type">Console</span>.WriteLine(GetValue());
+        Console.WriteLine(GetValue());
 
-        <span class="comment">// 変換が必要な方。</span>
-        <span class="comment">// コピーが書き換わるだけなので、s1 には影響なし。</span>
-        <span class="reserved">var</span> s1 = <span class="string">"awsedrftgyhu"</span>;
+        // 変換が必要な方。
+        // コピーが書き換わるだけなので、s1 には影響なし。
+        var s1 = "awsedrftgyhu";
         FillA8(s1);
-        <span class="type">Console</span>.WriteLine(s1); <span class="comment">// awsedrftgyhu</span>
+        Console.WriteLine(s1); // awsedrftgyhu
 
-        <span class="comment">// ポインターで渡る方。</span>
-        <span class="comment">// s2 はネイティブ コード側での書き換えの影響を受ける。</span>
-        <span class="reserved">var</span> s2 = <span class="string">"awsedrftgyhu"</span>;
+        // ポインターで渡る方。
+        // s2 はネイティブ コード側での書き換えの影響を受ける。
+        var s2 = "awsedrftgyhu";
         FillA16(s2);
-        <span class="type">Console</span>.WriteLine(s2); <span class="comment">// aaaaaaaaaaaa</span>
+        Console.WriteLine(s2); // aaaaaaaaaaaa
     }
 }
-</code></pre>
+```
 
 UTF-16なnull終端文字列に対してC#側から文字列を渡す場合、ポインター渡しになって、ネイティブ コード側での書き換えの影響を受けます。
 一方で、相手がANSI文字列(`char*`)の場合には、変換処理が走って、別途メモリが確保されてコピーするので、C++側で書き換えた結果は元の文字列に影響しません。

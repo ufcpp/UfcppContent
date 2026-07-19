@@ -32,24 +32,24 @@ C# Design Meeting でも、13向けのトリアージがちらほら始まりま
 
 C# 7.2 辺りから、以下のような「配列のアロケーションを消す」最適化が掛かります。
 
-<pre class="source" title="配列が消える">
-<span class="comment">// 定数だけで構成された byte 配列は最適化で消える。</span>
-<span class="comment">// new ReadOnlySpan&lt;byte&gt;(静的データのポインター, 4) みたいなコードに展開される。</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">data1</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="reserved">byte</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> };
+```csharp
+// 定数だけで構成された byte 配列は最適化で消える。
+// new ReadOnlySpan<byte>(静的データのポインター, 4) みたいなコードに展開される。
+ReadOnlySpan<byte> data1 = new byte[] { 1, 2, 3, 4 };
 
-<span class="comment">// .NET 7 までは byte, sbyte のみだったけど、 .NET 8 からはそれ以外の整数にも最適化がかかるように。</span>
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">data2</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="reserved">int</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> };
-</pre>
+// .NET 7 までは byte, sbyte のみだったけど、 .NET 8 からはそれ以外の整数にも最適化がかかるように。
+ReadOnlySpan<int> data2 = new int[] { 1, 2, 3, 4 };
+```
 
 けども、見た目はどう見ても配列を作っているので、たびたび「この配列を new するのもったいなくない？」という突っ込みが入りがちです。
 
 そこで、以下のような「ReadOnlySpan の初期化構文が欲しい」という話がありました。
 
-<pre class="source" title="Span 初期化構文(案)">
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">data1</span> <span class="operator">=</span> { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> };
+```csharp
+ReadOnlySpan<byte> data1 = { 1, 2, 3, 4 };
 
-<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">data2</span> <span class="operator">=</span> { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> };
-</pre>
+ReadOnlySpan<int> data2 = { 1, 2, 3, 4 };
+```
 
 ですが、C# 12 で入る予定の[コレクション式](../../1/collection-literal/index.md)がこれを兼ねるので、この `{}` を使った書き方はリジェクトになりました。
 
@@ -57,20 +57,20 @@ C# 7.2 辺りから、以下のような「配列のアロケーションを消�
 
 [#6247](https://github.com/dotnet/csharplang/issues/6247)
 
-<pre class="source" title="インジケーター案">
-<span class="comment">// こんな風に、raw string の先頭行に「文字列リテラルの中身が何か」を示すインジケーターを書きたいという案。</span>
-<span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="string">&quot;&quot;&quot;regex
+```csharp
+// こんな風に、raw string の先頭行に「文字列リテラルの中身が何か」を示すインジケーターを書きたいという案。
+var y = """regex
     \s+
-    &quot;&quot;&quot;</span>;
+    """;
 
-<span class="comment">// ちなみに今も、以下のように「文字列リテラル直前のコメントに lang = を付ける」という手段でインジケーターを書ける。</span>
-<span class="comment">// Visual Studio はこれを認識して色付けしたり補間したりしてくれる。</span>
+// ちなみに今も、以下のように「文字列リテラル直前のコメントに lang = を付ける」という手段でインジケーターを書ける。
+// Visual Studio はこれを認識して色付けしたり補間したりしてくれる。
 
-<span class="comment">// lang=regex</span>
-<span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="string">&quot;&quot;&quot;
+// lang=regex
+var y = """
     \s+
-    &quot;&quot;&quot;</span>;
-</pre>
+    """;
+```
 
 
 優先度付くほど強いモチベーションがなさげ。
@@ -125,11 +125,11 @@ Working set (作業中)。
 
 [#6926](https://github.com/dotnet/csharplang/issues/6926)
 
-<pre class="source" title="const is expression">
-<span class="reserved">const</span> <span class="reserved">int</span> <span class="constant"><span class="static">x</span></span> <span class="operator">=</span> <span class="number">123</span>;
-<span class="reserved">const</span> <span class="reserved">bool</span> <span class="static"><span class="constant">y</span></span> <span class="operator">=</span> <span class="constant">x</span> <span class="operator">==</span> <span class="number">0</span>; <span class="comment">// これは OK。const 同士に対する式の結果は const。</span>
-<span class="reserved">const</span> <span class="reserved">bool</span> <span class="static"><span class="constant">z</span></span> <span class="operator">=</span> <span class="error" title="CS0133"><span class="constant">x</span> <span class="reserved">is</span> <span class="number">0</span></span>; <span class="comment">// 今ダメ。 == が行けるんなら is も行けていいんじゃない？</span>
-</pre>
+```csharp
+const int x = 123;
+const bool y = x == 0; // これは OK。const 同士に対する式の結果は const。
+const bool z = x is 0; // 今ダメ。 == が行けるんなら is も行けていいんじゃない？
+```
 
 Any time (C# チーム内ではやらないけど、コミュニティ貢献受付はできる)。
 実際、[コミュニティ実装が始まってそう](https://github.com/dotnet/csharplang/pull/7589)。
@@ -163,16 +163,16 @@ Working set。
 
 .NET 8 の並々ならぬ努力の結果、JIT 最適化がだいぶ賢くなった。
 
-<pre class="source" title=".NET 8 の Utf8.TryWrite は UTF-16 → UTF-8 変換がほぼノーコスト">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>Unicode;
+```csharp
+using System.Text.Unicode;
 
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>;
-<span class="reserved">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">456</span>;
-<span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">dest</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">byte</span>[<span class="number">100</span>];
+int x = 123;
+int y = 456;
+Span<byte> dest = stackalloc byte[100];
 
-<span class="static"><span class="type">Utf8</span></span><span class="operator">.</span><span class="method"><span class="static">TryWrite</span></span>(<span class="variable">dest</span>, <span class="string">$&quot;</span><span class="string">UTF-8 補間 </span>{<span class="variable">x</span>}<span class="string"> </span>{<span class="variable">y</span>}<span class="string">&quot;</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">written</span>);
-<span class="comment">// ↑ 普通の(UTF-16 な)文字列補間だけど、JIT の努力によって UTF-16 → UTF-8 への変換がほぼノーコストに最適化される。</span>
-</pre>
+Utf8.TryWrite(dest, $"UTF-8 補間 {x} {y}", out var written);
+// ↑ 普通の(UTF-16 な)文字列補間だけど、JIT の努力によって UTF-16 → UTF-8 への変換がほぼノーコストに最適化される。
+```
 
 その結果、 `$""u8` の要求減った。
 Backlog 行き。
@@ -212,26 +212,26 @@ div rem にはいろいろ種類があるんで、メソッド名とかメソッ
 代わりにライブラリ追加の提案が runtime の方で進みそう ([#93568](https://github.com/dotnet/runtime/issues/93568))。
 ↓提案内容。
 
-<pre class="source" title="">
-<span class="reserved">namespace</span> System<span class="operator">.</span>Numerics;
+```csharp
+namespace System.Numerics;
 
-<span class="reserved">public</span> <span class="reserved">enum</span> <span class="type">DivisionRounding</span>
+public enum DivisionRounding
 {
-    Truncate <span class="operator">=</span> <span class="number">0</span>,        <span class="comment">// Towards Zero</span>
-    Floor <span class="operator">=</span> <span class="number">1</span>,           <span class="comment">// Towards -Infinity</span>
-    Ceiling <span class="operator">=</span> <span class="number">2</span>,         <span class="comment">// Towards +Infinity</span>
-    AwayFromZero <span class="operator">=</span> <span class="number">3</span>,    <span class="comment">// Away from Zero</span>
-    Euclidean <span class="operator">=</span> <span class="number">4</span>,       <span class="comment">// floor(x / abs(n)) * sign(n)</span>
+    Truncate = 0,        // Towards Zero
+    Floor = 1,           // Towards -Infinity
+    Ceiling = 2,         // Towards +Infinity
+    AwayFromZero = 3,    // Away from Zero
+    Euclidean = 4,       // floor(x / abs(n)) * sign(n)
 }
 
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">interface</span> <span class="type">IBinaryInteger</span>&lt;<span class="type param">TSelf</span>&gt;
+public partial interface IBinaryInteger<TSelf>
 {
-    <span class="comment">// Existing:</span>
-    <span class="reserved">static</span> <span class="reserved">virtual</span> (<span class="type param">TSelf</span> Quotient, <span class="type param">TSelf</span> Remainder) <span class="method"><span class="static">DivRem</span></span>(<span class="type param">TSelf</span> <span class="variable local">left</span>, <span class="type param">TSelf</span> <span class="variable local">right</span>);
+    // Existing:
+    static virtual (TSelf Quotient, TSelf Remainder) DivRem(TSelf left, TSelf right);
 
-    <span class="comment">// Proposed:</span>
-    <span class="reserved">static</span> <span class="reserved">virtual</span> <span class="type param">TSelf</span> <span class="static"><span class="method">Divide</span></span>(<span class="type param">TSelf</span> <span class="variable local">left</span>, <span class="type param">TSelf</span> <span class="variable local">right</span>, <span class="type">DivisionRounding</span> <span class="variable local">mode</span>);
-    <span class="reserved">static</span> <span class="reserved">virtual</span> (<span class="type param">TSelf</span> Quotient, <span class="type param">TSelf</span> Remainder) <span class="static"><span class="method">DivRem</span></span>(<span class="type param">TSelf</span> <span class="variable local">left</span>, <span class="type param">TSelf</span> <span class="variable local">right</span>, <span class="type">DivisionRounding</span> <span class="variable local">mode</span>);
-    <span class="reserved">static</span> <span class="reserved">virtual</span> <span class="type param">TSelf</span> <span class="method"><span class="static">Remainder</span></span>(<span class="type param">TSelf</span> <span class="variable local">left</span>, <span class="type param">TSelf</span> <span class="variable local">right</span>, <span class="type">DivisionRounding</span> <span class="variable local">mode</span>);
+    // Proposed:
+    static virtual TSelf Divide(TSelf left, TSelf right, DivisionRounding mode);
+    static virtual (TSelf Quotient, TSelf Remainder) DivRem(TSelf left, TSelf right, DivisionRounding mode);
+    static virtual TSelf Remainder(TSelf left, TSelf right, DivisionRounding mode);
 }
-</pre>
+```

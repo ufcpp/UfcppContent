@@ -34,20 +34,20 @@ aliases:
 
 例えば、ActualLibraryという名前のライブラリがあって、この中に以下のようなクラスが定義されているとします。
 
-<pre class="source" title="ActualLibrary中">
-<code><reserved></span><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Class1</span>
+```csharp
+public class Class1
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name =&gt; GetType().Assembly.GetName().Name + <span class="string">" / "</span> + <span class="reserved">nameof</span>(<span class="type">Class1</span>);
+    public string Name => GetType().Assembly.GetName().Name + " / " + nameof(Class1);
 }
-</code></pre>
+```
 
 このActualLibraryを参照して、以下のような.csファイルを含む、TypeForwardingLibraryという名前のライブラリを作ります。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-[<span class="reserved">assembly</span>: <span class="type">TypeForwardedTo</span>(<span class="reserved">typeof</span>(<span class="type">Class1</span>))]
-</code></pre>
+[assembly: TypeForwardedTo(typeof(Class1))]
+```
 
 これで、アプリが「TypeForwardingLibraryにあるはずのClass1」を使おうとすると、
 実際には「ActualLibraryで定義されたClass1」が返ってきます。

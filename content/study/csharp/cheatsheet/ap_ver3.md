@@ -78,11 +78,11 @@ C# 3.0 の新機能には、関数型言語や動的言語が由来と思われ�
 var キーワードを用いて、
 暗黙的に型付けされたローカル変数（Implicitly typed local variables）を定義できるようになりました。
 
-<pre class="source" title="var" lang="">
-<code><span class="reserved">var</span> n = <span class="literal">1</span>;
-<span class="reserved">var</span> x = <span class="literal">1.0</span>;
-<span class="reserved">var</span> s = <span class="literal">"test"</span>;
-</code></pre>
+```csharp
+var n = 1;
+var x = 1.0;
+var s = "test";
+```
 
 
 
@@ -91,24 +91,24 @@ var キーワードを用いて、
 以下のような構文で、
 クラスやインターフェースに対してインスタンスメソッドを擬似的に追加できるようになりました。
 
-<pre class="source" title="拡張メソッドの定義" lang="">
-<code><span class="reserved">static class</span> <span class="type">StringExtensions</span>
+```csharp
+static class StringExtensions
 {
-  <span class="reserved">public static string</span> ToggleCase(<span class="reserved"><em>this</em> string</span> s)
-  <span class="input">中身省略</span>
+  public static string ToggleCase(this string s)
+  中身省略
 }
-</code></pre>
+```
 
 
 このようにして定義したメソッドは、
 通常通り、静的メソッドとして呼び出すこともできますが、
 あたかも string 型のインスタンスメソッドであるかのように呼び出せるようになります。
 
-<pre class="source" title="拡張メソッドの呼び出し" lang="">
-<code><span class="reserved">string</span> s = <span class="literal">"This Is a Test String."</span>;
-<span class="reserved">string</span> s1 = <span class="type">StringExtensions</span>.ToggleCase(s); <span class="comment">// 通常の呼び出し方。</span>
-<span class="reserved">string</span> s1 = <em>s.ToggleCase()</em>;                 <span class="comment">// 拡張メソッド呼び出し。</span>
-</code></pre>
+```csharp
+string s = "This Is a Test String.";
+string s1 = StringExtensions.ToggleCase(s); // 通常の呼び出し方。
+string s1 = s.ToggleCase();                 // 拡張メソッド呼び出し。
+```
 
 
 
@@ -117,31 +117,31 @@ var キーワードを用いて、
 関数型言語でよく使うような記法で匿名メソッドを定義できるようになりました。
 この機能をラムダ式と呼びます。
 
-<pre class="source" title="ラムダ式" lang="">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt; p = <em>n =&gt; n &gt; <span class="literal">0</span></em>;
-</code></pre>
+```csharp
+Func<int, bool> p = n => n > 0;
+```
 
 
 この式は、以下のような匿名メソッド同じ意味になります。
 
-<pre class="source" title="C# 2.0 の匿名メソッド" lang="">
-<code><span class="reserved">delegate</span>(<span class="reserved">int</span> n)
+```csharp
+delegate(int n)
 {
-  <span class="reserved">return</span> n &gt; <span class="literal">0</span>;
+  return n > 0;
 }
-</code></pre>
+```
 
 
 さらに、ラムダ式は式木データとしても利用可能です。
 ラムダ式をデリゲートに代入すると匿名メソッド（実行コード）として、
 Expression 型に代入すると式木データとしてコンパイルされます。
 
-<pre class="source" title="ラムダ式をデータとして扱う" lang="">
-<code><span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">bool</span>&gt;&gt; e = n =&gt; n &gt; <span class="literal">0</span>;
-<span class="type">BinaryExpression</span> lt = (<span class="type">BinaryExpression</span>)e.Body;
-<span class="type">ParameterExpression</span> en = (<span class="type">ParameterExpression</span>)lt.Left;
-<span class="type">ConstantExpression</span> zero = (<span class="type">ConstantExpression</span>)lt.Right;
-</code></pre>
+```csharp
+Expression<Func<int, bool>> e = n => n > 0;
+BinaryExpression lt = (BinaryExpression)e.Body;
+ParameterExpression en = (ParameterExpression)lt.Left;
+ConstantExpression zero = (ConstantExpression)lt.Right;
+```
 
 
 
@@ -149,35 +149,35 @@ Expression 型に代入すると式木データとしてコンパイルされま
 
 オブジェクトの初期化を以下のような記法でできるようになりました。
 
-<pre class="source" title="オブジェクト初期化子" lang="">
-<code><span class="type">Point</span> p = <span class="reserved">new</span> <span class="type">Point</span>{ X = <span class="literal">0</span>, Y = <span class="literal">1</span> };
-</code></pre>
+```csharp
+Point p = new Point{ X = 0, Y = 1 };
+```
 
 
 ちなみに、このコードは以下のようなコードと等価です。
 
-<pre class="source" title="オブジェクト初期化子" lang="">
-<code><span class="type">Point</span> p = <span class="reserved">new</span> <span class="type">Point</span>();
-p.X = <span class="literal">0</span>;
-p.Y = <span class="literal">1</span>;
-</code></pre>
+```csharp
+Point p = new Point();
+p.X = 0;
+p.Y = 1;
+```
 
 
 また、コレクションの初期化を以下のような記法でできるようになりました。
 
-<pre class="source" title="コレクション初期化子" lang="">
-<code><span class="type">List</span>&lt;<span class="reserved">int</span>&gt; list = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt; {<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>};
-</code></pre>
+```csharp
+List<int> list = new List<int> {1, 2, 3};
+```
 
 
 こちらは以下のようなコードと等価です。
 
-<pre class="source" title="コレクション初期化子" lang="">
-<code><span class="type">List</span>&lt;<span class="reserved">int</span>&gt; list = <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="reserved">int</span>&gt;();
-list.Add(<span class="literal">1</span>);
-list.Add(<span class="literal">2</span>);
-list.Add(<span class="literal">3</span>);
-</code></pre>
+```csharp
+List<int> list = new List<int>();
+list.Add(1);
+list.Add(2);
+list.Add(3);
+```
 
 
 
@@ -186,9 +186,9 @@ list.Add(<span class="literal">3</span>);
 匿名型（anonymous type）を作成できるようになりました。
 匿名型の作り方は以下の通りです。
 
-<pre class="source" title="匿名型" lang="">
-<code><span class="reserved">var</span> x = <span class="reserved">new</span> { FamilyName = <span class="literal">"糸色"</span>, FirstName=<span class="literal">"望"</span>};
-</code></pre>
+```csharp
+var x = new { FamilyName = "糸色", FirstName="望"};
+```
 
 
 
@@ -197,9 +197,9 @@ list.Add(<span class="literal">3</span>);
 new で配列を作成する際、
 型を省略できるようになりました。
 
-<pre class="source" title="配列の暗黙的型付け" lang="">
-<code><span class="reserved">int</span>[] array = <em><span class="reserved">new</span>[] {<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span>}</em>;
-</code></pre>
+```csharp
+int[] array = new[] {1, 2, 3, 4};
+```
 
 
 
@@ -224,37 +224,37 @@ C# 等の言語に SQL ライクなデータベース操作構文を組み込む
 というものです。
 例えば、以下のような書き方ができます。
 
-<pre class="source" title="C# 3.0 LINQ" lang="">
-<code><span class="reserved">var</span> 学生名簿 =
-<span class="reserved">new</span>[] {
-  <span class="reserved">new</span> {学生番号 = <span class="literal">14</span>, 姓 = <span class="literal">"風浦"</span>, 名 = <span class="literal">"可符香"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">20</span>, 姓 = <span class="literal">"小森"</span>, 名 = <span class="literal">"霧"</span>    },
-  <span class="reserved">new</span> {学生番号 = <span class="literal">22</span>, 姓 = <span class="literal">"常月"</span>, 名 = <span class="literal">"まとい"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">19</span>, 姓 = <span class="literal">"小節"</span>, 名 = <span class="literal">"あびる"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">18</span>, 姓 = <span class="literal">"木村"</span>, 名 = <span class="literal">"カエレ"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">16</span>, 姓 = <span class="literal">"音無"</span>, 名 = <span class="literal">"芽留"</span>  },
-  <span class="reserved">new</span> {学生番号 = <span class="literal">17</span>, 姓 = <span class="literal">"木津"</span>, 名 = <span class="literal">"千里"</span>  },
-  <span class="reserved">new</span> {学生番号 = <span class="literal"> 8</span>, 姓 = <span class="literal">"関内"</span>, 名 = <span class="literal">"マリア"</span>},
-  <span class="reserved">new</span> {学生番号 = <span class="literal">28</span>, 姓 = <span class="literal">"日塔"</span>, 名 = <span class="literal">"奈美"</span>  },
+```csharp
+var 学生名簿 =
+new[] {
+  new {学生番号 = 14, 姓 = "風浦", 名 = "可符香"},
+  new {学生番号 = 20, 姓 = "小森", 名 = "霧"    },
+  new {学生番号 = 22, 姓 = "常月", 名 = "まとい"},
+  new {学生番号 = 19, 姓 = "小節", 名 = "あびる"},
+  new {学生番号 = 18, 姓 = "木村", 名 = "カエレ"},
+  new {学生番号 = 16, 姓 = "音無", 名 = "芽留"  },
+  new {学生番号 = 17, 姓 = "木津", 名 = "千里"  },
+  new {学生番号 =  8, 姓 = "関内", 名 = "マリア"},
+  new {学生番号 = 28, 姓 = "日塔", 名 = "奈美"  },
 };
 
-<span class="reserved">var</span> 学籍番号前半名 =
-  <span class="reserved">from</span> p <span class="reserved">in</span> 学生名簿
-  <span class="reserved">where</span> p.学生番号 &lt;= <span class="literal">15</span>
-  <span class="reserved">orderby</span> p.学生番号
-  <span class="reserved">select</span> p.名;
+var 学籍番号前半名 =
+  from p in 学生名簿
+  where p.学生番号 <= 15
+  orderby p.学生番号
+  select p.名;
 
-<span class="reserved">foreach</span>(<span class="reserved">var</span> 名 <span class="reserved">in</span> 学籍番号前半名)
+foreach(var 名 in 学籍番号前半名)
 {
-  <span class="type">Console</span>.Write(<span class="literal">"{0}\n"</span>, 名);
+  Console.Write("{0}\n", 名);
 }
-</code></pre>
+```
 
 
-<pre class="console" title="C# 3.0 LINQ の例、実行結果">
+```console
 マリア
 可符香
-</pre>
+```
 
 
 詳細は「[LINQ](../data/sp3_linq.md)」と「[標準クエリ演算子（クエリ式関係）](../data/sp3_stdquery.md)」で説明します。
@@ -281,22 +281,22 @@ C# 3.0 では、
 
 例えば、
 
-<pre class="source" title="プロパティの set/get の省略" lang="">
-<code><span class="reserved">public string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-</code></pre>
+```csharp
+public string Name { get; set; }
+```
 
 
 というように、
 <code>get; set;</code> とだけ書いておくと、
 
-<pre class="source" title="set/get の自動生成結果" lang="">
-<code><span class="reserved">private string</span> __name;
-<span class="reserved">public string</span> Name
+```csharp
+private string __name;
+public string Name
 {
-  <span class="reserved">get</span> { <span class="reserved">return this</span>.__name; }
-  <span class="reserved">set</span> { <span class="reserved">this</span>.__name = value; }
+  get { return this.__name; }
+  set { this.__name = value; }
 }
-</code></pre>
+```
 
 
 というようなコードに相当するものが自動的に生成されます。
@@ -316,22 +316,22 @@ C# 3.0 では、
 
 例えば、まずクラスの部分定義で以下のようなコードを書いたとします。
 
-<pre class="source" title="パーシャルメソッドの宣言" lang="">
-<code><span class="reserved">partial class</span> <span class="type">Program</span>
+```csharp
+partial class Program
 {
-  <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+  static void Main(string[] args)
   {
     OnBeginProgram();
 
-    <span class="type">Console</span>.Write(<span class="literal">"program body\n"</span>);
+    Console.Write("program body\n");
 
     OnEndProgram();
   }
 
-  <span class="reserved">static partial void</span> OnBeginProgram();
-  <span class="reserved">static partial void</span> OnEndProgram();
+  static partial void OnBeginProgram();
+  static partial void OnEndProgram();
 }
-</code></pre>
+```
 
 
 この状態でプログラムをコンパイル → 実行すると、「program body」の文字だけが表示されます。
@@ -339,30 +339,30 @@ C# 3.0 では、
 ここで、以下のような部分定義を追加して、
 パーシャルメソッドに実装を与えます。
 
-<pre class="source" title="パーシャルメソッドに実装を追加" lang="">
-<code><span class="reserved">partial class</span> Program
+```csharp
+partial class Program
 {
-  <span class="reserved">static partial void</span> OnBeginProgram()
+  static partial void OnBeginProgram()
   {
-    <span class="type">Console</span>.Write(<span class="literal">"check pre-condition\n"</span>);
+    Console.Write("check pre-condition\n");
   }
 
-  <span class="reserved">static partial void</span> OnEndProgram()
+  static partial void OnEndProgram()
   {
-    <span class="type">Console</span>.Write(<span class="literal">"check post-condition\n"</span>);
+    Console.Write("check post-condition\n");
   }
 }
-</code></pre>
+```
 
 
 すると、OnBeginProgram、OnEndProgram が呼ばれるようになります。
 実行結果は以下の通り。
 
-<pre class="console" title="パーシャルメソッド実装追加後の実行結果">
+```console
 check pre-condition
 program body
 check post-condition
-</pre>
+```
 
 
 利用場面としては、

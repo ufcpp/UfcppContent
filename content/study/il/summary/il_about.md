@@ -28,7 +28,7 @@ MSIL（Microsoft Intermediate Language）や CIL（Common intermediate language�
 
 ## <a id="sec-generated-title-2"></a> <a id="mechanism"></a>.NET の仕組み
 
-<pre>
+```text
 いくつか、用語を説明
 
 C# など → IL → ネイティブ コード
@@ -40,7 +40,7 @@ Pre-JIT（NGen）
 特に、Windows 8/.NET 4.5 では Auto-NGen
 
 マシン語（数値化した IL）と、アセンブリ言語（human-readable な IL 表現）
-</pre>
+```
 C#をはじめとする、.NET対応言語は、.NETの仮想マシンが直接解釈できるILマシン語にコンパイルされます。アプリやライブラリは、このILの状態で配布します。
 
 一般的な（仮想マシンか実CPUか問わず）実行環境と同様に、ILには、マシン語と1対1に対応していて、ある程度人間でも読めるような言語（アセンブリ言語）が定義されています。
@@ -50,7 +50,7 @@ ILは、.NET Frameworkの仮想マシンによって、都度、ネイティブ 
 
 ## <a id="sec-generated-title-3"></a> <a id="why"></a>なぜ IL
 
-<pre>
+```text
 ・コンパイラー作る側の都合
 
 C# などの高級言語の専門家と、
@@ -67,40 +67,40 @@ CPU ごとに高度な最適化をしようと思うと、
 ・メタデータ
 これは IL だからというわけでもなく、COM なんかでもそうだけど
 メタデータを持ちたい
-</pre>
+```
 
 ## <a id="sec-generated-title-4"></a> <a id="assembly"></a>.NET アセンブリ
 
 C#などのソース コードのコンパイル結果、つまり、.NET向けの実行可能形式（exe）やライブラリ（dll）を総称して、.NETアセンブリ（assembly）と言います。
 
 アセンブリの中には、メタデータ（型情報や属性）と、ILコードが入っています。
-<pre>
+```text
 図を入れる
-</pre>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="metadata"></a>メタデータ
 
-<pre class="source" title="C#" lang="">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Sample</span>
+```csharp
+public class Sample
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">string</span> _name;
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span> { <span class="reserved">return</span> _name; } }
+    private readonly string _name;
+    public string Name { get { return _name; } }
 
-    <span class="reserved">public</span> <span class="reserved">int</span> Value { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int Value { get; set; }
 
-    <span class="reserved">public</span> Sample(<span class="reserved">string</span> name, <span class="reserved">int</span> value = 0)
+    public Sample(string name, int value = 0)
     {
         _name = name;
         Value = value;
     }
 }
-</code></pre>
+```
 
 
 メタデータの例:
 
-<pre class="source" title="IL" lang="">
-<code>.class public auto ansi beforefieldinit Sample
+```cil
+.class public auto ansi beforefieldinit Sample
        extends [mscorlib]System.Object
 {
 }
@@ -118,15 +118,15 @@ C#などのソース コードのコンパイル結果、つまり、.NET向け�
   .set instance void Sample::set_Value(int32)
 }
 
-<span class="input">...後略...</span>
-</code></pre>
+...後略...
+```
 
 
 どのクラスがどういうメンバーを持っていてとか、そういう情報が全部アセンブリ内に残る。
 
 これはアセンブリ言語表現の IL。
 実際にアセンブリに入るのは、この情報をバイナリ化したもの。
-<pre>
+```text
 . から始まる行がメタデータ定義
 
 TypeDef （リフレクションで使うような型全部の情報）と
@@ -136,14 +136,14 @@ TypeRef （型の弁別情報だけ）
 （クラスとかが生成されてるわけじゃない。IL レベルにある。）
 
 ジェネリック
-</pre>
+```
 
 ## <a id="sec-generated-title-6"></a> <a id="metadata"></a>IL 命令
 
 IL コードの例:
 
-<pre class="source" title="IL" lang="">
-<code>.method public hidebysig specialname rtspecialname 
+```cil
+.method public hidebysig specialname rtspecialname 
         instance void  .ctor(string name,
                              [opt] int32 'value') cil managed
 {
@@ -159,7 +159,7 @@ IL コードの例:
   IL_000f:  call       instance void Sample::set_Value(int32)
   IL_0014:  ret
 }
-</code></pre>
+```
 
 
 IL_0000 とかはラベル。制御フローに使う。
@@ -171,7 +171,7 @@ ldarg.0 とかが IL 命令。
 いくつか紹介。
 アセンブリ言語 ⇔ マシン語 対応表込みで。
 例えば ldarg.0 なら0x02。
-<pre>
+```text
 スタック型マシン
 任意の型を受け付けるスタック
 （＋ ローカル変数テーブル、引数テーブル）
@@ -198,4 +198,4 @@ case の数次第で、if-else 相当コードか、ジャンプ テーブルに
 ガベコレ
 
 ネイティブ interop
-</pre>
+```

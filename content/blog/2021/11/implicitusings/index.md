@@ -20,9 +20,9 @@ aliases: []
 
 何回か話してはいるんですが、 .NET 6 SDK から、C# プロジェクトのテンプレートの初期状態が以下のような(コメントを除けば)1行だけのソースコードになっています。
 
-<pre class="source" title="新コンソール アプリ テンプレート">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">"Hello, World!"</span>);
-</code></pre>
+```csharp
+Console.WriteLine("Hello, World!");
+```
 
 C# コンパイラーとしては [global using](../../../../study/csharp/cheatsheet/ap_ver10.md#global-using) という文法を追加したわけですが、
 わざわざ C# の文法として追加した(コンパイル オプションにはしなかった)のは [Source Generator](../../../../study/csharp/misc/analyzer-generator.md) を使って global using を生成するような手法も取れるようにするためです。
@@ -59,24 +59,24 @@ Web アプリの場合は `Microsoft.AspNetCore.*`、`Microsoft.Extensions.*`、
 これを .NET 6 にアップデートしたら、「`Select` が `System.Linq` と `MyExtensions` の2か所にあって弁別できない」というエラーが起き得ます。
 (実際、Preview 7 の頃はエラーになりました。)
 
-<pre class="source" title="自前 LINQ で global using が競合する例">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> MyExtensions;
+```csharp
+using System;
+using MyExtensions;
 
-<span class="reserved">var</span> <span class="variable">result</span> = <span class="reserved">new</span>[] { 1, 2, 3, 4 }.Select(<span class="variable">x</span> =&gt; <span class="variable">x</span> * <span class="variable">x</span>);
+var result = new[] { 1, 2, 3, 4 }.Select(x => x * x);
 
-<span class="reserved">namespace</span> MyExtensions
+namespace MyExtensions
 {
-    <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Enumerable</span>
+    static class Enumerable
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="type">T2</span>&gt; <span class="method">Select</span>&lt;<span class="type">T1</span>, <span class="type">T2</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">T1</span>&gt; <span class="variable">array</span>, <span class="type">Func</span>&lt;<span class="type">T1</span>, <span class="type">T2</span>&gt; <span class="variable">selector</span>)
+        public static IEnumerable<T2> Select<T1, T2>(this IEnumerable<T1> array, Func<T1, T2> selector)
         {
-            <span class="comment">// 実装は省略。</span>
-            <span class="control">return</span> <span class="reserved">null</span>!;
+            // 実装は省略。
+            return null!;
         }
     }
 }
-</code></pre>
+```
 
 わざわざ `Select` を自作する人は少ないかもしれませんが、
 例えば、「これまで標準でなかったから `MinBy`、`MaxBy` を自作していた。これらが .NET 6 で標準入りした」みたいな衝突は割かし起こるんじゃないかと思います。
@@ -88,25 +88,25 @@ Web アプリの場合は `Microsoft.AspNetCore.*`、`Microsoft.Extensions.*`、
 ということで、明示的に設定を追加したときだけ「global using の自動追加」が働くように変更されました。
 具体的には、csproj に以下の1行(`ImplicitUsings` オプションが true もしくは enable)があるときにだけ自動追加が働きます。
 
-<pre class="xsource" title="ImplicitUsings">
-<code>    &lt;</span><span class="element">ImplicitUsings</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">ImplicitUsings</span><span class="attvalue">&gt;</span>
-</code></pre>
+```xml
+    <ImplicitUsings>enable</ImplicitUsings>
+```
 
 で、この行は、.NET 6 SDK を使って新規プロジェクトを作成すると、初期状態で入っています。
 .NET 6 SDK の、例えばコンソール アプリの csproj の初期状態は以下のような感じ。
 
-<pre class="xsource" title=".NET 6 で dotnet new console した直後の csproj の中身">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>Exe<span class="attvalue">&lt;/</span><span class="element">OutputType</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>net6.0<span class="attvalue">&lt;/</span><span class="element">TargetFramework</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">ImplicitUsings</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">ImplicitUsings</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 ## Using オプション
 
@@ -122,19 +122,18 @@ Web アプリの場合は `Microsoft.AspNetCore.*`、`Microsoft.Extensions.*`、
 例えば以下のように書くと、`System.Text.RegularExpressions` 名前空間が追加されて(`Regex` クラスなどが使える)、
 `System.Linq` 名前空間が削除されます(自前 LINQ との衝突がなくなる)。
 
-<pre class="xsource" title="Using タグの例">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue"> </span><span class="attribute">Sdk</span><span class="attvalue">=</span>&quot;<span class="attvalue">Microsoft.NET.Sdk</span>&quot;<span class="attvalue">&gt;</span>
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <span class="comment">他の設定は省略</span>
+  他の設定は省略
 
-<span class="attvalue">  &lt;</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Using</span><span class="attvalue"> </span><span class="attribute">Include</span><span class="attvalue">=</span>&quot;<span class="attvalue">System.Text.RegularExpressions</span>&quot;<span class="attvalue">/&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Using</span><span class="attvalue"> </span><span class="attribute">Remove</span><span class="attvalue">=</span>&quot;<span class="attvalue">System.Linq</span>&quot;<span class="attvalue">/&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">ItemGroup</span><span class="attvalue">&gt;</span>
+  <ItemGroup>
+    <Using Include="System.Text.RegularExpressions"/>
+    <Using Remove="System.Linq"/>
+  </ItemGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-
-</code></pre>
+</Project>
+```
 
 ## 全域一括 ImplicitUsings
 
@@ -147,16 +146,16 @@ Web アプリの場合は `Microsoft.AspNetCore.*`、`Microsoft.Extensions.*`、
 そのファイルがあるフォルダー配下にある全 csproj に対して設定が有効化されます。
 なので、リポジトリのルート フォルダーに以下の内容で `Directory.Build.props` ファイルを置いておけば、リポジトリ全域に対して `ImplicitUsings` と `Enullable` が有効化されます。
 
-<pre class="xsource" title="お薦め Directory.Build.props">
-<code><span class="attvalue">&lt;</span><span class="element">Project</span><span class="attvalue">&gt;</span>
+```xml
+<Project>
  
-<span class="attvalue">  &lt;</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">ImplicitUsings</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">ImplicitUsings</span><span class="attvalue">&gt;</span>
-<span class="attvalue">    &lt;</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>enable<span class="attvalue">&lt;/</span><span class="element">Nullable</span><span class="attvalue">&gt;</span>
-<span class="attvalue">  &lt;/</span><span class="element">PropertyGroup</span><span class="attvalue">&gt;</span>
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
  
-<span class="attvalue">&lt;/</span><span class="element">Project</span><span class="attvalue">&gt;</span>
-</code></pre>
+</Project>
+```
 
 新規リポジトリにはこのファイルを置いておいていいんじゃないでしょうか。
 (`ImplicitUsings` に関しては既存リポジトリに対しても、前述のような名前の衝突は経験上、数千～数万行に1個くらいしか起きない程度なので割かし追加しちゃっていいと思います。)

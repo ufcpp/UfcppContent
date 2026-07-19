@@ -27,74 +27,76 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;symbol name="name"&gt;&lt;/symbol&gt;
-</pre>
+```xml
+<symbol name="name"></symbol>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;symbol n="forall"/&gt;x s.t. &lt;symbol n="vtheta"/&gt;&lt;paren&gt;x&lt;/paren&gt; &lt;op&gt;=&lt;/op&gt; 0
-
-</pre><div class="math"><span class="normal">∀</span>x s.t. <span class="normal">ϑ</span><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span> <op>=</op> 0
+```xml
+<symbol n="forall"/>x s.t. <symbol n="vtheta"/><paren>x</paren> <op>=</op> 0
+```
+<div class="math"><span class="normal">∀</span>x s.t. <span class="normal">ϑ</span><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span> <op>=</op> 0
 
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:math//ufcpp:symbol|ufcpp:math//ufcpp:sym|ufcpp:Math//ufcpp:symbol|ufcpp:Math//ufcpp:sym"&gt;
-&lt;xsl:variable name="n"&gt;&lt;xsl:choose&gt;&lt;xsl:when test="@name != ''"&gt;&lt;xsl:value-of select="@name"/&gt;&lt;/xsl:when&gt;&lt;xsl:otherwise&gt;&lt;xsl:value-of select="@n"/&gt;&lt;/xsl:otherwise&gt;&lt;/xsl:choose&gt;&lt;/xsl:variable&gt;
+```xml
+<xsl:template match="ufcpp:math//ufcpp:symbol|ufcpp:math//ufcpp:sym|ufcpp:Math//ufcpp:symbol|ufcpp:Math//ufcpp:sym">
+<xsl:variable name="n"><xsl:choose><xsl:when test="@name != ''"><xsl:value-of select="@name"/></xsl:when><xsl:otherwise><xsl:value-of select="@n"/></xsl:otherwise></xsl:choose></xsl:variable>
 
-&lt;span class="normal"&gt;
-&lt;xsl:choose&gt;
- &lt;xsl:when test="$n = 'forall'"&gt;&amp;#8704;&lt;/xsl:when&gt;&lt;!--∀--&gt;
- &lt;xsl:when test="$n = 'exist'"&gt;&amp;#8707;&lt;/xsl:when&gt;&lt;!--∃--&gt;
- &lt;xsl:when test="$n = 'partial'"&gt;&amp;#8706;&lt;/xsl:when&gt;&lt;!--∂--&gt;
- &lt;xsl:when test="$n = 'part'"&gt;&amp;#8706;&lt;/xsl:when&gt;&lt;!--∂--&gt;
- &lt;xsl:when test="$n = 'nabla'"&gt;&amp;#8711;&lt;/xsl:when&gt;&lt;!--∇--&gt;
- &lt;xsl:when test="$n = 'infinity'"&gt;&amp;#8734;&lt;/xsl:when&gt;&lt;!--∞--&gt;
- &lt;xsl:when test="$n = 'infty'"&gt;&amp;#8734;&lt;/xsl:when&gt;&lt;!--∞--&gt;
- &lt;xsl:when test="$n = 'infin'"&gt;&amp;#8734;&lt;/xsl:when&gt;&lt;!--∞--&gt;
- &lt;xsl:when test="$n = 'ang'"&gt;&amp;#8736;&lt;/xsl:when&gt;&lt;!--∠--&gt;
- &lt;xsl:when test="$n = 'therefore'"&gt;&amp;#8756;&lt;/xsl:when&gt;&lt;!--∴--&gt;
- &lt;xsl:when test="$n = 'because'"&gt;&amp;#8757;&lt;/xsl:when&gt;&lt;!--∵--&gt;
+<span class="normal">
+<xsl:choose>
+ <xsl:when test="$n = 'forall'">&#8704;</xsl:when><!--∀-->
+ <xsl:when test="$n = 'exist'">&#8707;</xsl:when><!--∃-->
+ <xsl:when test="$n = 'partial'">&#8706;</xsl:when><!--∂-->
+ <xsl:when test="$n = 'part'">&#8706;</xsl:when><!--∂-->
+ <xsl:when test="$n = 'nabla'">&#8711;</xsl:when><!--∇-->
+ <xsl:when test="$n = 'infinity'">&#8734;</xsl:when><!--∞-->
+ <xsl:when test="$n = 'infty'">&#8734;</xsl:when><!--∞-->
+ <xsl:when test="$n = 'infin'">&#8734;</xsl:when><!--∞-->
+ <xsl:when test="$n = 'ang'">&#8736;</xsl:when><!--∠-->
+ <xsl:when test="$n = 'therefore'">&#8756;</xsl:when><!--∴-->
+ <xsl:when test="$n = 'because'">&#8757;</xsl:when><!--∵-->
 
- &lt;xsl:when test="$n = 'empty'"&gt;&amp;#8709;&lt;/xsl:when&gt;&lt;!--∅--&gt;
- &lt;xsl:when test="$n = 'weierp'"&gt;&amp;#8472;&lt;/xsl:when&gt;&lt;!--℘--&gt;
- &lt;xsl:when test="$n = 'image'"&gt;&amp;#8465;&lt;/xsl:when&gt;&lt;!--ℑ--&gt;
- &lt;xsl:when test="$n = 'real'"&gt;&amp;#8476;&lt;/xsl:when&gt;&lt;!--ℜ--&gt;
- &lt;xsl:when test="$n = 'alef'"&gt;&amp;#8501;&lt;/xsl:when&gt;&lt;!--ℵ--&gt;
- &lt;xsl:when test="$n = 'planck'"&gt;&amp;#x210F;&lt;/xsl:when&gt;&lt;!--ℏ--&gt;
+ <xsl:when test="$n = 'empty'">&#8709;</xsl:when><!--∅-->
+ <xsl:when test="$n = 'weierp'">&#8472;</xsl:when><!--℘-->
+ <xsl:when test="$n = 'image'">&#8465;</xsl:when><!--ℑ-->
+ <xsl:when test="$n = 'real'">&#8476;</xsl:when><!--ℜ-->
+ <xsl:when test="$n = 'alef'">&#8501;</xsl:when><!--ℵ-->
+ <xsl:when test="$n = 'planck'">&#x210F;</xsl:when><!--ℏ-->
 
- &lt;!-- ellipsis --&gt;
- &lt;xsl:when test="$n = 'dots'"&gt;&amp;#x22EF;&lt;/xsl:when&gt;&lt;!--⋯--&gt;
- &lt;xsl:when test="$n = 'vdots'"&gt;&amp;#x22EE;&lt;/xsl:when&gt;&lt;!--⋮--&gt;
- &lt;xsl:when test="$n = 'updots'"&gt;&amp;#x22F0;&lt;/xsl:when&gt;&lt;!--⋰--&gt;
- &lt;xsl:when test="$n = 'downdots'"&gt;&amp;#x22F1;&lt;/xsl:when&gt;&lt;!--⋱--&gt;
+ <!-- ellipsis -->
+ <xsl:when test="$n = 'dots'">&#x22EF;</xsl:when><!--⋯-->
+ <xsl:when test="$n = 'vdots'">&#x22EE;</xsl:when><!--⋮-->
+ <xsl:when test="$n = 'updots'">&#x22F0;</xsl:when><!--⋰-->
+ <xsl:when test="$n = 'downdots'">&#x22F1;</xsl:when><!--⋱-->
 
- &lt;!--ギリシャ文字異字体--&gt;
- &lt;xsl:when test="$n = 'vbeta'"&gt;&amp;#976;&lt;/xsl:when&gt;
- &lt;xsl:when test="$n = 'vepsilon'"&gt;&amp;#8714;&lt;/xsl:when&gt;
- &lt;xsl:when test="$n = 'vtheta'"&gt;&amp;#977;&lt;/xsl:when&gt;
- &lt;xsl:when test="$n = 'vkappa'"&gt;&amp;#1008;&lt;/xsl:when&gt;
- &lt;xsl:when test="$n = 'vpi'"&gt;&amp;#982;&lt;/xsl:when&gt;
- &lt;xsl:when test="$n = 'vrho'"&gt;&amp;#1009;&lt;/xsl:when&gt;
- &lt;xsl:when test="$n = 'vsigma'"&gt;&amp;#962;&lt;/xsl:when&gt;
- &lt;xsl:when test="$n = 'vphi'"&gt;&amp;#981;&lt;/xsl:when&gt;
+ <!--ギリシャ文字異字体-->
+ <xsl:when test="$n = 'vbeta'">&#976;</xsl:when>
+ <xsl:when test="$n = 'vepsilon'">&#8714;</xsl:when>
+ <xsl:when test="$n = 'vtheta'">&#977;</xsl:when>
+ <xsl:when test="$n = 'vkappa'">&#1008;</xsl:when>
+ <xsl:when test="$n = 'vpi'">&#982;</xsl:when>
+ <xsl:when test="$n = 'vrho'">&#1009;</xsl:when>
+ <xsl:when test="$n = 'vsigma'">&#962;</xsl:when>
+ <xsl:when test="$n = 'vphi'">&#981;</xsl:when>
 
- &lt;xsl:otherwise&gt;
-  &lt;xsl:value-of select="text()"/&gt;
- &lt;/xsl:otherwise&gt;
-&lt;/xsl:choose&gt;
-&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+ <xsl:otherwise>
+  <xsl:value-of select="text()"/>
+ </xsl:otherwise>
+</xsl:choose>
+</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.normal
+```css
+span.normal
 {
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

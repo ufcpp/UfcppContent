@@ -58,18 +58,18 @@ aliases:
 
 簡単な例を上げてみましょう。以下のようなコードをライブラリ化することを考えます。
 
-<pre class="source" title="fluent interface な算術演算ライブラリ">
-<code><reserved></span><span class="reserved">namespace</span> FluentArithmetic
+```csharp
+namespace FluentArithmetic
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">FluentExtensions</span>
+    public static class FluentExtensions
     {
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Add(<span class="reserved">this</span> <span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x + y;
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Sub(<span class="reserved">this</span> <span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x - y;
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Mul(<span class="reserved">this</span> <span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x * y;
-        <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">int</span> Div(<span class="reserved">this</span> <span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; x / y;
+        public static int Add(this int x, int y) => x + y;
+        public static int Sub(this int x, int y) => x - y;
+        public static int Mul(this int x, int y) => x * y;
+        public static int Div(this int x, int y) => x / y;
     }
 }
-</code></pre>
+```
 
 `a + b - c` などと書く代わりに、`a.Add(b).Sub(c)` と書けるようにするコードです。特に使い道はないんですが、「ライブラリ固有の事情」の説明にはなかなか手頃だと思います。
 

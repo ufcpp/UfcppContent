@@ -425,7 +425,7 @@ G ＝ <span class="paren" style="font-size:em;">{</span>x | ∃y ∈ R, x ＝ a 
 
 ## <a id="sec-generated-title-12"></a> <a id="plan"></a>執筆予定
 
-<pre>
+```text
 ・部分群
 
 ・巡回群とかの説明もここ？
@@ -433,4 +433,4 @@ G ＝ <span class="paren" style="font-size:em;">{</span>x | ∃y ∈ R, x ＝ a 
 ある元 a があって、
 全ての元が a の冪で書き表せるとき、その群を巡回群という。
 a のことは生成元という。
-</pre>
+```

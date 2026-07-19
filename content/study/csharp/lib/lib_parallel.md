@@ -46,63 +46,51 @@ Parallel クラスは Invoke、For、ForEach の3つの静的メソッドを持�
 	<tr>
 		<td markdown="1">Invoke</td>
 		<td markdown="1">
-<pre class="source" title="3つのメソッドを逐次呼び出し" lang="">
-<code>A();
+<pre class="source" title="3つのメソッドを逐次呼び出し" lang=""><code class="language-csharp">A();
 B();
-C();
-</code></pre>
+C();</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="3つのメソッドを並列呼び出し" lang="">
-<code><span class="type">Parallel</span>.Invoke(A, B, C);
-</code></pre>
+<pre class="source" title="3つのメソッドを並列呼び出し" lang=""><code class="language-csharp">Parallel.Invoke(A, B, C);</code></pre>
 
 </td>
 	</tr>
 	<tr>
 		<td markdown="1">For</td>
 		<td markdown="1">
-<pre class="source" title="0～N まで逐次処理" lang="">
-<code><span class="reserved">for</span> (<span class="reserved">int</span> i = 0; i &lt; N; i++)
+<pre class="source" title="0～N まで逐次処理" lang=""><code class="language-csharp">for (int i = 0; i &lt; N; i++)
 {
-    <span class="type">Console</span>.WriteLine(i * i);
-}
-</code></pre>
+    Console.WriteLine(i * i);
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="0～N まで並列処理" lang="">
-<code><span class="type">Parallel</span>.For(0, N, i =&gt;
+<pre class="source" title="0～N まで並列処理" lang=""><code class="language-csharp">Parallel.For(0, N, i =&gt;
 {
-    <span class="type">Console</span>.WriteLine(i * i);
-});
-</code></pre>
+    Console.WriteLine(i * i);
+});</code></pre>
 
 </td>
 	</tr>
 	<tr>
 		<td markdown="1">ForEach</td>
 		<td markdown="1">
-<pre class="source" title="data の要素を逐次列挙" lang="">
-<code><span class="reserved">var</span> data = <span class="type">Enumerable</span>.Range(0, N);
+<pre class="source" title="data の要素を逐次列挙" lang=""><code class="language-csharp">var data = Enumerable.Range(0, N);
  
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+foreach (var x in data)
 {
-    <span class="type">Console</span>.WriteLine(x * x);
-}
-</code></pre>
+    Console.WriteLine(x * x);
+}</code></pre>
 
 </td>
 		<td markdown="1">
-<pre class="source" title="data の要素を並列列挙" lang="">
-<code><span class="reserved">var</span> data = <span class="type">Enumerable</span>.Range(0, N);
+<pre class="source" title="data の要素を並列列挙" lang=""><code class="language-csharp">var data = Enumerable.Range(0, N);
  
-<span class="type">Parallel</span>.ForEach(data, x =&gt;
+Parallel.ForEach(data, x =&gt;
 {
-    <span class="type">Console</span>.WriteLine(x * x);
-});
-</code></pre>
+    Console.WriteLine(x * x);
+});</code></pre>
 
 </td>
 	</tr>
@@ -115,30 +103,30 @@ C();
 例えば、以下のような処理は、単に foreach 文を Parallel.ForEach メソッドに置き換えるだけでなく、
 ロックが必要です。
 
-<pre class="source" title="和を求める" lang="">
-<code><span class="reserved">var</span> data = <span class="type">Enumerable</span>.Range(0, N);
+```csharp
+var data = Enumerable.Range(0, N);
  
-<span class="reserved">var</span> sum = 0;
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+var sum = 0;
+foreach (var x in data)
 {
     sum += x;
 }
-<span class="type">Console</span>.WriteLine(sum);
-</code></pre>
+Console.WriteLine(sum);
+```
 
 
 以下のように、sum += x の部分にロックを掛けます。
 
-<pre class="source" title="Parallel.ForEach で和を求める" lang="">
-<code><span class="reserved">var</span> data = <span class="type">Enumerable</span>.Range(0, N);
+```csharp
+var data = Enumerable.Range(0, N);
  
-<span class="reserved">var</span> sum = 0;
-<span class="type">Parallel</span>.ForEach(data, x =&gt;
+var sum = 0;
+Parallel.ForEach(data, x =>
 {
-    <span class="reserved">lock</span> (data) sum += x;
+    lock (data) sum += x;
 });
-<span class="type">Console</span>.WriteLine(sum);
-</code></pre>
+Console.WriteLine(sum);
+```
 
 
 ロック自体がそれなりにオーバーヘッドのかかる処理なので、
@@ -152,11 +140,11 @@ System.Linq 名前空間に ParallelEnumerable というクラスが追加され
 このクラスで定義されている AsParallel 拡張メソッドを使えば、LINQ クエリを並列化できます。
 （データ ソースに対して .AsParallel() を付けるだけです。）
 
-<pre class="source" title="AsParallel を使ってデータ処理の並列化" lang="">
-<code><span class="reserved">var</span> data = <span class="type">Enumerable</span>.Range(0, N);
-<span class="reserved">var</span> sqSum = data.<em>AsParallel()</em>.Sum(x =&gt; x * x);
-<span class="type">Console</span>.WriteLine(sqSum);
-</code></pre>
+```csharp
+var data = Enumerable.Range(0, N);
+var sqSum = data.AsParallel().Sum(x => x * x);
+Console.WriteLine(sqSum);
+```
 
 
 必要な「[排他制御](../async/sp_thread.md#exclusive)」は適宜ライブラリ内で行ってくれるので、
@@ -168,25 +156,25 @@ Parallel クラスを使うよりも、こちらを使う方がおすすめで�
 例えば、1つ前の要素を参照したいというような場合、
 以下のように書いてしまいがちです。
 
-<pre class="source" title="階差の最大値を求める処理" lang="">
-<code><span class="comment">// 1つ前の値を保存しておく</span>
-<span class="reserved">var</span> prev = data.First();
-<span class="reserved">var</span> max = <span class="reserved">int</span>.MinValue;
-<span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data.Skip(1))
+```csharp
+// 1つ前の値を保存しておく
+var prev = data.First();
+var max = int.MinValue;
+foreach (var x in data.Skip(1))
 {
-    <span class="comment">// 階差の最大値</span>
-    max = <span class="type">Math</span>.Max(x - prev, max);
+    // 階差の最大値
+    max = Math.Max(x - prev, max);
     prev = x;
 }
-</code></pre>
+```
 
 
 並列化したい場合、必ずしも順序の保証がないので、prev = x; では「1つ前の要素を保存」という処理になりません。
 以下のような工夫が必要になります。
 
-<pre class="source" title="" lang="">
-<code><span class="comment">// 1項ずらしたデータ ストリームと Zip</span>
-<span class="reserved">var</span> difference = data.Zip(data.Skip(1), (i, j) =&gt; j - i);
-<span class="comment">// そのあと、AsParallel</span>
-<span class="reserved">var</span> max = difference.AsParallel().Max();
-</code></pre>
+```csharp
+// 1項ずらしたデータ ストリームと Zip
+var difference = data.Zip(data.Skip(1), (i, j) => j - i);
+// そのあと、AsParallel
+var max = difference.AsParallel().Max();
+```

@@ -41,23 +41,23 @@ aliases: []
 
 ということで、角度θを360度ちゃんと求めるためには、x, y、すなわち、cos, sinの両方の値が必要です。実際、`Atan2`は大体以下のような感じの分岐をしています。
 
-<pre class="source" title="Atan2 の中身(抜粋)">
-<code><span class="reserved">static</span> <span class="reserved">double</span> Atan2(<span class="reserved">double</span> y, <span class="reserved">double</span> x)
+```csharp
+static double Atan2(double y, double x)
 {
-    <span class="reserved">var</span> z = <span class="type">Math</span>.Atan(<span class="type">Math</span>.Abs(y / x));
-    <span class="reserved">if</span> (x &gt; 0)
+    var z = Math.Atan(Math.Abs(y / x));
+    if (x > 0)
     {
-        <span class="reserved">if</span> (y &gt; 0) <span class="reserved">return</span> z;
-        <span class="reserved">else</span> <span class="reserved">return</span> -z;
+        if (y > 0) return z;
+        else return -z;
     }
-    <span class="reserved">else</span>
+    else
     {
-        <span class="reserved">if</span> (y &gt; 0) <span class="reserved">return</span> <span class="type">Math</span>.PI - z;
-        <span class="reserved">else</span> <span class="reserved">return</span> z - <span class="type">Math</span>.PI;
+        if (y > 0) return Math.PI - z;
+        else return z - Math.PI;
     }
-    <span class="comment">// ほんとは0, infinity, NaN の場合分けあり</span>
+    // ほんとは0, infinity, NaN の場合分けあり
 }
-</code></pre>
+```
 
 ## 2点のなす角
 

@@ -149,8 +149,8 @@ PowerShell には本来、クラスを定義するための構文がありませ
 ですが、ちょっとしたライブラリを書くことで、
 以下のような構文でクラスもどきを作ることができます。
 
-<pre class="source" title="PowerShell で擬似クラス定義" lang="">
-<code>Def-Class Point {
+```powershell
+Def-Class Point {
   var x
   var y
 
@@ -170,7 +170,7 @@ PowerShell には本来、クラスを定義するための構文がありませ
     $_.y = $a * $_.y
   }
 }
-</code></pre>
+```
 
 
 メンバー変数として x, y を持っていて、
@@ -179,8 +179,8 @@ PowerShell には本来、クラスを定義するための構文がありませ
 
 このクラスを利用する側は以下のような感じ。
 
-<pre class="source" title="PowerShell で擬似クラス利用" lang="">
-<code>$x = New-Instance Point
+```powershell
+$x = New-Instance Point
 $y = New-Instance Point 3 4
 
 function show($x)
@@ -193,7 +193,7 @@ show $y
 
 Call-Method $y scale 2
 show $y
-</code></pre>
+```
 
 
 （PowerShell in Action って本にこういう話があるらしい。
@@ -332,15 +332,15 @@ VB9 では、（C# 3.0 にも追加された）LINQ に加えて、
 「XML 統合」もありました。
 要するに、以下のような感じで VB のソースコード中に XML を埋め込むことができます。
 
-<pre class="source" title="VB9 の XML 埋め込み" lang="">
-<code>Dim doc = 
-  &lt;configuration&gt;
-    &lt;window
-      width=<span class="literal">"480"</span>
-      height=<span class="literal">"360"</span>
-      /&gt;
-  &lt;/configuration&gt;
-</code></pre>
+```vbnet
+Dim doc = 
+  <configuration>
+    <window
+      width="480"
+      height="360"
+      />
+  </configuration>
+```
 
 
 こういう書き方で、XDocument 型のインスタンスが生成されるみたい。
@@ -408,19 +408,19 @@ Fortress の構文拡張では、まず、
 SQL のパーサ parseSql 関数を書くとします。
 そして、以下のようにして、syntax expander を定義します。
 
-<pre class="source" title="Fortress の syntax expander" lang="">
-<code>syntax sql e end = parseSql(e)
-</code></pre>
+```csharp
+syntax sql e end = parseSql(e)
+```
 
 
 すると、
 Fortress のソース中に、以下のような構文が書けるようになります。
 
-<pre class="source" title="自作構文の利用" lang="">
-<code>sql
+```csharp
+sql
   SELECT x FROM points
 end
-</code></pre>
+```
 
 
 sql ～ end の間のブロックの中身が parseSql 関数に渡されて、

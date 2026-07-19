@@ -19,13 +19,13 @@ aliases: []
 
 もう、割かし以下の利用例1個で説明終わりな感じ。
 
-<pre class="source" title="main: 属性">
-<code>[<span class="reserved"><em>main</em></span>: <span class="type">STAThread</span>]
+```csharp
+[main: STAThread]
 
-<span class="reserved">using</span> System.Windows;
+using System.Windows;
 
-<span class="type">Clipboard</span>.<span class="method">SetData</span>(<span class="type">DataFormats</span>.Text, <span class="type">Environment</span>.OSVersion.<span class="method">ToString</span>());
-</code></pre>
+Clipboard.SetData(DataFormats.Text, Environment.OSVersion.ToString());
+```
 
 今、これと同じことをしようと思ったら、これだけのために `class Program { static void Main() { } }` が必要です。
 

@@ -26,25 +26,25 @@ aliases: []
 
 現状ではコンパイル エラーになる以下のコードを書けるようにしようという話です。
 
-<pre class="source" title="構造体の引数なしコンストラクターとフィールド初期化子">
-<code><span class="reserved">struct</span> <span class="type">S1</span>
+```csharp
+struct S1
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X;
-    <span class="reserved">public</span> <span class="reserved">int</span> Y;
+    public int X;
+    public int Y;
  
-    <span class="reserved">public</span> <span class="type">S1</span>() <span class="comment">// これとか</span>
+    public S1() // これとか
     {
         X = 1;
         Y = 2;
     }
 }
  
-<span class="reserved">struct</span> <span class="type">S2</span>
+struct S2
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X = 1;
-    <span class="reserved">public</span> <span class="reserved">int</span> Y = 2; <span class="comment">// この2行とか</span>
+    public int X = 1;
+    public int Y = 2; // この2行とか
 }
-</code></pre>
+```
 
 C# 6.0 の頃に一度採用しようとしたものの、`Activator.CreateInstance` のバグを踏んでしまって取りやめになっていました。
 (6・7年前の話ですが、まあ、覚えている方も中にはいらっしゃるかも。)
@@ -100,13 +100,13 @@ C# 6.0 でこの話が出た時、なんで即座に実装できなかったと�
 実際には多分、無意識に使っています。
 と言うのも、ジェネリクスの `new()` 制約を付けた型を実際に `new T()` すると、内部的に `Activator.CreateInstance<T>()` が呼ばれます。
 
-<pre class="source" title="new() 制約付きの型 T に対する new T()">
-<code><span class="reserved">class</span> <span class="type">C</span>&lt;<span class="type">T</span>&gt;
-    <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>()
+```csharp
+class C<T>
+    where T : new()
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> <span class="method">M</span>() =&gt; <span class="reserved">new</span> <span class="type">T</span>(); <span class="comment">// これが実は Activator.CreateInstanct&lt;T&gt;() になってる。</span>
+    public static T M() => new T(); // これが実は Activator.CreateInstanct<T>() になってる。
 }
-</code></pre>
+```
 
 C# 6.0 でこの問題に気づいたあとすぐに `CreateInstance` は修正されて、
 今はちゃんと「構造体でも引数なしコンストラクターがある場合はそれを呼ぶ」という実装に変更されています。
@@ -126,37 +126,37 @@ C# 9.0 で追加された[レコード型](../../../2020/6/record0609/index.md)(
 C# 9.0 のレコード型では、例えば以下のような書き方ができます。
 型名の直後の `()` はプライマリ コンストラクターとか呼ばれています。
 
-<pre class="source" title="プライマリ コンストラクターの例">
-<code><span class="comment">// プライマリ コンストラクター</span>
-<span class="reserved">record</span> <span class="type">A</span>(<span class="reserved">int</span> <span class="variable">x</span>)
+```csharp
+// プライマリ コンストラクター
+record A(int x)
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; } = <span class="variable">x</span>;
+    public int X { get; init; } = x;
 }
  
-<span class="comment">// 引数なしプライマリ コンストラクター</span>
-<span class="reserved">record</span> <span class="type">B</span>() : <span class="type">A</span>(1)
+// 引数なしプライマリ コンストラクター
+record B() : A(1)
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; } = 2;
+    public int Y { get; init; } = 2;
 }
-</code></pre>
+```
 
 これと同じようなことをしたいんだから、自然と、record struct でも以下のような書き方もできてほしくなります。
 
-<pre class="source" title="record struct でも引数なしプライマリ コンストラクター">
-<code><span class="reserved">record</span> <span class="reserved">struct</span> <span class="type">S</span>()
+```csharp
+record struct S()
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; } = 1;
+    public int X { get; init; } = 1;
 }
-</code></pre>
+```
 
 まあ、record struct は単なる契機であって、元から以下のような書き方をしたいという要望はずっと昔からあります。
 
-<pre class="source" title="普通の構造体でもフィールド初期化子">
-<code><span class="reserved">struct</span> <span class="type">S</span>
+```csharp
+struct S
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X = 1;
+    public int X = 1;
 }
-</code></pre>
+```
 
 はい、いいタイミングなのでやりましょう(いまここ)。
 
@@ -175,21 +175,21 @@ C# 9.0 のレコード型では、例えば以下のような書き方ができ�
 
 以下のようなコードはダメだそうです。
 
-<pre class="source" title="アクセシビリティの問題">
-<code><span class="reserved">internal</span> <span class="reserved">struct</span> <span class="type">Internal</span> { }
+```csharp
+internal struct Internal { }
  
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">PublicContainsInternal</span>
+public struct PublicContainsInternal
 {
-    <span class="reserved">private</span> <span class="type">Internal</span> _internal;
+    private Internal _internal;
  
-    <span class="comment">// このコンストラクターが Internal 構造体よりも広いアクセシビリティなのでダメ。</span>
-    <span class="comment">// internal とか private なら OK。</span>
-    <span class="error"><span class="reserved">public</span> <span class="type">PublicContainsInternal</span>()</span>
+    // このコンストラクターが Internal 構造体よりも広いアクセシビリティなのでダメ。
+    // internal とか private なら OK。
+    public PublicContainsInternal()
     {
-        _internal = <span class="reserved">new</span>();
+        _internal = new();
     }
 }
-</code></pre>
+```
 
 引数なしコンストラクターの有無で `new T()` の意味が変わるので、既存の型への引数なしコンストラクター追加は破壊的変更になります。
 なので、より広い範囲に公開されてしまうコンストラクターがあると問題を起こしかねないので禁止とのこと。
@@ -199,10 +199,10 @@ C# 9.0 のレコード型では、例えば以下のような書き方ができ�
 これまで、構造体は無条件に `new T()` できていました。
 なので、以下のようなメソッドを書いて、`CreateStruct<T>()` を呼んで実行できないケースは全くありませんでした。
 
-<pre class="source" title="C# 9.0 までなら絶対に大丈夫なコード">
-<code><span class="reserved">static</span> <span class="type">T</span> <span class="method">CreateNew</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">new</span>() =&gt; <span class="reserved">new</span> <span class="type">T</span>();
-<span class="reserved">static</span> <span class="type">T</span> <span class="method">CreateStruct</span>&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="method">CreateNew</span>&lt;<span class="type">T</span>&gt;();
-</code></pre>
+```csharp
+static T CreateNew<T>() where T : new() => new T();
+static T CreateStruct<T>() where T : struct => CreateNew<T>();
+```
 
 一方で、`Activator.CreateInstance<T>()` は `T` 型の引数なしコンストラクターが public でないと例外を起こします。
 ということで、もし、C# 10.0 で非 public な引数なしコンストラクターを定義した構造体に対して上記の `CreateStruct<T>()` を呼ぶと実行時に `MissingMethod` 例外が出るようになります。
@@ -213,38 +213,38 @@ C# 9.0 のレコード型では、例えば以下のような書き方ができ�
 C# のオプション引数で、構造体な引数は `default(T)` だけを既定値設定できます。
 例えば以下のようなコードは `new TimeSpan(0)` のところだけコンパイル エラーになります。
 
-<pre class="source" title="オプション引数に default(T) は渡せても new T(...) は渡せない">
-<code><span class="reserved">void</span> <span class="method">M</span>(
-    <span class="reserved">int</span> <span class="variable">x</span> = 1, <span class="comment">// 組み込み型の場合は const にできるもの何でも OK</span>
-    <span class="type">CancellationToken</span> <span class="variable">c</span> = <span class="reserved">default</span>, <span class="comment">// default だけは渡せる。この行も OK。</span>
-    <span class="type">TimeSpan</span> <span class="variable">t</span> = <span class="error"><span class="reserved">new</span> <span class="type">TimeSpan</span>(0)</span> <span class="comment">// これはダメ。一見定数にできそうに見えてもダメ。</span>
+```csharp
+void M(
+    int x = 1, // 組み込み型の場合は const にできるもの何でも OK
+    CancellationToken c = default, // default だけは渡せる。この行も OK。
+    TimeSpan t = new TimeSpan(0) // これはダメ。一見定数にできそうに見えてもダメ。
     )
 {
 }
-</code></pre>
+```
 
 ここで問題になるのは、昔は `new T()` と `default(T)` は全く同じ意味だったという点。
 ということで、以下のコードは有効な C# コードになります。
 
-<pre class="source" title="new T() と default(T) が同じ意味なので OK">
-<code><span class="reserved">void</span> <span class="method">M</span>(
-    <span class="type">CancellationToken</span> <span class="variable">c</span> = <span class="reserved">new</span>() <span class="comment">// new T() と default(T) が同じ意味なので OK。</span>
+```csharp
+void M(
+    CancellationToken c = new() // new T() と default(T) が同じ意味なので OK。
     )
 {
 }
-</code></pre>
+```
 
 で、C# 10.0 では「引数なしコンストラクターを持っている構造体に対しては `new T()` の意味が変わるので…
 以下のような状態になります。
 
-<pre class="source" title="引数なしコンストラクターを追加すると破壊的変更になる例">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="type">S</span> <span class="variable">s</span> = <span class="reserved">new</span>()) <span class="comment">// S に引数なしコンストラクターを足したらコンパイル エラーになる。</span>
+```csharp
+void M(S s = new()) // S に引数なしコンストラクターを足したらコンパイル エラーになる。
 {
 }
  
-<span class="reserved">struct</span> <span class="type">S</span>
+struct S
 {
-    <span class="reserved">int</span> x;
-    <span class="reserved">public</span> <span class="type">S</span>() =&gt; x = 1; <span class="comment">// この行の有無で M がコンパイルできるかどうか変わる。</span>
+    int x;
+    public S() => x = 1; // この行の有無で M がコンパイルできるかどうか変わる。
 }
-</code></pre>
+```

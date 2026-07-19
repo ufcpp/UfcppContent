@@ -37,29 +37,29 @@ aliases:
 `Span<T>` 構造体自身にも `ref` 修飾子がついています。
 そして、`ref`構造体をフィールドとして持てるのは`ref`構造体だけです。
 
-<pre class="source" title="ref構造体を持てるのはref構造体だけ">
-<code><span class="comment">// Span&lt;T&gt; は ref 構造体になっている</span>
-<span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Span</span>&lt;<span class="type">T</span>&gt; { ... }
+```csharp
+// Span<T> は ref 構造体になっている
+public readonly ref struct Span<T> { ... }
 
-<span class="comment">// ref 構造体を持てるのは ref 構造体だけ</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">RefStruct</span>
+// ref 構造体を持てるのは ref 構造体だけ
+ref struct RefStruct
 {
-    <span class="reserved">private</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; _span; <span class="comment">//OK</span>
+    private Span<int> _span; //OK
 }
-</code></pre>
+```
 
 逆に言うと、`ref` 修飾子がついていない構造体や、クラスは`ref`構造体をフィールドとして持てません。
 
-<pre class="source" title="">
-<code><span class="comment">// NG。構造体以外を「ref 型」にはできない</span>
-<span class="reserved">ref</span> <span class="reserved"><span class="error">class</span></span> <span class="type">InvalidClass</span> { }
+```csharp
+// NG。構造体以外を「ref 型」にはできない
+ref class InvalidClass { }
 
-<span class="comment">// ref がついていない普通の構造体は ref 構造体を持てない</span>
-<span class="reserved">struct</span> <span class="type">NonRefStruct</span>
+// ref がついていない普通の構造体は ref 構造体を持てない
+struct NonRefStruct
 {
-    <span class="reserved">private</span> <span class="error"><span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;</span> _span; <span class="comment">//NG</span>
+    private Span<int> _span; //NG
 }
-</code></pre>
+```
 
 そして、以下で説明する制約は、`Span<T>` 構造体だけでなく、すべての `ref` 構造体に対して掛かります。
 
@@ -73,67 +73,67 @@ aliases:
 - ローカルで確保したものは返せません
 - 引数などを介して多段に参照している場合、コードをたどって大元が安全かまで調べます
 
-<pre class="source" title="戻り値に返せるかどうか">
-<code><span class="comment">// 引数で受け取ったものは戻り値で返せる</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; Success(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x) =&gt; x;
+```csharp
+// 引数で受け取ったものは戻り値で返せる
+private static Span<int> Success(Span<int> x) => x;
 
-<span class="comment">// ローカルで確保したもの変数はダメ</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; Error()
+// ローカルで確保したもの変数はダメ
+private static Span<int> Error()
 {
-    <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[1];
-    <span class="reserved">return</span> <span class="error">x</span>;
+    Span<int> x = stackalloc int[1];
+    return x;
 }
 
-<span class="comment">// 多段の場合も元をたどって出所を調べてくれる</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; Success(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x, <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; y)
+// 多段の場合も元をたどって出所を調べてくれる
+private static Span<int> Success(Span<int> x, Span<int> y)
 {
-    <span class="reserved">var</span> r1 = x;
-    <span class="reserved">var</span> r2 = y;
-    <span class="reserved">var</span> r3 = r1.Length &gt;= r2.Length ? r1 : r2;
+    var r1 = x;
+    var r2 = y;
+    var r3 = r1.Length >= r2.Length ? r1 : r2;
 
-    <span class="comment">// r3 は出所をたどると引数の x か y</span>
-    <span class="comment">// x も y も引数なので大丈夫</span>
-    <span class="reserved">return</span> r3;
+    // r3 は出所をたどると引数の x か y
+    // x も y も引数なので大丈夫
+    return r3;
 }
 
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; Error(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x, <span class="reserved">int</span> n)
+private static Span<int> Error(Span<int> x, int n)
 {
-    <span class="reserved">var</span> r1 = x;
-    <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; r2 = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[n];
-    <span class="reserved">var</span> r3 = r1.Length &gt;= r2.Length ? r1 : r2;
+    var r1 = x;
+    Span<int> r2 = stackalloc int[n];
+    var r3 = r1.Length >= r2.Length ? r1 : r2;
 
-    <span class="comment">// r2 がローカルなのでダメ</span>
-    <span class="reserved">return</span> <span class="error">r3</span>;
+    // r2 がローカルなのでダメ
+    return r3;
 }
-</code></pre>
+```
 
 ちなみに、上記の`Error`と似たようなコードでも、以下のコードはコンパイルできます。
 ちゃんと「メモリ確保があったかどうか」を見ていて、「`default`であれば何も確保していない」という判定もしています。
 
-<pre class="source" title="default は何も確保しない">
-<code><span class="comment">// ちゃんと「メモリ確保」があったかどうかを見てる</span>
-<span class="comment">// 同じようなコードでもこれは OK (default だと何も確保しない)</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; Success1()
+```csharp
+// ちゃんと「メモリ確保」があったかどうかを見てる
+// 同じようなコードでもこれは OK (default だと何も確保しない)
+private static Span<int> Success1()
 {
-    <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x = <span class="reserved">default</span>;
-    <span class="reserved">return</span> x;
+    Span<int> x = default;
+    return x;
 }
-</code></pre>
+```
 
 このルールは、`ref`構造体と、`ref`引数・`ref`戻り値の間でも働きます。
 例えば、引数由来の `Span<T>`から得た`ref T`な参照は戻り値にできますが、ローカル由来のものはできません。
 
-<pre class="source" title="Span&gt;T&lt;とref T">
-<code><span class="comment">// 引数で受け取った Span 由来の ref 戻り値は返せる</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> Success(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x) =&gt; <span class="reserved">ref</span> x[0];
+```csharp
+// 引数で受け取った Span 由来の ref 戻り値は返せる
+private static ref int Success(Span<int> x) => ref x[0];
 
-<span class="comment">// ローカルで確保した Span 由来の ref 戻り値はダメ</span>
-<span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> Error()
+// ローカルで確保した Span 由来の ref 戻り値はダメ
+private static ref int Error()
 {
-    <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[1];
-    <span class="reserved">return</span> <span class="reserved">ref</span> <span class="error">x</span>[0];
+    Span<int> x = stackalloc int[1];
+    return ref x[0];
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="readonly-ref"></a>readonly ref
 
@@ -142,43 +142,43 @@ C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readon
 
 例えば以下のコードを見てください。
 
-<pre class="source" title="readonly修飾とref構造体">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// ref だけ</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">RefToSpan</span>
+// ref だけ
+ref struct RefToSpan
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; _span;
-    <span class="reserved">public</span> RefToSpan(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; span) =&gt; _span = span;
+    private readonly Span<int> _span;
+    public RefToSpan(Span<int> span) => _span = span;
 
-    <span class="comment">// 例え _span に readonly が付いていても、this 書き換えが可能</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Method(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; span) { <span class="reserved">this</span> = <span class="reserved">new</span> RefToSpan(span); }
+    // 例え _span に readonly が付いていても、this 書き換えが可能
+    public void Method(Span<int> span) { this = new RefToSpan(span); }
 }
 
-<span class="comment">// readonly ref</span>
-<span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">RORefToSpan</span>
+// readonly ref
+readonly ref struct RORefToSpan
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; _span;
-    <span class="reserved">public</span> <span class="reserved">void</span> Method(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; span) { }
+    private readonly Span<int> _span;
+    public void Method(Span<int> span) { }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> LocalToRef(<span class="type">RefToSpan</span> r)
+    public static void LocalToRef(RefToSpan r)
     {
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; local = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[1];
-        <span class="error">r.Method(local)</span>; <span class="comment">// ここでエラーになる。r の中身が書き換えられることで、local が外に漏れる可能性を危惧</span>
+        Span<int> local = stackalloc int[1];
+        r.Method(local); // ここでエラーになる。r の中身が書き換えられることで、local が外に漏れる可能性を危惧
 
-        <span class="comment">// 注: この例の場合は実際には漏れはしないものの、RefToSpan の作り次第なので保証はできない</span>
+        // 注: この例の場合は実際には漏れはしないものの、RefToSpan の作り次第なので保証はできない
     }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> LocalToRORef(<span class="type">RORefToSpan</span> r)
+    public static void LocalToRORef(RORefToSpan r)
     {
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; local = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[1];
-        r.Method(local); <span class="comment">// readonly ref に対してなら OK</span>
+        Span<int> local = stackalloc int[1];
+        r.Method(local); // readonly ref に対してなら OK
     }
 }
-</code></pre>
+```
 
 ローカルで定義した`Span<T>`を、引数で渡ってきた`ref`構造体のメソッドに対して渡しています。
 この場合、`readonly`がついている場合にだけコンパイルできます。
@@ -194,17 +194,17 @@ C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readon
 例えば、以下のコードは不正で、実行時エラーであったり、予期しない動作を招く可能性があります。
 しかし、コンパイラーが不正を判定できず、コンパイル時にエラーにすることができません。
 
-<pre class="source" title="unsafe な手段までは追えない">
-<code><span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; X()
+```csharp
+unsafe static Span<int> X()
 {
-    <span class="comment">// ローカル</span>
-    <span class="reserved">int</span> x = 10;
+    // ローカル
+    int x = 10;
 
-    <span class="comment">// unsafe な手段でローカルなものの参照を作って返す</span>
-    <span class="comment">// これをやってしまうとまずいものの、コンパイル時にはエラーにできない</span>
-    <span class="reserved">return</span> <span class="reserved">new</span> <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;(&amp;x, 1);
+    // unsafe な手段でローカルなものの参照を作って返す
+    // これをやってしまうとまずいものの、コンパイル時にはエラーにできない
+    return new Span<int>(&x, 1);
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-6"></a> <a id="stack-only"></a>「スタックのみ」制約
 
@@ -242,55 +242,55 @@ C# 7.2 で追加された構造体がらみの修飾子には[`readonly`](readon
   - `ToString` など、`object` 型のメソッドを呼べない
 - ジェネリック型引数として使えない
 
-<pre class="source" title="ref構造体は stack-only">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-<span class="comment">//❌ そもそもクラスに ref を付けれないのも stack-only を保証するため</span>
-<span class="reserved">ref</span> <span class="reserved"><span class="error">class</span></span> <span class="type">Class</span> { }
+//❌ そもそもクラスに ref を付けれないのも stack-only を保証するため
+ref class Class { }
 
-<span class="comment">//❌ インターフェイス実装</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">RefStruct</span> : <span class="type"><span class="error">IDisposable</span></span> { <span class="reserved">public</span> <span class="reserved">void</span> Dispose() { } }
+//❌ インターフェイス実装
+ref struct RefStruct : IDisposable { public void Dispose() { } }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">//❌ 非同期メソッドの引数</span>
-    <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> Async(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="error">x</span>)
+    //❌ 非同期メソッドの引数
+    static async Task Async(Span<int> x)
     {
-        <span class="comment">//❌ 非同期メソッドのローカル変数</span>
-        <span class="error"><span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;</span> local = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[10];
+        //❌ 非同期メソッドのローカル変数
+        Span<int> local = stackalloc int[10];
     }
 
-    <span class="comment">//❌ イテレーターの引数</span>
-    <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; Iterator(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; x)
+    //❌ イテレーターの引数
+    static IEnumerable<int> Iterator(Span<int> x)
     {
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; local = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[10];
-        local[0] = 1; <span class="comment">//⭕ yield return をまたがないならOK</span>
-        <span class="reserved">yield</span> <span class="reserved">return</span> local[0];
-        <span class="comment">//❌ yield をまたいだ読み書き</span>
-        <span class="error">local</span>[0] = 2; <span class="comment">// ダメ</span>
+        Span<int> local = stackalloc int[10];
+        local[0] = 1; //⭕ yield return をまたがないならOK
+        yield return local[0];
+        //❌ yield をまたいだ読み書き
+        local[0] = 2; // ダメ
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; local = <span class="reserved">stackalloc</span> <span class="reserved">int</span>[1];
+        Span<int> local = stackalloc int[1];
 
-        <span class="comment">//❌ box 化</span>
-        <span class="reserved">object</span> obj = <span class="error">local</span>;
+        //❌ box 化
+        object obj = local;
 
-        <span class="comment">//❌ object のメソッド呼び出し</span>
-        <span class="reserved">var</span> str = <span class="error">local</span>.ToString();
+        //❌ object のメソッド呼び出し
+        var str = local.ToString();
 
-        <span class="comment">//❌ クロージャ</span>
-        <span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; a1 = () =&gt; <span class="error">local</span>[0];
-        <span class="reserved">int</span> F() =&gt; <span class="error">local</span>[0];
+        //❌ クロージャ
+        Func<int> a1 = () => local[0];
+        int F() => local[0];
 
-        <span class="comment">//❌ 型引数にも渡せない</span>
-        <span class="type">List</span>&lt;<span class="error"><span class="type">Span</span>&lt;<span class="reserved">int</span>&gt;</span>&gt; list;
+        //❌ 型引数にも渡せない
+        List<Span<int>> list;
     }
 }
-</code></pre>
+```
 
 
 ### <a id="sec-generated-title-7"></a> <a id="TypedReference"></a>余談: TypedReference
@@ -314,39 +314,39 @@ C# 11 で、[ref 構造体](#key-refstruct)のフィールドを [`ref` (参照�
 
 ref フィールドの書き方は参照引数や参照戻り値と同じく、型の前に `ref` 修飾を付けます。
 
-<pre class="source" title="ref フィールド">
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">ByReference</span>&lt;<span class="type param">T</span>&gt;
+```csharp
+ref struct ByReference<T>
 {
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type param">T</span> <span class="field">Value</span>;
+    public ref T Value;
 }
-</pre>
+```
 
 C# 7.2 に頃に [`Span<T>` 構造体の内部的な話](span.md#fast-span)で、「`Span<T>` はランタイム側で特殊処理を入れている」というような話を書いていましたが、
 ref フィールドが入ったことで、通常の C# コードで同様のことができるようになりました。
 実際、.NET 7 からはそういう実装に置き換わっていて、`Span<T>` の内部は晴れて以下のようなコードに変更されています。
 
-<pre class="source" title=".NET 7 での Span の中身">
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Span</span>&lt;<span class="type param">T</span>&gt;
+```csharp
+ref struct Span<T>
 {
-    <span class="reserved">internal</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="type param">T</span> <span class="field">_reference</span>;
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="field">_length</span>;
+    internal readonly ref T _reference;
+    private readonly int _length;
 }
-</pre>
+```
 
 ちなみに、ref フィールドを持てるのは ref 構造体だけです。
 以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">ref</span> <span class="reserved">int</span> <span class="field"><span class="error" title="CS9059">_x</span></span>; <span class="comment">// class 中はダメ。</span>
+    ref int _x; // class 中はダメ。
 }
 
-<span class="reserved">struct</span> <span class="type struct">B</span>
+struct B
 {
-    <span class="reserved">ref</span> <span class="reserved">int</span> <span class="field"><span class="error" title="CS9059">_x</span></span>; <span class="comment">// struct も ref がついてないものの中はダメ。</span>
+    ref int _x; // struct も ref がついてないものの中はダメ。
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="readonly-ref">readonly ref</a>
 
@@ -357,75 +357,75 @@ C# 7.2 の頃に [`ref readonly`](sp_ref.md#ref-readonly) というものがあ�
 比較のためにまず、どちらの readonly もついていない状態ですが、
 当然、「どこを参照するか変更」と「参照先の値の変更」のどちらもできます。
 
-<pre class="source" title="✔「どこを参照するか変更」と✔「参照先の値の変更」">
-<span class="reserved">scoped</span> <span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">A</span>();
+```csharp
+scoped var a = new A();
 
-<span class="reserved">int</span> <span class="variable">x1</span> <span class="operator">=</span> <span class="number">0</span>;
-<span class="variable">a</span><span class="operator">.</span><span class="field">X</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x1</span>; <span class="comment">// どこを参照するかを変更。</span>
+int x1 = 0;
+a.X = ref x1; // どこを参照するかを変更。
 
-<span class="variable">a</span><span class="operator">.</span><span class="field">X</span> <span class="operator">=</span> <span class="number">2</span>; <span class="comment">// 参照先の値を変更</span>
+a.X = 2; // 参照先の値を変更
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">A</span>
+ref struct A
 {
-    <span class="reserved">public</span> <em><span class="reserved">ref</span></em> <span class="reserved">int</span> <span class="field">X</span>;
+    public ref int X;
 }
-</pre>
+```
 
 で、`ref readonly` の方は C# 7.2 の頃からある意味と同じで、「参照先の値の変更不可」です。
 
-<pre class="source" title="✔「どこを参照するか変更」と✖「参照先の値の変更」">
-<span class="reserved">scoped</span> <span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">A</span>();
+```csharp
+scoped var a = new A();
 
-<span class="reserved">int</span> <span class="variable">x1</span> <span class="operator">=</span> <span class="number">0</span>;
-<span class="variable">a</span><span class="operator">.</span><span class="field">X</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x1</span>; <span class="comment">// どこを参照するかを変更。</span>
+int x1 = 0;
+a.X = ref x1; // どこを参照するかを変更。
 
-<span class="variable"><span class="error" title="CS8331">a</span><span class="operator">.</span><span class="field">X</span></span> <span class="operator">=</span> <span class="number">2</span>; <span class="comment">// エラー: 参照先の値を変更不可。</span>
+a.X = 2; // エラー: 参照先の値を変更不可。
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">A</span>
+ref struct A
 {
-    <span class="reserved">public</span> <em><span class="reserved">ref</span> <span class="reserved">readonly</span></em> <span class="reserved">int</span> <span class="field">X</span>;
+    public ref readonly int X;
 }
-</pre>
+```
 
 一方、C# 11 から書ける `readonly ref` は、要は、ref フィールド `ref T X` を readonly にするという意味なので、「どこを参照するか変更」の方ができなくなります。
 
-<pre class="source" title="✖「どこを参照するか変更」と✔「参照先の値の変更」">
-<span class="reserved">int</span> <span class="variable">x0</span> <span class="operator">=</span> <span class="number">0</span>;
+```csharp
+int x0 = 0;
 
-<span class="comment">// readonly フィールドはコンストラクターでしか初期化できないので引数で渡す。</span>
-<span class="reserved">scoped</span> <span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">A</span>(<span class="reserved">ref</span> <span class="variable">x0</span>);
+// readonly フィールドはコンストラクターでしか初期化できないので引数で渡す。
+scoped var a = new A(ref x0);
 
-<span class="reserved">int</span> <span class="variable">x1</span> <span class="operator">=</span> <span class="number">1</span>;
-<span class="variable"><span class="error" title="CS0191">a</span><span class="operator">.</span><span class="field">X</span></span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x1</span>; <span class="comment">// エラー: どこを参照するかを変更不可。</span>
+int x1 = 1;
+a.X = ref x1; // エラー: どこを参照するかを変更不可。
 
-<span class="variable">a</span><span class="operator">.</span><span class="field">X</span> <span class="operator">=</span> <span class="number">2</span>; <span class="comment">// 参照先の値を変更はできる。</span>
+a.X = 2; // 参照先の値を変更はできる。
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">A</span>
+ref struct A
 {
-    <span class="reserved">public</span> <em><span class="reserved">readonly</span> <span class="reserved">ref</span></em> <span class="reserved">int</span> <span class="field">X</span>;
-    <span class="reserved">public</span> <span class="type struct">A</span>(<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="field">X</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">x</span>;
+    public readonly ref int X;
+    public A(ref int x) => X = ref x;
 }
-</pre>
+```
 
 当然、両方の `readonly` を付けると両方不可です。
 
-<pre class="source" title="✖「どこを参照するか変更」と✖「参照先の値の変更」">
-<span class="reserved">int</span> <span class="variable">x0</span> <span class="operator">=</span> <span class="number">0</span>;
+```csharp
+int x0 = 0;
 
-<span class="comment">// readonly フィールドはコンストラクターでしか初期化できないので引数で渡す。</span>
-<span class="reserved">scoped</span> <span class="type struct">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">A</span>(<span class="reserved">ref</span> <span class="variable">x0</span>);
+// readonly フィールドはコンストラクターでしか初期化できないので引数で渡す。
+scoped var a = new A(ref x0);
 
-<span class="reserved">int</span> <span class="variable">x1</span> <span class="operator">=</span> <span class="number">1</span>;
-<span class="variable"><span class="error" title="CS0191">a</span><span class="operator">.</span><span class="field">X</span></span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x1</span>; <span class="comment">// エラー: どこを参照するかを変更不可。</span>
+int x1 = 1;
+a.X = ref x1; // エラー: どこを参照するかを変更不可。
 
-<span class="variable"><span class="error" title="CS8331">a</span><span class="operator">.</span><span class="field">X</span></span> <span class="operator">=</span> <span class="number">2</span>; <span class="comment">// エラー: 参照先の値を変更不可。</span>
+a.X = 2; // エラー: 参照先の値を変更不可。
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">A</span>
+ref struct A
 {
-    <span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="field">X</span>;
-    <span class="reserved">public</span> <span class="type struct">A</span>(<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="field">X</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">x</span>;
+    public readonly ref readonly int X;
+    public A(ref int x) => X = ref x;
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-10"></a> <a id="escape-analysis">エスケープ解析</a>
 
@@ -433,28 +433,28 @@ C# 7.2 の頃に [`ref readonly`](sp_ref.md#ref-readonly) というものがあ�
 簡単に言うと、メソッド内のローカル変数はメソッドを抜けると消えるので、
 その参照は外に漏らしてはいけません。
 
-<pre class="source" title="ローカル変数への参照は外に漏らせない">
-<span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method"><span class="static">M</span></span>()
+```csharp
+static ref int M()
 {
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>; <span class="comment">// メソッド内の変数はメソッド抜けると消える。</span>
-    <span class="control">return</span> <span class="reserved">ref</span> <span class="variable"><span class="error" title="CS8168">x</span></span>; <span class="comment">// エラー: 消えるものと外には漏らせない。</span>
+    int x = 123; // メソッド内の変数はメソッド抜けると消える。
+    return ref x; // エラー: 消えるものと外には漏らせない。
 }
-</pre>
+```
 
 こういう「漏れている」状態を「エスケープ(escape: 脱走)している」と言います。
 
 上記の例の場合は単純ですが、
 参照変数などがあるため、間接的に何段も追いかける必要があります。
 
-<pre class="source" title="エスケープ阻止のため、多段に追う必要あり">
-<span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="static"><span class="method">M</span></span>()
+```csharp
+static ref int M()
 {
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>; <span class="comment">// メソッド内の変数はメソッド抜けると消える。</span>
-    <span class="reserved">ref</span> <span class="reserved">var</span> <span class="variable">y</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">x</span>;
-    <span class="reserved">ref</span> <span class="reserved">var</span> <span class="variable">z</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable">y</span>;
-    <span class="control">return</span> <span class="reserved">ref</span> <span class="variable"><span class="error" title="CS8157">z</span></span>; <span class="comment">// エラー: 間に2段挟まっているものの、元は x なので外に漏らせない。</span>
+    int x = 123; // メソッド内の変数はメソッド抜けると消える。
+    ref var y = ref x;
+    ref var z = ref y;
+    return ref z; // エラー: 間に2段挟まっているものの、元は x なので外に漏らせない。
 }
-</pre>
+```
 
 このように、間に何段か挟まっていようと、大本をたどってエスケープを避ける処理を「<strong id="key-escape-analysis" class="keyword">エスケープ解析</strong>」(escape analysis)と呼びます。
 
@@ -464,68 +464,68 @@ C# 11 で ref フィールドが入ったわけですが、
 
 例えばわざとちょっと複雑なことをすると、以下のように、いろいろなところに参照が伝搬するコードが書けます。
 
-<pre class="source" title="参照がいろんなところに伝搬する例">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">out</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">result</span>)
+```csharp
+static void M(out Span<int> result)
 {
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>;
-    <span class="reserved">var</span> <span class="variable">span</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;(<span class="reserved">ref</span> <span class="variable">x</span>); <span class="comment">// x が span から参照される状態。</span>
-    <span class="reserved">scoped</span> <span class="reserved">var</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">R</span>();
+    int x = 123;
+    var span = new Span<int>(ref x); // x が span から参照される状態。
+    scoped var r = new R();
 
-    <span class="reserved">var</span> <span class="variable">ret</span> <span class="operator">=</span> <span class="variable">r</span><span class="operator">.</span><span class="method">M</span>(<span class="variable">span</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">y</span>); <span class="comment">// x がいろんなところに伝搬。</span>
+    var ret = r.M(span, out var y); // x がいろんなところに伝搬。
 
-    <span class="variable local">result</span> <span class="operator">=</span> <span class="error" title="CS8352"><span class="variable">r</span><span class="operator">.</span><span class="field">Span</span></span>; <span class="comment">// エラー: x が r.Span に伝搬してるかもしれないのでダメ。</span>
-    <span class="variable local">result</span> <span class="operator">=</span> <span class="variable"><span class="error" title="CS8352">y</span></span>;      <span class="comment">// エラー: x が y に伝搬してるかもしれないのでダメ。</span>
-    <span class="variable local">result</span> <span class="operator">=</span> <span class="error" title="CS8352"><span class="variable">ret</span></span>;    <span class="comment">// エラー: x が ret に伝搬してるかもしれないのでダメ。</span>
+    result = r.Span; // エラー: x が r.Span に伝搬してるかもしれないのでダメ。
+    result = y;      // エラー: x が y に伝搬してるかもしれないのでダメ。
+    result = ret;    // エラー: x が ret に伝搬してるかもしれないのでダメ。
 }
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">R</span>
+ref struct R
 {
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="field">Span</span>;
+    public Span<int> Span;
 
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="method">M</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">x</span>, <span class="reserved">out</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>)
+    public Span<int> M(Span<int> x, out Span<int> y)
     {
-        <span class="field">Span</span> <span class="operator">=</span> <span class="variable local">x</span>; <span class="comment">// フィールドにも、</span>
-        <span class="variable local">y</span> <span class="operator">=</span> <span class="variable local">x</span>;    <span class="comment">// out 引数にも、</span>
-        <span class="control">return</span> <span class="variable local">x</span>; <span class="comment">// 戻り値にも x (が持ってる参照)が伝搬。</span>
+        Span = x; // フィールドにも、
+        y = x;    // out 引数にも、
+        return x; // 戻り値にも x (が持ってる参照)が伝搬。
     }
 }
-</pre>
+```
 
 コスト度外視でよければ、
 「どの引数・フィールドが、他のどの引数・フィールド・戻り値に伝搬するか」を事細かに指定することで厳密なエスケープ解析ができます。
 (C# では採用しなかったため)仮定的なコードにはなりますが、
 先ほどのコードを以下のように書けるようにするという案はなくはないです。
 
-<pre class="source" title="(仮定的なコードで) 参照の伝搬をすべて明示">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">out</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">result</span>)
+```csharp
+static void M(out Span<int> result)
 {
-    <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>;
-    <span class="reserved">var</span> <span class="variable">span1</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;(<span class="reserved">ref</span> <span class="variable">x</span>); <span class="comment">// x が span から参照される状態。</span>
-    <span class="reserved">var</span> <span class="variable">span2</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">1</span>];           <span class="comment">// こちらは配列を参照しているので外に漏らしても大丈夫。</span>
+    int x = 123;
+    var span1 = new Span<int>(ref x); // x が span から参照される状態。
+    var span2 = new int[1];           // こちらは配列を参照しているので外に漏らしても大丈夫。
 
-    <span class="reserved">var</span> <span class="variable">r</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">R</span> { <span class="field">Span</span> <span class="operator">=</span> <span class="variable">span1</span> };
+    var r = new R { Span = span1 };
 
-    <span class="reserved">var</span> <span class="variable">ret</span> <span class="operator">=</span> <span class="variable">r</span><span class="operator">.</span><span class="method">M</span>(<span class="variable">span2</span>, <span class="reserved">out</span> <span class="reserved">var</span> <span class="variable">y</span>); <span class="comment">// span2 → y, span1 → r.Span → ret と伝搬。</span>
+    var ret = r.M(span2, out var y); // span2 → y, span1 → r.Span → ret と伝搬。
 
-    <span class="variable local">result</span> <span class="operator">=</span> <span class="variable">y</span>;      <span class="comment">// 出どころが y → span2 → 配列 なので外に漏らして大丈夫。</span>
-    <span class="variable local">result</span> <span class="operator">=</span> <span class="error"><span class="variable">ret</span></span>;    <span class="comment">// 出どころが ret → r.Span → span1 → x なのでダメ。</span>
+    result = y;      // 出どころが y → span2 → 配列 なので外に漏らして大丈夫。
+    result = ret;    // 出どころが ret → r.Span → span1 → x なのでダメ。
 }
 
-<span class="comment">// 仮定的な文法: ` で、参照の伝搬先を表現。</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">R</span>
+// 仮定的な文法: ` で、参照の伝搬先を表現。
+ref struct R
 {
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;</span><em>`A</em> <span class="field">Span</span>;
+    public Span<int>`A Span;
 
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;</span><em>`A</em> <span class="method">M</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;</span><em>`B</em> <span class="variable local">x</span>, <span class="reserved">out</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;<em>`B</em> <span class="variable local">y</span>)
+    public Span<int>`A M(Span<int>`B x, out Span<int>`B y)
     {
-        <span class="comment">// 伝搬先の指定が違うので、以下のコードはダメ。</span>
-        <span class="comment">// Span = x;</span>
-        <span class="comment">// return x;</span>
-        <span class="variable local">y</span> <span class="operator">=</span> <span class="variable local">x</span>;       <span class="comment">// `B 間の伝搬は OK。</span>
-        <span class="control">return</span> <span class="field">Span</span>; <span class="comment">// `A 間の伝搬は OK。</span>
+        // 伝搬先の指定が違うので、以下のコードはダメ。
+        // Span = x;
+        // return x;
+        y = x;       // `B 間の伝搬は OK。
+        return Span; // `A 間の伝搬は OK。
     }
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-11"></a> <a id="scoped"></a><a id="scoped-modifier">scoped 修飾子</a>
 
@@ -547,82 +547,82 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 実際のコードを見てみましょう。
 まず、何もつけない場合(`ref T` は return-only、ref 構造体は unscoped):
 
-<pre class="source" title="何もつけない: ref T は return-only、ref 構造体は unscoped">
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Default</span>
+```csharp
+ref struct Default
 {
-    <span class="reserved">private</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="field">_x</span>;
-    <span class="reserved">private</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="field">_y</span>;
+    private ref int _x;
+    private Span<int> _y;
 
-    <span class="comment">// OK なやつ。</span>
-    <span class="reserved">public</span> <span class="type struct">Default</span>(<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="field">_x</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">x</span>;
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">ReturnRef</span>(<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="variable local">x</span>;
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">GetRef</span>() <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="field">_x</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">UseRef</span>(<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
+    // OK なやつ。
+    public Default(ref int x) => _x = ref x;
+    public ref int ReturnRef(ref int x) => ref x;
+    public ref int GetRef() => ref _x;
+    public void UseRef(ref int x) { }
 
-    <span class="reserved">public</span> <span class="type struct">Default</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="field">_y</span> <span class="operator">=</span> <span class="variable local">y</span>;
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="method">ReturnSpan</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="variable local">y</span>;
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="method">GetSpan</span>() <span class="operator">=&gt;</span> <span class="field">_y</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetSpan</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="field">_y</span> <span class="operator">=</span> <span class="variable local">y</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">UseSpan</span>(<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) { }
+    public Default(Span<int> y) => _y = y;
+    public Span<int> ReturnSpan(Span<int> y) => y;
+    public Span<int> GetSpan() => _y;
+    public void SetSpan(Span<int> y) => _y = y;
+    public void UseSpan(Span<int> y) { }
 
-    <span class="comment">// エラーになるやつ。</span>
-    <span class="comment">// 引数 → フィールドへの伝搬だけ、ref T と Span&lt;T&gt; の挙動が違う。</span>
-    <span class="comment">// ref T は「引数 → 戻り値 だけは OK」(return-only)。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetRef</span>(<span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="error" title="CS9079"><span class="field">_x</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">x</span></span>;
+    // エラーになるやつ。
+    // 引数 → フィールドへの伝搬だけ、ref T と Span<T> の挙動が違う。
+    // ref T は「引数 → 戻り値 だけは OK」(return-only)。
+    public void SetRef(ref int x) => _x = ref x;
 }
-</pre>
+```
 
 続いて、`scoped` 修飾子を付けた場合(いずれも scoped 扱い)、たいていのものがダメになります:
 
-<pre class="source" title="scoped 修飾子を付けた場合">
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Scoped</span>
+```csharp
+ref struct Scoped
 {
-    <span class="reserved">private</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="field">_x</span>;
-    <span class="reserved">private</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="field">_y</span>;
+    private ref int _x;
+    private Span<int> _y;
 
-    <span class="comment">// OK なやつ。</span>
-    <span class="comment">// フィールドにも戻りにも伝搬しない場合だけ OK。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">UseRef</span>(<span class="reserved">scoped</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">UseSpan</span>(<span class="reserved">scoped</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) { }
+    // OK なやつ。
+    // フィールドにも戻りにも伝搬しない場合だけ OK。
+    public void UseRef(scoped ref int x) { }
+    public void UseSpan(scoped Span<int> y) { }
 
-    <span class="comment">// エラーになるやつ。</span>
-    <span class="comment">// たいていダメ。</span>
-    <span class="reserved">public</span> <span class="type struct">Scoped</span>(<span class="reserved">scoped</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="error" title="CS8374"><span class="field">_x</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">x</span></span>;
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">ReturnRef</span>(<span class="reserved">scoped</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="variable local"><span class="error" title="CS9075">x</span></span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetRef</span>(<span class="reserved">scoped</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="error" title="CS8374"><span class="field">_x</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">x</span></span>;
+    // エラーになるやつ。
+    // たいていダメ。
+    public Scoped(scoped ref int x) => _x = ref x;
+    public ref int ReturnRef(scoped ref int x) => ref x;
+    public void SetRef(scoped ref int x) => _x = ref x;
 
-    <span class="reserved">public</span> <span class="type struct">Scoped</span>(<span class="reserved">scoped</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="field">_y</span> <span class="operator">=</span> <span class="variable local"><span class="error" title="CS8352">y</span></span>;
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="method">ReturnSpan</span>(<span class="reserved">scoped</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="error" title="CS8352"><span class="variable local">y</span></span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetSpan</span>(<span class="reserved">scoped</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="field">_y</span> <span class="operator">=</span> <span class="variable local"><span class="error" title="CS8352">y</span></span>;
+    public Scoped(scoped Span<int> y) => _y = y;
+    public Span<int> ReturnSpan(scoped Span<int> y) => y;
+    public void SetSpan(scoped Span<int> y) => _y = y;
 }
-</pre>
+```
 
 最後に、`UnscopedRef` 属性を付けた場合、たいていのものが OK になります
 (ただし、ref 構造体は何も付けなくても unscoped 扱いなので、追加で属性を付けようとするとエラーになります):
 
-<pre class="source" title="">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Unscoped</span>
+ref struct Unscoped
 {
-    <span class="reserved">private</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="field">_x</span>;
-    <span class="reserved">private</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="field">_y</span>;
+    private ref int _x;
+    private Span<int> _y;
 
-    <span class="comment">// OK なやつ。</span>
-    <span class="comment">// UnscopedRef 属性を付けるとなんでも OK に。</span>
-    <span class="comment">// (といっても差が出るのは SetRef だけ。)</span>
-    <span class="reserved">public</span> <span class="type struct">Unscoped</span>([<span class="type">UnscopedRef</span>] <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="field">_x</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">x</span>;
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">ReturnRef</span>([<span class="type">UnscopedRef</span>] <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="variable local">x</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetRef</span>([<span class="type">UnscopedRef</span>] <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="field">_x</span> <span class="operator">=</span> <span class="reserved">ref</span> <span class="variable local">x</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">UseRef</span>([<span class="type">UnscopedRef</span>] <span class="reserved">ref</span> <span class="reserved">int</span> <span class="variable local">x</span>) { }
+    // OK なやつ。
+    // UnscopedRef 属性を付けるとなんでも OK に。
+    // (といっても差が出るのは SetRef だけ。)
+    public Unscoped([UnscopedRef] ref int x) => _x = ref x;
+    public ref int ReturnRef([UnscopedRef] ref int x) => ref x;
+    public void SetRef([UnscopedRef] ref int x) => _x = ref x;
+    public void UseRef([UnscopedRef] ref int x) { }
 
-    <span class="comment">// Span の方は「デフォルトで UnscopedRef だから属性付けるな」とエラーになる。</span>
-    <span class="reserved">public</span> <span class="type struct">Unscoped</span>([<span class="type"><span class="error" title="CS9063">UnscopedRef</span></span>] <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="field">_y</span> <span class="operator">=</span> <span class="variable local">y</span>;
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="method">ReturnSpan</span>([<span class="type"><span class="error" title="CS9063">UnscopedRef</span></span>] <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="variable local">y</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">SetSpan</span>([<span class="error" title="CS9063"><span class="type">UnscopedRef</span></span>] <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="field">_y</span> <span class="operator">=</span> <span class="variable local">y</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">UseSpan</span>([<span class="type"><span class="error" title="CS9063">UnscopedRef</span></span>] <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">y</span>) { }
+    // Span の方は「デフォルトで UnscopedRef だから属性付けるな」とエラーになる。
+    public Unscoped([UnscopedRef] Span<int> y) => _y = y;
+    public Span<int> ReturnSpan([UnscopedRef] Span<int> y) => y;
+    public void SetSpan([UnscopedRef] Span<int> y) => _y = y;
+    public void UseSpan([UnscopedRef] Span<int> y) { }
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="caller">呼び出し元の挙動</a>
 
@@ -632,57 +632,57 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 例えば、unscoped (何も修飾子を付けていない ref 構造体)の場合、以下のように、
 `Builder.Replace` の中で制限がない代わり、それを呼んでいる場所でのエラーが増えます。
 
-<pre class="source" title="unscoped な挙動">
-<span class="reserved">var</span> <span class="variable">builder</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">Builder</span>();
+```csharp
+var builder = new Builder();
 
-<span class="static"><span class="method">Replace</span></span>(<span class="reserved">ref</span> <span class="variable">builder</span>);
+Replace(ref builder);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Replace</span></span>(<span class="reserved">ref</span> <span class="type struct">Builder</span> <span class="variable local">builder</span>)
+static void Replace(ref Builder builder)
 {
-    <span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable">newBuffer</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="reserved">char</span>[<span class="number">3</span>];
-    <span class="error" title="CS8350"><span class="variable local">builder</span><span class="operator">.</span><span class="method">Replace</span>(<span class="error" title="CS8352"><span class="variable">newBuffer</span></span>)</span>; <span class="comment">// ダメ。stackalloc したものが builder 越しに外に漏れる。</span>
+    Span<char> newBuffer = stackalloc char[3];
+    builder.Replace(newBuffer); // ダメ。stackalloc したものが builder 越しに外に漏れる。
 }
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Builder</span>(<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">initialBuffer</span>)
+ref struct Builder(Span<char> initialBuffer)
 {
-    <span class="reserved">private</span> <span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="field">_buffer</span> <span class="operator">=</span> <span class="variable local">initialBuffer</span>;
+    private Span<char> _buffer = initialBuffer;
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Replace</span>(<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">value</span>)
+    public void Replace(Span<char> value)
     {
-        <span class="comment">// 参照先自体を書き換え。</span>
-        <span class="comment">// 引数からフィールドに参照が伝搬。</span>
-        <span class="field">_buffer</span> <span class="operator">=</span> <span class="variable local">value</span>;
+        // 参照先自体を書き換え。
+        // 引数からフィールドに参照が伝搬。
+        _buffer = value;
     }
 }
-</pre>
+```
 
 一方、scoped (`scoped` 修飾子を付けている)の場合、以下のように、
 `Builder.Replace` の中で制限が掛かる代わり、それを呼んでいる場所でのエラーがなくなります。
 
-<pre class="source" title="">
-<span class="reserved">var</span> <span class="variable">builder</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type struct">Builder</span>();
+```csharp
+var builder = new Builder();
 
-<span class="static"><span class="method">Append</span></span>(<span class="reserved">ref</span> <span class="variable">builder</span>);
+Append(ref builder);
 
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Append</span></span>(<span class="reserved">ref</span> <span class="type struct">Builder</span> <span class="variable local">builder</span>)
+static void Append(ref Builder builder)
 {
-    <span class="type struct">Span</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable">buffer</span> <span class="operator">=</span> [<span class="number">0x61</span>, <span class="number">0x62</span>, <span class="number">0x63</span>];
-    <span class="variable local">builder</span><span class="operator">.</span><span class="method">Append</span>(<span class="variable">buffer</span>); <span class="comment">// 同じようなことをしていてもこれは OK。</span>
+    Span<byte> buffer = [0x61, 0x62, 0x63];
+    builder.Append(buffer); // 同じようなことをしていてもこれは OK。
 }
 
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Builder</span>(<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">initialBuffer</span>)
+ref struct Builder(Span<char> initialBuffer)
 {
-    <span class="reserved">private</span> <span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="field">_buffer</span> <span class="operator">=</span> <span class="variable local">initialBuffer</span>;
+    private Span<char> _buffer = initialBuffer;
 
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Append</span>(<span class="reserved">scoped</span> <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; <span class="variable local">utf8</span>)
+    public void Append(scoped ReadOnlySpan<byte> utf8)
     {
-        <span class="comment">// 中身を書き換え。参照先自体は元のまま。</span>
-        <span class="comment">// 引数の参照はどこにも漏らさない。</span>
-        System<span class="operator">.</span>Text<span class="operator">.</span><span class="type">Encoding</span><span class="operator">.</span><span class="static"><span class="property">UTF8</span></span><span class="operator">.</span><span class="method">GetChars</span>(<span class="variable local">utf8</span>, <span class="field">_buffer</span>);
+        // 中身を書き換え。参照先自体は元のまま。
+        // 引数の参照はどこにも漏らさない。
+        System.Text.Encoding.UTF8.GetChars(utf8, _buffer);
     }
 }
-</pre>
+```
 
 ちなみに、内部的には `scoped` 修飾子の方も属性で表現されています。
 `scoped` 修飾子を付けた引数には `ScopedRef` 属性が付きます。
@@ -693,36 +693,36 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 構造体の `this` は参照になっています。
 この参照はデフォルトで scoped 扱いになっていて、外に漏らすことができません。
 
-<pre class="source" title="this は scoped 扱い">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">struct</span> <span class="type struct">S</span>
+struct S
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_x</span>;
+    private int _x;
 
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type struct">S</span> <span class="method">RefThis</span>() <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="reserved"><span class="error" title="CS8170">this</span></span>;
+    public ref S RefThis() => ref this;
 
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">RefX</span>() <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="field"><span class="error" title="CS8170">_x</span></span>;
+    public ref int RefX() => ref _x;
 }
-</pre>
+```
 
 この挙動を変えるのにも `UnscopedRef` 属性が使えます。
 メソッド自身に `UnscopedRef` 属性を付けることで、`this` が unscoped 扱いになります。
 
-<pre class="source" title="this を unscoped 扱いに変更">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="reserved">struct</span> <span class="type struct">S</span>
+struct S
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_x</span>;
+    private int _x;
 
-    [<span class="type">UnscopedRef</span>]
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type struct">S</span> <span class="method">RefThis</span>() <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="reserved">this</span>;
+    [UnscopedRef]
+    public ref S RefThis() => ref this;
 
-    [<span class="type">UnscopedRef</span>]
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="method">RefX</span>() <span class="operator">=&gt;</span> <span class="reserved">ref</span> <span class="field">_x</span>;
+    [UnscopedRef]
+    public ref int RefX() => ref _x;
 }
-</pre>
+```
 
 ## <a id="sec-generated-title-14"></a> <a id="ref-struct-interface">ref 構造体のインターフェイス実装</a>
 
@@ -731,41 +731,41 @@ ref 構造体(`Span<T>` など)に関しては実際にこの2択で、
 C# 13 で、ref 構造体にインターフェイスを実装できるようになりました。
 例えば以下のようなコードを書いてもエラーを起こしません。
 
-<pre class="source" title="ref 構造体にインターフェイスを実装する例">
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">S</span> : <span class="type">IFormattable</span>
+```csharp
+ref struct S : IFormattable
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="method">ToString</span>(<span class="reserved">string</span><span class="operator">?</span> <span class="variable local">format</span>, <span class="type">IFormatProvider</span><span class="operator">?</span> <span class="variable local">formatProvider</span>) <span class="operator">=&gt;</span> <span class="string">&quot;&quot;</span>;
+    public string ToString(string? format, IFormatProvider? formatProvider) => "";
 }
-</pre>
+```
 
 ただ、前述の[「スタックのみ」制約](#stack-only)のせいで直接インターフェイス型の変数に代入することは C# 13 でもできません。
 以下のコードは引き続きエラーになります。
 
-<pre class="source" title="インターフェイスを実装できるようになったのに、インターフェイスに代入できない">
-<span class="type">IFormattable</span> <span class="variable">f</span> <span class="operator">=</span> <span class="error" title="CS0029"><span class="reserved">new</span> <span class="type struct">S</span>()</span>;
+```csharp
+IFormattable f = new S();
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">S</span> : <span class="type">IFormattable</span>
+ref struct S : IFormattable
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="method">ToString</span>(<span class="reserved">string</span><span class="operator">?</span> <span class="variable local">format</span>, <span class="type">IFormatProvider</span><span class="operator">?</span> <span class="variable local">formatProvider</span>) <span class="operator">=&gt;</span> <span class="string">&quot;&quot;</span>;
+    public string ToString(string? format, IFormatProvider? formatProvider) => "";
 }
-</pre>
+```
 
 [ボックス化](rmboxing.md#boxing)を起こさないようにインターフェイス活用しようと思うと[ジェネリクス](../oop/sp2_generics.md)が必要になります。
 
-<pre class="source" title="ジェネリクスでボックス化回避">
-<span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">123</span>; <span class="comment">// int は IFormattable を実装してる。</span>
+```csharp
+int x = 123; // int は IFormattable を実装してる。
 
-<span class="comment">// これはボックス化を起こす。</span>
-<span class="type">IFormattable</span> <span class="variable">f</span> <span class="operator">=</span> <span class="variable">x</span>;
-<span class="variable">f</span><span class="operator">.</span><span class="method">ToString</span>(<span class="string">&quot;X&quot;</span>, <span class="reserved">null</span>);
+// これはボックス化を起こす。
+IFormattable f = x;
+f.ToString("X", null);
 
-<span class="comment">// ジェネリックメソッドを介して、</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type param">T</span> <span class="variable local">f</span>) <span class="reserved">where</span> <span class="type param">T</span> : <span class="type">IFormattable</span>
-    <span class="operator">=&gt;</span> <span class="variable local">f</span><span class="operator">.</span><span class="method">ToString</span>(<span class="string">&quot;X&quot;</span>, <span class="reserved">null</span>);
+// ジェネリックメソッドを介して、
+static void M<T>(T f) where T : IFormattable
+    => f.ToString("X", null);
 
-<span class="comment">// こうやって IFormattable.ToString を呼べばボックス化を回避できる。</span>
-<span class="static"><span class="method">M</span></span>(<span class="variable">x</span>);
-</pre>
+// こうやって IFormattable.ToString を呼べばボックス化を回避できる。
+M(x);
+```
 
 したがって、この機能の肝は「ref 構造体をジェネリクスで使えるようにする」ということになります。
 
@@ -776,50 +776,50 @@ ref 構造体に課せられている「ボックス化できない」などの�
 例えば以下のコードは C# 2 以来ずっと合法なわけですが、
 ボックス化を起こすコードなので ref 構造体に適しません。
 
-<pre class="source" title="">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type param">T</span> <span class="variable local">f</span>) <span class="reserved">where</span> <span class="type param">T</span> : <span class="type">IFormattable</span>
+```csharp
+static void M<T>(T f) where T : IFormattable
 {
-    <span class="comment">// object に代入するとボックス化。</span>
-    <span class="reserved">object</span> <span class="variable">o</span> <span class="operator">=</span> <span class="variable local">f</span>;
+    // object に代入するとボックス化。
+    object o = f;
 
-    <span class="comment">// WriteLine(object) なので、これも「object への変換」でボックス化。</span>
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable local">f</span>);
+    // WriteLine(object) なので、これも「object への変換」でボックス化。
+    Console.WriteLine(f);
 
-    <span class="comment">// 何ならインターフェイスへの代入でもボックス化。</span>
-    <span class="type">IFormattable</span> <span class="variable">f1</span> <span class="operator">=</span> <span class="variable local">f</span>;
+    // 何ならインターフェイスへの代入でもボックス化。
+    IFormattable f1 = f;
 }
 
-<span class="static"><span class="method">M</span></span>(<span class="number">123</span>);
-</pre>
+M(123);
+```
 
 そこで C# 13 で、`allows ref struct` というものが追加されました。
 型制約の `where` 句にこの条件を書くと、型引数に ref 構造体を渡せるようになります。
 
-<pre class="source" title="">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;() <span class="reserved">where</span> <span class="type param">T</span> : <em><span class="reserved">allows</span> <span class="reserved">ref</span> <span class="reserved">struct</span></em>
+```csharp
+static void M<T>() where T : allows ref struct
 {
 }
 
-<span class="comment">// これまで使えていた型は引き続き使える。</span>
-<span class="static"><span class="method">M</span></span>&lt;<span class="reserved">string</span>&gt;();
-<span class="static"><span class="method">M</span></span>&lt;<span class="reserved">int</span>&gt;();
+// これまで使えていた型は引き続き使える。
+M<string>();
+M<int>();
 
-<span class="comment">// これまで使えなかった ref 構造体にも使えるようになる。</span>
-<span class="static"><span class="method">M</span></span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt;&gt;();
-<span class="static"><span class="method">M</span></span>&lt;<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt;&gt;();
-</pre>
+// これまで使えなかった ref 構造体にも使えるようになる。
+M<Span<int>>();
+M<ReadOnlySpan<char>>();
+```
 
 その代わり、`allows ref struct` を付けると、メソッド内でボックス化を起こすようなコードを書けなくなります。
 
-<pre class="source" title="allows ref struct な型の変数はボックス化できない">
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;() <span class="reserved">where</span> <span class="type param">T</span> : <span class="reserved">allows</span> <span class="reserved">ref</span> <span class="reserved">struct</span>
+```csharp
+static void M<T>() where T : allows ref struct
 {
-    <span class="comment">// 先ほどのボックス化を起こすコードはすべてエラーに。</span>
-    <span class="reserved">object</span> <span class="variable">o</span> <span class="operator">=</span> <span class="error" title="CS0103">f</span>;
-    <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="error" title="CS0103">f</span>);
-    <span class="type">IFormattable</span> <span class="variable">f1</span> <span class="operator">=</span> <span class="error" title="CS0103">f</span>;
+    // 先ほどのボックス化を起こすコードはすべてエラーに。
+    object o = f;
+    Console.WriteLine(f);
+    IFormattable f1 = f;
 }
-</pre>
+```
 
 ちなみに、通常の制約が「メソッド内でできることが増える代わりに、渡せる型が減る」というものなのに対して、
 `allows ref struct` は「メソッド内でできることを減らす代わりに、渡せるが型が増える」ものになっていて、
@@ -828,25 +828,25 @@ ref 構造体に課せられている「ボックス化できない」などの�
 これで、ボックス化を起こさないようにインターフェイスのメンバーを呼べるようになったので、
 ref 構造体のインターフェイス実装を活用できるようになります。
 
-<pre class="source" title="allows ref struct なジェネリック メソッドを介して、ref 構造体のインターフェイス実装を呼ぶ">
-<span class="type struct">S</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">new</span>(); <span class="comment">// S は IFormattable を実装してる。</span>
+```csharp
+S x = new(); // S は IFormattable を実装してる。
 
-<span class="comment">// これはボックス化を起こすから C# 13 でもエラーになる。</span>
-<span class="type">IFormattable</span> <span class="variable">f</span> <span class="operator">=</span> <span class="variable"><span class="error" title="CS0029">x</span></span>;
-<span class="variable">f</span><span class="operator">.</span><span class="method">ToString</span>(<span class="string">&quot;X&quot;</span>, <span class="reserved">null</span>);
+// これはボックス化を起こすから C# 13 でもエラーになる。
+IFormattable f = x;
+f.ToString("X", null);
 
-<span class="comment">// allows ref struct なジェネリックメソッドを介して、</span>
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>&lt;<span class="type param">T</span>&gt;(<span class="type param">T</span> <span class="variable local">f</span>) <span class="reserved">where</span> <span class="type param">T</span> : <span class="type">IFormattable</span>, <span class="reserved">allows</span> <span class="reserved">ref</span> <span class="reserved">struct</span>
-    <span class="operator">=&gt;</span> <span class="variable local">f</span><span class="operator">.</span><span class="method">ToString</span>(<span class="string">&quot;X&quot;</span>, <span class="reserved">null</span>);
+// allows ref struct なジェネリックメソッドを介して、
+static void M<T>(T f) where T : IFormattable, allows ref struct
+    => f.ToString("X", null);
 
-<span class="comment">// こうやって IFormattable.ToString を呼べば大丈夫になった。</span>
-<span class="method"><span class="static">M</span></span>(<span class="variable">x</span>);
+// こうやって IFormattable.ToString を呼べば大丈夫になった。
+M(x);
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">S</span> : <span class="type">IFormattable</span>
+ref struct S : IFormattable
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> <span class="method">ToString</span>(<span class="reserved">string</span><span class="operator">?</span> <span class="variable local">format</span>, <span class="type">IFormatProvider</span><span class="operator">?</span> <span class="variable local">formatProvider</span>) <span class="operator">=&gt;</span> <span class="string">&quot;&quot;</span>;
+    public string ToString(string? format, IFormatProvider? formatProvider) => "";
 }
-</pre>
+```
 
 #### <a id="sec-generated-title-16"></a> <a id="bcl-allows-ref-struct">標準ライブラリ中の allows ref struct</a>
 
@@ -854,30 +854,30 @@ C# 13 で `allows ref struct` が追加されると同時に、
 .NET 9 では、標準ライブラリ中のジェネリックなデリゲート型の大部分と、一部のインターフェイスの型引数に `allows ref struct` が付きました。
 以下のようなコードが書けるようになっています。
 
-<pre class="source" title="多くのデリゲート、一部のインターフェイスに allows ref struct">
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics<span class="operator">.</span>CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
 
-<span class="comment">// 多くのデリゲートの型引数に allows ref struct が付いた。</span>
-<span class="type">Action</span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt;&gt; <span class="variable">a</span> <span class="operator">=</span> <span class="variable local">x</span> <span class="operator">=&gt;</span> <span class="string">&quot;123&quot;</span><span class="operator">.</span><span class="method">TryCopyTo</span>(<span class="variable local">x</span>);
-<span class="type">Func</span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt;, <span class="reserved">int</span>&gt; <span class="variable">b</span> <span class="operator">=</span> <span class="variable local">x</span> <span class="operator">=&gt;</span> <span class="variable local">x</span><span class="operator">.</span><span class="method">IndexOf</span>(<span class="string">'1'</span>);
-<span class="type">Predicate</span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt;&gt; <span class="variable">c</span> <span class="operator">=</span> <span class="variable local">x</span> <span class="operator">=&gt;</span> <span class="variable local">x</span><span class="operator">.</span><span class="method">Contains</span>(<span class="string">'1'</span>);
-<span class="type">Comparison</span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt;&gt; <span class="variable">d</span> <span class="operator">=</span> (<span class="variable local">x</span>, <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="variable local">x</span><span class="operator">.</span><span class="method">SequenceCompareTo</span>(<span class="variable local">y</span>);
-<span class="type">Converter</span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt;, <span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt;&gt; <span class="variable">e</span> <span class="operator">=</span> <span class="variable local">x</span> <span class="operator">=&gt;</span> <span class="variable local">x</span>;
+// 多くのデリゲートの型引数に allows ref struct が付いた。
+Action<Span<char>> a = x => "123".TryCopyTo(x);
+Func<Span<char>, int> b = x => x.IndexOf('1');
+Predicate<Span<char>> c = x => x.Contains('1');
+Comparison<Span<char>> d = (x, y) => x.SequenceCompareTo(y);
+Converter<Span<char>, ReadOnlySpan<char>> e = x => x;
 
-<span class="comment">// 比較系のインターフェイスには大体 allows ref struct が付いた。</span>
-<span class="reserved">class</span> <span class="type">C</span> : <span class="type">IComparer</span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt;&gt;, <span class="type">IEqualityComparer</span>&lt;<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt;&gt;
+// 比較系のインターフェイスには大体 allows ref struct が付いた。
+class C : IComparer<Span<char>>, IEqualityComparer<Span<char>>
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">Compare</span>(<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">x</span>, <span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="number">0</span>;
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">x</span>, <span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">y</span>) <span class="operator">=&gt;</span> <span class="reserved">true</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">GetHashCode</span>([<span class="type">DisallowNull</span>] <span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">obj</span>) <span class="operator">=&gt;</span> <span class="number">0</span>;
+    public int Compare(Span<char> x, Span<char> y) => 0;
+    public bool Equals(Span<char> x, Span<char> y) => true;
+    public int GetHashCode([DisallowNull] Span<char> obj) => 0;
 }
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">S</span> : <span class="type">IEquatable</span>&lt;<span class="type struct">S</span>&gt;, <span class="type">IComparable</span>&lt;<span class="type struct">S</span>&gt;
+ref struct S : IEquatable<S>, IComparable<S>
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">CompareTo</span>(<span class="type struct">S</span> <span class="variable local">other</span>) <span class="operator">=&gt;</span> <span class="number">0</span>;
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type struct">S</span> <span class="variable local">other</span>) <span class="operator">=&gt;</span> <span class="reserved">true</span>;
+    public int CompareTo(S other) => 0;
+    public bool Equals(S other) => true;
 }
-</pre>
+```
 
 ##### <a id="sec-generated-title-17"></a> <a id="ref-struct-delegate">余談: ref 構造体引数のデリゲートの自然な型</a>
 
@@ -886,13 +886,13 @@ C# 10 の頃にデリゲートに[自然な型](../functional/sp_delegate.md#nat
 これに対して、.NET 9 でこれらのデリゲートに `allows ref strcut` が付いたことで、「可能であれば」の範囲が広がっています。
 これまでだと匿名のデリゲート型になっていたものが、`Action` や `Func` に変わることがあります。
 
-<pre class="source" title=".NET 8 から 9 で型が変わる例">
-<span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> (<span class="type struct">Span</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">s</span>) <span class="operator">=&gt;</span> { };
+```csharp
+var a = (Span<char> s) => { };
 
-<span class="comment">// .NET 8 以前だと: &lt;&gt;f__AnonymousDelegate0</span>
-<span class="comment">// .NET 9 以降だと: Action`1</span>
-<span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="variable">a</span><span class="operator">.</span><span class="method">GetType</span>()<span class="operator">.</span><span class="property">Name</span>);
-</pre>
+// .NET 8 以前だと: <>f__AnonymousDelegate0
+// .NET 9 以降だと: Action`1
+Console.WriteLine(a.GetType().Name);
+```
 
 #### <a id="sec-generated-title-18"></a> <a id="ienumerable-not-allow">余談: IEnumerable 問題</a>
 
@@ -900,27 +900,27 @@ ref 構造体がらみで非常に多い要望の1つに、`Span<T>`、`ReadOnly
 しかし、ref 構造体にインターフェイスを実装できるようになっても、`Span<T>` に `IEnumerable<T>` は実装できなくて、この要望はかないません。
 問題は、以下のように、`IEnumerator<T>` インターフェイスを戻り値に返す部分が ref 構造体と合いません。
 
-<pre class="source" title="ref 構造体は IEnumerable と相性がよくない">
-<span class="reserved">using</span> System<span class="operator">.</span>Collections;
+```csharp
+using System.Collections;
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Span</span>&lt;<span class="type param">T</span>&gt; : <span class="type">IEnumerable</span>&lt;<span class="type param">T</span>&gt;
+ref struct Span<T> : IEnumerable<T>
 {
-    <span class="comment">// res 構造体に IEnumerator を実装するのは可能。</span>
-    <span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">Enumerator</span>(<span class="type struct">Span</span>&lt;<span class="type param">T</span>&gt; <span class="variable local">span</span>) : <span class="type">IEnumerator</span>&lt;<span class="type param">T</span>&gt;
+    // res 構造体に IEnumerator を実装するのは可能。
+    ref struct Enumerator(Span<T> span) : IEnumerator<T>
     {
-        <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type struct">Span</span>&lt;<span class="type param">T</span>&gt; <span class="field">_span</span> <span class="operator">=</span> <span class="variable local">span</span>;
-        <span class="reserved">public</span> <span class="type param">T</span> <span class="property">Current</span> <span class="operator">=&gt;</span> <span class="reserved">default</span><span class="operator">!</span>;
-        <span class="reserved">object</span> <span class="type">IEnumerator</span><span class="operator">.</span><span class="property">Current</span> <span class="operator">=&gt;</span> <span class="reserved">null</span><span class="operator">!</span>;
-        <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Dispose</span>() { }
-        <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">MoveNext</span>() <span class="operator">=&gt;</span> <span class="reserved">false</span>;
-        <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Reset</span>() { }
+        private readonly Span<T> _span = span;
+        public T Current => default!;
+        object IEnumerator.Current => null!;
+        public void Dispose() { }
+        public bool MoveNext() => false;
+        public void Reset() { }
     }
 
-    <span class="comment">// 問題はここ。</span>
-    <span class="comment">// (ジェネリックを介さず) 直接 IEnumerator&lt;T&gt; インターフェイスを返す必要があって、ref 構造体に合わない。</span>
-    <span class="reserved">public</span> <span class="type">IEnumerator</span>&lt;<span class="type param">T</span>&gt; <span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="error" title="CS0029"><span class="reserved">new</span> <span class="type struct">Enumerator</span>(<span class="reserved">this</span>)</span>;
-    <span class="type">IEnumerator</span> <span class="type">IEnumerable</span><span class="operator">.</span><span class="method">GetEnumerator</span>() <span class="operator">=&gt;</span> <span class="method">GetEnumerator</span>();
+    // 問題はここ。
+    // (ジェネリックを介さず) 直接 IEnumerator<T> インターフェイスを返す必要があって、ref 構造体に合わない。
+    public IEnumerator<T> GetEnumerator() => new Enumerator(this);
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
-</pre>
+```
 
 `IEnumerator<T>` の方であれば問題なく実装できるので、`IEnumerator<T>` 版の LINQ を用意した方がいいのかという話題も出ていたりします。

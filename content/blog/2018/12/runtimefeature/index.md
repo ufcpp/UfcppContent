@@ -47,16 +47,16 @@ side by side (1台のPCに複数バージョンを同時にインストール可
 その検知機構として用意されたのが、`RuntimeFeature`クラス(`System.Runtime.CompilerServices`名前空間)です。
 以下のようなクラスになっていて、`const string`なメンバーが存在するかどうかで、その機能を使えるかどうかを判定します。
 
-<pre class="source" title="RuntimeFeature クラス">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">RuntimeFeature</span>
+```csharp
+public static partial class RuntimeFeature
 {
-<span class="inactive">#if</span> FEATURE_DEFAULT_INTERFACES
-    <span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">string</span> DefaultImplementationsOfInterfaces = <span class="string">"DefaultImplementationsOfInterfaces"</span>;
-<span class="inactive">#endif</span>
-    <span class="reserved">public</span> <span class="reserved">const</span> <span class="reserved">string</span> PortablePdb = <span class="string">"PortablePdb"</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> IsSupported(<span class="reserved">string</span> feature);
+#if FEATURE_DEFAULT_INTERFACES
+    public const string DefaultImplementationsOfInterfaces = "DefaultImplementationsOfInterfaces";
+#endif
+    public const string PortablePdb = "PortablePdb";
+    public static bool IsSupported(string feature);
 }
-</code></pre>
+```
 
 今のところ生えているメンバーは、
 
@@ -89,13 +89,13 @@ PDB は基本的に C# コンパイラーが生成するものなので、`Runti
 その他に、`RuntimeFeature`クラスには
 (.NET Standard 2.1 から)以下のような bool 型の静的プロパティもあります。
 
-<pre class="source" title="DynamicCode">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">RuntimeFeature</span>
+```csharp
+public static partial class RuntimeFeature
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> IsDynamicCodeSupported { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">bool</span> IsDynamicCodeCompiled { <span class="reserved">get</span>; }
+    public static bool IsDynamicCodeSupported { get; }
+    public static bool IsDynamicCodeCompiled { get; }
 }
-</code></pre>
+```
 
 先ほどの2つとは違って、こちらは実行時に値を確認して使う用みたいです。
 そのランタイムで、
@@ -159,34 +159,34 @@ DI 用途でほしかったり。
 インデクサーに型引数を取りたいと。
 ↓みたいな。(今は、この`T`がどうやっても使えない。)
 
-<pre class="source" title="インデクサーに型引数">
-<code><span class="reserved">public</span> <span class="reserved">interface</span> <span class="type">IOptions</span>
+```csharp
+public interface IOptions
 {
-    <span class="type">T</span> <span class="reserved">this</span>&lt;<span class="type">T</span>&gt;[<span class="type">OptionKey</span>&lt;<span class="type">T</span>&gt; key]
+    T this<T>[OptionKey<T> key]
     {
-        <span class="reserved">get</span>;
-        <span class="reserved">set</span>;
+        get;
+        set;
     }
 }
-</code></pre>
+```
 
 ### Higher-kinded polymorphism
 
 ジェネリクスの型制約に複雑な条件を付けたいというやつ。
 例として挙がってるのは↓みたいなコード。
 
-<pre class="source" title="複雑な型制約">
-<code><span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span>&lt;<span class="type">A</span>&gt; To&lt;<span class="type">T</span>, <span class="type">A</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">A</span>&gt; xs)
-    <span class="reserved">where</span> <span class="type">T</span> : &lt;&gt;, <span class="reserved">new</span>(), <span class="type">ICollection</span>&lt;&gt;
+```csharp
+public static T<A> To<T, A>(this IEnumerable<A> xs)
+    where T : <>, new(), ICollection<>
 {
-    <span class="reserved">var</span> ta = <span class="reserved">new</span> <span class="type">T</span>&lt;<span class="type">A</span>&gt;();
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> xs)
+    var ta = new T<A>();
+    foreach (var x in xs)
     {
         ta.Add(x);
     }
-    <span class="reserved">return</span> ta;
+    return ta;
 }
-</code></pre>
+```
 
 ### methods in enums
 

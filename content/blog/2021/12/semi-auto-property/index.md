@@ -30,23 +30,23 @@ C# 11 目標で、自動プロパティにちょっと手が入りそうです�
 
 C# 1.0 の頃からの一番煩雑な書き方だとプロパティは以下のように書いていました。追加でフィールドが1個必要。
 
-<pre class="source" title="C# 初期のプロパティ">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span> { <span class="control">return</span> _x; } <span class="reserved">set</span> { _x = <span class="reserved">value</span>; } }
+    private int _x;
+    public int X { get { return _x; } set { _x = value; } }
 }
-</code></pre>
+```
 
 それに対して C# 3.0 で書けるようになった簡易記法が自動プロパティ(automatically implemented property、通称 auto-property)。
 `get; set;` だけ書くと、上記の `_x` フィールド相当のものを自動的に作ってくれます。
 
-<pre class="source" title="C# 3.0 の自動プロパティ">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int X { get; set; }
 }
-</code></pre>
+```
 
 ## 自動プロパティが使えなかったものの例
 
@@ -57,39 +57,39 @@ C# 3.0～10.0 までの “完全に自動な” プロパティだと一部の�
 
 1． PropertyChanged
 
-<pre class="source" title="PropertyChanged のためにフィールドが必要">
-<code><span class="reserved">using</span> System.ComponentModel;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">INotifyPropertyChanged</span>
+class A : INotifyPropertyChanged
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span> =&gt; _x; <span class="reserved">set</span> =&gt; <span class="method">SetProperty</span>(<span class="reserved">ref</span> _x, <span class="reserved">value</span>); }
+    private int _x;
+    public int X { get => _x; set => SetProperty(ref _x, value); }
 
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">PropertyChangedEventHandler</span>? PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    <span class="reserved">protected</span> <span class="reserved">void</span> <span class="method">SetProperty</span>&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> <span class="variable">storage</span>, <span class="type">T</span> <span class="variable">newValue</span>, [<span class="type">CallerMemberName</span>] <span class="reserved">string</span>? <span class="variable">propertyName</span> = <span class="reserved">null</span>)
+    protected void SetProperty<T>(ref T storage, T newValue, [CallerMemberName] string? propertyName = null)
     {
-        <span class="variable">storage</span> = <span class="variable">newValue</span>;
-        PropertyChanged?.<span class="method">Invoke</span>(<span class="reserved">this</span>, <span class="reserved">new</span>(<span class="variable">propertyName</span>));
+        storage = newValue;
+        PropertyChanged?.Invoke(this, new(propertyName));
     }
 }
-</code></pre>
+```
 
 2. 遅延初期化
 
-<pre class="source" title="初回限りの重たい処理を、プロパティの初アクセス時に呼びたい">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">string</span>? _x;
-    <span class="reserved">public</span> <span class="reserved">string</span> X =&gt; _x ?? <span class="method">GetX</span>();
+    private string? _x;
+    public string X => _x ?? GetX();
 
-    <span class="reserved">private</span> <span class="reserved">string</span> <span class="method">GetX</span>()
+    private string GetX()
     {
-        <span class="comment">// 初回限りの重たい処理</span>
+        // 初回限りの重たい処理
     }
 }
-</code></pre>
+```
 
 ## field キーワードの追加
 
@@ -99,25 +99,25 @@ C# 3.0～10.0 までの “完全に自動な” プロパティだと一部の�
 
 1． PropertyChanged
 
-<pre class="source" title="">
-<code><span class="reserved">class</span> <span class="type">A</span> : <span class="type">INotifyPropertyChanged</span>
+```csharp
+class A : INotifyPropertyChanged
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span> =&gt; <em><span class="reserved">field</span></em>; <span class="reserved">set</span> =&gt; SetProperty(<span class="reserved">ref</span> <em><span class="reserved">field</span></em>, <span class="reserved">value</span>); }
+    public int X { get => field; set => SetProperty(ref field, value); }
 
-    <span class="comment">// 以下元と同じ</span>
+    // 以下元と同じ
 }
-</code></pre>
+```
 
 2. 遅延初期化
 
-<pre class="source" title="field キーワードで遅延初期化">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> X =&gt; <em><span class="reserved">field</span></em> ?? <span class="method">GetX</span>();
+    public string X => field ?? GetX();
 
-    <span class="comment">// 以下元と同じ</span>
+    // 以下元と同じ
 }
-</code></pre>
+```
 
 ## 細々補足
 
@@ -152,26 +152,26 @@ field は明確に「文脈キーワード」です。補足説明の通り、`n
 とりあえず、Visual Studio 上では「青」(キーワード扱いの色)です。
 (↓ うちのサイトの色付けは Visual Studio 初期設定準拠。)
 
-<pre class="source" title="value は青">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">set</span> =&gt; _x = <span class="reserved">value</span>; }
-    <span class="comment">// ↑ Visual Studio 上、value の文字は青(キーワードの色)になってる。</span>
+    private int _x;
+    public int X { set => _x = value; }
+    // ↑ Visual Studio 上、value の文字は青(キーワードの色)になってる。
 }
-</code></pre>
+```
 
 ところで、この `value`、仕様書上は「`set` アクセサーには暗黙の引数 `value` がある」みたいな書かれ方になっています。
 そして、結果的に `nameof(value)` は許されるという。
 
-<pre class="source" title="nameof(value)">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">string</span> _x;
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">set</span> =&gt; _x = <span class="reserved">nameof</span>(<span class="reserved">value</span>); }
-    <span class="comment">// 意味あるコードではないものの、とりあえずコンパイル可能。</span>
+    private string _x;
+    public int X { set => _x = nameof(value); }
+    // 意味あるコードではないものの、とりあえずコンパイル可能。
 }
-</code></pre>
+```
 
 `nameof(int)` とかも許されておらず、`nameof` の中に「青」が来る(たぶん)唯一の例となります。
 
@@ -180,15 +180,15 @@ field は明確に「文脈キーワード」です。補足説明の通り、`n
 
 ちなみに、同じく仕様からして「暗黙の引数」とされている[トップ レベル ステートメント](../../../../study/csharp/misc/miscentrypoint.md#top-level-statements)の[コマンドライン引数の `args`](../../../../study/csharp/misc/miscentrypoint.md#args-returns) はちゃんと「群青」(変数・引数の色)です。
 
-<pre class="source" title="args は群青">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">args</span>[0]);
-</code></pre>
+```csharp
+Console.WriteLine(args[0]);
+```
 
 まあ、`field` キーワードは最初から「キーワード扱い」の予定です。
 
-<pre class="source" title="field は青">
-<code><span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">set</span> =&gt; <span class="reserved">field</span> = <span class="reserved">value</span>; }
+    public int X { set => field = value; }
 }
-</code></pre>
+```

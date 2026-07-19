@@ -34,72 +34,72 @@ Visual Studio などの統合開発環境を利用していると分かると思
 例えば、データベースのテーブル定義から C# のクラスを生成するみたいなツールがあります。
 仮に、`Id` と `Name` の2つの列がある `Entity` という名前のテーブルから、以下のようなクラスをツール生成したとします。
 
-<pre class="source" title="データベース テーブルの Id, Name 列からのプロパティ生成">
-<span class="reserved">class</span> <span class="type">Entity</span>
+```csharp
+class Entity
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Id</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Name</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int Id { get; set; }
+    public string? Name { get; set; }
 }
-</pre>
+```
 
 これに対して、プロパティの値の書き換え時に処理を挟みたいとします。
 一応、ツール生成のソースコードを書き換えれば目的を達成することは可能ではあります。
 
-<pre class="source" title="ツール生成物をもし手で書き換えたとすると…">
-<span class="reserved">class</span> <span class="type">Entity</span>
+```csharp
+class Entity
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_id</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Id</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_id</span>; <span class="reserved">set</span> { <span class="control">if</span> (<span class="field">_id</span> <span class="operator">!=</span> <span class="reserved">value</span>) { <span class="field">_id</span> <span class="operator">=</span> <span class="reserved">value</span>; <span class="field">_changed</span> <span class="operator">=</span> <span class="reserved">true</span>; } } }
+    private int _id;
+    public int Id { get => _id; set { if (_id != value) { _id = value; _changed = true; } } }
 
-    <span class="reserved">private</span> <span class="reserved">string</span><span class="operator">?</span> <span class="field">_name</span>;
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Name</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_name</span>; <span class="reserved">set</span> { <span class="control">if</span> (<span class="field">_name</span> <span class="operator">!=</span> <span class="reserved">value</span>) { <span class="field">_name</span> <span class="operator">=</span> <span class="reserved">value</span>; <span class="field">_changed</span> <span class="operator">=</span> <span class="reserved">true</span>; } } }
+    private string? _name;
+    public string? Name { get => _name; set { if (_name != value) { _name = value; _changed = true; } } }
 
-    <span class="reserved">private</span> <span class="reserved">bool</span> <span class="field">_changed</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Flush</span>() <span class="operator">=&gt;</span> <span class="field">_changed</span> <span class="operator">=</span> <span class="reserved">false</span>;
+    private bool _changed;
+    public void Flush() => _changed = false;
 }
-</pre>
+```
 
 ここで、データベースのテーブルに列 `X` を追加したので、ツール生成の C# コードも更新したいとします。
 「手書きで書き方部分は残して新たに追加したものだけをソースコード生成」なんてことは難しく、普通はすべて上書きされます。
 
-<pre class="source" title="残念ながら、手書きで書き換えた分は紛失する">
-<span class="reserved">class</span> <span class="type">Entity</span>
+```csharp
+class Entity
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Id</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Name</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public int X { get; set; }
 }
-</pre>
+```
 
 ソースコードの一部分を「ここはツール生成だから書き換えないで」領域にすることもできなくはないですが、なかなかに危険です。
 例えば、WinForms (C# 1.1 時代からある GUI フレームワーク)開発がまさにそういう方式で、
 WinForms アプリを作ると、ソースコード中に以下のような領域ができます。
 
-<pre class="source" title="WinForms アプリで、Visual Studio が生成するコード">
-<span class="reserved">namespace</span> WinFormsApp1;
+```csharp
+namespace WinFormsApp1;
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Form1</span>
+partial class Form1
 {
-    <span class="comment">// 前略</span>
-    <span class="comment">// この部分は手書きで書き換える想定。</span>
+    // 前略
+    // この部分は手書きで書き換える想定。
 
-    <span class="preprocess">#</span><span class="preprocess">region</span> Windows Form Designer generated code
+    #region Windows Form Designer generated code
 
-    <span class="comment">///</span><span class="comment"> </span><span class="comment">&lt;</span><span class="comment">summary</span><span class="comment">&gt;</span>
-    <span class="comment">///</span><span class="comment">  Required method for Designer support - do not modify</span>
-    <span class="comment">///</span><span class="comment">  the contents of this method with the code editor.</span>
-    <span class="comment">///</span><span class="comment"> </span><span class="comment">&lt;/</span><span class="comment">summary</span><span class="comment">&gt;</span>
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">InitializeComponent</span>()
+    /// <summary>
+    ///  Required method for Designer support - do not modify
+    ///  the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
     {
-        <span class="reserved">this</span><span class="operator">.</span><span class="field">components</span> <span class="operator">=</span> <span class="reserved">new</span> System<span class="operator">.</span>ComponentModel<span class="operator">.</span><span class="type">Container</span>();
-        <span class="reserved">this</span><span class="operator">.</span>AutoScaleMode <span class="operator">=</span> System<span class="operator">.</span>Windows<span class="operator">.</span>Forms<span class="operator">.</span>AutoScaleMode<span class="operator">.</span>Font;
-        <span class="reserved">this</span><span class="operator">.</span>ClientSize <span class="operator">=</span> <span class="reserved">new</span> System<span class="operator">.</span>Drawing<span class="operator">.</span><span class="type struct">Size</span>(<span class="number">800</span>, <span class="number">450</span>);
-        <span class="reserved">this</span><span class="operator">.</span>Text <span class="operator">=</span> <span class="string">&quot;Form1&quot;</span>;
+        this.components = new System.ComponentModel.Container();
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.ClientSize = new System.Drawing.Size(800, 450);
+        this.Text = "Form1";
     }
 
-    <span class="preprocess">#</span><span class="preprocess">endregion</span>
+    #endregion
 }
-</pre>
+```
 
 まさに「書き換えないで」(do not modify)と書かれていますし、
 実際、書き換えても Visual Studio によって元に戻されたりします。
@@ -115,122 +115,122 @@ WinForms アプリを作ると、ソースコード中に以下のような領�
 
 例えば前節のツール生成例に `partial` を付けてみましょう。
 
-<pre class="source" title="partial の例">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Entity</span>
+```csharp
+partial class Entity
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Id</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Name</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    public int Id { get; set; }
+    public string? Name { get; set; }
 }
-</pre>
+```
 
 この型に手で何かコードを足したい場合、別ファイルに以下のような感じでコードを書きます。
 
-<pre class="source" title="partial を使えば、別ファイルでクラスに処理を足せる">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Entity</span>
+```csharp
+partial class Entity
 {
-    <span class="reserved">private</span> <span class="reserved">bool</span> <span class="field">_changed</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Flush</span>() <span class="operator">=&gt;</span> <span class="field">_changed</span> <span class="operator">=</span> <span class="reserved">false</span>;
+    private bool _changed;
+    public void Flush() => _changed = false;
 }
-</pre>
+```
 
 (プロパティ `Id` や `Name` の中の処理を変更したい場合の話は次節の「[メソッドの実装の分離](#partial_method)」で説明します。)
 
 `partial` はクラスの他に、構造体、インターフェイスにもつけれます。
 
-<pre class="source" title="構造体、インターフェイスにも partial">
-<span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type struct">S</span> { }
-<span class="reserved">partial</span> <span class="reserved">struct</span> <span class="type struct">S</span> { }
+```csharp
+partial struct S { }
+partial struct S { }
 
-<span class="reserved">partial</span> <span class="reserved">interface</span> <span class="type">I</span> { }
-<span class="reserved">partial</span> <span class="reserved">interface</span> <span class="type">I</span> { }
+partial interface I { }
+partial interface I { }
 
-<span class="reserved">partial</span> <span class="reserved">record</span> <span class="type">R</span> { }
-<span class="reserved">partial</span> <span class="reserved">record</span> <span class="type">R</span> { }
+partial record R { }
+partial record R { }
 
-<span class="reserved">partial</span> <span class="reserved">record</span> <span class="reserved">class</span> <span class="type">RC</span> { }
-<span class="reserved">partial</span> <span class="reserved">record</span> <span class="reserved">class</span> <span class="type">RC</span> { }
+partial record class RC { }
+partial record class RC { }
 
-<span class="reserved">partial</span> <span class="reserved">record</span> <span class="reserved">struct</span> <span class="type struct">RS</span> { }
-<span class="reserved">partial</span> <span class="reserved">record</span> <span class="reserved">struct</span> <span class="type struct">RS</span> { }
-</pre>
+partial record struct RS { }
+partial record struct RS { }
+```
 
 ただ、部分クラスにしたい場合、すべての型定義に `partial` 修飾子を付ける必要があります。
 これは、「ファイルを分けるつもりがなかったのに、他の誰かに勝手に部分定義を足された」みたいなことを避けるためです。
 
-<pre class="source" title="partial はすべての型定義に付ける必要あり">
-<span class="comment">// 片方に partial が付いてないとエラー。</span>
-<span class="reserved">class</span> <span class="type"><span class="error" title="CS0260">C</span></span> { }
+```csharp
+// 片方に partial が付いてないとエラー。
+class C { }
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">C</span> { }
-</pre>
+partial class C { }
+```
 
 ちなみに、`partial` 以外の修飾子に関しては、複数ある型定義についてる修飾子すべてを統合したものになります。
 例えば、以下のように「片方が `public`、もう片方が `static`」な場合、この型は `public static` 扱いです。
 
-<pre class="source" title="修飾子は統合される">
-<span class="comment">// この型は public static class C 扱い。</span>
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">C</span> { }
-<span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type"><span class="static">C</span></span> { }
-</pre>
+```csharp
+// この型は public static class C 扱い。
+public partial class C { }
+static partial class C { }
+```
 
 ここで実例として、WPF アプリを紹介します。
 WinForms とは違って、WPF (C# 3.0 世代の GUI フレームワーク)は `partial` を使ってツール生成のコードと手書きコードを分けています。
 WPF アプリでは、手での書き換えを前提とした以下のようなコードを書く一方で、
 
-<pre class="source" title="WPF で手書きするべきコード例">
-<span class="reserved">using</span> System<span class="operator">.</span>Windows;
+```csharp
+using System.Windows;
 
-<span class="reserved">namespace</span> WpfApp1;
+namespace WpfApp1;
 
-<span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">MainWindow</span> : <span class="type">Window</span>
+public partial class MainWindow : Window
 {
-    <span class="reserved">public</span> <span class="type">MainWindow</span>()
+    public MainWindow()
     {
-        <span class="method">InitializeComponent</span>();
+        InitializeComponent();
     }
 }
-</pre>
+```
 
 ツール生成で以下のようなコードが作られます(実物はだいぶ長いので一部抜粋)。
 
-<pre class="source" title="WPF で、XAML から生成されるコード例">
-<span class="comment">//------------------------------------------------------------------------------</span>
-<span class="comment">// &lt;auto-generated&gt;</span>
-<span class="comment">//     This code was generated by a tool.</span>
-<span class="comment">//     Runtime Version:4.0.30319.42000</span>
-<span class="comment">//</span>
-<span class="comment">//     Changes to this file may cause incorrect behavior and will be lost if</span>
-<span class="comment">//     the code is regenerated.</span>
-<span class="comment">// &lt;/auto-generated&gt;</span>
-<span class="comment">//------------------------------------------------------------------------------</span>
+```csharp
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//     Runtime Version:4.0.30319.42000
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
 
-<span class="reserved">using</span> System;
-<span class="reserved">using</span> System<span class="operator">.</span>Diagnostics;
-<span class="reserved">using</span> System<span class="operator">.</span>Windows;
-<span class="comment">// 中略</span>
+using System;
+using System.Diagnostics;
+using System.Windows;
+// 中略
 
-<span class="reserved">namespace</span> WpfApp1
+namespace WpfApp1
 {
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">MainWindow</span> : System<span class="operator">.</span>Windows<span class="operator">.</span><span class="type">Window</span>, System<span class="operator">.</span>Windows<span class="operator">.</span>Markup<span class="operator">.</span><span class="type">IComponentConnector</span>
+    public partial class MainWindow : System.Windows.Window, System.Windows.Markup.IComponentConnector
     {
-        <span class="reserved">private</span> <span class="reserved">bool</span> <span class="field">_contentLoaded</span>;
+        private bool _contentLoaded;
 
-        <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">InitializeComponent</span>()
+        public void InitializeComponent()
         {
-            <span class="control">if</span> (<span class="field">_contentLoaded</span>)
+            if (_contentLoaded)
             {
-                <span class="control">return</span>;
+                return;
             }
-            <span class="field">_contentLoaded</span> <span class="operator">=</span> <span class="reserved">true</span>;
-            System<span class="operator">.</span><span class="type">Uri</span> <span class="variable">resourceLocater</span> <span class="operator">=</span> <span class="reserved">new</span> System<span class="operator">.</span><span class="type">Uri</span>(<span class="string">&quot;/WpfApp1;V1.0.0.0;component/mainwindow.xaml&quot;</span>, System<span class="operator">.</span><span class="type">UriKind</span><span class="operator">.</span>Relative);
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/WpfApp1;V1.0.0.0;component/mainwindow.xaml", System.UriKind.Relative);
 
-<span class="preprocess">#</span><span class="preprocess">line</span> <span class="number">1</span> <span class="string">&quot;..\..\..\MainWindow.xaml&quot;</span>
-            System<span class="operator">.</span>Windows<span class="operator">.</span>Application<span class="operator">.</span>LoadComponent(<span class="reserved">this</span>, <span class="variable">resourceLocater</span>);
+#line 1 "..\..\..\MainWindow.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
         }
-<span class="comment">// 中略</span>
+// 中略
     }
 }
-</pre>
+```
 
 こちらのツール生成のコードは、通常、どこに生成されたのかすら意識せず、中身を覗くこともほとんどありません。
 
@@ -268,18 +268,18 @@ C# 3.0 で
 そういった場合、「プロパティの値が変わった」のタイミングを拾えるよう、
 以下のように、部分メソッドを含むコードをツール生成してもらっておきます。
 
-<pre class="source" title="ツール生成で partial メソッドを生成">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Entity</span>
+```csharp
+partial class Entity
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_id</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Id</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_id</span>; <span class="reserved">set</span> { <span class="control">if</span> (<span class="field">_id</span> <span class="operator">!=</span> <span class="reserved">value</span>) { <span class="field">_id</span> <span class="operator">=</span> <span class="reserved">value</span>; <span class="method">OnIdChanged</span>(); } } }
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnIdChanged</span>();
+    private int _id;
+    public int Id { get => _id; set { if (_id != value) { _id = value; OnIdChanged(); } } }
+    partial void OnIdChanged();
 
-    <span class="reserved">private</span> <span class="reserved">string</span><span class="operator">?</span> <span class="field">_name</span>;
-    <span class="reserved">public</span> <span class="reserved">string</span><span class="operator">?</span> <span class="property">Name</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_name</span>; <span class="reserved">set</span> { <span class="control">if</span> (<span class="field">_name</span> <span class="operator">!=</span> <span class="reserved">value</span>) { <span class="field">_name</span> <span class="operator">=</span> <span class="reserved">value</span>; <span class="method">OnNameChanged</span>(); } } }
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnNameChanged</span>();
+    private string? _name;
+    public string? Name { get => _name; set { if (_name != value) { _name = value; OnNameChanged(); } } }
+    partial void OnNameChanged();
 }
-</pre>
+```
 
 `OnIdChanged` と `OnNameChanged` が部分メソッドです。
 このまま何も手書きコードを足さなければ、これらのメソッドは何もしません。
@@ -289,16 +289,16 @@ C# 3.0 で
 
 一方、手書きコードで処理を足したければ以下のような感じのコードを書きます。
 
-<pre class="source" title="partial メソッドに実装を足す例">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Entity</span>
+```csharp
+partial class Entity
 {
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnIdChanged</span>() <span class="operator">=&gt;</span> <span class="field">_changed</span> <span class="operator">=</span> <span class="reserved">true</span>;
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnNameChanged</span>() <span class="operator">=&gt;</span> <span class="field">_changed</span> <span class="operator">=</span> <span class="reserved">true</span>;
+    partial void OnIdChanged() => _changed = true;
+    partial void OnNameChanged() => _changed = true;
 
-    <span class="reserved">private</span> <span class="reserved">bool</span> <span class="field">_changed</span>;
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Flush</span>() <span class="operator">=&gt;</span> <span class="field">_changed</span> <span class="operator">=</span> <span class="reserved">false</span>;
+    private bool _changed;
+    public void Flush() => _changed = false;
 }
-</pre>
+```
 
 こうすると、追加した `OnIdChanged` や `OnNameChanged` の実装が呼び出されるようになります。
 
@@ -309,19 +309,19 @@ C# 3.0 で
 
 例えば、以下のコードの実行結果はどうなるでしょう。
 
-<pre class="source" title="">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+partial class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Main</span></span>(<span class="reserved">string</span>[] <span class="variable local">args</span>)
+    static void Main(string[] args)
     {
-        <span class="reserved">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
-        <span class="method"><span class="static">A</span></span>(<span class="variable">x</span> <span class="operator">=</span> <span class="number">2</span>);
-        <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">Write</span></span>(<span class="string">&quot;{0}\n&quot;</span>, <span class="variable">x</span>);
+        int x = 1;
+        A(x = 2);
+        Console.Write("{0}\n", x);
     }
 
-    <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="static"><span class="method">A</span></span>(<span class="reserved">int</span> <span class="variable local">x</span>);
+    static partial void A(int x);
 }
-</pre>
+```
 
 `A` の実装がある場合には 2 に、ない場合には 1 になります。
 部分クラスなので、当然、実装は別ファイルにあってもかまいません。
@@ -346,45 +346,45 @@ C# 3.0 で
 C# 9.0 では、そのための「不完全なメソッド」を書く方法として `partial` キーワードを再利用することにしました。
 旧来の部分メソッドとの文法上の差は[アクセシビリティ](../oop/oo_conceal.md#level)修飾子(`public` とか `private` とか)を持つかどうかです。
 
-<pre class="source" title="新旧・部分メソッド">
-<span class="comment">// (1) ツールが事前に生成する想定のコード</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+```csharp
+// (1) ツールが事前に生成する想定のコード
+partial class PartialClass
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">PreGeneratedMethod</span>()
+    public void PreGeneratedMethod()
     {
-        <span class="method">OnPreGeneratedMethod</span>();
+        OnPreGeneratedMethod();
  
-        <span class="comment">// ツール生成のコード</span>
+        // ツール生成のコード
     }
  
-    <span class="comment">// ツール生成のコードの前に何か手書き処理を足したければこのメソッドの中身を書く</span>
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnPreGeneratedMethod</span>();
+    // ツール生成のコードの前に何か手書き処理を足したければこのメソッドの中身を書く
+    partial void OnPreGeneratedMethod();
 }
  
-<span class="comment">// (2) 手書き前提のコード</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+// (2) 手書き前提のコード
+partial class PartialClass
 {
-<span class="inactive">#if</span> DEBUG
-    <span class="comment">// ツール生成コード前に、Debug 時のみログを仕込む。</span>
-    <span class="comment">// これを書かなければ OnPreGeneratedMethod は呼ばれる痕跡すら残らない。</span>
-    <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">OnPreGeneratedMethod</span>()
+#if DEBUG
+    // ツール生成コード前に、Debug 時のみログを仕込む。
+    // これを書かなければ OnPreGeneratedMethod は呼ばれる痕跡すら残らない。
+    partial void OnPreGeneratedMethod()
     {
-        System.<span class="type">Console</span>.<span class="method">WriteLine</span>(
-            <span class="string">&quot;PreGeneratedMethod が呼ばれた直後&quot;</span>
-            + <span class="method">WantSourceGenerated</span>());
+        System.Console.WriteLine(
+            "PreGeneratedMethod が呼ばれた直後"
+            + WantSourceGenerated());
     }
-<span class="inactive">#endif</span>
+#endif
  
-    <span class="comment">// 手書き C# コードが先にあって、これを元にソースコード生成してほしいメソッド。</span>
-    <span class="reserved"><em>private</em></span> <span class="reserved">partial</span> <span class="reserved">string</span> <span class="method">WantSourceGenerated</span>();
+    // 手書き C# コードが先にあって、これを元にソースコード生成してほしいメソッド。
+    private partial string WantSourceGenerated();
 }
  
-<span class="comment">// (3) C# からのソースコード生成が前提のコード</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+// (3) C# からのソースコード生成が前提のコード
+partial class PartialClass
 {
-    <span class="reserved">private</span> <span class="reserved">partial</span> <span class="reserved">string</span> <span class="method">WantSourceGenerated</span>() =&gt; <span class="string">&quot;手書きはしづらしくて、ソースコード生成なら楽な文字列&quot;</span>;
+    private partial string WantSourceGenerated() => "手書きはしづらしくて、ソースコード生成なら楽な文字列";
 }
-</pre>
+```
 
 [コード解析・コード生成の利用](analyzer-generator.md#usage)で紹介している [StringLiteralGenerator](https://github.com/ufcpp/StringLiteralGenerator) はこの新しい部分メソッドを使っています。
 
@@ -425,96 +425,96 @@ C# 9.0 では、そのための「不完全なメソッド」を書く方法と�
 
 アクセシビリティ、`static`, `readonly`, `ref` の有無が違うとエラーになります。
 
-<pre class="source" title="シグネチャが合わなくてエラーになる例">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+```csharp
+partial class PartialClass
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="static"><span class="method">M0</span></span>();
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="static"><span class="method">M1</span></span>();
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="method"><span class="static">M2</span></span>();
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="static"><span class="method">M3</span></span>();
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="static"><span class="method">M4</span></span>();
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="static"><span class="method">M5</span></span>();
+    public static partial ref readonly int M0();
+    public static partial ref readonly int M1();
+    public static partial ref readonly int M2();
+    public static partial ref readonly int M3();
+    public static partial ref readonly int M4();
+    public static partial ref readonly int M5();
 }
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+partial class PartialClass
 {
-    <span class="comment">// 全部一致。これは大丈夫。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="method"><span class="static">M0</span></span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
+    // 全部一致。これは大丈夫。
+    public static partial ref readonly int M0() => throw new Exception();
 
-    <span class="comment">// 戻り値の型が違うのは当然ダメ。エラー。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">byte</span> <span class="static"><span class="error" title="CS8817"><span class="method">M1</span></span></span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
+    // 戻り値の型が違うのは当然ダメ。エラー。
+    public static partial ref readonly byte M1() => throw new Exception();
 
-    <span class="comment">// 以下、修飾子のどこかが違う。全部エラー。</span>
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="method"><span class="static"><span class="error" title="CS8799">M2</span></span></span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span> <span class="error" title="CS0763"><span class="method">M3</span></span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="method"><span class="static"><span class="error" title="CS8818"><span class="warning" title="CS8826">M4</span></span></span></span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="error" title="CS8818"><span class="static"><span class="method"><span class="warning" title="CS8826">M5</span></span></span></span>() <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
+    // 以下、修飾子のどこかが違う。全部エラー。
+    private static partial ref readonly int M2() => throw new Exception();
+    public partial ref readonly int M3() => throw new Exception();
+    public static partial int M4() => throw new Exception();
+    public static partial ref int M5() => throw new Exception();
 }
-</pre>
+```
 
 タプル要素名の差もエラーになります。
 
-<pre class="source" title="タプル要素名が違うとエラー">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+```csharp
+partial class PartialClass
 {
-    <span class="reserved">public</span> <span class="reserved">partial</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="method">M0</span>((<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="variable local">t</span>);
-    <span class="reserved">public</span> <span class="reserved">partial</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="method">M1</span>((<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="variable local">t</span>);
-    <span class="reserved">public</span> <span class="reserved">partial</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="method">M2</span>((<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="variable local">t</span>);
+    public partial (int x, int y) M0((int x, int y) t);
+    public partial (int x, int y) M1((int x, int y) t);
+    public partial (int x, int y) M2((int x, int y) t);
 }
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+partial class PartialClass
 {
-    <span class="comment">// 全部一致。これは大丈夫。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="method">M0</span>((<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="variable local">t</span>) <span class="operator">=&gt;</span> <span class="reserved">default</span>;
+    // 全部一致。これは大丈夫。
+    public partial (int x, int y) M0((int x, int y) t) => default;
 
-    <span class="comment">// タプル要素名が違うとエラーに。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> (<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="method"><span class="error" title="CS8142">M1</span></span>((<span class="reserved">int</span> a, <span class="reserved">int</span> b) <span class="variable local">t</span>) <span class="operator">=&gt;</span> <span class="reserved">default</span>;
-    <span class="reserved">public</span> <span class="reserved">partial</span> (<span class="reserved">int</span> a, <span class="reserved">int</span> b) <span class="error" title="CS8142"><span class="method">M2</span></span>((<span class="reserved">int</span> x, <span class="reserved">int</span> y) <span class="variable local">t</span>) <span class="operator">=&gt;</span> <span class="reserved">default</span>;
+    // タプル要素名が違うとエラーに。
+    public partial (int x, int y) M1((int a, int b) t) => default;
+    public partial (int a, int b) M2((int x, int y) t) => default;
 }
-</pre>
+```
 
 
 引数名、[null 許容参照型](../resource/nullablereferencetype.md)のアノテーションの差は警告になります。
 
-<pre class="source" title="引数名、nullability の差は警告に">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+```csharp
+partial class PartialClass
 {
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">M0</span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">string</span><span class="operator">?</span> <span class="variable local">y</span>);
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">M1</span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">string</span><span class="operator">?</span> <span class="variable local">y</span>);
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">M2</span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">string</span><span class="operator">?</span> <span class="variable local">y</span>);
+    public partial void M0(int x, string? y);
+    public partial void M1(int x, string? y);
+    public partial void M2(int x, string? y);
 }
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+partial class PartialClass
 {
-    <span class="comment">// 全部一致。これは大丈夫。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">M0</span>(<span class="reserved">int</span> <span class="variable local">x</span>, <span class="reserved">string</span><span class="operator">?</span> <span class="variable local">y</span>) { }
+    // 全部一致。これは大丈夫。
+    public partial void M0(int x, string? y) { }
 
-    <span class="comment">// 引数名が違う。警告。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method"><span class="warning" title="CS8826">M1</span></span>(<span class="reserved">int</span> <span class="variable local">a</span>, <span class="reserved">string</span><span class="operator">?</span> <span class="variable local">y</span>) { }
+    // 引数名が違う。警告。
+    public partial void M1(int a, string? y) { }
 
-    <span class="comment">// nullability が違う。警告。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="warning" title="CS8611"><span class="warning" title="CS8826"><span class="method">M2</span></span></span>(<span class="reserved">int</span> <span class="variable local">a</span>, <span class="reserved">string</span> <span class="variable local">y</span>) { }
+    // nullability が違う。警告。
+    public partial void M2(int a, string y) { }
 }
-</pre>
+```
 
 一方で、属性は統合されます。
 
-<pre class="source" title="属性は統合">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+```csharp
+partial class PartialClass
 {
-    [<span class="type">A</span>] <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">M</span>([<span class="type">A</span>] <span class="reserved">int</span> <span class="variable local">x</span>);
+    [A] public partial void M([A] int x);
 }
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+partial class PartialClass
 {
-    [<span class="type">B</span>] <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">void</span> <span class="method">M</span>([<span class="type">B</span>] <span class="reserved">int</span> <span class="variable local">x</span>) { }
+    [B] public partial void M([B] int x) { }
 }
 
-<span class="comment">// [A, B] public partial void M([A, B] int x) { } と書いたのと同じになる。</span>
+// [A, B] public partial void M([A, B] int x) { } と書いたのと同じになる。
 
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">Attribute</span> { }
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">Attribute</span> { }
-</pre>
+class A : Attribute { }
+class B : Attribute { }
+```
 
 ### <a id="sec-generated-title-8"></a> <a id="partial_property">部分プロパティ</a>
 
@@ -527,40 +527,40 @@ C# 9.0 では、そのための「不完全なメソッド」を書く方法と�
 制約的にも用途的にも、[プロパティ](../oop/oo_property.md)や[インデクサー](../oop/oo_indexer.md)でも使えるはずです。
 実際、工数の問題で後回しになっていただけで、C# 13 でめでたく部分プロパティ・部分インデクサーが実装されました。
 
-<pre class="source" title="">
-<span class="comment">// 元コード。</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+```csharp
+// 元コード。
+partial class PartialClass
 {
-    <span class="comment">// 部分プロパティ。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="property">PartialProprty</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 部分プロパティ。
+    public partial int PartialProprty { get; set; }
 
-    <span class="comment">// 部分インデクサー。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>] { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 部分インデクサー。
+    public partial int this[int index] { get; set; }
 }
 
-<span class="comment">// コード生成で作ってもらう前提のコード。</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+// コード生成で作ってもらう前提のコード。
+partial class PartialClass
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_field</span>;
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="property">PartialProprty</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_field</span>; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">_field</span> <span class="operator">=</span> <span class="reserved">value</span>; }
+    private int _field;
+    public partial int PartialProprty { get => _field; set => _field = value; }
 
-    <span class="reserved">private</span> <span class="reserved">int</span>[] <span class="field">_array</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">10</span>];
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="reserved">this</span>[<span class="reserved">int</span> <span class="variable local">index</span>] { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_array</span>[<span class="variable local">index</span>]; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">_array</span>[<span class="variable local">index</span>] <span class="operator">=</span> <span class="reserved">value</span>; }
+    private int[] _array = new int[10];
+    public partial int this[int index] { get => _array[index]; set => _array[index] = value; }
 }
-</pre>
+```
 
 この機能の追加で特にうれしいのは [`GeneratedRegex`](https://learn.microsoft.com/ja-jp/dotnet/api/system.text.regularexpressions.generatedregexattribute) の存在でしょう。
 C# 12 までは、以下のようにメソッドにする必要がありました。
 
-<pre class="source" title="GeneratedRegex">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>RegularExpressions;
+```csharp
+using System.Text.RegularExpressions;
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">MyPatterns</span>
+partial class MyPatterns
 {
-    [<span class="type">GeneratedRegex</span>(<span class="string">@&quot;\d{4}&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="type">Regex</span> <span class="static"><span class="method">FourDigits</span></span>();
+    [GeneratedRegex(@"\d{4}")]
+    public static partial Regex FourDigits();
 }
-</pre>
+```
 
 この属性を付けると、正規表現 `\d{4}` のマッチ処理を[ソースコード生成](analyzer-generator.md)で作ってくれます。
 (普通に `new Regex(@"\d{4}")` と書くよりもだいぶパフォーマンスがよくなります。)
@@ -570,15 +570,15 @@ C# 12 までは、以下のようにメソッドにする必要がありまし�
 これまでは「部分プロパティがなかったからやむなくメソッドに付けていた」というだけで、
 C# 13 と同世代の .NET 9 からはプロパティで同じことができるようになりました。
 
-<pre class="source" title="GeneratedRegex をプロパティに付けれるようになった">
-<span class="reserved">using</span> System<span class="operator">.</span>Text<span class="operator">.</span>RegularExpressions;
+```csharp
+using System.Text.RegularExpressions;
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">MyPatterns</span>
+partial class MyPatterns
 {
-    [<span class="type">GeneratedRegex</span>(<span class="string">@&quot;\d{4}&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="type">Regex</span> <span class="property"><span class="static">FourDigits</span></span> { <span class="reserved">get</span>; } <span class="comment">// プロパティになった。</span>
+    [GeneratedRegex(@"\d{4}")]
+    public static partial Regex FourDigits { get; } // プロパティになった。
 }
-</pre>
+```
 
 #### <a id="sec-generated-title-9"></a> <a id="auto-property">プロパティの宣言と自動実装</a>
 
@@ -587,61 +587,61 @@ C# の文法上の紛らわしさなんですが、
 
 普通のクラスや構造体で `{ get; set; }` を書くとき、これは[自動実装](../oop/oo_property.md#auto)になります。
 
-<pre class="source" title="自動実装の get; set;">
-<span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="comment">// 自動実装の意味。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 自動実装の意味。
+    public int X { get; set; }
 
-    <span class="comment">// コンパイラーが裏でフィールドを1個作って、</span>
-    <span class="comment">// public int X { get =&gt; field; set =&gt; field = value; }</span>
-    <span class="comment">// みたいなコードとして扱われる。</span>
+    // コンパイラーが裏でフィールドを1個作って、
+    // public int X { get => field; set => field = value; }
+    // みたいなコードとして扱われる。
 }
-</pre>
+```
 
 一方、[インターフェイス](../oop/oo_interface.md)や、[抽象メンバー](../oop/oo_abstract.md)の場合、「宣言だけある」という扱いになります。
 
-<pre class="source" title="abstract の get; set;">
-<span class="reserved">interface</span> <span class="type">I</span>
+```csharp
+interface I
 {
-    <span class="comment">// 宣言(「このプロパティは get も set も持っていてほしい」という意思表示のみ)。</span>
-    <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 宣言(「このプロパティは get も set も持っていてほしい」という意思表示のみ)。
+    int X { get; set; }
 }
 
-<span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">C</span>
+abstract class C
 {
-    <span class="comment">// これも宣言のみ。</span>
-    <span class="reserved">public</span> <span class="reserved">abstract</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // これも宣言のみ。
+    public abstract int X { get; set; }
 }
-</pre>
+```
 
 部分プロパティの場合は後者の意味になります。
 
-<pre class="source" title="partial の get; set;">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">C</span>
+```csharp
+partial class C
 {
-    <span class="comment">// 宣言(「partial の片割れで get も set も実装してほしい」という意思表示)。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS9248">X</span></span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 宣言(「partial の片割れで get も set も実装してほしい」という意思表示)。
+    public partial int X { get; set; }
 }
-</pre>
+```
 
 「片方が宣言、片方が自動実装」みたいなことにはならないので、
 以下のコードはコンパイル エラーを起こします。
 
-<pre class="source" title="実装がいない問題">
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">C</span>
+```csharp
+partial class C
 {
-    <span class="comment">// 宣言。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="property"><span class="error" title="CS9248">X</span></span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 宣言。
+    public partial int X { get; set; }
 }
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">C</span>
+partial class C
 {
-    <span class="comment">// こっちも宣言。</span>
-    <span class="comment">// なので、実装がいなくてエラーになる。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">int</span> <span class="error" title="CS0102"><span class="error" title="CS9250"><span class="property">X</span></span></span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // こっちも宣言。
+    // なので、実装がいなくてエラーになる。
+    public partial int X { get; set; }
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="partial-event">部分イベントと部分コンストラクター</a>
 
@@ -649,30 +649,30 @@ C# の文法上の紛らわしさなんですが、
 C# 14 では[イベント](../functional/sp_event.md)と[コンストラクター](../oop/oo_construct.md)も部分定義できるようになりました。
 (これも「工数の問題で後回しになっていただけ」の類です。)
 
-<pre class="source" title="部分イベントと部分コンストラクターの例">
-<span class="comment">// 元コード(手書き想定)。</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+```csharp
+// 元コード(手書き想定)。
+partial class PartialClass
 {
-    <span class="comment">// 部分イベント。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt;<span class="operator">?</span> PartialEvent;
+    // 部分イベント。
+    public partial event Action<int>? PartialEvent;
 
-    <span class="comment">// 部分コンストラクター。</span>
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="type">PartialClass</span>();
+    // 部分コンストラクター。
+    public partial PartialClass();
 }
 
-<span class="comment">// コード生成で作ってもらう前提のコード。</span>
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">PartialClass</span>
+// コード生成で作ってもらう前提のコード。
+partial class PartialClass
 {
-    <span class="reserved">private</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt;<span class="operator">?</span> <span class="field">_partialEvent</span>;
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">event</span> <span class="type">Action</span>&lt;<span class="reserved">int</span>&gt;<span class="operator">?</span> PartialEvent
+    private Action<int>? _partialEvent;
+    public partial event Action<int>? PartialEvent
     {
-        <span class="reserved">add</span> <span class="operator">=&gt;</span> <span class="field">_partialEvent</span> <span class="operator">+=</span> <span class="reserved">value</span>;
-        <span class="reserved">remove</span> <span class="operator">=&gt;</span> <span class="field">_partialEvent</span> <span class="operator">-=</span> <span class="reserved">value</span>;
+        add => _partialEvent += value;
+        remove => _partialEvent -= value;
     }
 
-    <span class="reserved">public</span> <span class="reserved">partial</span> <span class="type">PartialClass</span>() { }
+    public partial PartialClass() { }
 }
-</pre>
+```
 
 
 ## <a id="sec-generated-title-11"></a> <a id="contextual-partial-keyword">partial キーワードの位置</a>
@@ -685,22 +685,22 @@ C# 14 では[イベント](../functional/sp_event.md)と[コンストラクタ�
 (前節の[拡張部分メソッド](../oop/oo_class.md#extended_partial_method)の場合は戻り値の型の直前だけ。)
 その結果、以下のように、語順に制約があります。
 
-<pre class="source" title="partial には語順に制約がある">
-<span class="comment">// OK</span>
-<span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Ok1</span> { }
-<span class="reserved">static</span> <span class="reserved">public</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Ok2</span> { }
+```csharp
+// OK
+public static partial class Ok1 { }
+static public partial class Ok2 { }
 
-<span class="comment">// コンパイル エラー</span>
-<span class="reserved">public</span> <span class="reserved"><span class="error">partial</span></span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Ng1</span> { }
-<span class="reserved"><span class="error">partial</span></span> <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Ng2</span> { }
-<span class="reserved">static</span> <span class="reserved"><span class="error">partial</span></span> <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Ng3</span> { }
+// コンパイル エラー
+public partial static class Ng1 { }
+partial public static class Ng2 { }
+static partial public class Ng3 { }
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">X</span>
+partial class X
 {
-    <span class="comment">// OK</span>
-    <span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">void</span> Ok();
+    // OK
+    static partial void Ok();
 
-    <span class="comment">// コンパイル エラー</span>
-    <span class="reserved"><span class="error">partial</span></span> <span class="reserved">static</span> <span class="reserved">void</span> Ng();
+    // コンパイル エラー
+    partial static void Ng();
 }
-</pre>
+```

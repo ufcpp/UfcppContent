@@ -48,43 +48,43 @@ Gist に全体像:
 
 とりあえず重複を許容して62個、44種並べられたもの:
 
-<pre class="source" title="キーワードを並べられるだけ並べた物(重複を許容して62個、44種)">
-<code><span class="reserved">in</span> <span class="reserved">await</span> <span class="reserved">value</span> <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">bool</span> <span class="reserved">or</span> <span class="reserved">char</span> <span class="reserved">or</span> <span class="reserved">byte</span> <span class="reserved">or</span> <span class="reserved">sbyte</span> <span class="reserved">or</span> <span class="reserved">short</span>
-<span class="reserved">or</span> <span class="reserved">ushort</span> <span class="reserved">or</span> <span class="reserved">int</span> <span class="reserved">or</span> <span class="reserved">uint</span> <span class="reserved">or</span> <span class="reserved">nint</span> <span class="reserved">or</span> <span class="reserved">nuint</span> <span class="reserved">or</span> <span class="reserved">long</span> <span class="reserved">or</span> <span class="reserved">ulong</span> <span class="reserved">or</span>
-<span class="reserved">float</span> <span class="reserved">or</span> <span class="reserved">double</span> <span class="reserved">or</span> <span class="reserved">decimal</span> <span class="reserved">or</span> <span class="reserved">string</span> <span class="reserved">and</span> <span class="reserved">var</span> <span class="reserved">_</span> <span class="reserved">as</span> <span class="reserved">dynamic</span> <span class="reserved">as</span>
-<span class="reserved">object</span> <span class="reserved">on</span> <span class="reserved">false</span> <span class="reserved">equals</span> <span class="reserved">null</span> <span class="reserved">where</span> <span class="reserved">this</span> <span class="reserved">orderby</span> <span class="reserved">default</span> <span class="reserved">ascending</span>
-<span class="reserved">orderby</span> <span class="reserved">null</span> <span class="reserved">descending</span> <span class="reserved">group</span> <span class="reserved">null</span> <span class="reserved">by</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">global</span>
-</code></pre>
+```csharp
+in await value is not bool or char or byte or sbyte or short
+or ushort or int or uint or nint or nuint or long or ulong or
+float or double or decimal or string and var _ as dynamic as
+object on false equals null where this orderby default ascending
+orderby null descending group null by static ref readonly global
+```
 
 これ、多少インデントをまともに整形すると以下のようなコードです。
 
-<pre class="source" title="上記コードを整形">
-<code><span class="reserved">from</span> x <span class="reserved">in</span> <span class="reserved">value</span>
-<span class="reserved">join</span> y
-    <span class="reserved">in</span> <span class="reserved">await</span> <span class="reserved">value</span>
-        <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">bool</span> <span class="reserved">or</span> <span class="reserved">char</span> <span class="reserved">or</span> <span class="reserved">byte</span> <span class="reserved">or</span> <span class="reserved">sbyte</span> <span class="reserved">or</span> <span class="reserved">short</span>
-            <span class="reserved">or</span> <span class="reserved">ushort</span> <span class="reserved">or</span> <span class="reserved">int</span> <span class="reserved">or</span> <span class="reserved">uint</span> <span class="reserved">or</span> <span class="reserved">nint</span> <span class="reserved">or</span> <span class="reserved">nuint</span>
-            <span class="reserved">or</span> <span class="reserved">long</span> <span class="reserved">or</span> <span class="reserved">ulong</span> <span class="reserved">or</span> <span class="reserved">float</span> <span class="reserved">or</span> <span class="reserved">double</span>
-            <span class="reserved">or</span> <span class="reserved">decimal</span> <span class="reserved">or</span> <span class="reserved">string</span> <span class="reserved">and</span> <span class="reserved">var</span> <span class="reserved">_</span>
-        <span class="reserved">as</span> <span class="reserved">dynamic</span>
-        <span class="reserved">as</span> <span class="reserved">object</span>
-    <span class="reserved">on</span> <span class="reserved">false</span> <span class="reserved">equals</span> <span class="reserved">null</span>
-<span class="reserved">where</span> <span class="reserved">this</span>
-<span class="reserved">orderby</span> <span class="reserved">default</span> <span class="reserved">ascending</span>
-<span class="reserved">orderby</span> <span class="reserved">null</span> <span class="reserved">descending</span>
-<span class="reserved">group</span> <span class="reserved">null</span> <span class="reserved">by</span>
-    <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">global</span>::System.<span class="type">Int32</span>() =&gt; <span class="reserved">ref</span> <span class="method">NullRef</span>&lt;<span class="reserved">int</span>&gt;()
-</code></pre>
+```csharp
+from x in value
+join y
+    in await value
+        is not bool or char or byte or sbyte or short
+            or ushort or int or uint or nint or nuint
+            or long or ulong or float or double
+            or decimal or string and var _
+        as dynamic
+        as object
+    on false equals null
+where this
+orderby default ascending
+orderby null descending
+group null by
+    static ref readonly global::System.Int32() => ref NullRef<int>()
+```
 
 とりあえず、「Visual Studio 上で青色か紫色になるやつはキーワードとする」という前提。
 [Classifier](https://docs.microsoft.com/ja-jp/dotnet/api/microsoft.codeanalysis.classification.classifier) が `"keyword"` か `"keyword - control"` を返してるやつです。
 
 ちなみに、重複を一切認めなくても27個のキーワードを並べられました。
 
-<pre class="source" title="キーワードを並べられるだけ並べた物(重複なし27個)">
-<code><span class="reserved">in</span> <span class="reserved">await</span> <span class="reserved">value</span> <span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">bool</span> <span class="reserved">or</span> <span class="reserved">byte</span> <span class="reserved">and</span> <span class="reserved">var</span> <span class="reserved">_</span> <span class="reserved">as</span> <span class="reserved">object</span> <span class="reserved">on</span> <span class="reserved">false</span> <span class="reserved">equals</span>
-<span class="reserved">null</span> <span class="reserved">where</span> <span class="reserved">this</span> <span class="reserved">orderby</span> <span class="reserved">default</span> <span class="reserved">ascending</span> <span class="reserved">group</span> <span class="reserved">true</span> <span class="reserved">by</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">int</span>
-</code></pre>
+```csharp
+in await value is not bool or byte and var _ as object on false equals
+null where this orderby default ascending group true by static ref readonly int
+```
 
 昨日、最初につぶやいた時点では20個くらいだったんですが、そこからだいぶ増えて27個に。
 
@@ -114,17 +114,17 @@ Kirill さんもこれを想定してつぶやいていたんじゃないかな�
 以下のように、「`object` 引数で何でも受け付ける拡張メソッド」を置いておくことでさらに自由度が増します。
 `where null` でも `group default by false` でも何でもありです。
 
-<pre class="source" title="何でも受け付けるLINQ演算子(拡張メソッド)">
-<code><span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Ex</span>
+```csharp
+static partial class Ex
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">object</span> <span class="method">Select</span>(<span class="reserved">this</span> <span class="reserved">object</span> <span class="variable">x</span>, <span class="type">Func</span>&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; <span class="variable">f</span>) =&gt; <span class="reserved">null</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">object</span> <span class="method">Join</span>(<span class="reserved">this</span> <span class="reserved">object</span> <span class="variable">x</span>, <span class="reserved">object</span> <span class="variable">y</span>, <span class="type">Func</span>&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; <span class="variable">a</span>, <span class="type">Func</span>&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; <span class="variable">b</span>, <span class="type">Func</span>&lt;<span class="reserved">object</span>, <span class="reserved">object</span>, <span class="reserved">object</span>&gt; <span class="variable">c</span>) =&gt; <span class="reserved">null</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">object</span> <span class="method">Where</span>(<span class="reserved">this</span> <span class="reserved">object</span> <span class="variable">x</span>, <span class="type">Func</span>&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; <span class="variable">f</span>) =&gt; <span class="reserved">true</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">object</span> <span class="method">OrderBy</span>(<span class="reserved">this</span> <span class="reserved">object</span> <span class="variable">x</span>, <span class="type">Func</span>&lt;<span class="reserved">string</span>, <span class="reserved">object</span>&gt; <span class="variable">f</span>) =&gt; <span class="reserved">null</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">object</span> <span class="method">OrderByDescending</span>(<span class="reserved">this</span> <span class="reserved">object</span> <span class="variable">x</span>, <span class="type">Func</span>&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; <span class="variable">f</span>) =&gt; <span class="reserved">null</span>;
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">object</span> <span class="method">GroupBy</span>(<span class="reserved">this</span> <span class="reserved">object</span> <span class="variable">x</span>, <span class="type">Func</span>&lt;<span class="reserved">object</span>, <span class="reserved">object</span>&gt; <span class="variable">a</span>, <span class="type">Func</span>&lt;<span class="reserved">string</span>, <span class="reserved">object</span>&gt; <span class="variable">b</span>) =&gt; <span class="reserved">null</span>;
+    public static object Select(this object x, Func<object, object> f) => null;
+    public static object Join(this object x, object y, Func<object, object> a, Func<object, object> b, Func<object, object, object> c) => null;
+    public static object Where(this object x, Func<object, object> f) => true;
+    public static object OrderBy(this object x, Func<string, object> f) => null;
+    public static object OrderByDescending(this object x, Func<object, object> f) => null;
+    public static object GroupBy(this object x, Func<object, object> a, Func<string, object> b) => null;
 }
-</code></pre>
+```
 
 ### 他の選択肢
 
@@ -137,9 +137,9 @@ Kirill さんもこれを想定してつぶやいていたんじゃないかな�
 「じゃあ `case` とか `when` を使えば伸びるのでは… と思っていたものの、
 ここもクエリ式を組み込めなくて没になりました(キーワード14個)。
 
-<pre class="source" title="case, when (没案)">
-<code><span class="control">case</span> <span class="reserved">not</span> <span class="reserved">null</span> <span class="reserved">and</span> <span class="reserved">bool</span> <span class="reserved">or</span> <span class="reserved">byte</span> <span class="control">when</span> <span class="reserved">true</span> <span class="reserved">as</span> <span class="reserved">object</span> <span class="reserved">is</span> <span class="reserved">var</span> <span class="reserved">_</span>
-</code></pre>
+```csharp
+case not null and bool or byte when true as object is var _
+```
 
 ### 式の並べ方
 
@@ -160,14 +160,14 @@ Kirill さんもこれを想定してつぶやいていたんじゃないかな�
 
 `join` から始めて、`in` から後ろを使うのが最長の候補です。
 
-<pre class="source" title="クエリ式の最長候補">
-<code><span class="reserved">from</span> x <span class="reserved">in</span> <span class="variable">n</span> <span class="reserved">join</span> y
-<span class="comment">// ここから下がキーワード候補</span>
-<span class="reserved">in</span> <span class="variable">a</span> <span class="reserved">on</span> <span class="variable">b</span> <span class="reserved">equals</span> <span class="variable">c</span>
-<span class="reserved">where</span> <span class="variable">d</span>
-<span class="reserved">orderby</span> <span class="variable">e</span> <span class="reserved">ascending</span>
-<span class="reserved">group</span> <span class="variable">f</span> <span class="reserved">by</span> <span class="variable">g</span>
-</code></pre>
+```csharp
+from x in n join y
+// ここから下がキーワード候補
+in a on b equals c
+where d
+orderby e ascending
+group f by g
+```
 
 (重複を許すなら `orderby descending` を追加。)
 
@@ -213,11 +213,11 @@ Kirill さんもこれを想定してつぶやいていたんじゃないかな�
 
 以下のようなコードの、`static ref readonly global` の部分が使えました。
 
-<pre class="source" title="ラムダ式戻り値">
-<code><span class="reserved">using</span> <span class="reserved">static</span> System.Runtime.CompilerServices.<span class="type">Unsafe</span>;
+```csharp
+using static System.Runtime.CompilerServices.Unsafe;
 
-<span class="reserved">var</span> <span class="variable">f</span> = <span class="reserved">static</span> <span class="reserved">ref</span> <span class="reserved">readonly</span> <span class="reserved">global</span>::System.<span class="type">Int32</span> () =&gt; <span class="reserved">ref</span> <span class="method">NullRef</span>&lt;<span class="reserved">int</span>&gt;()
-</code></pre>
+var f = static ref readonly global::System.Int32 () => ref NullRef<int>()
+```
 
 末尾限定で [`global`](../../../../study/csharp/structured/sp_namespace.md#global) が使えることも分かっているので、型名は `int` ではなく `global::System.Int32` で参照しています。
 
@@ -229,23 +229,23 @@ Kirill さんもこれを想定してつぶやいていたんじゃないかな�
 
 `await` も以下のような拡張メソッドを用意しておくことで任意のオブジェクトに対して使えます。
 
-<pre class="source" title="任意のオブジェクトを awaitable にする拡張メソッド">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">static</span> <span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Ex</span>
+static partial class Ex
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">ValueTaskAwaiter</span>&lt;<span class="reserved">object</span>&gt; <span class="method">GetAwaiter</span>(<span class="reserved">this</span> <span class="reserved">object</span> <span class="variable">x</span>) =&gt; <span class="reserved">default</span>;
+    public static ValueTaskAwaiter<object> GetAwaiter(this object x) => default;
 }
-</code></pre>
+```
 
 ただ、前述の通り、`value` を使いたければプロパティの `set` 内である必要があります。
 プロパティは非同期にはできないので、1段工夫が必要で、以下のように、ラムダ式で覆う必要がありました。
 
-<pre class="source" title="プロパティ内で await を使う">
-<code><span class="reserved">public</span> <span class="reserved">object</span> X
+```csharp
+public object X
 {
-    <span class="reserved">set</span> =&gt; _x = <span class="reserved">async</span> () =&gt; ...
-</code></pre> 
+    set => _x = async () => ...
+```
 
 ### is
 
@@ -257,9 +257,9 @@ Kirill さんもこれを想定してつぶやいていたんじゃないかな�
 
 重複なしなら以下のパターン。
 
-<pre class="source" title="not or and var _">
-<code><span class="reserved">is</span> <span class="reserved">not</span> <span class="reserved">bool</span> <span class="reserved">or</span> <span class="reserved">int</span> <span class="reserved">and</span> <span class="reserved">var</span> <span class="reserved">_</span>
-</code></pre>
+```csharp
+is not bool or int and var _
+```
 
 `not null` とかも書けるんですが、`null` は前述の「単独で使える貴重なキーワード」なので、ここでは避けます。
 

@@ -87,9 +87,9 @@ aliases:
 
 以下のように変数の前にキーワードを付けることでアクセシビリティを制御することが出来ます。
 
-<pre class="source" title="アクセシビリティの指定" lang="">
-<code><span class="input">アクセシビリティ</span> <span class="input">変数宣言やメソッド定義</span>
-</code></pre>
+```csharp
+アクセシビリティ 変数宣言やメソッド定義
+```
 
 
 派生クラスについては後ほど「[継承](oo_inherit.md#subclass)」で説明します。
@@ -108,54 +108,54 @@ aliases:
 
 ##### <a id="sec-generated-title-4"></a>サンプル
 
-<pre class="source" title="アクセシビリティのサンプル" lang="">
-<code><span class="reserved">class</span> A
+```csharp
+class A
 {
-  <span class="reserved"><em>public</em>    int</span> pub; <span class="comment">// どこからでもアクセス可能</span>
-  <span class="reserved"><em>protected</em> int</span> pro; <span class="comment">// クラス内部と派生クラス内部からアクセス可能</span>
-  <span class="reserved"><em>private</em>   int</span> pri; <span class="comment">// クラス内部からのみアクセス可能</span>
+  public    int pub; // どこからでもアクセス可能
+  protected int pro; // クラス内部と派生クラス内部からアクセス可能
+  private   int pri; // クラス内部からのみアクセス可能
 
-  <span class="reserved">public void</span> function1()
+  public void function1()
   {
-    <span class="comment">// クラス内部</span>
-    pub = 1; <span class="comment">// OK</span>
-    pro = 2; <span class="comment">// OK</span>
-    pri = 3; <span class="comment">// OK</span>
+    // クラス内部
+    pub = 1; // OK
+    pro = 2; // OK
+    pri = 3; // OK
   }
 }
 
-<span class="reserved">class</span> B : A
+class B : A
 {
-  <span class="reserved">public void</span> function2()
+  public void function2()
   {
-    <span class="comment">// 派生クラス内部</span>
-    pub = 1; <span class="comment">// OK</span>
-    pro = 2; <span class="comment">// OK</span>
-    pri = 3; <span class="comment">// エラー</span>
+    // 派生クラス内部
+    pub = 1; // OK
+    pro = 2; // OK
+    pri = 3; // エラー
   }
 }
 
-<span class="reserved">class</span> AccessibilitySample
+class AccessibilitySample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    A a = <span class="reserved">new</span> A();
-    <span class="comment">// クラス A の外部</span>
-    a.pub = 1; <span class="comment">// OK</span>
-    a.pro = 2; <span class="comment">// エラー</span>
-    a.pri = 3; <span class="comment">// エラー</span>
+    A a = new A();
+    // クラス A の外部
+    a.pub = 1; // OK
+    a.pro = 2; // エラー
+    a.pri = 3; // エラー
   }
 }
-</code></pre>
+```
 
 
 このソースをコンパイルしようとすると、以下のようなエラーが出ます。
 
-<pre class="console" title="">
+```console
 test.cs(23,3): error CS0122: 'A.pri' is inaccessible due to its protection level
 test.cs(34,3): error CS0122: 'A.pro' is inaccessible due to its protection level
 test.cs(35,3): error CS0122: 'A.pri' is inaccessible due to its protection level
-</pre>
+```
 
 
 
@@ -168,32 +168,32 @@ test.cs(35,3): error CS0122: 'A.pri' is inaccessible due to its protection level
 以前は実装の隠蔽は行っていませんでしたが、
 ちゃんと実装を隠蔽するように作り直して見ましょう。
 
-<pre class="source" title="複素数クラス その2" lang="">
-<code><span class="reserved">class</span> Complex
+```csharp
+class Complex
 {
-  <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
-  <span class="reserved">private double</span> re; <span class="comment">// 実部を記憶しておく</span>
-  <span class="reserved">private double</span> im; <span class="comment">// 虚部を記憶しておく</span>
+  // 実装は外部から隠蔽(privateにしておく)
+  private double re; // 実部を記憶しておく
+  private double im; // 虚部を記憶しておく
 
-  <span class="comment">// 実部を取り出す</span>
-  <span class="reserved">public double</span> Re(){<span class="reserved">return this</span>.re;}
+  // 実部を取り出す
+  public double Re(){return this.re;}
 
-  <span class="comment">// 実部を書き換え</span>
-  <span class="reserved">public void</span> Re(<span class="reserved">double</span> x){<span class="reserved">this</span>.re = x;}
+  // 実部を書き換え
+  public void Re(double x){this.re = x;}
 
-  <span class="comment">// 虚部を取り出す</span>
-  <span class="reserved">public double</span> Im(){<span class="reserved">return this</span>.im;}
+  // 虚部を取り出す
+  public double Im(){return this.im;}
 
-  <span class="comment">// 虚部を書き換え</span>
-  <span class="reserved">public void</span> Im(<span class="reserved">double</span> y){<span class="reserved">this</span>.im = y;}
+  // 虚部を書き換え
+  public void Im(double y){this.im = y;}
 
-  <span class="comment">// 絶対値を取り出す</span>
-  <span class="reserved">public double</span> Abs()
+  // 絶対値を取り出す
+  public double Abs()
   {
-    <span class="reserved">return</span> Math.Sqrt(re*re + im*im);<span class="comment">// Math.Sqrt は平方根を求める関数</span>
+    return Math.Sqrt(re*re + im*im);// Math.Sqrt は平方根を求める関数
   }
 }
-</code></pre>
+```
 
 
 見ての通り、以前のものと比べてかなり回りくどくて面倒くさいものになっています。
@@ -214,73 +214,73 @@ test.cs(35,3): error CS0122: 'A.pri' is inaccessible due to its protection level
 ここで、年齢が負の数になるのはおかしいので、
 コンストラクタで年齢が負の数にならないようにチェックを行うように改良してみましょう。
 
-<pre class="source" title="Person クラスその1" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">public string</span> name; <span class="comment">// 名前</span>
-  <span class="reserved">public int</span> age;     <span class="comment">// 年齢</span>
+  public string name; // 名前
+  public int age;     // 年齢
 
-  <span class="reserved">public</span> Person()
+  public Person()
   {
-    <span class="reserved">this</span>.name = "";
-    <span class="reserved">this</span>.age  = 0;
+    this.name = "";
+    this.age  = 0;
   }
 
-  <span class="reserved">public</span> Person(<span class="reserved">string</span> name, <span class="reserved">int</span> age)
+  public Person(string name, int age)
   {
-    <span class="reserved">this</span>.name = name;
-    <span class="reserved">this</span>.age  = age &gt; 0 ? age : 0; <span class="comment">// age が負だった場合、0歳にしておく</span>
+    this.name = name;
+    this.age  = age > 0 ? age : 0; // age が負だった場合、0歳にしておく
   }
 }
-</code></pre>
+```
 
 
 しかし、現時点ではクラスの外部から<code>Person</code>クラスのメンバー<code>age</code>を直接書き換えれてしまうため、
 年齢が負の数にならないように強制することは無理です。
 例えば、以下のサンプルのようにすると無理やり年齢を負の数に設定することができます。
 
-<pre class="source" title="メンバー変数に直接アクセスができる場合の問題点" lang="">
-<code>Person p = <span class="reserved">new</span> Person(<span class="literal">"範馬刃牙"</span>, -5); <span class="comment">// 年齢に負の値を設定しようとしても</span>
-Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span class="comment">// 0歳に修正されている</span>
-              p.name, p.age);        <span class="comment">// (「範馬刃牙は0歳です」と表示される)</span>
+```csharp
+Person p = new Person("範馬刃牙", -5); // 年齢に負の値を設定しようとしても
+Console.Write("{0}は{1}歳です。\n",  // 0歳に修正されている
+              p.name, p.age);        // (「範馬刃牙は0歳です」と表示される)
 
-p.age = -5;                          <span class="comment">// でも、ageを直接書き換えてしまえば</span>
-Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span class="comment">// 負の年齢になってしまう</span>
-              p.name, p.age);        <span class="comment">// (「範馬刃牙は-5歳です」と表示される)</span>
-</code></pre>
+p.age = -5;                          // でも、ageを直接書き換えてしまえば
+Console.Write("{0}は{1}歳です。\n",  // 負の年齢になってしまう
+              p.name, p.age);        // (「範馬刃牙は-5歳です」と表示される)
+```
 
 
 この問題を解決するためには、メンバー変数<code>age</code>は外部からは直接アクセスできないようにして、メソッドを通して<code>age</code>の値を設定、取得する必要があります。
 
-<pre class="source" title="Person クラスその2" lang="">
-<code><span class="reserved">class</span> Person
+```csharp
+class Person
 {
-  <span class="reserved">public string</span> name; <span class="comment">// 名前</span>
-  <span class="reserved">private int</span> age;    <span class="comment">// 年齢</span>
+  public string name; // 名前
+  private int age;    // 年齢
 
-  <span class="reserved">public</span> Person()
+  public Person()
   {
-    <span class="reserved">this</span>.name = "";
-    <span class="reserved">this</span>.age  = 0;
+    this.name = "";
+    this.age  = 0;
   }
 
-  <span class="reserved">public</span> Person(<span class="reserved">string</span> name, <span class="reserved">int</span> age)
+  public Person(string name, int age)
   {
-    <span class="reserved">this</span>.name = name;
+    this.name = name;
     SetAge(age);
   }
 
-  <span class="reserved">public int</span> GetAge()
+  public int GetAge()
   {
-    <span class="reserved">return this</span>.age;
+    return this.age;
   }
 
-  <span class="reserved">public void</span> SetAge(int age)
+  public void SetAge(int age)
   {
-    <span class="reserved">this</span>.age  = age &gt; 0 ? age : 0; <span class="comment">// age が負だった場合、0歳にしておく</span>
+    this.age  = age > 0 ? age : 0; // age が負だった場合、0歳にしておく
   }
 }
-</code></pre>
+```
 
 
 
@@ -289,34 +289,34 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
 クラスの実装を隠蔽しない場合、どのような不具合が生じるかを説明するため、
 まず、以下のコードについて考えてみましょう。
 
-<pre class="source" title="複素数クラスその1の利用" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// クラス定義</span>
-<span class="reserved">class</span> Complex
+// クラス定義
+class Complex
 {
-  <span class="reserved">public double</span> re; <span class="comment">// 実部を記憶しておく(外部からの読み出し・書き換えも可能)</span>
-  <span class="reserved">public double</span> im; <span class="comment">// 虚部を記憶しておく(外部からの読み出し・書き換えも可能)</span>
+  public double re; // 実部を記憶しておく(外部からの読み出し・書き換えも可能)
+  public double im; // 虚部を記憶しておく(外部からの読み出し・書き換えも可能)
 
-  <span class="comment">// 絶対値を取り出す</span>
-  <span class="reserved">public double</span> Abs()
+  // 絶対値を取り出す
+  public double Abs()
   {
-    <span class="reserved">return</span> Math.Sqrt(re*re + im*im);<span class="comment">// Math.Sqrt は平方根を求める関数</span>
+    return Math.Sqrt(re*re + im*im);// Math.Sqrt は平方根を求める関数
   }
 }
 
-<span class="comment">// クラス利用側</span>
-<span class="reserved">class</span> ConcealSample
+// クラス利用側
+class ConcealSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Complex c = <span class="reserved">new</span> Complex();
-    c.re = 4; <span class="comment">// メンバー変数に直接アクセス</span>
-    c.im = 3; <span class="comment">// メンバー変数に直接アクセス</span>
-    Console.Write(<span class="literal">"|c| = {0}\n"</span>, c.Abs());
+    Complex c = new Complex();
+    c.re = 4; // メンバー変数に直接アクセス
+    c.im = 3; // メンバー変数に直接アクセス
+    Console.Write("|c| = {0}\n", c.Abs());
   }
 }
-</code></pre>
+```
 
 
 「[クラス](oo_class.md)」で説明しましたが、複素数クラスの実装方法には、
@@ -330,34 +330,34 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
 後者の方式に変更したくなったとします。
 この場合、以下のようにクラスの側だけでなく、クラスの利用側のコードも修正する必要があります。
 
-<pre class="source" title="複素数クラスその1の仕様変更時" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// クラス定義</span>
-<span class="reserved">class</span> Complex
+// クラス定義
+class Complex
 {
-  <span class="reserved">public double</span> abs; <span class="comment">// 絶対値を記憶しておく(外部からの読み出し・書き換えも可能)</span>
-  <span class="reserved">public double</span> arg; <span class="comment">// 偏角を記憶しておく(外部からの読み出し・書き換えも可能)</span>
+  public double abs; // 絶対値を記憶しておく(外部からの読み出し・書き換えも可能)
+  public double arg; // 偏角を記憶しておく(外部からの読み出し・書き換えも可能)
 
-  <span class="comment">// 実部・虚部を書き換え</span>
-  <span class="reserved">public void</span> Set(<span class="reserved">double</span> x, <span class="reserved">double</span> y)
+  // 実部・虚部を書き換え
+  public void Set(double x, double y)
   {
     this.abs = Math.Sqrt(x*x + y*y);
     this.arg = Math.Atan2(y, x);
   }
 }
 
-<span class="comment">// クラス利用側</span>
-<span class="reserved">class</span> ConcealSample
+// クラス利用側
+class ConcealSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Complex c = <span class="reserved">new</span> Complex();
-<em>    c.Set(4, 3); <span class="comment">// クラス利用側のコードも修正が必要</span></em>
-    Console.Write(<span class="literal">"|c| = {0}\n"</span>, c.abs);
+    Complex c = new Complex();
+    c.Set(4, 3); // クラス利用側のコードも修正が必要
+    Console.Write("|c| = {0}\n", c.abs);
   }
 }
-</code></pre>
+```
 
 
 このように、
@@ -366,37 +366,37 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
 
 このような問題は、以下のように実装を隠蔽することで避けることができます。
 
-<pre class="source" title="複素数クラスその2の利用" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// クラス定義</span>
-<span class="reserved">class</span> Complex
+// クラス定義
+class Complex
 {
-  <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
-  <span class="reserved">private double</span> re; <span class="comment">// 実部を記憶しておく</span>
-  <span class="reserved">private double</span> im; <span class="comment">// 虚部を記憶しておく</span>
+  // 実装は外部から隠蔽(privateにしておく)
+  private double re; // 実部を記憶しておく
+  private double im; // 虚部を記憶しておく
 
-  <span class="reserved">public double</span> Re(){<span class="reserved">return this</span>.re;}    <span class="comment">// 実部を取り出す</span>
-  <span class="reserved">public void</span> Re(<span class="reserved">double</span> x){<span class="reserved">this</span>.re = x;} <span class="comment">// 実部を書き換え</span>
+  public double Re(){return this.re;}    // 実部を取り出す
+  public void Re(double x){this.re = x;} // 実部を書き換え
 
-  <span class="reserved">public double</span> Im(){<span class="reserved">return this</span>.im;}    <span class="comment">// 虚部を取り出す</span>
-  <span class="reserved">public void</span> Im(<span class="reserved">double</span> y){<span class="reserved">this</span>.im = y;} <span class="comment">// 虚部を書き換え</span>
+  public double Im(){return this.im;}    // 虚部を取り出す
+  public void Im(double y){this.im = y;} // 虚部を書き換え
 
-  <span class="reserved">public double</span> Abs(){<span class="reserved">return</span> Math.Sqrt(re*re + im*im);}  <span class="comment">// 絶対値を取り出す</span>
+  public double Abs(){return Math.Sqrt(re*re + im*im);}  // 絶対値を取り出す
 }
 
-<span class="comment">// クラス利用側</span>
-<span class="reserved">class</span> ConcealSample
+// クラス利用側
+class ConcealSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Complex c = <span class="reserved">new</span> Complex();
-    c.Re(4); <span class="comment">// メソッドを通してオブジェクトの状態を変更</span>
+    Complex c = new Complex();
+    c.Re(4); // メソッドを通してオブジェクトの状態を変更
     c.Im(3);
-    Console.Write(<span class="literal">"|c| = {0}\n"</span>, c.Abs());
+    Console.Write("|c| = {0}\n", c.Abs());
   }
 }
-</code></pre>
+```
 
 
 このコードの実装方法を
@@ -404,56 +404,56 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
 「絶対値と偏角をメンバー変数に記憶しておく」方法に変更する場合、
 以下のように、クラス利用側のコードに手を加える必要は一切ありません。
 
-<pre class="source" title="複素数クラスその2の仕様変更時" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// クラス定義</span>
-<span class="reserved">class</span> Complex
+// クラス定義
+class Complex
 {
-  <span class="comment">// 実装は外部から隠蔽(privateにしておく)</span>
-  <span class="reserved">private double</span> abs; <span class="comment">// 絶対値を記憶しておく</span>
-  <span class="reserved">private double</span> arg; <span class="comment">// 偏角を記憶しておく</span>
+  // 実装は外部から隠蔽(privateにしておく)
+  private double abs; // 絶対値を記憶しておく
+  private double arg; // 偏角を記憶しておく
 
-  <span class="comment">// 実部を取り出す</span>
-  <span class="reserved">public double</span> Re()
+  // 実部を取り出す
+  public double Re()
   {
-    <span class="reserved">return this</span>.abs * Math.Cos(<span class="reserved">this</span>.arg);
+    return this.abs * Math.Cos(this.arg);
   }
 
-  <span class="comment">// 実部を書き換え</span>
-  <span class="reserved">public void</span> Re(<span class="reserved">double</span> x)
+  // 実部を書き換え
+  public void Re(double x)
   {
-    <span class="reserved">double</span> im = <span class="reserved">this</span>.abs * Math.Sin(<span class="reserved">this</span>.arg);
-    <span class="reserved">this</span>.abs = Math.Sqrt(x*x + im*im);
-    <span class="reserved">this</span>.arg = Math.Atan2(im, x);
+    double im = this.abs * Math.Sin(this.arg);
+    this.abs = Math.Sqrt(x*x + im*im);
+    this.arg = Math.Atan2(im, x);
   }
 
-  <span class="comment">// 虚部を取り出す</span>
-  <span class="reserved">public double</span> Im(){<span class="reserved">return this</span>.abs * Math.Sin(<span class="reserved">this</span>.arg);}
+  // 虚部を取り出す
+  public double Im(){return this.abs * Math.Sin(this.arg);}
 
-  <span class="comment">// 虚部を書き換え</span>
-  <span class="reserved">public void</span> Im(<span class="reserved">double</span> y)
+  // 虚部を書き換え
+  public void Im(double y)
   {
-    <span class="reserved">double</span> re = <span class="reserved">this</span>.abs * Math.Cos(<span class="reserved">this</span>.arg);
-    <span class="reserved">this</span>.abs = Math.Sqrt(y*y + re*re);
-    <span class="reserved">this</span>.arg = Math.Atan2(y, re);
+    double re = this.abs * Math.Cos(this.arg);
+    this.abs = Math.Sqrt(y*y + re*re);
+    this.arg = Math.Atan2(y, re);
   }
 
-  <span class="reserved">public double</span> Abs(){<span class="reserved">return this</span>.abs;}  <span class="comment">// 絶対値を取り出す</span>
+  public double Abs(){return this.abs;}  // 絶対値を取り出す
 }
 
-<span class="comment">// クラス利用側</span>
-<span class="reserved">class</span> ConcealSample
+// クラス利用側
+class ConcealSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    Complex c = <span class="reserved">new</span> Complex();
-    c.Re(4); <span class="comment">// クラス利用側は一切変更せず</span>
+    Complex c = new Complex();
+    c.Re(4); // クラス利用側は一切変更せず
     c.Im(3);
-    Console.Write(<span class="literal">"|c| = {0}\n"</span>, c.Abs());
+    Console.Write("|c| = {0}\n", c.Abs());
   }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-8"></a> <a id="protected-internal"></a>protected、internal、protected internal と private protected
 
@@ -461,20 +461,20 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
 
 まず、1つの[プロジェクト](../package/project.md#project)内ではアクセシビリティに応じて以下のような制限がかかります。
 
-<pre class="source" title="同一プロジェクト内でのアクセス制限">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Base</span>
+```csharp
+public class Base
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> Public { <span class="reserved">get</span>; <span class="reserved">set</span>; } <span class="comment">// どこからでも</span>
-    <span class="reserved">protected</span> <span class="reserved">int</span> Protected { <span class="reserved">get</span>; <span class="reserved">set</span>; } <span class="comment">// 派生クラスからだけ</span>
-    <span class="reserved">internal</span> <span class="reserved">int</span> Internal { <span class="reserved">get</span>; <span class="reserved">set</span>; } <span class="comment">// 同一アセンブリ(同一 exe/同一 dll)内からだけ</span>
-    <span class="reserved">protected</span> <span class="reserved">internal</span> <span class="reserved">int</span> ProtectedInternal { <span class="reserved">get</span>; <span class="reserved">set</span>; } <span class="comment">// 派生クラス "もしくは" 同一アセンブリ内 から</span>
-    <span class="reserved">private</span> <span class="reserved">protected</span> <span class="reserved">int</span> PrivateProtected { <span class="reserved">get</span>; <span class="reserved">set</span>; } <span class="comment">// 派生クラス "かつ" 同一アセンブリ内 から(C# 7.2 以降)</span>
-    <span class="reserved">private</span> <span class="reserved">int</span> Private { <span class="reserved">get</span>; <span class="reserved">set</span>; } <span class="comment">// クラス内からだけ</span>
+    public int Public { get; set; } // どこからでも
+    protected int Protected { get; set; } // 派生クラスからだけ
+    internal int Internal { get; set; } // 同一アセンブリ(同一 exe/同一 dll)内からだけ
+    protected internal int ProtectedInternal { get; set; } // 派生クラス "もしくは" 同一アセンブリ内 から
+    private protected int PrivateProtected { get; set; } // 派生クラス "かつ" 同一アセンブリ内 から(C# 7.2 以降)
+    private int Private { get; set; } // クラス内からだけ
 
-    <span class="reserved">public</span> <span class="reserved">void</span> Method()
+    public void Method()
     {
-        <span class="comment">// 同一クラス内</span>
-        <span class="comment">// 全部 OK</span>
+        // 同一クラス内
+        // 全部 OK
         Public = 0;
         Protected = 0;
         Internal = 0;
@@ -484,88 +484,88 @@ Console.Write(<span class="literal">"{0}は{1}歳です。\n"</span>,  <span cla
     }
 }
 
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">Derived</span> : Base
+internal class Derived : Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> MethodInDerived()
+    public void MethodInDerived()
     {
-        <span class="comment">// 同一アセンブリ内の派生クラス</span>
-        <span class="comment">// コメントアウトしてないやつだけ OK</span>
+        // 同一アセンブリ内の派生クラス
+        // コメントアウトしてないやつだけ OK
         Public = 0;
         Protected = 0;
         Internal = 0;
         ProtectedInternal = 0;
-        <span class="comment">//Private = 0;</span>
+        //Private = 0;
         PrivateProtected = 0;
     }
 }
 
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">OtherClass</span>
+internal class OtherClass
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> Method()
+    public void Method()
     {
-        <span class="comment">// 同一アセンブリ内の他のクラス</span>
-        <span class="comment">// コメントアウトしてないやつだけ OK</span>
-        <span class="reserved">var</span> x = <span class="reserved">new</span> Base();
+        // 同一アセンブリ内の他のクラス
+        // コメントアウトしてないやつだけ OK
+        var x = new Base();
 
         x.Public = 0;
-        <span class="comment">//x.Protected = 0;</span>
+        //x.Protected = 0;
         x.Internal = 0;
         x.ProtectedInternal = 0;
-        <span class="comment">//x.Private = 0;</span>
-        <span class="comment">//x.PrivateProtected = 0;</span>
+        //x.Private = 0;
+        //x.PrivateProtected = 0;
     }
 }
-</code></pre>
+```
 
 このコードとは別のプロジェクト内では、以下のような制限がかかります。
 
-<pre class="source" title="他のプロジェクト内でのアクセス制限">
-<code><span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Derived</span> : ClassLibrary1.Base
+```csharp
+public class Derived : ClassLibrary1.Base
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> MethodInDerived()
+    public void MethodInDerived()
     {
-        <span class="comment">// 他のアセンブリ内の派生クラス</span>
-        <span class="comment">// コメントアウトしてないやつだけ OK</span>
+        // 他のアセンブリ内の派生クラス
+        // コメントアウトしてないやつだけ OK
 
         Public = 0;
         Protected = 0;
-        <span class="comment">//Internal = 0;</span>
+        //Internal = 0;
         ProtectedInternal = 0;
-        <span class="comment">//Private = 0;</span>
-        <span class="comment">//PrivateProtected = 0; // ここが protected internal との差</span>
+        //Private = 0;
+        //PrivateProtected = 0; // ここが protected internal との差
     }
 }
 
-<span class="reserved">internal</span> <span class="reserved">class</span> <span class="type">OtherClass</span>
+internal class OtherClass
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> Method()
+    public void Method()
     {
-        <span class="comment">// 他のアセンブリ内の他のクラス</span>
-        <span class="comment">// public 以外全滅</span>
+        // 他のアセンブリ内の他のクラス
+        // public 以外全滅
 
-        <span class="reserved">var</span> x = <span class="reserved">new</span> ClassLibrary1.Base();
+        var x = new ClassLibrary1.Base();
 
         x.Public = 0;
-        <span class="comment">//x.Protected = 0;</span>
-        <span class="comment">//x.Internal = 0;</span>
-        <span class="comment">//x.ProtectedInternal = 0;</span>
-        <span class="comment">//x.Private = 0;</span>
-        <span class="comment">//x.PrivateProtected = 0;</span>
+        //x.Protected = 0;
+        //x.Internal = 0;
+        //x.ProtectedInternal = 0;
+        //x.Private = 0;
+        //x.PrivateProtected = 0;
     }
 }
-</code></pre>
+```
 
 ちなみに、`protected internal` と `private protected` では、語順は自由です。
 `protected internal`と`internal protected`、`private protected`と`protected private`はそれぞれ同じ意味になります。
 
-<pre class="source" title="protected internal と private protected の語順は自由">
-<code><span class="comment">// どちらの順序でも同じ意味</span>
-<span class="reserved">protected</span> <span class="reserved">internal</span> <span class="reserved">int</span> A1;
-<span class="reserved">internal</span> <span class="reserved">protected</span> <span class="reserved">int</span> A2;
+```csharp
+// どちらの順序でも同じ意味
+protected internal int A1;
+internal protected int A2;
 
-<span class="reserved">private</span> <span class="reserved">protected</span> <span class="reserved">int</span> B1;
-<span class="reserved">protected</span> <span class="reserved">private</span> <span class="reserved">int</span> B2;
-</code></pre>
+private protected int B1;
+protected private int B2;
+```
 
 ### <a id="sec-generated-title-9"></a> <a id="private-protected"></a>余談: private protected は C# コンパイラー上だけの問題
 

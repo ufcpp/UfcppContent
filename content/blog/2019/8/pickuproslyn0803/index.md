@@ -42,31 +42,31 @@ Design Notes が3件ほど。
 元々、[switch](../../../../study/csharp/datatype/typeswitch.md#switch-expression)式を式ステートメント(式1個だけ + `;` でステートメントを作るやつ)で使えるようにしたいという話があります。
 セットで、戻り値が `void` な式を `switch` 式使えるようにしたいという話もあり。
 
-<pre class="source" title="switch 式を式ステートメント化け &amp; void を認める">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">bool</span> <span class="variable">flag</span>)
+```csharp
+static void M(bool flag)
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">a</span>() { }
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">b</span>() { }
+    static void a() { }
+    static void b() { }
  
-    <span class="comment">// switch 式内で void なものを書けるようしたいという話あり。</span>
-    <span class="comment">// (今 (少なくとも VS 16.3 Preview 1)は認められていない。)</span>
-    <span class="variable">flag</span> <span class="control">switch</span>
+    // switch 式内で void なものを書けるようしたいという話あり。
+    // (今 (少なくとも VS 16.3 Preview 1)は認められていない。)
+    flag switch
     {
-        <span class="reserved">true</span> =&gt; <span class="method">a</span>(),
-        <span class="reserved">false</span> =&gt; <span class="method">b</span>(),
+        true => a(),
+        false => b(),
     };
 }
-</code></pre>
+```
 
 (ちなみに、これの実装はまだなく、[関連 issue](https://github.com/dotnet/roslyn/issues/30649)を今見ると[Compiler.Next](https://github.com/dotnet/roslyn/milestone/44)という謎のマイルストーンが付けられてた…
 C# 8.0 を目指してたけどスケジュール的に無理で次に回ったやつですね、たぶん。)
 
 で、7/10 の議題的には、以下のような「空 switch 式」を認めるかどうか。
 
-<pre class="source" title="空 switch 式">
-<code><span class="comment">// 式ステートメントに出来る前提では、空 switch を禁止する十分な理由が見当たらない。</span>
-<span class="variable">flag</span> <span class="control">switch</span> { };
-</code></pre>
+```csharp
+// 式ステートメントに出来る前提では、空 switch を禁止する十分な理由が見当たらない。
+flag switch { };
+```
 
 意味のあるコードではないですけども、
 まあ、わざわざ禁止する十分な理由が見当たらないとのこと。
@@ -76,29 +76,29 @@ C# 8.0 を目指してたけどスケジュール的に無理で次に回った�
 `[DoesNotReturn]` 属性は、[null 許容参照型](../../../../study/csharp/resource/nullablereferencetype.md)に関連する属性です。
 以下のメソッドのように、そのメソッドを呼んだ時点でそこから後ろは絶対に呼ばれないということを表すもの。
 
-<pre class="source" title="">
-<code><span class="comment">// 例外を出すんで、このメソッドからは絶対に正常に戻ってこない。</span>
-[<span class="type">DoesNotReturn</span>]
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Throw</span>() =&gt; <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>();
+```csharp
+// 例外を出すんで、このメソッドからは絶対に正常に戻ってこない。
+[DoesNotReturn]
+static void Throw() => throw new Exception();
  
-<span class="comment">// 永久ループしてるんで、このメソッドからも戻ってこない。</span>
-[<span class="type">DoesNotReturn</span>]
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">InfiniteLoop</span>() { <span class="control">while</span> (<span class="reserved">true</span>) ; }
+// 永久ループしてるんで、このメソッドからも戻ってこない。
+[DoesNotReturn]
+static void InfiniteLoop() { while (true) ; }
  
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable">i</span>)
+static void M(int i)
 {
-    <span class="reserved">string</span>? <span class="variable">s</span> = <span class="reserved">null</span>;
+    string? s = null;
  
-    <span class="comment">// 絶対に戻ってこない or 非 null な値の代入ありのどちらか。</span>
-    <span class="control">if</span> (<span class="variable">i</span> == 1) <span class="method">Throw</span>();
-    <span class="control">else</span> <span class="control">if</span>(<span class="variable">i</span> == 2) <span class="method">InfiniteLoop</span>();
-    <span class="control">else</span> { <span class="variable">s</span> = <span class="string">&quot;abc&quot;</span>; }
+    // 絶対に戻ってこない or 非 null な値の代入ありのどちらか。
+    if (i == 1) Throw();
+    else if(i == 2) InfiniteLoop();
+    else { s = "abc"; }
  
-    <span class="comment">// ここに来た時点で絶対に s = &quot;abc&quot; を通ってるので、s は非 null。</span>
-    <span class="comment">// 警告は出さなくていいはず。</span>
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">s</span>.Length);
+    // ここに来た時点で絶対に s = "abc" を通ってるので、s は非 null。
+    // 警告は出さなくていいはず。
+    Console.WriteLine(s.Length);
 }
-</code></pre>
+```
 
 null 許容参照型のために導入される属性ですが、
 原理的には[確実な初期化ルール](../../../../study/csharp/resource/rm_struct.md#definite-assignment)に対しても使えるはずです。
@@ -121,26 +121,26 @@ null 許容参照型のために導入される属性ですが、
 
 例えば現状の文法案(引数の後ろに `!`) は、「式の後ろの `!`」と期待するものが真逆になるのでまずいです。これに対して、適切な文法を考えている余裕はもう C# 8.0 のスケジュールにはありません。
 
-<pre class="source" title="param! と expression!">
-<code><span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">param</span>!)
+```csharp
+static void M(string param!)
 {
-    <span class="comment">// (C# 8.0 に入れないことが決まった。)</span>
-    <span class="comment">// param! と書くと、以下のコードがコンパイラーによって挿入される</span>
-    <span class="comment">// if (param is null) throw new ArgumentNullException(nameof(param));</span>
+    // (C# 8.0 に入れないことが決まった。)
+    // param! と書くと、以下のコードがコンパイラーによって挿入される
+    // if (param is null) throw new ArgumentNullException(nameof(param));
  
-    <span class="comment">// つまり、暗に、本来非 null なところに null が来うることを期待してる。</span>
+    // つまり、暗に、本来非 null なところに null が来うることを期待してる。
 }
  
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="method">N</span>(<span class="reserved">string</span>? <span class="variable">nullable</span>)
+static void N(string? nullable)
 {
-    <span class="comment">// (これは C# 8.0 に入る。)</span>
-    <span class="comment">// null が来てても完全に無視。</span>
-    <span class="comment">// null forgiven (null の罪に目をつむる) 演算子って言ったりする。</span>
-    <span class="reserved">string</span> <span class="variable">notnull</span> = <span class="variable">nullable</span>!;
+    // (これは C# 8.0 に入る。)
+    // null が来てても完全に無視。
+    // null forgiven (null の罪に目をつむる) 演算子って言ったりする。
+    string notnull = nullable!;
  
-    <span class="comment">// つまり、暗に、本来 null 許容なところに null が来ないことを期待してる。</span>
+    // つまり、暗に、本来 null 許容なところに null が来ないことを期待してる。
 }
-</code></pre>
+```
 
 ## 7/17
 
@@ -193,20 +193,20 @@ C# のイベント、特に[自動イベント](../../../../study/csharp/functio
 records は、要は純粋なデータを表すような型のこと。
 現状の C# で書くと、コンストラクター引数をプロパティでほぼ同じものを何度も繰り返し書かないといけなくてしんどいやつです。
 
-<pre class="source" title="records">
-<code><span class="reserved">class</span> <span class="type">Records</span>
+```csharp
+class Records
 {
-    <span class="comment">// public なプロパティでデータをまとめたいというのがこの手の型(レコード)の主目的。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    // public なプロパティでデータをまとめたいというのがこの手の型(レコード)の主目的。
+    public int X { get; }
+    public int Y { get; }
  
-    <span class="comment">// 目的外のところで、存外書かないといけないコードが多い。</span>
-    <span class="reserved">public</span> <span class="type">Records</span>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">y</span>) =&gt; (X, Y) = (<span class="variable">x</span>, <span class="variable">y</span>);
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">y</span>) =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) = (X, Y);
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type">Records</span> <span class="variable">other</span>) =&gt; (X, Y) == (<span class="variable">other</span>.X, <span class="variable">other</span>.Y);
-    <span class="comment">// その他、GetHashCode, == と !=, Equals(object) 等々…</span>
+    // 目的外のところで、存外書かないといけないコードが多い。
+    public Records(int x, int y) => (X, Y) = (x, y);
+    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
+    public bool Equals(Records other) => (X, Y) == (other.X, other.Y);
+    // その他、GetHashCode, == と !=, Equals(object) 等々…
 }
-</code></pre>
+```
 
 うちのブログでも何度も何度も出ている話なのでずっと読んでくれている方ならわかると思いますが、初出は C# 6.0 の頃で、7 でも 8 でも流れて、9.0 で今度こそこれを主役にしたいという雰囲気。
 
@@ -214,9 +214,9 @@ records は、要は純粋なデータを表すような型のこと。
 
 最初に提案された records (今回、records V1 とか positional records とか呼ばれるようになっています)は概ね、以下のような書き方から、上記のようなクラスを生成する機能です。
 
-<pre class="source" title="Records V1">
-<code>data <span class="reserved">class</span> <span class="type">Records</span>(<span class="reserved">int</span> X, <span class="reserved">int</span> Y);
-</code></pre>
+```csharp
+data class Records(int X, int Y);
+```
 
 クラスの生成は、前述のような immutable (プロパティが get-only で、コンストラクターでの初期化が必須)なものになる(少なくともデフォルトではそうなる。get/set できるようにしたければ明示が必要にする)予定です。
 
@@ -224,74 +224,74 @@ records は、要は純粋なデータを表すような型のこと。
 
 問題は、V1 だとプロパティ初期化子が使えないこと。
 
-<pre class="source" title="Records に対して初期化子を使いたい">
-<code><span class="reserved">class</span> <span class="type">Records</span>
+```csharp
+class Records
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Records</span>(<span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">int</span> <span class="variable">y</span>) =&gt; (X, Y) = (<span class="variable">x</span>, <span class="variable">y</span>);
-    <span class="comment">// 以下略</span>
+    public int X { get; }
+    public int Y { get; }
+    public Records(int x, int y) => (X, Y) = (x, y);
+    // 以下略
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// こうは書ける。</span>
-        <span class="reserved">var</span> <span class="variable">r1</span> = <span class="reserved">new</span> <span class="type">Records</span>(1, 2);
+        // こうは書ける。
+        var r1 = new Records(1, 2);
  
-        <span class="comment">// こう書きたいけど、これが V1 だと無理。</span>
-        <span class="reserved">var</span> <span class="variable">r2</span> = <span class="reserved">new</span> <span class="type">Records</span> { X = 1, Y = 2 };
+        // こう書きたいけど、これが V1 だと無理。
+        var r2 = new Records { X = 1, Y = 2 };
  
-        <span class="comment">// こんな感じで「部分書き換え」もしたい。</span>
-        <span class="comment">// X は r2.X を引き継ぎつつ、Y だけ書き換えた新しいインスタンスを作りたい。</span>
-        <span class="reserved">var</span> <span class="variable">r3</span> = <span class="variable">r2</span> with { Y = 3};
+        // こんな感じで「部分書き換え」もしたい。
+        // X は r2.X を引き継ぎつつ、Y だけ書き換えた新しいインスタンスを作りたい。
+        var r3 = r2 with { Y = 3};
     }
 }
-</code></pre>
+```
 
 ### records V2
 
 そこで今回提案されているのが records V2 (nominal records) で、
 以下のように、「initonly」なプロパティを定義できるようにするのはどうかというものです。
 
-<pre class="source" title="initonly プロパティ">
-<code><span class="reserved">class</span> <span class="type">Records</span>
+```csharp
+class Records
 {
-    <span class="reserved">public</span> initonly <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> initonly <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    public initonly int X { get; }
+    public initonly int Y { get; }
 }
  
-<span class="reserved">public</span> <span class="reserved">class</span> <span class="type">Program</span>
+public class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="comment">// こう書けるようにする。</span>
-        <span class="reserved">var</span> <span class="variable">r2</span> = <span class="reserved">new</span> <span class="type">Records</span> { X = 1, Y = 2 };
-        <span class="reserved">var</span> <span class="variable">r3</span> = <span class="variable">r2</span> with { Y = 3};
+        // こう書けるようにする。
+        var r2 = new Records { X = 1, Y = 2 };
+        var r3 = r2 with { Y = 3};
     }
 }
-</code></pre>
+```
 
 仕組み的には、以下のように、「`readonly`が付いてるんだけどコンストラクター以外から書き換えられる set メソッドを用意」を考えているそうです。
 
-<pre class="source" title="readonly なフィールドを書き換える set メソッド">
-<code><span class="reserved">class</span> <span class="type">Records</span>
+```csharp
+class Records
 {
-    <span class="comment">// public initonly int X { get; } に対して</span>
+    // public initonly int X { get; } に対して
  
-    <span class="comment">// コンパイラーは &lt;Backing&gt;_X みたいな C# では書けない名前でフィールドを生成してる。</span>
-    <span class="comment">// ここでは、説明のために単に _X で書く。</span>
-    <span class="reserved">private</span> <span class="reserved">int</span> _X;
+    // コンパイラーは <Backing>_X みたいな C# では書けない名前でフィールドを生成してる。
+    // ここでは、説明のために単に _X で書く。
+    private int _X;
  
-    <span class="comment">// get アクセサーに相当するメソッド</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">get_X</span>() =&gt; _X;
+    // get アクセサーに相当するメソッド
+    public int get_X() => _X;
  
-    <span class="comment">// set アクセサーに相当するメソッド</span>
-    [<span class="type">initonly</span>]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">set_X</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; _X = <span class="variable">x</span>;
+    // set アクセサーに相当するメソッド
+    [initonly]
+    public void set_X(int x) => _X = x;
 }
-</code></pre>
+```
 
 `[initonly]` 属性のところは、単なる(C# コンパイラーだけが使う)属性じゃなくて、
 .NET ランタイムが解釈して特別扱いできる属性値(modreq)にしたいそうです。
@@ -312,77 +312,77 @@ verifiable にするためにも、`[initonly]` が付いたメソッドには�
 1つ目の primary コンストラクターは、以下のような書き方で、
 コンストラクター(の引数)とプロパティを同時に定義する書き方。
 
-<pre class="source" title="primary コンストラクター (positional records)">
-<code><span class="reserved">class</span> <span class="type">Records</span>(<span class="reserved">int</span> X);
+```csharp
+class Records(int X);
    
-<span class="comment">// ↓解釈結果</span>
+// ↓解釈結果
  
-<span class="reserved">class</span> <span class="type">Records</span>
+class Records
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; }
-    <span class="reserved">public</span> <span class="type">Records</span>(<span class="reserved">int</span> <span class="variable">X</span>) =&gt; <span class="reserved">this</span>.X = <span class="variable">X</span>;
+    public int X { get; }
+    public Records(int X) => this.X = X;
 }
-</code></pre>
+```
 
 2つ目が今日話した initonly プロパティ。
 immutable なデータ構造に対してプロパティ初期化子が使えるようにするもの。
 
-<pre class="source" title="initonly プロパティ">
-<code><span class="reserved">class</span> <span class="type">Records</span>
+```csharp
+class Records
 {
-    <span class="reserved">public</span> initonly <span class="reserved">int</span> X { <span class="reserved">get</span>; }
+    public initonly int X { get; }
 }
  
-<span class="comment">// ↓解釈結果</span>
+// ↓解釈結果
  
-<span class="reserved">class</span> <span class="type">Records</span>
+class Records
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> _X;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="method">get_X</span>() =&gt; _X;
-    [<span class="type">InitOnly</span>]
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">set_X</span>(<span class="reserved">int</span> <span class="variable">x</span>) =&gt; _X = <span class="variable">x</span>;
+    private int _X;
+    public int get_X() => _X;
+    [InitOnly]
+    public void set_X(int x) => _X = x;
 }
-</code></pre>
+```
 
 3つ目は、`data class`/`data struct` と書くことで、プロパティから `Equals`や`GetHashCode`、`Deconstruct`などの関連メソッドを自動生成する機能。
 要は、これまでの提案と比べると、primarily コンストラクター が別機能として独立したことになります。
 (キーワードは仮。`data` じゃなくて `record` キーワードになったりはするかも。)
 
-<pre class="source" title="data class">
-<code><span class="comment">// data が付く。</span>
-data <span class="reserved">class</span> <span class="type">Records</span>
+```csharp
+// data が付く。
+data class Records
 {
-    <span class="comment">// 中身自体は既存の C# コード。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 中身自体は既存の C# コード。
+    public int X { get; set; }
+    public int Y { get; set; }
 }
  
-<span class="comment">// ↓解釈結果</span>
+// ↓解釈結果
  
-<span class="reserved">class</span> <span class="type">Records</span> : <span class="type">IEquatable</span>&lt;<span class="type">Records</span>&gt;
+class Records : IEquatable<Records>
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">void</span> <span class="method">Deconstruct</span>(<span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">x</span>, <span class="reserved">out</span> <span class="reserved">int</span> <span class="variable">y</span>) =&gt; (<span class="variable">x</span>, <span class="variable">y</span>) = (X, Y);
-    <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">Equals</span>(<span class="type">Records</span> <span class="variable">other</span>) =&gt; (X, Y) == (<span class="variable">other</span>.X, <span class="variable">other</span>.Y);
-    <span class="comment">// その他、GetHashCode, == と !=, Equals(object) 等々…</span>
+    public int X { get; set; }
+    public int Y { get; set; }
+    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
+    public bool Equals(Records other) => (X, Y) == (other.X, other.Y);
+    // その他、GetHashCode, == と !=, Equals(object) 等々…
 }
-</code></pre>
+```
 
 primary コンストラクター を独立させたのと、今回 initonly プロパティを足したわけですが、
 要するに、これらの混在もできる予定です。
 
-<pre class="source" title="3つの機能の混在">
-<code><span class="comment">// primary コンストラクターと、</span>
-data <span class="reserved">class</span> <span class="type">Records</span>(<span class="reserved">int</span> X)
+```csharp
+// primary コンストラクターと、
+data class Records(int X)
 {
-    <span class="comment">// initonly プロパティと、</span>
-    <span class="reserved">public</span> initonly <span class="reserved">int</span> Y { <span class="reserved">get</span>; }
+    // initonly プロパティと、
+    public initonly int Y { get; }
 
-    <span class="comment">// 既存の普通のプロパティが混在。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> Z { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 既存の普通のプロパティが混在。
+    public int Z { get; set; }
  
-    <span class="comment">// data が付いてるので Equals とかがコンパイラー生成される。</span>
-    <span class="comment">// (X, Y, Z から生成。)</span>
+    // data が付いてるので Equals とかがコンパイラー生成される。
+    // (X, Y, Z から生成。)
 }
-</code></pre>
+```

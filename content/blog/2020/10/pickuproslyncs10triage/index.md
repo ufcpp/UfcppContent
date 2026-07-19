@@ -32,12 +32,12 @@ aliases: []
 C# では、というか、IEEE 754 (浮動小数点数の標準規格)では、
 NaN (Not a Number)との比較は常に false ということになっています。
 
-<pre class="source" title="NaN との比較">
-<code><span class="reserved">bool</span> <span class="method">m</span>(<span class="reserved">double</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> == <span class="reserved">double</span>.NaN;
+```csharp
+bool m(double x) => x == double.NaN;
  
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">m</span>(1.0)); <span class="comment">// 当然 false</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="method">m</span>(<span class="reserved">double</span>.NaN)); <span class="comment">// これですら false</span>
-</code></pre>
+Console.WriteLine(m(1.0)); // 当然 false
+Console.WriteLine(m(double.NaN)); // これですら false
+```
 
 最近の C# では「常に false な式」に対して警告を出すことが結構あるんで、
 過去の文法に対しても「常に false 警告」を足してもいいんじゃないかという話があります。
@@ -56,38 +56,38 @@ C# 8.0 で [null 許容参照型](../../../../study/csharp/resource/nullablerefe
 
 - `MemberNotNull` 属性
 
-<pre class="source" title="MemberNotNull 属性">
-<code><span class="reserved">class</span> <span class="type">X</span>
+```csharp
+class X
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> NotNull;
-    <span class="reserved">public</span> <span class="type">X</span>() =&gt; <span class="method">Init</span>();
+    public string NotNull;
+    public X() => Init();
  
-    <span class="comment">// このメソッドの呼び出し後、NotNull プロパティの非 null を保証</span>
-    [<span class="type">MemberNotNull</span>(<span class="reserved">nameof</span>(NotNull))]
-    <span class="reserved">private</span> <span class="reserved">void</span> <span class="method">Init</span>() =&gt; NotNull = <span class="string">&quot;&quot;</span>;
+    // このメソッドの呼び出し後、NotNull プロパティの非 null を保証
+    [MemberNotNull(nameof(NotNull))]
+    private void Init() => NotNull = "";
 }
-</code></pre>
+```
 
 - 制約なしジェネリック型に対する `T?`
 
-<pre class="source" title="制約なしジェネリック型に対する T?">
-<code><span class="inactive">#nullable</span> <span class="inactive">enable</span>
+```csharp
+#nullable enable
  
-<span class="reserved">class</span> <span class="type">X</span>
+class X
 {
-    <span class="comment">// where T を書かないときも T? が利用できるように。</span>
-    <span class="comment">// ただし、意味的には nullable というよりも &quot;defaultable&quot; で…</span>
-    <span class="reserved">static</span> <span class="type">T</span>? <span class="method">M</span>&lt;<span class="type">T</span>&gt;() =&gt; <span class="reserved">default</span>;
+    // where T を書かないときも T? が利用できるように。
+    // ただし、意味的には nullable というよりも "defaultable" で…
+    static T? M<T>() => default;
  
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">Main</span>()
+    static void Main()
     {
-        <span class="reserved">string</span>? <span class="variable">s1</span> = <span class="method">M</span>&lt;<span class="reserved">string</span>?&gt;(); <span class="comment">// string? → string?</span>
-        <span class="reserved">string</span>? <span class="variable">s2</span> = <span class="method">M</span>&lt;<span class="reserved">string</span>&gt;();  <span class="comment">// string → string?</span>
-        <span class="reserved">int</span>?    <span class="variable">i1</span> = <span class="method">M</span>&lt;<span class="reserved">int</span>?&gt;();    <span class="comment">// int? → int?</span>
-        <span class="reserved">int</span>     <span class="variable">i2</span> = <span class="method">M</span>&lt;<span class="reserved">int</span>&gt;();     <span class="comment">// int → int で 0 が返る</span>
+        string? s1 = M<string?>(); // string? → string?
+        string? s2 = M<string>();  // string → string?
+        int?    i1 = M<int?>();    // int? → int?
+        int     i2 = M<int>();     // int → int で 0 が返る
     }
 }
-</code></pre>
+```
 
 で、C# 9.0 にも漏れたものがいくつかあって、引き続き 10.0 向けに検討していくとのこと。
 
@@ -103,36 +103,36 @@ C# 8.0 で [null 許容参照型](../../../../study/csharp/resource/nullablerefe
 C# 9.0 時点では nominal に(プロパティで)定義したメンバーは初期化を必須にできません。
 常に省略可能で、省略した場合は 0/null に自動的に初期化されます。
 
-<pre class="source" title="nominal record のプロパティは現状、明示的な初期化が不要">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span>
+```csharp
+var p = new Point
 {
-    <span class="comment">// X, Y ともに何も書かなくても別に構わない</span>
+    // X, Y ともに何も書かなくても別に構わない
 };
  
-<span class="reserved">record</span> Point
+record Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">init</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int X { get; init; }
+    public int Y { get; init; }
 }
-</code></pre>
+```
 
 これに対して、明示的な初期化を義務付けたいという話があって、
 1案としては以下のような書き方が提案されています。
 これを required プロパティといいます。
 
-<pre class="source" title="required プロパティ(の1案)">
-<code><span class="reserved">var</span> <span class="variable">p</span> = <span class="reserved">new</span> <span class="type">Point</span>
+```csharp
+var p = new Point
 {
-    X = 1, <span class="comment">// X は書かないとコンパイル エラー</span>
-    <span class="comment">// Y はなくてもいい</span>
+    X = 1, // X は書かないとコンパイル エラー
+    // Y はなくてもいい
 };
  
-<span class="reserved">record</span> Point
+record Point
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; req; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">init</span>; }
+    public int X { get; req; }
+    public int Y { get; init; }
 }
-</code></pre>
+```
 
 元々「間に合う物なら C# 9.0 で」くらいの感じで提案が出ていたものなので、引き続き 10.0 候補として検討していくとのこと。
 
@@ -144,10 +144,10 @@ C# 9.0 時点では nominal に(プロパティで)定義したメンバーは�
 となると逆に、「匿名型は名前なしのレコード型」という扱いになっている方が自然で、
 この一貫性を取るために、匿名型にも `with` 式を認めたいという話が出ています。
 
-<pre class="source" title="匿名型に対する with 式">
-<code><span class="reserved">var</span> <span class="variable">a</span> = <span class="reserved">new</span> { X = 1, Y = 2 };
-<span class="reserved">var</span> <span class="variable">b</span> = <span class="variable">a</span> <span class="reserved">with</span> { X = 3 }; <span class="comment">// 9.0 時点ではできないものの、10.0 で検討</span>
-</code></pre>
+```csharp
+var a = new { X = 1, Y = 2 };
+var b = a with { X = 3 }; // 9.0 時点ではできないものの、10.0 で検討
+```
 
 [discussion](https://github.com/dotnet/csharplang/discussions/3952)では「匿名型自体どうなの？」とか言われたりもしますが…
 
@@ -158,11 +158,11 @@ C# チーム的には前向き(たぶん、変更コストがそんなに高く�
 
 C# でも shebang (Unix シェルでよくある、1行目に `#!` を書いてスクリプトを何で実行するか指定するやつ)を認めよう(C# コンパイラー的には単にコメント扱いで無視)という話があります。
 
-<pre class="source" title="shebang">
-<code><span class="inactive">#! dotnet run</span>
+```csharp
+#! dotnet run
  
-System.<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hello&quot;</span>);
-</code></pre>
+System.Console.WriteLine("Hello");
+```
 
 ただ、これはどちらかというと [donet CLI](https://docs.microsoft.com/ja-jp/dotnet/core/tools/?WT.mc_id=DT-MVP-4028921)側の問題なので、C# チーム的には「X.0」(いつやるか未定)扱い。
 「CLI 側が dotnet run でスクリプト実行できるようになったら本気出す」みたいな感じみたいです。
@@ -171,15 +171,14 @@ System.<span class="type">Console</span>.<span class="method">WriteLine</span>(<
 
 配列とか `List<T>` とか(あるいはもしかしたら汎用に `IEnumerable<T>` も)を `[]` を使った[パターン](../../../../study/csharp/datatype/patterns.md)でマッチングできるようにしたいという話があります。
 
-<pre class="source" title="リスト パターン">
-<code>
-<span class="reserved">var</span> <span class="variable">x</span> = <span class="reserved">new</span>[] { 1, 2, 3 };
+```csharp
+var x = new[] { 1, 2, 3 };
  
-<span class="control">if</span> (<span class="variable">x</span> <span class="reserved">is</span> [1, 2, var i])
+if (x is [1, 2, var i])
 {
     ...
 }
-</code></pre>
+```
 
 (すでにコミュニティ貢献でプロトタイプ実装があったりします。)
 
@@ -194,9 +193,9 @@ System.<span class="type">Console</span>.<span class="method">WriteLine</span>(<
 
 ここでは C# のスクリプト文法を使えるので、例えば、以下のような1行のコードが「実行」ボタン1つで実行できます。
 
-<pre class="source" title="チュートリアル上ではこの1ライナーが有効">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;Hellow World!&quot;</span>);
-</code></pre>
+```csharp
+Console.WriteLine("Hellow World!");
+```
 
 これ、実は `using System;` なしで `Console` クラスにアクセスできたりします。
 スクリプト文法限定なんですが、いくつかの名前空間は「デフォルトで `using` 済み扱い」みたいにする機能があるということだったりします。
@@ -218,21 +217,21 @@ enum 型に対して、「メンバー定義してない値は取らない」と
 
 例えば以下のコードは現状では警告が出るんですが、「警告をなくせる enum が欲しい」というのが closed enum です(ここでいう close (閉じる)というのは、「これ以上のメンバー追加はない」という意味です)。
 
-<pre class="source" title="enum の網羅性">
-<code><span class="reserved">int</span> <span class="method">m</span>(<span class="type">X</span> <span class="variable">x</span>) =&gt; <span class="variable">x</span> <span class="warning"><span class="control">switch</span></span>
+```csharp
+int m(X x) => x switch
 {
-    <span class="type">X</span>.A =&gt; 1,
-    <span class="type">X</span>.B =&gt; 2,
-    <span class="type">X</span>.C =&gt; 4,
-    <span class="comment">// 今の enum の仕様だと (X)100 とか書けるので、A, B, C だけでは「網羅した」判定を受けない。</span>
-    <span class="comment">// 警告が出る。</span>
+    X.A => 1,
+    X.B => 2,
+    X.C => 4,
+    // 今の enum の仕様だと (X)100 とか書けるので、A, B, C だけでは「網羅した」判定を受けない。
+    // 警告が出る。
 };
  
-<span class="reserved">enum</span> <span class="type">X</span>
+enum X
 {
     A, B, C
 }
-</code></pre>
+```
 
 この辺りの網羅性のロジックは、別途 C# 10.0 で検討されている [discriminated union](https://github.com/dotnet/csharplang/issues/113) でも同様なので、それと一緒に考えたいとのこと。
 
@@ -241,23 +240,23 @@ enum 型に対して、「メンバー定義してない値は取らない」と
 C# 9.0 で入った[トップ レベル ステートメント](../../../../study/csharp/misc/miscentrypoint.md#top-level-statements)で、トップ レベルにメソッドを書いた場合、
 それはトップ レベルからのみアクセスできます。
 
-<pre class="source" title="トップ レベルにメソッドを書いた場合の挙動">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="comment">// トップ レベルでメソッドを書く。</span>
-<span class="reserved">void</span> <span class="method">m</span>() =&gt; <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;m&quot;</span>);
+// トップ レベルでメソッドを書く。
+void m() => Console.WriteLine("m");
  
-<span class="comment">// トップ レベルから呼ぶのは OK。</span>
-<span class="method">m</span>();
+// トップ レベルから呼ぶのは OK。
+m();
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// トップじゃない場所から呼ぶとコンパイル エラー。</span>
-    <span class="comment">// ちなみにエラー内容は「m が見つからない」じゃなくて、
-    // 「トップ レベルの m はトップ レベルからだけ呼べる」。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> <span class="method">M</span>() =&gt; <span class="method">m</span>();
+    // トップじゃない場所から呼ぶとコンパイル エラー。
+    // ちなみにエラー内容は「m が見つからない」じゃなくて、
+    // 「トップ レベルの m はトップ レベルからだけ呼べる」。
+    static void M() => m();
 }
-</code></pre>
+```
 
 少なくとも C# 9.0 時点では意図的にこういう仕様になっているんですが、
 「将来、この `m` をプロジェクト内のどこからでも呼んでいい global 関数的なものとして認めてもいいんじゃないか」という議題は残っていました
@@ -282,15 +281,15 @@ unsafe とか[抑止演算子の `!`](../../../../study/csharp/resource/nullable
 
 そこで、必要であればやっぱり実行時の検証、要するに以下のようなコードも必要だろうという空気感。
 
-<pre class="source" title="実行時 null 検証">
-<code><span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">s</span>)
+```csharp
+void M(string s)
 {
-    <span class="control">if</span> (<span class="variable">s</span> <span class="reserved">is</span> <span class="reserved">null</span>)
-        <span class="control">throw</span> <span class="reserved">new</span> <span class="type">ArgumentNullException</span>(<span class="reserved">nameof</span>(<span class="variable">s</span>));
+    if (s is null)
+        throw new ArgumentNullException(nameof(s));
  
     ...
 }
-</code></pre>
+```
 
 これを、`string s!` とかで簡素化したいという案も出ています。
 「文法は `!` でいいのか」みたいな部分で合意が取れておらず 9.0 では流れましたが、10.0 で再検討とのこと。
@@ -299,9 +298,9 @@ unsafe とか[抑止演算子の `!`](../../../../study/csharp/resource/nullable
 
 `using` エイリアスで以下のような書き方をしたいという話はずっと昔からたびたび出ています。
 
-<pre class="source" title="using エイリアスでジェネリック型引数を書きたい">
-<code><span class="reserved">using</span> List&lt;T&gt; = System.Collections.Generic.<span class="type">List</span>&lt;T&gt;;
-</code></pre>
+```csharp
+using List<T> = System.Collections.Generic.List<T>;
+```
 
 「欲しいけど、他にたくさんある C# 10.0 候補を押しのけてまでは…」という感じみたいで、
 「X.0」(いつやるか不明)行き。
@@ -311,16 +310,16 @@ unsafe とか[抑止演算子の `!`](../../../../study/csharp/resource/nullable
 null 許容参照型の [`NutNullIfNotNull`](../../../../study/csharp/resource/nullablereferencetype.md#sec-generated-title-6) とかの登場で急に需要が高まったんですが、
 属性内で、メソッドの引数を `nameof` 参照したいという要求があります。
 
-<pre class="source" title="パラメーターを nameof 参照したい例">
-<code><span class="reserved">using</span> System.Diagnostics.CodeAnalysis;
+```csharp
+using System.Diagnostics.CodeAnalysis;
  
-<span class="reserved">class</span> <span class="type">Path</span>
+class Path
 {
-    <span class="comment">// 今、nameof(path) とは書けない。</span>
-    [<span class="reserved">return</span>: <span class="type">NotNullIfNotNull</span>(<span class="string">&quot;path&quot;</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">string</span>? <span class="method">GetFileName</span>(<span class="reserved">string</span>? <span class="variable">path</span>);
+    // 今、nameof(path) とは書けない。
+    [return: NotNullIfNotNull("path")]
+    public static string? GetFileName(string? path);
 }
-</code></pre>
+```
 
 まあ、C# 8.0 時点でこれの需要が急増することはわかっていて、
 単に優先度的に 9.0 に入らなかっただけです。
@@ -331,25 +330,25 @@ null 許容参照型の [`NutNullIfNotNull`](../../../../study/csharp/resource/n
 今や普通に `string` と `Span<char>`、`ReadOnlySpan<char>` を比較することがあるわけで、
 だったら、`Span<chat>` を `switch` 式に掛けたいという要求が当然あります。
 
-<pre class="source" title="Span に対して文字列リテラルで switch">
-<code><span class="comment">// string に対してこんな感じの switch していたものを…</span>
-<span class="reserved">int</span> <span class="method">M</span>(<span class="reserved">string</span> <span class="variable">s</span>) =&gt; <span class="variable">s</span> <span class="control">switch</span>
+```csharp
+// string に対してこんな感じの switch していたものを…
+int M(string s) => s switch
 {
-    <span class="string">&quot;Id&quot;</span> =&gt; 1,
-    <span class="string">&quot;Name&quot;</span> =&gt; 2,
-    <span class="string">&quot;Age&quot;</span> =&gt; 3,
-    <span class="reserved">_</span> =&gt; 0,
+    "Id" => 1,
+    "Name" => 2,
+    "Age" => 3,
+    _ => 0,
 };
  
-<span class="comment">// Span や ReadOnlySpan でもやりたい。</span>
-<span class="reserved">int</span> <span class="method">M</span>(<span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; <span class="variable">s</span>) =&gt; <span class="variable">s</span> <span class="control">switch</span>
+// Span や ReadOnlySpan でもやりたい。
+int M(ReadOnlySpan<char> s) => s switch
 {
-    <span class="string">&quot;Id&quot;</span> =&gt; 1,
-    <span class="string">&quot;Name&quot;</span> =&gt; 2,
-    <span class="string">&quot;Age&quot;</span> =&gt; 3,
-    <span class="reserved">_</span> =&gt; 0,
+    "Id" => 1,
+    "Name" => 2,
+    "Age" => 3,
+    _ => 0,
 };
-</code></pre>
+```
 
 これは「Any Time」(C# チーム的には乗り気じゃないけど、コミュニティ貢献は受け付ける)扱いなんですが、
 実際にコミュニティ貢献の Pull Request が出ていたりします。

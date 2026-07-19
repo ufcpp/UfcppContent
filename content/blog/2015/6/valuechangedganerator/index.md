@@ -47,80 +47,80 @@ aliases: []
 
 例えば、以下のようなコードが Point.cs と言う名前であったとします。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Point</span> : <span class="type">BindableBase</span>
+```csharp
+partial class Point : BindableBase
 {
-    <span class="reserved">struct</span> <span class="type">NotifyRecord</span>
+    struct NotifyRecord
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> X;
-        <span class="reserved">public</span> <span class="reserved">int</span> Y;
-        <span class="reserved">public</span> <span class="reserved">int</span> Z =&gt; X * Y;
+        public int X;
+        public int Y;
+        public int Z => X * Y;
 
-        <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-        <span class="inactive">///</span><span class="comment"> Name.</span>
-        <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-        <span class="reserved">public</span> <span class="reserved">string</span> Name;
+        /// <summary>
+        /// Name.
+        /// </summary>
+        public string Name;
     }
 }
-</code></pre>
+```
 
 このファイル自体も、`Point`クラスに対して`partial`修飾子がつく修正がかかります。
 
 そして、Point.ValueChanged.cs という名前で、以下のようなコードが生成されます。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">using</span> System.ComponentModel;
+```csharp
+using System.ComponentModel;
 
-<span class="reserved">partial</span> <span class="reserved">class</span> <span class="type">Point</span>
+partial class Point
 {
-    <span class="reserved">private</span> <span class="type">NotifyRecord</span> _value;
+    private NotifyRecord _value;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span> { <span class="reserved">return</span> _value.X; } <span class="reserved">set</span> { SetProperty(<span class="reserved">ref</span> _value.X, <span class="reserved">value</span>, XProperty); OnPropertyChanged(ZProperty); } }
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">PropertyChangedEventArgs</span> XProperty = <span class="reserved">new</span> <span class="type">PropertyChangedEventArgs</span>(<span class="reserved">nameof</span>(X));
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span> { <span class="reserved">return</span> _value.Y; } <span class="reserved">set</span> { SetProperty(<span class="reserved">ref</span> _value.Y, <span class="reserved">value</span>, YProperty); OnPropertyChanged(ZProperty); } }
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">PropertyChangedEventArgs</span> YProperty = <span class="reserved">new</span> <span class="type">PropertyChangedEventArgs</span>(<span class="reserved">nameof</span>(Y));
+    public int X { get { return _value.X; } set { SetProperty(ref _value.X, value, XProperty); OnPropertyChanged(ZProperty); } }
+    private static readonly PropertyChangedEventArgs XProperty = new PropertyChangedEventArgs(nameof(X));
+    public int Y { get { return _value.Y; } set { SetProperty(ref _value.Y, value, YProperty); OnPropertyChanged(ZProperty); } }
+    private static readonly PropertyChangedEventArgs YProperty = new PropertyChangedEventArgs(nameof(Y));
 
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;summary&gt;</span>
-    <span class="inactive">///</span><span class="comment"> Name.</span>
-    <span class="inactive">///</span><span class="comment"> </span><span class="inactive">&lt;/summary&gt;</span>
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span> { <span class="reserved">return</span> _value.Name; } <span class="reserved">set</span> { SetProperty(<span class="reserved">ref</span> _value.Name, <span class="reserved">value</span>, NameProperty); } }
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">PropertyChangedEventArgs</span> NameProperty = <span class="reserved">new</span> <span class="type">PropertyChangedEventArgs</span>(<span class="reserved">nameof</span>(Name));
-    <span class="reserved">public</span> <span class="reserved">int</span> Z =&gt; _value.Z;
-    <span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">readonly</span> <span class="type">PropertyChangedEventArgs</span> ZProperty = <span class="reserved">new</span> <span class="type">PropertyChangedEventArgs</span>(<span class="reserved">nameof</span>(Z));
+    /// <summary>
+    /// Name.
+    /// </summary>
+    public string Name { get { return _value.Name; } set { SetProperty(ref _value.Name, value, NameProperty); } }
+    private static readonly PropertyChangedEventArgs NameProperty = new PropertyChangedEventArgs(nameof(Name));
+    public int Z => _value.Z;
+    private static readonly PropertyChangedEventArgs ZProperty = new PropertyChangedEventArgs(nameof(Z));
 }
-</code></pre>
+```
 
 `SetProperty`と`OnPropertyChanged`の実装は、元のクラス(今回の場合`Point`)が持っている前提でコード生成します。今回は、基底クラスで実装している想定。その基底クラス`BindableBase`は以下のような実装になっています。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.ComponentModel;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-<span class="reserved">class</span> <span class="type">BindableBase</span> : <span class="type">INotifyPropertyChanged</span>
+class BindableBase : INotifyPropertyChanged
 {
-    <span class="reserved">#region</span> INotifyPropertyChanged
+    #region INotifyPropertyChanged
 
-    <span class="reserved">public</span> <span class="reserved">event</span> <span class="type">PropertyChangedEventHandler</span> PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
-    <span class="reserved">protected</span> <span class="reserved">void</span> OnPropertyChanged(<span class="type">PropertyChangedEventArgs</span> args) =&gt; PropertyChanged?.Invoke(<span class="reserved">this</span>, args);
+    protected void OnPropertyChanged(PropertyChangedEventArgs args) => PropertyChanged?.Invoke(this, args);
 
-    <span class="reserved">protected</span> <span class="reserved">void</span> OnPropertyChanged([<span class="type">CallerMemberName</span>] <span class="reserved">string</span> propertyName = <span class="reserved">null</span>) =&gt; OnPropertyChanged(<span class="reserved">new</span> <span class="type">PropertyChangedEventArgs</span>(propertyName));
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
-    <span class="reserved">protected</span> <span class="reserved">void</span> SetProperty&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> storage, <span class="type">T</span> value, <span class="type">PropertyChangedEventArgs</span> args)
+    protected void SetProperty<T>(ref T storage, T value, PropertyChangedEventArgs args)
     {
-        <span class="reserved">if</span> (!<span class="type">EqualityComparer</span>&lt;<span class="type">T</span>&gt;.Default.Equals(storage, value))
+        if (!EqualityComparer<T>.Default.Equals(storage, value))
         {
             storage = value;
             OnPropertyChanged(args);
         }
     }
 
-    <span class="reserved">protected</span> <span class="reserved">void</span> SetProperty&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> storage, <span class="type">T</span> value, [<span class="type">CallerMemberName</span>] <span class="reserved">string</span> propertyName = <span class="reserved">null</span>) =&gt; SetProperty(<span class="reserved">ref</span> storage, value, <span class="reserved">new</span> <span class="type">PropertyChangedEventArgs</span>(propertyName));
+    protected void SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) => SetProperty(ref storage, value, new PropertyChangedEventArgs(propertyName));
 
-    <span class="reserved">#endregion</span>
+    #endregion
 }
-</code></pre>
+```
 
 もちろん、このためにだけに継承を使うのは嫌という話もあります。それはまた[別の方法](https://github.com/ufcpp/MixinGenerator)で解決しようかなぁと(未実装。Test-Firstで先に生成前後のサンプルだけあり)。そっちもやりすぎ感あふれてて悩ましいですが…
 

@@ -41,19 +41,19 @@ C# 11 の機能追加があるたびに [YouTube 配信](https://www.youtube.com
 
 「ちょっとした修正」も、例えば以下のようなバグの修正みたいなレベルの話です。
 
-<pre class="source" title="Preview 7 だと挙動が怪しいやつの例">
-<code><span class="reserved">unsafe</span>
+```csharp
+unsafe
 {
-    <span class="comment">// ref フィールドを持ってる構造体、 .NET 7 Preview 7 では managed 扱いされないバグがあるみたい。</span>
-    <span class="comment">// (ガベコレ的にまずいコード。)</span>
-    <span class="reserved">var</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">stackalloc</span> <span class="type struct">RefInt</span>[<span class="number">4</span>];
+    // ref フィールドを持ってる構造体、 .NET 7 Preview 7 では managed 扱いされないバグがあるみたい。
+    // (ガベコレ的にまずいコード。)
+    var a = stackalloc RefInt[4];
 }
 
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type struct">RefInt</span>
+ref struct RefInt
 {
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="reserved">int</span> <span class="field">Reference</span>;
+    public ref int Reference;
 }
-</code></pre>
+```
 
 ### preview 外れた
 
@@ -63,16 +63,16 @@ C# 11 の機能追加があるたびに [YouTube 配信](https://www.youtube.com
 注意点として、今回、「`net6.0` と C# 11」みたいな組み合わせにするとちょっと問題を起こすような破壊的変更があったりします。
 以下のようなやつで、まあ、めったに踏むようなコードでもないとは思いますが、一応。
 
-<pre class="source" title="net6.0 + C# 11 でだけ問題を起こすコードの例">
-<code><span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="reserved">public</span> <span class="reserved">struct</span> <span class="type struct">Buffer</span>
+public struct Buffer
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_item0</span>;
+    private int _item0;
 
-    <span class="comment">// net7.0 なら問題なくコンパイルできる。</span>
-    <span class="comment">// net6.0 + C# 10 でも問題なくコンパイルできる。</span>
-    <span class="comment">// net6.0 + C# 11 だとコンパイルエラーになるので注意。</span>
-    <span class="reserved">public</span> <span class="type struct">Span</span>&lt;<span class="reserved">int</span>&gt; <span class="method">AsSpan</span>() <span class="operator">=&gt;</span> <span class="type">MemoryMarshal</span><span class="operator">.</span><span class="method">CreateSpan</span>(<span class="reserved">ref</span> <span class="field">_item0</span>, <span class="number">1</span>);
+    // net7.0 なら問題なくコンパイルできる。
+    // net6.0 + C# 10 でも問題なくコンパイルできる。
+    // net6.0 + C# 11 だとコンパイルエラーになるので注意。
+    public Span<int> AsSpan() => MemoryMarshal.CreateSpan(ref _item0, 1);
 }
-</code></pre>
+```

@@ -40,16 +40,16 @@ XML 内のデータを普通のオブジェクトと同じような構文で読�
     後略
 
 で、PowerShell で
-<pre class="console" title="コマンド実行の例">
-<span class="prompt">&gt; </span>$xml = [xml](Get-Content xml.xml)
-<span class="prompt">&gt; </span>$xml.document.title
+```console
+> $xml = [xml](Get-Content xml.xml)
+> $xml.document.title
 XML
-<span class="prompt">&gt; </span>$xml.document.section[0].title
+> $xml.document.section[0].title
 概要
-<span class="prompt">&gt; </span>$xml.document.section[0].id
+> $xml.document.section[0].id
 abst
-<span class="prompt">&gt; </span>$xml.document.section[0].p
-</pre>
+> $xml.document.section[0].p
+```
 という感じで中身にアクセス可能。
 PowerShell では、
 XML 内のデータを普通のオブジェクトと同じような構文で読み出すことができます。

@@ -182,18 +182,18 @@ Unicode 5.1 から 6.0 の間で Po クラス(その他の句読点。C# 的に�
 そして、C# 6 から、判定基準が Unicode 6.0 以降になりました。
 つまり、以下のソースコードは、C# 5.0 まではコンパイルできたものの、C# 6 ではコンパイルできません。
 
-<pre class="source" title="C# 6 でコンパイルできなくなったコード" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">int</span> x・y = 10;
-        <span class="type">Console</span>.WriteLine(x・y);
+        int x・y = 10;
+        Console.WriteLine(x・y);
     }
 }
-</code></pre>
+```
 
 
 同様の問題は、Java 7 でも起きているようです。
@@ -222,18 +222,18 @@ Swift は絵文字を識別子に使えると聞いて。
 
 やばい例その1: [http://www.swiftstub.com/381749597/](http://www.swiftstub.com/381749597/)
 
-<pre class="source" title="Swift 絵文字識別子 その1: 色付きハート" lang="">
-<code>let 💙 = 1
+```swift
+let 💙 = 1
 let 💚 = 2
 let 💛 = 4
 let 💜 = 8
 println(💙 + 💚 + 💛 + 💜)
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 15
-</pre>
+```
 
 
 上から順に、青ハート、緑ハート、黄ハート、紫ハートです。カラー絵文字フォントを使って表示すると結構きれい。
@@ -244,8 +244,8 @@ println(💙 + 💚 + 💛 + 💜)
 
 やばい例その2: [http://www.swiftstub.com/647829248/](http://www.swiftstub.com/647829248/)
 
-<pre class="source" title="Swift 絵文字識別子 その2: 数字識別子" lang="">
-<code>let 𝟢 = 1
+```swift
+let 𝟢 = 1
 let 𝟣 = 2
 let 𝟤 = 4
 let 𝟥 = 8
@@ -269,12 +269,12 @@ x += 𝟪
 x += 𝟫
 
 println(x)
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 1023
-</pre>
+```
 
 
 コンパイル通った… 

@@ -77,10 +77,10 @@ Unicode 内にも U+16A0(ᚠ) ～ U+16F0(ᛰ) の範囲で存在しているル�
 
 これ、最悪、
 
-<pre class="source" title="rune is rune">
-<span class="comment">// ルーン(符号点のこと)がルーン(ルーン文字のこと)かどうか調べる</span>
-<code><span class="type">Rune</span>.IsRune(<span class="string">'ᚠ'</span>);
-</code></pre>
+```csharp
+// ルーン(符号点のこと)がルーン(ルーン文字のこと)かどうか調べる
+Rune.IsRune('ᚠ');
+```
 
 が生まれちゃうやつじゃないですか。
 
@@ -107,28 +107,28 @@ Unicode 内にも U+16A0(ᚠ) ～ U+16F0(ᛰ) の範囲で存在しているル�
 
 元々、`Utf8String`は以下のような型として提案されてました。
 
-<pre class="source" title="">
-<code><span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Utf8String</span>
+```csharp
+ref struct Utf8String
 {
-    <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; _buffer;
+    ReadOnlySpan<byte> _buffer;
 }
-</code></pre>
+```
 
 で、これだと「ヒープ上に持っていけないのが不便」と言われ、以下のように変化。
 
-<pre class="source" title="">
-<code><span class="comment">// stack-only</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Utf8Span</span>
+```csharp
+// stack-only
+ref struct Utf8Span
 {
-    <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; _buffer;
+    ReadOnlySpan<byte> _buffer;
 }
 
-<span class="comment">// <em>ヒープに置ける</em></span>
-<span class="reserved">struct</span> <span class="type">Utf8String</span>
+// ヒープに置ける
+struct Utf8String
 {
-    <span class="reserved">byte</span>[] _buffer;
+    byte[] _buffer;
 }
-</code></pre>
+```
 
 さらに、「構造体嫌だ…」と言われます。
 なんせ、[`ImmutableArray`](https://source.dot.net/#System.Collections.Immutable/System/Collections/Immutable/ImmutableArray.cs)とかでさんざん苦労しているそうで。
@@ -139,19 +139,19 @@ Unicode 内にも U+16A0(ᚠ) ～ U+16F0(ᛰ) の範囲で存在しているル�
 
 ということで、以下のように変化。
 
-<pre class="source" title="">
-<code><span class="comment">// stack-only</span>
-<span class="reserved">ref</span> <span class="reserved">struct</span> <span class="type">Utf8Span</span>
+```csharp
+// stack-only
+ref struct Utf8Span
 {
-    <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">byte</span>&gt; _buffer;
+    ReadOnlySpan<byte> _buffer;
 }
 
-<span class="comment">// ヒープに置けるというか、最初から<em>参照型</em></span>
-<span class="reserved"><em>class</em></span> <span class="type">Utf8String</span>
+// ヒープに置けるというか、最初から参照型
+class Utf8String
 {
-    <span class="reserved">byte</span>[] _buffer;
+    byte[] _buffer;
 }
-</code></pre>
+```
 
 もちろん、これだと、クラスの中に配列があって、ヒープ確保・間接参照が2段階になります。
 パフォーマンス的にはちょっと微妙。

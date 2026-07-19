@@ -44,7 +44,7 @@ nullable(もしくは C# 7.X 以前のコード由来)な変数だけど、実�
 以下のように、nullable なものに対して何らかのメソッドを呼んだ場合、
 `x` が null だったら例外が出るはずで、だったら、呼び出して以降は null チェック済みと考えていいはず。
 
-```
+```csharp
 string? x = y;
 var z = x.Substring(1);
 ...
@@ -90,15 +90,15 @@ nullable 参照型に対するフロー解析、一部は `Nullable<T>` 構造�
 
 ## nullable参照型のgeneric制約
 
-<pre class="source">
-<code><span class="reserved">void</span> M&lt;<span class="type">T</span>, <span class="type">U</span>&gt;()
-    <span class="reserved">where</span> T : <span class="reserved">class</span>
-    <span class="reserved">where</span> U : T
+```csharp
+void M<T, U>()
+    where T : class
+    where U : T
 { }
 
-<span class="reserved">interface</span> <span class="type">I</span> { }
-<span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> T : I { }
-</code></pre>
+interface I { }
+void M<T>() where T : I { }
+```
 
 みたいなのの、`T` は非 null？
 

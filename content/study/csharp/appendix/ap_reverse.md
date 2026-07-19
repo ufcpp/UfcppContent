@@ -53,23 +53,23 @@ aliases:
 
 日本語 Windows 環境では、<code>Encoding.Default</code> でシフト JIS の Encoding が得られる。
 
-<pre class="source" title="StreamReader/StreamWriter" lang="">
-<code>StreamReader fin  = <span class="reserved">new</span> StreamReader(
-  <span class="literal">"in file"</span>, Encoding.Default);
-StreamWriter fout = <span class="reserved">new</span> StreamWriter(
-  <span class="literal">"out file"</span>, <span class="reserved">false</span>, Encoding.Default);
-</code></pre>
+```csharp
+StreamReader fin  = new StreamReader(
+  "in file", Encoding.Default);
+StreamWriter fout = new StreamWriter(
+  "out file", false, Encoding.Default);
+```
 
 
 ちなみに、シフト JIS のコードページは 932。
 （日本語 Windows では）以下のコードと上のコードは同じ結果に。
 
-<pre class="source" title="StreamReader/StreamWriter" lang="">
-<code>StreamReader fin  = <span class="reserved">new</span> StreamReader(
-  <span class="literal">"in file"</span>, Encoding.GetEncoding(932));
-StreamWriter fout = <span class="reserved">new</span> StreamWriter(
-  <span class="literal">"out file"</span>, <span class="reserved">false</span>, Encoding.GetEncoding(932));
-</code></pre>
+```csharp
+StreamReader fin  = new StreamReader(
+  "in file", Encoding.GetEncoding(932));
+StreamWriter fout = new StreamWriter(
+  "out file", false, Encoding.GetEncoding(932));
+```
 
 
 
@@ -88,10 +88,10 @@ StreamWriter fout = <span class="reserved">new</span> StreamWriter(
 シフトJISのコードページは 932 です。
 また、日本語 Windows 環境では <code>Encoding.Default</code> によってシフトJISのエンコーディングクラスを取得できます。
 
-<pre class="source" title="StreamReader/StreamWriter" lang="">
-<code>Encoding.GetEncoding(932).GetBytes(str);
+```csharp
+Encoding.GetEncoding(932).GetBytes(str);
 Encoding.Default.GetBytes(str);
-</code></pre>
+```
 
 
 #### <a id="sec-generated-title-9"></a> <a id="string_02">正規表現を使いたい</a>
@@ -109,14 +109,14 @@ Encoding.Default.GetBytes(str);
 平仮名は文字クラス IsHiraganaに、
 片仮名は IsKatakana、漢字は IsCJKUnifiedIdeographs にマッチする。
 
-<pre class="source" title="IsHiragana, IsKatakana, IsCJKUnifiedIdeographs" lang="">
-<code><span class="comment">// 平仮名だけからなる単語にマッチ</span>
-Regex hira  = <span class="reserved">new</span> Regex(<span class="literal">@"\b\p{IsHiragana}+\b"</span>);
-<span class="comment">// 片仮名にマッチ</span>
-Regex kata  = <span class="reserved">new</span> Regex(<span class="literal">@"\p{IsKatakana}"</span>);
-<span class="comment">// 漢字にマッチ</span>
-Regex kanji = <span class="reserved">new</span> Regex(<span class="literal">@"\p{IsCJKUnifiedIdeographs}"</span>);
-</code></pre>
+```csharp
+// 平仮名だけからなる単語にマッチ
+Regex hira  = new Regex(@"\b\p{IsHiragana}+\b");
+// 片仮名にマッチ
+Regex kata  = new Regex(@"\p{IsKatakana}");
+// 漢字にマッチ
+Regex kanji = new Regex(@"\p{IsCJKUnifiedIdeographs}");
+```
 
 
 その他にも文字クラス名を指定することでさまざまな文字クラスが判定可能。
@@ -133,15 +133,14 @@ Regex kanji = <span class="reserved">new</span> Regex(<span class="literal">@"\p
 <code>DateTime.ParseExact</code> メソッドで、
 以下のようにしてフォーマットを指定。
 
-<pre class="source" title="DateTime.ParseExact" lang="">
-<code><span class="reserved">string</span> str = <span class="literal">"08/Jul/2006:03:28:50 +0900"</span>;
+```csharp
+string str = "08/Jul/2006:03:28:50 +0900";
 
 Date d = DateTime.ParseExact(str,
-  <span class="literal">"d'/'MMM'/'yyyy':'HH':'mm':'ss zzz"</span>,
+  "d'/'MMM'/'yyyy':'HH':'mm':'ss zzz",
   System.Globalization.DateTimeFormatInfo.InvariantInfo,
   System.Globalization.DateTimeStyles.None);
-
-</code></pre>
+```
 
 
 
@@ -155,9 +154,9 @@ Date d = DateTime.ParseExact(str,
 <code>System.Console.Write(string, params object[])</code> を使えばフォーマット出力が可能です。
 パラメータの書式は以下の通り
 
-<pre class="source" title="Console.Write の書式指定" lang="">
-<code>{N,M:format}
-</code></pre>
+```csharp
+{N,M:format}
+```
 
 
 * <code>N</code>: パラメータのインデックス
@@ -183,32 +182,30 @@ string.Format メソッドに関しては、
 #### <a id="sec-generated-title-16"></a> <a id="input_01">C の scanf みたいなことをしたい</a>
 
 例)
-<pre class="source" title="C の scanf" lang="">
-<code>int width, height;
-scanf("width %d height %d", &amp;width, &amp;height);
-</code></pre>
+```csharp
+int width, height;
+scanf("width %d height %d", &width, &height);
+```
 
 1)正規表現を使う
-<pre class="source" title="Regex を使った入力文字列解析" lang="">
-<code><span class="reserved">const string</span> pattern = <span class="literal">@"height (?&lt;height&gt;\w+) width (?&lt;width&gt;\w+)"</span>; 
+```csharp
+const string pattern = @"height (?<height>\w+) width (?<width>\w+)"; 
 
-Regex x = <span class="reserved">new</span> Regex(pattern);
-<span class="reserved">string</span> str = Console.ReadLine();
+Regex x = new Regex(pattern);
+string str = Console.ReadLine();
 Match m = x.Match(str); 
 
-<span class="reserved">int</span> width = m.Group(<span class="literal">"width"</span>);
-<span class="reserved">int</span> height = m.Group(<span class="literal">"height"</span>);
-
-</code></pre>
+int width = m.Group("width");
+int height = m.Group("height");
+```
 
 2) Split を使う
-<pre class="source" title="string.Split を使った入力文字列解析" lang="">
-<code><span class="reserved">string</span> str = Console.ReadLine();
-sring strs = str.Split(<span class="literal">' '</span>);
-<span class="reserved">int</span> width = <span class="reserved">int</span>.Parse(strs[1]);
-<span class="reserved">int</span> height = <span class="reserved">int</span>.Parse(strs[3]);
-
-</code></pre>
+```csharp
+string str = Console.ReadLine();
+sring strs = str.Split(' ');
+int width = int.Parse(strs[1]);
+int height = int.Parse(strs[3]);
+```
 
 
 
@@ -220,35 +217,34 @@ sring strs = str.Split(<span class="literal">' '</span>);
 
 #### <a id="sec-generated-title-18"></a> <a id="d179e351_01">リソースファイルの作成</a>
 
-<pre class="source" title="リソースファイルの作成" lang="">
-<code><span class="reserved">using</span> System.Drawing;
-<span class="reserved">using</span> System.Resources; 
+```csharp
+using System.Drawing;
+using System.Resources; 
 
-<span class="reserved">class</span> CreateResource
+class CreateResource
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">using</span>(ResourceWriter writer =
-      <span class="reserved">new</span> ResourceWriter(<span class="literal">"リソースファイル.resources"</span>))
+    using(ResourceWriter writer =
+      new ResourceWriter("リソースファイル.resources"))
     {
-      writer.AddResource(<span class="literal">"リソース名"</span>, <span class="reserved">new</span> Icon(<span class="literal">"ファイル.ico"</span>));
+      writer.AddResource("リソース名", new Icon("ファイル.ico"));
       writer.Generate();
     }
   }
 }
-
-</code></pre>
+```
 
 
 後はコンパイル時に <code>/res</code> を指定するだけ。
 
 #### <a id="sec-generated-title-19"></a> <a id="d179e351_02">リソースの利用</a>
 
-<pre class="source" title="リソースの利用" lang="">
-<code>ResourceManager rm = <span class="reserved">new</span> ResourceManager(
-  <span class="literal">"アセンブリ名"</span>, <span class="reserved">this</span>.GetType().Assembly);
-<span class="reserved">this</span>.Icon = (System.Drawing.Icon)rm.GetObject(<span class="literal">"リソース名"</span>);
-</code></pre>
+```csharp
+ResourceManager rm = new ResourceManager(
+  "アセンブリ名", this.GetType().Assembly);
+this.Icon = (System.Drawing.Icon)rm.GetObject("リソース名");
+```
 
 
 
@@ -278,28 +274,27 @@ sring strs = str.Split(<span class="literal">' '</span>);
 構造体のレイアウトを <code>LayoutKind.Explicit</code> にすることで
 C 言語の共用体のような使い方が出来ます。
 
-<pre class="source" title="LayoutKind.Explicit で C 言語の共用体ライクな構造体を作る" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System;
+using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Explicit)]
-<span class="reserved">struct</span> Hoge
+struct Hoge
 {
-  [FieldOffset(0)] <span class="reserved">public byte</span> B;
-  [FieldOffset(0)] <span class="reserved">public int</span> N;
+  [FieldOffset(0)] public byte B;
+  [FieldOffset(0)] public int N;
 } 
 
-<span class="reserved">class</span> Test 
+class Test 
 { 
-  <span class="reserved">static void</span> Main() { 
-    Hoge h = <span class="reserved">new</span> Hoge(); 
+  static void Main() { 
+    Hoge h = new Hoge(); 
     h.N = 257; 
 
-    Console.WriteLine(h.B); <span class="comment">// 1 が表示される</span>
+    Console.WriteLine(h.B); // 1 が表示される
   } 
 } 
-
-</code></pre>
+```
 
 
 
@@ -343,25 +338,25 @@ C 言語の共用体のような使い方が出来ます。
 実行ファイルと同じディレクトリに置く。
 
 
-<pre class="xsource" title="マニフェスト">
-<code><span class="bracket">&lt;</span>?xml version="1.0" encoding="UTF-8" standalone="yes"?<span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">assembly</span>
-  <span class="attribute">xmlns</span><span class="attvalue">="urn:schemas-microsoft-com:asm.v1"</span>
-  <span class="attribute">manifestVersion</span><span class="attvalue">="1.0"</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span><span class="element">dependency</span><span class="bracket">&gt;</span>
-   <span class="bracket">&lt;</span><span class="element">dependentAssembly</span><span class="bracket">&gt;</span>
-     <span class="bracket">&lt;</span><span class="element">assemblyIdentity</span>
-       <span class="attribute">type</span><span class="attvalue">="win32"</span>
-       <span class="attribute">name</span><span class="attvalue">="Microsoft.Windows.Common-Controls"</span>
-       <span class="attribute">version</span><span class="attvalue">="6.0.0.0"</span>
-       <span class="attribute">processorArchitecture</span><span class="attvalue">="X86"</span>
-       <span class="attribute">publicKeyToken</span><span class="attvalue">="6595b64144ccf1df"</span>
-       <span class="attribute">language</span><span class="attvalue">="*"</span>
-     /<span class="bracket">&gt;</span>
-   <span class="bracket">&lt;</span>/<span class="element">dependentAssembly</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">dependency</span><span class="bracket">&gt;</span>
-<span class="bracket">&lt;</span>/<span class="element">assembly</span><span class="bracket">&gt;</span>
-</code></pre>
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly
+  xmlns="urn:schemas-microsoft-com:asm.v1"
+  manifestVersion="1.0">
+<dependency>
+   <dependentAssembly>
+     <assemblyIdentity
+       type="win32"
+       name="Microsoft.Windows.Common-Controls"
+       version="6.0.0.0"
+       processorArchitecture="X86"
+       publicKeyToken="6595b64144ccf1df"
+       language="*"
+     />
+   </dependentAssembly>
+</dependency>
+</assembly>
+```
 マニフェストを実行ファイル中に埋め込むためには、
 リソースタイプ「RT_MANIFEST」、ID「1」のリソースとして埋め込む。
 Visual Studio .NET を使えば、以下の手順で簡単にマニフェストの埋め込みが出来る。

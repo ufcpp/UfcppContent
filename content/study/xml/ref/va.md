@@ -27,37 +27,40 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;dV/&gt;
-&lt;dS/&gt;
-&lt;dl/&gt;
-&lt;gradient/&gt;
-&lt;divergence/&gt;
-&lt;rotation/&gt;
-&lt;textgrad/&gt;
-&lt;textdiv/&gt;
-&lt;textrot/&gt;
-&lt;nabra/&gt;
-</pre>
+```xml
+<dV/>
+<dS/>
+<dl/>
+<gradient/>
+<divergence/>
+<rotation/>
+<textgrad/>
+<textdiv/>
+<textrot/>
+<nabra/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;int&gt;&lt;sub&gt;V&lt;/sub&gt;&lt;/int&gt; &lt;divergence/&gt;&lt;vec&gt;f&lt;/vec&gt; &lt;dV/&gt;
+```xml
+<int><sub>V</sub></int> <divergence/><vec>f</vec> <dV/>
 ＝
-&lt;oint&gt;&lt;sub&gt;∂V&lt;/sub&gt;&lt;/oint&gt; &lt;vec&gt;f&lt;/vec&gt;・&lt;dS/&gt;
+<oint><sub>∂V</sub></oint> <vec>f</vec>・<dS/>
 ,
-&lt;int&gt;&lt;sub&gt;S&lt;/sub&gt;&lt;/int&gt; &lt;rotation/&gt;&lt;vec&gt;f&lt;/vec&gt;・&lt;dS/&gt;
+<int><sub>S</sub></int> <rotation/><vec>f</vec>・<dS/>
 ＝
-&lt;oint&gt;&lt;sub&gt;∂S&lt;/sub&gt;&lt;/oint&gt; &lt;vec&gt;f&lt;/vec&gt;・&lt;dl/&gt;
+<oint><sub>∂S</sub></oint> <vec>f</vec>・<dl/>
 ,
-&lt;d/&gt;f
+<d/>f
 ＝
-&lt;gradient/&gt;f
-・&lt;dl/&gt;,
-&lt;gradient/&gt; ＝ &lt;textgrad/&gt;, 
-&lt;divergence/&gt; ＝ &lt;textdiv/&gt;, 
-&lt;rotation/&gt; ＝ &lt;textrot/&gt;, 
-&lt;nabra/&gt;
-</pre><div class="math"><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">V</td></tr></table> <span class="vector">∇</span>・<span class="vector">f</span> <span class="normal">d</span>V
+<gradient/>f
+・<dl/>,
+<gradient/> ＝ <textgrad/>, 
+<divergence/> ＝ <textdiv/>, 
+<rotation/> ＝ <textrot/>, 
+<nabra/>
+```
+<div class="math"><span class="integral">∫</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">V</td></tr></table> <span class="vector">∇</span>・<span class="vector">f</span> <span class="normal">d</span>V
 ＝
 <span class="ointegral">∮</span><table class="integral" summary="integral"><tr><td class="intsup"> </td></tr><tr><td style="font-size:30%;"> </td></tr><tr><td class="intsub">∂V</td></tr></table> <span class="vector">f</span>・<span class="normal">d</span><span class="vector">S</span>
 ,
@@ -77,54 +80,54 @@ aliases:
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:dV"&gt;
-  &lt;span class="normal"&gt;d&lt;/span&gt;V
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:dV">
+  <span class="normal">d</span>V
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:dS"&gt;
-  &lt;span class="normal"&gt;d&lt;/span&gt;&lt;span class="vector"&gt;S&lt;/span&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:dS">
+  <span class="normal">d</span><span class="vector">S</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:dl"&gt;
-  &lt;span class="normal"&gt;d&lt;/span&gt;&lt;span class="vector"&gt;l&lt;/span&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:dl">
+  <span class="normal">d</span><span class="vector">l</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:gradient"&gt;
-  &lt;span class="vector"&gt;∇&lt;/span&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:gradient">
+  <span class="vector">∇</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:divergence"&gt;
-  &lt;span class="vector"&gt;∇&lt;/span&gt;・
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:divergence">
+  <span class="vector">∇</span>・
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:rotation"&gt;
-  &lt;span class="vector"&gt;∇&lt;/span&gt;×
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:rotation">
+  <span class="vector">∇</span>×
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:textgrad"&gt;
-  &lt;span class="normal"&gt;grad&lt;/span&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:textgrad">
+  <span class="normal">grad</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:textdiv"&gt;
-  &lt;span class="normal"&gt;div&lt;/span&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:textdiv">
+  <span class="normal">div</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:textrot"&gt;
-  &lt;span class="normal"&gt;rot&lt;/span&gt;
-&lt;/xsl:template&gt;
+<xsl:template match="ufcpp:textrot">
+  <span class="normal">rot</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:nabra"&gt;
-  &lt;span class="vector"&gt;∇&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:nabra">
+  <span class="vector">∇</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.normal
+```css
+span.normal
 {
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

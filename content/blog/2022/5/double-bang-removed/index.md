@@ -20,11 +20,11 @@ aliases: []
 [2月にブログに書きましたが](../../2/parameter-null-check/index.md)、
 Visual Studio 17.1 Preview 3の頃、C# 11 候補として「引数の null チェック」構文が入っていました。
 
-<pre class="source" title="引数 null チェックの !!">
-<code><span class="method">m</span>(<span class="reserved">null</span>); <span class="comment">// ArgumentNull 例外が出る。</span>
+```csharp
+m(null); // ArgumentNull 例外が出る。
 
-<span class="reserved">void</span> <span class="method">m</span>(<span class="reserved">string</span> <span class="variable">x</span><em>!!</em>) { }
-</code></pre>
+void m(string x!!) { }
+```
 
 今現在(VS 17.2 Preview 5)でもこの構文は生きているんですが、次(たぶん、17.2正式リリースでも17.3 Preview 1でも)でいったん取りやめになるそうです。
 
@@ -128,13 +128,13 @@ NRT のフロー解析が完璧ならそもそもとして「null であって�
 例えば、[`record`](../../../../study/csharp/datatype/record.md) が絡むとどうなの？とか。
 以下のようなコードの挙動を見ると、構文の問題以上にもうちょっと見当が必要かもなー、とかは思います。
 
-<pre class="source" title="record のプライマリーコンストラクターで !! を使ってみて">
-<code><span class="comment">// これは例外を出してもらえる。</span>
-<span class="reserved">var</span> <span class="variable">r1</span> = <span class="reserved">new</span> <span class="type">R</span>(<span class="reserved">null</span>);
+```csharp
+// これは例外を出してもらえる。
+var r1 = new R(null);
 
-<span class="comment">// でもこれは例外が出ない。</span>
-<span class="comment">// init アクセッサーにも同種の null チェックを備えられるようにすべきではないか？</span>
-<span class="reserved">var</span> <span class="variable">r2</span> = <span class="reserved">new</span> <span class="type">R</span>(<span class="string">&quot;&quot;</span>) { X = <span class="reserved">null</span> };
+// でもこれは例外が出ない。
+// init アクセッサーにも同種の null チェックを備えられるようにすべきではないか？
+var r2 = new R("") { X = null };
 
-<span class="reserved">record</span> <span class="type">R</span>(<span class="reserved">string</span> <span class="variable">X</span>!!);
-</code></pre>
+record R(string X!!);
+```

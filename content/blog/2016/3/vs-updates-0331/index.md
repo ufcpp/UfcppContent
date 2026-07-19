@@ -121,13 +121,13 @@ C# 的には、まあ、[GitHubのRoslynリポジトリ](https://github.com/dotn
 
 ↓こんなやつ。
 
-<pre class="source" title="ローカル関数">
-<code><reserved></span><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">void</span> LocalFunctions()
+```csharp
+private static void LocalFunctions()
 {
-    <span class="reserved">int</span> F(<span class="reserved">int</span> n) =&gt; n &gt;= 1 ? n * F(n - 1) : 1;
-    <span class="type">Console</span>.WriteLine(F(5));
+    int F(int n) => n >= 1 ? n * F(n - 1) : 1;
+    Console.WriteLine(F(5));
 }
-</code></pre>
+```
 
 まあ、`public void X()`に対して`private void XInternal()`みたいなのを別途書くこと、たまにあったじゃないですか。
 それが必要なくなります。
@@ -154,22 +154,22 @@ C# 的には、まあ、[GitHubのRoslynリポジトリ](https://github.com/dotn
 
 ↓こんな感じ。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">struct</span> <span class="type">Buffer</span>&lt;<span class="type">T</span>&gt;
+```csharp
+struct Buffer<T>
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> BaseIndex { <span class="reserved">get</span>; }
+    public int BaseIndex { get; }
 
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="type">T</span>[] _array;
+    private readonly T[] _array;
 
-    <span class="reserved">public</span> Buffer(<span class="reserved">int</span> baseIndex, <span class="reserved">int</span> count)
+    public Buffer(int baseIndex, int count)
     {
         BaseIndex = baseIndex;
-        _array = <span class="reserved">new</span> <span class="type">T</span>[count];
+        _array = new T[count];
     }
 
-    <span class="reserved">public</span> <span class="reserved">ref</span> <span class="type">T</span> <span class="reserved">this</span>[<span class="reserved">int</span> index] =&gt; <span class="reserved">ref</span> _array[index - BaseIndex];
+    public ref T this[int index] => ref _array[index - BaseIndex];
 }
-</code></pre>
+```
 
 まあ、ほとんどの開発者は直接は使わなさそうですかね。
 パフォーマンス改善に期待できる機能です。
@@ -182,10 +182,10 @@ C# 的には、まあ、[GitHubのRoslynリポジトリ](https://github.com/dotn
 
 ↓これは大変わかりやすく。
 
-<pre class="source" title="">
-<code><reserved></span><span class="reserved">var</span> b = 0b1000_0001;
-<span class="type">Console</span>.WriteLine(b);
-</code></pre>
+```csharp
+var b = 0b1000_0001;
+Console.WriteLine(b);
+```
 
 こいつはC# 6の頃から新機能候補に挙がってましたし、結構前から実装済みだったはず。[CoreFx](https://github.com/dotnet/corefx)の方のソースコード見てたらそこらじゅうですでに使われてたり。
 前からあるから、今回リリースノートに書き忘れたのかなぁとか思ったり。

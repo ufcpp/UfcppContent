@@ -241,12 +241,12 @@ C# のソースコード中に直接整数値を書き込むと整数リテラ�
 また、整数値の後ろに「u」か「U」を付けると符号なし整数とみなされ、
 「l」か「L」を付けると <code>long</code> 型のリテラルとみなされます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span>   k = 351;    <span class="comment">// 整数リテラル</span>
-<span class="reserved">uint</span>  l = 86U;    <span class="comment">// 符号なし</span>
-<span class="reserved">long</span>  m = 1879L;  <span class="comment">// Lを付けるとlongとみなされる</span>
-<span class="reserved">ulong</span> n = 2419UL; <span class="comment">// UとLを付けるとulongとみなされる</span>
-</code></pre>
+```csharp
+int   k = 351;    // 整数リテラル
+uint  l = 86U;    // 符号なし
+long  m = 1879L;  // Lを付けるとlongとみなされる
+ulong n = 2419UL; // UとLを付けるとulongとみなされる
+```
 
 
 
@@ -275,18 +275,18 @@ C# では、内部的に Unicode という2バイトの文字コードが使わ�
 前述の通り、C# の `char`型 UTF-16 なので、文字リテラルも2バイトの数値です。
 [`short` や `ushort`](#integer)とは、互いに桁落ちなく変換することもできます。
 
-<pre class="source" title="">
-<code><span class="reserved">short</span> <span class="variable">x</span> = (<span class="reserved">short</span>)<span class="string">&#39;a&#39;</span>; <span class="comment">// 97 と同じ意味</span>
-<span class="reserved">char</span> <span class="variable">c</span> = (<span class="reserved">char</span>)97;    <span class="comment">// &#39;a&#39; と同じ意味</span>
-</code></pre>
+```csharp
+short x = (short)'a'; // 97 と同じ意味
+char c = (char)97;    // 'a' と同じ意味
+```
 
 また、<code>'</code> 自身を表す文字リテラルは <code>
                     <span class="string">'\''</span>
                 </code> というように書きます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">char</span> c = <span class="literal">'a'</span>;                       <span class="comment">// 文字リテラル</span>
-</code></pre>
+```csharp
+char c = 'a';                       // 文字リテラル
+```
 
 ### <a id="sec-generated-title-10"></a> <a id="escape-sequence"></a>エスケープ シーケンス
 
@@ -329,11 +329,11 @@ C# は以下のようなエスケープ シーケンスを持っています。
 この、後ろに書かれた16進数の数値を文字コードに持つ文字に置き換わります。
 例えば16進数で61というのはアルファベットの a を表すコードで、要するに `\u0061` は `a` と同じ意味になります。
 
-<pre class="source" title="Unicode エスケープ シーケンス">
-<code><span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&#39;\u0061&#39;</span>); <span class="comment">// 文字 a</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&quot;\U0001F60A&quot;</span>); <span class="comment">// 絵文字の 😊</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="string">&#39;\x61&#39;</span>); <span class="comment">// 文字 a。4桁固定じゃないということ以外は \u と同じ</span>
-</code></pre>
+```csharp
+Console.WriteLine('\u0061'); // 文字 a
+Console.WriteLine("\U0001F60A"); // 絵文字の 😊
+Console.WriteLine('\x61'); // 文字 a。4桁固定じゃないということ以外は \u と同じ
+```
 
 `\u`、`\U`、`\x`の3つの差は、後ろに続く16進数の長さの差です。
 
@@ -358,12 +358,12 @@ C# は以下のようなエスケープ シーケンスを持っています。
 
 ちなみに、`\u` と `\U` は文字・文字列リテラルの外で、[識別子](misc_identifier.md)にも使えます。
 
-<pre class="source" title="\u, \U 識別子">
-<code><span class="reserved">var</span> <span class="variable">\u0061</span> = 1; <span class="comment">// var a = 1; と同じ意味</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">a</span>); <span class="comment">// 1</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">\U00000061</span>); <span class="comment">// 記法が違ってもやっぱり a の意味で解釈されるので 1 が表示される</span>
-<span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="reserved">nameof</span>(<span class="variable">\u0061</span>)); <span class="comment">// a と表示される</span>
-</code></pre>
+```csharp
+var \u0061 = 1; // var a = 1; と同じ意味
+Console.WriteLine(a); // 1
+Console.WriteLine(\U00000061); // 記法が違ってもやっぱり a の意味で解釈されるので 1 が表示される
+Console.WriteLine(nameof(\u0061)); // a と表示される
+```
 
 ## <a id="sec-generated-title-11"></a> <a id="float"></a>浮動小数点型(実数型)
 
@@ -420,11 +420,11 @@ C# のソースコード中に小数を書き込むと浮動小数点リテラ�
 また、浮動小数点リテラルは指数表記(2.56×10<sup>4</sup>といった形式。2.56の部分を仮数部、10の肩に乗っている4のことを指数部といいます)でも書くことが出来ます。
 指数表記のリテラルの書き方は [仮数部]e[指数部] (例えば、2.56×10<sup>4</sup>は<code>2.56e4</code>と書く)です。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">double</span> x = 2.2362;  <span class="comment">// 浮動小数点リテラル</span>
-<span class="reserved">float</span>  y = 2.7183f; <span class="comment">// fを付けると単精度</span>
-<span class="reserved">double</span> z = 6.02e23; <span class="comment">// 指数表記 6.02×10^23</span>
-</code></pre>
+```csharp
+double x = 2.2362;  // 浮動小数点リテラル
+float  y = 2.7183f; // fを付けると単精度
+double z = 6.02e23; // 指数表記 6.02×10^23
+```
 
 
 
@@ -472,9 +472,9 @@ float や double などの浮動小数点数は、コンピュータの内部で
 
 そこで、C# では10進小数を表すための decimal という型が用意されています。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">decimal</span> m = 99.9m;  <span class="comment">// mを付けるとdecimalになる</span>
-</code></pre>
+```csharp
+decimal m = 99.9m;  // mを付けるとdecimalになる
+```
 
 
 一見、浮動小数点と似ていますが（小数点の位置が動くという意味では decimal も浮動小数点なんですが）、
@@ -536,9 +536,9 @@ double 型と比べて、大きな数を表すことは出来ない代わりに�
 
 小数の後ろに「m」か「M」を付けると <code>decimal</code> 型とみなされます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">decimal</span> m = 99.9m;  <span class="comment">// mを付けるとdecimalになる</span>
-</code></pre>
+```csharp
+decimal m = 99.9m;  // mを付けるとdecimalになる
+```
 
 
 
@@ -562,11 +562,11 @@ C# では論理値型は <code>
                     <span class="reserved">false</span>
                 </code> の2つです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">bool</span> b = x==1;  <span class="comment">// x が 1 ならば true 、そうでなければ false になる。</span>
-<span class="reserved">bool</span> t = <span class="reserved">true</span>;  <span class="comment">// 直接 true を代入</span>
-<span class="reserved">bool</span> f = <span class="reserved">false</span>; <span class="comment">// 直接 false を代入</span>
-</code></pre>
+```csharp
+bool b = x==1;  // x が 1 ならば true 、そうでなければ false になる。
+bool t = true;  // 直接 true を代入
+bool f = false; // 直接 false を代入
+```
 
 
 ちなみに、1行目を見ての通り、== などの比較演算の結果は bool 値になります。
@@ -596,10 +596,10 @@ C# では論理値型は <code>
                     <span class="string">"&lt;a href=\"index.html\"&gt;"</span>
                 </code> というように表現します。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">string</span> s = <span class="literal">"C#入門"</span>;                <span class="comment">// 文字列リテラル</span>
-<span class="reserved">string</span> x = <span class="literal">"\uff9f\u0434\uff9f"</span>;    <span class="comment">// Unicodeを直入力。 ﾟдﾟ ←これ。</span>
-</code></pre>
+```csharp
+string s = "C#入門";                // 文字列リテラル
+string x = "\uff9f\u0434\uff9f";    // Unicodeを直入力。 ﾟдﾟ ←これ。
+```
 
 
 
@@ -611,21 +611,21 @@ C# では論理値型は <code>
 '' や "" の前に @ (アットマーク)を付けると \ とそれに続く文字がエスケープシーケンスとはみなされず、
 普通に \ 記号として解釈されます。これを逐語的文字列リテラル（verbatim string literal）といいます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">string</span> path = <span class="literal">@"C:\windows\system"</span>; <span class="comment">// 逐語的リテラル（@-quoted string）。 \ 記号がそのまま解釈される。</span>
-</code></pre>
+```csharp
+string path = @"C:\windows\system"; // 逐語的リテラル（@-quoted string）。 \ 記号がそのまま解釈される。
+```
 
 
 ちなみに、逐語的文字列リテラルの場合、<em>複数行に渡る文章を書くことも出来ます</em>。
 改行の位置にはちゃんと改行文字が入ります。
 
-<pre class="source" title="複数行にわたる文字列" lang="">
-<code><span class="reserved">string</span> multiLineString =
-<span class="literal">@"@-quoted string では、
+```csharp
+string multiLineString =
+@"@-quoted string では、
 文章を複数行に渡って書くことができます。
-"</span>;
+";
 Console.Write(multiLineString);
-</code></pre>
+```
 
 
 こういう逐語的文字列リテラルの使い方のことを <em>here 文字列</em>と言ったりもします。
@@ -633,17 +633,17 @@ Console.Write(multiLineString);
 
 また、逐語的文字列リテラル中で " （ダブルクォーテーション）を使いたい場合は、"" というように、2つ並べて書きます。
 
-<pre class="source" title="here 文字列中の引用符" lang="">
-<code><span class="reserved">var</span> s = <span class="literal">@"</span>
-<span class="literal">var s = ""here 文字列中の引用符"";</span>
-<span class="literal">"</span>;
-<span class="type">Console</span>.WriteLine(s);
-</code></pre>
+```csharp
+var s = @"
+var s = ""here 文字列中の引用符"";
+";
+Console.WriteLine(s);
+```
 
 
-<pre class="console" title="">
+```console
 var s = "here 文字列中の引用符";
-</pre>
+```
 
 
 
@@ -667,9 +667,9 @@ C# では、組込み型・ユーザー定義型を問わずすべての型は <
 
 string 型や object 型は、有効な値の他に、無効な（まだ初期化されていない）状態を表す null という値を持つことができます。
 
-<pre class="source" title="複数行にわたる文字列" lang="">
-<code><span class="reserved">object</span> notInitializedVariable = <span class="reserved">null</span>;
-</code></pre>
+```csharp
+object notInitializedVariable = null;
+```
 
 
 null （無効な値）を代入できるのは、参照型か Nullable 型のみになります
@@ -775,6 +775,6 @@ C# では、変数を明示的に初期化しなかった場合に与えられ�
 
 既定値を得るための default 式というものもあります。例えば、以下のように書くと、int の規定値（0）が得られます。
 
-<pre class="source" title="既定値" lang="">
-<code><span class="reserved">int</span> n = <span class="reserved">default</span>(<span class="reserved">int</span>);
-</code></pre>
+```csharp
+int n = default(int);
+```

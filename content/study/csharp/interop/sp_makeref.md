@@ -37,19 +37,19 @@ C# には参照関連の隠しキーワード `__makeref`, `__refvalue`, `__reft
 (一種の制限付きのポインター)。
 例えば、以下のコードは C++ のものですが、変数 r が、別の変数 x の参照になっています。
 
-<pre class="source" title="C++" lang="">
-<code><span class="reserved">#include</span> <span class="literal">&lt;stdio.h&gt;</span>
+```cpp
+#include <stdio.h>
 
-<span class="reserved">void</span> sample()
+void sample()
 {
-    <span class="reserved">int</span> x = 10;
-    <em><span class="reserved">int</span>&amp; r = x;</em> <span class="comment">// x の参照を作る</span>
+    int x = 10;
+    int& r = x; // x の参照を作る
 
-    r = 99; <span class="comment">// 参照元の x も書き換わる</span>
+    r = 99; // 参照元の x も書き換わる
 
-    printf(<span class="literal">"%d"</span>, x); <span class="comment">// 99</span>
+    printf("%d", x); // 99
 }
-</code></pre>
+```
 
 
 通常、C# では、開発者が意識して参照を使える場面は、
@@ -104,35 +104,35 @@ C# には参照関連の隠しキーワード `__makeref`, `__refvalue`, `__reft
 
 C# でも、内部的には(コンパイル結果の IL 的には)、値型の this 参照や、値型の入れ子の書き換えなどで参照が使われます。
 
-<pre class="source" title="this 参照" lang="">
-<code><span class="reserved">struct</span> <span class="type">A</span>
+```csharp
+struct A
 {
-    <span class="reserved">public int</span> x;
-    <span class="reserved">public int</span> Y()
+    public int x;
+    public int Y()
     {
-        <span class="reserved">return this</span>.x * <span class="reserved">this</span>.x; <span class="comment">// この this はメソッド Y に参照が渡されてる</span>
+        return this.x * this.x; // この this はメソッド Y に参照が渡されてる
     }
 }
-</code></pre>
+```
 
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">struct</span> <span class="type">A</span> { <span class="reserved">public</span> <span class="type">B</span> b; }
-    <span class="reserved">struct</span> <span class="type">B</span> { <span class="reserved">public</span> <span class="type">C</span> c; }
-    <span class="reserved">struct</span> <span class="type">C</span> { <span class="reserved">public int</span> x; }
+    struct A { public B b; }
+    struct B { public C c; }
+    struct C { public int x; }
 
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="type">A</span>();
+        var a = new A();
         a.b.c.x = 1;
-        <span class="type">Console</span>.WriteLine(a.b.c.x); <span class="comment">// ちゃんと x が 1 に書き換わってる</span>
+        Console.WriteLine(a.b.c.x); // ちゃんと x が 1 に書き換わってる
     }
 }
-</code></pre>
+```
 
 
 
@@ -140,22 +140,22 @@ C# でも、内部的には(コンパイル結果の IL 的には)、値型の t
 
 先ほどの C++ の例を、__makeref キーワードを使って書きなおすと以下のようになります。
 
-<pre class="source" title="__makeref の例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        <span class="reserved">int</span> x = 10;
-        <span class="type">TypedReference</span> r = <span class="reserved">__makeref</span>(x); <span class="comment">// x の参照を作る</span>
+        int x = 10;
+        TypedReference r = __makeref(x); // x の参照を作る
 
-        <span class="reserved">__refvalue</span>(r, <span class="reserved">int</span>) = 99; <span class="comment">// 参照元の x も書き換わる</span>
+        __refvalue(r, int) = 99; // 参照元の x も書き換わる
 
-        <span class="type">Console</span>.WriteLine(x); <span class="comment">// 99</span>
+        Console.WriteLine(x); // 99
     }
 }
-</code></pre>
+```
 
 
 通常では C# で必要になる機能でもなく、完全に隠し機能なので、かなり煩雑な文法になっています
@@ -165,10 +165,10 @@ __makeref で参照を作って、__refvalue で値の読み書きをします�
 
 ちなみに、型推論も利きます。
 
-<pre class="source" title="__makeref の型推論" lang="">
-<code><span class="reserved">var</span> x = 10; <span class="comment">// int</span>
-<span class="reserved">var</span> r = <span class="reserved">__makeref</span>(x); <span class="comment">// TypedReference</span>
-</code></pre>
+```csharp
+var x = 10; // int
+var r = __makeref(x); // TypedReference
+```
 
 
 
@@ -184,65 +184,65 @@ C# の配列引数の場合、このスタック上で消費される数は固�
 これに対して、隠しキーワード __arglist を使うと、C# で本当に可変個引数なメソッドを作りことができます。
 例えば、以下のようなコードになります。
 
-<pre class="source" title="__arglist の例" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        X(<span class="reserved">__arglist</span>(1, <span class="literal">"aaa"</span>, <span class="literal">'x'</span>, 1.5)); <span class="comment">// 呼び出し側にも __arglist を書く</span>
+        X(__arglist(1, "aaa", 'x', 1.5)); // 呼び出し側にも __arglist を書く
     }
 
-    <span class="reserved">static void</span> X(<span class="reserved">__arglist</span>) <span class="comment">// 仮引数のところに __arglist を書く</span>
+    static void X(__arglist) // 仮引数のところに __arglist を書く
     {
-        <span class="comment">// 中身のとりだしには ArgIterator 構造体を使う</span>
-        <span class="type">ArgIterator</span> argumentIterator = <span class="reserved">new</span> <span class="type">ArgIterator</span>(<span class="reserved">__arglist</span>);
-        <span class="reserved">while</span> (argumentIterator.GetRemainingCount() &gt; 0)
+        // 中身のとりだしには ArgIterator 構造体を使う
+        ArgIterator argumentIterator = new ArgIterator(__arglist);
+        while (argumentIterator.GetRemainingCount() > 0)
         {
-            <span class="reserved">object</span> value = <span class="reserved">null</span>;
+            object value = null;
 
-            <span class="reserved">var</span> r = argumentIterator.GetNextArg(); <span class="comment">// 可変個引数の1個1個は TypedReference になっている</span>
-            <span class="reserved">var</span> t = <span class="reserved">__reftype</span>(r); <span class="comment">// TypedReference から、元の型を取得</span>
+            var r = argumentIterator.GetNextArg(); // 可変個引数の1個1個は TypedReference になっている
+            var t = __reftype(r); // TypedReference から、元の型を取得
 
-            <span class="comment">// 型で分岐して、__refvalue で値の取り出し</span>
-            <span class="reserved">if</span> (t == <span class="reserved">typeof</span>(<span class="reserved">int</span>)) value = <span class="reserved">__refvalue</span>(r, <span class="reserved">int</span>);
-            <span class="reserved">else if</span> (t == <span class="reserved">typeof</span>(<span class="reserved">char</span>)) value = <span class="reserved">__refvalue</span>(r, <span class="reserved">char</span>);
-            <span class="reserved">else if</span> (t == <span class="reserved">typeof</span>(<span class="reserved">double</span>)) value = <span class="reserved">__refvalue</span>(r, <span class="reserved">double</span>);
-            <span class="reserved">else</span> value = <span class="reserved">__refvalue</span>(r, <span class="reserved">string</span>);
+            // 型で分岐して、__refvalue で値の取り出し
+            if (t == typeof(int)) value = __refvalue(r, int);
+            else if (t == typeof(char)) value = __refvalue(r, char);
+            else if (t == typeof(double)) value = __refvalue(r, double);
+            else value = __refvalue(r, string);
 
-            <span class="type">Console</span>.WriteLine(t.Name + <span class="literal">": "</span> + value);
+            Console.WriteLine(t.Name + ": " + value);
         }
     }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="実行結果">
+```console
 Int32: 1
 String: aaa
 Char: x
 Double: 1.5
-</pre>
+```
 
 
 配列引数を使う場合と比べて大幅に煩雑なので、他の言語との相互運用のための機能だと思った方がいいでしょう。
 例えば、以下のようなコードで、C 言語の printf 関数を呼ぶことができます。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">using</span> System.Runtime.InteropServices;
+```csharp
+using System.Runtime.InteropServices;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main(<span class="reserved">string</span>[] args)
+    static void Main(string[] args)
     {
-        printf(<span class="literal">"%d, %s, %c, %f"</span>, <span class="reserved">__arglist</span>(1, <span class="literal">"aaa"</span>, <span class="literal">'x'</span>, 1.5));
+        printf("%d, %s, %c, %f", __arglist(1, "aaa", 'x', 1.5));
     }
 
-    [<span class="type">DllImport</span>(<span class="literal">"msvcrt"</span>, CallingConvention = <span class="type">CallingConvention</span>.Cdecl)]
-    <span class="reserved">static extern int</span> printf(<span class="reserved">string</span> format, <span class="reserved">__arglist</span>);
+    [DllImport("msvcrt", CallingConvention = CallingConvention.Cdecl)]
+    static extern int printf(string format, __arglist);
 }
-</code></pre>
+```
 
 
 
@@ -256,32 +256,32 @@ Double: 1.5
 しかし、まれに、この型付き参照なしではボックス化を避けれないこともあるようです。
 例えば、以下のように、ジェネリックな引数に対して、型を見ていくつかの型の場合だけ特殊処理したい場合などです。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public static void</span> Set1&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> value)
+```csharp
+public static void Set1<T>(ref T value)
 {
-    <span class="comment">// 型を見て分岐しているのに、結局一度 (T)(object) とキャストしないといけない
-    // (object)の時点でボックス化発生</span>
-    <span class="reserved">if</span> (value <span class="reserved">is int</span>) value = (<span class="type">T</span>)(<span class="reserved">object</span>)1;
-    <span class="reserved">else if</span> (value <span class="reserved">is double</span>) value = (<span class="type">T</span>)(<span class="reserved">object</span>)1.0;
-    <span class="reserved">else if</span> (value <span class="reserved">is char</span>  ) value = (<span class="type">T</span>)(<span class="reserved">object</span>)<span class="literal">'1'</span>;
-    <span class="reserved">else if</span> (value <span class="reserved">is string</span>) value = (<span class="type">T</span>)(<span class="reserved">object</span>)<span class="literal">"1"</span>;
-    <span class="reserved">else</span> value = <span class="reserved">default</span>(<span class="type">T</span>);
+    // 型を見て分岐しているのに、結局一度 (T)(object) とキャストしないといけない
+    // (object)の時点でボックス化発生
+    if (value is int) value = (T)(object)1;
+    else if (value is double) value = (T)(object)1.0;
+    else if (value is char  ) value = (T)(object)'1';
+    else if (value is string) value = (T)(object)"1";
+    else value = default(T);
 }
-</code></pre>
+```
 
 
 この場合に、__makeref を使うとボックス化を避けることができたりします。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">public static void</span> Set1&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> value)
+```csharp
+public static void Set1<T>(ref T value)
 {
-    <span class="reserved">if</span> (value <span class="reserved">is int</span>) <span class="reserved">__refvalue</span>(<span class="reserved">__makeref</span>(value), <span class="reserved">int</span>) = 1;
-    <span class="reserved">else if</span> (value <span class="reserved">is double</span>) <span class="reserved">__refvalue</span>(<span class="reserved">__makeref</span>(value), <span class="reserved">double</span>) = 1;
-    <span class="reserved">else if</span> (value <span class="reserved">is char</span>  ) <span class="reserved">__refvalue</span>(<span class="reserved">__makeref</span>(value), <span class="reserved">char</span>  ) = <span class="literal">'1'</span>;
-    <span class="reserved">else if</span> (value <span class="reserved">is string</span>) <span class="reserved">__refvalue</span>(<span class="reserved">__makeref</span>(value), <span class="reserved">string</span>) = <span class="literal">"1"</span>;
-    <span class="reserved">else</span> value = <span class="reserved">default</span>(<span class="type">T</span>);
+    if (value is int) __refvalue(__makeref(value), int) = 1;
+    else if (value is double) __refvalue(__makeref(value), double) = 1;
+    else if (value is char  ) __refvalue(__makeref(value), char  ) = '1';
+    else if (value is string) __refvalue(__makeref(value), string) = "1";
+    else value = default(T);
 }
-</code></pre>
+```
 
 
 参考:
@@ -293,15 +293,15 @@ Double: 1.5
 ちなみに、この用途は [`Unsafe` クラス](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.unsafe)を使った方法の方がパフォーマンスがいいので、
 このクラスが使えるようになって以降はこの用途で `__makeref` が使われることはなくなりました。
 
-<pre class="source" title="Unsafe クラスで同様の処理">
-<code><span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">static</span> <span class="reserved">void</span> Set1&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> value)
+static void Set1<T>(ref T value)
 {
-    <span class="reserved">if</span> (value <span class="reserved">is</span> <span class="reserved">int</span>) <span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">int</span>&gt;(<span class="reserved">ref</span> value) = 1;
-    <span class="reserved">else</span> <span class="reserved">if</span> (value <span class="reserved">is</span> <span class="reserved">double</span>) <span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">int</span>&gt;(<span class="reserved">ref</span> value) = 1;
-    <span class="reserved">else</span> <span class="reserved">if</span> (value <span class="reserved">is</span> <span class="reserved">char</span>) <span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">char</span>&gt;(<span class="reserved">ref</span> value) = <span class="string">'1'</span>;
-    <span class="reserved">else</span> <span class="reserved">if</span> (value <span class="reserved">is</span> <span class="reserved">string</span>) <span class="type">Unsafe</span>.As&lt;<span class="type">T</span>, <span class="reserved">string</span>&gt;(<span class="reserved">ref</span> value) = <span class="string">"1"</span>;
-    <span class="reserved">else</span> value = <span class="reserved">default</span>(<span class="type">T</span>);
+    if (value is int) Unsafe.As<T, int>(ref value) = 1;
+    else if (value is double) Unsafe.As<T, int>(ref value) = 1;
+    else if (value is char) Unsafe.As<T, char>(ref value) = '1';
+    else if (value is string) Unsafe.As<T, string>(ref value) = "1";
+    else value = default(T);
 }
-</code></pre>
+```

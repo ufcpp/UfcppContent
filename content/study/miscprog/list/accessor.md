@@ -41,39 +41,39 @@ Set変数名 / Get変数名 という名前のメンバー関数を用意する�
 
 age なら、SetAge と GetAge というのを Person クラス内に作る。
 
-<pre class="source" title="SetAge, GetAge" lang="">
-<code><span class="reserved">#include</span>&lt;iostream&gt;
+```cpp
+#include<iostream>
 
-<span class="reserved">class</span> Person
+class Person
 {
-<span class="reserved">private</span>:
-  <span class="reserved">int</span> age;
-<span class="reserved">public</span>:
-  <span class="reserved">void</span> SetAge(<span class="reserved">int</span> a)
+private:
+  int age;
+public:
+  void SetAge(int a)
   {
-    <span class="reserved">if</span>(a &lt; 0) <span class="reserved">return</span>;
-    <span class="reserved">this</span>-&gt;age = a;
+    if(a < 0) return;
+    this->age = a;
   }
 
-  <span class="reserved">int</span> GetAge()
+  int GetAge()
   {
-    <span class="reserved">return this</span>-&gt;age;
+    return this->age;
   }
 
-  Person() { <span class="reserved">this</span>-&gt;SetAge(0); }
-  Person(<span class="reserved">int</span> a) { <span class="reserved">this</span>-&gt;SetAge(a); }
+  Person() { this->SetAge(0); }
+  Person(int a) { this->SetAge(a); }
 };
 
-<span class="reserved">int</span> main()
+int main()
 {
   Person p;
 
   p.SetAge(20);
-  std::cout &lt;&lt; p.GetAge();
+  std::cout << p.GetAge();
 
-  <span class="reserved">return</span> 0;
+  return 0;
 }
-</code></pre>
+```
 
 
 まあ、これが C++ における実装の隠蔽の基本です。
@@ -97,39 +97,39 @@ Visual Studio のインテリセンスなどの入力支援（変数名を途中
 C++ は、引数が異なる同名の関数を定義（オーバーロード）できるので、
 void SetAge(int a) と int GetAge() の両方を Age という名前にしてしまっても問題ありません。
 
-<pre class="source" title="void Age(int a), int Age()" lang="">
-<code><span class="reserved">#include</span>&lt;iostream&gt;
+```cpp
+#include<iostream>
 
-<span class="reserved">class</span> Person
+class Person
 {
-<span class="reserved">private</span>:
-  <span class="reserved">int</span> age;
-<span class="reserved">public</span>:
-  <span class="reserved">void</span> Age(<span class="reserved">int</span> a)
+private:
+  int age;
+public:
+  void Age(int a)
   {
-    <span class="reserved">if</span>(a &lt; 0) <span class="reserved">return</span>;
-    <span class="reserved">this</span>-&gt;age = a;
+    if(a < 0) return;
+    this->age = a;
   }
 
-  <span class="reserved">int</span> Age()
+  int Age()
   {
-    <span class="reserved">return this</span>-&gt;age;
+    return this->age;
   }
 
-  Person() { <span class="reserved">this</span>-&gt;Age(0); }
-  Person(<span class="reserved">int</span> a) { <span class="reserved">this</span>-&gt;Age(a); }
+  Person() { this->Age(0); }
+  Person(int a) { this->Age(a); }
 };
 
-<span class="reserved">int</span> main()
+int main()
 {
   Person p;
 
   p.Age(20);
-  std::cout &lt;&lt; p.Age();
+  std::cout << p.Age();
 
-  <span class="reserved">return</span> 0;
+  return 0;
 }
-</code></pre>
+```
 
 
 まあ、Set / Get がなくなって、タイピングしやすくはなりました。
@@ -143,49 +143,49 @@ C# の「[プロパティ](../../csharp/oop/oo_property.md#property)」のよう
 実は、C++ でも、かなり無理やりですが、（見た目だけは）プロパティのようなことができたりします。
 とりあえず、百聞は一見にしかずということで、以下の例を見てください。
 
-<pre class="source" title="proxy" lang="">
-<code><span class="reserved">#include</span>&lt;iostream&gt;
+```cpp
+#include<iostream>
 
-<span class="reserved">class</span> Person
+class Person
 {
-<span class="reserved">private</span>:
-  <span class="reserved">int</span> age;
-<span class="reserved">public</span>:
-  <span class="reserved">class</span> AgeProxy
+private:
+  int age;
+public:
+  class AgeProxy
   {
-    Person&amp; p;
-  <span class="reserved">public</span>:
-    AgeProxy(Person&amp; p0) : p(p0) {}
+    Person& p;
+  public:
+    AgeProxy(Person& p0) : p(p0) {}
 
-    AgeProxy&amp; <span class="reserved">operator</span>= (<span class="reserved">int</span> a)
+    AgeProxy& operator= (int a)
     {
-      <span class="reserved">if</span>(a &gt;= 0)
-        <span class="reserved">this</span>-&gt;p.age = a;
-      <span class="reserved">return</span> *<span class="reserved">this</span>;
+      if(a >= 0)
+        this->p.age = a;
+      return *this;
     }
 
-    <span class="reserved">operator int</span>()
+    operator int()
     {
-      <span class="reserved">return this</span>-&gt;p.age;
+      return this->p.age;
     }
   } Age;
 
-  <span class="reserved">friend class</span> AgeProxy;
+  friend class AgeProxy;
 
-  Person() : Age(*<span class="reserved">this</span>) { <span class="reserved">this</span>-&gt;Age = 0; }
-  Person(<span class="reserved">int</span> a) : Age(*<span class="reserved">this</span>) { <span class="reserved">this</span>-&gt;Age = a; }
+  Person() : Age(*this) { this->Age = 0; }
+  Person(int a) : Age(*this) { this->Age = a; }
 };
 
-<span class="reserved">int</span> main()
+int main()
 {
   Person p;
 
   p.Age = 20;
-  std::cout &lt;&lt; (<span class="reserved">int</span>)p.Age;
+  std::cout << (int)p.Age;
 
-  <span class="reserved">return</span> 0;
+  return 0;
 }
-</code></pre>
+```
 
 
 Person の中身はちょっと変な感じになっていますが、

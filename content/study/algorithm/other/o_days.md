@@ -119,9 +119,9 @@ aliases:
 で計算可能です。
 で、プログラム的には、整数同士の除算は、普通は余り切り捨てなので、
 
-<pre class="source" title="y 年までのうるう年の回数" lang="">
-<code>y / 4 - y / 100 + y / 400;
-</code></pre>
+```csharp
+y / 4 - y / 100 + y / 400;
+```
 
 
 となります。
@@ -130,10 +130,10 @@ aliases:
 ÷4 をシフト演算で書き換えて、
 以下のように書くことも可能。
 
-<pre class="source" title="y 年までのうるう年の回数" lang="">
-<code><span class="reserved">int</span> c = y / 100;
-<span class="reserved">int</span> dl = (y &gt;&gt; 2) - c + (c &gt;&gt; 2);
-</code></pre>
+```csharp
+int c = y / 100;
+int dl = (y >> 2) - c + (c >> 2);
+```
 
 
 
@@ -367,9 +367,9 @@ aliases:
 で計算します。
 プログラム的に書くなら、÷32 はシフト演算に置き換えられて、以下のようになります。
 
-<pre class="source" title="1月1日から m 月1日までの日数" lang="">
-<code><span class="reserved">int</span> dm = (m * 979 - 1033) &gt;&gt; 5;
-</code></pre>
+```csharp
+int dm = (m * 979 - 1033) >> 5;
+```
 
 
 
@@ -378,31 +378,31 @@ aliases:
 結局、これまでに説明した内容をまとめると、
 1年1月1日からの経過日数を求めるプログラムは以下のようになります。
 
-<pre class="source" title="グレゴリウス暦1年1月1日からの経過日数を求める" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// グレゴリウス暦1年1月1日からの経過日数を求める。
 /// （グレゴリウス暦施行前の日付も、
 ///   形式的にグレゴリウス暦と同じルールで計算。）
-/// &lt;/summary&gt;
-/// &lt;param name="y"&gt;年&lt;/param&gt;
-/// &lt;param name="m"&gt;月&lt;/param&gt;
-/// &lt;param name="d"&gt;日&lt;/param&gt;
-/// &lt;returns&gt;1年1月1日からの経過日数&lt;/returns&gt;</span>
-<span class="reserved">static int</span> GetDays(<span class="reserved">int</span> y, <span class="reserved">int</span> m, <span class="reserved">int</span> d)
+/// </summary>
+/// <param name="y">年</param>
+/// <param name="m">月</param>
+/// <param name="d">日</param>
+/// <returns>1年1月1日からの経過日数</returns>
+static int GetDays(int y, int m, int d)
 {
-  <span class="comment">// 1・2月 → 前年の13・14月</span>
-  <span class="reserved">if</span> (m &lt;= 2)
+  // 1・2月 → 前年の13・14月
+  if (m <= 2)
   {
     --y;
     m += 12;
   }
-  <span class="reserved">int</span> dy = 365 * (y - 1); <span class="comment">// 経過年数×365日</span>
-  <span class="reserved">int</span> c = y / 100;
-  <span class="reserved">int</span> dl = (y &gt;&gt; 2) - c + (c &gt;&gt; 2); <span class="comment">// うるう年分</span>
-  <span class="reserved">int</span> dm = (m * 979 - 1033) &gt;&gt; 5; <span class="comment">// 1月1日から m 月1日までの日数</span>
-  <span class="reserved">return</span> dy + dl + dm + d - 1;
+  int dy = 365 * (y - 1); // 経過年数×365日
+  int c = y / 100;
+  int dl = (y >> 2) - c + (c >> 2); // うるう年分
+  int dm = (m * 979 - 1033) >> 5; // 1月1日から m 月1日までの日数
+  return dy + dl + dm + d - 1;
 }
-</code></pre>
+```
 
 
 ちなみに、
@@ -412,20 +412,20 @@ aliases:
 
 参考までに、ツェラーの公式による曜日判定プログラムを書いておくと、以下の通りです。
 
-<pre class="source" title="ツェラーの公式に基づく曜日判定" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// 曜日判定
-/// &lt;/summary&gt;
-/// &lt;param name="y"&gt;年&lt;/param&gt;
-/// &lt;param name="m"&gt;月&lt;/param&gt;
-/// &lt;param name="d"&gt;日&lt;/param&gt;
-/// &lt;returns&gt;0なら日曜、1: 月曜、…、6: 土曜&lt;/returns&gt;</span>
-<span class="reserved">static int</span> GetDayOfWeek(<span class="reserved">int</span> y, <span class="reserved">int</span> m, <span class="reserved">int</span> d)
-  <span class="reserved">int</span> c = y / 100;
+/// </summary>
+/// <param name="y">年</param>
+/// <param name="m">月</param>
+/// <param name="d">日</param>
+/// <returns>0なら日曜、1: 月曜、…、6: 土曜</returns>
+static int GetDayOfWeek(int y, int m, int d)
+  int c = y / 100;
   y %= 100;
-  <span class="reserved">int</span> dow = d + 26 * (m + 1) / 10 + y + y / 4  + c / 4 - 2 * c;
+  int dow = d + 26 * (m + 1) / 10 + y + y / 4  + c / 4 - 2 * c;
   dow %= 7;
-</code></pre>
+```
 
 
 月 <span class="math">m</span> の前に 26 という謎の定数が出てきますが、

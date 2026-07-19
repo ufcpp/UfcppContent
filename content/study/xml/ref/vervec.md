@@ -25,40 +25,44 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;vervec size="ベクトルの要素数"&gt;&lt;elem&gt;要素1&lt;/elem&gt;...&lt;elem&gt;要素n&lt;elem&gt;&lt;/vervec&gt;
-</pre>
+```xml
+<vervec size="ベクトルの要素数"><elem>要素1</elem>...<elem>要素n<elem></vervec>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;vec&gt;r&lt;/vec&gt; = &lt;vervec size="2"&gt;&lt;elem&gt;x&lt;/elem&gt;&lt;elem&gt;y&lt;/elem&gt;&lt;/vervec&gt;
-</pre><div class="math"><span class="vector">r</span> = <span class="paren" style="font-size:2em;">[</span><table class="matrix" summary="vector"><tr><td>x</td></tr><tr><td>y</td></tr></table><span class="paren" style="font-size:2em;">]</span>
+```xml
+<vec>r</vec> = <vervec size="2"><elem>x</elem><elem>y</elem></vervec>
+```
+<div class="math"><span class="vector">r</span> = <span class="paren" style="font-size:2em;">[</span><table class="matrix" summary="vector"><tr><td>x</td></tr><tr><td>y</td></tr></table><span class="paren" style="font-size:2em;">]</span>
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:vervec"&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size"/&gt;em;&lt;/xsl:attribute&gt;
+```xml
+<xsl:template match="ufcpp:vervec">
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size"/>em;</xsl:attribute>
     [
-  &lt;/span&gt;
-  &lt;table class="matrix" summary="vector"&gt;
-    &lt;xsl:apply-templates select="ufcpp:elem"/&gt;
-  &lt;/table&gt;
-  &lt;span class="paren"&gt;
-    &lt;xsl:attribute name="style"&gt;font-size:&lt;xsl:value-of select="@size" /&gt;em;&lt;/xsl:attribute&gt;
+  </span>
+  <table class="matrix" summary="vector">
+    <xsl:apply-templates select="ufcpp:elem"/>
+  </table>
+  <span class="paren">
+    <xsl:attribute name="style">font-size:<xsl:value-of select="@size" />em;</xsl:attribute>
     ]
-  &lt;/span&gt;
-&lt;/xsl:template&gt;
+  </span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:vervec/ufcpp:elem"&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;xsl:apply-templates/&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:vervec/ufcpp:elem">
+  <tr><td><xsl:apply-templates/></td></tr>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>table.matrix
+```css
+table.matrix
 {
   display:inline;
   font-style:italic;
@@ -72,5 +76,4 @@ span.paren
   font-style:normal;
   vertical-align:middle;
 }
-
-</pre>
+```

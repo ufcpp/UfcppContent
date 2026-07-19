@@ -23,20 +23,20 @@ aliases:
 リリース版には残したくないデバッグ用のコードは、
 以下のように <code>#if, #ifdef</code> プリプロセッサ命令を使って条件コンパイルするのが一般的です。
 
-<pre class="source" title="" lang="">
-<code>#ifdef _DEBUG_
+```csharp
+#ifdef _DEBUG_
 #define debug_puts(str) fputs(str, fp);
 #else
 #define debug_puts()
 #endif
-</code></pre>
+```
 
 
 また、最近のコンパイラは不要なコードは綺麗さっぱり消してくれるので、
 以下のようにフラグと <code>inline</code> 関数を使って条件コンパイルを行うことも出来ます。
 
-<pre class="source" title="" lang="">
-<code>#ifdef _DEBUG_
+```csharp
+#ifdef _DEBUG_
 #define DEBUG_PUTS_ON 1
 #else
 #define DEBUG_PUTS_ON 0
@@ -47,21 +47,21 @@ inline void debug_puts(char* str)
   if(DEBUG_PUTS_ON)
     fputs(str, fp);
 }
-</code></pre>
+```
 
 
 しかし、これらの方法では可変長引数を取れない(inline 関数を使う方は出来ないこともないけど、やっぱりめんどくさい)という欠点があります。
 そこで、Visual C++ 限定の手法なんですが、
 可変長引数を使いたい場合には以下のようにします。
 
-<pre class="source" title="" lang="">
-<code>#ifdef _DEBUG_
+```csharp
+#ifdef _DEBUG_
 #define debug_printf printf
 #else
 #define SLASH() /
 #define debug_printf SLASH()SLASH()
 #endif
-</code></pre>
+```
 
 
 こうすることで、<code>debug_printf</code> はデバッグ時には <code>printf</code> に、

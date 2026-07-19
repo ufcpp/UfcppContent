@@ -30,31 +30,31 @@ aliases: []
 
 素直に実装すると以下のようになります。
 
-<pre class="source" title="object に対して is で型判定">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">StringOrCharArray</span>
+public readonly struct StringOrCharArray
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">object</span> _value;
+    private readonly object _value;
 
-    <span class="reserved">public</span> StringOrCharArray(<span class="reserved">string</span> s) =&gt; _value = s;
-    <span class="reserved">public</span> StringOrCharArray(<span class="reserved">char</span>[] array) =&gt; _value = array;
+    public StringOrCharArray(string s) => _value = s;
+    public StringOrCharArray(char[] array) => _value = array;
 
-    <span class="reserved">public</span> <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; Span
-        =&gt; _value <span class="reserved">is</span> <span class="reserved">string</span> s ? s.AsSpan() :
-        _value <span class="reserved">is</span> <span class="reserved">char</span>[] a ? a.AsSpan() :
-        <span class="reserved">default</span>;
+    public ReadOnlySpan<char> Span
+        => _value is string s ? s.AsSpan() :
+        _value is char[] a ? a.AsSpan() :
+        default;
 }
-</code></pre>
+```
 
 見てほしいのは`Span`プロパティの部分です。
 この中で使っている[`is`演算](../../../../study/csharp/datatype/typeswitch.md#is)は、
 実際のところ、以下のような `as` + null チェックと等価です。
 
-<pre class="source" title="is は as + null チェック">
-<code><span class="reserved">var</span> s = _value <span class="reserved">as</span> <span class="reserved">string</span>;
-<span class="reserved">if</span> (s != <span class="reserved">null</span>) ...
-</code></pre>
+```csharp
+var s = _value as string;
+if (s != null) ...
+```
 
 で、`as` 演算子は IL 的には [isinst 命令](https://docs.microsoft.com/ja-jp/dotnet/api/system.reflection.emit.opcodes.isinst)になってます。
 
@@ -70,33 +70,33 @@ isinst 命令は要は実行時型情報を調べる命令です。
 `object` 型のフィールドに加えて、型弁別用の enum 値を別途持ってみることにします。
 ただ、素直な実装をしてしまうと「コスト避け」の試みは失敗します。
 
-<pre class="source" title="型弁別用の enum を追加">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">StringOrCharArray</span>
+public readonly struct StringOrCharArray
 {
-    <span class="reserved">public</span> Discriminator Type { <span class="reserved">get</span>; }
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">object</span> _value;
+    public Discriminator Type { get; }
+    private readonly object _value;
  
-    <span class="reserved">public</span> StringOrCharArray(<span class="reserved">string</span> s) =&gt; (Type, _value) = (Discriminator.String, s);
-    <span class="reserved">public</span> StringOrCharArray(<span class="reserved">char</span>[] array) =&gt; (Type, _value) = (Discriminator.CharArray, array);
+    public StringOrCharArray(string s) => (Type, _value) = (Discriminator.String, s);
+    public StringOrCharArray(char[] array) => (Type, _value) = (Discriminator.CharArray, array);
  
-    <span class="reserved">public</span> <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; Span
+    public ReadOnlySpan<char> Span
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="comment">// せっかく Type を見て switch してるのに…</span>
-            <span class="reserved">switch</span> (Type)
+            // せっかく Type を見て switch してるのに…
+            switch (Type)
             {
-                <span class="reserved">default</span>: <span class="reserved">return</span> <span class="reserved">default</span>;
-                <span class="comment">// この2行のキャストが余計。</span>
-                <span class="reserved">case</span> Discriminator.String: <span class="reserved">return</span> ((<span class="reserved">string</span>)_value).AsSpan();
-                <span class="reserved">case</span> Discriminator.CharArray: <span class="reserved">return</span> ((<span class="reserved">char</span>[])_value).AsSpan();
+                default: return default;
+                // この2行のキャストが余計。
+                case Discriminator.String: return ((string)_value).AsSpan();
+                case Discriminator.CharArray: return ((char[])_value).AsSpan();
             }
         }
     }
 }
-</code></pre>
+```
 
 enum 値を見て switch していますが、分岐の先で結局キャストしています。
 キャストの方は [caltclass 命令](https://docs.microsoft.com/ja-jp/dotnet/api/system.reflection.emit.opcodes.castclass)になるんですが、
@@ -112,30 +112,30 @@ enum 値を見て switch していますが、分岐の先で結局キャスト�
 ということで、`Unsafe`。
 先ほどの `Span` プロパティを以下のように書き換えます。
 
-<pre class="source" title="Unsafe.As はチェックをすっ飛ばすので高速">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Runtime.CompilerServices;
+```csharp
+using System;
+using System.Runtime.CompilerServices;
  
-<span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">StringOrCharArray</span>
+public readonly struct StringOrCharArray
 {
-    <span class="comment">// 先ほどと同じところは割愛</span>
+    // 先ほどと同じところは割愛
  
-    <span class="reserved">public</span> <span class="type">ReadOnlySpan</span>&lt;<span class="reserved">char</span>&gt; Span
+    public ReadOnlySpan<char> Span
     {
-        <span class="reserved">get</span>
+        get
         {
-            <span class="comment">// せっかく Type を見て switch してるんだから</span>
-            <span class="reserved">switch</span> (<span class="type">Type</span>)
+            // せっかく Type を見て switch してるんだから
+            switch (Type)
             {
-                <span class="reserved">default</span>: <span class="reserved">return</span> <span class="reserved">default</span>;
-                <span class="comment">// キャストを Unsafe.As で置き換えれば高速。</span>
-                <span class="reserved">case</span> Discriminator.String: <span class="reserved">return</span> <span class="type">Unsafe</span>.As&lt;<span class="reserved">object</span>, <span class="reserved">string</span>&gt;(<span class="reserved">ref</span> <span class="type">Unsafe</span>.AsRef(_value)).AsSpan();
-                <span class="reserved">case</span> Discriminator.CharArray: <span class="reserved">return</span> <span class="type">Unsafe</span>.As&lt;<span class="reserved">object</span>, <span class="reserved">char</span>[]&gt;(<span class="reserved">ref</span> <span class="type">Unsafe</span>.AsRef(_value)).AsSpan();
+                default: return default;
+                // キャストを Unsafe.As で置き換えれば高速。
+                case Discriminator.String: return Unsafe.As<object, string>(ref Unsafe.AsRef(_value)).AsSpan();
+                case Discriminator.CharArray: return Unsafe.As<object, char[]>(ref Unsafe.AsRef(_value)).AsSpan();
             }
         }
     }
 }
-</code></pre>
+```
 
 `Unsafe.As`メソッドは型チェックをすっとばしてるので高速です。
 名前通り unsafe ではありますが、今回の場合、事前に enum 値で型を調べているので問題は起こしません。
@@ -157,14 +157,14 @@ enum 値を見て switch していますが、分岐の先で結局キャスト�
 ただ、実装によってはこのコストは避けれます。
 例えば、標準ライブラリ中の`Memory<T>`構造体(`System`名前空間)は以下のような構造になっています。
 
-<pre class="source" title="Memory&lt;T&gt; 構造体の中身">
-<code><span class="reserved">public</span> <span class="reserved">readonly</span> <span class="reserved">struct</span> <span class="type">Memory</span>&lt;<span class="type">T</span>&gt;
+```csharp
+public readonly struct Memory<T>
 {
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">object</span> _object;
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> _index;
-    <span class="reserved">private</span> <span class="reserved">readonly</span> <span class="reserved">int</span> _length;
+    private readonly object _object;
+    private readonly int _index;
+    private readonly int _length;
 }
-</code></pre>
+```
 
 `Memory`構造体は、以下のような前提で、フィールドを増やさずに isinst 命令を避けたりしています。
 

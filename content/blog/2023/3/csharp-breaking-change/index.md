@@ -53,22 +53,22 @@ C# のジェネリクスは C# 2.0 からの導入なわけで、それ以前に
 ここで、多少工夫すると、C# 1.0 の頃でも合法そうな `<>` が書けます。
 例えばこんな感じ:
 
-<pre class="source" title="&lt;&gt;">
-X(A&lt;B, C&gt;(D));
-</pre>
+```csharp
+X(A<B, C>(D));
+```
 
 * C# 1.0 の解釈: 2引数のメソッド `X` があって、式 `A<B` と `C>(D)` が引数
 * C# 2.0 の解釈: 1引数のメソッド `X` と、引数1つで型引数2つのメソッド `A` がある
 
 色が付くと多少わかりやすいですかね。
 
-<pre class="source" title="&lt;&gt; 1.0 VS 2.0">
-<span class="comment">// C# 1.0 解釈</span>
-<span class="method">X</span>(<span class="variable">A</span> &lt; <span class="variable">B</span>, <span class="variable">C</span> &gt; (<span class="variable">D</span>));
+```csharp
+// C# 1.0 解釈
+X(A < B, C > (D));
 
-<span class="comment">// C# 2.0 解釈</span>
-<span class="method">X</span>(<span class="method">A</span>&lt;<span class="type">B</span>, <span class="type">C</span>&gt;(<span class="variable">D</span>));
-</pre>
+// C# 2.0 解釈
+X(A<B, C>(D));
+```
 
 まあ、狙わないと踏めないですね。
 C# 2.0 当時に踏んだ人はいないんじゃないでしょうか。
@@ -80,18 +80,18 @@ C# 2.0 当時に踏んだ人はいないんじゃないでしょうか。
 詳細はリンク先を見てもらうとして、
 簡単に言うと以下のコードの実行結果が C# 4.0 以前と 5.0 以降で変わります。
 
-<pre class="source" title="C# 5.0 の foreach の仕様変更">
-<span class="reserved">var</span> <span class="variable">data</span> <span class="operator">=</span> <span class="reserved">new</span>[] { <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> };
+```csharp
+var data = new[] { 1, 2, 3, 4, 5 };
 
-<span class="type">Action</span> <span class="variable">a</span> <span class="operator">=</span> <span class="reserved">null</span>;
+Action a = null;
 
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">x</span> <span class="control">in</span> <span class="variable">data</span>)
+foreach (var x in data)
 {
-    <span class="variable">a</span> <span class="operator">+=</span> () <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="variable">x</span>);
+    a += () => Console.WriteLine(x);
 }
 
-<span class="variable">a</span>();
-</pre>
+a();
+```
 
 `x` のスコープが `foreach` の内側か外側かが変わっていて、
 単一の変数 `x` が全てのループで共有されるか、ループごとに違う変数扱いになるかが変わります。
@@ -113,26 +113,26 @@ C# 11.0 で[`required`](../../../../study/csharp/cheatsheet/ap_ver11.md#required
 
 ただ、幸い、これらは(当然、[文脈キーワード](../../../../study/csharp/misc/ap_compatibility.md#contextual-keyword)で)「型名として使おうとする時だけまずい」という仕様になっています。
 
-<pre class="source" title="record の破壊的変更の影響は型名に対してのみ">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// 全然平気。</span>
-    <span class="reserved">int</span> <span class="field">record</span>;
-    <span class="reserved">void</span> <span class="method">M</span>(<span class="reserved">int</span> <span class="variable local">record</span>) { }
-    <span class="reserved">int</span> <span class="method">M</span>()
+    // 全然平気。
+    int record;
+    void M(int record) { }
+    int M()
     {
-        <span class="reserved">int</span> <span class="variable">record</span> <span class="operator">=</span> <span class="number">0</span>;
-        <span class="control">return</span> <span class="variable">record</span>;
+        int record = 0;
+        return record;
     }
 
-    <span class="comment">// これがダメ。</span>
-    <span class="comment">// 以前:  record という名前のクラスのフィールド x</span>
-    <span class="comment">// C# 11: x という名前のレコード型宣言</span>
-    <span class="reserved">record</span> <span class="type"><span class="warning" title="CS8981">x</span></span>;
+    // これがダメ。
+    // 以前:  record という名前のクラスのフィールド x
+    // C# 11: x という名前のレコード型宣言
+    record x;
 }
 
-<span class="reserved">class</span> <span class="type"><span class="warning" title="CS8860">record</span></span> { }
-</pre>
+class record { }
+```
 
 幸い、C# では「型名は大文字始まりにする」という文化が浸透していて、わざわざこの規約に反する型名を使う人もほとんどいません。
 
@@ -152,44 +152,44 @@ C# 11.0 で[`required`](../../../../study/csharp/cheatsheet/ap_ver11.md#required
 今何で困っているかというと、1月にブログに書いた[半自動プロパティ](../../1/semi-auto-property/index.md)です。
 `field` キーワードの追加。
 
-<pre class="source" title="手動、(全)自動、半自動プロパティ">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="comment">// 手動プロパティ (manual property)</span>
-    <span class="comment">// (と、自前で用意したフィールド)。</span>
-    <span class="comment">// こういう、プロパティからほぼ素通しで値を記録しているフィールドを「バッキング フィールド」(backing field)という。</span>
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_x</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_x</span>; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">_x</span> <span class="operator">=</span> <span class="reserved">value</span>; }
+    // 手動プロパティ (manual property)
+    // (と、自前で用意したフィールド)。
+    // こういう、プロパティからほぼ素通しで値を記録しているフィールドを「バッキング フィールド」(backing field)という。
+    private int _x;
+    public int X { get => _x; set => _x = value; }
 
-    <span class="comment">// 自動プロパティ (auto-property)。</span>
-    <span class="comment">// 前述の X とほぼ一緒。</span>
-    <span class="comment">// バッキング フィールドの自動生成。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Y</span> { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // 自動プロパティ (auto-property)。
+    // 前述の X とほぼ一緒。
+    // バッキング フィールドの自動生成。
+    public int Y { get; set; }
 
-    <span class="comment">// 【C# 12 候補】 半自動プロパティ (semi-auto-property)。</span>
-    <span class="comment">// バッキング フィールドは自動生成。</span>
-    <span class="comment">// 全自動の方と違って、バッキング フィールドの使い方は自由にできる。</span>
-    <span class="comment">// field キーワードでバッキング フィールドを読み書き。</span>
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Z</span> { <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved"><em>field</em></span>; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved"><em>field</em></span> <span class="operator">=</span> <span class="reserved">value</span>; }
+    // 【C# 12 候補】 半自動プロパティ (semi-auto-property)。
+    // バッキング フィールドは自動生成。
+    // 全自動の方と違って、バッキング フィールドの使い方は自由にできる。
+    // field キーワードでバッキング フィールドを読み書き。
+    public int Z { get => field; set => field = value; }
 }
-</pre>
+```
 
 `record` とかと違ってこれが危ないのは、「`field` という名前のフィールドがいたらアウト」という、割かしありそうなラインなせいです。
 以下のコード、半自動プロパティが実装される前後で意味が変わる可能性が大きくなっています。
 (回避できなくもないものの、コストが高すぎてできれば破壊的変更を認める方向で進めたい。)
 
-<pre class="source" title="半自動プロパティで壊れる予定のコード">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">field</span>;
+    private int field;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span>
+    public int Property
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">field</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">field</span> <span class="operator">=</span> <span class="reserved">value</span>;
+        get => field;
+        set => field = value;
     }
 }
-</pre>
+```
 
 これはGitHubで調べたら、いるらしいです。
 まあ、いそうですよね。
@@ -199,34 +199,34 @@ C# 11.0 で[`required`](../../../../study/csharp/cheatsheet/ap_ver11.md#required
 C# のコーディング規約上の派閥的な話もあります。
 フィールドの命名規約として「`_` を付ける派」は影響を受けません。
 
-<pre class="source" title="_ 派">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_field</span>; <span class="comment">// _ 派。影響を受けない。</span>
+    private int _field; // _ 派。影響を受けない。
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span>
+    public int Property
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_field</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">_field</span> <span class="operator">=</span> <span class="reserved">value</span>;
+        get => _field;
+        set => _field = value;
     }
 }
-</pre>
+```
 
 「インスタンス メンバーには常に `this.` を付ける派」も影響を受けません。
 
-<pre class="source" title="this. 派">
-<span class="reserved">class</span> <span class="type">A</span>
+```csharp
+class A
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">field</span>;
+    private int field;
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Property</span>
+    public int Property
     {
-        <span class="comment">// this. 派。影響を受けない。</span>
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">this</span><span class="operator">.</span><span class="field">field</span>;
-        <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">this</span><span class="operator">.</span><span class="field">field</span> <span class="operator">=</span> <span class="reserved">value</span>;
+        // this. 派。影響を受けない。
+        get => this.field;
+        set => this.field = value;
     }
 }
-</pre>
+```
 
 C# は結構「`private` なところのコーディング規約は口うるさく言わない」みたいなところがあるので、フィールドに関しては `_field`、`this.field`、`field` の3つとも結構います。
 

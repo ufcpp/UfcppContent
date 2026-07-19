@@ -90,99 +90,99 @@ Main 関数内のループで時刻の表示を行い、
 別のスレッドでイベント(ユーザからのキー入力)の発生を待ち続け、
 同時にイベントの処理もこのスレッド内で行います。
 
-<pre class="source" title="イベント処理の例 version 1" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 時刻の表示形式</span>
-    <span class="reserved">const string</span> FULL = <span class="literal">"yyyy/dd/MM hh:mm:ss\n"</span>;
-    <span class="reserved">const string</span> DATE = <span class="literal">"yyyy/dd/MM\n"</span>;
-    <span class="reserved">const string</span> TIME = <span class="literal">"hh:mm:ss\n"</span>;
+    // 時刻の表示形式
+    const string FULL = "yyyy/dd/MM hh:mm:ss\n";
+    const string DATE = "yyyy/dd/MM\n";
+    const string TIME = "hh:mm:ss\n";
 
-    <span class="reserved">static bool</span> isSuspended = <span class="reserved">true</span>;  <span class="comment">// プログラムの一時停止フラグ。</span>
-    <span class="reserved">static string</span> timeFormat = TIME; <span class="comment">// 時刻の表示形式。</span>
+    static bool isSuspended = true;  // プログラムの一時停止フラグ。
+    static string timeFormat = TIME; // 時刻の表示形式。
 
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
         WriteHelp();
 
-        <span class="reserved">var</span> cts = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>();
+        var cts = new CancellationTokenSource();
 
-        <span class="type">Task</span>.WhenAll(
-            <span class="type">Task</span>.Run(() =&gt; EventLoop(cts)),
+        Task.WhenAll(
+            Task.Run(() => EventLoop(cts)),
             TimerLoop(cts.Token)
             ).Wait();
     }
 
-    <span class="comment">// 毎秒時刻表示のループ</span>
-    <span class="reserved">private static async</span> <span class="type">Task</span> TimerLoop(<span class="type">CancellationToken</span> ct)
+    // 毎秒時刻表示のループ
+    private static async Task TimerLoop(CancellationToken ct)
     {
-        <span class="reserved">while</span> (!ct.IsCancellationRequested)
+        while (!ct.IsCancellationRequested)
         {
-            <span class="reserved">if</span> (!isSuspended)
+            if (!isSuspended)
             {
-                <span class="comment">// 1秒おきに現在時刻を表示。</span>
-                <span class="type">Console</span>.Write(<span class="type">DateTime</span>.Now.ToString(timeFormat));
+                // 1秒おきに現在時刻を表示。
+                Console.Write(DateTime.Now.ToString(timeFormat));
             }
-            <span class="reserved">await</span> <span class="type">Task</span>.Delay(1000);
+            await Task.Delay(1000);
         }
     }
 
-    <span class="comment">// キー受付のループ</span>
-    <span class="reserved">static void</span> EventLoop(<span class="type">CancellationTokenSource</span> cts)
+    // キー受付のループ
+    static void EventLoop(CancellationTokenSource cts)
     {
-        <span class="reserved">while</span> (!cts.IsCancellationRequested)
+        while (!cts.IsCancellationRequested)
         {
-            <span class="comment">// 文字を読み込む
-            // (「キーが押される」というイベントの発生を待つ)</span>
-            <span class="reserved">string</span> line = <span class="type">Console</span>.ReadLine();
-            <span class="reserved">char</span> eventCode = line.Length == 0 ? <span class="literal">'\0'</span> : line[0];
+            // 文字を読み込む
+            // (「キーが押される」というイベントの発生を待つ)
+            string line = Console.ReadLine();
+            char eventCode = line.Length == 0 ? '\0' : line[0];
 
-            <span class="comment">// イベント処理</span>
-            <span class="reserved">switch</span> (eventCode)
+            // イベント処理
+            switch (eventCode)
             {
-                <span class="reserved">case</span> <span class="literal">'r'</span>: <span class="comment">// run</span>
-                    isSuspended = <span class="reserved">false</span>;
-                    <span class="reserved">break</span>;
-                <span class="reserved">case</span> <span class="literal">'s'</span>: <span class="comment">// suspend</span>
-                    isSuspended = <span class="reserved">true</span>;
-                    <span class="reserved">break</span>;
-                <span class="reserved">case</span> <span class="literal">'f'</span>: <span class="comment">// full</span>
+                case 'r': // run
+                    isSuspended = false;
+                    break;
+                case 's': // suspend
+                    isSuspended = true;
+                    break;
+                case 'f': // full
                     timeFormat = FULL;
-                    <span class="reserved">break</span>;
-                <span class="reserved">case</span> <span class="literal">'d'</span>: <span class="comment">// date</span>
+                    break;
+                case 'd': // date
                     timeFormat = DATE;
-                    <span class="reserved">break</span>;
-                <span class="reserved">case</span> <span class="literal">'t'</span>: <span class="comment">// time</span>
+                    break;
+                case 't': // time
                     timeFormat = TIME;
-                    <span class="reserved">break</span>;
-                <span class="reserved">case</span> <span class="literal">'q'</span>: <span class="comment">// quit</span>
+                    break;
+                case 'q': // quit
                     cts.Cancel();
-                    <span class="reserved">break</span>;
-                <span class="reserved">default</span>: <span class="comment">// ヘルプ</span>
+                    break;
+                default: // ヘルプ
                     WriteHelp();
-                    <span class="reserved">break</span>;
+                    break;
             }
         }
     }
 
-    <span class="reserved">private static void</span> WriteHelp()
+    private static void WriteHelp()
     {
-        <span class="type">Console</span>.Write(
-            <span class="literal">"使い方\n"</span> +
-            <span class="literal">"r (run)    : 時刻表示を開始します。\n"</span> +
-            <span class="literal">"s (suspend): 時刻表示を一時停止します。\n"</span> +
-            <span class="literal">"f (full)   : 時刻の表示形式を“日付＋時刻”にします。\n"</span> +
-            <span class="literal">"d (date)   : 時刻の表示形式を“日付のみ”にします。\n"</span> +
-            <span class="literal">"t (time)   : 時刻の表示形式を“時刻のみ”にします。\n"</span> +
-            <span class="literal">"q (quit)   : プログラムを終了します。\n"</span>
+        Console.Write(
+            "使い方\n" +
+            "r (run)    : 時刻表示を開始します。\n" +
+            "s (suspend): 時刻表示を一時停止します。\n" +
+            "f (full)   : 時刻の表示形式を“日付＋時刻”にします。\n" +
+            "d (date)   : 時刻の表示形式を“日付のみ”にします。\n" +
+            "t (time)   : 時刻の表示形式を“時刻のみ”にします。\n" +
+            "q (quit)   : プログラムを終了します。\n"
             );
     }
 }
-</code></pre>
+```
 
 
 このプログラムでは、<code>EventLoop</code> というメソッドの中で、
@@ -208,146 +208,146 @@ Main 関数内のループで時刻の表示を行い、
 単に[デリゲート](sp_delegate.md)を用いてイベント処理を他のメソッドに譲り渡してしまえばいいだけのことです。
 したがって、イベント発生待受け用クラスは以下のようになります。
 
-<pre class="source" title="キーボードからの入力イベント待受けクラス" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-<span class="comment">// イベント処理用のデリゲート</span>
-<span class="reserved">delegate void</span> <span class="type">KeyboadEventHandler</span>(<span class="reserved">char</span> eventCode);
+// イベント処理用のデリゲート
+delegate void KeyboadEventHandler(char eventCode);
 
-<span class="inactive">/// &lt;summary&gt;
-///</span><span class="comment"> キーボードからの入力イベント待受けクラス。</span>
-<span class="inactive">/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> <span class="type">KeyboardEventLoop</span>
+/// <summary>
+/// キーボードからの入力イベント待受けクラス。
+/// </summary>
+class KeyboardEventLoop
 {
-    <span class="type">KeyboadEventHandler</span> _onKeyDown;
+    KeyboadEventHandler _onKeyDown;
 
-    <span class="reserved">public</span> KeyboardEventLoop(<span class="type">KeyboadEventHandler</span> onKeyDown)
+    public KeyboardEventLoop(KeyboadEventHandler onKeyDown)
     {
         _onKeyDown = onKeyDown;
     }
 
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> 待受け開始。</span>
-    <span class="inactive">/// &lt;/summary&gt;
-    /// &lt;param name="</span>ct<span class="inactive">"&gt;</span><span class="comment">待ち受けを終了したいときにキャンセルする。</span><span class="inactive">&lt;/param&gt;</span>
-    <span class="reserved">public</span> <span class="type">Task</span> Start(<span class="type">CancellationToken</span> ct)
+    /// <summary>
+    /// 待受け開始。
+    /// </summary>
+    /// <param name="ct">待ち受けを終了したいときにキャンセルする。</param>
+    public Task Start(CancellationToken ct)
     {
-        <span class="reserved">return</span> <span class="type">Task</span>.Run(() =&gt; EventLoop(ct));
+        return Task.Run(() => EventLoop(ct));
     }
 
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> イベント待受けループ。</span>
-    <span class="inactive">/// &lt;/summary&gt;</span>
-    <span class="reserved">void</span> EventLoop(<span class="type">CancellationToken</span> ct)
+    /// <summary>
+    /// イベント待受けループ。
+    /// </summary>
+    void EventLoop(CancellationToken ct)
     {
-        <span class="comment">// イベントループ</span>
-        <span class="reserved">while</span> (!ct.IsCancellationRequested)
+        // イベントループ
+        while (!ct.IsCancellationRequested)
         {
-            <span class="comment">// 文字を読み込む
-            // (「キーが押される」というイベントの発生を待つ)</span>
-            <span class="reserved">string</span> line = <span class="type">Console</span>.ReadLine();
-            <span class="reserved">char</span> eventCode = (line == <span class="reserved">null</span> || line.Length == 0) ? <span class="literal">'\0'</span> : line[0];
+            // 文字を読み込む
+            // (「キーが押される」というイベントの発生を待つ)
+            string line = Console.ReadLine();
+            char eventCode = (line == null || line.Length == 0) ? '\0' : line[0];
 
-            <span class="comment">// イベント処理はデリゲートを通して他のメソッドに任せる。</span>
+            // イベント処理はデリゲートを通して他のメソッドに任せる。
             _onKeyDown(eventCode);
         }
     }
 }
-</code></pre>
+```
 
 
 このようにしてイベント待受け部から独立させたイベント処理部(この例においては <code>onKeyDown</code> デリゲート)のことを<em>イベント ハンドラー</em>と呼びます。
 そして、このクラスを用いて先ほどのサンプルプログラムを書き換えると以下のようになります。
 
-<pre class="source" title="イベント処理の例 version 2" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 時刻の表示形式</span>
-    <span class="reserved">const string</span> FULL = <span class="literal">"yyyy/dd/MM hh:mm:ss\n"</span>;
-    <span class="reserved">const string</span> DATE = <span class="literal">"yyyy/dd/MM\n"</span>;
-    <span class="reserved">const string</span> TIME = <span class="literal">"hh:mm:ss\n"</span>;
+    // 時刻の表示形式
+    const string FULL = "yyyy/dd/MM hh:mm:ss\n";
+    const string DATE = "yyyy/dd/MM\n";
+    const string TIME = "hh:mm:ss\n";
 
-    <span class="reserved">static</span> <span class="type">KeyboardEventLoop</span> eventLoop;
-    <span class="reserved">static bool</span> isSuspended = <span class="reserved">true</span>;  <span class="comment">// プログラムの一時停止フラグ。</span>
-    <span class="reserved">static string</span> timeFormat = TIME; <span class="comment">// 時刻の表示形式。</span>
+    static KeyboardEventLoop eventLoop;
+    static bool isSuspended = true;  // プログラムの一時停止フラグ。
+    static string timeFormat = TIME; // 時刻の表示形式。
 
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
         WriteHelp();
 
-        <span class="reserved">var</span> cts = <span class="reserved">new</span> <span class="type">CancellationTokenSource</span>();
-        eventLoop = <span class="reserved">new</span> <span class="type">KeyboardEventLoop</span>(code =&gt; OnKeyDown(code, cts));
+        var cts = new CancellationTokenSource();
+        eventLoop = new KeyboardEventLoop(code => OnKeyDown(code, cts));
 
-        <span class="type">Task</span>.WhenAll(
+        Task.WhenAll(
             eventLoop.Start(cts.Token),
             TimerLoop(cts.Token)
             ).Wait();
     }
 
-    <span class="comment">// 毎秒時刻表示のループ</span>
-    <span class="reserved">private static async</span> <span class="type">Task</span> TimerLoop(<span class="type">CancellationToken</span> ct)
+    // 毎秒時刻表示のループ
+    private static async Task TimerLoop(CancellationToken ct)
     {
-        <span class="reserved">while</span> (!ct.IsCancellationRequested)
+        while (!ct.IsCancellationRequested)
         {
-            <span class="reserved">if</span> (!isSuspended)
+            if (!isSuspended)
             {
-                <span class="comment">// 1秒おきに現在時刻を表示。</span>
-                <span class="type">Console</span>.Write(<span class="type">DateTime</span>.Now.ToString(timeFormat));
+                // 1秒おきに現在時刻を表示。
+                Console.Write(DateTime.Now.ToString(timeFormat));
             }
-            <span class="reserved">await</span> <span class="type">Task</span>.Delay(1000);
+            await Task.Delay(1000);
         }
     }
 
-    <span class="comment">// イベント処理部。</span>
-    <span class="reserved">static void</span> OnKeyDown(<span class="reserved">char</span> eventCode, <span class="type">CancellationTokenSource</span> cts)
+    // イベント処理部。
+    static void OnKeyDown(char eventCode, CancellationTokenSource cts)
     {
-        <span class="reserved">switch</span> (eventCode)
+        switch (eventCode)
         {
-            <span class="reserved">case</span> <span class="literal">'r'</span>: <span class="comment">// run</span>
-                isSuspended = <span class="reserved">false</span>;
-                <span class="reserved">break</span>;
-            <span class="reserved">case</span> <span class="literal">'s'</span>: <span class="comment">// suspend</span>
-                <span class="type">Console</span>.Write(<span class="literal">"\n一時停止します\n"</span>);
-                isSuspended = <span class="reserved">true</span>;
-                <span class="reserved">break</span>;
-            <span class="reserved">case</span> <span class="literal">'f'</span>: <span class="comment">// full</span>
+            case 'r': // run
+                isSuspended = false;
+                break;
+            case 's': // suspend
+                Console.Write("\n一時停止します\n");
+                isSuspended = true;
+                break;
+            case 'f': // full
                 timeFormat = FULL;
-                <span class="reserved">break</span>;
-            <span class="reserved">case</span> <span class="literal">'d'</span>: <span class="comment">// date</span>
+                break;
+            case 'd': // date
                 timeFormat = DATE;
-                <span class="reserved">break</span>;
-            <span class="reserved">case</span> <span class="literal">'t'</span>: <span class="comment">// time</span>
+                break;
+            case 't': // time
                 timeFormat = TIME;
-                <span class="reserved">break</span>;
-            <span class="reserved">case</span> <span class="literal">'q'</span>: <span class="comment">// quit</span>
+                break;
+            case 'q': // quit
                 cts.Cancel();
-                <span class="reserved">break</span>;
-            <span class="reserved">default</span>: <span class="comment">// ヘルプ</span>
+                break;
+            default: // ヘルプ
                 WriteHelp();
-                <span class="reserved">break</span>;
+                break;
         }
     }
 
-    <span class="reserved">private static void</span> WriteHelp()
+    private static void WriteHelp()
     {
-        <span class="type">Console</span>.Write(
-            <span class="literal">"使い方\n"</span> +
-            <span class="literal">"r (run)    : 時刻表示を開始します。\n"</span> +
-            <span class="literal">"s (suspend): 時刻表示を一時停止します。\n"</span> +
-            <span class="literal">"f (full)   : 時刻の表示形式を“日付＋時刻”にします。\n"</span> +
-            <span class="literal">"d (date)   : 時刻の表示形式を“日付のみ”にします。\n"</span> +
-            <span class="literal">"t (time)   : 時刻の表示形式を“時刻のみ”にします。\n"</span> +
-            <span class="literal">"q (quit)   : プログラムを終了します。\n"</span>
+        Console.Write(
+            "使い方\n" +
+            "r (run)    : 時刻表示を開始します。\n" +
+            "s (suspend): 時刻表示を一時停止します。\n" +
+            "f (full)   : 時刻の表示形式を“日付＋時刻”にします。\n" +
+            "d (date)   : 時刻の表示形式を“日付のみ”にします。\n" +
+            "t (time)   : 時刻の表示形式を“時刻のみ”にします。\n" +
+            "q (quit)   : プログラムを終了します。\n"
             );
     }
 }
-</code></pre>
+```
 
 
 
@@ -375,9 +375,9 @@ Main 関数内のループで時刻の表示を行い、
 そこで、C# にはこの仕組みを実現するために <em>event</em> というキーワードが用意されています。
 利用方法は簡単で、イベント ハンドラーとして使用したいデリゲート型の変数宣言時に <code>event</code> という修飾子を付けるだけです。
 
-<pre class="source" title="event キーワード" lang="">
-<code><span class="reserved">event</span> <span class="input">デリゲート型</span> <span class="input">イベント ハンドラー名</span>;
-</code></pre>
+```csharp
+event デリゲート型 イベント ハンドラー名;
+```
 
 
 このようにして宣言した変数は“<em>イベント</em>”と呼ばれ、
@@ -389,23 +389,23 @@ Main 関数内のループで時刻の表示を行い、
 追加/削除時の処理を明示的に指定することもできます。
 （省略可能。省略すると、デリゲートを格納するフィールドと、add/remove アクセサーをコンパイラーが自動生成してくれる。）
 
-<pre class="source" title="イベントプロパティ" lang="">
-<code><span class="reserved">event</span> <span class="input">デリゲート型</span> <span class="input">イベント ハンドラー名</span>
+```csharp
+event デリゲート型 イベント ハンドラー名
 {
-  <span class="reserved">add</span>
+  add
   {
-<span class="comment">    // addアクセサ
-    //  ここにイベント ハンドラー追加時の処理を書く。</span>
+    // addアクセサ
+    //  ここにイベント ハンドラー追加時の処理を書く。
   }
-  <span class="reserved">remove</span>
+  remove
   {
-<span class="comment">    // removeアクセサ
-    //  ここにイベント ハンドラー削除時の処理を書く。</span>
+    // removeアクセサ
+    //  ここにイベント ハンドラー削除時の処理を書く。
   }
-<span class="comment">  // add/remove アクセッサ共に、
-  // 追加/削除したいイベント ハンドラーは value という名前の変数に格納されている。</span>
+  // add/remove アクセッサ共に、
+  // 追加/削除したいイベント ハンドラーは value という名前の変数に格納されている。
 }
-</code></pre>
+```
 
 
 このように明示的に追加/削除時の処理を追加したものをイベントプロパティと呼びます。
@@ -413,58 +413,58 @@ Main 関数内のループで時刻の表示を行い、
 それでは、先ほど作成したイベント発生待受けクラスを event を用いて書き換えてみましょう。
 （event キーワードを足して public にしただけ。）
 
-<pre class="source" title="イベント発生待受けクラス 完成形" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
-<span class="reserved">using</span> System.Threading.Tasks;
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-<span class="comment">// イベント処理用のデリゲート</span>
-<span class="reserved">delegate void</span> <span class="type">KeyboadEventHandler</span>(<span class="reserved">char</span> eventCode);
+// イベント処理用のデリゲート
+delegate void KeyboadEventHandler(char eventCode);
 
-<span class="inactive">/// &lt;summary&gt;
-///</span><span class="comment"> キーボードからの入力イベント待受けクラス。</span>
-<span class="inactive">/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> <span class="type">KeyboardEventLoop</span>
+/// <summary>
+/// キーボードからの入力イベント待受けクラス。
+/// </summary>
+class KeyboardEventLoop
 {
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> キー入力があった時に呼ばれるイベント。</span>
-    <span class="inactive">/// &lt;/summary&gt;</span>
-    <em><span class="reserved">public event</span> <span class="type">KeyboadEventHandler</span> OnKeyDown;</em>
+    /// <summary>
+    /// キー入力があった時に呼ばれるイベント。
+    /// </summary>
+    public event KeyboadEventHandler OnKeyDown;
 
-    <span class="reserved">public</span> KeyboardEventLoop() { }
-    <span class="reserved">public</span> KeyboardEventLoop(<span class="type">KeyboadEventHandler</span> onKeyDown)
+    public KeyboardEventLoop() { }
+    public KeyboardEventLoop(KeyboadEventHandler onKeyDown)
     {
         OnKeyDown += onKeyDown;
     }
 
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> 待受け開始。</span>
-    <span class="inactive">/// &lt;/summary&gt;
-    /// &lt;param name="</span>ct<span class="inactive">"&gt;</span><span class="comment">待ち受けを終了したいときにキャンセルする。</span><span class="inactive">&lt;/param&gt;</span>
-    <span class="reserved">public</span> <span class="type">Task</span> Start(<span class="type">CancellationToken</span> ct)
+    /// <summary>
+    /// 待受け開始。
+    /// </summary>
+    /// <param name="ct">待ち受けを終了したいときにキャンセルする。</param>
+    public Task Start(CancellationToken ct)
     {
-        <span class="reserved">return</span> <span class="type">Task</span>.Run(() =&gt; EventLoop(ct));
+        return Task.Run(() => EventLoop(ct));
     }
 
-    <span class="inactive">/// &lt;summary&gt;
-    ///</span><span class="comment"> イベント待受けループ。</span>
-    <span class="inactive">/// &lt;/summary&gt;</span>
-    <span class="reserved">void</span> EventLoop(<span class="type">CancellationToken</span> ct)
+    /// <summary>
+    /// イベント待受けループ。
+    /// </summary>
+    void EventLoop(CancellationToken ct)
     {
-        <span class="comment">// イベントループ</span>
-        <span class="reserved">while</span> (!ct.IsCancellationRequested)
+        // イベントループ
+        while (!ct.IsCancellationRequested)
         {
-            <span class="comment">// 文字を読み込む
-            // (「キーが押される」というイベントの発生を待つ)</span>
-            <span class="reserved">string</span> line = <span class="type">Console</span>.ReadLine();
-            <span class="reserved">char</span> eventCode = (line == <span class="reserved">null</span> || line.Length == 0) ? <span class="literal">'\0'</span> : line[0];
+            // 文字を読み込む
+            // (「キーが押される」というイベントの発生を待つ)
+            string line = Console.ReadLine();
+            char eventCode = (line == null || line.Length == 0) ? '\0' : line[0];
 
-            <span class="comment">// イベント処理は event を通して他のメソッドに任せる。</span>
+            // イベント処理は event を通して他のメソッドに任せる。
             OnKeyDown(eventCode);
         }
     }
 }
-</code></pre>
+```
 
 
 
@@ -478,75 +478,75 @@ Main 関数内のループで時刻の表示を行い、
 
 例えば、以下のようなイベントを書いたとします。
 
-<pre class="source" title="自動イベント" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">EventSample</span>
+class EventSample
 {
-    <span class="reserved">public event</span> <span class="type">EventHandler</span> X;
+    public event EventHandler X;
 }
-</code></pre>
+```
 
 
 C# 4.0 以降、コンパイラーによる自動生成の結果は以下のような意味合いのものになります。
 
-<pre class="source" title="コンパイラーによる自動生成の結果" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Threading;
+```csharp
+using System;
+using System.Threading;
 
-<span class="reserved">class</span> <span class="type">EventSample</span>
+class EventSample
 {
-    <span class="reserved">private</span> <span class="type">EventHandler</span> _X; <span class="comment">// 注意: コンパイラー自動生成結果的には X</span>
+    private EventHandler _X; // 注意: コンパイラー自動生成結果的には X
 
-    <span class="reserved">public event</span> <span class="type">EventHandler</span> X
+    public event EventHandler X
     {
-        <span class="reserved">add</span>
+        add
         {
-            <span class="type">EventHandler</span> x2;
-            <span class="reserved">var</span> x1 = _X;
-            <span class="reserved">do</span>
+            EventHandler x2;
+            var x1 = _X;
+            do
             {
                 x2 = x1;
-                <span class="reserved">var</span> x3 = (<span class="type">EventHandler</span>)<span class="type">Delegate</span>.Combine(x2, <span class="reserved">value</span>);
-                x1 = <span class="type">Interlocked</span>.CompareExchange(<span class="reserved">ref</span> _X, x3, x2);
+                var x3 = (EventHandler)Delegate.Combine(x2, value);
+                x1 = Interlocked.CompareExchange(ref _X, x3, x2);
             }
-            <span class="reserved">while</span> (x1 != x2);
+            while (x1 != x2);
         }
-        <span class="reserved">remove</span>
+        remove
         {
-            <span class="type">EventHandler</span> x2;
-            <span class="reserved">var</span> x1 = _X;
-            <span class="reserved">do</span>
+            EventHandler x2;
+            var x1 = _X;
+            do
             {
                 x2 = x1;
-                <span class="reserved">var</span> x3 = (<span class="type">EventHandler</span>)<span class="type">Delegate</span>.Remove(x2, <span class="reserved">value</span>);
-                x1 = <span class="type">Interlocked</span>.CompareExchange(<span class="reserved">ref</span> _X, x3, x2);
+                var x3 = (EventHandler)Delegate.Remove(x2, value);
+                x1 = Interlocked.CompareExchange(ref _X, x3, x2);
             }
-            <span class="reserved">while</span> (x1 != x2);
+            while (x1 != x2);
         }
     }
 }
-</code></pre>
+```
 
 
 結構大げさなコードが生成されていますが、これは、マルチスレッド動作で正しく動くことを保証するためにこうなっています。
 (こういうマルチスレッド動作保証の方法については、別途、非同期処理がらみのページで説明予定。)
 マルチスレッド動作を気にしなくていいなら、意味的には以下のコードと同じです。
 
-<pre class="source" title="マルチスレッド動作を気にしないならこれでいい" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">EventSample</span>
+class EventSample
 {
-    <span class="reserved">private</span> <span class="type">EventHandler</span> _X; <span class="comment">// 注意: コンパイラー自動生成結果的には X</span>
+    private EventHandler _X; // 注意: コンパイラー自動生成結果的には X
 
-    <span class="reserved">public event</span> <span class="type">EventHandler</span> X
+    public event EventHandler X
     {
-        <span class="reserved">add</span> { _X += <span class="reserved">value</span>; }
-        <span class="reserved">remove</span> { _X -= <span class="reserved">value</span>; }
+        add { _X += value; }
+        remove { _X -= value; }
     }
 }
-</code></pre>
+```
 
 
 1点、注意があります。

@@ -71,33 +71,33 @@ C# ではライブラリを利用する際、プログラムのソースには�
 <code>Math</code> クラスは <code>System</code> という名前空間に属しています。
 そのため、<code>Math</code> クラスを利用するには、以下のように完全修飾名で書くか、
 
-<pre class="source" title="完全修飾名でクラスを利用" lang="">
-<code><span class="reserved">class</span> LibrarySample
+```csharp
+class LibrarySample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">for</span>(<span class="reserved">double</span> x=0; x&lt;1; x+=0.1)
-      <em>System.Console</em>.Write(<span class="literal">"sin({0}) = {1}\n"</span>, x, <em>System.Math</em>.Sin(x));
+    for(double x=0; x<1; x+=0.1)
+      System.Console.Write("sin({0}) = {1}\n", x, System.Math.Sin(x));
   }
 }
-</code></pre>
+```
 
 
 以下のように using ディレクティブを利用します。
 (using ディレクティブに関しても「[名前空間](sp_namespace.md)」で説明します。)
 
-<pre class="source" title="using を使ってクラスを利用" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> LibrarySample
+class LibrarySample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    <span class="reserved">for</span>(<span class="reserved">double</span> x=0; x&lt;1; x+=0.1)
-      <em>Console</em>.Write(<span class="literal">"sin({0}) = {1}\n"</span>, x, <em>Math</em>.Sin(x));
+    for(double x=0; x<1; x+=0.1)
+      Console.Write("sin({0}) = {1}\n", x, Math.Sin(x));
   }
 }
-</code></pre>
+```
 
 
 

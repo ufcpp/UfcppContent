@@ -30,61 +30,61 @@ C# のデリゲートは、複数のメソッドを `+=` で繋いで、一斉�
 これを[マルチキャスト デリゲート](../../../../study/csharp/functional/sp_delegate.md#malticast)と言います。
 例えば以下のコードは、
 
-<pre class="source" title="マルチキャスト デリゲート">
-<code><span class="type">Action</span> f = <span class="reserved">null</span>;
+```csharp
+Action f = null;
  
-<span class="reserved">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 })
+foreach (var i in new[] { 1, 2, 3, 4, 5 })
 {
-    f += () =&gt; <span class="type">Console</span>.WriteLine(<span class="string">$&quot;lambda </span>{i}<span class="string"> invoked&quot;</span>);
+    f += () => Console.WriteLine($"lambda {i} invoked");
 }
  
 f();
-</code></pre>
+```
 
 以下のような結果を出力します。
 
-<pre class="source" title="実行結果">
-<code>lambda 1 invoked
+```csharp
+lambda 1 invoked
 lambda 2 invoked
 lambda 3 invoked
 lambda 4 invoked
 lambda 5 invoked
-</code></pre>
+```
 
 基本的には[イベント](../../../../study/csharp/functional/sp_event.md)のための機能で、
 戻り値は想定していません。`void`戻り値以外のメソッドに使おうとするとトラブります。
 以下のようなコードを書いたとすると、
 
-<pre class="source" title="マルチキャスト デリゲートの戻り値">
-<code><span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f = <span class="reserved">null</span>;
+```csharp
+Func<int> f = null;
  
-<span class="reserved">foreach</span> (<span class="reserved">var</span> i <span class="reserved">in</span> <span class="reserved">new</span>[] { 1, 2, 3, 4, 5 })
+foreach (var i in new[] { 1, 2, 3, 4, 5 })
 {
-    f += () =&gt;
+    f += () =>
     {
-        <span class="type">Console</span>.WriteLine(<span class="string">$&quot;lambda </span>{i}<span class="string"> invoked&quot;</span>);
-        <span class="reserved">return</span> i;
+        Console.WriteLine($"lambda {i} invoked");
+        return i;
     };
 }
  
-<span class="type">Console</span>.WriteLine(<span class="string">$&quot;f returns </span>{f()}<span class="string">&quot;</span>);
-</code></pre>
+Console.WriteLine($"f returns {f()}");
+```
 
 最後の行の出力は
 
-<pre class="source" title="実行結果">
-<code>f returns 5
-</code></pre>
+```csharp
+f returns 5
+```
 
 になります。要するに、最後の1個の戻り値以外は消えてなくなります。
 全ての戻り値を取りたければ以下のように、
 個々のデリゲートを配列で受け取って、1つ1つ呼び出すようなコードを書きます。
 
-<pre class="source" title="マルチキャスト デリゲートから、個別のデリゲートを取り出す">
-<code><span class="type">Delegate</span>[] list = f.GetInvocationList();
-<span class="reserved">foreach</span> (<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; item <span class="reserved">in</span> list)
-    <span class="type">Console</span>.WriteLine(<span class="string">$&quot;f returns </span>{item()}<span class="string">&quot;</span>);
-</code></pre>
+```csharp
+Delegate[] list = f.GetInvocationList();
+foreach (Func<int> item in list)
+    Console.WriteLine($"f returns {item()}");
+```
 
 `f` が `Func<int>` なんだから、`Func<int>[]` で一覧を取りたいところなんですが、
 残念ながら `GetInvocationList` の結果は `Delegate[]` で帰ってきます。
@@ -104,45 +104,45 @@ lambda 5 invoked
 
 比較用データ: 同じ `string` 配列を、`string[]` のフィールドと `object[]` にフィールドに格納して使います。
 
-<pre class="source" title="ベンチマークに使うデータ">
-<code><span class="reserved">string</span>[] _stringData = <span class="reserved">new</span> <span class="reserved">string</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;ab&quot;</span>, <span class="string">&quot;abc&quot;</span>, <span class="string">&quot;abcd&quot;</span>, <span class="string">&quot;abcde&quot;</span>, <span class="string">&quot;abcdef&quot;</span>, <span class="string">&quot;abcdefg&quot;</span> };
-<span class="reserved">object</span>[] _objectData = <span class="reserved">new</span> <span class="reserved">string</span>[] { <span class="string">&quot;a&quot;</span>, <span class="string">&quot;ab&quot;</span>, <span class="string">&quot;abc&quot;</span>, <span class="string">&quot;abcd&quot;</span>, <span class="string">&quot;abcde&quot;</span>, <span class="string">&quot;abcdef&quot;</span>, <span class="string">&quot;abcdefg&quot;</span> };
-</code></pre>
+```csharp
+string[] _stringData = new string[] { "a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg" };
+object[] _objectData = new string[] { "a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg" };
+```
 
 これを、以下の3パターン(+ 参考までに1パターン)のコードに与えてみます。
 
 (1) MemberwiseCast: 要素ごとにダウンキャスト
 
-<pre class="source" title="MemberwiseCast">
-<code><span class="reserved">foreach</span> (<span class="reserved">string</span> s <span class="reserved">in</span> _objectData)
+```csharp
+foreach (string s in _objectData)
     sum += s.Length;
-</code></pre>
+```
 
 (2) ArrayCast: 最初に配列自体をダウンキャスト
 
-<pre class="source" title="ArrayCast">
-<code><span class="reserved">var</span> data = (<span class="reserved">string</span>[])_objectData;
-<span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> data)
+```csharp
+var data = (string[])_objectData;
+foreach (var s in data)
     sum += s.Length;
-</code></pre>
+```
 
 (3) UnsafeStructCast: 謎の最適化
 
-<pre class="source" title="謎の最適化に使う謎の構造体">
-<code><span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">Wrap</span>&lt;<span class="type">T</span>&gt; { <span class="reserved">public</span> <span class="type">T</span> Value; }
-</code></pre>
-<pre class="source" title="UnsafeStructCast">
-<code><span class="reserved">var</span> data = <span class="type">Unsafe</span>.As&lt;<span class="reserved">object</span>[], Wrap&lt;<span class="reserved">string</span>&gt;[]&gt;(<span class="reserved">ref</span> _objectData);
-<span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> data)
+```csharp
+public struct Wrap<T> { public T Value; }
+```
+```csharp
+var data = Unsafe.As<object[], Wrap<string>[]>(ref _objectData);
+foreach (var s in data)
     sum += s.Value.Length;
-</code></pre>
+```
 
 (参考) Static: 最初から `string[]` の方を列挙
 
-<pre class="source" title="Static">
-<code><span class="reserved">foreach</span> (<span class="reserved">var</span> s <span class="reserved">in</span> _stringData)
+```csharp
+foreach (var s in _stringData)
     sum += s.Length;
-</code></pre>
+```
 
 比較の結果、以下のような感じになります。
 
@@ -164,10 +164,10 @@ lambda 5 invoked
 
 [.NET の配列には共変性](../../../../study/csharp/oop/sp4_variance.md#covariant-array)があります。
 
-<pre class="source" title="配列の共変性">
-<code><span class="reserved">string</span>[] derivedItems = { <span class="string">&quot;Aleph&quot;</span>, <span class="string">&quot;Beth&quot;</span>, <span class="string">&quot;Gimel&quot;</span> };
-<span class="reserved">object</span>[] baseItems = derivedItems; <span class="comment">// この代入は明示的なキャストなしでできる</span>
-</code></pre>
+```csharp
+string[] derivedItems = { "Aleph", "Beth", "Gimel" };
+object[] baseItems = derivedItems; // この代入は明示的なキャストなしでできる
+```
 
 だいたいこいつが犯人。
 
@@ -178,10 +178,10 @@ lambda 5 invoked
 
 ちなみに、共変性は参照型にしか働かないので、例えば以下のようなコードはコンパイル エラーになります。`int` は値型なので、共変ではなくなります。
 
-<pre class="source" title="値型の配列には共変性が働かない">
-<code><span class="reserved">int</span>[] derivedItems = { 1, 2, 3 };
-<span class="reserved">object</span>[] baseItems = derivedItems; <span class="comment">// この代入は(キャストの有無によらず)認められない</span>
-</code></pre>
+```csharp
+int[] derivedItems = { 1, 2, 3 };
+object[] baseItems = derivedItems; // この代入は(キャストの有無によらず)認められない
+```
 
 謎の最適化 (3) が速くなる理由はここにあります。
 `Wrap<T>`構造体を介することで、共変性がなくなっています。

@@ -53,82 +53,82 @@ C# では[関数メンバー](st_function.md#function-member)に対して、
 例えば以下のようなメソッド `M` を書いた場合、
 上の方に書いたものほど優先的に呼ばれます。
 
-<pre class="source" title="引数の型の「一致度」の高さ">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// A → B → C の型階層</span>
-<span class="comment">// IDisposable インターフェイスを実装</span>
-<span class="comment">// C には int への暗黙的型変換あり</span>
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">IDisposable</span> { <span class="reserved">public</span> <span class="reserved">void</span> Dispose() { } }
-<span class="reserved">class</span> <span class="type">B</span> : A, <span class="type">IDisposable</span> { }
-<span class="reserved">class</span> <span class="type">C</span> : B, <span class="type">IDisposable</span>
+// A → B → C の型階層
+// IDisposable インターフェイスを実装
+// C には int への暗黙的型変換あり
+class A : IDisposable { public void Dispose() { } }
+class B : A, IDisposable { }
+class C : B, IDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="reserved">int</span>(C x) =&gt; 0;
+    public static implicit operator int(C x) => 0;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// M のオーバーロードがいくつかある中、C を引数にして呼び出す</span>
-        M(<span class="reserved">new</span> C());
+        // M のオーバーロードがいくつかある中、C を引数にして呼び出す
+        M(new C());
     }
 
-    <span class="comment">// 上から順に候補になる。</span>
-    <span class="comment">// 上の方を消さないと、下の方が呼ばれることはない。</span>
+    // 上から順に候補になる。
+    // 上の方を消さないと、下の方が呼ばれることはない。
 
-    <span class="comment">// 「そのもの」が当然1番一致度高い</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">C</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"C"</span>);
+    // 「そのもの」が当然1番一致度高い
+    static void M(C x) => Console.WriteLine("C");
 
-    <span class="comment">// 次がジェネリックなやつ。型変換が要らないので一致度が高いという扱い。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"generic"</span>);
+    // 次がジェネリックなやつ。型変換が要らないので一致度が高いという扱い。
+    static void M<T>(T x) => Console.WriteLine("generic");
 
-    <span class="comment">// 基底クラスは、階層が近い方が優先。この場合 B が先で、A が後</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">B</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"B"</span>);
+    // 基底クラスは、階層が近い方が優先。この場合 B が先で、A が後
+    static void M(B x) => Console.WriteLine("B");
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">A</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"A"</span>);
+    static void M(A x) => Console.WriteLine("A");
 
-    <span class="comment">// 次に、インターフェイス、暗黙的型変換が同率。</span>
-    <span class="comment">// (構造体の時の ValueType と違って、クラスは明確に基底クラスが上。)</span>
-    <span class="comment">// この2つが同時に候補になってると ambiguous エラー</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">IDisposable</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"IDisposable"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">int</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int"</span>);
+    // 次に、インターフェイス、暗黙的型変換が同率。
+    // (構造体の時の ValueType と違って、クラスは明確に基底クラスが上。)
+    // この2つが同時に候補になってると ambiguous エラー
+    static void M(IDisposable x) => Console.WriteLine("IDisposable");
+    static void M(int x) => Console.WriteLine("int");
 
-    <span class="comment">// 最後が object。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">object</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"object"</span>);
+    // 最後が object。
+    static void M(object x) => Console.WriteLine("object");
 }
-</code></pre>
+```
 
 型変換に関しては、候補が複数ある場合は、どちらを呼ぶべきか不明瞭なためコンパイル エラーになります。
 例えば以下のコードはコンパイルできません。
 
-<pre class="source" title="不明瞭でオーバーロード解決できない例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// インターフェイス実装とユーザー定義の型変換を持つ</span>
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">IDisposable</span>
+// インターフェイス実装とユーザー定義の型変換を持つ
+class A : IDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> Dispose() { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="reserved">int</span>(A x) =&gt; 0;
+    public void Dispose() { }
+    public static implicit operator int(A x) => 0;
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">IDisposable</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"IDisposable"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">int</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int"</span>);
+    static void M(IDisposable x) => Console.WriteLine("IDisposable");
+    static void M(int x) => Console.WriteLine("int");
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// インターフェイスへの変換と、ユーザー定義の型変換は同列</span>
-        <span class="comment">// どちらを呼ぶべきか、このコードでは解決できない</span>
-        <span class="error">M</span>(<span class="reserved">new</span> A());
+        // インターフェイスへの変換と、ユーザー定義の型変換は同列
+        // どちらを呼ぶべきか、このコードでは解決できない
+        M(new A());
 
-        <span class="comment">// 明示的にキャストを書けば大丈夫</span>
-        M((<span class="type">IDisposable</span>)<span class="reserved">new</span> A());
-        M((<span class="reserved">int</span>)<span class="reserved">new</span> A());
+        // 明示的にキャストを書けば大丈夫
+        M((IDisposable)new A());
+        M((int)new A());
     }
 }
-</code></pre>
+```
 
 型の派生に関してはクラスのみです。
 C# では、任意の[値型](../resource/oo_reference.md#valtype)は `System.ValueType` クラスから派生、任意の[列挙型](st_enum.md)は`System.Enum`クラスから派生しているように振る舞いますが、
@@ -136,51 +136,51 @@ C# では、任意の[値型](../resource/oo_reference.md#valtype)は `System.Va
 実際には型変換の一種です。
 そのため、以下のようなコードはコンパイル エラーになります。
 
-<pre class="source" title="ValueType への変換はインターフェイスへの変換と同列">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">S</span> : <span class="type">IDisposable</span>
+struct S : IDisposable
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> Dispose() { }
+    public void Dispose() { }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// S は ValueType から派生しているかのように振る舞うものの、これはあくまで ValueType への型変換になる</span>
-        <span class="comment">// インターフェイスへの変換と同列なので、以下の呼び出しは不明瞭</span>
-        M(<span class="reserved">new</span> S());
+        // S は ValueType から派生しているかのように振る舞うものの、これはあくまで ValueType への型変換になる
+        // インターフェイスへの変換と同列なので、以下の呼び出しは不明瞭
+        M(new S());
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">IDisposable</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"IDisposable"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">ValueType</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"ValueType"</span>);
+    static void M(IDisposable x) => Console.WriteLine("IDisposable");
+    static void M(ValueType x) => Console.WriteLine("ValueType");
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-4"></a> <a id="generic-method"></a>ジェネリック メソッド
 
 C# では、「ジェネリックかどうか」だけの差があるメソッド オーバーロードも可能です。
 この場合、非ジェネリックな方が優先的に呼ばれます。
 
-<pre class="source" title="非ジェネリックな方優先">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// M(string) の方が呼ばれる</span>
-        M(<span class="string">"abc"</span>);
+        // M(string) の方が呼ばれる
+        M("abc");
 
-        <span class="comment">// M&lt;T&gt;(string) の方が呼ばれる</span>
-        M&lt;<span class="reserved">int</span>&gt;(<span class="string">"abc"</span>);
+        // M<T>(string) の方が呼ばれる
+        M<int>("abc");
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"M"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="reserved">string</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"M&lt;T&gt;"</span>);
+    static void M(string x) => Console.WriteLine("M");
+    static void M<T>(string x) => Console.WriteLine("M<T>");
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-5"></a> <a id="optional"></a>オプション引数・可変長引数
 
@@ -191,26 +191,26 @@ C# には[オプション引数](sp4_optional.md#optional)と[可変長引数](s
 - オプション引数による省略
 - 可変長引数による省略
 
-<pre class="source" title="引数の省略">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
         M();
     }
 
-    <span class="comment">// これが最優先</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M() =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"void"</span>);
+    // これが最優先
+    static void M() => Console.WriteLine("void");
 
-    <span class="comment">// 次がこれ。既定値を与えたもの</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">int</span> x = 0) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int x = 0"</span>);
+    // 次がこれ。既定値を与えたもの
+    static void M(int x = 0) => Console.WriteLine("int x = 0");
 
-    <span class="comment">// 最後がこれ。params</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">params</span> <span class="reserved">int</span>[] x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"params int[]"</span>);
+    // 最後がこれ。params
+    static void M(params int[] x) => Console.WriteLine("params int[]");
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-6"></a> <a id="instance"></a>インスタンス メソッド優先
 
@@ -223,32 +223,32 @@ C# には[拡張メソッド](../functional/sp3_extension.md)という、
 この場合、インスタンス メソッドの方が優先です。
 拡張メソッドの方を呼びたければ、本来の静的メソッドとして呼ぶ必要があります。
 
-<pre class="source" title="拡張メソッド">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">A</span>
+class A
 {
-    <span class="reserved">public</span> <span class="reserved">void</span> M() =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"instance"</span>);
+    public void M() => Console.WriteLine("instance");
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Extensions</span>
+static class Extensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">this</span> A a) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"extension"</span>);
+    public static void M(this A a) => Console.WriteLine("extension");
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// instance の方が呼ばれる</span>
-        <span class="reserved">new</span> A().M();
+        // instance の方が呼ばれる
+        new A().M();
 
-        <span class="comment">// A 自身が M を持っている以上、↑の書き方で拡張メソッドの方は呼べない</span>
-        <span class="comment">// 以下のように、普通に静的メソッドとして呼ぶ必要がある</span>
-        <span class="type">Extensions</span>.M(<span class="reserved">new</span> A());
+        // A 自身が M を持っている以上、↑の書き方で拡張メソッドの方は呼べない
+        // 以下のように、普通に静的メソッドとして呼ぶ必要がある
+        Extensions.M(new A());
     }
 }
-</code></pre>
+```
 
 ## <a id="sec-generated-title-7"></a> <a id="inference"></a>型推論とオーバーロード解決
 
@@ -262,83 +262,83 @@ C# の構文にはいくつか、左辺値からの型推論をするものが�
 
 推論に推論を重ねることになるので、これらの型を引数にした場合、オーバーロード解決ができない場合が増えます。
 
-<pre class="source" title="型推論が働かなくなる例">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// 引数が完全に一致しているデリゲート型を2個用意</span>
-<span class="reserved">delegate</span> <span class="reserved">int</span> <span class="type">A</span>(<span class="reserved">int</span> x);
-<span class="reserved">delegate</span> <span class="reserved">int</span> <span class="type">B</span>(<span class="reserved">int</span> x);
+// 引数が完全に一致しているデリゲート型を2個用意
+delegate int A(int x);
+delegate int B(int x);
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 2個以上候補があるときに default は使えない</span>
-        <span class="error">M</span>(<span class="reserved">default</span>);
+        // 2個以上候補があるときに default は使えない
+        M(default);
 
-        <span class="comment">// 型推論とはちょっと違うものの、null (型がない。どの型にでも代入可)でも同様</span>
-        <span class="error">M</span>(<span class="reserved">null</span>);
+        // 型推論とはちょっと違うものの、null (型がない。どの型にでも代入可)でも同様
+        M(null);
 
-        <span class="comment">// 型指定ありの default なら大丈夫</span>
-        M(<span class="reserved">default</span>(<span class="type">A</span>));
+        // 型指定ありの default なら大丈夫
+        M(default(A));
 
-        <span class="comment">// A なのか B なのか区別がつかない</span>
-        <span class="error">M</span>(x =&gt; x);
+        // A なのか B なのか区別がつかない
+        M(x => x);
 
-        <span class="comment">// キャストがあれば大丈夫</span>
-        <span class="comment">// new でも可</span>
-        M((<span class="type">A</span>)(x =&gt; x));
-        M(<span class="reserved">new</span> <span class="type">A</span>(x =&gt; x));
+        // キャストがあれば大丈夫
+        // new でも可
+        M((A)(x => x));
+        M(new A(x => x));
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">A</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"A"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">B</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"B"</span>);
+    static void M(A x) => Console.WriteLine("A");
+    static void M(B x) => Console.WriteLine("B");
 }
-</code></pre>
+```
 
 文字列補完では、`string`型で受け取る場合と`FormattableString`で受け取る場合で異なる挙動になりますが、
 `var`を使った暗黙的変数宣言では自動的に`string`扱いされます。
 そのため、オーバーロード解決でも特にキャストがない場合、`string`が優先されます。
 
-<pre class="source" title="文字列補間">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> (a, b) = (1, 2);
+        var (a, b) = (1, 2);
 
-        <span class="comment">// M(string) の方が呼ばれる</span>
-        M(<span class="string">$"</span>{a}<span class="string">, </span>{b}<span class="string">"</span>);
+        // M(string) の方が呼ばれる
+        M($"{a}, {b}");
 
-        <span class="comment">// こう書けば M(FormattableString) の方</span>
-        M((<span class="type">FormattableString</span>)<span class="string">$"</span>{a}<span class="string">, </span>{b}<span class="string">"</span>);
+        // こう書けば M(FormattableString) の方
+        M((FormattableString)$"{a}, {b}");
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="reserved">string</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"string"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">FormattableString</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"FormattableString"</span>);
+    static void M(string x) => Console.WriteLine("string");
+    static void M(FormattableString x) => Console.WriteLine("FormattableString");
 }
-</code></pre>
+```
 
 同様に、ラムダ式は、デリゲート型で受け取る場合と式ツリーで受け取る場合で異なる挙動になります。
 こちらは推論は効かず、オーバーロード解決もできなくなります。
 
-<pre class="source" title="式ツリー">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Linq.Expressions;
+```csharp
+using System;
+using System.Linq.Expressions;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        M(x =&gt; x);
+        M(x => x);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; f) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Func"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Expression</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt;&gt; f) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Expression"</span>);
+    static void M(Func<int, int> f) => Console.WriteLine("Func");
+    static void M(Expression<Func<int, int>> f) => Console.WriteLine("Expression");
 }
-</code></pre>
+```
 
 ただし、次節で説明しますが、ラムダ式の型推論は結構優秀で、
 ちゃんと推論が働きつつ、オーバーロード解決できる場合も多いです。
@@ -348,32 +348,32 @@ C# の構文にはいくつか、左辺値からの型推論をするものが�
 ラムダ式の型推論は相当優秀で、結構複雑なオーバーロード解決もできたりします。
 例えば、以下の `M(x => x)` はちゃんとコンパイルできます。
 
-<pre class="source" title="ラムダ式とオーバーロード解決">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// x の素通し = 引数と戻り値が一致 = Fucn&lt;int, int&gt; の方だけなのでそっちが選ばれる</span>
-        <span class="comment">// x の型は int に</span>
-        M(x =&gt; x);
+        // x の素通し = 引数と戻り値が一致 = Fucn<int, int> の方だけなのでそっちが選ばれる
+        // x の型は int に
+        M(x => x);
 
-        <span class="comment">// 明示的に double を返すと Func&lt;int, double&gt; の方が選ばれる</span>
-        <span class="comment">// x の型は int に</span>
-        M(x =&gt; (<span class="reserved">double</span>)x);
+        // 明示的に double を返すと Func<int, double> の方が選ばれる
+        // x の型は int に
+        M(x => (double)x);
 
-        <span class="comment">// この場合、引数と戻り値が一致してるという条件では int なのか string なのか区別できなくてエラー</span>
-        <span class="error">N</span>(x =&gt; x);
+        // この場合、引数と戻り値が一致してるという条件では int なのか string なのか区別できなくてエラー
+        N(x => x);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int → int"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">double</span>&gt; x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int → double"</span>);
+    static void M(Func<int, int> x) => Console.WriteLine("int → int");
+    static void M(Func<int, double> x) => Console.WriteLine("int → double");
 
-    <span class="reserved">static</span> <span class="reserved">void</span> N(<span class="type">Func</span>&lt;<span class="reserved">int</span>, <span class="reserved">int</span>&gt; x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int → int"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> N(<span class="type">Func</span>&lt;<span class="reserved">string</span>, <span class="reserved">string</span>&gt; x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int → int"</span>);
+    static void N(Func<int, int> x) => Console.WriteLine("int → int");
+    static void N(Func<string, string> x) => Console.WriteLine("int → int");
 }
-</code></pre>
+```
 
 <h5 class="version version6">Ver. 6.0</h5>
 
@@ -381,35 +381,35 @@ C# の構文にはいくつか、左辺値からの型推論をするものが�
 以下のように、多段のラムダ式でちゃんとオーバーロード解決できるようになったのは C# 6.0 からです。
 また、「匿名メソッド式はラムダ式と違って式ツリーにならない」という条件が加味されたのも C# 6.0 からです。
 
-<pre class="source" title="多段のラムダ式など">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Linq.Expressions;
+```csharp
+using System;
+using System.Linq.Expressions;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// M(() =&gt; { }) だと Action か Expression&lt;Action&gt; か区別つかないものの</span>
-        <span class="comment">// 匿名メソッド式の場合は式ツリー化できない仕様なので、M(Action) で確定</span>
-        <span class="comment">// なのに以前はこれもエラーになってた(C# 6.0 からは M(Action) が呼ばれる)</span>
-        M(<span class="reserved">delegate</span> () { });
+        // M(() => { }) だと Action か Expression<Action> か区別つかないものの
+        // 匿名メソッド式の場合は式ツリー化できない仕様なので、M(Action) で確定
+        // なのに以前はこれもエラーになってた(C# 6.0 からは M(Action) が呼ばれる)
+        M(delegate () { });
 
-        <span class="comment">// 以下のような、多段のラムダ式でちゃんとオーバーロード解決できるのは C# 6.0 から</span>
-        <span class="comment">// Func&lt;int, Func&lt;int&gt;&gt; の方</span>
-        M(() =&gt; () =&gt; 1);
-        <span class="comment">// Func&lt;int, Func&lt;double&gt;&gt; の方</span>
-        M(() =&gt; () =&gt; 1.0);
+        // 以下のような、多段のラムダ式でちゃんとオーバーロード解決できるのは C# 6.0 から
+        // Func<int, Func<int>> の方
+        M(() => () => 1);
+        // Func<int, Func<double>> の方
+        M(() => () => 1.0);
     }
 
-    <span class="comment">// ラムダ式だと区別できないものの、匿名メソッド式なら Action で確定</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Action</span>x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Action"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Expression</span>&lt;<span class="type">Action</span>&gt; x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Expression"</span>);
+    // ラムダ式だと区別できないものの、匿名メソッド式なら Action で確定
+    static void M(Actionx) => Console.WriteLine("Action");
+    static void M(Expression<Action> x) => Console.WriteLine("Expression");
 
-    <span class="comment">// () =&gt; () =&gt; 1 みたいな、多段のラムダ式</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt;&gt; x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"() → () → int"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="type">Func</span>&lt;<span class="reserved">double</span>&gt;&gt; x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"() → () → int"</span>);
+    // () => () => 1 みたいな、多段のラムダ式
+    static void M(Func<Func<int>> x) => Console.WriteLine("() → () → int");
+    static void M(Func<Func<double>> x) => Console.WriteLine("() → () → int");
 }
-</code></pre>
+```
 
 
 <!-- original-page-break -->
@@ -437,32 +437,32 @@ C# の構文にはいくつか、左辺値からの型推論をするものが�
 同名の静的メソッドとインスタンス メソッドを1つずつ定義していますが、
 間違った引数で呼び出しています。
 
-<pre class="source" title="同名の静的メソッドとインスタンス メソッド">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Static</span> { }
-<span class="reserved">struct</span> <span class="type">Instance</span> { }
+struct Static { }
+struct Instance { }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 同名で、片方は静的メソッドで、もう片方はインスタンス メソッド。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Static</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Static"</span>);
-    <span class="reserved">void</span> M(<span class="type">Instance</span> x) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Instance"</span>);
+    // 同名で、片方は静的メソッドで、もう片方はインスタンス メソッド。
+    static void M(Static x) => Console.WriteLine("Static");
+    void M(Instance x) => Console.WriteLine("Instance");
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 型名.M() で呼べるのは静的メソッドだけのはず。</span>
-        <span class="comment">// でも、エラー メッセージとしては「M(Instance) を呼ぶにはインスタンスが必要」の類。</span>
-        <span class="error"><span class="type">Program</span>.M</span>(<span class="reserved">new</span> <span class="type">Instance</span>());
+        // 型名.M() で呼べるのは静的メソッドだけのはず。
+        // でも、エラー メッセージとしては「M(Instance) を呼ぶにはインスタンスが必要」の類。
+        Program.M(new Instance());
 
-        <span class="comment">// インスタンス.M() で呼べるのはインスタンス メソッドだけのはず。</span>
-        <span class="comment">// でも、エラー メッセージとしては「M(Static) を呼ぶにはインスタンス越しじゃダメ」の類。</span>
-        <span class="error"><span class="reserved">new</span> <span class="type">Program</span>().M</span>(<span class="reserved">new</span> <span class="type">Static</span>());
+        // インスタンス.M() で呼べるのはインスタンス メソッドだけのはず。
+        // でも、エラー メッセージとしては「M(Static) を呼ぶにはインスタンス越しじゃダメ」の類。
+        new Program().M(new Static());
 
-        <span class="comment">// つまり、引数の型でのオーバーロード解決を先にやって、その後、静的/インスタンスの区別を調べてる。</span>
+        // つまり、引数の型でのオーバーロード解決を先にやって、その後、静的/インスタンスの区別を調べてる。
     }
 }
-</code></pre>
+```
 
 静的かインスタンスかの差をよりも先に、引数の型だけでオーバーロード解決しています。
 なので、`Program.M(new Instance())`と呼ぼうが、`M(Instance x)`の方がまず選ばれます。
@@ -478,47 +478,47 @@ C# 7.3でこの順を逆にして、引数の型でオーバーロード解決�
 2つのメソッド`M`が、どちらも`M()`で呼べるようになります。
 C# 7.3からは、これらの呼び分けができるようになりました。
 
-<pre class="source" title="静的メソッドかインスタンス メソッドかでオーバーロード解決">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Static</span> { }
-<span class="reserved">struct</span> <span class="type">Instance</span> { }
+struct Static { }
+struct Instance { }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// 既定値が入っているのでどちらも M() で呼べる。</span>
-    <span class="comment">// 片方は静的メソッドで、もう片方はインスタンス メソッド。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Static</span> x = <span class="reserved">default</span>) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Static"</span>);
-    <span class="reserved">void</span> M(<span class="type">Instance</span> x = <span class="reserved">default</span>) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Instance"</span>);
+    // 既定値が入っているのでどちらも M() で呼べる。
+    // 片方は静的メソッドで、もう片方はインスタンス メソッド。
+    static void M(Static x = default) => Console.WriteLine("Static");
+    void M(Instance x = default) => Console.WriteLine("Instance");
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// 型名.M() で呼べるのは静的メソッドだけのはず。</span>
-        <span class="comment">// でも、これまでは、M(Static) か M(Instance) かの区別がつかなかった。</span>
-        <span class="comment">// C# 7.3 では M(Static) が選ばれるように。</span>
-        <span class="type">Program</span>.M();
+        // 型名.M() で呼べるのは静的メソッドだけのはず。
+        // でも、これまでは、M(Static) か M(Instance) かの区別がつかなかった。
+        // C# 7.3 では M(Static) が選ばれるように。
+        Program.M();
 
-        <span class="comment">// インスタンス.M() で呼べるのはインスタンス メソッドだけのはず。</span>
-        <span class="comment">// 同上。</span>
-        <span class="comment">// C# 7.3 では M(Instance) が選ばれるように。</span>
-        <span class="reserved">new</span> <span class="type">Program</span>().M();
+        // インスタンス.M() で呼べるのはインスタンス メソッドだけのはず。
+        // 同上。
+        // C# 7.3 では M(Instance) が選ばれるように。
+        new Program().M();
 
-        <span class="comment">// Main が静的メソッドなので、何もつけない場合、この M() も静的な方が呼ばれる。</span>
+        // Main が静的メソッドなので、何もつけない場合、この M() も静的な方が呼ばれる。
         M();
     }
 
-    <span class="reserved">void</span> InstanceMethod()
+    void InstanceMethod()
     {
-        <span class="comment">// でも、これはダメ。</span>
-        <span class="comment">// 静的な方もインスタンスの方も M() で呼べるので不明瞭。</span>
-        <span class="error">M</span>();
+        // でも、これはダメ。
+        // 静的な方もインスタンスの方も M() で呼べるので不明瞭。
+        M();
 
-        <span class="comment">// これなら OK。</span>
-        <span class="comment">// this. が付いているのでインスタンス メソッドに絞られる。</span>
-        <span class="reserved">this</span>.M();
+        // これなら OK。
+        // this. が付いているのでインスタンス メソッドに絞られる。
+        this.M();
     }
 }
-</code></pre>
+```
 
 #### <a id="sec-generated-title-11"></a> <a id="color-color"></a>余談: Color Color 問題
 
@@ -533,126 +533,126 @@ Color Color問題下においても呼び分けできるようになったもの
 末尾の2つはC# 7.3でだけコンパイルできるコード、
 真ん中の `Color.M()` はC# 7.3でもコンパイルできないコードになります。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">struct</span> <span class="type">Color</span>
+struct Color
 {
-    <span class="reserved">public</span> <span class="reserved">byte</span> R;
-    <span class="reserved">public</span> <span class="reserved">byte</span> G;
-    <span class="reserved">public</span> <span class="reserved">byte</span> B;
+    public byte R;
+    public byte G;
+    public byte B;
 
-    <span class="comment">// どちらも M() で呼べるメソッド。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> M(<span class="reserved">int</span> x = 0) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"Instance"</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Color</span> c = <span class="reserved">default</span>) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"static"</span>);
+    // どちらも M() で呼べるメソッド。
+    public void M(int x = 0) => Console.WriteLine("Instance");
+    public static void M(Color c = default) => Console.WriteLine("static");
 
-    <span class="comment">// 参考までに、オーバーロードがない場合。</span>
-    <span class="reserved">public</span> <span class="reserved">void</span> Instance() { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> Static() { }
+    // 参考までに、オーバーロードがない場合。
+    public void Instance() { }
+    public static void Static() { }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// C# では、型名とプロパティ名が同じプロパティを作れる。</span>
-    <span class="reserved">static</span> Color Color { <span class="reserved">get</span>; <span class="reserved">set</span>; }
+    // C# では、型名とプロパティ名が同じプロパティを作れる。
+    static Color Color { get; set; }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// これは「プロパティのColor」(C# 7.2以前でも行ける)。</span>
+        // これは「プロパティのColor」(C# 7.2以前でも行ける)。
         Color.Instance();
 
-        <span class="comment">// これが「型のColor」(C# 7.2以前でも行ける)。</span>
-        <span class="type">Color</span>.Static();
+        // これが「型のColor」(C# 7.2以前でも行ける)。
+        Color.Static();
 
-        <span class="comment">// これだと、この Color が型名かプロパティかが区別できない。</span>
-        <span class="comment">// C# 7.3 でも不明瞭エラー。</span>
-        Color.<span class="error">M</span>();
+        // これだと、この Color が型名かプロパティかが区別できない。
+        // C# 7.3 でも不明瞭エラー。
+        Color.M();
 
-        <span class="comment">// C# 7.3 なら、以下の書き方で呼び分け可能(これまでは不明瞭エラー)。</span>
-        <span class="comment">// 「プロパティのColor」。</span>
-        <span class="type">Program</span>.Color.M();
-        <span class="comment">// 「型のColor」。</span>
-        <span class="reserved">global</span>::<span class="type">Color</span>.M();
+        // C# 7.3 なら、以下の書き方で呼び分け可能(これまでは不明瞭エラー)。
+        // 「プロパティのColor」。
+        Program.Color.M();
+        // 「型のColor」。
+        global::Color.M();
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-12"></a> <a id="constraints"></a>ジェネリック型制約
 
 ジェネリック メソッドで、型制約だけが違うメソッドのオーバーロード解決ができるようにもなりました。
 
-<pre class="source" title="型制約での呼び分け">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="comment">// オーバーロード用のダミー型</span>
-<span class="reserved">struct</span> <span class="type">A</span> { }
-<span class="reserved">struct</span> <span class="type">B</span> { }
+// オーバーロード用のダミー型
+struct A { }
+struct B { }
 
-<span class="comment">// IDisposable, IComparable な型を用意</span>
-<span class="reserved">struct</span> <span class="type">Disposable</span> : <span class="type">IDisposable</span> { <span class="reserved">public</span> <span class="reserved">void</span> Dispose() { } }
-<span class="reserved">struct</span> <span class="type">Comparable</span> : <span class="type">IComparable</span> { <span class="reserved">public</span> <span class="reserved">int</span> CompareTo(<span class="reserved">object</span> x) =&gt; 0; }
+// IDisposable, IComparable な型を用意
+struct Disposable : IDisposable { public void Dispose() { } }
+struct Comparable : IComparable { public int CompareTo(object x) => 0; }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="comment">// M(x) で呼べるメソッドが2つ。</span>
-    <span class="comment">// 差は、T の型制約のみ。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="type">A</span> _ = <span class="reserved">default</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IDisposable</span> { }
-    <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="type">B</span> _ = <span class="reserved">default</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="type">IComparable</span> { }
+    // M(x) で呼べるメソッドが2つ。
+    // 差は、T の型制約のみ。
+    static void M<T>(T x, A _ = default) where T : IDisposable { }
+    static void M<T>(T x, B _ = default) where T : IComparable { }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// C# 7.3 からこの呼び出し方ができるように。</span>
-        M(<span class="reserved">new</span> <span class="type">Disposable</span>());
-        M(<span class="reserved">new</span> <span class="type">Comparable</span>());
+        // C# 7.3 からこの呼び出し方ができるように。
+        M(new Disposable());
+        M(new Comparable());
 
-        <span class="comment">// この書き方も C# 7.3 から。</span>
-        M(<span class="reserved">new</span> <span class="type">Disposable</span>(), <span class="reserved">default</span>); <span class="comment">// default は default(A) に推論される</span>
-        M(<span class="reserved">new</span> <span class="type">Comparable</span>(), <span class="reserved">default</span>); <span class="comment">// default は default(B) に推論される</span>
+        // この書き方も C# 7.3 から。
+        M(new Disposable(), default); // default は default(A) に推論される
+        M(new Comparable(), default); // default は default(B) に推論される
 
-        <span class="comment">// C# 7.2 以前の場合、こう書くのが必須。</span>
-        M(<span class="reserved">new</span> <span class="type">Disposable</span>(), <span class="reserved">default</span>(<span class="type">A</span>));
-        M(<span class="reserved">new</span> <span class="type">Comparable</span>(), <span class="reserved">default</span>(<span class="type">B</span>));
+        // C# 7.2 以前の場合、こう書くのが必須。
+        M(new Disposable(), default(A));
+        M(new Comparable(), default(B));
     }
 }
-</code></pre>
+```
 
 特に、参照型(class)か値型(struct)かによるオーバーロード解決は便利そうです。
 例えば、「条件を満たさなければnullを返す」みたいなメソッドを書きたい場合、
 値型の時だけ[null許容型](../resource/sp2_nullable.md)にして、`?`を付ける必要があります。
 この呼び分けが、これまでだとなかなか難しかったですが、C# 7.3ではできるようになります。
 
-<pre class="source" title="class 制約と struct 制約の呼び分け">
-<code><span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Linq;
+```csharp
+using System.Collections.Generic;
+using System.Linq;
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">ClassExtensions</span>
+static class ClassExtensions
 {
-    <span class="comment">// クラスの場合は LINQ の FirstOrDefault そのまま。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> FirstOrNull&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt; source)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
-        =&gt; source.FirstOrDefault();
+    // クラスの場合は LINQ の FirstOrDefault そのまま。
+    public static T FirstOrNull<T>(this IEnumerable<T> source)
+        where T : class
+        => source.FirstOrDefault();
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">StructExtensions</span>
+static class StructExtensions
 {
-    <span class="comment">// 構造体の場合は null 許容型に変える必要がある。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span>? FirstOrNull&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt; source)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span>
-        =&gt; source.Select(x =&gt; (<span class="type">T</span>?)x).FirstOrDefault();
+    // 構造体の場合は null 許容型に変える必要がある。
+    public static T? FirstOrNull<T>(this IEnumerable<T> source)
+        where T : struct
+        => source.Select(x => (T?)x).FirstOrDefault();
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// ClassExtensions の方のが呼ばれる。</span>
-        <span class="reserved">new</span>[] { <span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span> }.FirstOrNull();
+        // ClassExtensions の方のが呼ばれる。
+        new[] { "a", "b", "c" }.FirstOrNull();
 
-        <span class="comment">// StructExtensions の方のが呼ばれる。</span>
-        <span class="reserved">new</span>[] { 1, 2, 3 }.FirstOrNull();
+        // StructExtensions の方のが呼ばれる。
+        new[] { 1, 2, 3 }.FirstOrNull();
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-13"></a> <a id="method-return"></a>メソッドの戻り値
 
@@ -662,50 +662,50 @@ C# (というか、.NET)のメソッドは、戻り値の型を[シグネチャ]
 ただ、これまでの例でもたびたび出てきたように、引数の規定値を与えることで戻り値だけが違う「っぽく見える」メソッド オーバーロードはできます。
 また、以下のように、「戻り値違いのデリゲートを受け取るメソッド」は作れます。
 
-<pre class="source" title="戻り値違いのデリゲートを受け取るメソッド オーバーロード">
-<code><span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int"</span>);
-<span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="reserved">string</span>&gt; f) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"string"</span>);
-</code></pre>
+```csharp
+static void M(Func<int> f) => Console.WriteLine("int");
+static void M(Func<string> f) => Console.WriteLine("string");
+```
 
 [前述の通り](#lambda)、
 ラムダ式であれば、ラムダ式の型推論が賢くて、この2つのメソッドの呼び分けができました。
 
-<pre class="source" title="ラムダ式は賢い">
-<code>M(() =&gt; 0); <span class="comment">// int の方</span>
-M(() =&gt; <span class="string">"abc"</span>); <span class="comment">// string の方</span>
-</code></pre>
+```csharp
+M(() => 0); // int の方
+M(() => "abc"); // string の方
+```
 
 しかし、メソッド グループを引数に渡した場合、これまではオーバーロード解決できませんでした。
 それが、以下のように、C# 7.3からはオーバーロード解決できるようになります。
 
-<pre class="source" title="メソッドの戻り値でオーバーロード解決">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="reserved">int</span>&gt; f) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"int"</span>);
-    <span class="reserved">static</span> <span class="reserved">void</span> M(<span class="type">Func</span>&lt;<span class="reserved">string</span>&gt; f) =&gt; <span class="type">Console</span>.WriteLine(<span class="string">"string"</span>);
+    static void M(Func<int> f) => Console.WriteLine("int");
+    static void M(Func<string> f) => Console.WriteLine("string");
 
-    <span class="reserved">static</span> <span class="reserved">int</span> IntReturn() =&gt; 0;
-    <span class="reserved">static</span> <span class="reserved">string</span> StringReturn() =&gt; <span class="string">""</span>;
+    static int IntReturn() => 0;
+    static string StringReturn() => "";
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="comment">// ラムダ式賢い。</span>
-        M(() =&gt; 0); <span class="comment">// int の方</span>
-        M(() =&gt; <span class="string">"abc"</span>); <span class="comment">// string の方</span>
+        // ラムダ式賢い。
+        M(() => 0); // int の方
+        M(() => "abc"); // string の方
 
-        <span class="comment">// こういう書き方なら C# 7.2 まででもできた。</span>
-        M(() =&gt; IntReturn());
-        M(() =&gt; StringReturn());
+        // こういう書き方なら C# 7.2 まででもできた。
+        M(() => IntReturn());
+        M(() => StringReturn());
 
-        <span class="comment">// なのに、以下のような書き方はこれまでできなかった。</span>
-        <span class="comment">// C# 7.3 からできるように。</span>
+        // なのに、以下のような書き方はこれまでできなかった。
+        // C# 7.3 からできるように。
         M(IntReturn);
         M(StringReturn);
     }
 }
-</code></pre>
+```
 
 ### <a id="sec-generated-title-14"></a> <a id="signature-trick"></a>余談: 同一シグネチャのメソッド オーバーロード
 
@@ -718,82 +718,82 @@ C# ではなく、.NET 型システムの制約です。
 単に C# コンパイラーだけの仕事ではないので、これを修正するのは少し難しいです。
 そのため、これは引き続き認められていません。
 
-<pre class="source" title="制約違いのオーバーロードは不可">
-<code><span class="comment">// 以下の2つは呼び分けできるようになった。</span>
-<span class="comment">// なのに、定義はできない(C# コンパイラーだけの問題じゃないので直せない)。</span>
-<span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> { }
-<span class="reserved">static</span> <span class="reserved">void</span> <span class="error">M</span>&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span> { }
-</code></pre>
+```csharp
+// 以下の2つは呼び分けできるようになった。
+// なのに、定義はできない(C# コンパイラーだけの問題じゃないので直せない)。
+static void M<T>(T x) where T : struct { }
+static void M<T>(T x) where T : class { }
+```
 
 ただし、これまで挙げてきた例で少し出てきていますが、
 「ごまかす」方法がいくつかあります。
 
 1つは[オプション引数](sp4_optional.md#optional)(引数の規定値)や[可変長引数](sp_params.md)を使う方法で、以下のような書き方で「違うオーバーロードなんだけど、実質的には同じ呼び方ができる」と言うようなメソッドを定義できます。
 
-<pre class="source" title="オプション引数をダミーにして疑似的に同シグネチャ オーバーロードを実現">
-<code><span class="reserved">class</span> <span class="type">Program</span>
+```csharp
+class Program
 {
-    <span class="comment">// 呼び分け用のダミー型</span>
-    <span class="reserved">struct</span> <span class="type">Struct</span> { }
-    <span class="reserved">struct</span> <span class="type">Class</span> { }
+    // 呼び分け用のダミー型
+    struct Struct { }
+    struct Class { }
 
-    <span class="comment">// ダミー引数を足すことでオーバーロードする。</span>
-    <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="type">Struct</span> _ = <span class="reserved">default</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> { }
-    <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="type">T</span> x, <span class="type">Class</span> _ = <span class="reserved">default</span>) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span> { }
+    // ダミー引数を足すことでオーバーロードする。
+    static void M<T>(T x, Struct _ = default) where T : struct { }
+    static void M<T>(T x, Class _ = default) where T : class { }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        M(1);     <span class="comment">// M(T, Struct) が呼ばれる</span>
-        M(<span class="string">"abc"</span>); <span class="comment">// M(T, Class) が呼ばれる</span>
+        M(1);     // M(T, Struct) が呼ばれる
+        M("abc"); // M(T, Class) が呼ばれる
     }
 }
-</code></pre>
+```
 
 もう1つは拡張メソッドを使う方法です。
 拡張メソッドであれば、別のクラス中で定義してやれば、同じ型を対象とした全く同じシグネチャのメソッドを定義できます。
 
-<pre class="source" title="拡張メソッドで同シグネチャ オーバーロードを実現">
-<code><span class="reserved">using</span> System.Collections.Generic;
-<span class="reserved">using</span> System.Linq;
+```csharp
+using System.Collections.Generic;
+using System.Linq;
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">ClassExtensions</span>
+static class ClassExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span> FirstOrNull&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt; source)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span>
-        =&gt; source.FirstOrDefault();
+    public static T FirstOrNull<T>(this IEnumerable<T> source)
+        where T : class
+        => source.FirstOrDefault();
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">StructExtensions</span>
+static class StructExtensions
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">T</span>? FirstOrNull&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type">T</span>&gt; source)
-        <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span>
-        =&gt; source.Select(x =&gt; (<span class="type">T</span>?)x).FirstOrDefault();
+    public static T? FirstOrNull<T>(this IEnumerable<T> source)
+        where T : struct
+        => source.Select(x => (T?)x).FirstOrDefault();
 }
-</code></pre>
+```
 
 また、`ref`の有無が違うだけの拡張メソッドでもオーバーロード可能です。
 
-<pre class="source" title="ref の有無でオーバーロード">
-<code><span class="reserved">static</span> <span class="reserved">class</span> <span class="type">Extensions</span>
+```csharp
+static class Extensions
 {
-    <span class="comment">// ref の有無の差 + 型制約</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="reserved">ref</span> <span class="type">T</span> x) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> { }
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> M&lt;<span class="type">T</span>&gt;(<span class="reserved">this</span> <span class="type">T</span> x) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">class</span> { }
+    // ref の有無の差 + 型制約
+    public static void M<T>(this ref T x) where T : struct { }
+    public static void M<T>(this T x) where T : class { }
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="string">"abc"</span>.M();
+        "abc".M();
 
-        <span class="reserved">var</span> x = 123;
+        var x = 123;
         x.M();
-        <span class="comment">// ただ、ref 拡張メソッドの性質上、123.M() とは呼べない(リテラルがダメ)</span>
-        <span class="comment">// また、DateTime.Now.M() とかもダメ(プロパティ越しがダメ)</span>
+        // ただ、ref 拡張メソッドの性質上、123.M() とは呼べない(リテラルがダメ)
+        // また、DateTime.Now.M() とかもダメ(プロパティ越しがダメ)
     }
 }
-</code></pre>
+```
 
 いずれも疑似的なもので、ダミーなしのオーバーロードと比べると利便性は下がりますが、
 C# 7.3で呼び分けができるようになったことで、少し使い勝手はよくなりました。
@@ -808,61 +808,61 @@ C# 13 で、オーバーロードの解決優先度を属性を付けて明示�
 `OverloadResolutionPriority` 属性(`System.Runtime.CompilerServices` 名前空間)を使います。
 名前通り優先度を指定できて、正の整数を指定すると優先度が上がって、負の整数なら下がります。
 
-<pre class="source" title="オーバーロード解決の優先度を変更する例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// IEnumerable&lt;char&gt; の方が選ばれる。</span>
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M1</span></span>(<span class="string">&quot;&quot;</span>);
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M2</span></span>(<span class="string">&quot;&quot;</span>);
+// IEnumerable<char> の方が選ばれる。
+C.M1("");
+C.M2("");
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="comment">// 通常、インターフェイスよりも具体的な型の方が優先。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M1</span></span>(<span class="reserved">string</span> <span class="variable local">_</span>) { }
+    // 通常、インターフェイスよりも具体的な型の方が優先。
+    public static void M1(string _) { }
 
-    <span class="comment">// 属性を付けて優先度を上げる。</span>
-    [<span class="type">OverloadResolutionPriority</span>(<span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M1</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">_</span>) { }
+    // 属性を付けて優先度を上げる。
+    [OverloadResolutionPriority(1)]
+    public static void M1(IEnumerable<char> _) { }
 
-    <span class="comment">// 属性を付けて優先度を下げる。</span>
-    [<span class="type">OverloadResolutionPriority</span>(<span class="operator">-</span><span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M2</span></span>(<span class="reserved">string</span> <span class="variable local">_</span>) { }
+    // 属性を付けて優先度を下げる。
+    [OverloadResolutionPriority(-1)]
+    public static void M2(string _) { }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M2</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">char</span>&gt; <span class="variable local">_</span>) { }
+    public static void M2(IEnumerable<char> _) { }
 }
-</pre>
+```
 
 ちなみに、オーバーロードできないメンバーにこの属性を付けるとコンパイル エラーになります。
 
-<pre class="source" title="オーバーロードできないメンバーに OverloadResolutionPriority を付けるとコンパイラーに怒られる">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">namespace</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices
+namespace System.Runtime.CompilerServices
 {
-    <span class="comment">// .NET 標準ライブラリ中の OverloadResolutionPriorityAttribute には</span>
-    <span class="comment">// AttributeTargets.Method | Constructor | Property がついてる。</span>
-    <span class="comment">// ここではあえてターゲットの制限を外した同名・同名前空間の型を定義。</span>
-    <span class="reserved">public</span> <span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">OverloadResolutionPriorityAttribute</span>(<span class="reserved">int</span> <span class="variable local">priority</span>) : <span class="type">Attribute</span>
+    // .NET 標準ライブラリ中の OverloadResolutionPriorityAttribute には
+    // AttributeTargets.Method | Constructor | Property がついてる。
+    // ここではあえてターゲットの制限を外した同名・同名前空間の型を定義。
+    public sealed class OverloadResolutionPriorityAttribute(int priority) : Attribute
     {
-        <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">Priority</span> <span class="operator">=&gt;</span> <span class="variable local">priority</span>;
+        public int Priority => priority;
     }
 }
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    [<span class="error" title="CS9262"><span class="type">OverloadResolutionPriority</span>(<span class="number">0</span>)</span>]
-    <span class="reserved">static</span> <span class="static"><span class="type">C</span></span>() { }
+    [OverloadResolutionPriority(0)]
+    static C() { }
 
-    [<span class="error" title="CS9262"><span class="type">OverloadResolutionPriority</span>(<span class="number">0</span>)</span>]
-    <span class="operator">~</span><span class="type">C</span>() { }
+    [OverloadResolutionPriority(0)]
+    ~C() { }
 
-    [<span class="error" title="CS9262"><span class="type">OverloadResolutionPriority</span>(<span class="number">0</span>)</span>]
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span> { <span class="reserved">get</span>; }
+    [OverloadResolutionPriority(0)]
+    public int X { get; }
 
-    [<span class="error" title="CS9262"><span class="type">OverloadResolutionPriority</span>(<span class="number">0</span>)</span>]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="reserved">int</span>(<span class="type">C</span> <span class="variable local">x</span>) <span class="operator">=&gt;</span> <span class="reserved">default</span><span class="operator">!</span>;
+    [OverloadResolutionPriority(0)]
+    public static implicit operator int(C x) => default!;
 }
-</pre>
+```
 
 
 ### <a id="sec-generated-title-16"></a> <a id="binary-compat">互換性問題</a>
@@ -876,139 +876,139 @@ C# の言語機能が増えるにつれて、例えば「`IEnumerable<T>` より
 `IEnumerable<T>` と `ReadOnlySpan<T>` の場合、C# 13 時点ではオーバーロード解決できなくなって困ります。
 (この2者の問題であれば、C# 14 で `Span<T>`/`ReadOnlySpan<T>` の特別扱いが入って問題解消する予定です。)
 
-<pre class="source" title="">
-<span class="comment">// C# 13 時点だと IEnumerable と ReadOnlySpan を選べなくてコンパイル エラーになる。</span>
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="error" title="CS0121"><span class="static">M</span></span></span>(<span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">1</span>]);
+```csharp
+// C# 13 時点だと IEnumerable と ReadOnlySpan を選べなくてコンパイル エラーになる。
+C.M(new int[1]);
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
+    public static void M(IEnumerable<int> _) { }
 
-    <span class="comment">// ReadOnlySpan は C# 7.2 / .NET Core 2.1 / 2017年頃に入った。</span>
-    <span class="comment">// パフォーマンス的に有利なので IEnumerable を置き換えたいことがある。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
+    // ReadOnlySpan は C# 7.2 / .NET Core 2.1 / 2017年頃に入った。
+    // パフォーマンス的に有利なので IEnumerable を置き換えたいことがある。
+    public static void M(ReadOnlySpan<int> _) { }
 }
-</pre>
+```
 
 他に、デフォルト引数が絡んだ場合に困ったりします。
 具体的には、`Debug.Assert` や文字列がらみで困っているみたいです。
 
 `Debug.Assert` は、C# 10 で導入された [`CallerArgumentExpression`](../cheatsheet/ap_ver10.md#CallerArgumentExpression) を使いたいものの、既存のオーバーロードに阻害されて呼びようがないという問題が出ています。
 
-<pre class="source" title="CallerArgumentExpression 付きのオーバーロードを呼べない問題">
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">Parse</span></span>(<span class="static"><span class="type">Console</span><span class="operator">.</span><span class="static"><span class="method">ReadLine</span></span>()</span>);
+```csharp
+var x = int.Parse(Console.ReadLine());
 
-<span class="comment">// Debug.Assert(x &gt; 0, &quot;x &gt; 0&quot;) になってほしいのに、1引数の方が呼ばれちゃう。</span>
-<span class="type">Debug</span><span class="operator">.</span><span class="static"><span class="method">Assert</span></span>(<span class="variable">x</span> <span class="operator">&gt;</span> <span class="number">0</span>);
+// Debug.Assert(x > 0, "x > 0") になってほしいのに、1引数の方が呼ばれちゃう。
+Debug.Assert(x > 0);
 
-<span class="comment">// System.Diagnostics.Debug からの抜粋</span>
-<span class="reserved">class</span> <span class="type">Debug</span>
+// System.Diagnostics.Debug からの抜粋
+class Debug
 {
-    <span class="comment">// 元々 bool 1引数のオーバーロードがある。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Assert</span></span>(<span class="reserved">bool</span> <span class="variable local">condition</span>) { }
+    // 元々 bool 1引数のオーバーロードがある。
+    public static void Assert(bool condition) { }
 
-    <span class="comment">// C# 10 で導入された CallerArgumentExpression を使いたい。</span>
-    <span class="comment">// けど、 Assert(condition) では1引数オーバーロードの方が優先されて、CallerArgumentExpression が役に立たない。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Assert</span></span>(<span class="reserved">bool</span> <span class="variable local">condition</span>, [<span class="type">CallerArgumentExpression</span>(<span class="reserved">nameof</span>(<span class="variable local">condition</span>))] <span class="reserved">string</span><span class="operator">?</span> <span class="variable local">message</span> <span class="operator">=</span> <span class="reserved">null</span>) { }
+    // C# 10 で導入された CallerArgumentExpression を使いたい。
+    // けど、 Assert(condition) では1引数オーバーロードの方が優先されて、CallerArgumentExpression が役に立たない。
+    public static void Assert(bool condition, [CallerArgumentExpression(nameof(condition))] string? message = null) { }
 }
-</pre>
+```
 
 文字列がらみは、
 .NET の負の遺産として有名なカルチャー依存問題(参考: [遅い](../../../blog/2023/3/string-order/index.md)、[環境依存](../../../blog/2020/11/net5_0ga/index.md))への対処として、`IndexOf` などのメソッドにデフォルト引数 `StringComparison comparisonType = StringComparison.Ordinal` を付けて、無指定の時の挙動を `Ordinal` に変えたいという話があります。
 しかしこれも、1引数オーバーロードの方が優先度が高くてうまく働きません。
 
-<pre class="source" title="">
-<span class="comment">// IndexOf(value, StringComparison.Ordinal) で呼ばれてほしいけど、</span>
-<span class="comment">// 残念ながら IndexOf(value) にしかならない。</span>
-<span class="type"><span class="static">String</span></span><span class="operator">.</span><span class="method"><span class="static">IndexOf</span></span>(<span class="string">&quot;àèò&quot;</span>, <span class="string">&quot;a&quot;</span>);
+```csharp
+// IndexOf(value, StringComparison.Ordinal) で呼ばれてほしいけど、
+// 残念ながら IndexOf(value) にしかならない。
+String.IndexOf("àèò", "a");
 
-<span class="comment">// 本来は string クラスのインスタンスメソッド。デモ用に静的メソッド。</span>
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">String</span></span>
+// 本来は string クラスのインスタンスメソッド。デモ用に静的メソッド。
+static class String
 {
-    <span class="comment">// 1引数オーバーロードがいるので…</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">IndexOf</span></span>(<span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>, <span class="reserved">string</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="variable local">s</span><span class="operator">.</span><span class="method">IndexOf</span>(<span class="variable local">value</span>);
+    // 1引数オーバーロードがいるので…
+    public static void IndexOf(this string s, string value) => s.IndexOf(value);
 
-    <span class="comment">// デフォルト引数を付けたところで IndexOf(string value) の方が優先される。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">IndexOf</span></span>(
-        <span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>, <span class="reserved">string</span> <span class="variable local">value</span>,
-        <span class="type">StringComparison</span> <span class="variable local">comparisonType</span> <span class="operator">=</span> <span class="type">StringComparison</span><span class="operator">.</span>Ordinal) <span class="comment">// Ordinal をデフォルトに変えたい。</span>
-        <span class="operator">=&gt;</span> <span class="variable local">s</span><span class="operator">.</span><span class="method">IndexOf</span>(<span class="variable local">value</span>, <span class="variable local">comparisonType</span>);
+    // デフォルト引数を付けたところで IndexOf(string value) の方が優先される。
+    public static void IndexOf(
+        this string s, string value,
+        StringComparison comparisonType = StringComparison.Ordinal) // Ordinal をデフォルトに変えたい。
+        => s.IndexOf(value, comparisonType);
 }
-</pre>
+```
 
 これらの問題に `OverloadResolutionPriority` 属性が使えます。
 
-<pre class="source" title="IEnumerable の優先度を下げる">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>(<span class="reserved">new</span> <span class="reserved">int</span>[<span class="number">1</span>]); <span class="comment">// 無事、ReadOnlySpan の方が選ばれる。</span>
+C.M(new int[1]); // 無事、ReadOnlySpan の方が選ばれる。
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    [<span class="type">OverloadResolutionPriority</span>(<span class="operator">-</span><span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="type">IEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
+    [OverloadResolutionPriority(-1)]
+    public static void M(IEnumerable<int> _) { }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type struct">ReadOnlySpan</span>&lt;<span class="reserved">int</span>&gt; <span class="variable local">_</span>) { }
+    public static void M(ReadOnlySpan<int> _) { }
 }
-</pre>
+```
 
-<pre class="source" title="1引数オーバーロードの優先度を下げる">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">Parse</span></span>(<span class="static"><span class="type">Console</span><span class="operator">.</span><span class="method"><span class="static">ReadLine</span></span>()</span>);
+var x = int.Parse(Console.ReadLine());
 
-<span class="comment">// 無事、 Debug.Assert(x &gt; 0, &quot;x &gt; 0&quot;) で呼ばれる。</span>
-<span class="type">Debug</span><span class="operator">.</span><span class="method"><span class="static">Assert</span></span>(<span class="variable">x</span> <span class="operator">&gt;</span> <span class="number">0</span>);
+// 無事、 Debug.Assert(x > 0, "x > 0") で呼ばれる。
+Debug.Assert(x > 0);
 
-<span class="reserved">class</span> <span class="type">Debug</span>
+class Debug
 {
-    [<span class="type">OverloadResolutionPriority</span>(<span class="operator">-</span><span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">Assert</span></span>(<span class="reserved">bool</span> <span class="variable local">condition</span>) { }
+    [OverloadResolutionPriority(-1)]
+    public static void Assert(bool condition) { }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">Assert</span></span>(<span class="reserved">bool</span> <span class="variable local">condition</span>, [<span class="type">CallerArgumentExpression</span>(<span class="reserved">nameof</span>(<span class="variable local">condition</span>))] <span class="reserved">string</span><span class="operator">?</span> <span class="variable local">message</span> <span class="operator">=</span> <span class="reserved">null</span>) { }
+    public static void Assert(bool condition, [CallerArgumentExpression(nameof(condition))] string? message = null) { }
 }
-</pre>
+```
 
-<pre class="source" title="1引数オーバーロードの優先度を下げる">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// 無事、IndexOf(value, StringComparison.Ordinal) で呼ばれる。</span>
-<span class="static"><span class="type">String</span></span><span class="operator">.</span><span class="static"><span class="method">IndexOf</span></span>(<span class="string">&quot;àèò&quot;</span>, <span class="string">&quot;a&quot;</span>);
+// 無事、IndexOf(value, StringComparison.Ordinal) で呼ばれる。
+String.IndexOf("àèò", "a");
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">String</span></span>
+static class String
 {
-    [<span class="type">OverloadResolutionPriority</span>(<span class="operator">-</span><span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">IndexOf</span></span>(<span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>, <span class="reserved">string</span> <span class="variable local">value</span>) <span class="operator">=&gt;</span> <span class="variable local">s</span><span class="operator">.</span><span class="method">IndexOf</span>(<span class="variable local">value</span>);
+    [OverloadResolutionPriority(-1)]
+    public static void IndexOf(this string s, string value) => s.IndexOf(value);
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">IndexOf</span></span>(
-        <span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>, <span class="reserved">string</span> <span class="variable local">value</span>,
-        <span class="type">StringComparison</span> <span class="variable local">comparisonType</span> <span class="operator">=</span> <span class="type">StringComparison</span><span class="operator">.</span>Ordinal) <span class="comment">// Ordinal をデフォルトに変えたい。</span>
-        <span class="operator">=&gt;</span> <span class="variable local">s</span><span class="operator">.</span><span class="method">IndexOf</span>(<span class="variable local">value</span>, <span class="variable local">comparisonType</span>);
+    public static void IndexOf(
+        this string s, string value,
+        StringComparison comparisonType = StringComparison.Ordinal) // Ordinal をデフォルトに変えたい。
+        => s.IndexOf(value, comparisonType);
 }
-</pre>
+```
 
 ちなみに、`OverloadResolutionPriority` で優先度を下げたメソッドを呼び出すのはかなり困難になったりします。
 場合によっては真っ当な方法で呼ぶ手段がなく、リフレクションや unsafe な手段でしか呼べなくなります。
 
-<pre class="source" title="優先度を下げたせいで真っ当な手段では呼べず &amp; 真っ当じゃない手段で呼ぶ例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// OverloadResolutionPriority(-1) のせいで、真っ当な方法ではどうやっても M(string) の方を呼べない。</span>
-<span class="type">C</span><span class="operator">.</span><span class="static"><span class="method">M</span></span>((<span class="reserved">string</span>)<span class="string">&quot;&quot;</span>);
+// OverloadResolutionPriority(-1) のせいで、真っ当な方法ではどうやっても M(string) の方を呼べない。
+C.M((string)"");
 
-<span class="comment">// リフレクションとか Unsafe な手段を使えば一応呼べなくはない。</span>
-[<span class="type">UnsafeAccessor</span>(<span class="type">UnsafeAccessorKind</span><span class="operator">.</span>StaticMethod, <span class="property">Name</span> <span class="operator">=</span> <span class="reserved">nameof</span>(<span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">M</span></span>))]
-<span class="reserved">static</span> <span class="reserved">extern</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="type">C</span><span class="operator">?</span> <span class="variable local">c</span>, <span class="reserved">string</span> <span class="variable local">_</span>);
-<span class="static"><span class="method">M</span></span>(<span class="reserved">default</span>, <span class="string">&quot;&quot;</span>);
+// リフレクションとか Unsafe な手段を使えば一応呼べなくはない。
+[UnsafeAccessor(UnsafeAccessorKind.StaticMethod, Name = nameof(C.M))]
+static extern void M(C? c, string _);
+M(default, "");
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">object</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">&quot;object&quot;</span>);
+    public static void M(object _) => Console.WriteLine("object");
 
-    [<span class="type">OverloadResolutionPriority</span>(<span class="operator">-</span><span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">string</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">&quot;string&quot;</span>);
+    [OverloadResolutionPriority(-1)]
+    public static void M(string _) => Console.WriteLine("string");
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-17"></a> <a id="in-a-type">同一クラス内でのみ有効</a>
 
@@ -1021,125 +1021,125 @@ C# の言語機能が増えるにつれて、例えば「`IEnumerable<T>` より
 
 例えば以下のような所業はできません。
 
-<pre class="source" title="Linq 乗っ取りを画策">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// わざと System.Linq.Enumerable と競合するようにして、</span>
-<span class="reserved">namespace</span> System<span class="operator">.</span>Linq;
+// わざと System.Linq.Enumerable と競合するようにして、
+namespace System.Linq;
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">FakeLinq</span></span>
+static class FakeLinq
 {
-    <span class="comment">// 優先度を最大限引き上げ。</span>
-    [<span class="type">OverloadResolutionPriority</span>(<span class="reserved">int</span><span class="operator">.</span><span class="static"><span class="constant">MaxValue</span></span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">IEnumerable</span>&lt;<span class="type param">TResult</span>&gt; <span class="method"><span class="static">Select</span></span>&lt;<span class="type param">TSource</span>, <span class="type param">TResult</span>&gt;(
-        <span class="reserved">this</span> <span class="type">IEnumerable</span>&lt;<span class="type param">TSource</span>&gt; <span class="variable local">source</span>, <span class="type">Func</span>&lt;<span class="type param">TSource</span>, <span class="type param">TResult</span>&gt; <span class="variable local">selector</span>)
-        <span class="operator">=&gt;</span> <span class="control">throw</span> <span class="reserved">new</span> <span class="type">Exception</span>(<span class="string">&quot;Select は乗っ取った&quot;</span>);
+    // 優先度を最大限引き上げ。
+    [OverloadResolutionPriority(int.MaxValue)]
+    public static IEnumerable<TResult> Select<TSource, TResult>(
+        this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+        => throw new Exception("Select は乗っ取った");
 }
-</pre>
+```
 
-<pre class="source" title="ただし、実際にやってみるとうまくいかない(当然)">
-<span class="comment">// FakeLinq の方が優先されたりはしない。</span>
-<span class="comment">// 単に「Enumerable と FakeLinq 間で不明瞭」エラーに。</span>
-<span class="string">&quot;abc&quot;</span><span class="operator">.</span><span class="method"><span class="error" title="CS0121">Select</span></span>(<span class="variable local">c</span> <span class="operator">=&gt;</span> (<span class="reserved">int</span>)<span class="variable local">c</span>);
-</pre>
+```csharp
+// FakeLinq の方が優先されたりはしない。
+// 単に「Enumerable と FakeLinq 間で不明瞭」エラーに。
+"abc".Select(c => (int)c);
+```
 
 また、`OverloadResolutionPriority` を付けることで逆にオーバーロード解決できなくなるようなこともありえます。
 
 例えば、以下のように複数のクラスで複数の拡張メソッドが定義されていて、
 全体でみれば1つだけ優先度が高くてオーバーロード解決できる場合を考えます。
 
-<pre class="source" title="複数のクラスの複数の拡張メソッドから1つ選ばれる例">
-<span class="comment">// A.M(string), A.M(string, int), B.M(string, int) が同列で比較されて、</span>
-<span class="comment">// デフォルト引数なしの A.M(string) が勝つ。</span>
-<span class="string">&quot;&quot;</span><span class="operator">.</span><span class="method">M</span>();
+```csharp
+// A.M(string), A.M(string, int), B.M(string, int) が同列で比較されて、
+// デフォルト引数なしの A.M(string) が勝つ。
+"".M();
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">A</span></span>
+static class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">A.M(</span>{<span class="variable local">s</span>}<span class="string">)</span><span class="string">&quot;</span>);
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>, <span class="reserved">int</span> <span class="variable local">i</span> <span class="operator">=</span> <span class="number">0</span>) <span class="operator">=&gt;</span> <span class="static"><span class="type">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">A.M(</span>{<span class="variable local">s</span>}<span class="string">, </span>{<span class="variable local">i</span>}<span class="string">)</span><span class="string">&quot;</span>);
+    public static void M(this string s) => Console.WriteLine($"A.M({s})");
+    public static void M(this string s, int i = 0) => Console.WriteLine($"A.M({s}, {i})");
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">B</span></span>
+static class B
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>, <span class="reserved">int</span> <span class="variable local">i</span> <span class="operator">=</span> <span class="number">0</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">B.M(</span>{<span class="variable local">s</span>}<span class="string">, </span>{<span class="variable local">i</span>}<span class="string">)</span><span class="string">&quot;</span>);
+    public static void M(this string s, int i = 0) => Console.WriteLine($"B.M({s}, {i})");
 }
-</pre>
+```
 
 ここで、`A.M` のうちの1つに `OverloadResolutionPriority` を付けて優先度を変えてみます。
 `OverloadResolutionPriority` は1つのクラス内でしか働かないので、`A` の中のどの `M` が選ばれるかにだけ影響します。
 その結果、以下のように別のクラスの `M` と競合する可能性があります。
 
-<pre class="source" title="OverloadResolutionPriority を付けたことで他のクラスのメンバーと競合するようになる例">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// OverloadResolutionPriority を付けたことで、A.M の中では A.M(string, int) が選ばれる。</span>
-<span class="comment">// B.M は元々 B.M(string, int) しかない。</span>
-<span class="comment">// A.M(string, int) と B.M(string, int) が競合してオーバーロード解決できなくなる。</span>
-<span class="string">&quot;&quot;</span><span class="operator">.</span><span class="method"><span class="error" title="CS0121">M</span></span>();
+// OverloadResolutionPriority を付けたことで、A.M の中では A.M(string, int) が選ばれる。
+// B.M は元々 B.M(string, int) しかない。
+// A.M(string, int) と B.M(string, int) が競合してオーバーロード解決できなくなる。
+"".M();
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type"><span class="static">A</span></span>
+static class A
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">A.M(</span>{<span class="variable local">s</span>}<span class="string">)</span><span class="string">&quot;</span>);
+    public static void M(this string s) => Console.WriteLine($"A.M({s})");
 
-    [<span class="type">OverloadResolutionPriority</span>(<span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="static"><span class="method">M</span></span>(<span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>, <span class="reserved">int</span> <span class="variable local">i</span> <span class="operator">=</span> <span class="number">0</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="method"><span class="static">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">A.M(</span>{<span class="variable local">s</span>}<span class="string">, </span>{<span class="variable local">i</span>}<span class="string">)</span><span class="string">&quot;</span>);
+    [OverloadResolutionPriority(1)]
+    public static void M(this string s, int i = 0) => Console.WriteLine($"A.M({s}, {i})");
 }
 
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="static"><span class="type">B</span></span>
+static class B
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">void</span> <span class="method"><span class="static">M</span></span>(<span class="reserved">this</span> <span class="reserved">string</span> <span class="variable local">s</span>, <span class="reserved">int</span> <span class="variable local">i</span> <span class="operator">=</span> <span class="number">0</span>) <span class="operator">=&gt;</span> <span class="type"><span class="static">Console</span></span><span class="operator">.</span><span class="static"><span class="method">WriteLine</span></span>(<span class="string">$&quot;</span><span class="string">B.M(</span>{<span class="variable local">s</span>}<span class="string">, </span>{<span class="variable local">i</span>}<span class="string">)</span><span class="string">&quot;</span>);
+    public static void M(this string s, int i = 0) => Console.WriteLine($"B.M({s}, {i})");
 }
-</pre>
+```
 
 ### <a id="sec-generated-title-18"></a> <a id="overload-by-return">余談: (疑似)戻り値オーバーロード</a>
 
 C# では戻り値だけが異なるオーバーロードを認めていません。
 例えば以下のコードはコンパイル エラーになります。
 
-<pre class="source" title="戻り値だけが違うオーバーロードの追加はできない">
-<span class="reserved">class</span> <span class="type">C</span>
+```csharp
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method"><span class="static">MAsync</span></span>() { <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>(); }
+    public static async Task MAsync() { await Task.Yield(); }
 
-    <span class="comment">// Task を ValueTask に変更したいとして、互換性のために Task MAsync() を残すと…</span>
-    <span class="comment">// 戻り値だけが違うオーバーロードは認められない。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type struct">ValueTask</span> <span class="error" title="CS0111"><span class="method"><span class="static">MAsync</span></span></span>() { <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>(); }
+    // Task を ValueTask に変更したいとして、互換性のために Task MAsync() を残すと…
+    // 戻り値だけが違うオーバーロードは認められない。
+    public static async ValueTask MAsync() { await Task.Yield(); }
 }
-</pre>
+```
 
 ちょっと気持ち悪い回避策になりますが、デフォルト引数を悪用することでオーバーロードもどきを作れたりはします。
 ところが、「引数なし」と「デフォルト引数持ち」なら前者の方が優先されるため、
 追加した新しいオーバーロードもどきが呼ばれることはありません。
 
-<pre class="source" title="オーバーロードもどき(おしい)">
-<span class="comment">// 残念ながら Task MAsync() の方しか呼ばれない。</span>
-<span class="reserved">await</span> <span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">MAsync</span></span>();
+```csharp
+// 残念ながら Task MAsync() の方しか呼ばれない。
+await C.MAsync();
 
-<span class="comment">// もちろんこうすれば ValueTask の方が呼ばれるものの、不格好すぎる。</span>
-<span class="reserved">await</span> <span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">MAsync</span></span>(<span class="reserved">default</span>);
+// もちろんこうすれば ValueTask の方が呼ばれるものの、不格好すぎる。
+await C.MAsync(default);
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="static"><span class="method">MAsync</span></span>() { <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="static"><span class="method">Yield</span></span>(); }
+    public static async Task MAsync() { await Task.Yield(); }
 
-    <span class="comment">// オーバーロードもどきとして、適当に使わないデフォルト値付きの引数を追加。</span>
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type struct">ValueTask</span> <span class="static"><span class="method">MAsync</span></span>(<span class="reserved">int</span> <span class="variable local">_</span> <span class="operator">=</span> <span class="number">0</span>) { <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>(); }
+    // オーバーロードもどきとして、適当に使わないデフォルト値付きの引数を追加。
+    public static async ValueTask MAsync(int _ = 0) { await Task.Yield(); }
 }
-</pre>
+```
 
 これも一応、`OverloadResolutionPriority` 属性で解消できます。
 
-<pre class="source" title="OverloadResolutionPriority でごり押し">
-<span class="reserved">using</span> System<span class="operator">.</span>Runtime<span class="operator">.</span>CompilerServices;
+```csharp
+using System.Runtime.CompilerServices;
 
-<span class="comment">// ValueTask 戻り値の方が呼ばれるように。</span>
-<span class="reserved">await</span> <span class="type">C</span><span class="operator">.</span><span class="method"><span class="static">MAsync</span></span>();
+// ValueTask 戻り値の方が呼ばれるように。
+await C.MAsync();
 
-<span class="reserved">class</span> <span class="type">C</span>
+class C
 {
-    [<span class="type">OverloadResolutionPriority</span>(<span class="operator">-</span><span class="number">1</span>)]
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method"><span class="static">MAsync</span></span>() { <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>(); }
+    [OverloadResolutionPriority(-1)]
+    public static async Task MAsync() { await Task.Yield(); }
 
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">async</span> <span class="type struct">ValueTask</span> <span class="static"><span class="method">MAsync</span></span>(<span class="reserved">int</span> <span class="variable local">_</span> <span class="operator">=</span> <span class="number">0</span>) { <span class="reserved">await</span> <span class="type">Task</span><span class="operator">.</span><span class="method"><span class="static">Yield</span></span>(); }
+    public static async ValueTask MAsync(int _ = 0) { await Task.Yield(); }
 }
-</pre>
+```

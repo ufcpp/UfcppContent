@@ -53,20 +53,20 @@ SOV とか SVO とかを補足しておくと、
 
 例えば、C 言語なんかでは以下のような書き方になります。
 
-<pre class="source" title="C 言語における語順" lang="">
-<code>Verb(subject);
+```csharp
+Verb(subject);
 Verb(subject, object);
-</code></pre>
+```
 
 
 たいてい、関数名が述語、そのあとに主語、目的語が来るので、VSO 型です。
 
 これに対して、オブジェクト指向言語では以下のように書きます。
 
-<pre class="source" title="OOP 言語における語順" lang="">
-<code>subject.Verb();
+```csharp
+subject.Verb();
 subject.Verb(object);
-</code></pre>
+```
 
 
 SVO になりました。
@@ -77,10 +77,10 @@ C# とかの OOP 言語は英語の文法に近いんですよね。
 さて、「SOV の方が自然」説を信じるなら、
 以下のような構文がいいということになります。
 
-<pre class="source" title="SOV 型" lang="">
-<code>subject.Verb();
+```csharp
+subject.Verb();
 (subject, object).Verb();
-</code></pre>
+```
 
 
 この構文でダブルディスパッチできるなら確かに欲しい。
@@ -119,41 +119,41 @@ C# で SOV 構文でプログラミングできるようにしてみました。
 
 ということで、以下のような構文でメソッド呼び出しできるようなライブラリを書いてみました。
 
-<pre class="source" title="SOV 英語構文" lang="">
-<code>Sentence
-    .With(<span class="literal">"Hello World!\n"</span>)
+```csharp
+Sentence
+    .With("Hello World!\n")
     .To(Console.Out)
     .Write();
 
-<span class="reserved">string</span> result =
+string result =
     Sentence
-    .With(<span class="literal">"置換前の文字列\n"</span>)
-    .From(<span class="literal">"置換前"</span>)
-    .To(<span class="literal">"置換後"</span>)
+    .With("置換前の文字列\n")
+    .From("置換前")
+    .To("置換後")
     .Replace();
-</code></pre>
+```
 
 
 ちなみに、Write と Replace の実体は以下のような感じ。
 
-<pre class="source" title="Write, Replace" lang="">
-<code><span class="reserved">public static void</span> Write(<span class="reserved">this</span> Nominals n)
+```csharp
+public static void Write(this Nominals n)
 {
-    <span class="reserved">var</span> writer = n.To.Cast&lt;System.IO.TextWriter&gt;();
+    var writer = n.To.Cast<System.IO.TextWriter>();
     writer.Write(n.With.Value);
 }
 
-<span class="reserved">public static string</span> Replace(<span class="reserved">this</span> Nominals n)
+public static string Replace(this Nominals n)
 {
-    <span class="reserved">var</span> input = n.With.Cast&lt;<span class="reserved">string</span>&gt;();
-    <span class="reserved">var</span> pattern = n.From.Cast&lt;<span class="reserved">string</span>&gt;();
-    <span class="reserved">var</span> replacement = n.To.Cast&lt;<span class="reserved">string</span>&gt;();
+    var input = n.With.Cast<string>();
+    var pattern = n.From.Cast<string>();
+    var replacement = n.To.Cast<string>();
 
-    <span class="reserved">var</span> reg = <span class="reserved">new</span> System.Text.RegularExpressions.Regex(pattern);
+    var reg = new System.Text.RegularExpressions.Regex(pattern);
 
-    <span class="reserved">return</span> reg.Replace(input, replacement);
+    return reg.Replace(input, replacement);
 }
-</code></pre>
+```
 
 
 要するに、Nominals（体言リスト）と、Nominals を生成するための With, To などの拡張メソッドを定義しただけ。
@@ -163,8 +163,8 @@ C# で SOV 構文でプログラミングできるようにしてみました。
 
 VB の名前付き引数みたいになってきた。VSO 型になるけども。
 
-<pre class="source" title="VB の名前付き引数" lang="">
-<code>Write( \
+```csharp
+Write( \
   With := "Hello World!" \
   To   := Console.Write )
 
@@ -172,7 +172,7 @@ Replace( \
   With := "置換前の文字列" \
   From := "置換前" \
   To   := "置換後")
-</code></pre>
+```
 
 
 
@@ -181,48 +181,48 @@ Replace( \
 SOV 型言語と言えば日本語ですね、と。
 日本語プログラミングしてみましょうか。
 
-<pre class="source" title="SOV と言えば日本語" lang="">
-<code>Nominals.Make(
-    <span class="literal">"Hello World!\n"</span>.を(),
+```csharp
+Nominals.Make(
+    "Hello World!\n".を(),
     Console.Out.に()
 ).出力();
 
-<span class="reserved">string</span> 置換結果 =
+string 置換結果 =
 Nominals.Make(
-    <span class="literal">"置換前の文字列\n"</span>.の(),
-    <span class="literal">"置換前"</span>.を(),
-    <span class="literal">"置換後"</span>.に()
+    "置換前の文字列\n".の(),
+    "置換前".を(),
+    "置換後".に()
     ).置換();
 
-<span class="reserved">string</span> 繋いだ結果 =
+string 繋いだ結果 =
 Nominals.Make(
-    <span class="literal">"abc"</span>.と(),
-    <span class="literal">"def"</span>.と(),
-    <span class="literal">"ghi"</span>.を()
+    "abc".と(),
+    "def".と(),
+    "ghi".を()
     ).繋ぐ();
-</code></pre>
+```
 
 
 出力、置換の定義は以下のような感じ。
 
-<pre class="source" title="出力、置換" lang="">
-<code><span class="reserved">public static void</span> 出力(<span class="reserved">this</span> Nominals n)
+```csharp
+public static void 出力(this Nominals n)
 {
-    <span class="reserved">var</span> writer = n.に.Cast&lt;System.IO.TextWriter&gt;();
+    var writer = n.に.Cast<System.IO.TextWriter>();
     writer.Write(n.を.Value);
 }
 
-<span class="reserved">public static string</span> 置換(<span class="reserved">this</span> Nominals n)
+public static string 置換(this Nominals n)
 {
-    <span class="reserved">var</span> input = n.の.Cast&lt;<span class="reserved">string</span>&gt;();
-    <span class="reserved">var</span> pattern = n.を.Cast&lt;<span class="reserved">string</span>&gt;();
-    <span class="reserved">var</span> replacement = n.に.Cast&lt;<span class="reserved">string</span>&gt;();
+    var input = n.の.Cast<string>();
+    var pattern = n.を.Cast<string>();
+    var replacement = n.に.Cast<string>();
 
-    <span class="reserved">var</span> reg = <span class="reserved">new</span> System.Text.RegularExpressions.Regex(pattern);
+    var reg = new System.Text.RegularExpressions.Regex(pattern);
 
-    <span class="reserved">return</span> reg.Replace(input, replacement);
+    return reg.Replace(input, replacement);
 }
-</code></pre>
+```
 
 
 
@@ -284,6 +284,6 @@ SOVO？
 「話の主題が前、そして、付帯情報を後ろに付ける」っていうと、
 実のところ、PowerShell のパイプライン構文がそうなってるかも。
 
-<pre class="source" title="PowerShell で SOVO" lang="">
-<code>subject, object | Verb -Option complement
-</code></pre>
+```powershell
+subject, object | Verb -Option complement
+```

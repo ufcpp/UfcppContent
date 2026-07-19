@@ -25,35 +25,38 @@ log,expの表示
 
 ## <a id="sec-generated-title-2"></a> <a id="usage"></a>利用方法
 
-<pre>&lt;log/&gt; &lt;exp/&gt;
-</pre>
+```xml
+<log/> <exp/>
+```
 
 ## <a id="sec-generated-title-3"></a> <a id="sample"></a>サンプル
 
-<pre>&lt;exp/&gt;At = &lt;Sigma&gt;&lt;sub&gt;n=0&lt;/sub&gt;&lt;sup&gt;∞&lt;/sup&gt;&lt;/Sigma&gt;&lt;inv&gt;n&lt;factorial/&gt;&lt;/inv&gt;A&lt;sup&gt;n&lt;/sup&gt;t&lt;sup&gt;n&lt;/sup&gt;,
-&lt;log/&gt;z = &lt;log/&gt;&lt;abs&gt;z&lt;/abs&gt; + i&lt;arg/&gt;z
-</pre><div class="math"><span class="normal">exp</span>At = <table class="sigma" summary="sum"><tr><td class="sigmasub">∞</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">n=0</td></tr></table><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>n<span class="normal">!</span></td></tr></table>A<sup>n</sup>t<sup>n</sup>,
+```xml
+<exp/>At = <Sigma><sub>n=0</sub><sup>∞</sup></Sigma><inv>n<factorial/></inv>A<sup>n</sup>t<sup>n</sup>,
+<log/>z = <log/><abs>z</abs> + i<arg/>z
+```
+<div class="math"><span class="normal">exp</span>At = <table class="sigma" summary="sum"><tr><td class="sigmasub">∞</td></tr><tr><td class="sigma">∑</td></tr><tr><td class="sigmasub">n=0</td></tr></table><table class="frac" summary="fraction"><tr><td class="num"><span class="normal">1</span></td></tr><tr><td>n<span class="normal">!</span></td></tr></table>A<sup>n</sup>t<sup>n</sup>,
 <span class="normal">log</span>z = <span class="normal">log</span><span class="normal">|</span>z<span class="normal">|</span> + i<span class="normal">arg</span>z
 </div>
 
 ## <a id="sec-generated-title-4"></a> <a id="xsl"></a>XSL template
 
-<pre>&lt;xsl:template match="ufcpp:log"&gt;
-  &lt;span class="normal"&gt;log&lt;/span&gt;
-&lt;/xsl:template&gt;
+```xml
+<xsl:template match="ufcpp:log">
+  <span class="normal">log</span>
+</xsl:template>
 
-&lt;xsl:template match="ufcpp:exp"&gt;
-  &lt;span class="normal"&gt;exp&lt;/span&gt;
-&lt;/xsl:template&gt;
-
-</pre>
+<xsl:template match="ufcpp:exp">
+  <span class="normal">exp</span>
+</xsl:template>
+```
 
 ## <a id="sec-generated-title-5"></a> <a id="css"></a>style sheet
 
-<pre>span.normal
+```css
+span.normal
 {
   font-weight:normal;
   font-style:normal;
 }
-
-</pre>
+```

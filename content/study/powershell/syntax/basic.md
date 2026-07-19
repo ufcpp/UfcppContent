@@ -41,13 +41,13 @@ $a と $A は同じコマンド・変数になります。
 ということで、
 とりえあず、コマンド名を打てばそれだけでコマンドが実行されます。
 
-<pre class="console" title="コマンド実行の例">
-<span class="prompt">&gt; </span> Get-Location
+```console
+>  Get-Location
 
 Path
 ----
 C:\Users\john\Desktop\temp
-</pre>
+```
 
 
 コマンドとして実行できるものには以下のようなものがあります。
@@ -69,14 +69,14 @@ C:\Users\john\Desktop\temp
 
 もちろん、コマンドには引数を与えることができます。
 
-<pre class="console" title="コマンド実行の例">
-<span class="prompt">&gt; </span> Get-Command p* -CommandType Cmdlet
+```console
+>  Get-Command p* -CommandType Cmdlet
 
 CommandType     Name             Definition
 -----------     ----             ----------
 Cmdlet          Pop-Location     Pop-Location [-PassThru] [-Stack...
-Cmdlet          Push-Location    Push-Location [[-Path] &lt;String&gt;]...
-</pre>
+Cmdlet          Push-Location    Push-Location [[-Path] <String>]...
+```
 
 
 また、コマンドには<strong id="alias" class="keyword">エイリアス</strong>（alias: 別名）を付けることもできます。
@@ -87,8 +87,8 @@ Unix でいうとろこの ls にあたるコマンドですが、
 dir と ls の両方の名前でエイリアスが設定されていて、
 これらの名前で実行可能です。
 
-<pre class="console" title="エイリアスの例">
-<span class="prompt">&gt; </span> dir
+```console
+>  dir
 
 Mode                LastWriteTime     Length Name
 ----                -------------     ------ ----
@@ -97,14 +97,14 @@ d----        2007/05/19      0:40            sample
 -a---        2007/05/19     18:34        186 test.ps1
 
 
-<span class="prompt">&gt; </span> ls
+>  ls
 
 Mode                LastWriteTime     Length Name
 ----                -------------     ------ ----
 d----        2007/05/19     18:36            doc
 d----        2007/05/19      0:40            sample
 -a---        2007/05/19     18:34        186 test.ps1
-</pre>
+```
 
 
 ちなみに、エイリアスの設定は Set-Alias コマンドで行います
@@ -113,8 +113,8 @@ d----        2007/05/19      0:40            sample
 あと、セミコロン ; で区切ることで、
 1行に複数のコマンドを書くこともできます。
 
-<pre class="console" title="1行に複数のコマンド">
-<span class="prompt">&gt; </span> pushd C:\Users\Public; ls; popd
+```console
+>  pushd C:\Users\Public; ls; popd
 
 Mode                LastWriteTime     Length Name
 ----                -------------     ------ ----
@@ -123,7 +123,7 @@ d-r--        2006/11/02     21:50            Downloads
 d-r--        2006/11/02     21:50            Music
 d-r--        2006/11/02     21:50            Pictures
 d-r--        2006/11/02     21:50            Videos
-</pre>
+```
 
 
 
@@ -132,9 +132,9 @@ d-r--        2006/11/02     21:50            Videos
 コマンドとコマンドの間を | で繋ぐと、
 前のコマンドの出力を次のコマンドの入力として与えることができます。
 
-<pre class="console" title="パイプラインの例">
+```console
 Get-Command | more
-</pre>
+```
 
 
 Get-Command は、利用できるコマンド
@@ -157,33 +157,33 @@ input.txt の中身を command に食わせて、
 &lt; に相当する機能を使いたければ、
 Get-Content コマンドとパイプラインを使います。
 
-<pre class="console" title="ファイルの中身をパイプラインに渡す">
-Get-Content input.txt | <span class="input">command</span>
-</pre>
+```console
+Get-Content input.txt | command
+```
 
 
 出力の方も、Set-Content コマンドを使って同じことができます。
 
-<pre class="console" title="出力もパイプラインで">
-Get-Content input.txt | <span class="input">command</span> | Set-Content output.txt
-</pre>
+```console
+Get-Content input.txt | command | Set-Content output.txt
+```
 
 
 出力リダイレクトに関しては、ファイル上書きの &gt; に加えて、
 追記の &gt;&gt; も使えます。
 
-<pre class="console" title="追記リダイレクト">
-<span class="prompt">&gt; </span> echo "test 1" &gt; test.txt
-<span class="prompt">&gt; </span> echo "test 2" &gt;&gt; test.txt
-<span class="prompt">&gt; </span> echo "test 3" &gt;&gt; test.txt
-<span class="prompt">&gt; </span> Get-Content test.txt
+```console
+>  echo "test 1" > test.txt
+>  echo "test 2" >> test.txt
+>  echo "test 3" >> test.txt
+>  Get-Content test.txt
 test 1
 test 2
 test 3
-<span class="prompt">&gt; </span> echo "test 1" &gt; test.txt
-<span class="prompt">&gt; </span> Get-Content test.txt
+>  echo "test 1" > test.txt
+>  Get-Content test.txt
 test 1
-</pre>
+```
 
 
 その他、リダイレクトには以下のようなものがあります。
@@ -233,11 +233,12 @@ test 1
 1 + 1 などといった計算や、
 "this is " + "a test" などといった文字列操作（この場合は連結）ができます。
 
-<pre class="console" title="式">
-<span class="prompt">&gt; </span> 1+1
+```console
+>  1+1
 2
-<span class="prompt">&gt; </span> "this is " + "a test"
-this is a test</pre>
+>  "this is " + "a test"
+this is a test
+```
 
 
 また、
@@ -247,25 +248,25 @@ $a とか $x というように、
 変数名に続けて = を書けば、代入式になります。
 また、変数だけ書くと、変数の中身が表示されます。
 
-<pre class="console" title="代入式と値の表示">
-<span class="prompt">&gt; </span> $a = 1 + 1
-<span class="prompt">&gt; </span> $a
+```console
+>  $a = 1 + 1
+>  $a
 2
-</pre>
+```
 
 
 = の直後がアルファベットから始まっている場合、
 = 直後の単語はコマンドとみなされて、
 コマンドの実行結果が変数に代入されます。
 
-<pre class="console" title="コマンド実行結果の代入">
-<span class="prompt">&gt; </span> $a = Get-Location
-<span class="prompt">&gt; </span> $a
+```console
+>  $a = Get-Location
+>  $a
 
 Path
 ----
 C:\Users\john\Desktop\temp
-</pre>
+```
 
 
 = とか + 以外に、どういう式が書けるかとかは別項で説明予定。
@@ -277,15 +278,15 @@ C:\Users\john\Desktop\temp
 コメントは # で始めて、行末までがコメントになります。
 当然のことながら、"" や '' （要するに文字列）中の # はコメントにはなりません。
 
-<pre class="console" title="コメント">
-<span class="prompt">&gt; </span> ls C:\Users\Public # comment
-</pre>
+```console
+>  ls C:\Users\Public # comment
+```
 
 
-<pre class="console" title="非コメント">
-<span class="prompt">&gt; </span> echo "# not comment"
-<span># not comment</span>
-</pre>
+```console
+>  echo "# not comment"
+# not comment
+```
 
 
 
@@ -304,15 +305,15 @@ PowerShell の構文解析には、
 
 まあ、例を挙げてみましょう。
 
-<pre class="console" title="式モードとコマンドモード（１）">
-<span class="prompt">&gt; </span> $a = 1 + 1
-<span class="prompt">&gt; </span> echo $a
+```console
+>  $a = 1 + 1
+>  echo $a
 2
-<span class="prompt">&gt; </span> echo 1 + 1
+>  echo 1 + 1
 1
 +
 1
-</pre>
+```
 
 
 まあ、見ての通り、<code>1 + 1</code> の解釈の仕方が違います。
@@ -330,13 +331,13 @@ $a への代入式の方では、1 + 1 がちゃんと式とみなされて、
 
 もう1つ、例として、1+1 の間のスペースをつめてみましょう。
 
-<pre class="console" title="式モードとコマンドモード（２）">
-<span class="prompt">&gt; </span> $a = 1+1
-<span class="prompt">&gt; </span> echo $a
+```console
+>  $a = 1+1
+>  echo $a
 2
-<span class="prompt">&gt; </span> echo 1+1
+>  echo 1+1
 1+1
-</pre>
+```
 
 
 こっちの場合、$a への代入の方は同じ結果です。
@@ -349,44 +350,44 @@ $a への代入式の方では、1 + 1 がちゃんと式とみなされて、
 「"test"」というような文字列を作りたい場合は、
 '"test"' とか "'test'" と書きます。
 
-<pre class="console" title="クオート記号の表示">
-<span class="prompt">&gt; </span> echo 'test'
+```console
+>  echo 'test'
 test
-<span class="prompt">&gt; </span> echo "test"
+>  echo "test"
 test
-<span class="prompt">&gt; </span> echo '"test"'
+>  echo '"test"'
 "test"
-<span class="prompt">&gt; </span> echo "'test'"
+>  echo "'test'"
 'test'
-</pre>
+```
 
 
 コマンドに関しても同様で、
 代入式の = の後ではコマンドとして実行されて、
 コマンドの後ろは単なる文字列とみなされます。
 
-<pre class="console" title="式モードとコマンドモード（３）">
-<span class="prompt">&gt; </span> $a = Get-Location
-<span class="prompt">&gt; </span> echo $a
+```console
+>  $a = Get-Location
+>  echo $a
 Path
 ----
 C:\Users\john\Desktop\temp
 
-<span class="prompt">&gt; </span> echo Get-Location
+>  echo Get-Location
 Get-Location
-</pre>
+```
 
 
 ちなみに、コマンドモードでも、() でくくられた部分は式あるいはコマンドとして評価されます。
 
-<pre class="console" title="（）でくくった部分は式">
-<span class="prompt">&gt; </span> echo (1 + 1)
+```console
+>  echo (1 + 1)
 2
-<span class="prompt">&gt; </span> echo (Get-Location)
+>  echo (Get-Location)
 Path
 ----
 C:\Users\john\Desktop\temp
-</pre>
+```
 
 
 
@@ -543,9 +544,9 @@ PowerShell をインストールすると、スタートメニューに
 というポリシーに設定しなおしてから使います。
 実行ポリシーの変更は Set-ExecutionPolicy コマンドを使って、以下のようにします。
 
-<pre class="console" title="実行ポリシーを変更">
-<span class="prompt">&gt; </span>Set-ExecutionPolicy RemoteSigned
-</pre>
+```console
+> Set-ExecutionPolicy RemoteSigned
+```
 
 
 （他にどういう実行ポリシーが設定できるかは、
@@ -572,13 +573,13 @@ PowerShell スクリプトファイルには、
 ps1 ファイルの中に実行したいコマンドを書いておいて、
 実行はただ単にファイル名を打つだけです。
 
-<pre class="console" title="スクリプトファイルの実行">
-<span class="prompt">&gt; </span> 'echo "test"' | Set-Content a.ps1
-<span class="prompt">&gt; </span> Get-Content .\a.ps1
+```console
+>  'echo "test"' | Set-Content a.ps1
+>  Get-Content .\a.ps1
 echo "test"
-<span class="prompt">&gt; </span> .\a.ps1
+>  .\a.ps1
 test
-</pre>
+```
 
 
 1つ注意が必要で、

@@ -63,17 +63,17 @@ aliases:
 2つの要素を入れ替えるスワップという処理をよく使用します。
 なので、スワップは以下のように関数化しておきます。
 
-<pre class="source" title="Swap" lang="">
-<code><span class="comment">/// &lt;summary&gt;
+```csharp
+/// <summary>
 /// a と b の中身を入れ替える。
-/// &lt;/summary&gt;
-/// &lt;param name="a"&gt;オペランドa&lt;/param&gt;
-/// &lt;param name="b"&gt;オペランドb&lt;/param&gt;</span>
-<span class="reserved">public static void</span> Swap&lt;T&gt;(<span class="reserved">ref</span> T a, <span class="reserved">ref</span> T b)
+/// </summary>
+/// <param name="a">オペランドa</param>
+/// <param name="b">オペランドb</param>
+public static void Swap<T>(ref T a, ref T b)
 {
   T c = a; a = b; b = c;
 }
-</code></pre>
+```
 
 
 ref というキーワードに関しては「[引数の参照渡し](../../csharp/resource/sp_ref.md)」を、
@@ -96,58 +96,58 @@ ref というキーワードに関しては「[引数の参照渡し](../../csha
 そして、年齢の大小でソートすることを考えて見ましょう。
 まず、年齢と名前のペアは Entry と言う名前で以下のように実装します。
 
-<pre class="source" title="年齢と名前のペア" lang="">
-<code><span class="reserved">class</span> Entry : IComparable&lt;Entry&gt;
+```csharp
+class Entry : IComparable<Entry>
 {
-  <span class="reserved">public int</span> age;
-  <span class="reserved">public string</span> name;
+  public int age;
+  public string name;
 
-  <span class="reserved">public</span> Entry(<span class="reserved">int</span> age, <span class="reserved">string</span> name)
+  public Entry(int age, string name)
   {
-    <span class="reserved">this</span>.age = age;
-    <span class="reserved">this</span>.name = name;
+    this.age = age;
+    this.name = name;
   }
 
-  <span class="reserved">int</span> IComparable&lt;Entry&gt;.CompareTo(Entry other)
+  int IComparable<Entry>.CompareTo(Entry other)
   {
-    <span class="reserved">return this</span>.age.CompareTo(other.age);
+    return this.age.CompareTo(other.age);
   }
 }
-</code></pre>
+```
 
 
 これを使って、以下のようなリストを作ります。
 
-<pre class="source" title="リスト" lang="">
-<code>Entry[] list = <span class="reserved">new</span> Entry[]{
-  <span class="reserved">new</span> Entry(10, <span class="literal">"a"</span>),
-  <span class="reserved">new</span> Entry(11, <span class="literal">"b"</span>),
-  <span class="reserved">new</span> Entry(12, <span class="literal">"c"</span>),
-  <span class="reserved">new</span> Entry(11, <span class="literal">"d"</span>),
-  <span class="reserved">new</span> Entry(13, <span class="literal">"e"</span>),
-  <span class="reserved">new</span> Entry(10, <span class="literal">"f"</span>),
-  <span class="reserved">new</span> Entry(12, <span class="literal">"g"</span>),
-  <span class="reserved">new</span> Entry(14, <span class="literal">"h"</span>),
+```csharp
+Entry[] list = new Entry[]{
+  new Entry(10, "a"),
+  new Entry(11, "b"),
+  new Entry(12, "c"),
+  new Entry(11, "d"),
+  new Entry(13, "e"),
+  new Entry(10, "f"),
+  new Entry(12, "g"),
+  new Entry(14, "h"),
 };
-</code></pre>
+```
 
 
 この状態では、名前順に並んでいますね。
 そして、10歳、11歳、12歳のエントリーがそれぞれ複数含まれています。
 これを、Array.Sort メソッドを使ってソートしてみましょう。
 
-<pre class="source" title="リストのソート" lang="">
-<code>Array.Sort(list);
-<span class="reserved">foreach</span> (Entry entry <span class="reserved">in</span> list)
+```csharp
+Array.Sort(list);
+foreach (Entry entry in list)
 {
-  Console.Write(<span class="literal">"{0}, {1}\n"</span>, entry.age, entry.name);
+  Console.Write("{0}, {1}\n", entry.age, entry.name);
 } 
-</code></pre>
+```
 
 
 結果は以下のようになります。
 
-<pre class="console" title="不安定なソート結果">
+```console
 10, f
 10, a
 11, d
@@ -156,7 +156,7 @@ ref というキーワードに関しては「[引数の参照渡し](../../csha
 12, c
 13, e
 14, h
-</pre>
+```
 
 
 名前の順序がばらばらになっていることが分かります。
@@ -165,7 +165,7 @@ Array.Sort は、おそらく「[クイックソート](sort_quick.md#quick)」�
 もしも、これを安定なソートアルゴリズムを使ってソートするならば、
 結果は以下のようになります。
 
-<pre class="console" title="安定なソート結果">
+```console
 10, a
 10, f
 11, d
@@ -174,7 +174,7 @@ Array.Sort は、おそらく「[クイックソート](sort_quick.md#quick)」�
 12, g
 13, e
 14, h
-</pre>
+```
 
 
 

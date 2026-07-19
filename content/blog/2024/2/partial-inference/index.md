@@ -20,18 +20,18 @@ C# のジェネリック型引数の推論を賢くしたいという話は、is
 現状の C# の型推論は割と "All or Nothing" で、
 `new()` みたいに型全体の省略はできても、`new List<>()` みたいな「一部分だけ省略」ができません。
 
-<pre class="source" title="部分的な型の推論">
-<span class="comment">// 型全体の推論は可能。</span>
-<span class="comment">// 左辺から型が決定されて、new() は new List&lt;int&gt;() と解釈される。</span>
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">x1</span> <span class="operator">=</span> <span class="reserved">new</span>();
+```csharp
+// 型全体の推論は可能。
+// 左辺から型が決定されて、new() は new List<int>() と解釈される。
+List<int> x1 = new();
 
-<span class="comment">// 一方、型引数だけの省略というのができない。</span>
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">x2</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="error" title="CS7003"><span class="type">List</span>&lt;&gt;</span>(); <span class="comment">// 要は Java のダイヤモンド演算子みたいなのとか、</span>
-<span class="type">List</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">x3</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="error" title="CS0246">_</span>&gt;(); <span class="comment">// あるいは「ここは推論して」を表すキーワードを用意したい。</span>
+// 一方、型引数だけの省略というのができない。
+List<int> x2 = new List<>(); // 要は Java のダイヤモンド演算子みたいなのとか、
+List<int> x3 = new List<_>(); // あるいは「ここは推論して」を表すキーワードを用意したい。
 
-<span class="comment">// 特にこういう「部分推論」ができないと困るのは以下のような場面。</span>
-<span class="type">IList</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">x4</span> <span class="operator">=</span> <span class="reserved">new</span> <span class="type">List</span>&lt;<span class="error" title="CS0246">_</span>&gt;(); <span class="comment">// 左辺がインターフェイス、右辺が具象型なので new() とは書けない。</span>
-</pre>
+// 特にこういう「部分推論」ができないと困るのは以下のような場面。
+IList<int> x4 = new List<_>(); // 左辺がインターフェイス、右辺が具象型なので new() とは書けない。
+```
 
 この issue はずいぶん前から「Champion」(C# チーム内の誰かが興味を持って推進している状態)にはなっていたんですが、しばらく動きはありませんでした。
 

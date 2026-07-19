@@ -75,50 +75,50 @@ foreachとは、コレクションのすべての要素を1回ずつ読み出す
 あくまで例として示すだけなので、単純な実装方法を取っています。
 (本来はもう少しちゃんとした実装の仕方をしないとだめ。)
 
-<pre class="source" title="連結リストの例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.IO;
+```csharp
+using System;
+using System.IO;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// リストのノード
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> Node
+/// </summary>
+class Node
 {
-  <span class="reserved">public int</span> elem;
-  <span class="reserved">public</span> Node next;
+  public int elem;
+  public Node next;
 
-  <span class="reserved">public</span> Node() : <span class="reserved">this</span>(0, <span class="reserved">null</span>){}
+  public Node() : this(0, null){}
 
-  <span class="reserved">public</span> Node(<span class="reserved">int</span> val, Node next)
+  public Node(int val, Node next)
   {
-    <span class="reserved">this</span>.elem = val;
-    <span class="reserved">this</span>.next = next;
+    this.elem = val;
+    this.next = next;
   }
 }
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 連結リストクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> List
+/// </summary>
+class List
 {
-  <span class="reserved">public</span> Node head;
+  public Node head;
 
-  <span class="reserved">public</span> List()
+  public List()
   {
-    head = <span class="reserved">null</span>;
+    head = null;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// リストに新しい要素を追加する。
-  /// &lt;/summary&gt;
-  /// &lt;param name="val"&gt;追加する値&lt;/param&gt;</span>
-  <span class="reserved">public void</span> Add(<span class="reserved">int</span> val)
+  /// </summary>
+  /// <param name="val">追加する値</param>
+  public void Add(int val)
   {
-    Node node = <span class="reserved">new</span> Node(val, <span class="reserved">this</span>.head);
-    <span class="reserved">this</span>.head = node;
+    Node node = new Node(val, this.head);
+    this.head = node;
   }
 }
-</code></pre>
+```
 
 
 
@@ -128,26 +128,26 @@ foreachとは、コレクションのすべての要素を1回ずつ読み出す
 データの格納方式が違えば、当然データの読み出し方も変わってくるということです。
 例えば、配列の場合、以下のようにすれば全ての要素を読み出せます。
 
-<pre class="source" title="配列のデータ読み出し" lang="">
-<code><span class="reserved">int</span>[] a = <span class="reserved">new int</span>[]{1, 3, 5, 7};
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;a.Length; ++i)
-  Console.Write(<span class="literal">"{0}\n"</span>, a[i]);
-</code></pre>
+```csharp
+int[] a = new int[]{1, 3, 5, 7};
+for(int i=0; i<a.Length; ++i)
+  Console.Write("{0}\n", a[i]);
+```
 
 
 しかし、上述の例に挙げたリストクラスに対して同じ操作を行おうとすると以下のようになります。
 
-<pre class="source" title="" lang="">
-<code>List list = <span class="reserved">new</span> List();
+```csharp
+List list = new List();
 list.Add(7);
 list.Add(5);
 list.Add(3);
 list.Add(1);
-<span class="reserved">for</span>(Node n=list.head; n!=<span class="reserved">null</span>; n=n.next)
+for(Node n=list.head; n!=null; n=n.next)
 {
-  Console.Write(<span class="literal">"{0}\n"</span>, n.elem);
+  Console.Write("{0}\n", n.elem);
 }
-</code></pre>
+```
 
 
 同じ「コレクション内のすべての要素を1回ずつ読み出す」という操作なのに全然違うコードを書く必要があります。
@@ -165,16 +165,16 @@ list.Add(1);
 ここでは <code>IEnumerable</code> インターフェースを介した要素へのアクセスの仕方のみを説明します。
 <code>IEnumerable</code> インターフェースを介した要素へのアクセスは以下のようにします。
 
-<pre class="source" title="IEnamerable インターフェースを介したコレクションのアクセス" lang="">
-<code><span class="reserved">int</span>[] array = <span class="reserved">new int</span>[]{1, 3, 5, 7};
+```csharp
+int[] array = new int[]{1, 3, 5, 7};
 
 IEnumerator e = array.GetEnumerator();
-<span class="reserved">while</span>(e.MoveNext())
+while(e.MoveNext())
 {
-  <span class="reserved">int</span> val = (<span class="reserved">int</span>)e.Current;
-  Console.Write(<span class="literal">"{0}\n"</span>, val);
+  int val = (int)e.Current;
+  Console.Write("{0}\n", val);
 }
-</code></pre>
+```
 
 
 ここで、<code>IEnumerator</code> とは<em>列挙子</em>と呼ばれるクラスを作るためのインターフェースです。
@@ -186,83 +186,83 @@ IEnumerator e = array.GetEnumerator();
 <strong id="foreach" class="keyword">foreach 文</strong>を用いるとこで <code>IEnumerable</code> インターフェースを介した要素へのアクセスを簡単化することが出来ます。
 以下のように、foreachを使うことでコレクションのすべての要素を1回ずつ読み出すことができます。
 
-<pre class="source" title="foreachの使い方" lang="">
-<code><span class="reserved">foreach</span>(<span class="input">型名</span> <span class="input">変数</span> <span class="reserved">in</span> <span class="input">コレクション</span>)
-  <span class="input">文</span>
-</code></pre>
+```csharp
+foreach(型名 変数 in コレクション)
+  文
+```
 
 
 このコードは以下のように展開されます。
 
-<pre class="source" title="foreachの実態" lang="">
-<code><span class="reserved">try</span>
+```csharp
+try
 {
   IEnumerator e = array.GetEnumerator();
-  <span class="reserved">while</span>(e.MoveNext())
+  while(e.MoveNext())
   {
-    <span class="input">型名</span> <span class="input">変数</span> = (<span class="input">型名</span>)e.Current;
-    <span class="input">文</span>
+    型名 変数 = (型名)e.Current;
+    文
   }
 } 
-<span class="reserved">finally</span>
+finally
 {
-  <span class="input">Dispose処理</span>
+  Dispose処理
 }
-</code></pre>
+```
 
 「Dispose処理」の部分は、コンパイル時点で`IDisposable`なことがわかっている型かどうかで実際に生成されるコードが変わります。
 コンパイル時点で`IDisposable`なことがわかる場合は以下の通り。
 
-<pre class="source" title="foreachのDispose処理(コンパイル時点でわかっている場合)" lang="">
-<code>    ((<span class="type">IDisposable</span>)e).Dispose();
-</code></pre>
+```csharp
+    ((IDisposable)e).Dispose();
+```
 
 逆に、わからない場合は以下のようになります。
 
-<pre class="source" title="foreachのDispose処理(コンパイル時点でわかっている場合)" lang="">
-<code>    <span class="type">IDisposable</span> d = e <span class="reserved">as</span> <span class="type">IDisposable</span>;
-    <span class="reserved">if</span> (d != null) d.Dispose();
-</code></pre>
+```csharp
+    IDisposable d = e as IDisposable;
+    if (d != null) d.Dispose();
+```
 
 例えば、<code>int</code>型の配列の要素を読み出して画面に表示するには以下のようにします。
 
-<pre class="source" title="foreachの例" lang="">
-<code><span class="reserved">int</span>[] array = <span class="reserved">new int</span>[10]{1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
+```csharp
+int[] array = new int[10]{1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
 
-<em><span class="reserved">foreach</span>(<span class="reserved">int</span> n <span class="reserved">in</span> array)</em>
+foreach(int n in array)
 {
-  Console.Write(n + <span class="literal">" "</span>);
+  Console.Write(n + " ");
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 1 2 4 8 16 32 64 128 256 512 
-</pre>
+```
 
 
 foreach文の実態は<code>IEnumerable</code> インターフェースを介した要素へのアクセスですから、
 <code>IEnumerable</code> インターフェースを実装しているならどんなコレクションクラスの要素でも読み出すことが出来ます。
 例えば、.NET Framework標準ライブラリの<code>ArrayList</code>クラスは<code>IEnumrable</code>インターフェースを実装していますので、以下のようにforeach文を使ってコレクション内の要素を列挙することが出来ます。
 
-<pre class="source" title="ArrayListに対してforeachを使う" lang="">
-<code><em>ArrayList</em> list = <span class="reserved">new</span> ArrayList();
+```csharp
+ArrayList list = new ArrayList();
 
-<span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;10; ++i)
+for(int i=0; i<10; ++i)
 {
   list.Add(i * (i + 1) / 2);
 }
 
-<em><span class="reserved">foreach</span>(<span class="reserved">int</span> s <span class="reserved">in</span> list)</em>
+foreach(int s in list)
 {
-  Console.Write(s + <span class="literal">" "</span>);
+  Console.Write(s + " ");
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 0 1 3 6 10 15 21 28 36 45 
-</pre>
+```
 
 
 
@@ -282,34 +282,34 @@ C# 8.0 まではパターン ベースと言っても、`GetEnumerator` メソ�
 
 例えば、C# 8.0 で入った [`Range`](dataranges.md#range) に対して以下のような拡張メソッドを書くことで、`foreach (var i in x..y)` みたいな書き方ができるようになります。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="control">foreach</span> (<span class="reserved">var</span> <span class="variable">i</span> <span class="control">in</span> 5..10)
+foreach (var i in 5..10)
 {
-    <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">i</span>); <span class="comment">// 5, 6, 7, 8, 9</span>
+    Console.WriteLine(i); // 5, 6, 7, 8, 9
 }
  
-<span class="reserved">static</span> <span class="reserved">class</span> <span class="type">RangeExtension</span>
+static class RangeExtension
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="type">RangeEnumerator</span> <span class="method">GetEnumerator</span>(<span class="reserved">this</span> <span class="type">Range</span> <span class="variable">r</span>) =&gt; <span class="reserved">new</span>(<span class="variable">r</span>);
+    public static RangeEnumerator GetEnumerator(this Range r) => new(r);
  
-    <span class="reserved">public</span> <span class="reserved">struct</span> <span class="type">RangeEnumerator</span>
+    public struct RangeEnumerator
     {
-        <span class="reserved">private</span> <span class="reserved">int</span> _i;
-        <span class="reserved">private</span> <span class="reserved">int</span> _end;
+        private int _i;
+        private int _end;
  
-        <span class="reserved">public</span> <span class="type">RangeEnumerator</span>(<span class="type">Range</span> <span class="variable">r</span>)
+        public RangeEnumerator(Range r)
         {
-            _i = <span class="variable">r</span>.Start.Value - 1;
-            _end = <span class="variable">r</span>.End.Value;
+            _i = r.Start.Value - 1;
+            _end = r.End.Value;
         }
  
-        <span class="reserved">public</span> <span class="reserved">bool</span> <span class="method">MoveNext</span>() =&gt; ++_i &lt; _end;
-        <span class="reserved">public</span> <span class="reserved">int</span> Current =&gt; _i;
+        public bool MoveNext() => ++_i < _end;
+        public int Current => _i;
     }
 }
-</code></pre>
+```
 
 (これまでは単に C# 1.0 時代からある文法に下手に手を入れるのが怖くて認められていなかっただけです。)
 
@@ -326,123 +326,123 @@ C# 8.0 まではパターン ベースと言っても、`GetEnumerator` メソ�
 <code>MoveNext</code>メソッドは列挙子をコレクションの次の要素に進めます。
 また、<code>Reset</code>メソッドは列挙子を初期位置、つまりコレクションの最初の要素の前に戻します。
 
-<pre class="source" title="コレクションクラスと列挙子の自作の例" lang="">
-<code><span class="reserved">using</span> System;
-<span class="reserved">using</span> System.Collections;
+```csharp
+using System;
+using System.Collections;
 
-<span class="comment">/// &lt;summary&gt;
+/// <summary>
 /// 片方向連結リストクラス
-/// &lt;/summary&gt;</span>
-<span class="reserved">class</span> LinearList : <em>IEnumerable</em>
+/// </summary>
+class LinearList : IEnumerable
 {
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 連結リストのセル
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">private class</span> Cell
+  /// </summary>
+  private class Cell
   {
-    <span class="reserved">public</span> object value;
-    <span class="reserved">public</span> Cell next;
+    public object value;
+    public Cell next;
 
-    <span class="reserved">public</span> Cell(object value, Cell next)
+    public Cell(object value, Cell next)
     {
-      <span class="reserved">this</span>.value = value;
-      <span class="reserved">this</span>.next = next;
+      this.value = value;
+      this.next = next;
     }
   }
 
-  <span class="comment">/// &lt;summary&gt;
-  /// <em>LinearList の列挙子</em>
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">private class</span> LinearListEnumerator : <em>IEnumerator</em>
+  /// <summary>
+  /// LinearList の列挙子
+  /// </summary>
+  private class LinearListEnumerator : IEnumerator
   {
-    <span class="reserved">private</span> LinearList list;
-    <span class="reserved">private</span> Cell current;
+    private LinearList list;
+    private Cell current;
 
-    <span class="reserved">public</span> LinearListEnumerator(LinearList list)
+    public LinearListEnumerator(LinearList list)
     {
-      <span class="reserved">this</span>.list = list;
-      <span class="reserved">this</span>.current = <span class="reserved">null</span>;
+      this.list = list;
+      this.current = null;
     }
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// コレクション内の現在の要素を取得
-    /// &lt;/summary&gt;</span>
-    <span class="reserved">public</span> object <em>Current</em>
+    /// </summary>
+    public object Current
     {
-      <span class="reserved">get</span>{<span class="reserved">return this</span>.current.value;}
+      get{return this.current.value;}
     }
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// 列挙子をコレクションの次の要素に進める
-    /// &lt;/summary&gt;</span>
-    <span class="reserved">public bool</span> <em>MoveNext</em>()
+    /// </summary>
+    public bool MoveNext()
     {
-      <span class="reserved">if</span>(<span class="reserved">this</span>.current == <span class="reserved">null</span>)
-        <span class="reserved">this</span>.current = <span class="reserved">this</span>.list.head;
-      <span class="reserved">else
-        this</span>.current = <span class="reserved">this</span>.current.next;
+      if(this.current == null)
+        this.current = this.list.head;
+      else
+        this.current = this.current.next;
 
-      <span class="reserved">if</span>(<span class="reserved">this</span>.current == <span class="reserved">null</span>)
-        <span class="reserved">return false</span>;
-      <span class="reserved">return true</span>;
+      if(this.current == null)
+        return false;
+      return true;
     }
 
-    <span class="comment">/// &lt;summary&gt;
+    /// <summary>
     /// 列挙子を初期位置に戻す
-    /// &lt;/summary&gt;</span>
-    <span class="reserved">public void</span> <em>Reset</em>()
+    /// </summary>
+    public void Reset()
     {
-      <span class="reserved">this</span>.current = <span class="reserved">null</span>;
+      this.current = null;
     }
   }
 
-  <span class="reserved">private</span> Cell head;
+  private Cell head;
 
-  <span class="reserved">public</span> LinearList()
+  public LinearList()
   {
-    head = <span class="reserved">null</span>;
+    head = null;
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// リストに新しい要素を追加
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public void</span> Add(object value)
+  /// </summary>
+  public void Add(object value)
   {
-    head = <span class="reserved">new</span> Cell(value, head);
+    head = new Cell(value, head);
   }
 
-  <span class="comment">/// &lt;summary&gt;
+  /// <summary>
   /// 列挙子を取得
-  /// &lt;/summary&gt;</span>
-  <span class="reserved">public</span> IEnumerator <em>GetEnumerator</em>()
+  /// </summary>
+  public IEnumerator GetEnumerator()
   {
-    <span class="reserved">return new</span> LinearListEnumerator(<span class="reserved">this</span>);
+    return new LinearListEnumerator(this);
   }
 }
 
-<span class="reserved">class</span> ForeachSample
+class ForeachSample
 {
-  <span class="reserved">static void</span> Main()
+  static void Main()
   {
-    LinearList list = <span class="reserved">new</span> LinearList();
+    LinearList list = new LinearList();
 
-    <span class="reserved">for</span>(<span class="reserved">int</span> i=0; i&lt;10; ++i)
+    for(int i=0; i<10; ++i)
     {
       list.Add(i * (i + 1) / 2);
     }
 
-    <span class="reserved">foreach</span>(<span class="reserved">int</span> s <span class="reserved">in</span> list)
+    foreach(int s in list)
     {
-      Console.Write(s + <span class="literal">" "</span>);
+      Console.Write(s + " ");
     }
   }
 }
-</code></pre>
+```
 
 
-<pre class="console" title="">
+```console
 45 36 28 21 15 10 6 3 1 0 
-</pre>
+```
 
 
 <h5 class="version version2">Ver. 2.0</h5>
@@ -460,14 +460,14 @@ C# 2.0 ではこの作業を簡単化するための「[イテレーター](sp2_
 IDispose を実装するクラスの場合には、
 さらに「[using ステートメント](../resource/oo_dispose.md#using)」で囲ったのと同じ扱いになります。）
 
-<pre class="source" title="foreachの実態" lang="">
-<code>IEnumerator e = array.GetEnumerator();
-<span class="reserved">while</span>(e.MoveNext())
+```csharp
+IEnumerator e = array.GetEnumerator();
+while(e.MoveNext())
 {
-  <span class="input">型名</span> <span class="input">変数</span> = (<span class="input">型名</span>)e.Current;
-  <span class="input">文</span>
+  型名 変数 = (型名)e.Current;
+  文
 }
-</code></pre>
+```
 
 
 このコードだと、
@@ -487,14 +487,14 @@ C# 8.0で非同期版の`foreach`が追加されました。
 `await foreach` (`foreach`の前に`await`を付ける)という構文で、
 [`IAsyncEnumerable<T>`](https://docs.microsoft.com/ja-jp/dotnet/api/system.collections.generic.iasyncenumerable-1)インターフェイス(`System.Collections.Generic`名前空間)か、それと同じ[パターン](../misc/miscpatternbased.md)を満たす型の列挙ができます。
 
-<pre class="source" title="非同期 foreach">
-<code><span class="reserved">static</span> <span class="reserved">async</span> <span class="type">Task</span> <span class="method">AsyncForeach</span>(<span class="type">IAsyncEnumerable</span>&lt;<span class="reserved">int</span>&gt; <span class="variable">items</span>)
+```csharp
+static async Task AsyncForeach(IAsyncEnumerable<int> items)
 {
-    <em><span class="reserved">await</span> <span class="control">foreach</span></em> (<span class="reserved">var</span> <span class="variable">item</span> <span class="control">in</span> <span class="variable">items</span>)
+    await foreach (var item in items)
     {
-        <span class="type">Console</span>.<span class="method">WriteLine</span>(<span class="variable">item</span>);
+        Console.WriteLine(item);
     }
 }
-</code></pre>
+```
 
 詳しくは「[非同期foreach](../async/asyncstream.md#await-foreach)」で説明します。

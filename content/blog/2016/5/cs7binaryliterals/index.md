@@ -34,12 +34,12 @@ aliases: []
 
 こういう機能。
 
-<pre class="source" title="digit separators">
-<code><reserved></span><span class="reserved">var</span> million = 1_000_000;
-<span class="reserved">var</span> abcd = 0b1010_1011_1100_1101; <span class="comment">// 特に2進数リテラルで有用</span>
-<span class="reserved">var</span> abcd2 = 0xab_cd;              <span class="comment">// 16進数リテラルにも使える</span>
-<span class="reserved">var</span> x = 1.123_456_789;            <span class="comment">// 浮動小数点数リテラルにも使える</span>
-</code></pre>
+```csharp
+var million = 1_000_000;
+var abcd = 0b1010_1011_1100_1101; // 特に2進数リテラルで有用
+var abcd2 = 0xab_cd;              // 16進数リテラルにも使える
+var x = 1.123_456_789;            // 浮動小数点数リテラルにも使える
+```
 
 2進数リテラルと数字区切り文字の2つはセットですね。
 2進数って普通に書いたらむちゃくちゃ大きな桁数になりますし。

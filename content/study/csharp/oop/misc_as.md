@@ -64,19 +64,19 @@ IL 上はどちらも1命令で、
 命令の差でパフォーマンスの違い推測できないんで、ここは実測してみます。
 for ループの中でキャストか as するだけの関数を書いて、
 
-<pre class="source" title="キャストと as のパフォーマンスを実測" lang="">
-<code>Stopwatch sw = <span class="reserved">new</span> Stopwatch();
+```csharp
+Stopwatch sw = new Stopwatch();
 
 sw.Reset();
 sw.Start();
 TestCast(N);
-Console.Write(<span class="literal">"{0}\n"</span>, sw.ElapsedTicks);
+Console.Write("{0}\n", sw.ElapsedTicks);
 
 sw.Reset();
 sw.Start();
 TestAs(N);
-Console.Write(<span class="literal">"{0}\n"</span>, sw.ElapsedTicks);
-</code></pre>
+Console.Write("{0}\n", sw.ElapsedTicks);
+```
 
 
 として、時間を計ってみます。
@@ -92,32 +92,32 @@ Console.Write(<span class="literal">"{0}\n"</span>, sw.ElapsedTicks);
 以下のようなコードを書けば実行速度が速くなるかというと、
 そんなことはない。
 
-<pre class="source" title="is で確認してからキャスト" lang="">
-<code>B b = <span class="reserved">new</span> D(); <span class="comment">// D extends B</span>
+```csharp
+B b = new D(); // D extends B
 
-<span class="reserved">if</span> (b <span class="reserved">is</span> D)
+if (b is D)
 {
   D d = (D)b;
 }
-</code></pre>
+```
 
 
 なぜかというと、is は、内部的には as とまったく同じコードになるから。
 以下のような2つのコードがほぼ同じコンパイル結果になります。
 
-<pre class="source" title="as ＋ null 比較" lang="">
-<code>B b = <span class="reserved">new</span> D(); <span class="comment">// D extends B</span>
-D d = b <span class="reserved">as</span> D;
-<span class="reserved">if</span> (d != <span class="reserved">null</span>)
-  <span class="input">...</span>
-</code></pre>
+```csharp
+B b = new D(); // D extends B
+D d = b as D;
+if (d != null)
+  ...
+```
 
 
-<pre class="source" title="is" lang="">
-<code>B b = <span class="reserved">new</span> D(); <span class="comment">// D extends B</span>
-<span class="reserved">if</span> (b <span class="reserved">is</span> D)
-  <span class="input">...</span>
-</code></pre>
+```csharp
+B b = new D(); // D extends B
+if (b is D)
+  ...
+```
 
 
 要するに、is 演算子は as ＋ null 比較相当のコードになります。

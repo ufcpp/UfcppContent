@@ -31,8 +31,9 @@ RC(バグ修正とかのぞいてもう変更しない)でGo Live(製品に使�
 
 Connect() キーノートのデモの中で、
 
-<pre><code>dotnet compile -o output --native
-</code></pre>
+```shell
+dotnet compile -o output --native
+```
 
 とかコマンドを打ってました。--nativeオプション。
 

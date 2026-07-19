@@ -23,28 +23,28 @@ C# 8.0 がらみの話も一段落してしまったので、
 
 .NET の配列は、バッファオーバーランとかのメモリ破壊を避けるべく、範囲チェックがかかっています。
 
-<pre class="source" title="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
  
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> a = <span class="reserved">new</span> <span class="reserved">int</span>[4];
-        <span class="reserved">var</span> x = a[5]; <span class="comment">// 範囲外なのでここで IndexOutOfRangeException が飛ぶ</span>
-        <span class="type">Console</span>.WriteLine(x);
+        var a = new int[4];
+        var x = a[5]; // 範囲外なのでここで IndexOutOfRangeException が飛ぶ
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 `a[5]` のところのコンパイル結果は以下のようになります。
 
 IL:
 
-<pre class="source">
-<code><span style="color:purple">IL_0006:</span> <span style="color:blue">ldc.i4.5</span>  <span style="color:green"> // 5 をロード
-</span><span style="color:purple">IL_0007:</span> <span style="color:blue">ldelem.i4</span> <span style="color:green"> // 配列要素の読み込み命令
-</span></code></pre>
+```cil
+IL_0006: ldc.i4.5   // 5 をロード
+IL_0007: ldelem.i4  // 配列要素の読み込み命令
+```
 
 IL には配列の要素を読み書きする命令があります。
 この時点では `ldelem` 命令が出力されているだけで、
@@ -53,11 +53,11 @@ IL には配列の要素を読み書きする命令があります。
 
 x86 コード:
 
-<pre class="source">
-<code><span style="color:purple">L000f:</span> <span style="color:blue">cmp</span> dword [eax+0x4], 0x5<span style="color:green"> ; 配列長と 5 を比較
-</span><span style="color:purple">L0013:</span> <span style="color:blue">jbe</span> L001e               <span style="color:green"> ; 例外を投げるコードにジャンプ
-</span><span style="color:purple">L0015:</span> <span style="color:blue">mov</span> ecx, [eax+0x1c]     <span style="color:green"> ; a[5] の場所のデータを読み込み
-</span></code></pre>
+```csharp
+L000f: cmp dword [eax+0x4], 0x5 ; 配列長と 5 を比較
+L0013: jbe L001e                ; 例外を投げるコードにジャンプ
+L0015: mov ecx, [eax+0x1c]      ; a[5] の場所のデータを読み込み
+```
 
 元のコードにはない比較・ジャンプ命令が挟まっています。
 
@@ -66,50 +66,50 @@ x86 コード:
 今度は、全要素列挙することを見てみましょう。
 以下のようなコードを考えます。
 
-<pre class="source" title="">
-<code><span class="reserved">void</span> M(<span class="reserved">int</span>[] array)
+```csharp
+void M(int[] array)
 {
-    <span class="reserved">for</span> (<span class="reserved">var</span> i = 0; i &lt; array.Length; ++i)
+    for (var i = 0; i < array.Length; ++i)
     {
-        <span class="reserved">var</span> x = array[i];
-        <span class="type">Console</span>.WriteLine(x);
+        var x = array[i];
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 この場合は、ループ付近が以下のようにコンパイルされます。
 
 IL:
 
-<pre class="source">
-<code><span style="color:purple">IL_0004:</span> <span style="color:blue">ldarg.1</span>
-<span style="color:purple">IL_0005:</span> <span style="color:blue">ldloc.0</span>
-<span style="color:purple">IL_0006:</span> <span style="color:blue">ldelem.i4</span>                 <span style="color:green"> // array[i]</span>
-<span style="color:purple">IL_0007:</span> <span style="color:blue">call</span> void WriteLine(int32)
-<span style="color:purple">IL_000c:</span> <span style="color:blue">ldloc.0</span>
-<span style="color:purple">IL_000d:</span> <span style="color:blue">ldc.i4.1</span>
-<span style="color:purple">IL_000e:</span> <span style="color:blue">add</span>
-<span style="color:purple">IL_000f:</span> <span style="color:blue">stloc.0</span>
-<span style="color:purple">IL_0010:</span> <span style="color:blue">ldloc.0</span>
-<span style="color:purple">IL_0011:</span> <span style="color:blue">ldarg.1</span>
-<span style="color:purple">IL_0012:</span> <span style="color:blue">ldlen</span>
-<span style="color:purple">IL_0013:</span> <span style="color:blue">conv.i4</span>                   <span style="color:green"> // i < Length</span>
-<span style="color:purple">IL_0014:</span> <span style="color:blue">blt.s</span> IL_0004
-</code></pre>
+```cil
+IL_0004: ldarg.1
+IL_0005: ldloc.0
+IL_0006: ldelem.i4                  // array[i]
+IL_0007: call void WriteLine(int32)
+IL_000c: ldloc.0
+IL_000d: ldc.i4.1
+IL_000e: add
+IL_000f: stloc.0
+IL_0010: ldloc.0
+IL_0011: ldarg.1
+IL_0012: ldlen
+IL_0013: conv.i4                    // i < Length
+IL_0014: blt.s IL_0004
+```
 
 x86 コード:
 
-<pre class="source">
-<code><span style="color:purple">L0008:</span> <span style="color:blue">xor</span> esi, esi
-<span style="color:purple">L000a:</span> <span style="color:blue">mov</span> ebx, [edi+0x4]
-<span style="color:purple">L000d:</span> <span style="color:blue">test</span> ebx, ebx
-<span style="color:purple">L000f:</span> <span style="color:blue">jle</span> L001f
-<span style="color:purple">L0011:</span> <span style="color:blue">mov</span> ecx, [edi+esi*4+0x8] <span style="color:green"> ; array[i]</span>
-<span style="color:purple">L0015:</span> <span style="color:blue">call</span> WriteLine(Int32)
-<span style="color:purple">L001a:</span> <span style="color:blue">inc</span> esi
-<span style="color:purple">L001b:</span> <span style="color:blue">cmp</span> ebx, esi             <span style="color:green"> ; i < Length</span>
-<span style="color:purple">L001d:</span> <span style="color:blue">jg</span> L0011
-</code></pre>
+```csharp
+L0008: xor esi, esi
+L000a: mov ebx, [edi+0x4]
+L000d: test ebx, ebx
+L000f: jle L001f
+L0011: mov ecx, [edi+esi*4+0x8]  ; array[i]
+L0015: call WriteLine(Int32)
+L001a: inc esi
+L001b: cmp ebx, esi              ; i < Length
+L001d: jg L0011
+```
 
 `for` ステートメント中の `i < Length` 相当のコードはありますが、
 その他の比較はありません。
@@ -129,35 +129,35 @@ x86 コード:
 先ほどの `for` を使ったコードとやっていることは全く一緒です。
 配列の全要素の列挙。
 
-<pre class="source" title="">
-<code><span class="reserved">void</span> M(<span class="reserved">int</span>[] array)
+```csharp
+void M(int[] array)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> array)
+    foreach (var x in array)
     {
-        <span class="type">Console</span>.WriteLine(x);
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 こいつは以下のようにコンパイルされます。
 
 IL:
 
-<pre class="source">
-<code><span style="color:purple">IL_0006:</span> <span style="color:blue">ldloc.0</span>
-<span style="color:purple">IL_0007:</span> <span style="color:blue">ldloc.1</span>
-<span style="color:purple">IL_0008:</span> <span style="color:blue">ldelem.i4</span>                 <span style="color:green"> // array[i]</span>
-<span style="color:purple">IL_0009:</span> <span style="color:blue">call</span> void WriteLine(int32)
-<span style="color:purple">IL_000e:</span> <span style="color:blue">ldloc.1</span>
-<span style="color:purple">IL_000f:</span> <span style="color:blue">ldc.i4.1</span>
-<span style="color:purple">IL_0010:</span> <span style="color:blue">add</span>
-<span style="color:purple">IL_0011:</span> <span style="color:blue">stloc.1</span>
-<span style="color:purple">IL_0012:</span> <span style="color:blue">ldloc.1</span>
-<span style="color:purple">IL_0013:</span> <span style="color:blue">ldloc.0</span>
-<span style="color:purple">IL_0014:</span> <span style="color:blue">ldlen</span>
-<span style="color:purple">IL_0015:</span> <span style="color:blue">conv.i4</span>                   <span style="color:green"> // i < Length</span>
-<span style="color:purple">IL_0016:</span> <span style="color:blue">blt.s</span> IL_0006
-</code></pre>
+```cil
+IL_0006: ldloc.0
+IL_0007: ldloc.1
+IL_0008: ldelem.i4                  // array[i]
+IL_0009: call void WriteLine(int32)
+IL_000e: ldloc.1
+IL_000f: ldc.i4.1
+IL_0010: add
+IL_0011: stloc.1
+IL_0012: ldloc.1
+IL_0013: ldloc.0
+IL_0014: ldlen
+IL_0015: conv.i4                    // i < Length
+IL_0016: blt.s IL_0006
+```
 
 `ldloc` (ローカル変数読み込み)の後ろの番号とかが違うだけで、
 他は先ほどの `for` のコードと全く同じです。
@@ -173,35 +173,35 @@ IL:
 配列全体の列挙に対して結構よい最適化がかかっていることはわかりました。
 次は、一部分だけ列挙することを考えます。
 
-<pre class="source" title="">
-<code><span class="reserved">void</span> M(<span class="reserved">int</span>[] array, <span class="reserved">int</span> start, <span class="reserved">int</span> count)
+```csharp
+void M(int[] array, int start, int count)
 {
-    <span class="reserved">var</span> end = start + count;
-    <span class="reserved">for</span> (<span class="reserved">var</span> i = start; i &lt; end; ++i)
+    var end = start + count;
+    for (var i = start; i < end; ++i)
     {
-        <span class="reserved">var</span> x = array[i];
-        <span class="type">Console</span>.WriteLine(x);
+        var x = array[i];
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 これを同じようにコンパイルすると…
 ループ近辺だけ抜き出すと以下のようになります。
 
 x86 コード:
 
-<pre class="source">
-<code><span style="color:purple">L0017:</span> <span style="color:blue">mov</span> eax, [edi+0x4]
-<span style="color:purple">L001a:</span> <span style="color:blue">mov</span> [ebp-0x10], eax
-<span style="color:purple">L001d:</span> <span style="color:blue">mov</span> eax, [ebp-0x10]
-<span style="color:purple">L0020:</span> <span style="color:blue">cmp</span> esi, eax       <span style="color:green"> ; ここの比較は array[i] に対して暗黙的に追加されるもの</span>
-<span style="color:purple">L0022:</span> <span style="color:blue">jae</span> L003a          <span style="color:green"> ; 例外を投げるコードへのジャンプ</span>
-<span style="color:purple">L0024:</span> <span style="color:blue">mov</span> ecx, [edi+esi*4+0x8]
-<span style="color:purple">L0028:</span> <span style="color:blue">call</span> System.Console.WriteLine(Int32)
-<span style="color:purple">L002d:</span> <span style="color:blue">inc</span> esi
-<span style="color:purple">L002e:</span> <span style="color:blue">cmp</span> esi, ebx       <span style="color:green"> ; ここの比較は i < end</span>
-<span style="color:purple">L0030:</span> <span style="color:blue">jl</span> L001d           <span style="color:green"> ; これはループを抜ける・抜けないの分岐</span>
-</code></pre>
+```csharp
+L0017: mov eax, [edi+0x4]
+L001a: mov [ebp-0x10], eax
+L001d: mov eax, [ebp-0x10]
+L0020: cmp esi, eax        ; ここの比較は array[i] に対して暗黙的に追加されるもの
+L0022: jae L003a           ; 例外を投げるコードへのジャンプ
+L0024: mov ecx, [edi+esi*4+0x8]
+L0028: call System.Console.WriteLine(Int32)
+L002d: inc esi
+L002e: cmp esi, ebx        ; ここの比較は i < end
+L0030: jl L001d            ; これはループを抜ける・抜けないの分岐
+```
 
 さすがに、`array.Length` 以外のものまで見て最適化は掛けてくれないみたいです。
 ちなみに、事前に `start`、`end`の範囲チェックをしてもダメ。
@@ -213,38 +213,38 @@ C# 7.2 では、[`Span<T>`](../../../../study/csharp/resource/span.md)がらみ�
 まず、配列同様、`Span<T>`に対する`foreach`は`for`に最適化されます。
 例えば、以下の2つのメソッドはほぼ同じ IL にコンパイルされます。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">void</span> M1(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; array)
+```csharp
+public void M1(Span<int> array)
 {
-    <span class="reserved">for</span> (<span class="reserved">var</span> i = 0; i &lt; array.Length; ++i)
+    for (var i = 0; i < array.Length; ++i)
     {
-        <span class="reserved">var</span> x = array[i];
-        <span class="type">Console</span>.WriteLine(x);
+        var x = array[i];
+        Console.WriteLine(x);
     }
 }
  
-<span class="reserved">public</span> <span class="reserved">void</span> M2(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; array)
+public void M2(Span<int> array)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> array)
+    foreach (var x in array)
     {
-        <span class="type">Console</span>.WriteLine(x);
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 また、JIT 時の最適化で、「暗黙の範囲チェック」も消えてくれるようです。
 要するに、先ほどの `for (var i = start; i < end; ++i)` なループよりも、
 以下のような、`Span<T>`を介したコードの方が最適化がかかりやすいです。
 
-<pre class="source" title="">
-<code><span class="reserved">public</span> <span class="reserved">void</span> M2(<span class="reserved">int</span>[] array, <span class="reserved">int</span> start, <span class="reserved">int</span> count)
+```csharp
+public void M2(int[] array, int start, int count)
 {
-    <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> array.AsSpan(start, count))
+    foreach (var x in array.AsSpan(start, count))
     {
-        <span class="type">Console</span>.WriteLine(x);
+        Console.WriteLine(x);
     }
 }
-</code></pre>
+```
 
 ちなみに、今のところこういう最適化がかかるのは配列と `Span<T>` だけです。
 `Span<T>` だけ特別扱いするのもちょっと嫌な話で、

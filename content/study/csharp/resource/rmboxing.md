@@ -60,48 +60,48 @@ C# でこれが可能なのは、次節で説明する「ボックス化」と�
 例えば、`int` 型(.NET の `Int32` 型(`System` 名前空間)の別名)の定義を覗いてみると、以下のようなメソッドを持っています。
 これらは、`object` 型で `virtual` に定義されているもののオーバーライドです。
 
-<pre class="source" title="int 型の定義(一部)" lang="">
-<code>    <span class="reserved">public struct</span> <span class="type">Int32</span> : <span class="type">IComparable</span>, <span class="type">IFormattable</span>, <span class="type">IConvertible</span>, <span class="type">IComparable</span>&lt;<span class="type">Int32</span>&gt;, <span class="type">IEquatable</span>&lt;<span class="type">Int32</span>&gt;
+```csharp
+    public struct Int32 : IComparable, IFormattable, IConvertible, IComparable<Int32>, IEquatable<Int32>
     {
-        <span class="reserved">public override bool</span> Equals(<span class="reserved">object</span> obj);
-        <span class="reserved">public override</span> <span class="type">Int32</span> GetHashCode();
-        <span class="reserved">public override string</span> ToString();
-        <span class="comment">// 以下略</span>
+        public override bool Equals(object obj);
+        public override Int32 GetHashCode();
+        public override string ToString();
+        // 以下略
     }
-</code></pre>
+```
 
 
 利用例も挙げておきましょう。以下のようになります。
 
-<pre class="source" title="object のメンバーを int に対して呼ぶ" lang="">
-<code><span class="reserved">int</span> x = 5;
-<span class="type">Console</span>.WriteLine(x.ToString());
-<span class="type">Console</span>.WriteLine(x.GetHashCode());
-<span class="type">Console</span>.WriteLine(x.Equals(5));
-<span class="type">Console</span>.WriteLine(x.GetType().Name);
-</code></pre>
+```csharp
+int x = 5;
+Console.WriteLine(x.ToString());
+Console.WriteLine(x.GetHashCode());
+Console.WriteLine(x.Equals(5));
+Console.WriteLine(x.GetType().Name);
+```
 
 
 この仕様のおかげで、C# では、int 型と string 型とでなどの、値型と参照型での処理の共通化ができます。
 以下の例は、型名と値をコンソールに出力するものですが、int 型でも string 型でも受け付けることができます。
 
-<pre class="source" title="int と string の両方を受け取れるメソッド" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
         Write(5);
-        Write(<span class="literal">"aaa"</span>);
+        Write("aaa");
     }
 
-    <span class="reserved">static void</span> Write(<span class="reserved">object</span> x)
+    static void Write(object x)
     {
-        <span class="type">Console</span>.WriteLine(x.GetType().Name + <span class="literal">" "</span> + x.ToString());
+        Console.WriteLine(x.GetType().Name + " " + x.ToString());
     }
 }
-</code></pre>
+```
 
 
 
@@ -122,11 +122,11 @@ C# でこれが可能なのは、次節で説明する「ボックス化」と�
 
 もちろん、この逆もあります。ボックス化した object から、元の型にキャストすると、ボックス化解除(unboxing)処理がかかります。
 
-<pre class="source" title="" lang="">
-<code><span class="reserved">int</span> x = 5;
-<span class="reserved">object</span> y = x;   <span class="comment">// int を object に。ボックス化が起きる。</span>
-<span class="reserved">int</span> z = (<span class="reserved">int</span>)y; <span class="comment">// object から元の型に。ボックス化解除。</span>
-</code></pre>
+```csharp
+int x = 5;
+object y = x;   // int を object に。ボックス化が起きる。
+int z = (int)y; // object から元の型に。ボックス化解除。
+```
 
 
 <figure>
@@ -156,62 +156,62 @@ C# でこれが可能なのは、次節で説明する「ボックス化」と�
 引数が int の方では起きません。
 ToString メソッド(object の仮想メソッド)の呼び出しも、型が明示されている限り、int.ToString (int 側でオーバーライドしたもの)が直接呼ばれます。
 
-<pre class="source" title="型を明示するとボックス化を避けれる" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
         ObjectWriteLine(5);
         IntWriteLine(5);
     }
 
-    <span class="reserved">static void</span> ObjectWriteLine(<span class="reserved">object</span> x)
+    static void ObjectWriteLine(object x)
     {
-        <span class="comment">// object.ToString が呼ばれる
-        // 値型に対してはボックス化が必要</span>
-        <span class="type">Console</span>.WriteLine(x.ToString());
+        // object.ToString が呼ばれる
+        // 値型に対してはボックス化が必要
+        Console.WriteLine(x.ToString());
     }
 
-    <span class="reserved">static void</span> IntWriteLine(<span class="reserved">int</span> x)
+    static void IntWriteLine(int x)
     {
-        <span class="comment">// こういう場合は、int.ToString が直接呼ばれる
+        // こういう場合は、int.ToString が直接呼ばれる
         // virtual メソッドだからといって、必ず virtual に呼ばれるわけじゃない
-        // コンパイルの時点で型が確定してるなら、非 virtual にメソッドを呼ぶ</span>
-        <span class="type">Console</span>.WriteLine(x.ToString());
+        // コンパイルの時点で型が確定してるなら、非 virtual にメソッドを呼ぶ
+        Console.WriteLine(x.ToString());
     }
 }
-</code></pre>
+```
 
 
 型を明示的に指定するには、「[ジェネリック](../oop/sp2_generics.md#generics)」を使うのも重要です。
 以下の例では、ジェネリック版と非ジェネリック版の2つのメソッドがあって、ほぼ同じ処理を書いていますが、
 ジェネリック版ではボックス化が起きません。
 
-<pre class="source" title="ジェネリックを使うとボックス化を避けれる" lang="">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static void</span> Main()
+    static void Main()
     {
-        <span class="type">Console</span>.WriteLine(CompareTo((<span class="type">IComparable</span>)5, 6));
-        <span class="type">Console</span>.WriteLine(CompareTo((<span class="type">IComparable</span>&lt;<span class="reserved">int</span>&gt;)5, 6));
+        Console.WriteLine(CompareTo((IComparable)5, 6));
+        Console.WriteLine(CompareTo((IComparable<int>)5, 6));
     }
 
-    <span class="reserved">static int</span> CompareTo(<span class="type">IComparable</span> x, <span class="reserved">int</span> value)
+    static int CompareTo(IComparable x, int value)
     {
-        <span class="comment">// IComparable.CompareTo(object) が呼ばれる。
-        // value がボックス化される</span>
-        <span class="reserved">return</span> x.CompareTo(value);
+        // IComparable.CompareTo(object) が呼ばれる。
+        // value がボックス化される
+        return x.CompareTo(value);
     }
 
-    <span class="reserved">static int</span> CompareTo(<span class="type">IComparable</span>&lt;<span class="reserved">int</span>&gt; x, <span class="reserved">int</span> value)
+    static int CompareTo(IComparable<int> x, int value)
     {
-        <span class="comment">// IComparable&lt;int&gt;.CompareTo(int) が呼ばれる。
-        // value は int のまま渡される</span>
-        <span class="reserved">return</span> x.CompareTo(value);
+        // IComparable<int>.CompareTo(int) が呼ばれる。
+        // value は int のまま渡される
+        return x.CompareTo(value);
     }
 }
-</code></pre>
+```

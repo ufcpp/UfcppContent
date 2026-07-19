@@ -65,55 +65,55 @@ C# 8.0 では、7.0 のときに先送りされた再帰パターンが入る予
 
 例えば以下のようなクラスがあったとして、
 
-<pre class="source" title="例">
-<code><span class="reserved">class</span> <span class="type">Base</span> { }
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">Base</span>
+```csharp
+class Base { }
+class A : Base
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> X { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Y { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> A(<span class="reserved">int</span> x, <span class="reserved">int</span> y) =&gt; (X, Y) = (x, y);
+    public int X { get; set; }
+    public int Y { get; set; }
+    public A(int x, int y) => (X, Y) = (x, y);
 }
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">Base</span>
+class B : Base
 {
-    <span class="reserved">public</span> <span class="reserved">string</span> Name { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> <span class="reserved">int</span> Value { <span class="reserved">get</span>; <span class="reserved">set</span>; }
-    <span class="reserved">public</span> B(<span class="reserved">string</span> name, <span class="reserved">int</span> value) =&gt; (Name, Value) = (name, value);
-    <span class="reserved">public</span> <span class="reserved">void</span> Deconstruct(<span class="reserved">out</span> <span class="reserved">string</span> name) =&gt; name = Name;
-    <span class="reserved">public</span> <span class="reserved">void</span> Deconstruct(<span class="reserved">out</span> <span class="reserved">string</span> name, <span class="reserved">out</span> <span class="reserved">int</span> value) =&gt; (name, value) = (Name, Value);
+    public string Name { get; set; }
+    public int Value { get; set; }
+    public B(string name, int value) => (Name, Value) = (name, value);
+    public void Deconstruct(out string name) => name = Name;
+    public void Deconstruct(out string name, out int value) => (name, value) = (Name, Value);
 }
-</code></pre>
+```
 
 以下のようなコードなら C# 7.0 でも書けました。
 
-<pre class="source" title="C# 7.0 の型パターン">
-<code><span class="reserved">static</span> <span class="reserved">int</span> M(<span class="type">Base</span> obj)
+```csharp
+static int M(Base obj)
 {
-    <span class="reserved">switch</span> (obj)
+    switch (obj)
     {
-        <span class="reserved">case</span> <span class="type">A</span> a: <span class="reserved">return</span> a.X * a.Y;
-        <span class="reserved">case</span> <span class="type">B</span> b <span class="reserved">when</span> b.Name == <span class="string">"one"</span>: <span class="reserved">return</span> b.Value;
-        <span class="reserved">case</span> <span class="type">B</span> b <span class="reserved">when</span> b.Name == <span class="string">"two"</span>: <span class="reserved">return</span> 2 * b.Value;
-        <span class="reserved">case</span> <span class="type">B</span> b <span class="reserved">when</span> b.Name == <span class="string">"three"</span>: <span class="reserved">return</span> 3 * b.Value;
-        <span class="reserved">default</span>: <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">IndexOutOfRangeException</span>();
+        case A a: return a.X * a.Y;
+        case B b when b.Name == "one": return b.Value;
+        case B b when b.Name == "two": return 2 * b.Value;
+        case B b when b.Name == "three": return 3 * b.Value;
+        default: throw new IndexOutOfRangeException();
     }
 }
-</code></pre>
+```
 
 C# 8.0 では以下のような、再帰的なパターンが使えるようになります。
 
-<pre class="source" title="C# 8.0 の再帰パターン">
-<code><span class="reserved">static</span> <span class="reserved">int</span> M(<span class="type">Base</span> obj)
+```csharp
+static int M(Base obj)
 {
-    <span class="reserved">switch</span> (obj)
+    switch (obj)
     {
-        <span class="reserved">case</span> <span class="type">A</span> { X: <span class="reserved">var</span> x, Y: <span class="reserved">var</span> y }: <span class="reserved">return</span> x * y;
-        <span class="reserved">case</span> <span class="type">B</span> (<span class="string">"one"</span>) { Value: <span class="reserved">var</span> v }: <span class="reserved">return</span> v;
-        <span class="reserved">case</span> <span class="type">B</span> (<span class="string">"two"</span>) { Value: <span class="reserved">var</span> v }: <span class="reserved">return</span> 2 * v;
-        <span class="reserved">case</span> <span class="type">B</span> (<span class="string">"three"</span>) { Value: <span class="reserved">var</span> v }: <span class="reserved">return</span> 3 * v;
-        <span class="reserved">default</span>: <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">IndexOutOfRangeException</span>();
+        case A { X: var x, Y: var y }: return x * y;
+        case B ("one") { Value: var v }: return v;
+        case B ("two") { Value: var v }: return 2 * v;
+        case B ("three") { Value: var v }: return 3 * v;
+        default: throw new IndexOutOfRangeException();
     }
 }
-</code></pre>
+```
 
 `B("one")` みたいな、`()` の部分は位置指定パターンと言って、`Deconstruct` メソッドが呼ばれています(「[分解](../../../../study/csharp/datatype/deconstruction.md)」と同じ仕組み)。
 残りの `{}` の部分はプロパティ パターンと言って、プロパティに対する `X is var x` などに展開されます。
@@ -124,56 +124,56 @@ C# 8.0 では以下のような、再帰的なパターンが使えるように�
 式です。`=>` の後ろとかにも書けます。
 今のところは以下のような構文になる予定。
 
-<pre class="source" title="switch 式">
-<code><span class="reserved">static</span> <span class="reserved">int</span> M(<span class="type">Base</span> obj)
-    =&gt; obj <span class="reserved">switch</span>
+```csharp
+static int M(Base obj)
+    => obj switch
     {
-        <span class="type">A</span> { X: <span class="reserved">var</span> x, Y: <span class="reserved">var</span> y } =&gt; x * y,
-        <span class="type">B</span> (<span class="string">"one"</span>) { Value: <span class="reserved">var</span> v } =&gt; v,
-        <span class="type">B</span> (<span class="string">"two"</span>) { Value: <span class="reserved">var</span> v } =&gt; 2 * v,
-        <span class="type">B</span> (<span class="string">"three"</span>) { Value: <span class="reserved">var</span> v } =&gt; 3 * v,
-        _ =&gt; <span class="reserved">throw</span> <span class="reserved">new</span> <span class="type">IndexOutOfRangeException</span>()
+        A { X: var x, Y: var y } => x * y,
+        B ("one") { Value: var v } => v,
+        B ("two") { Value: var v } => 2 * v,
+        B ("three") { Value: var v } => 3 * v,
+        _ => throw new IndexOutOfRangeException()
     };
-</code></pre>
+```
 
 #### {} パターンで null チェック
 
 ちなみに、プロパティ パターン (`{}` を使ったパターン)には null チェックが伴うそうです。
 
-<pre class="source" title="{} パターンで null チェック">
-<code><span class="reserved">string</span> s = <span class="reserved">null</span>;
+```csharp
+string s = null;
 
-<span class="comment">// null は型情報を持ってなかったり。たとえ、静的な型が一致していても is は常に false。</span>
-<span class="reserved">if</span> (s <span class="reserved">is</span> <span class="reserved">string</span>) <span class="type">Console</span>.WriteLine(<span class="string">"ここは絶対通らない"</span>);
+// null は型情報を持ってなかったり。たとえ、静的な型が一致していても is は常に false。
+if (s is string) Console.WriteLine("ここは絶対通らない");
 
-<span class="comment">// is string x みたいな変数宣言を伴ってても同じ。</span>
-<span class="reserved">if</span> (s <span class="reserved">is</span> <span class="reserved">string</span> x) <span class="type">Console</span>.WriteLine(<span class="string">"ここも通らない"</span>);
+// is string x みたいな変数宣言を伴ってても同じ。
+if (s is string x) Console.WriteLine("ここも通らない");
 
-<span class="comment">// が、var パターンは常に true。見た目 is string に似てるけど、結果が違う。</span>
-<span class="reserved">if</span> (s <span class="reserved">is</span> <span class="reserved">var</span>  y) <span class="type">Console</span>.WriteLine(<span class="string">"ここは通る"</span>);
+// が、var パターンは常に true。見た目 is string に似てるけど、結果が違う。
+if (s is var  y) Console.WriteLine("ここは通る");
 
-<span class="comment">// で、プロパティ パターンを使って、null チェック付きの var に近いことができる。</span>
-<span class="reserved">if</span> (s <span class="reserved">is</span> { }) <span class="type">Console</span>.WriteLine(<span class="string">"ここは通らない"</span>);
-</code></pre>
+// で、プロパティ パターンを使って、null チェック付きの var に近いことができる。
+if (s is { }) Console.WriteLine("ここは通らない");
+```
 
 #### タプル switch
 
 あと、タプルに対する switch では、`()` を1重に省略できます。
 
-<pre class="source" title="タプル switch">
-<code><span class="reserved">static</span> <span class="reserved">int</span> M(<span class="reserved">int</span> x, <span class="reserved">int</span> y)
+```csharp
+static int M(int x, int y)
 {
-    <span class="comment">// 本来は、switch ((x, y))</span>
-    <span class="reserved">switch</span> (x, y)
+    // 本来は、switch ((x, y))
+    switch (x, y)
     {
-        <span class="reserved">case</span> (1, 1): <span class="reserved">return</span> 1;
-        <span class="reserved">case</span> (1, 2): <span class="reserved">return</span> 2;
-        <span class="reserved">case</span> (2, 1): <span class="reserved">return</span> 3;
-        <span class="reserved">case</span> (2, 2): <span class="reserved">return</span> 4;
-        <span class="reserved">default</span>: <span class="reserved">return</span> 0;
+        case (1, 1): return 1;
+        case (1, 2): return 2;
+        case (2, 1): return 3;
+        case (2, 2): return 4;
+        default: return 0;
     }
 }
-</code></pre>
+```
 
 ### ranges
 
@@ -181,46 +181,46 @@ ranges は、`1..3` みたいな書き方で「1から3まで(ただし3は含�
 `Range`構造体と`Index`構造体に展開される予定で、
 [この`range.cs`](https://raw.githubusercontent.com/dotnet/csharplang/master/proposals/ranges.cs)みたいな定義が必要です。
 
-<pre class="source" title="ranges">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> data = <span class="reserved">new</span>[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+        var data = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
 
-        <span class="comment">// 1～4番目 → { 2, 3, 4 }</span>
+        // 1～4番目 → { 2, 3, 4 }
         Write(data[1..4]);
-        <span class="comment">// ↑は、↓と同じ結果</span>
+        // ↑は、↓と同じ結果
         Write(data.AsSpan().Slice(1, 4 - 1));
 
-        <span class="comment">// 2～(Length - 2)番目 = 最初と最後の2要素を飛ばす → { 3, 4, 5, 6 }</span>
+        // 2～(Length - 2)番目 = 最初と最後の2要素を飛ばす → { 3, 4, 5, 6 }
         Write(data[2..^2]);
-        <span class="comment">// ↑は、↓と同じ結果</span>
+        // ↑は、↓と同じ結果
         Write(data.AsSpan().Slice(2, (data.Length - 2) - 2));
 
-        <span class="comment">// 5～末尾 → { 6, 7, 8 }</span>
+        // 5～末尾 → { 6, 7, 8 }
         Write(data[5..]);
 
-        <span class="comment">// 先頭～3 → { 1, 2, 3 }</span>
+        // 先頭～3 → { 1, 2, 3 }
         Write(data[..3]);
 
-        <span class="comment">// 全体</span>
+        // 全体
         Write(data[..]);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Write(<span class="type">Span</span>&lt;<span class="reserved">int</span>&gt; s)
+    static void Write(Span<int> s)
     {
-        <span class="reserved">foreach</span> (var x <span class="reserved">in</span> s)
+        foreach (var x in s)
         {
-            <span class="type">Console</span>.Write(x);
-            <span class="type">Console</span>.Write(<span class="string">" "</span>);
+            Console.Write(x);
+            Console.Write(" ");
         }
-        <span class="type">Console</span>.WriteLine();
+        Console.WriteLine();
     }
 }
-</code></pre>
+```
 
 正直、`Slice(start, length)` みたいな記法との差が少なすぎて、便利さで言うとそこまで大きくはないんですが。
 以下のような要件があるので、それなりに必要性はあります。

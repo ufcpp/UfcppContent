@@ -98,39 +98,39 @@ aliases: []
 
 まず、エラーを表現するために、例外型を定義。
 
-<pre class="source" title="(Java)例外型を定義">
-<code><span class="reserved">class</span> InvalidArgumentException <span class="reserved">extends</span> Exception { }
-<span class="reserved">class</span> InvalidResultException <span class="reserved">extends</span> Exception { }
-</code></pre>
+```java
+class InvalidArgumentException extends Exception { }
+class InvalidResultException extends Exception { }
+```
 
 平方根を求める関数は、以下のような静的メソッドになります。
 
-<pre class="source" title="(Java)正常値か、InvalidArgument, InvalidResultを返すメソッド">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">double</span> sqrt(<span class="reserved">double</span> value) <span class="reserved">throws</span> InvalidResultException, InvalidArgumentException
+```java
+private static double sqrt(double value) throws InvalidResultException, InvalidArgumentException
 {
-    <span class="reserved">if</span> (Double.isNaN(value)) <span class="reserved">throw</span> <span class="reserved">new</span> InvalidArgumentException();
-    <span class="reserved">if</span> (value &lt; 0) <span class="reserved">throw</span> <span class="reserved">new</span> InvalidResultException();
-    <span class="reserved">return</span> Math.sqrt(value);
+    if (Double.isNaN(value)) throw new InvalidArgumentException();
+    if (value < 0) throw new InvalidResultException();
+    return Math.sqrt(value);
 }
-</code></pre>
+```
 
 このメソッドを呼び出す側は例えば以下のようになるでしょう。
 
-<pre class="source" title="(Java)メソッドを呼び出す側">
-<code><span class="reserved">try</span>
+```java
+try
 {
-    <span class="reserved">double</span> y = sqrt(x);
+    double y = sqrt(x);
     System.out.println(y);
 }
-<span class="reserved">catch</span>(InvalidArgumentException b)
+catch(InvalidArgumentException b)
 {
-    System.out.println(<span class="string">"引数の時点でおかしな値"</span>);
+    System.out.println("引数の時点でおかしな値");
 }
-<span class="reserved">catch</span>(InvalidResultException a)
+catch(InvalidResultException a)
 {
-    System.out.println(<span class="string">"計算結果がおかしな値"</span>);
+    System.out.println("計算結果がおかしな値");
 }
-</code></pre>
+```
 
 チェック例外のメリットは2つあります。
 
@@ -153,30 +153,30 @@ Union型(直和型)とパターン マッチです。
 例えばF#で先ほどと同様のsqrt関数を書こうと思うと、
 まず、正常な値か、`InvalidArgument`エラー、`InvalidResult`エラーを表すUnionを作ります(F#の場合は[判別共用体](https://msdn.microsoft.com/ja-jp/library/dd233226(v=vs.110).aspx)(discriminated union types)と言います)。
 
-<pre class="source" title="(F#)値、InvalidArgument、InvalidResultのいずれかの値を取る型">
-<code>type SqrtResult =
+```fsharp
+type SqrtResult =
     | Value of Double
     | InvalidArgument
     | InvalidResult
-</code></pre>
+```
 
 これを使って、平方根を求める関数は以下のように書けます。
 
-<pre class="source" title="(F#)値、InvalidArgument, InvalidResultを返すメソッド">
-<code>let sqrt x =
+```fsharp
+let sqrt x =
     if Double.IsNaN(x) then InvalidArgument
-    elif x &lt; 0.0 then InvalidResult
+    elif x < 0.0 then InvalidResult
     else Value(Math.Sqrt(x))
-</code></pre>
+```
 
 呼び出す側は以下のとおり。
 
-<pre class="source" title="(F#)メソッドを呼び出す側">
+```fsharp
 match sqrt(x) with
-| Value y        -&gt; Console.WriteLine(y)
-| InvalidArgument -&gt; Console.WriteLine("引数の時点でおかしな値")
-| InvalidResult   -&gt; Console.WriteLine("計算結果がおかしな値")
-</code></pre>
+| Value y        -> Console.WriteLine(y)
+| InvalidArgument -> Console.WriteLine("引数の時点でおかしな値")
+| InvalidResult   -> Console.WriteLine("計算結果がおかしな値")
+```
 
 ちゃんと要件は満たしています。
 
@@ -191,23 +191,23 @@ match sqrt(x) with
 
 エラーのパターンを増やしたとしましょう。例えば、この例で言うと、NaNだけじゃなくて∞もエラーにしたくなって、`InvalidArgument`とは別に`Infinite`エラーというのを返したくなったとします。
 
-<pre class="source" title="(Java) throws句に例外を1つ追加">
-<code><span class="reserved">private</span> <span class="reserved">static</span> <span class="reserved">double</span> sqrt(<span class="reserved">double</span> value) <span class="reserved">throws</span> InvalidResultException, InvalidArgumentException, InfiniteException
+```java
+private static double sqrt(double value) throws InvalidResultException, InvalidArgumentException, InfiniteException
 {
-    <span class="reserved">if</span> (Double.isInfinite(value)) <span class="reserved">throw</span> <span class="reserved">new</span> InfiniteException();
-    <span class="reserved">if</span> (Double.isNaN(value)) <span class="reserved">throw</span> <span class="reserved">new</span> InvalidArgumentException();
-    <span class="reserved">if</span> (value &lt; 0) <span class="reserved">throw</span> <span class="reserved">new</span> InvalidResultException();
-    <span class="reserved">return</span> Math.sqrt(value);
+    if (Double.isInfinite(value)) throw new InfiniteException();
+    if (Double.isNaN(value)) throw new InvalidArgumentException();
+    if (value < 0) throw new InvalidResultException();
+    return Math.sqrt(value);
 }
-</code></pre>
+```
 
-<pre class="source" title="(F#)判別共用体に1つcase追加">
-<code>let sqrt x =
+```fsharp
+let sqrt x =
     if Double.IsInfinity(x) then Infinite
     elif Double.IsNaN(x) then InvalidArgument
-    elif x &lt; 0.0 then InvalidResult
+    elif x < 0.0 then InvalidResult
     else Value(Math.Sqrt(x))
-</code></pre>
+```
 
 呼び出し側も修正しないと、Javaの場合はコンパイル エラー、F# の場合は警告になります。(ビルド設定で「警告もエラー扱いする」という項目もある以上、警告の追加も破壊的変更です。)
 
@@ -235,51 +235,51 @@ match sqrt(x) with
 
 まず、エラーを示すための列挙型を作ります。
 
-<pre class="source" title="現状のC#で同様のsqrt">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">enum</span> <span class="type">ErrorType</span>
+enum ErrorType
 {
     None,
     InvalidArgument,
     InvalidResult,
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="type">ErrorType</span> TrySqrt(<span class="reserved">double</span> x, <span class="reserved">out</span> <span class="reserved">double</span> y)
+    static ErrorType TrySqrt(double x, out double y)
     {
         y = 0;
-        <span class="reserved">if</span> (<span class="reserved">double</span>.IsNaN(x)) <span class="reserved">return</span> <span class="type">ErrorType</span>.InvalidArgument;
-        <span class="reserved">if</span> (x &lt; 0) <span class="reserved">return</span> <span class="type">ErrorType</span>.InvalidResult;
-        y = <span class="type">Math</span>.Sqrt(x);
-        <span class="reserved">return</span> <span class="type">ErrorType</span>.None;
+        if (double.IsNaN(x)) return ErrorType.InvalidArgument;
+        if (x < 0) return ErrorType.InvalidResult;
+        y = Math.Sqrt(x);
+        return ErrorType.None;
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> data = <span class="reserved">new</span>[] { <span class="reserved">double</span>.NaN, -1.0, 2.0 };
+        var data = new[] { double.NaN, -1.0, 2.0 };
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+        foreach (var x in data)
         {
-            <span class="type">Console</span>.Write(x + <span class="string">" → "</span>);
-            <span class="reserved">double</span> y;
-            <span class="reserved">switch</span> (TrySqrt(x, <span class="reserved">out</span> y))
+            Console.Write(x + " → ");
+            double y;
+            switch (TrySqrt(x, out y))
             {
-                <span class="reserved">case</span> <span class="type">ErrorType</span>.None:
-                    <span class="type">Console</span>.WriteLine(y);
-                    <span class="reserved">break</span>;
-                <span class="reserved">case</span> <span class="type">ErrorType</span>.InvalidArgument:
-                    <span class="type">Console</span>.WriteLine(<span class="string">"引数の時点でおかしな値"</span>);
-                    <span class="reserved">break</span>;
-                <span class="reserved">case</span> <span class="type">ErrorType</span>.InvalidResult:
-                    <span class="type">Console</span>.WriteLine(<span class="string">"計算結果的におかしな値"</span>);
-                    <span class="reserved">break</span>;
+                case ErrorType.None:
+                    Console.WriteLine(y);
+                    break;
+                case ErrorType.InvalidArgument:
+                    Console.WriteLine("引数の時点でおかしな値");
+                    break;
+                case ErrorType.InvalidResult:
+                    Console.WriteLine("計算結果的におかしな値");
+                    break;
             }
         }
     }
 }
-</code></pre>
+```
 
 正直なところ、この先祖返り感は結構な残念さではあるんですが。
 先祖返りが起こるってのは、現状(例外機構)に対して結構な不満があるという証でもあります。
@@ -287,41 +287,41 @@ match sqrt(x) with
 将来的に、これがどうなってほしいかというと、以下のような感じでしょうか。
 
 
-<pre class="source" title="(まだ見ぬ未来のC#)同様のsqrt">
-<code><span class="reserved">using</span> System;
+```csharp
+using System;
 
-<span class="reserved">enum</span> <span class="type">ErrorType</span>
+enum ErrorType
 {
     InvalidArgument,
     InvalidResult,
 }
 
-<span class="reserved">class</span> <span class="type">Program</span>
+class Program
 {
-    <span class="reserved">static</span> <span class="reserved">double</span> | <span class="type">ErrorType</span> M(<span class="reserved">double</span> x)
+    static double | ErrorType M(double x)
     {
-        <span class="reserved">if</span> (<span class="reserved">double</span>.IsNaN(x)) <span class="reserved">return</span> <span class="type">ErrorType</span>.InvalidArgument;
-        <span class="reserved">if</span> (x &lt; 0) <span class="reserved">return</span> <span class="type">ErrorType</span>.InvalidResult;
-        <span class="reserved">return</span> <span class="type">Math</span>.Sqrt(x);
+        if (double.IsNaN(x)) return ErrorType.InvalidArgument;
+        if (x < 0) return ErrorType.InvalidResult;
+        return Math.Sqrt(x);
     }
 
-    <span class="reserved">static</span> <span class="reserved">void</span> Main()
+    static void Main()
     {
-        <span class="reserved">var</span> data = <span class="reserved">new</span>[] { <span class="reserved">double</span>.NaN, -1.0, 2.0 };
+        var data = new[] { double.NaN, -1.0, 2.0 };
 
-        <span class="reserved">foreach</span> (<span class="reserved">var</span> x <span class="reserved">in</span> data)
+        foreach (var x in data)
         {
-            <span class="type">Console</span>.Write(<span class="string">$"</span>{x}<span class="string"> → "</span>);
-            <span class="type">Console</span>.WriteLine(M(x) <span class="reserved">match</span>
+            Console.Write($"{x} → ");
+            Console.WriteLine(M(x) match
             {
-                <span class="reserved">double</span> y: y.ToString(),
-                <span class="type">ErrorType</span>.InvalidArgument: <span class="string">"引数の時点でおかしな値"</span>,
-                <span class="type">ErrorType</span>.InvalidResult: <span class="string">"計算結果的におかしな値"</span>,
+                double y: y.ToString(),
+                ErrorType.InvalidArgument: "引数の時点でおかしな値",
+                ErrorType.InvalidResult: "計算結果的におかしな値",
             });
         }
     }
 }
-</code></pre>
+```
 
 パーツごとに説明すると、以下のようなものから成り立ちます。
 
@@ -338,11 +338,11 @@ match sqrt(x) with
 Union型は、要するに、`A | B` と書いた場合、`A`か`B`かのどちらかの値を持つ型です。
 一応、これをC#で似たようなことしようと思うと、以下のように書くことになります。要するに、ただ単にクラスの継承階層を作るだけ。
 
-<pre class="source" title="AかBかを表す型">
-<code><span class="reserved">abstract class</span> <span class="type">AorB</span> { }
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">AorB</span> { }
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">AorB</span> { }
-</code></pre>
+```csharp
+abstract class AorB { }
+class A : AorB { }
+class B : AorB { }
+```
 
 ここで問題は、`AorB`を赤の他人が継承して使えることです。
 「完備検査の課題」で説明した通り、完備検査をする場合、パターン追加が破壊的変更を起こします。
@@ -351,28 +351,28 @@ Union型は、要するに、`A | B` と書いた場合、`A`か`B`かのどち�
 
 一応、第3者による継承を防止する手段はあって、以下のように書きます。
 
-<pre class="source" title="AかBかを表し、かつ、それ以外はあり得ない型">
-<code><span class="comment">// AorB 自体のインスタンスを作れないように abstract</span>
-<span class="reserved">abstract</span> <span class="reserved">class</span> <span class="type">AorB</span>
+```csharp
+// AorB 自体のインスタンスを作れないように abstract
+abstract class AorB
 {
-    <span class="comment">// クラスの外からの派生を禁止するためにコンストラクターを private に</span>
-    <span class="reserved">private</span> AorB() { }
+    // クラスの外からの派生を禁止するためにコンストラクターを private に
+    private AorB() { }
 
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">A</span> : <span class="type">AorB</span> { }
-    <span class="reserved">public</span> <span class="reserved">class</span> <span class="type">B</span> : <span class="type">AorB</span> { }
+    public class A : AorB { }
+    public class B : AorB { }
 }
-</code></pre>
+```
 
 ですが、この書き方はネストするのがうざい。
 ということで、以下のような書き方で、上記のネスト状態のコードに展開したいという案が出ています。
 
-<pre class="source" title="(まだ見ぬ未来のC#)AかBかを表し、かつ、それ以外はあり得ない型">
-<code><span class="comment">// 継承前提(abstract)なんだけど、意図しない継承はさせたくない(sealed)という意図で</span>
-<span class="comment">// abstract sealed と付ける</span>
-<span class="reserved">abstract</span> <span class="reserved">sealed</span> <span class="reserved">class</span> <span class="type">AorB</span> { }
-<span class="reserved">class</span> <span class="type">A</span> : <span class="type">AorB</span> { }
-<span class="reserved">class</span> <span class="type">B</span> : <span class="type">AorB</span> { }
-</code></pre>
+```csharp
+// 継承前提(abstract)なんだけど、意図しない継承はさせたくない(sealed)という意図で
+// abstract sealed と付ける
+abstract sealed class AorB { }
+class A : AorB { }
+class B : AorB { }
+```
 
 `abstract sealed`という、現在のC#的にいうと矛盾する2つの修飾子を組み合わせて、
 継承して使う前提だけど、意図しない第3者には継承させないという型を作ることができます。

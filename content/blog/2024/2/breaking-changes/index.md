@@ -37,35 +37,35 @@ C# 13 で導入したい `field` アクセス(自動プロパティのバッキ�
 
 `field` アクセスは以下のような話。
 
-<pre class="source" title="field アクセス">
-<span class="reserved">class</span> <span class="type">こういうのを</span>
+```csharp
+class こういうのを
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">_x</span>;
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    private int _x;
+    public int X
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">_x</span>; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">_x</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">.</span><span class="static"><span class="method">Min</span></span>(<span class="reserved">value</span>, <span class="number">0</span>);
+        get => _x; set => _x = int.Min(value, 0);
     }
 }
 
-<span class="reserved">class</span> <span class="type">こう書きたい</span> <span class="comment">// C# 13 候補</span>
+class こう書きたい // C# 13 候補
 {
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="reserved">field</span>; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="reserved">field</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">Min</span></span>(<span class="reserved">value</span>, <span class="number">0</span>);
+        get => field; set => field = int.Min(value, 0);
     }
 }
 
-<span class="reserved">class</span> <span class="type">こういうコードで困る</span>
+class こういうコードで困る
 {
-    <span class="reserved">private</span> <span class="reserved">int</span> <span class="field">field</span>;
-    <span class="comment">// ↑「このフィールドがないときだけ field をキーワード扱いする」みたいなことすると使い勝手が悪くなる。</span>
+    private int field;
+    // ↑「このフィールドがないときだけ field をキーワード扱いする」みたいなことすると使い勝手が悪くなる。
 
-    <span class="reserved">public</span> <span class="reserved">int</span> <span class="property">X</span>
+    public int X
     {
-        <span class="reserved">get</span> <span class="operator">=&gt;</span> <span class="field">field</span>; <span class="reserved">set</span> <span class="operator">=&gt;</span> <span class="field">field</span> <span class="operator">=</span> <span class="reserved">int</span><span class="operator">.</span><span class="static"><span class="method">Min</span></span>(<span class="reserved">value</span>, <span class="number">0</span>);
+        get => field; set => field = int.Min(value, 0);
     }
 }
-</pre>
+```
 
 これは以下のように、前述の基準を満たします。
 
@@ -79,16 +79,16 @@ C# 13 で導入したい `field` アクセス(自動プロパティのバッキ�
 [C# 3.0 の頃からある `var`](../../../../study/csharp/cheatsheet/ap_ver3.md#functional)ですが、
 有名な話、「`class var { }` とかいう型をどこかに書いておけば、型推論の `var` を阻害できる」という問題があります。
 
-<pre class="source" title="var">
-<span class="comment">// 普通は型推論の var になるはず。</span>
-<span class="reserved">var</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">1</span>;
+```csharp
+// 普通は型推論の var になるはず。
+var x = 1;
 
-<span class="comment">// が、こういうことをすると var x の意味が変わってしまう。</span>
-<span class="reserved">class</span> <span class="type"><span class="warning" title="CS8981">var</span></span>
+// が、こういうことをすると var x の意味が変わってしまう。
+class var
 {
-    <span class="reserved">public</span> <span class="reserved">static</span> <span class="reserved">implicit</span> <span class="reserved">operator</span> <span class="type">var</span>(<span class="reserved">int</span> <span class="variable local">_</span>) <span class="operator">=&gt;</span> <span class="number">0</span>;
+    public static implicit operator var(int _) => 0;
 }
-</pre>
+```
 
 嫌がらせでしかないんですが、
 昔は「型推論とか怖いから嫌がらせしてやれ」と言っちゃう人が実際いたとか…
@@ -110,31 +110,31 @@ C# 13 で導入したい `field` アクセス(自動プロパティのバッキ�
 [C# 7 で discard が導入された](../../../../study/csharp/cheatsheet/ap_ver7.md#discard)わけですが、
 これも「`_` を普通に変数として使っていないときに限り、`_` が discard の意味になる」という挙動になっています。
 
-<pre class="source" title="_ (discard)">
-<span class="reserved">void</span> <span class="method">m1</span>(<span class="reserved">int</span> <span class="variable local">i</span>, <span class="reserved">string</span> <span class="variable local">s</span>)
+```csharp
+void m1(int i, string s)
 {
-    <span class="comment">// これはいずれも discard。</span>
-    (<span class="reserved">_</span>, <span class="reserved">string</span> <span class="reserved">_</span>) <span class="operator">=</span> (<span class="variable local">i</span>, <span class="variable local">s</span>);
-    <span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">TryParse</span></span>(<span class="variable local">s</span>, <span class="reserved">out</span> <span class="reserved">_</span>);
+    // これはいずれも discard。
+    (_, string _) = (i, s);
+    int.TryParse(s, out _);
 }
 
-<span class="reserved">void</span> <span class="method">m2</span>(<span class="reserved">int</span> <span class="variable local">i</span>, <span class="reserved">string</span> <span class="variable local">s</span>)
+void m2(int i, string s)
 {
-    <span class="reserved">var</span> <span class="variable">_</span> <span class="operator">=</span> <span class="variable local">i</span>; <span class="comment">// これがあるせいで…</span>
+    var _ = i; // これがあるせいで…
 
-    (<span class="variable">_</span>, <span class="reserved">string</span> <span class="reserved">_</span>) <span class="operator">=</span> (<span class="variable local">i</span>, <span class="variable local">s</span>); <span class="comment">// ここの1個目の _ は変数。</span>
-    <span class="reserved">int</span><span class="operator">.</span><span class="method"><span class="static">TryParse</span></span>(<span class="variable local">s</span>, <span class="reserved">out</span> <span class="variable">_</span>); <span class="comment">// ここの _ は変数。</span>
+    (_, string _) = (i, s); // ここの1個目の _ は変数。
+    int.TryParse(s, out _); // ここの _ は変数。
 }
 
-<span class="reserved">void</span> <span class="method">m3</span>(<span class="reserved">int</span> <span class="variable local">i</span>, <span class="reserved">string</span> <span class="variable local">s</span>)
+void m3(int i, string s)
 {
-    <span class="reserved">var</span> <span class="variable">_</span> <span class="operator">=</span> <span class="variable local">i</span>;
-    <span class="reserved">var</span> <span class="variable"><span class="error" title="CS0128">_</span></span> <span class="operator">=</span> <span class="variable local">s</span>; <span class="comment">// これは「同じ名前の変数がすでにある」エラー。</span>
+    var _ = i;
+    var _ = s; // これは「同じ名前の変数がすでにある」エラー。
 
-    (<span class="variable">_</span>, <span class="reserved">string</span> <span class="reserved">_</span>) <span class="operator">=</span> (<span class="variable local">i</span>, <span class="variable local">s</span>);
-    <span class="reserved">int</span><span class="operator">.</span><span class="static"><span class="method">TryParse</span></span>(<span class="variable local">s</span>, <span class="reserved">out</span> <span class="variable">_</span>);
+    (_, string _) = (i, s);
+    int.TryParse(s, out _);
 }
-</pre>
+```
 
 これについての前述の基準:
 
