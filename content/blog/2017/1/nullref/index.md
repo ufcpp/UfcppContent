@@ -1,0 +1,77 @@
+---
+title: "ピックアップRoslyn 1/24: null参照"
+source_url: "https://ufcpp.net/blog/2017/1/nullref/"
+content_type: "BlogEntry"
+published_at: "2017-01-24T00:06:35"
+updated_at: "2017-01-24T00:12:41"
+tags: []
+umbraco_id: 2034
+parent_id: 2033
+sort_order: 0
+aliases: []
+---
+
+# ピックアップRoslyn 1/24: null参照
+
+今日はピックアップRoslynなのかC#小ネタ集なのか微妙なライン。
+
+なんか、C# 7で導入される[参照戻り値](../../../2016/6/cs7refreturns/index.md)に関して、参照なのにnullを返せるというネタを思いついてしまったり。
+ただのネタのつもりだったんですが、案外考えなきゃ行けない事案かもなぁという話。
+
+## 経緯
+
+参照戻り値で、「null参照」を返したいっていう要望が出ていたりします。
+
+- [Please add new syntax keyword "ref?" to represent that "ref return" result might be null #16670](https://github.com/dotnet/roslyn/issues/16670)
+
+`ref? T` みたいな専用の記法が欲しいという要望です。
+他の人の反応としては、「参照はnullを返すものじゃない。あきらめろ」的な雰囲気。
+僕個人の感想としても、「メリットの割に複雑。実装するのは割に合わない」と思います。
+
+なのでそのままスルーしようとしていたところで、ふと、邪悪なアイディアを思いついてしまいます。
+「[`Unsafe`クラス](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/)使ってnull返せるよ」とかいう。
+以下のようなコードでできます。
+
+<pre class="source" title="null参照戻り値">
+<code>    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="type">T</span> NullRef&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="reserved">ref</span> <span class="type">Unsafe</span>.AsRef&lt;<span class="type">T</span>&gt;((<span class="reserved">void</span>*)0);
+    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">bool</span> IsNull&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> r) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="type">Unsafe</span>.AsPointer(<span class="reserved">ref</span> r) == (<span class="reserved">void</span>*)0;
+</code></pre>
+
+どういうことかというと、[先月18日の小ネタ](../../../2016/12/tipsgeneratedil/index.md)の最後でちょっと話しましたけど、 .NET ランタイムの内部的には参照とポインターの扱いは全く同じです。で、`Unsafe`クラスは、それを利用して(半分、悪用レベル)ポインターと参照の相互変換する機能を提供しています。名前通り結構安全性を損なう機能で、色々悪用もできます。その1つが、今回の「null参照」。0をポインターに渡して、それを参照に変換してやれば、nullな参照の完成という。
+
+## 参照にnullは期待しない 
+ 
+参照とポインターの違いの1つに、無効な参照先(要するにnull)を認めるかどうかがあります。ポインターにはnullポインターがありますが、普通、参照先がない参照なんて想定しません。無効な場所を指さないように、コンパイラーが色々制限を掛けているのが参照です。 
+C#でも「そのつもり」です。
+参照引数も、参照戻り値も、通常は必ず有効な参照先を持ちます。
+ 
+それを台無しにできる程度に悪用可能なのがunsafeコンテキストなわけです。まあ、そういうことが可能だから、コンパイルオプションで「unsafeコードを認める」(/unsafeオプション)をオンにしないと使えなくしているわけですが… 参照戻り値を使うと、/unsafeオプションなしで危ない事ができる可能性が出てきます。 
+ 
+`Unsafe`クラスの利用自体では、危ない事をするにはポインターを介する必要があって、使う側にも/unsafeオプションが必要です。危ないことしている自覚が出るという意味では、`Unsafe`クラスはまだ安全な部類と言えます。 
+ 
+ところが、先ほどのコード、再掲になりますが以下のようなものが入ったライブラリを作るとします。 
+ 
+<pre class="source" title="null参照戻り値">
+<code>    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">ref</span> <span class="type">T</span> NullRef&lt;<span class="type">T</span>&gt;() <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="reserved">ref</span> <span class="type">Unsafe</span>.AsRef&lt;<span class="type">T</span>&gt;((<span class="reserved">void</span>*)0);
+    <span class="reserved">unsafe</span> <span class="reserved">static</span> <span class="reserved">bool</span> IsNull&lt;<span class="type">T</span>&gt;(<span class="reserved">ref</span> <span class="type">T</span> r) <span class="reserved">where</span> <span class="type">T</span> : <span class="reserved">struct</span> =&gt; <span class="type">Unsafe</span>.AsPointer(<span class="reserved">ref</span> r) == (<span class="reserved">void</span>*)0;
+</code></pre>
+ 
+このコードを実装する際にはポインターが含まれているので/unsafeオプションが必要です。一方、引数や戻り値にはポインターが出てこず、これを使う側には/unsafeオプション不要です。通常の、safeなコンテキストで、危ないものが使えている状態になりました。 
+ 
+### null参照を認めるべきか 
+ 
+できてしまうものは仕方がない。であれば、改めて、null参照を認めるべきなのかという問題が出てきます。 
+ 
+まあ、前述の通り、普通、「無効な参照」なんて期待しません。他の言語でも見たことがない。「nullがほしければポインターを使え」という感じ。あまり期待されないていないものが存在するのはそれだけでデメリットです。完全に消せるならそれに越したことはない。 
+ 
+ところが、先ほどの邪悪なアイディアにより、現状でも存在しうることがはっきりしました。まあ、敢えてあんなコードを書かない限りは起きない事なので、別に問題なしとして放置するのもありな範囲でしょう。(参照戻り値自体、利用頻度はそれほど多くならないだろうものです。低頻度なものにコストを掛けても割に合いません。) 
+ 
+逆に、積極的にnull参照を認めるならどうすべきでしょう。今現在、[null許容参照型](http://www.buildinsider.net/column/iwanaga-nobuyuki/012)っていう言語機能も提案されているくらいですし、少なくとも、null参照があり得るかあり得ないかの区別は、メソッドシグネチャだけ見て区別が付くべきでしょう。そうなると、冒頭の`ref? T`という書き方が現実味を帯びてきます。 
+
+## まとめ
+
+[`Unsafe`クラス](https://www.nuget.org/packages/System.Runtime.CompilerServices.Unsafe/)がなかなかやりたい放題で、通常あり得なさそうな「null参照」を得られることに気づきました。
+
+まあ、`Unsafe`とかいう名前からして危なそうなものを使って初めてできることですし、参照戻り値自体利用頻度はそう高くない機能になると思われるので、放っておいても問題なさそうなものです。
+
+とはいえ、もしかすると、「null許容参照」みたいな概念も必要になるかもしれません。

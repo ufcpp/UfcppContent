@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "node_count": 1150,
+  "markdown_outputs": 1107,
+  "canonical_pages": 928,
+  "structural_indexes": 179,
+  "integrated_exercises": 34,
+  "metadata_nodes": 4,
+  "excluded_nodes": 5,
+  "sitemap_urls": 928,
+  "canonical_sitemap_matches": 928,
+  "unknown_macros": 0,
+  "known_missing_required_properties": 1,
+  "unresolved_internal_links": 0,
+  "referenced_assets": 815,
+  "missing_assets": 0,
+  "output_path_collisions": 0,
+  "invalid_paths": 0,
+  "original_page_break_files": 21,
+  "original_page_break_markers": 42,
+  "source_anomalies": [
+    {
+      "umbraco_id": 1410,
+      "content_type": "Article",
+      "missing_property": "bodyText",
+      "handling": "Generated with an empty value."
+    }
+  ],
+  "sitemap_runtime_urls": [
+    "/404/",
+    "/500/"
+  ],
+  "generated_utility_urls_not_in_sitemap": [
+    "/search/",
+    "/sitemap/"
+  ]
+}

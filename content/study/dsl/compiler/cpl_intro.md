@@ -1,0 +1,40 @@
+---
+title: "初めてのコンパイラ"
+source_url: "https://ufcpp.net/study/dsl/compiler/cpl_intro/"
+content_type: "Article"
+published_at: "2009-06-28T00:00:00"
+updated_at: "2015-05-06T14:15:41"
+tags: []
+umbraco_id: 1435
+parent_id: 1434
+sort_order: 0
+aliases:
+  - "/dsl/compiler/cpl_intro/"
+  - "/dsl/cpl_intro"
+  - "/dsl/cpl_intro.html"
+  - "/study/dsl/cpl_intro"
+  - "/study/dsl/cpl_intro.html"
+---
+
+# 初めてのコンパイラ
+
+##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+モデリングとか DSL とかの話とセットにしていいものかどうか悩ましいけど、
+一応関連はしてるのでここに収めることにする。
+
+
+##### <a id="sec-generated-title-2"></a>目的
+* コンピュータープログラムの動作の基本となる「スタック」という概念について学びます。
+
+* 人が書きやすいプログラミング言語から、 コンピューターが直接実行できるマシン語への変換過程を学びます。
+
+
+
+##### <a id="sec-generated-title-3"></a>本章に書かれる（予定の）こと
+* デモ用に、整数の加減乗除・比較と関数の定義・呼び出しだけができる簡単な仮想マシン（コンピューターを仮想的に再現したもの）を作成します。
+
+* 作成した仮想マシン向けのプログラミング言語を作成します。
+
+* このプログラミング言語から仮想マシン語コードへの変換過程を例に、コンパイラの作成方法及びスタックの動作を説明します。（予定）
+
+* 実際に、ソースコード → 字句 → 構文木 → マシン語コード と変換される様子を Silverlight を使って「動くデモ」にします。

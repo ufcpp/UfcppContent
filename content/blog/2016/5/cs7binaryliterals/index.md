@@ -1,0 +1,74 @@
+---
+title: "2進数リテラルと数字区切り文字"
+source_url: "https://ufcpp.net/blog/2016/5/cs7binaryliterals/"
+content_type: "BlogEntry"
+published_at: "2016-05-23T15:40:39"
+updated_at: "2016-05-23T15:41:45"
+tags:
+  - "C# 7思い出話"
+umbraco_id: 1903
+parent_id: 1890
+sort_order: 3
+aliases: []
+---
+
+# 2進数リテラルと数字区切り文字
+
+## C# 7思い出話
+
+[C# によるプログラミング入門](../../../../study/csharp/index.md)に、ちらほらとC# 7の話題を書き始めたわけですが。
+
+まあ、入門なんで仕様として固まったものだけを書いていくつもりです。ある程度固まりそうな段階まで書かないし、結局予定から漏れたものは修正したり。
+
+一方で、その仕様が固まるまでにあった流れなんかも、ブログに残しといてもいいかなぁとか思ったり。
+
+ってことで、「C# 7思い出話」なんていうカテゴリー付けて、ブログでも書いてみようというのが今回の話。
+さしあたって、今、[入門](../../../../study/csharp/index.md)に書いたのが、
+
+- [2進数リテラル](../../../../study/csharp/start/stnumber.md#binary) (binary literals)
+- [数字区切り文字](../../../../study/csharp/start/stnumber.md#digit-separator) (digit separators)
+
+の2つなので、今日はこの2つ。
+
+## 2進数リテラルと数字区切り文字
+
+こういう機能。
+
+<pre class="source" title="digit separators">
+<code><reserved></span><span class="reserved">var</span> million = 1_000_000;
+<span class="reserved">var</span> abcd = 0b1010_1011_1100_1101; <span class="comment">// 特に2進数リテラルで有用</span>
+<span class="reserved">var</span> abcd2 = 0xab_cd;              <span class="comment">// 16進数リテラルにも使える</span>
+<span class="reserved">var</span> x = 1.123_456_789;            <span class="comment">// 浮動小数点数リテラルにも使える</span>
+</code></pre>
+
+2進数リテラルと数字区切り文字の2つはセットですね。
+2進数って普通に書いたらむちゃくちゃ大きな桁数になりますし。
+そりゃ、区切らないと読めた代物じゃない。
+
+この2つの機能、「C# 7」としては「気が付いたらいつの間にか実装があった」って感じです。
+特に「実装したよ」アナウンスもなく、pull-requestも見かけず。
+
+そもそも、「[C# 7の最初の設計ミーティング](https://github.com/dotnet/roslyn/issues/98)」でちょこっと「ページ内検索してみたら確かに書かれてる」程度の地味な取り上げられ方してただけ。機能的にも小さなものなので、提案ページもすごく簡素。
+
+- [Proposal: Binary literals #215](https://github.com/dotnet/roslyn/issues/215)
+
+それも当然でして、この機能はC# 6の頃からあったから。
+要するに、「C# 6の頃から試験的な実装あったけど、結局C# 6には入れなった」というもの。
+仕様的に何か問題があったわけでもなくて、単純に「優先度低、スケジュール的に後回し」。
+という話が、今稼働してる[GitHubのリポジトリ](https://github.com/dotnet/roslyn)じゃなくて、昔懐かし[CodePlex](https://roslyn.codeplex.com/)時代にありました。
+
+まあ、こういう、低コスト・低リターン機能は後回しになりがち。
+
+実装するのは低コストと言っても、仕様的に問題ないかをよく考えたり、実際試してみる期間を設けるのはそれなりに大変です。
+CodePlex上で、以下のようなディスカッションがあった記憶があります。
+
+- 区切り文字は `_` でいいの？
+- `1010 1100`みたいにスペースで区切らせてよ
+  - それは字句解析的に面倒で、コストかかりすぎる
+- 8進数リテラルも入れてよ
+  - あっても使わないだろ、実際
+      - chmodで使うよ
+  - C言語の`0`始まりは紛らわしいし、octalだからって`0o` (ゼロ、オー)も0とoが区別つきにくいし
+- そもそも、16進数リテラルの`0x`もなんなの、Xって。hexの3文字目って
+
+簡単な機能であっても、なかなかめんどくさい感じの話に。

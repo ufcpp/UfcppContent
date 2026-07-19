@@ -1,0 +1,136 @@
+---
+title: "ビルドで使う C# コンパイラーを差し替える"
+source_url: "https://ufcpp.net/blog/2017/12/msnetcompilers/"
+content_type: "BlogEntry"
+published_at: "2017-12-11T19:37:14"
+updated_at: "2017-12-11T19:50:56"
+tags: []
+umbraco_id: 2121
+parent_id: 2112
+sort_order: 4
+aliases: []
+---
+
+# ビルドで使う C# コンパイラーを差し替える
+
+[Visual Studio 2017 15.5](../vs15_5/index.md)で、C# コンパイラーのコード生成の仕方がちょっと変わりました。
+
+その余波で起きる問題を回避するために、Visual Studio は 15.5 のまま、C# コンパイラーのバージョンだけを下げる方法について話します。
+
+## 背景
+
+### C# コンパイラーが出力するコードのどこが変わったか
+
+15.5 の世代では、とにかくいろいろパフォーマンス改善を行っています。
+.NET Coreのランタイムや標準ライブラリのパフォーマンスも1～2割上がっています。
+Visual Studioも、ソリューションのロードにかかる時間が半減していたりします。
+C# コンパイラーも、コンパイラーが出力するコードがより速くなるように微妙に調整が入っています。
+
+コンパイラーの出力結果なんですが、今まで `int` (符号付き)だったところが `uint` (符号なし)で生成されていたりします。
+なんでかというと、以下のようなコード(よくある配列の範囲チェックみたいなやつ)を考えたとき、
+
+<pre class="source" title="">
+<code>0 &lt;= index &amp;&amp; index &lt; length
+</code></pre>
+
+以下のように書き換えた方が比較が1回減って速いから。
+
+<pre class="source" title="">
+<code>(<span class="reserved">uint</span>)index &lt; length
+</code></pre>
+
+こういう範囲チェック、ポインター操作をしていると頻出するので、
+ポインターの扱いを符号付き整数から符号なし整数に変えたみたいです。
+
+ということで、以下のようなコードを書いた場合、
+
+<pre class="source" title="">
+<code><span class="reserved">public</span> <span class="reserved">unsafe</span> <span class="reserved">void</span> M(<span class="reserved">string</span> s)
+{
+    <span class="reserved">fixed</span> (<span class="reserved">char</span>* p = s)
+    {
+    }
+}
+</code></pre>
+
+これまで、`conv.i` (`s`のアドレスを符号付き整数に変換)命令が出ていたところに、
+`conv.u` (同、符号なし整数)命令が出るように変わったりしました。
+
+### Unity でこれが問題に
+
+この、「ポインター化の `conv.u`」が、[Unity](https://unity3d.com/jp/)(ゲーム エンジンの)を即死させます。
+起きていることは `InvalidCast` 例外(符号の有無が違うから)の類なんですけども、
+命令解釈のレベルで起きてることなせいか、Unity エディターが無言で落ちます。
+
+まあ、問題が起きてる場所的に、Unity が落ちる条件も限定的ではあります。
+以下のような条件。
+
+- unsafeコードを使っている
+- そのコードを Visual Studio 15.5 でビルドした DLL を、Unity で参照する
+
+自社のプロジェクトでは、まさにこの条件を踏んでしまっていて困っていました。
+
+### ダウングレードしにくい・side by side インストールしにくい
+
+ということで、最初は、「Visual Studio のバージョンを上げない」運用をしていたんですけども、
+チーム内でうっかりバージョンを上げちゃう事案が発生。
+自分もうっかり上げたくなる事案は常に発生中。
+
+で、Visual Studio 2017 (15.0)以来、Visual Studioのインストール手順が簡略化されたんですけども
+(Lightweight インストーラーって呼ばれています)、
+その代わり、バージョン違いの Visual Studio の同時インストール(side by side インストール)がかえってやりにくくなってたりします。
+
+「Professional と Community で別バージョンを入れる」みたいなことは結構楽なんですけども、
+「どっちもProで、15.4.5 と 15.5.0 を同時に入れる」みたいなのは、Lightweight インストーラーではできません。
+
+しかも、ダウングレードが大変。
+アップグレードは「更新」ボタン1つでできるんですけども、
+ダウングレードは一度アンインストールからのインストールし直しが必要。
+
+ということで、「うっかり上げちゃう事案」が結構深刻な問題になりました。
+
+## コンパイラーのバージョンだけを下げる
+
+ふと、確か、NuGet パッケージ参照で C# コンパイラーを差し替えれる仕組みがあることを思いだしたので、
+それで問題回避をしてみることに。
+
+### Microsoft.Net.Compilers パッケージ
+
+以下のパッケージを NuGet 参照すると、そのプロジェクトのビルドは、パッケージ中に含まれている csc で行われるようになります。
+
+- [Microsoft.Net.Compilers](https://www.nuget.org/packages/Microsoft.Net.Compilers/)
+
+例えば、Microsoft.Net.Compilers の 2.4.0 を参照すると C# 7.1 時代のコンパイラーになります。
+
+元々は、ASP.NET で使う用です。
+ASP.NET だとサーバー上でコンパイルが行われるので、
+開発中とサーバー上でコンパイラーのバージョンが違うと困ります。
+なので、Visual Studio を使って開発している最中も、指定のバージョンのコンパイラーが使われるようにするのがこのパッケージ。
+
+パッケージ中には、csc 以下ビルドに必要なバイナリ一式と、
+そっちの csc を使う設定が書かれた props ファイル(csproj に対してインポートするヘッダー ファイルみたいなもの)が入っています。
+
+[このバージョン 2.4.0 を、unsafe コードを使っているプロジェクトで参照するようにしてみた](https://github.com/ufcpp/UnitySamples/blob/master/2017%2010%2019%20CrashUnityVs15.5/Lib/Lib155-240.csproj#L9)ところ、
+Unity が落ちなくなる(DLL の中身を ildasm したところ、`conv.i` に戻っている)ことは確認済み。
+
+### 問題点
+
+一応、以下のような問題もあります。
+
+- C# のバージョン自体を下げているので、これを参照したプロジェクトでは C# 7.2 が使えない
+  - 影響が出るのはパッケージを直接参照しているプロジェクトだけです
+- さし変わるのはビルドに使うコンパイラーだけなので、Visual Studio 上ではエラーにならないのに、ビルドしたらエラーが出ることがある
+  - C# 7.2 の文法を使ってしまった場合だけです
+- 体感できるほどの差はないものの、微妙にコンパイルが遅いはず
+- C# の言語バージョンと、Microsoft.Net.Compilers パッケージのバージョンが違いすぎてどれがどれかわからない
+  - 今回の場合は 2.4.0 で大丈夫です。2.4.0 は C# 7.1 になります
+
+## まとめ
+
+- `conv.u` (unsigned)
+- 今のVisual Studio
+  - ダウングレードしにくい
+  - side by side インストールしにくい
+- ビルド時に使う C# コンパイラーを差し替えたければ[Microsoft.Net.Compilers](https://www.nuget.org/packages/Microsoft.Net.Compilers/)パッケージをNuGet参照
+  - Visual Studio 上のコード補完の挙動とビルドの挙動が変わるので注意
+  - ASP.NET 以外で使う日が来るとは…

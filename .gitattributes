@@ -1,0 +1,17 @@
+* text=auto eol=lf
+assets/** -text
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.xap binary
+*.pdf binary
+*.ppt binary
+*.pptx binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary

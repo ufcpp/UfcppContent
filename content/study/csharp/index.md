@@ -1,0 +1,315 @@
+---
+title: "C# によるプログラミング入門"
+source_url: "https://ufcpp.net/study/csharp/"
+content_type: "Subject"
+published_at: "2015-05-06T14:06:20"
+updated_at: "2015-05-14T10:42:03"
+tags: []
+umbraco_id: 1169
+parent_id: 1115
+sort_order: 0
+aliases:
+  - "/csharp"
+  - "/csharp/"
+  - "/csharp/index"
+  - "/csharp/index.html"
+  - "/study/csharp/index"
+  - "/study/csharp/index.html"
+---
+
+# C# によるプログラミング入門
+
+C# によるプログラミング入門です。C# 初心者の方はもちろん、これからプログラミングを始めようという方も対象としています。
+
+## 章
+
+### <a id="intro"></a>[まえがき](intro/index.md)
+
+- [はじめに](intro/introduction.md)
+- [はじめてのプログラミング](intro/getstarted.md)
+- [\[雑記\] プログラミング言語の簡単さ・難しさ](intro/howeasy.md)
+
+### <a id="cheatsheet"></a>[C# の機能一覧（索引的なもの）](cheatsheet/index.md)
+
+- [C# の式と文の一覧](cheatsheet/list_expression.md)
+- [C# の型とメンバー](cheatsheet/list_type.md)
+- [バージョン](cheatsheet/list_versions.md)
+- [C# 1.0](cheatsheet/ap_ver1.md)
+- [C# 2.0 の新機能](cheatsheet/ap_ver2.md)
+- [C# 3.0 の新機能](cheatsheet/ap_ver3.md)
+- [C# 4.0 の新機能](cheatsheet/ap_ver4.md)
+- [C# 5.0 の新機能](cheatsheet/ap_ver5.md)
+- [C# 6 の新機能](cheatsheet/ap_ver6.md)
+- [C# 7 の新機能](cheatsheet/ap_ver7.md)
+- [C# 7.1 の新機能](cheatsheet/ap_ver7_1.md)
+- [C# 7.2 の新機能](cheatsheet/ap_ver7_2.md)
+- [C# 7.3 の新機能](cheatsheet/ap_ver7_3.md)
+- [C# 8.0 の新機能](cheatsheet/ap_ver8.md)
+- [C# 9.0 の新機能](cheatsheet/ap_ver9.md)
+- [C# 10.0 の新機能](cheatsheet/ap_ver10.md)
+- [C# 11.0 の新機能](cheatsheet/ap_ver11.md)
+- [C# 12.0 の新機能](cheatsheet/ap_ver12.md)
+- [C# 13.0 の新機能](cheatsheet/ap_ver13.md)
+- [C# 14.0 の新機能](cheatsheet/ap_ver14.md)
+- [言語バージョンの指定](cheatsheet/langversionoption.md)
+- [C#の言語バージョンと.NETバージョン](cheatsheet/listfxlangversion.md)
+- [使わなくなった機能・新しい機能](cheatsheet/ap_modern.md)
+- [C#スクリプト実行](cheatsheet/apscripting.md)
+- [ファイル ベース実行](cheatsheet/file-based-app.md)
+
+### <a id="abstract"></a>[C# の概要](abstract/index.md)
+
+- [C# とは](abstract/ab_csharp.md)
+- [.NET とは](abstract/ab_dotnet.md)
+
+### <a id="devenv"></a>[C#開発環境](devenv/index.md)
+
+- [C# 開発環境](devenv/ab_devenv.md)
+- [プロジェクト管理](devenv/vs_project.md)
+- [はじめての C# 実演編](devenv/getstarted_csharp.md)
+
+### <a id="start"></a>[基礎](start/index.md)
+
+- [C#のプログラムの基本構造](start/st_basis.md)
+- [プログラムの作成・実行](start/st_compile.md)
+- [コメント](start/st_comment.md)
+- [値の入出力](start/st_consoleio.md)
+- [変数と式](start/st_variable.md)
+- [\[雑記\] 識別子名に使える文字](start/misc_identifier.md)
+- [\[雑記\] C# ソースコードと Unicode](start/misc_unicode.md)
+- [組込み型](start/st_embeddedtype.md)
+- [数値](start/stnumber.md)
+- [特殊な文字列リテラル](start/st_string.md)
+- [C# 10.0 の補間文字列の改善](start/improvedinterpolatedstring.md)
+- [組込み演算子](start/st_operator.md)
+- [組込み型変換](start/st_cast.md)
+- [オーバーフローのチェック](start/sp_checked.md)
+- [定数](start/sp_const.md)
+- [型推論(暗黙的型付け)と匿名型](start/sp3_inference.md)
+- [\[雑記\] 型推論の是非](start/sp3_var.md)
+- [\[雑記\] 識別子のスコープとオブジェクトの寿命](start/st_scope.md)
+- [\[雑記\] 型の決定](start/misctyperesolution.md)
+- [\[雑記\] コンパイル結果に影響を及ぼす属性](start/miscreservedattribute.md)
+- [\[雑記\] 明確な代入ルール](start/definiteassignment.md)
+
+### <a id="structured"></a>[構造化](structured/index.md)
+
+- [構造化](structured/st_structured.md)
+- [制御フロー](structured/st_control.md)
+- [条件分岐](structured/st_branch.md)
+- [反復処理](structured/st_loop.md)
+- [配列](structured/st_array.md)
+- [関数](structured/st_function.md)
+- [\[雑記\] エントリーポイント](structured/miscentrypoint.md)
+- [\[雑記\] インライン化](structured/miscinlining.md)
+- [\[雑記\] オーバーロード解決](structured/miscoverloadresolution.md)
+- [可変長引数](structured/sp_params.md)
+- [オプション引数・名前付き引数](structured/sp4_optional.md)
+- [コマンドライン引数](structured/st_command.md)
+- [ライブラリ](structured/st_library.md)
+- [列挙型](structured/st_enum.md)
+- [データの構造化(複合型)](structured/st_struct.md)
+- [名前のない複合型](structured/st_anonymoustype.md)
+- [名前空間](structured/sp_namespace.md)
+- [例外処理](structured/oo_exception.md)
+- [\[雑記\] 例外の使い方](structured/misc_exception.md)
+- [\[雑記\] 例外のスタックトレース](structured/misc_stacktrace.md)
+- [\[雑記\] 式にまつわる補足](structured/miscexpressions.md)
+
+### <a id="oop"></a>[オブジェクト指向](oop/index.md)
+
+- [オブジェクト指向とは](oop/oo_about.md)
+- [クラス](oop/oo_class.md)
+- [コンストラクター](oop/oo_construct.md)
+- [実装の隠蔽](oop/oo_conceal.md)
+- [プロパティ](oop/oo_property.md)
+- [静的メンバー](oop/oo_static.md)
+- [モジュール初期化子](oop/moduleinitializer.md)
+- [演算子のオーバーロード](oop/oo_operator.md)
+- [インデクサー](oop/oo_indexer.md)
+- [継承](oop/oo_inherit.md)
+- [\[余談\] 暗黙的な派生](oop/miscimplictinherit.md)
+- [\[雑記\] 多重継承できない理由](oop/oo_multipleinheritance.md)
+- [多態性](oop/oo_polymorphism.md)
+- [\[雑記\] キャストと as](oop/misc_as.md)
+- [\[雑記\] コンストラクター内の仮想メソッド呼び出し](oop/misc_construct.md)
+- [抽象メソッド、抽象クラス](oop/oo_abstract.md)
+- [インターフェース](oop/oo_interface.md)
+- [\[雑記\] 抽象定義と自動実装](oop/misc_autoimpl.md)
+- [\[雑記\] 仮想関数テーブル](oop/oo_vftable.md)
+- [ジェネリック](oop/sp2_generics.md)
+- [ジェネリクスの共変性・反変性](oop/sp4_variance.md)
+- [【Generic Math】 C# 11 での演算子の新機能](oop/generic-math-operators.md)
+
+### <a id="datatype"></a>[データ型](datatype/index.md)
+
+- [タプル](datatype/tuples.md)
+- [複合型の分解](datatype/deconstruction.md)
+- [is、switch の拡張 (型スイッチ)](datatype/typeswitch.md)
+- [パターン マッチング](datatype/patterns.md)
+- [特殊な変数宣言](datatype/declarationexpressions.md)
+- [レコード型](datatype/record.md)
+- [コレクション式](datatype/collection-expression.md)
+- [\[雑記\] InlineArray](datatype/inline-array.md)
+
+### <a id="functional"></a>[関数指向](functional/index.md)
+
+- [関数指向](functional/fun_functional.md)
+- [デリゲート](functional/sp_delegate.md)
+- [\[雑記\] デリゲートの利用例](functional/misc_delegate.md)
+- [\[雑記\] デリゲートの内部](functional/miscdelegateinternal.md)
+- [ローカル関数と匿名関数](functional/fun_localfunctions.md)
+- [\[雑記\] 匿名関数のコンパイル結果](functional/sp2_anonymousmethod.md)
+- [ラムダ式](functional/sp3_lambda.md)
+- [イベント](functional/sp_event.md)
+- [【雑記】イベントの購読とその解除](functional/misceventsubscribe.md)
+- [関数型言語・動的言語的な機能](functional/sp3_functional.md)
+- [拡張メソッド](functional/sp3_extension.md)
+- [クラスの機能拡張](functional/fun_whyextensions.md)
+
+### <a id="data"></a>[データ列処理](data/index.md)
+
+- [foreach](data/sp_foreach.md)
+- [イテレーター](data/sp2_iterator.md)
+- [\[雑記\] 内部イテレータと外部イテレータ](data/sp2_itpattern.md)
+- [データ処理](data/da_about.md)
+- [LINQ](data/sp3_linq.md)
+- [標準クエリ演算子（クエリ式関係）](data/sp3_stdquery.md)
+- [標準クエリ演算子（その他）](data/sp3_stdqueryo.md)
+- [\[雑記\] LINQ と遅延評価](data/sp3_lazylist.md)
+- [\[雑記\] 小さな機能の組み合わせ](data/datamodulararchitecture.md)
+- [\[雑記\] O/R インピーダンスミスマッチ](data/sp3_ormismatch.md)
+- [\[雑記\] O/R インピーダンスミスマッチ（クラスの継承）](data/sp3_ormismatch2.md)
+- [\[雑記\] LINQ to SQL 実践編](data/sp3_linqtosql.md)
+- [\[雑記\] IQueryable の実装](data/sp3_iqueryable.md)
+- [不変(immutable)なコレクション](data/misc_immutabledata.md)
+- [インデックス/範囲処理](data/dataranges.md)
+
+### <a id="resource"></a>[メモリとリソース管理](resource/index.md)
+
+- [C# のメモリ管理](resource/rm_gc.md)
+- [構造体](resource/rm_struct.md)
+- [値型と参照型](resource/oo_reference.md)
+- [readonly の注意点](resource/readonlyness.md)
+- [既定値](resource/rm_default.md)
+- [参照渡し](resource/sp_ref.md)
+- [Span<T>構造体](resource/span.md)
+- [ref構造体](resource/refstruct.md)
+- [\[雑記\] スタックとヒープ](resource/misc_heap.md)
+- [ボックス化](resource/rmboxing.md)
+- [null許容値型(Nullable&lt;T&gt; 型)](resource/sp2_nullable.md)
+- [null 許容参照型](resource/nullablereferencetype.md)
+- [null の取り扱い](resource/rm_nullusage.md)
+- [リソースの破棄](resource/oo_dispose.md)
+- [ファイナライザー](resource/rm_destructor.md)
+- [\[雑記\] Dispose にまつわる余談](resource/rm_disposable.md)
+- [【雑記】弱参照](resource/rmweakreference.md)
+
+### <a id="dynamic"></a>[動的な処理](dynamic/index.md)
+
+- [実行時型情報](dynamic/sp_reflection.md)
+- [属性](dynamic/sp_attribute.md)
+- [式木（Expression Trees）](dynamic/sp3_expression.md)
+- [dynamic](dynamic/sp4_dynamic.md)
+- [dynamic の内部実装](dynamic/sp4_callsite.md)
+- [\[雑記\] 動的コード生成のパフォーマンス](dynamic/misc_dynamic.md)
+- [\[雑記\]動的な処理の使い方](dynamic/dyn_usage.md)
+- [\[雑記\] 多重ディスパッチ](dynamic/sp4_multipledispatch.md)
+
+### <a id="interop"></a>[相互運用](interop/index.md)
+
+- [unsafe](interop/sp_unsafe.md)
+- [型付き参照](interop/sp_makeref.md)
+- [プラットフォーム呼び出し](interop/sp_pinvoke.md)
+- [COM 相互運用時の特別処理](interop/sp4_cominterop.md)
+- [複合型のレイアウト](interop/memorylayout.md)
+- [関数ポインター](interop/functionpointer.md)
+
+### <a id="async"></a>[非同期処理](async/index.md)
+
+- [マルチスレッド](async/sp_thread.md)
+- [非同期処理の種類](async/asyncvariation.md)
+- [非同期処理を支えるインフラ](async/asyncinside.md)
+- [実行コンテキスト](async/asyncexecutioncontext.md)
+- [\[雑記\] スレッド間の競合回避](async/misc_synchronize.md)
+- [\[雑記\] スレッド プールとタスク](async/misc_task.md)
+- [\[雑記\] 非同期制御フロー](async/misc_asyncflow.md)
+- [非同期メソッド](async/sp5_async.md)
+- [非同期メソッドの内部実装](async/sp5_awaitable.md)
+- [\[雑記\] 継続と先物](async/misc_continuation.md)
+- [\[雑記\] GUI と非同期処理](async/misc_uithread.md)
+- [非同期ストリーム](async/asyncstream.md)
+
+### <a id="misc"></a>[その他](misc/index.md)
+
+- [型の分割定義 (partial)](misc/partial-type.md)
+- [プリプロセス](misc/sp_preprocess.md)
+- [XML Document](misc/sp_xmldoc.md)
+- [“Safe C” としての C#](misc/ap_safec.md)
+- [互換性の維持](misc/ap_compatibility.md)
+- [\[雑記\] .NET Compiler Platform](misc/misc_roslyn.md)
+- [\[雑記\] 構文の進化](misc/misclanguageevolution.md)
+- [パターン ベースな構文](misc/miscpatternbased.md)
+- [エントリー ポイント](misc/miscentrypoint.md)
+- [コード解析とコード生成](misc/analyzer-generator.md)
+- [file ローカル型](misc/file-local.md)
+- [UnsafeAccessor](misc/unsafeaccessor.md)
+
+### <a id="package"></a>[パッケージ管理](package/index.md)
+
+- [プロジェクトの分割](package/project.md)
+- [トップ レベルのアクセシビリティ](package/toplevelaccessibility.md)
+- [Code-Awareなライブラリ](package/pkgcodeawarelibrary.md)
+- [型フォワーディング](package/typeforwarding.md)
+
+### <a id="framework"></a>[フレームワーク / 実行環境](framework/index.md)
+
+- [実行基盤](framework/fwinfrastructure.md)
+- [マネージ コード](framework/fwmanaged.md)
+- [JITコンパイル](framework/fwjitcompilation.md)
+- [参照アセンブリ](framework/fwreferenceassemblies.md)
+- [AppDomain](framework/fwappdomain.md)
+- [WinRT](framework/fwwinrt.md)
+
+### <a id="lib"></a>[標準ライブラリ](lib/index.md)
+
+- [文字列関係](lib/lib_string.md)
+- [ファイル操作](lib/lib_file.md)
+- [グラフィック](lib/lib_drawing.md)
+- [GUI アプリケーション](lib/lib_forms.md)
+- [その他のライブラリ](lib/lib_other.md)
+- [.NET Framework 3.0 / 3.5](lib/lib_dotnet3.md)
+- [並列処理ライブラリ](lib/lib_parallel.md)
+
+### <a id="sample"></a>[サンプルプログラム](sample/index.md)
+
+- [C# サンプルプログラム](sample/ap_sample.md)
+- [\[サンプル\] SoundLibrary](sample/sm_soundlib.md)
+- [\[サンプル\] イテレータとマイクロスレッド](sample/sp2_microthread.md)
+- [\[サンプル\] クエリ式とリスト内包](sample/sp3_comprehensions.md)
+- [\[サンプル\] 式木からクエリ式の再構築](sample/sp3_linqreconstruct.md)
+- [\[サンプル\] 式木の利用例](sample/sp3_expressionsample.md)
+- [\[サンプル\] ジェネリックな複素数型](sample/sm_genericop.md)
+- [\[サンプル\] 式木を WPF で GUI 表示](sample/sm_treeview.md)
+- [\[サンプル\] SOV 型のメソッド呼び出し](sample/sm_sov.md)
+- [\[サンプル\] 透過プロキシ](sample/sm_proxy.md)
+- [\[サンプル\] 大富豪](sample/sm_daifugou.md)
+- [\[サンプル\] Silverlight サンプル](sample/sm_silverlight.md)
+
+### <a id="cs4j"></a>[他のプログラミング言語経験者向け](cs4j/index.md)
+
+- [Java 開発者向けチート シート](cs4j/java_cheatsheet.md)
+- [C# の特徴（C++、Java 利用者向け）](cs4j/ab_csspec.md)
+- [C++とJavaとの組込み型の比較](cs4j/cmp_type.md)
+- [C# と Visual Basic](cs4j/ap_visualbasic.md)
+
+### <a id="appendix"></a>[付録](appendix/index.md)
+
+- [その他の用語](appendix/ap_term.md)
+- [関連技術](appendix/ap_related.md)
+- [キーワード（予約語）一覧](appendix/ap_reserved.md)
+- [重要語句一覧](appendix/keywords.md)
+- [リンク集（C#）](appendix/link.md)
+- [逆引き辞書](appendix/ap_reverse.md)
+- [演習問題集](appendix/exercise.md)
+- [C# のバージョン別目次](appendix/version_index.md)

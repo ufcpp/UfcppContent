@@ -1,0 +1,129 @@
+---
+title: "ファイナライザー"
+source_url: "https://ufcpp.net/study/csharp/resource/rm_destructor/"
+content_type: "Article"
+published_at: "2018-10-21T00:00:00"
+updated_at: "2025-05-17T17:46:52"
+tags: []
+umbraco_id: 2173
+parent_id: 1286
+sort_order: 14
+aliases:
+  - "/csharp/resource/rm_destructor/"
+---
+
+# ファイナライザー
+
+##<a id="sec-generated-title-1"></a> <a id="abstract"></a>概要
+(※本項で説明するファイナライザーは、かつてはデストラクター(destructor)と呼ばれていました。
+うちのサイト内でもかつてはその表記だったため、今でも痕跡が残っている箇所があるかもしれません。
+参考ブログ: [ファイナライザー](../../../blog/2025/5/ファイナライザー/index.md))
+
+ファイナライザーとは、オブジェクトが[ガベージ コレクション](../../computer/essential-software/memorymanagement.md#garbage-collection)に回収されるときに呼び出される特別なメソッドです。
+
+「[リソースの破棄](oo_dispose.md)」で説明しているように、
+基本的には、確保したリソースの後片付けは`Dispose`メソッドを`using`ステートメントを使って行います。
+しかし、`using`ステートメントは呼び忘れる可能性があって、100%保証のある後片付けにはなりません。
+
+一方で、ガベージ コレクションによって回収されるタイミングであれば、
+呼び忘れの心配はありません。
+そのため、確実に解放しなければならないリソースは、`Dispose`メソッドだけでなく、ファイナライザーでも後片付けを行います。
+(もちろん、ガベージ コレクション自体を阻害するようなバグ(メモリ リーク)は起こり得て、
+その場合はファイナライザーも呼ばれないため、かなりまずいです。)
+
+##### <a id="sec-generated-title-2"></a>ポイント
+* `~` + クラス名で、ファイナライザーと呼ばれる特殊なメソッドが定義できます
+* ファイナライザーはオブジェクトがガベージ コレクションで回収される際に呼ばれます
+* リソースの破棄を確実にするためには、`Dispose`メソッドに加えてファイナライザーも定義します
+
+##<a id="sec-generated-title-3"></a> <a id="dtor"></a>ファイナライザー
+[コンストラクター](../oop/oo_construct.md)とは逆に、インスタンスが破棄されるときに呼び出されるのがファイナライザーです。
+ファイナライザーは以下のように、クラス名の前に <code>~</code> を付けた名前のメソッドを書くことで定義できます。
+
+<pre class="source" title="ファイナライザー例" lang="">
+<code><span class="reserved">class</span> SampleClass
+{
+  <span class="comment">// ↓これがファイナライザー</span>
+  ~SampleClass()
+  {
+    <span class="comment">// インスタンスの破棄用のコードを書く</span>
+  }
+}
+</code></pre>
+
+
+ファイナライザーはコンストラクターと違って、引数を持つことができません。
+また、[アクセシビリティ](../oop/oo_conceal.md#level)も指定できず、[`static`](../oop/oo_static.md)にもできません。
+
+###<a id="sec-generated-title-4"></a> <a id="when-to-destruct"></a>注意: ファイナライザーの呼び出しタイミング
+.NET Framework では、インスタンスの寿命は .NET Framework 自体が管理していて、
+いつインスタンスの破棄が行われるのかは分かりません。
+（C++ 言語に慣れている人は注意が必要。）
+
+<pre class="source" title="ファイナライザーが呼び出されるタイミングは分からない" lang="">
+<code><span class="reserved">using</span> System;
+
+<span class="reserved">class</span> Test
+{
+  <span class="reserved">public</span> Test()
+  {
+    Console.Write(<span class="literal">"Test クラスのコンストラクターが呼ばれました\n"</span>);
+  }
+
+  ~Test()
+  {
+    Console.Write(<span class="literal">"Test クラスのファイナライザーが呼ばれました\n"</span>);
+  }
+}
+
+<span class="reserved">class</span> DestructorSample
+{
+  <span class="reserved">static void</span> Main()
+  {
+    Console.Write(<span class="literal">"1\n"</span>);
+    Test t = <span class="reserved">new</span> Test(); <span class="comment">// ここで Test のコンストラクターが呼ばれる</span>
+    Console.Write(<span class="literal">"2\n"</span>);
+    t = <span class="reserved">null</span>;            <span class="comment">// ↑で作成したインスタンスはもう利用されなくなる
+                         // でも、ファイナライザーはまだ呼ばれない</span>
+    Console.Write(<span class="literal">"3\n"</span>);
+  }
+}
+</code></pre>
+
+
+<pre class="console" title="">
+1
+Test クラスのコンストラクターが呼ばれました
+2
+3
+Test クラスのファイナライザーが呼ばれました
+</pre>
+
+
+この例では、ファイナライザーはプログラムの終了時に呼び出されます(「[ガベージ コレクション](rm_gc.md#garbage-collection)」するときに呼ばれます)。
+ガベージ コレクションのタイミングは、通常は制御できないので、ファイナライザーはいつ呼び出されるかわかりません。
+
+このような性質を持っているため、通常、ファイナライザーはあまり利用されません。
+ほぼ、非管理リソースの破棄漏れ防止用です(参考: 「[IDisposable インターフェイスの実装](rm_disposable.md#idisposable)」)。
+
+破棄のタイミングを明示的に制御する必要がある場合
+（例えば、何らかの外部リソース(ファイルやプリンタなど)の破棄(ファイルのバッファのフラッシュやプリンタの解放)を行う必要がある場合）、
+後述する 「[using ステートメント](oo_dispose.md#using)」というものを使った Dispose を行います。
+
+
+###<a id="sec-generated-title-5"></a> <a id="finalize"></a>注意: Finalize
+かつてのデストラクターという呼び名と、~ 記号を使う構文は C++ の構文を参考にしたものです。
+しかし、C++ のデストラクター(変数のスコープを抜けたとき、もしくは、delete 演算子を呼んだタイミングで呼ばれる)とは呼び出されるタイミングが全然違うので注意してください。
+
+C++ では、特定のスコープを抜けた時に確実に呼びたい処理のためにデストラクターを使うことがありますが、
+こういう用途には、C# の場合、 「[using ステートメント](oo_dispose.md#using)」 を使います。
+
+C# のファイナライザー(旧称、デストラクター)は、動作的にはむしろ、Java の `finalize` メソッド(ガベージ コレクションに回収された時点で呼ばれる)と同じです。
+実際、C# では「デストラクター」と呼んでいた頃も、.NET Framework の中間言語(＝ C#のコンパイル結果)的にはファイナライザーと呼んでいました。
+呼び名の問題だけではなくて、中間言語にコンパイルした結果としては、(旧)デストラクターは `Finalize` という名前のメソッドになっています
+
+ちなみに、通常、リソースの破棄処理は、 「[using ステートメント](oo_dispose.md#using)」とファイナライザーでの2段構えで行います。
+`using`ステートメントは高効率ですが確実性がなく、
+ファイナライザーは確実ですがパフォーマンスが悪いです。
+2段構えにすることで、忘れず`using`していればパフォーマンスがよく、忘れた場合でもファイナライザーでの確実な破棄ができます。
+詳しくは「[IDisposable インターフェイスの実装](rm_disposable.md#idisposable)」で説明しています。

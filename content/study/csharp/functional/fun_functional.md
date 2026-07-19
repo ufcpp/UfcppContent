@@ -1,0 +1,66 @@
+---
+title: "関数指向"
+source_url: "https://ufcpp.net/study/csharp/functional/fun_functional/"
+content_type: "Article"
+published_at: "2015-05-06T14:10:11"
+updated_at: "2016-12-24T16:00:36"
+tags: []
+umbraco_id: 1276
+parent_id: 1275
+sort_order: 0
+aliases:
+  - "/csharp/fun_functional"
+  - "/csharp/fun_functional.html"
+  - "/csharp/functional/fun_functional/"
+  - "/study/csharp/fun_functional"
+  - "/study/csharp/fun_functional.html"
+---
+
+# 関数指向
+
+##<a id="sec-generated-title-1"></a> <a id="abst"></a>概要
+（書きかけ）
+
+いわゆる「関数型言語」と呼ばれる類の言語の設計手法、
+オブジェクト指向言語でも使えるところは多い（というか、そもそも明確に分ける意味もあまりない）。
+
+関数（function）中心の設計。
+
+メソッドをオブジェクトとして扱う → デリゲート
+
+デリゲートが有用な場面 → イベント駆動、高階関数、非同期処理
+
+純粋な関数（pure function）、フィールド等を参照せず、同じ入力に対して常に同じ出力を返す関数。
+
+などの説明を予定
+<pre>
+（予定）
+タイトル要検討
+
+OOP で「クラスの付属品」になってたメソッドに再度焦点を
+
+OOP と 関数型の mixed パラダイム
+
+第一級関数
+高階関数
+ラムダ式
+
+用途:
+イベント駆動（コールバック）
+処理の差し替え（IoC 制御の逆転）
+非同期処理
+
+データ処理、パイプライン化
+インターフェイスに実装持ちたい → 実は後置きしたいだけ。静的メソッドを後置きできれば解決 → 拡張メソッド
+
+
+↓こういう類の説明を入れる
+http://csharptan.wordpress.com/2011/12/14/
+[インターフェイス: どういうメンバーを持っているかという規約] → [静的メソッド: 規約に対して使えるアルゴリズム]
+↓
+[実装: 規約を満たす具象クラス]
+
+インターフェイス: ユークリッド整域
+アルゴリズム: ユークリッド互除法
+実装: 整数、多項式
+</pre>
