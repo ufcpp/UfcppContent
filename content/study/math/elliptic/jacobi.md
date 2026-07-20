@@ -63,20 +63,26 @@ Legendre は
 ```
 <h3>グラフ</h3>
 <figure>
-	[![ヤコビの楕円関数（k=0.1）](../../../../assets/media/ufcpp2000/math/JacobiSn01.png)](../../../../assets/media/ufcpp2000/math/JacobiSn01.png)
-	<figcaption>ヤコビの楕円関数（k=0.1）</figcaption>
+
+[![ヤコビの楕円関数（k=0.1）](../../../../assets/media/ufcpp2000/math/JacobiSn01.png)](../../../../assets/media/ufcpp2000/math/JacobiSn01.png)
+
+<figcaption>ヤコビの楕円関数（k=0.1）</figcaption>
 </figure>
 
 
 <figure>
-	[![ヤコビの楕円関数（k=0.5）](../../../../assets/media/ufcpp2000/math/JacobiSn05.png)](../../../../assets/media/ufcpp2000/math/JacobiSn05.png)
-	<figcaption>ヤコビの楕円関数（k=0.5）</figcaption>
+
+[![ヤコビの楕円関数（k=0.5）](../../../../assets/media/ufcpp2000/math/JacobiSn05.png)](../../../../assets/media/ufcpp2000/math/JacobiSn05.png)
+
+<figcaption>ヤコビの楕円関数（k=0.5）</figcaption>
 </figure>
 
 
 <figure>
-	[![ヤコビの楕円関数（k=0.9）](../../../../assets/media/ufcpp2000/math/JacobiSn09.png)](../../../../assets/media/ufcpp2000/math/JacobiSn09.png)
-	<figcaption>ヤコビの楕円関数（k=0.9）</figcaption>
+
+[![ヤコビの楕円関数（k=0.9）](../../../../assets/media/ufcpp2000/math/JacobiSn09.png)](../../../../assets/media/ufcpp2000/math/JacobiSn09.png)
+
+<figcaption>ヤコビの楕円関数（k=0.9）</figcaption>
 </figure>
 
 <h3>簡単な性質</h3>

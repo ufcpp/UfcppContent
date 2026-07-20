@@ -232,14 +232,18 @@ intentional programming。
 
 
 <figure>
-	[![ダイアグラムでステートマシンを表現](../../../../assets/media/ufcpp2000/dsl/fig/fsmdiagram.png)](../../../../assets/media/ufcpp2000/dsl/fig/fsmdiagram.png)
-	<figcaption>ダイアグラムでステートマシンを表現</figcaption>
+
+[![ダイアグラムでステートマシンを表現](../../../../assets/media/ufcpp2000/dsl/fig/fsmdiagram.png)](../../../../assets/media/ufcpp2000/dsl/fig/fsmdiagram.png)
+
+<figcaption>ダイアグラムでステートマシンを表現</figcaption>
 </figure>
 
 
 <figure>
-	[![ダイアグラムでステートマシンを表現](../../../../assets/media/ufcpp2000/dsl/fig/fsmtable.png)](../../../../assets/media/ufcpp2000/dsl/fig/fsmtable.png)
-	<figcaption>ダイアグラムでステートマシンを表現</figcaption>
+
+[![ダイアグラムでステートマシンを表現](../../../../assets/media/ufcpp2000/dsl/fig/fsmtable.png)](../../../../assets/media/ufcpp2000/dsl/fig/fsmtable.png)
+
+<figcaption>ダイアグラムでステートマシンを表現</figcaption>
 </figure>
 
 

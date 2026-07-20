@@ -21,8 +21,10 @@ aliases:
 ## <a id="sec-generated-title-1"></a> <a id="lineint"></a>線積分とは
 
 <figure>
-	[![線積分](../../../../assets/media/ufcpp2000/math/lineint1.png)](../../../../assets/media/ufcpp2000/math/lineint1.png)
-	<figcaption>線積分</figcaption>
+
+[![線積分](../../../../assets/media/ufcpp2000/math/lineint1.png)](../../../../assets/media/ufcpp2000/math/lineint1.png)
+
+<figcaption>線積分</figcaption>
 </figure>
 
 

@@ -38,8 +38,10 @@ System.Reflection.Assembly クラスの Load メソッドなどを使って DLL 
 System.Activator.Create メソッドでインスタンスを作ります。
 
 <figure>
-	[![動的ローディング。](../../../../assets/media/ufcpp2000/csharp/fig/latebinding.png)](../../../../assets/media/ufcpp2000/csharp/fig/latebinding.png)
-	<figcaption>動的ローディング。</figcaption>
+
+[![動的ローディング。](../../../../assets/media/ufcpp2000/csharp/fig/latebinding.png)](../../../../assets/media/ufcpp2000/csharp/fig/latebinding.png)
+
+<figcaption>動的ローディング。</figcaption>
 </figure>
 
 
@@ -159,8 +161,10 @@ JSON 形式でシリアライズする DataContractJsonSerializer クラス（Sy
 この方法なら、重たい処理は最初の1回だけでよくて、2回目以降は十分高速になります。
 
 <figure>
-	[![動的実行と動的コード生成（重たい処理は初回だけ）。](../../../../assets/media/ufcpp2000/csharp/fig/code-generation1.png)](../../../../assets/media/ufcpp2000/csharp/fig/code-generation1.png)
-	<figcaption>動的実行と動的コード生成（重たい処理は初回だけ）。</figcaption>
+
+[![動的実行と動的コード生成（重たい処理は初回だけ）。](../../../../assets/media/ufcpp2000/csharp/fig/code-generation1.png)](../../../../assets/media/ufcpp2000/csharp/fig/code-generation1.png)
+
+<figcaption>動的実行と動的コード生成（重たい処理は初回だけ）。</figcaption>
 </figure>
 
 
@@ -168,8 +172,10 @@ JSON 形式でシリアライズする DataContractJsonSerializer クラス（Sy
 一方、キャッシュしたコードを実行するだけなら、かなり低負荷です。
 
 <figure>
-	[![動的実行と動的コード生成（処理内容の例と、処理負荷）。](../../../../assets/media/ufcpp2000/csharp/fig/code-generation2.png)](../../../../assets/media/ufcpp2000/csharp/fig/code-generation2.png)
-	<figcaption>動的実行と動的コード生成（処理内容の例と、処理負荷）。</figcaption>
+
+[![動的実行と動的コード生成（処理内容の例と、処理負荷）。](../../../../assets/media/ufcpp2000/csharp/fig/code-generation2.png)](../../../../assets/media/ufcpp2000/csharp/fig/code-generation2.png)
+
+<figcaption>動的実行と動的コード生成（処理内容の例と、処理負荷）。</figcaption>
 </figure>
 
 
@@ -304,8 +310,10 @@ public class Service : IService
 このクラスを、普通にインスタンスを作って使うなら、図4のようになります。
 
 <figure>
-	[![クラスのインスタンスの通常の利用方法。](../../../../assets/media/ufcpp2000/csharp/fig/dynamic-proxy1.png)](../../../../assets/media/ufcpp2000/csharp/fig/dynamic-proxy1.png)
-	<figcaption>クラスのインスタンスの通常の利用方法。</figcaption>
+
+[![クラスのインスタンスの通常の利用方法。](../../../../assets/media/ufcpp2000/csharp/fig/dynamic-proxy1.png)](../../../../assets/media/ufcpp2000/csharp/fig/dynamic-proxy1.png)
+
+<figcaption>クラスのインスタンスの通常の利用方法。</figcaption>
 </figure>
 
 
@@ -313,8 +321,10 @@ public class Service : IService
 わかりやすい例は、図5のような、通信をはさんでサーバー上で処理を行いたい場合です。
 
 <figure>
-	[![メソッド呼び出しに割り込んで、挙動を変える例。](../../../../assets/media/ufcpp2000/csharp/fig/dynamic-proxy2.png)](../../../../assets/media/ufcpp2000/csharp/fig/dynamic-proxy2.png)
-	<figcaption>メソッド呼び出しに割り込んで、挙動を変える例。</figcaption>
+
+[![メソッド呼び出しに割り込んで、挙動を変える例。](../../../../assets/media/ufcpp2000/csharp/fig/dynamic-proxy2.png)](../../../../assets/media/ufcpp2000/csharp/fig/dynamic-proxy2.png)
+
+<figcaption>メソッド呼び出しに割り込んで、挙動を変える例。</figcaption>
 </figure>
 
 
@@ -381,8 +391,10 @@ WPFやSilverlightでは、UIの方（いわゆるビュー。XAMLで書くやつ
 こういう仕組みをデータ バインディング（data binding）と呼びます。
 
 <figure>
-	[![データ バインディングの例。](../../../../assets/media/ufcpp2000/csharp/fig/data-binding1.png)](../../../../assets/media/ufcpp2000/csharp/fig/data-binding1.png)
-	<figcaption>データ バインディングの例。</figcaption>
+
+[![データ バインディングの例。](../../../../assets/media/ufcpp2000/csharp/fig/data-binding1.png)](../../../../assets/media/ufcpp2000/csharp/fig/data-binding1.png)
+
+<figcaption>データ バインディングの例。</figcaption>
 </figure>
 
 
@@ -390,8 +402,10 @@ WPFやSilverlightでは、UIの方（いわゆるビュー。XAMLで書くやつ
 データ バインディングは内部的にいろいろ動的な処理をしているわけですが、渡す側も動的だと、型情報が取れなくて困ります（図7）。
 
 <figure>
-	[![データ バインディングと動的な型。](../../../../assets/media/ufcpp2000/csharp/fig/data-binding2.png)](../../../../assets/media/ufcpp2000/csharp/fig/data-binding2.png)
-	<figcaption>データ バインディングと動的な型。</figcaption>
+
+[![データ バインディングと動的な型。](../../../../assets/media/ufcpp2000/csharp/fig/data-binding2.png)](../../../../assets/media/ufcpp2000/csharp/fig/data-binding2.png)
+
+<figcaption>データ バインディングと動的な型。</figcaption>
 </figure>
 
 

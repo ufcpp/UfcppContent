@@ -92,8 +92,10 @@ public ArrayList(int capacity)
 
 
 <figure>
-	[![大きめに配列を確保](../../../../assets/media/ufcpp2000/algorithm/fig/col_array0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_array0.png)
-	<figcaption>大きめに配列を確保</figcaption>
+
+[![大きめに配列を確保](../../../../assets/media/ufcpp2000/algorithm/fig/col_array0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_array0.png)
+
+<figcaption>大きめに配列を確保</figcaption>
 </figure>
 
 

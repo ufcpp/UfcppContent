@@ -90,8 +90,10 @@ void sample()
 といっても、コード補完(IntelliSense)には出ず、キーワードのハイライトのみです。
 
 <figure>
-	[![隠しキーワード(__arglist)](../../../../assets/media/ufcpp2000/csharp/fig/MakerefKeyword.png)](../../../../assets/media/ufcpp2000/csharp/fig/MakerefKeyword.png)
-	<figcaption>隠しキーワード(__arglist)</figcaption>
+
+[![隠しキーワード(__arglist)](../../../../assets/media/ufcpp2000/csharp/fig/MakerefKeyword.png)](../../../../assets/media/ufcpp2000/csharp/fig/MakerefKeyword.png)
+
+<figcaption>隠しキーワード(__arglist)</figcaption>
 </figure>
 
 

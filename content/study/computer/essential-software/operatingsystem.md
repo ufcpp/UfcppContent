@@ -43,8 +43,10 @@ aliases:
 
 
 <figure>
-	[![CPUと周辺機器](../../../../assets/media/ufcpp2000/computer/fig/Essential/HardwareManagement.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/HardwareManagement.png)
-	<figcaption>CPUと周辺機器</figcaption>
+
+[![CPUと周辺機器](../../../../assets/media/ufcpp2000/computer/fig/Essential/HardwareManagement.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/HardwareManagement.png)
+
+<figcaption>CPUと周辺機器</figcaption>
 </figure>
 
 
@@ -63,8 +65,10 @@ CPUからハードウェアを制御するためには、ハードウェアとCP
 
 
 <figure>
-	[![ハードウェアによるの割り込み](../../../../assets/media/ufcpp2000/computer/fig/Essential/Interrupt.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Interrupt.png)
-	<figcaption>ハードウェアによるの割り込み</figcaption>
+
+[![ハードウェアによるの割り込み](../../../../assets/media/ufcpp2000/computer/fig/Essential/Interrupt.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Interrupt.png)
+
+<figcaption>ハードウェアによるの割り込み</figcaption>
 </figure>
 
 
@@ -80,8 +84,10 @@ CPUからハードウェアを制御するためには、ハードウェアとCP
 このような動作をマルチタスク（multitasking）と呼びます。
 
 <figure>
-	[![ハードウェアによるの割り込み](../../../../assets/media/ufcpp2000/computer/fig/Essential/Multitasking.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Multitasking.png)
-	<figcaption>ハードウェアによるの割り込み</figcaption>
+
+[![ハードウェアによるの割り込み](../../../../assets/media/ufcpp2000/computer/fig/Essential/Multitasking.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Multitasking.png)
+
+<figcaption>ハードウェアによるの割り込み</figcaption>
 </figure>
 
 
@@ -111,8 +117,10 @@ CPUからハードウェアを制御するためには、ハードウェアとCP
 図4に示すように、アプリケーションから見えるメモリを仮想メモリ空間、メイン・メモリや記憶装置上に確保される物理的な領域を物理メモリ空間と呼びます。
 
 <figure>
-	[![仮想メモリ空間と物理メモリ空間](../../../../assets/media/ufcpp2000/computer/fig/Essential/VirtualMemory.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/VirtualMemory.png)
-	<figcaption>仮想メモリ空間と物理メモリ空間</figcaption>
+
+[![仮想メモリ空間と物理メモリ空間](../../../../assets/media/ufcpp2000/computer/fig/Essential/VirtualMemory.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/VirtualMemory.png)
+
+<figcaption>仮想メモリ空間と物理メモリ空間</figcaption>
 </figure>
 
 

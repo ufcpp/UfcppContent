@@ -40,8 +40,10 @@ aliases:
 まず、図1を見てください。
 
 <figure>
-	[![最短経路 ＝ 直線](../../../../assets/media/ufcpp2000/physics/action01.png)](../../../../assets/media/ufcpp2000/physics/action01.png)
-	<figcaption>最短経路 ＝ 直線</figcaption>
+
+[![最短経路 ＝ 直線](../../../../assets/media/ufcpp2000/physics/action01.png)](../../../../assets/media/ufcpp2000/physics/action01.png)
+
+<figcaption>最短経路 ＝ 直線</figcaption>
 </figure>
 
 
@@ -62,8 +64,10 @@ A から B まで進めといわれたら、
 図2のように、等高線を引いてみます。
 
 <figure>
-	[![平面じゃなくしてみた](../../../../assets/media/ufcpp2000/physics/action02.png)](../../../../assets/media/ufcpp2000/physics/action02.png)
-	<figcaption>平面じゃなくしてみた</figcaption>
+
+[![平面じゃなくしてみた](../../../../assets/media/ufcpp2000/physics/action02.png)](../../../../assets/media/ufcpp2000/physics/action02.png)
+
+<figcaption>平面じゃなくしてみた</figcaption>
 </figure>
 
 
@@ -74,20 +78,26 @@ A から B への行き方は人によるかもしれませんね。
 あるいは、高さが苦手だと（例えば、上り下りが全くできない乗り物があったとして、それに乗るとすると）図5のような経路を取らざるを得ません。
 
 <figure>
-	[![高さをものともしない場合](../../../../assets/media/ufcpp2000/physics/action03.png)](../../../../assets/media/ufcpp2000/physics/action03.png)
-	<figcaption>高さをものともしない場合</figcaption>
+
+[![高さをものともしない場合](../../../../assets/media/ufcpp2000/physics/action03.png)](../../../../assets/media/ufcpp2000/physics/action03.png)
+
+<figcaption>高さをものともしない場合</figcaption>
 </figure>
 
 
 <figure>
-	[![尾根道好きの人](../../../../assets/media/ufcpp2000/physics/action04.png)](../../../../assets/media/ufcpp2000/physics/action04.png)
-	<figcaption>尾根道好きの人</figcaption>
+
+[![尾根道好きの人](../../../../assets/media/ufcpp2000/physics/action04.png)](../../../../assets/media/ufcpp2000/physics/action04.png)
+
+<figcaption>尾根道好きの人</figcaption>
 </figure>
 
 
 <figure>
-	[![上り下りができない乗り物にでも乗ると](../../../../assets/media/ufcpp2000/physics/action05.png)](../../../../assets/media/ufcpp2000/physics/action05.png)
-	<figcaption>上り下りができない乗り物にでも乗ると</figcaption>
+
+[![上り下りができない乗り物にでも乗ると](../../../../assets/media/ufcpp2000/physics/action05.png)](../../../../assets/media/ufcpp2000/physics/action05.png)
+
+<figcaption>上り下りができない乗り物にでも乗ると</figcaption>
 </figure>
 
 

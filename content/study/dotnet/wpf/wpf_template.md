@@ -59,8 +59,10 @@ Contorl クラス（Button などの親クラス）は Template という名前�
 </WrapPanel>
 ```
 <figure>
-	[![コントロールテンプレート](../../../../assets/media/ufcpp2000/dotnet/fig/template01.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template01.png)
-	<figcaption>コントロールテンプレート</figcaption>
+
+[![コントロールテンプレート](../../../../assets/media/ufcpp2000/dotnet/fig/template01.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template01.png)
+
+<figcaption>コントロールテンプレート</figcaption>
 </figure>
 
 
@@ -94,8 +96,10 @@ Button や Label など、
 </WrapPanel>
 ```
 <figure>
-	[![ContentPresenter](../../../../assets/media/ufcpp2000/dotnet/fig/template02.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template02.png)
-	<figcaption>ContentPresenter</figcaption>
+
+[![ContentPresenter](../../../../assets/media/ufcpp2000/dotnet/fig/template02.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template02.png)
+
+<figcaption>ContentPresenter</figcaption>
 </figure>
 
 
@@ -154,8 +158,10 @@ ControlTemplate は、リソース中に 書くこともできます。
 </WrapPanel>
 ```
 <figure>
-	[![全てのボタンにテンプレートを適用](../../../../assets/media/ufcpp2000/dotnet/fig/template03.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template03.png)
-	<figcaption>全てのボタンにテンプレートを適用</figcaption>
+
+[![全てのボタンにテンプレートを適用](../../../../assets/media/ufcpp2000/dotnet/fig/template03.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template03.png)
+
+<figcaption>全てのボタンにテンプレートを適用</figcaption>
 </figure>
 
 
@@ -191,8 +197,10 @@ TemplateBinding マークアップ拡張を用います。
 </WrapPanel>
 ```
 <figure>
-	[![TemplateBinding マークアップ拡張](../../../../assets/media/ufcpp2000/dotnet/fig/template04.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template04.png)
-	<figcaption>TemplateBinding マークアップ拡張</figcaption>
+
+[![TemplateBinding マークアップ拡張](../../../../assets/media/ufcpp2000/dotnet/fig/template04.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template04.png)
+
+<figcaption>TemplateBinding マークアップ拡張</figcaption>
 </figure>
 
 
@@ -241,8 +249,10 @@ ItemsPresenter を記述します。
 </WrapPanel>
 ```
 <figure>
-	[![ItemsPresenter](../../../../assets/media/ufcpp2000/dotnet/fig/template05.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template05.png)
-	<figcaption>ItemsPresenter</figcaption>
+
+[![ItemsPresenter](../../../../assets/media/ufcpp2000/dotnet/fig/template05.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template05.png)
+
+<figcaption>ItemsPresenter</figcaption>
 </figure>
 
 
@@ -276,8 +286,10 @@ ItemsPanel プロパティ（ItemsPanelTemplate 型）を設定します。
 </WrapPanel>
 ```
 <figure>
-	[![ItemsPanel](../../../../assets/media/ufcpp2000/dotnet/fig/template06.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template06.png)
-	<figcaption>ItemsPanel</figcaption>
+
+[![ItemsPanel](../../../../assets/media/ufcpp2000/dotnet/fig/template06.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template06.png)
+
+<figcaption>ItemsPanel</figcaption>
 </figure>
 
 
@@ -325,8 +337,10 @@ XML からデータを読み込んで一覧表示することができます。
 </WrapPanel>
 ```
 <figure>
-	[![XML データを ListBox 中に一覧表示](../../../../assets/media/ufcpp2000/dotnet/fig/template07.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template07.png)
-	<figcaption>XML データを ListBox 中に一覧表示</figcaption>
+
+[![XML データを ListBox 中に一覧表示](../../../../assets/media/ufcpp2000/dotnet/fig/template07.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template07.png)
+
+<figcaption>XML データを ListBox 中に一覧表示</figcaption>
 </figure>
 
 
@@ -380,8 +394,10 @@ XML の各項目に対してテンプレートを適用したければ、
 </WrapPanel>
 ```
 <figure>
-	[![XML データを ListBox 中に一覧表示](../../../../assets/media/ufcpp2000/dotnet/fig/template08.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template08.png)
-	<figcaption>XML データを ListBox 中に一覧表示</figcaption>
+
+[![XML データを ListBox 中に一覧表示](../../../../assets/media/ufcpp2000/dotnet/fig/template08.png)](../../../../assets/media/ufcpp2000/dotnet/fig/template08.png)
+
+<figcaption>XML データを ListBox 中に一覧表示</figcaption>
 </figure>
 
 

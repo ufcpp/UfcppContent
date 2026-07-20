@@ -39,8 +39,10 @@ IL（メタデータ含めて）、VES、BCL それぞれの意味合いを
 共通型システム
 
 <figure>
-	[![CLI](../../../../assets/media/ufcpp2000/csharp/fig/Framework/cli.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/cli.png)
-	<figcaption>CLI</figcaption>
+
+[![CLI](../../../../assets/media/ufcpp2000/csharp/fig/Framework/cli.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/cli.png)
+
+<figcaption>CLI</figcaption>
 </figure>
 
 
@@ -51,14 +53,18 @@ IL（メタデータ含めて）、VES、BCL それぞれの意味合いを
 要は、「Java 言語だけど、実行システムもライブラリも Java じゃない」。
 
 <figure>
-	[![Java と Android](../../../../assets/media/ufcpp2000/csharp/fig/Framework/android.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/android.png)
-	<figcaption>Java と Android</figcaption>
+
+[![Java と Android](../../../../assets/media/ufcpp2000/csharp/fig/Framework/android.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/android.png)
+
+<figcaption>Java と Android</figcaption>
 </figure>
 
 
 <figure>
-	[![Java と Android](../../../../assets/media/ufcpp2000/csharp/fig/Framework/android2.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/android2.png)
-	<figcaption>Java と Android</figcaption>
+
+[![Java と Android](../../../../assets/media/ufcpp2000/csharp/fig/Framework/android2.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/android2.png)
+
+<figcaption>Java と Android</figcaption>
 </figure>
 
 
@@ -69,12 +75,16 @@ Java を名乗るためには互換性テストに通らないといけない。
 これに対して、 .NET は？
 
 <figure>
-	[![.NET](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet.png)
-	<figcaption>.NET</figcaption>
+
+[![.NET](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet.png)
+
+<figcaption>.NET</figcaption>
 </figure>
 
 
 <figure>
-	[![.NET](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png)
-	<figcaption>.NET</figcaption>
+
+[![.NET](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png)
+
+<figcaption>.NET</figcaption>
 </figure>

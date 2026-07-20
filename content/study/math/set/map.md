@@ -325,8 +325,10 @@ aliases:
 この様子を図1に示します。
 
 <figure>
-	[![像の値域と定義域](../../../../assets/media/ufcpp2000/math/map01.png)](../../../../assets/media/ufcpp2000/math/map01.png)
-	<figcaption>像の値域と定義域</figcaption>
+
+[![像の値域と定義域](../../../../assets/media/ufcpp2000/math/map01.png)](../../../../assets/media/ufcpp2000/math/map01.png)
+
+<figcaption>像の値域と定義域</figcaption>
 </figure>
 
 
@@ -345,8 +347,10 @@ aliases:
 要するに、<span class="math">a</span> 全ての元に対して、ちょうど1つずつ値が割り当てられているような対応のことを写像といいます。
 
 <figure>
-	[![写像](../../../../assets/media/ufcpp2000/math/map02.png)](../../../../assets/media/ufcpp2000/math/map02.png)
-	<figcaption>写像</figcaption>
+
+[![写像](../../../../assets/media/ufcpp2000/math/map02.png)](../../../../assets/media/ufcpp2000/math/map02.png)
+
+<figcaption>写像</figcaption>
 </figure>
 
 
@@ -455,8 +459,10 @@ aliases:
 もしくは<span class="math">a</span> から <span class="math">b</span> の上への写像（onto mapping）といいます。
 
 <figure>
-	[![全写](../../../../assets/media/ufcpp2000/math/map03.png)](../../../../assets/media/ufcpp2000/math/map03.png)
-	<figcaption>全写</figcaption>
+
+[![全写](../../../../assets/media/ufcpp2000/math/map03.png)](../../../../assets/media/ufcpp2000/math/map03.png)
+
+<figcaption>全写</figcaption>
 </figure>
 
 
@@ -468,8 +474,10 @@ aliases:
 もしくは1対1の写像（1:1 mapping）といいます。
 
 <figure>
-	[![単写](../../../../assets/media/ufcpp2000/math/map04.png)](../../../../assets/media/ufcpp2000/math/map04.png)
-	<figcaption>単写</figcaption>
+
+[![単写](../../../../assets/media/ufcpp2000/math/map04.png)](../../../../assets/media/ufcpp2000/math/map04.png)
+
+<figcaption>単写</figcaption>
 </figure>
 
 
@@ -478,8 +486,10 @@ aliases:
 もしくは上への1対1の写像（1:1 onto mapping）といいます。
 
 <figure>
-	[![全単写](../../../../assets/media/ufcpp2000/math/map05.png)](../../../../assets/media/ufcpp2000/math/map05.png)
-	<figcaption>全単写</figcaption>
+
+[![全単写](../../../../assets/media/ufcpp2000/math/map05.png)](../../../../assets/media/ufcpp2000/math/map05.png)
+
+<figcaption>全単写</figcaption>
 </figure>
 
 

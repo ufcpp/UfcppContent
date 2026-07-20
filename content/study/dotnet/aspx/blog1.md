@@ -91,8 +91,10 @@ aliases:
 </content>
 ```
 <figure>
-	[![表示結果](../../../../assets/media/ufcpp2000/dotnet/resources/blog1.jpg)](../../../../assets/media/ufcpp2000/dotnet/resources/blog1.jpg)
-	<figcaption>表示結果</figcaption>
+
+[![表示結果](../../../../assets/media/ufcpp2000/dotnet/resources/blog1.jpg)](../../../../assets/media/ufcpp2000/dotnet/resources/blog1.jpg)
+
+<figcaption>表示結果</figcaption>
 </figure>
 
 
@@ -242,8 +244,10 @@ XML やデータベース中から取り出してきたデータを任意の形�
 App_Data フォルダに格納する事にします。
 
 <figure>
-	[![App_Data フォルダとその中身の例](../../../../assets/media/ufcpp2000/dotnet/resources/App_Data.png)](../../../../assets/media/ufcpp2000/dotnet/resources/App_Data.png)
-	<figcaption>App_Data フォルダとその中身の例</figcaption>
+
+[![App_Data フォルダとその中身の例](../../../../assets/media/ufcpp2000/dotnet/resources/App_Data.png)](../../../../assets/media/ufcpp2000/dotnet/resources/App_Data.png)
+
+<figcaption>App_Data フォルダとその中身の例</figcaption>
 </figure>
 
 

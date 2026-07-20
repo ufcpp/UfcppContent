@@ -29,14 +29,18 @@ aliases:
 <table class="layout" summary="レイアウト用テーブル">
 <tr><td markdown="1">
 <figure>
-	[![場のイメージ1](../../../../assets/media/ufcpp2000/math/field1.png)](../../../../assets/media/ufcpp2000/math/field1.png)
-	<figcaption>場のイメージ1</figcaption>
+
+[![場のイメージ1](../../../../assets/media/ufcpp2000/math/field1.png)](../../../../assets/media/ufcpp2000/math/field1.png)
+
+<figcaption>場のイメージ1</figcaption>
 </figure>
 
 </td><td markdown="1">
 <figure>
-	[![場のイメージ2](../../../../assets/media/ufcpp2000/math/field2.png)](../../../../assets/media/ufcpp2000/math/field2.png)
-	<figcaption>場のイメージ2</figcaption>
+
+[![場のイメージ2](../../../../assets/media/ufcpp2000/math/field2.png)](../../../../assets/media/ufcpp2000/math/field2.png)
+
+<figcaption>場のイメージ2</figcaption>
 </figure>
 
 </td></tr></table>

@@ -261,8 +261,10 @@ derivative: x => (-1 * (Sin(x) / Cos(x)))
 作ったプログラムのスクリーンショット↓。
 
 <figure>
-	[![スクリーンショット](../../../../assets/media/ufcpp2000/csharp/fig/dynamics2.png)](../../../../assets/media/ufcpp2000/csharp/fig/dynamics2.png)
-	<figcaption>スクリーンショット</figcaption>
+
+[![スクリーンショット](../../../../assets/media/ufcpp2000/csharp/fig/dynamics2.png)](../../../../assets/media/ufcpp2000/csharp/fig/dynamics2.png)
+
+<figcaption>スクリーンショット</figcaption>
 </figure>
 
 

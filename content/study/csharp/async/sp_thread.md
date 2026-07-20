@@ -47,8 +47,10 @@ C# でマルチスレッドプログラムを作成する場合、これらラ�
 複数の処理を平行して行う物を<strong id="multi" class="keyword">マルチスレッド</strong>と呼びます
 
 <figure>
-	[![スレッドの概念図](../../../../assets/media/ufcpp2000/csharp/fig/thread.png)](../../../../assets/media/ufcpp2000/csharp/fig/thread.png)
-	<figcaption>スレッドの概念図</figcaption>
+
+[![スレッドの概念図](../../../../assets/media/ufcpp2000/csharp/fig/thread.png)](../../../../assets/media/ufcpp2000/csharp/fig/thread.png)
+
+<figcaption>スレッドの概念図</figcaption>
 </figure>
 
 
@@ -541,14 +543,18 @@ class TestThread
 図3に示す実行順序になった場合には <code>num</code> がちゃんと2増えます。
 
 <figure>
-	[![マルチスレッドの動作1](../../../../assets/media/ufcpp2000/csharp/fig/multithread1.png)](../../../../assets/media/ufcpp2000/csharp/fig/multithread1.png)
-	<figcaption>マルチスレッドの動作1</figcaption>
+
+[![マルチスレッドの動作1](../../../../assets/media/ufcpp2000/csharp/fig/multithread1.png)](../../../../assets/media/ufcpp2000/csharp/fig/multithread1.png)
+
+<figcaption>マルチスレッドの動作1</figcaption>
 </figure>
 
 
 <figure>
-	[![マルチスレッドの動作2](../../../../assets/media/ufcpp2000/csharp/fig/multithread2.png)](../../../../assets/media/ufcpp2000/csharp/fig/multithread2.png)
-	<figcaption>マルチスレッドの動作2</figcaption>
+
+[![マルチスレッドの動作2](../../../../assets/media/ufcpp2000/csharp/fig/multithread2.png)](../../../../assets/media/ufcpp2000/csharp/fig/multithread2.png)
+
+<figcaption>マルチスレッドの動作2</figcaption>
 </figure>
 
 

@@ -70,8 +70,10 @@ s → z 変換を用いることで、
 フィルタの次数はいずれも5次です。
 
 <figure>
-	[![アナログ LPF の振幅特性](../../../../assets/media/ufcpp2000/sp/analoglpf01.png)](../../../../assets/media/ufcpp2000/sp/analoglpf01.png)
-	<figcaption>アナログ LPF の振幅特性</figcaption>
+
+[![アナログ LPF の振幅特性](../../../../assets/media/ufcpp2000/sp/analoglpf01.png)](../../../../assets/media/ufcpp2000/sp/analoglpf01.png)
+
+<figcaption>アナログ LPF の振幅特性</figcaption>
 </figure>
 
 
@@ -101,8 +103,10 @@ s → z 変換を用いることで、
 
 
 <figure>
-	[![LPF の設計仕様](../../../../assets/media/ufcpp2000/sp/analoglpf02.png)](../../../../assets/media/ufcpp2000/sp/analoglpf02.png)
-	<figcaption>LPF の設計仕様</figcaption>
+
+[![LPF の設計仕様](../../../../assets/media/ufcpp2000/sp/analoglpf02.png)](../../../../assets/media/ufcpp2000/sp/analoglpf02.png)
+
+<figcaption>LPF の設計仕様</figcaption>
 </figure>
 
 
@@ -118,12 +122,16 @@ s → z 変換を用いることで、
 凡例中の()の中の数字は、この仕様により得られたフィルタの次数です。
 
 <figure>
-	[![仕様を満たすように設計した LPF (1)](../../../../assets/media/ufcpp2000/sp/analoglpf03.png)](../../../../assets/media/ufcpp2000/sp/analoglpf03.png)
-	<figcaption>仕様を満たすように設計した LPF (1)</figcaption>
+
+[![仕様を満たすように設計した LPF (1)](../../../../assets/media/ufcpp2000/sp/analoglpf03.png)](../../../../assets/media/ufcpp2000/sp/analoglpf03.png)
+
+<figcaption>仕様を満たすように設計した LPF (1)</figcaption>
 </figure>
 
 
 <figure>
-	[![仕様を満たすように設計した LPF (2)](../../../../assets/media/ufcpp2000/sp/analoglpf04.png)](../../../../assets/media/ufcpp2000/sp/analoglpf04.png)
-	<figcaption>仕様を満たすように設計した LPF (2)</figcaption>
+
+[![仕様を満たすように設計した LPF (2)](../../../../assets/media/ufcpp2000/sp/analoglpf04.png)](../../../../assets/media/ufcpp2000/sp/analoglpf04.png)
+
+<figcaption>仕様を満たすように設計した LPF (2)</figcaption>
 </figure>

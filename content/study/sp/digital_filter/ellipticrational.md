@@ -131,8 +131,10 @@ k
 
 
 <figure>
-	[![cn(u, k) の C 上での値](../../../../assets/media/ufcpp2000/sp/rational01.png)](../../../../assets/media/ufcpp2000/sp/rational01.png)
-	<figcaption>cn(u, k) の C 上での値</figcaption>
+
+[![cn(u, k) の C 上での値](../../../../assets/media/ufcpp2000/sp/rational01.png)](../../../../assets/media/ufcpp2000/sp/rational01.png)
+
+<figcaption>cn(u, k) の C 上での値</figcaption>
 </figure>
 
 <span class="math"><span class="normal">cd</span><span class="paren" style="font-size:em;">(</span>u, k<span class="paren" style="font-size:em;">)</span></span> は <span class="math">C</span> 上で単調増加 → 
@@ -158,8 +160,10 @@ k
 <span class="math">C<sub>3</sub></span> 上での値を緑色の線で表す。
 
 <figure>
-	[![cn(u, k1) の D 上での値](../../../../assets/media/ufcpp2000/sp/rational02.png)](../../../../assets/media/ufcpp2000/sp/rational02.png)
-	<figcaption>cn(u, k1) の D 上での値</figcaption>
+
+[![cn(u, k1) の D 上での値](../../../../assets/media/ufcpp2000/sp/rational02.png)](../../../../assets/media/ufcpp2000/sp/rational02.png)
+
+<figcaption>cn(u, k1) の D 上での値</figcaption>
 </figure>
 
 
@@ -174,8 +178,10 @@ k
 となるので、チェビシェフ有理関数 <span class="math">R<sub>n, k<sub>1</sub></sub><span class="paren" style="font-size:em;">(</span>x<span class="paren" style="font-size:em;">)</span></span> のグラフは図3のようになる。
 
 <figure>
-	[![チェビシェフ有理関数のグラフ](../../../../assets/media/ufcpp2000/sp/rational03.png)](../../../../assets/media/ufcpp2000/sp/rational03.png)
-	<figcaption>チェビシェフ有理関数のグラフ</figcaption>
+
+[![チェビシェフ有理関数のグラフ](../../../../assets/media/ufcpp2000/sp/rational03.png)](../../../../assets/media/ufcpp2000/sp/rational03.png)
+
+<figcaption>チェビシェフ有理関数のグラフ</figcaption>
 </figure>
 
 

@@ -25,8 +25,10 @@ C# などのプログラミング言語には、
 複数のデータを一まとめにするための「配列」というものがあります。
 
 <figure>
-	[![配列](../../../../assets/media/ufcpp2000/csharp/fig/array.png)](../../../../assets/media/ufcpp2000/csharp/fig/array.png)
-	<figcaption>配列</figcaption>
+
+[![配列](../../../../assets/media/ufcpp2000/csharp/fig/array.png)](../../../../assets/media/ufcpp2000/csharp/fig/array.png)
+
+<figcaption>配列</figcaption>
 </figure>
 
 
@@ -394,14 +396,16 @@ for(int i=0; i<a.Length; ++i) // a.Length は a の行数を表す。
 		<th>イメージ</th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/arrayrect.png)](../../../../assets/media/ufcpp2000/csharp/fig/arrayrect.png)
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/arrayrect.png)](../../../../assets/media/ufcpp2000/csharp/fig/arrayrect.png)
 
 </figure>
 
 </td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/arrayjug.png)](../../../../assets/media/ufcpp2000/csharp/fig/arrayjug.png)
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/arrayjug.png)](../../../../assets/media/ufcpp2000/csharp/fig/arrayjug.png)
 
 </figure>
 

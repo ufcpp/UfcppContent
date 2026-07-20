@@ -34,8 +34,10 @@ aliases:
 配列の先頭と末尾を繋いだ環のようなイメージのデータ構造です（図1）。
 
 <figure>
-	[![循環バッファ](../../../../assets/media/ufcpp2000/algorithm/fig/col_circular0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_circular0.png)
-	<figcaption>循環バッファ</figcaption>
+
+[![循環バッファ](../../../../assets/media/ufcpp2000/algorithm/fig/col_circular0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_circular0.png)
+
+<figcaption>循環バッファ</figcaption>
 </figure>
 
 

@@ -56,8 +56,10 @@ event は、デリゲートに対する「[プロパティ](../oop/oo_property.m
 ポイントは、図1に示すように、イベントを発生させる側と受け取って何か処理をする側がわかれることです。
 
 <figure>
-	[![イベントの概要](../../../../assets/media/ufcpp2000/csharp/fig/ObservableObserver.png)](../../../../assets/media/ufcpp2000/csharp/fig/ObservableObserver.png)
-	<figcaption>イベントの概要</figcaption>
+
+[![イベントの概要](../../../../assets/media/ufcpp2000/csharp/fig/ObservableObserver.png)](../../../../assets/media/ufcpp2000/csharp/fig/ObservableObserver.png)
+
+<figcaption>イベントの概要</figcaption>
 </figure>
 
 

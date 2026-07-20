@@ -245,7 +245,8 @@ public sealed class ContentMigration
 
         value = _macros.Expand(value, context);
         value = _links.Rewrite(value, context);
-        return CodeBlockNormalizer.Normalize(value, ContentPaths.CanonicalUrl(context));
+        value = CodeBlockNormalizer.Normalize(value, ContentPaths.CanonicalUrl(context));
+        return TextUtilities.NormalizeMarkdownFigureImages(value);
     }
 
     private static string NormalizeHeadingAnchors(string value, bool generateMissingAnchors)

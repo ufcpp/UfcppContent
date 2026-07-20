@@ -94,8 +94,10 @@ n, Supplement = c.Supplement, CharacterVoice = (cv.姓 + cv.名)))
 この結果をツリー表示すると、以下のような感じ。
 
 <figure>
-	[![IQueryable.Expression の例](../../../../assets/media/ufcpp2000/csharp/fig/iqueryable1.png)](../../../../assets/media/ufcpp2000/csharp/fig/iqueryable1.png)
-	<figcaption>IQueryable.Expression の例</figcaption>
+
+[![IQueryable.Expression の例](../../../../assets/media/ufcpp2000/csharp/fig/iqueryable1.png)](../../../../assets/media/ufcpp2000/csharp/fig/iqueryable1.png)
+
+<figcaption>IQueryable.Expression の例</figcaption>
 </figure>
 
 

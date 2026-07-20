@@ -50,6 +50,8 @@ aliases:
 となります。
 
 <figure>
-	[![体積素](../../../../assets/media/ufcpp2000/math/volumeint1.png)](../../../../assets/media/ufcpp2000/math/volumeint1.png)
-	<figcaption>体積素</figcaption>
+
+[![体積素](../../../../assets/media/ufcpp2000/math/volumeint1.png)](../../../../assets/media/ufcpp2000/math/volumeint1.png)
+
+<figcaption>体積素</figcaption>
 </figure>

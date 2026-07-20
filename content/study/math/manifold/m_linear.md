@@ -350,8 +350,10 @@ p ＝ <span class="vector">A</span><span class="vector">x</span></span>
 この表現方法は、図的に考えると図1のようになります。
 
 <figure>
-	[![基底の線形結合による座標表現](../../../../assets/media/ufcpp2000/math/linear0.emf)](../../../../assets/media/ufcpp2000/math/linear0.emf)
-	<figcaption>基底の線形結合による座標表現</figcaption>
+
+[![基底の線形結合による座標表現](../../../../assets/media/ufcpp2000/math/linear0.emf)](../../../../assets/media/ufcpp2000/math/linear0.emf)
+
+<figcaption>基底の線形結合による座標表現</figcaption>
 </figure>
 
 
@@ -400,8 +402,10 @@ y ＝ <span class="vector">a</span><sub>2</sub><sup>T</sup> p
 （少しごまかしあり。あくまでイメージを表す図です。）
 
 <figure>
-	[![基底の内積による座標表現](../../../../assets/media/ufcpp2000/math/linear1.emf)](../../../../assets/media/ufcpp2000/math/linear1.emf)
-	<figcaption>基底の内積による座標表現</figcaption>
+
+[![基底の内積による座標表現](../../../../assets/media/ufcpp2000/math/linear1.emf)](../../../../assets/media/ufcpp2000/math/linear1.emf)
+
+<figcaption>基底の内積による座標表現</figcaption>
 </figure>
 
 

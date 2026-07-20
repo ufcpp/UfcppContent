@@ -32,8 +32,10 @@ C 言語のポインターや、C#・Java の参照型・参照渡しといっ�
 高速な代わりに小容量なレジスターと、低速な代わりに大容量なメイン・メモリがあります。
 
 <figure>
-	[![汎用コンピューターの構造： CPUとメイン・メモリ](../../../../assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png)](../../../../assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png)
-	<figcaption>汎用コンピューターの構造： CPUとメイン・メモリ</figcaption>
+
+[![汎用コンピューターの構造： CPUとメイン・メモリ](../../../../assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png)](../../../../assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png)
+
+<figcaption>汎用コンピューターの構造： CPUとメイン・メモリ</figcaption>
 </figure>
 
 
@@ -51,8 +53,10 @@ CPU内のレジスターはデータの読み書きが高速な代わりに小�
 図2のように、新興住宅地のごとく、同じ形の家が大量に並んでいるような感じです。
 
 <figure>
-	[![メモリを住宅地に例えてみる](../../../../assets/media/ufcpp2000/computer/fig/mem02.png)](../../../../assets/media/ufcpp2000/computer/fig/mem02.png)
-	<figcaption>メモリを住宅地に例えてみる</figcaption>
+
+[![メモリを住宅地に例えてみる](../../../../assets/media/ufcpp2000/computer/fig/mem02.png)](../../../../assets/media/ufcpp2000/computer/fig/mem02.png)
+
+<figcaption>メモリを住宅地に例えてみる</figcaption>
 </figure>
 
 
@@ -60,8 +64,10 @@ CPU内のレジスターはデータの読み書きが高速な代わりに小�
 例えば、図3のように、コインロッカーのようなものをイメージすると良いと思います。
 
 <figure>
-	[![メモリをコインロッカーに例えてみる](../../../../assets/media/ufcpp2000/computer/fig/mem03.png)](../../../../assets/media/ufcpp2000/computer/fig/mem03.png)
-	<figcaption>メモリをコインロッカーに例えてみる</figcaption>
+
+[![メモリをコインロッカーに例えてみる](../../../../assets/media/ufcpp2000/computer/fig/mem03.png)](../../../../assets/media/ufcpp2000/computer/fig/mem03.png)
+
+<figcaption>メモリをコインロッカーに例えてみる</figcaption>
 </figure>
 
 
@@ -121,8 +127,10 @@ int b;
 （実際にどのアドレスに値が置かれるかは環境次第ですが、今回は仮に、aがアドレス100の位置に、bがアドレス105の位置に格納される物として話を進めます。 ）
 
 <figure>
-	[![普通の値もポインターもどちらもメイン・メモリ上に記憶される](../../../../assets/media/ufcpp2000/computer/fig/mem04.png)](../../../../assets/media/ufcpp2000/computer/fig/mem04.png)
-	<figcaption>普通の値もポインターもどちらもメイン・メモリ上に記憶される</figcaption>
+
+[![普通の値もポインターもどちらもメイン・メモリ上に記憶される](../../../../assets/media/ufcpp2000/computer/fig/mem04.png)](../../../../assets/media/ufcpp2000/computer/fig/mem04.png)
+
+<figcaption>普通の値もポインターもどちらもメイン・メモリ上に記憶される</figcaption>
 </figure>
 
 
@@ -138,8 +146,10 @@ a = &b; // 変数 b のアドレスを a に代入。
 イメージ的には図6ようになります。
 
 <figure>
-	[![アドレスをポインター変数に格納](../../../../assets/media/ufcpp2000/computer/fig/mem05.png)](../../../../assets/media/ufcpp2000/computer/fig/mem05.png)
-	<figcaption>アドレスをポインター変数に格納</figcaption>
+
+[![アドレスをポインター変数に格納](../../../../assets/media/ufcpp2000/computer/fig/mem05.png)](../../../../assets/media/ufcpp2000/computer/fig/mem05.png)
+
+<figcaption>アドレスをポインター変数に格納</figcaption>
 </figure>
 
 
@@ -156,8 +166,10 @@ a = &b; // 変数 b のアドレスを a に代入。
 <code>a</code> の指し示す先（この例では <code>b</code>）の中身が書き換わります。
 
 <figure>
-	[![ポインター変数 a の指し示す先](../../../../assets/media/ufcpp2000/computer/fig/mem06.png)](../../../../assets/media/ufcpp2000/computer/fig/mem06.png)
-	<figcaption>ポインター変数 a の指し示す先</figcaption>
+
+[![ポインター変数 a の指し示す先](../../../../assets/media/ufcpp2000/computer/fig/mem06.png)](../../../../assets/media/ufcpp2000/computer/fig/mem06.png)
+
+<figcaption>ポインター変数 a の指し示す先</figcaption>
 </figure>
 
 

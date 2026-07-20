@@ -204,8 +204,10 @@ letter-character に加えて、
 
 
 <figure>
-	[![変な記号](../../../../assets/media/ufcpp2000/csharp/fig/OddIdentifier.png)](../../../../assets/media/ufcpp2000/csharp/fig/OddIdentifier.png)
-	<figcaption>変な記号</figcaption>
+
+[![変な記号](../../../../assets/media/ufcpp2000/csharp/fig/OddIdentifier.png)](../../../../assets/media/ufcpp2000/csharp/fig/OddIdentifier.png)
+
+<figcaption>変な記号</figcaption>
 </figure>
 
 ## <a id="sec-generated-title-8"></a> <a id="supplementary"></a>追加面文字

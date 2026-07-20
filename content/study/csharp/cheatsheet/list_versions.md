@@ -21,8 +21,10 @@ aliases:
 ## <a id="sec-generated-title-1"></a> <a id="abst"></a>概要
 
 <figure>
-	[![C#、.NET Framework、Visual Studio のバージョン](../../../../assets/media/ufcpp2000/csharp/fig/Index/versions.png)](../../../../assets/media/ufcpp2000/csharp/fig/Index/versions.png)
-	<figcaption>C#、.NET Framework、Visual Studio のバージョン</figcaption>
+
+[![C#、.NET Framework、Visual Studio のバージョン](../../../../assets/media/ufcpp2000/csharp/fig/Index/versions.png)](../../../../assets/media/ufcpp2000/csharp/fig/Index/versions.png)
+
+<figcaption>C#、.NET Framework、Visual Studio のバージョン</figcaption>
 </figure>
 
 

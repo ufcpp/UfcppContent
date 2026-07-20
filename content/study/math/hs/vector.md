@@ -43,8 +43,10 @@ m (d^2/dt^2)x = f
 昔は、同じ文字を2重に重ねたものを使っていたりもしたらしい（図1）。
 
 <figure>
-	[![2重文字](../../../../assets/media/ufcpp2000/math/fig/mb01.png)](../../../../assets/media/ufcpp2000/math/fig/mb01.png)
-	<figcaption>2重文字</figcaption>
+
+[![2重文字](../../../../assets/media/ufcpp2000/math/fig/mb01.png)](../../../../assets/media/ufcpp2000/math/fig/mb01.png)
+
+<figcaption>2重文字</figcaption>
 </figure>
 
 
@@ -87,8 +89,10 @@ x
 あと、どこに線を1本増やすのかは、結構人によって流儀がまちまちだったりも。
 
 <figure>
-	[![手書きの場合の太字記法](../../../../assets/media/ufcpp2000/math/fig/mb02.png)](../../../../assets/media/ufcpp2000/math/fig/mb02.png)
-	<figcaption>手書きの場合の太字記法</figcaption>
+
+[![手書きの場合の太字記法](../../../../assets/media/ufcpp2000/math/fig/mb02.png)](../../../../assets/media/ufcpp2000/math/fig/mb02.png)
+
+<figcaption>手書きの場合の太字記法</figcaption>
 </figure>
 
 

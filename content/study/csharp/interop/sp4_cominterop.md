@@ -149,8 +149,10 @@ End Class
 C# 側からは get_X でしか参照できません。（下図参照。）
 
 <figure>
-	[![C# から見たインデックス付きプロパティ](../../../../assets/media/ufcpp2000/csharp/fig/get_x.png)](../../../../assets/media/ufcpp2000/csharp/fig/get_x.png)
-	<figcaption>C# から見たインデックス付きプロパティ</figcaption>
+
+[![C# から見たインデックス付きプロパティ](../../../../assets/media/ufcpp2000/csharp/fig/get_x.png)](../../../../assets/media/ufcpp2000/csharp/fig/get_x.png)
+
+<figcaption>C# から見たインデックス付きプロパティ</figcaption>
 </figure>
 
 ## <a id="sec-generated-title-4"></a> <a id="no-pia"></a>No PIA

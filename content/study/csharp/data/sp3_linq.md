@@ -364,8 +364,10 @@ C# 2.0 までの感覚でも割となじみやすいのではないかと思い�
 LINQ の全体像を絵的に表すと、図1のようになります。
 
 <figure>
-	[![LINQ の全体像](../../../../assets/media/ufcpp2000/csharp/fig/linq01.png)](../../../../assets/media/ufcpp2000/csharp/fig/linq01.png)
-	<figcaption>LINQ の全体像</figcaption>
+
+[![LINQ の全体像](../../../../assets/media/ufcpp2000/csharp/fig/linq01.png)](../../../../assets/media/ufcpp2000/csharp/fig/linq01.png)
+
+<figcaption>LINQ の全体像</figcaption>
 </figure>
 
 

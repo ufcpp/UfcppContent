@@ -50,14 +50,18 @@ C# 3.0 で導入されたラムダ式と、
 
 
 <figure>
-	[![UI スレッドを止めないためのタスク](../../../../assets/media/ufcpp2000/csharp/fig/task1.png)](../../../../assets/media/ufcpp2000/csharp/fig/task1.png)
-	<figcaption>UI スレッドを止めないためのタスク</figcaption>
+
+[![UI スレッドを止めないためのタスク](../../../../assets/media/ufcpp2000/csharp/fig/task1.png)](../../../../assets/media/ufcpp2000/csharp/fig/task1.png)
+
+<figcaption>UI スレッドを止めないためのタスク</figcaption>
 </figure>
 
 
 <figure>
-	[![並列処理のためのタスク](../../../../assets/media/ufcpp2000/csharp/fig/task2.png)](../../../../assets/media/ufcpp2000/csharp/fig/task2.png)
-	<figcaption>並列処理のためのタスク</figcaption>
+
+[![並列処理のためのタスク](../../../../assets/media/ufcpp2000/csharp/fig/task2.png)](../../../../assets/media/ufcpp2000/csharp/fig/task2.png)
+
+<figcaption>並列処理のためのタスク</figcaption>
 </figure>
 
 
@@ -76,8 +80,10 @@ C# 3.0 で導入されたラムダ式と、
 例えば、単一 CPU で4つの処理を実行する場合の例を図3に示します。
 
 <figure>
-	[![単一 CPU での複数スレッド実行の例](../../../../assets/media/ufcpp2000/csharp/fig/contextswitch.png)](../../../../assets/media/ufcpp2000/csharp/fig/contextswitch.png)
-	<figcaption>単一 CPU での複数スレッド実行の例</figcaption>
+
+[![単一 CPU での複数スレッド実行の例](../../../../assets/media/ufcpp2000/csharp/fig/contextswitch.png)](../../../../assets/media/ufcpp2000/csharp/fig/contextswitch.png)
+
+<figcaption>単一 CPU での複数スレッド実行の例</figcaption>
 </figure>
 
 
@@ -145,8 +151,10 @@ C# 3.0 で導入されたラムダ式と、
 .NET Framework 4 のスレッド プールでは、図4に示すように、スレッドごとにローカルなキューを持っています。
 
 <figure>
-	[![スレッドごとにローカル キューを持つ](../../../../assets/media/ufcpp2000/csharp/fig/taskqueue.png)](../../../../assets/media/ufcpp2000/csharp/fig/taskqueue.png)
-	<figcaption>スレッドごとにローカル キューを持つ</figcaption>
+
+[![スレッドごとにローカル キューを持つ](../../../../assets/media/ufcpp2000/csharp/fig/taskqueue.png)](../../../../assets/media/ufcpp2000/csharp/fig/taskqueue.png)
+
+<figcaption>スレッドごとにローカル キューを持つ</figcaption>
 </figure>
 
 

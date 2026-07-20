@@ -235,8 +235,10 @@ Comic.dbml を開くと、
 これで、図1のような状態になるはずです。
 
 <figure>
-	[![LINQ to SQL クラスデザイナにテーブルを追加した状態](../../../../assets/media/ufcpp2000/csharp/fig/linqsql1.png)](../../../../assets/media/ufcpp2000/csharp/fig/linqsql1.png)
-	<figcaption>LINQ to SQL クラスデザイナにテーブルを追加した状態</figcaption>
+
+[![LINQ to SQL クラスデザイナにテーブルを追加した状態](../../../../assets/media/ufcpp2000/csharp/fig/linqsql1.png)](../../../../assets/media/ufcpp2000/csharp/fig/linqsql1.png)
+
+<figcaption>LINQ to SQL クラスデザイナにテーブルを追加した状態</figcaption>
 </figure>
 
 
@@ -258,8 +260,10 @@ Series クラスから Book クラスにドラッグして、
 これで、図2のような状態になります。
 
 <figure>
-	[![LINQ to SQL クラスアソシエーションを追加](../../../../assets/media/ufcpp2000/csharp/fig/linqsql2.png)](../../../../assets/media/ufcpp2000/csharp/fig/linqsql2.png)
-	<figcaption>LINQ to SQL クラスアソシエーションを追加</figcaption>
+
+[![LINQ to SQL クラスアソシエーションを追加](../../../../assets/media/ufcpp2000/csharp/fig/linqsql2.png)](../../../../assets/media/ufcpp2000/csharp/fig/linqsql2.png)
+
+<figcaption>LINQ to SQL クラスアソシエーションを追加</figcaption>
 </figure>
 
 

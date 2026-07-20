@@ -131,8 +131,10 @@ stack trace:
 さらに、それぞれ、Show 内で A を、A 内で X を呼んだ場所や、X 内で例外を投げた場所の行番号がわかります。
 
 <figure>
-	[![呼び出しの過程(スタックトレース)](../../../../assets/media/ufcpp2000/csharp/fig/StackTrace.png)](../../../../assets/media/ufcpp2000/csharp/fig/StackTrace.png)
-	<figcaption>呼び出しの過程(スタックトレース)</figcaption>
+
+[![呼び出しの過程(スタックトレース)](../../../../assets/media/ufcpp2000/csharp/fig/StackTrace.png)](../../../../assets/media/ufcpp2000/csharp/fig/StackTrace.png)
+
+<figcaption>呼び出しの過程(スタックトレース)</figcaption>
 </figure>
 
 

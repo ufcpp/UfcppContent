@@ -36,8 +36,10 @@ aliases:
 そして、このCPUに与える命令がいわゆる<strong id="software" class="keyword">ソフトウェア</strong>というものになります。
 
 <figure>
-	[![CPU](../../../../assets/media/ufcpp2000/computer/fig/General/CPU.png)](../../../../assets/media/ufcpp2000/computer/fig/General/CPU.png)
-	<figcaption>CPU</figcaption>
+
+[![CPU](../../../../assets/media/ufcpp2000/computer/fig/General/CPU.png)](../../../../assets/media/ufcpp2000/computer/fig/General/CPU.png)
+
+<figcaption>CPU</figcaption>
 </figure>
 
 
@@ -49,8 +51,10 @@ aliases:
 現在の主流な汎用コンピューターの中枢部分は、図2に示すように、メイン・メモリ（main memory: 主記憶）とCPUと呼ばれる部分から構成されています。
 
 <figure>
-	[![汎用コンピューターの構造： CPUとメイン・メモリ](../../../../assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png)](../../../../assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png)
-	<figcaption>汎用コンピューターの構造： CPUとメイン・メモリ</figcaption>
+
+[![汎用コンピューターの構造： CPUとメイン・メモリ](../../../../assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png)](../../../../assets/media/ufcpp2000/computer/fig/General/ComputerStructure.png)
+
+<figcaption>汎用コンピューターの構造： CPUとメイン・メモリ</figcaption>
 </figure>
 
 
@@ -61,8 +65,10 @@ aliases:
 本項では、CPUに関して、より詳細に見ていきましょう。CPUの概念的な内部構造を図3に示します。
 
 <figure>
-	[![CPUの概念的な内部構造](../../../../assets/media/ufcpp2000/computer/fig/General/CpuStructure.png)](../../../../assets/media/ufcpp2000/computer/fig/General/CpuStructure.png)
-	<figcaption>CPUの概念的な内部構造</figcaption>
+
+[![CPUの概念的な内部構造](../../../../assets/media/ufcpp2000/computer/fig/General/CpuStructure.png)](../../../../assets/media/ufcpp2000/computer/fig/General/CpuStructure.png)
+
+<figcaption>CPUの概念的な内部構造</figcaption>
 </figure>
 
 
@@ -133,16 +139,20 @@ CPUへの命令も、コンピューターの内部ではすべて0, 1の羅列�
 （通常は、アセンブラー（Assembler）と呼ばれるプログラムを使って自動的に変換します）。
 
 <figure>
-	[![アセンブリ言語と機械語](../../../../assets/media/ufcpp2000/computer/fig/General/AssemblyLanguage.png)](../../../../assets/media/ufcpp2000/computer/fig/General/AssemblyLanguage.png)
-	<figcaption>アセンブリ言語と機械語</figcaption>
+
+[![アセンブリ言語と機械語](../../../../assets/media/ufcpp2000/computer/fig/General/AssemblyLanguage.png)](../../../../assets/media/ufcpp2000/computer/fig/General/AssemblyLanguage.png)
+
+<figcaption>アセンブリ言語と機械語</figcaption>
 </figure>
 
 
 こうして得られた機械語（すなわち、CPUに与える命令）は、図5に例示するような形でCPUに解釈されます。
 
 <figure>
-	[![アセンブリ言語と機械語](../../../../assets/media/ufcpp2000/computer/fig/General/Interpretation.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Interpretation.png)
-	<figcaption>アセンブリ言語と機械語</figcaption>
+
+[![アセンブリ言語と機械語](../../../../assets/media/ufcpp2000/computer/fig/General/Interpretation.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Interpretation.png)
+
+<figcaption>アセンブリ言語と機械語</figcaption>
 </figure>
 
 
@@ -180,26 +190,34 @@ CPUへの命令も、コンピューターの内部ではすべて0, 1の羅列�
 
 
 <figure>
-	[![メイン・メモリから値を読み込み（Load）](../../../../assets/media/ufcpp2000/computer/fig/General/Load.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Load.png)
-	<figcaption>メイン・メモリから値を読み込み（Load）</figcaption>
+
+[![メイン・メモリから値を読み込み（Load）](../../../../assets/media/ufcpp2000/computer/fig/General/Load.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Load.png)
+
+<figcaption>メイン・メモリから値を読み込み（Load）</figcaption>
 </figure>
 
 
 <figure>
-	[![メイン・メモリに値を書き込み（Store）](../../../../assets/media/ufcpp2000/computer/fig/General/Store.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Store.png)
-	<figcaption>メイン・メモリに値を書き込み（Store）</figcaption>
+
+[![メイン・メモリに値を書き込み（Store）](../../../../assets/media/ufcpp2000/computer/fig/General/Store.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Store.png)
+
+<figcaption>メイン・メモリに値を書き込み（Store）</figcaption>
 </figure>
 
 
 <figure>
-	[![レジスター間での値のコピー（Move）](../../../../assets/media/ufcpp2000/computer/fig/General/Move.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Move.png)
-	<figcaption>レジスター間での値のコピー（Move）</figcaption>
+
+[![レジスター間での値のコピー（Move）](../../../../assets/media/ufcpp2000/computer/fig/General/Move.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Move.png)
+
+<figcaption>レジスター間での値のコピー（Move）</figcaption>
 </figure>
 
 
 <figure>
-	[![レジスターへの即値代入（Load Immediate）](../../../../assets/media/ufcpp2000/computer/fig/General/Immediate.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Immediate.png)
-	<figcaption>レジスターへの即値代入（Load Immediate）</figcaption>
+
+[![レジスターへの即値代入（Load Immediate）](../../../../assets/media/ufcpp2000/computer/fig/General/Immediate.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Immediate.png)
+
+<figcaption>レジスターへの即値代入（Load Immediate）</figcaption>
 </figure>
 
 
@@ -212,8 +230,10 @@ CPUへの命令も、コンピューターの内部ではすべて0, 1の羅列�
 CPUによっては、オペランドを命令に埋め込んだり（即値命令）、メイン・メモリから直接オペランドを読み込んだり（間接参照命令）が可能なものもあります。
 
 <figure>
-	[![演算命令の例（ADD）](../../../../assets/media/ufcpp2000/computer/fig/General/Add.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Add.png)
-	<figcaption>演算命令の例（ADD）</figcaption>
+
+[![演算命令の例（ADD）](../../../../assets/media/ufcpp2000/computer/fig/General/Add.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Add.png)
+
+<figcaption>演算命令の例（ADD）</figcaption>
 </figure>
 
 
@@ -246,12 +266,16 @@ CPUによっては、オペランドを命令に埋め込んだり（即値命�
 
 
 <figure>
-	[![相対アドレス指定](../../../../assets/media/ufcpp2000/computer/fig/General/RelativeJump.png)](../../../../assets/media/ufcpp2000/computer/fig/General/RelativeJump.png)
-	<figcaption>相対アドレス指定</figcaption>
+
+[![相対アドレス指定](../../../../assets/media/ufcpp2000/computer/fig/General/RelativeJump.png)](../../../../assets/media/ufcpp2000/computer/fig/General/RelativeJump.png)
+
+<figcaption>相対アドレス指定</figcaption>
 </figure>
 
 
 <figure>
-	[![絶対アドレス指定](../../../../assets/media/ufcpp2000/computer/fig/General/AbsoluteJump.png)](../../../../assets/media/ufcpp2000/computer/fig/General/AbsoluteJump.png)
-	<figcaption>絶対アドレス指定</figcaption>
+
+[![絶対アドレス指定](../../../../assets/media/ufcpp2000/computer/fig/General/AbsoluteJump.png)](../../../../assets/media/ufcpp2000/computer/fig/General/AbsoluteJump.png)
+
+<figcaption>絶対アドレス指定</figcaption>
 </figure>

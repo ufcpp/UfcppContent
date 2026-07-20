@@ -32,8 +32,10 @@ aliases:
 こちらはコレクションとしていろいろと応用が利きます。
 
 <figure>
-	[![片方向連結リスト](../../../../assets/media/ufcpp2000/algorithm/fig/col_blist0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_blist0.png)
-	<figcaption>片方向連結リスト</figcaption>
+
+[![片方向連結リスト](../../../../assets/media/ufcpp2000/algorithm/fig/col_blist0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_blist0.png)
+
+<figcaption>片方向連結リスト</figcaption>
 </figure>
 
 

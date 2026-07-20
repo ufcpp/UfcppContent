@@ -102,8 +102,10 @@ aliases:
 ）
 
 <figure>
-	[![関係演算子](../../../../assets/media/ufcpp2000/math/prec_succ.emf)](../../../../assets/media/ufcpp2000/math/prec_succ.emf)
-	<figcaption>関係演算子</figcaption>
+
+[![関係演算子](../../../../assets/media/ufcpp2000/math/prec_succ.emf)](../../../../assets/media/ufcpp2000/math/prec_succ.emf)
+
+<figcaption>関係演算子</figcaption>
 </figure>
 
 
@@ -591,8 +593,10 @@ aliases:
 図2に示すように1対1の関係を作ることが出来ます。
 
 <figure>
-	[![ωとω2の対応](../../../../assets/media/ufcpp2000/math/card00.emf)](../../../../assets/media/ufcpp2000/math/card00.emf)
-	<figcaption>ωとω2の対応</figcaption>
+
+[![ωとω2の対応](../../../../assets/media/ufcpp2000/math/card00.emf)](../../../../assets/media/ufcpp2000/math/card00.emf)
+
+<figcaption>ωとω2の対応</figcaption>
 </figure>
 
 

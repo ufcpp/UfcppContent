@@ -42,8 +42,10 @@ aliases:
 ここで、真を1、偽を0とみなすことで、0, 1の2値間の演算が得られます。このような演算を論理積と呼びます（図1）。
 
 <figure>
-	[![論理積演算](../../../../assets/media/ufcpp2000/computer/fig/Logical/LogicalOperation.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/LogicalOperation.png)
-	<figcaption>論理積演算</figcaption>
+
+[![論理積演算](../../../../assets/media/ufcpp2000/computer/fig/Logical/LogicalOperation.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/LogicalOperation.png)
+
+<figcaption>論理積演算</figcaption>
 </figure>
 
 
@@ -269,8 +271,10 @@ Web ページ上での表示の都合で、
 （ANDやORではなく、NANDな理由は、CMOSを用いて作る場合にはNANDの方がシンプルな回路で実現できるためです。NANDが実現できれば、ANDもORも実現することができます。）
 
 <figure>
-	[![CMOS NAND回路の回路図](../../../../assets/media/ufcpp2000/computer/fig/Logical/CmosNand.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/CmosNand.png)
-	<figcaption>CMOS NAND回路の回路図</figcaption>
+
+[![CMOS NAND回路の回路図](../../../../assets/media/ufcpp2000/computer/fig/Logical/CmosNand.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/CmosNand.png)
+
+<figcaption>CMOS NAND回路の回路図</figcaption>
 </figure>
 
 
@@ -279,8 +283,10 @@ AおよびBの値に応じてスイッチが開閉し、Cの値が図3のよう�
 結果として、AもしくはBのいずれか一方でも0のときにはCが1になり、両方が1の時に限りCが0になります（NAND演算の挙動）。
 
 <figure>
-	[![CMOS NAND回路の動作の例](../../../../assets/media/ufcpp2000/computer/fig/Logical/CmosNandCharacter.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/CmosNandCharacter.png)
-	<figcaption>CMOS NAND回路の動作の例</figcaption>
+
+[![CMOS NAND回路の動作の例](../../../../assets/media/ufcpp2000/computer/fig/Logical/CmosNandCharacter.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/CmosNandCharacter.png)
+
+<figcaption>CMOS NAND回路の動作の例</figcaption>
 </figure>
 
 
@@ -308,7 +314,8 @@ AおよびBの値に応じてスイッチが開閉し、Cの値が図3のよう�
           </span></th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Not.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Not.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Not.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Not.png)
 
 </figure>
 
@@ -320,7 +327,8 @@ AおよびBの値に応じてスイッチが開閉し、Cの値が図3のよう�
           </span></th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/And.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/And.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/And.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/And.png)
 
 </figure>
 
@@ -332,7 +340,8 @@ AおよびBの値に応じてスイッチが開閉し、Cの値が図3のよう�
           </span></th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Or.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Or.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Or.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Or.png)
 
 </figure>
 
@@ -344,7 +353,8 @@ AおよびBの値に応じてスイッチが開閉し、Cの値が図3のよう�
           </span></th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Xor.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Xor.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Xor.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Xor.png)
 
 </figure>
 
@@ -356,7 +366,8 @@ AおよびBの値に応じてスイッチが開閉し、Cの値が図3のよう�
           </span></th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Nand.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Nand.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Nand.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Nand.png)
 
 </figure>
 
@@ -368,7 +379,8 @@ AおよびBの値に応じてスイッチが開閉し、Cの値が図3のよう�
           </span></th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Nor.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Nor.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/Nor.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Nor.png)
 
 </figure>
 

@@ -483,8 +483,10 @@ using 文1つでどの静的メソッドが呼ばれるのかが切り替わっ�
 例えば、下図のような、データ列に対するパイプライン処理を考えてみます。
 
 <figure>
-	[![パイプライン処理](../../../../assets/media/ufcpp2000/csharp/fig/extension01.png)](../../../../assets/media/ufcpp2000/csharp/fig/extension01.png)
-	<figcaption>パイプライン処理</figcaption>
+
+[![パイプライン処理](../../../../assets/media/ufcpp2000/csharp/fig/extension01.png)](../../../../assets/media/ufcpp2000/csharp/fig/extension01.png)
+
+<figcaption>パイプライン処理</figcaption>
 </figure>
 
 

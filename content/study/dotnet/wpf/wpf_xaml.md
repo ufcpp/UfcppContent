@@ -58,8 +58,10 @@ Page タグから始まる XAML ファイルは、ブラウザ中で実行する
 ダブルクリックすると、ブラウザ中に以下のような内容が表示されます。
 
 <figure>
-	[![XAML の実行例](../../../../assets/media/ufcpp2000/dotnet/fig/xaml0.png)](../../../../assets/media/ufcpp2000/dotnet/fig/xaml0.png)
-	<figcaption>XAML の実行例</figcaption>
+
+[![XAML の実行例](../../../../assets/media/ufcpp2000/dotnet/fig/xaml0.png)](../../../../assets/media/ufcpp2000/dotnet/fig/xaml0.png)
+
+<figcaption>XAML の実行例</figcaption>
 </figure>
 
 

@@ -43,14 +43,18 @@ aliases:
 図2のように、平行移動すると一致するような2つのベクトルは等しいと考えます。
 
 <figure>
-	[![幾何ベクトル](../../../../assets/media/ufcpp2000/math/vector00.png)](../../../../assets/media/ufcpp2000/math/vector00.png)
-	<figcaption>幾何ベクトル</figcaption>
+
+[![幾何ベクトル](../../../../assets/media/ufcpp2000/math/vector00.png)](../../../../assets/media/ufcpp2000/math/vector00.png)
+
+<figcaption>幾何ベクトル</figcaption>
 </figure>
 
 
 <figure>
-	[![等しい2つの幾何ベクトル](../../../../assets/media/ufcpp2000/math/vector01.png)](../../../../assets/media/ufcpp2000/math/vector01.png)
-	<figcaption>等しい2つの幾何ベクトル</figcaption>
+
+[![等しい2つの幾何ベクトル](../../../../assets/media/ufcpp2000/math/vector01.png)](../../../../assets/media/ufcpp2000/math/vector01.png)
+
+<figcaption>等しい2つの幾何ベクトル</figcaption>
 </figure>
 
 
@@ -63,14 +67,18 @@ aliases:
 
 
 <figure>
-	[![幾何ベクトルの和](../../../../assets/media/ufcpp2000/math/vector02.png)](../../../../assets/media/ufcpp2000/math/vector02.png)
-	<figcaption>幾何ベクトルの和</figcaption>
+
+[![幾何ベクトルの和](../../../../assets/media/ufcpp2000/math/vector02.png)](../../../../assets/media/ufcpp2000/math/vector02.png)
+
+<figcaption>幾何ベクトルの和</figcaption>
 </figure>
 
 
 <figure>
-	[![幾何ベクトルの定数倍](../../../../assets/media/ufcpp2000/math/vector03.png)](../../../../assets/media/ufcpp2000/math/vector03.png)
-	<figcaption>幾何ベクトルの定数倍</figcaption>
+
+[![幾何ベクトルの定数倍](../../../../assets/media/ufcpp2000/math/vector03.png)](../../../../assets/media/ufcpp2000/math/vector03.png)
+
+<figcaption>幾何ベクトルの定数倍</figcaption>
 </figure>
 
 
@@ -206,14 +214,18 @@ s.t.
 例えば、図6のように、適当に選んだ2つのベクトル <span class="math">x, y</span> を使って幾何ベクトルを表すことも出来ます。
 
 <figure>
-	[![直交座標系](../../../../assets/media/ufcpp2000/math/vector04.png)](../../../../assets/media/ufcpp2000/math/vector04.png)
-	<figcaption>直交座標系</figcaption>
+
+[![直交座標系](../../../../assets/media/ufcpp2000/math/vector04.png)](../../../../assets/media/ufcpp2000/math/vector04.png)
+
+<figcaption>直交座標系</figcaption>
 </figure>
 
 
 <figure>
-	[![非直交座標系](../../../../assets/media/ufcpp2000/math/vector05.png)](../../../../assets/media/ufcpp2000/math/vector05.png)
-	<figcaption>非直交座標系</figcaption>
+
+[![非直交座標系](../../../../assets/media/ufcpp2000/math/vector05.png)](../../../../assets/media/ufcpp2000/math/vector05.png)
+
+<figcaption>非直交座標系</figcaption>
 </figure>
 
 

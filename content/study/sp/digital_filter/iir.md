@@ -156,8 +156,10 @@ T
 
 
 <figure>
-	[![IIRフィルタ](../../../../assets/media/ufcpp2000/sp/iir01.png)](../../../../assets/media/ufcpp2000/sp/iir01.png)
-	<figcaption>IIRフィルタ</figcaption>
+
+[![IIRフィルタ](../../../../assets/media/ufcpp2000/sp/iir01.png)](../../../../assets/media/ufcpp2000/sp/iir01.png)
+
+<figcaption>IIRフィルタ</figcaption>
 </figure>
 
 
@@ -177,8 +179,10 @@ X
 
 
 <figure>
-	[![直列接続2次IIRフィルタ](../../../../assets/media/ufcpp2000/sp/iir02.png)](../../../../assets/media/ufcpp2000/sp/iir02.png)
-	<figcaption>直列接続2次IIRフィルタ</figcaption>
+
+[![直列接続2次IIRフィルタ](../../../../assets/media/ufcpp2000/sp/iir02.png)](../../../../assets/media/ufcpp2000/sp/iir02.png)
+
+<figcaption>直列接続2次IIRフィルタ</figcaption>
 </figure>
 
 

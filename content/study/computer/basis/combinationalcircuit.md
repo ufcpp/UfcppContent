@@ -26,8 +26,10 @@ aliases:
 <figure>
 
 <figure>
-	[![を表す論理回路図](../../../../assets/media/ufcpp2000/computer/fig/Logical/AB_BnC.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/AB_BnC.png)
-	<figcaption><span class="math">
+
+[![を表す論理回路図](../../../../assets/media/ufcpp2000/computer/fig/Logical/AB_BnC.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/AB_BnC.png)
+
+<figcaption><span class="math">
             AB <span class="normal">+</span> B<span class="bar">C</span>
           </span>を表す論理回路図</figcaption>
 </figure>
@@ -80,7 +82,8 @@ aliases:
 		<td markdown="1">1</td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg1.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg1.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg1.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg1.png)
 
 </figure>
 
@@ -90,7 +93,8 @@ aliases:
 		<td markdown="1">2</td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg2.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg2.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg2.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg2.png)
 
 </figure>
 
@@ -100,7 +104,8 @@ aliases:
 		<td markdown="1">3</td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg3.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg3.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg3.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg3.png)
 
 </figure>
 
@@ -110,7 +115,8 @@ aliases:
 		<td markdown="1">4</td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg4.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg4.png)
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg4.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7seg4.png)
 
 </figure>
 
@@ -136,8 +142,10 @@ aliases:
 という記号を振りましょう。
 
 <figure>
-	[![7つの液晶表示部に番号を振る](../../../../assets/media/ufcpp2000/computer/fig/Logical/7segOut.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7segOut.png)
-	<figcaption>7つの液晶表示部に番号を振る</figcaption>
+
+[![7つの液晶表示部に番号を振る](../../../../assets/media/ufcpp2000/computer/fig/Logical/7segOut.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/7segOut.png)
+
+<figcaption>7つの液晶表示部に番号を振る</figcaption>
 </figure>
 
 
@@ -208,8 +216,10 @@ aliases:
 そして、AND演算で作った項を、真偽値表の出力のところの0, 1に応じてOR演算することで式を得ます。
 
 <figure>
-	[![真偽値表から論理式を得る](../../../../assets/media/ufcpp2000/computer/fig/Logical/DisjunctiveNormalForm.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/DisjunctiveNormalForm.png)
-	<figcaption>真偽値表から論理式を得る</figcaption>
+
+[![真偽値表から論理式を得る](../../../../assets/media/ufcpp2000/computer/fig/Logical/DisjunctiveNormalForm.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/DisjunctiveNormalForm.png)
+
+<figcaption>真偽値表から論理式を得る</figcaption>
 </figure>
 
 
@@ -374,8 +384,10 @@ x の場合、AND演算とOR演算がそれぞれ1回ずつ必要ですが、y �
       </span> を回路化したものを図4に示します。
 
 <figure>
-	[![を求める回路](../../../../assets/media/ufcpp2000/computer/fig/Logical/CircuitY0.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/CircuitY0.png)
-	<figcaption><span class="math">y<sub><span class="normal">0</span></sub></span>を求める回路</figcaption>
+
+[![を求める回路](../../../../assets/media/ufcpp2000/computer/fig/Logical/CircuitY0.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/CircuitY0.png)
+
+<figcaption><span class="math">y<sub><span class="normal">0</span></sub></span>を求める回路</figcaption>
 </figure>
 
 

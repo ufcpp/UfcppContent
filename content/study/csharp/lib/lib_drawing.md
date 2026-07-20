@@ -95,8 +95,10 @@ Windows アプリケーション開発用のプロジェクトを作ると、
 初期状態で図1のようなフォームが出来ているはずです。
 
 <figure>
-	[![Windows アプリケーション初期状態](../../../../assets/media/ufcpp2000/csharp/fig/graphics01.png)](../../../../assets/media/ufcpp2000/csharp/fig/graphics01.png)
-	<figcaption>Windows アプリケーション初期状態</figcaption>
+
+[![Windows アプリケーション初期状態](../../../../assets/media/ufcpp2000/csharp/fig/graphics01.png)](../../../../assets/media/ufcpp2000/csharp/fig/graphics01.png)
+
+<figcaption>Windows アプリケーション初期状態</figcaption>
 </figure>
 
 
@@ -119,16 +121,20 @@ private void Form1_Paint(object sender, PaintEventArgs e)
 プロパティウィンドウ（右下に出ているか、出ていなければメニューから「表示(V)」→「プロパティウィンドウ」を選択）の Paint の部分をダブルクリックするだけでイベントハンドラの雛形を自動生成してくれます。（図2）
 
 <figure>
-	[![Windows アプリケーション初期状態](../../../../assets/media/ufcpp2000/csharp/fig/graphics02.png)](../../../../assets/media/ufcpp2000/csharp/fig/graphics02.png)
-	<figcaption>Windows アプリケーション初期状態</figcaption>
+
+[![Windows アプリケーション初期状態](../../../../assets/media/ufcpp2000/csharp/fig/graphics02.png)](../../../../assets/media/ufcpp2000/csharp/fig/graphics02.png)
+
+<figcaption>Windows アプリケーション初期状態</figcaption>
 </figure>
 
 
 その結果、アプリケーション起動時に図3のような落書きが表示されるはずです。
 
 <figure>
-	[![Windows アプリケーションに落書き](../../../../assets/media/ufcpp2000/csharp/fig/graphics03.png)](../../../../assets/media/ufcpp2000/csharp/fig/graphics03.png)
-	<figcaption>Windows アプリケーションに落書き</figcaption>
+
+[![Windows アプリケーションに落書き](../../../../assets/media/ufcpp2000/csharp/fig/graphics03.png)](../../../../assets/media/ufcpp2000/csharp/fig/graphics03.png)
+
+<figcaption>Windows アプリケーションに落書き</figcaption>
 </figure>
 
 

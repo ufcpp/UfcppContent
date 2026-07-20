@@ -129,8 +129,10 @@ using ステートメントを使って Stream を閉じていても、内情を
 Windows ストア アプリ版や、クラウド最適化版の .NET Framework では削除されました。
 
 <figure>
-	[![Stream.Close メソッドの利用可否。](../../../../assets/media/ufcpp2000/csharp/fig/stream.close.png)](../../../../assets/media/ufcpp2000/csharp/fig/stream.close.png)
-	<figcaption>Stream.Close メソッドの利用可否。</figcaption>
+
+[![Stream.Close メソッドの利用可否。](../../../../assets/media/ufcpp2000/csharp/fig/stream.close.png)](../../../../assets/media/ufcpp2000/csharp/fig/stream.close.png)
+
+<figcaption>Stream.Close メソッドの利用可否。</figcaption>
 </figure>
 
 

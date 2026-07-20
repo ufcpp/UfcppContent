@@ -25,8 +25,10 @@ aliases:
 位相特性も線形に近いという特徴があります。
 
 <figure>
-	[![バターワースフィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/butterworth01.png)](../../../../assets/media/ufcpp2000/sp/butterworth01.png)
-	<figcaption>バターワースフィルタの周波数特性</figcaption>
+
+[![バターワースフィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/butterworth01.png)](../../../../assets/media/ufcpp2000/sp/butterworth01.png)
+
+<figcaption>バターワースフィルタの周波数特性</figcaption>
 </figure>
 
 
@@ -45,8 +47,10 @@ aliases:
 図2に、例として、3次、5次、9次のバターワースフィルタの振幅特性を示します。
 
 <figure>
-	[![3～9次のバターワースフィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/butterworth_amp.png)](../../../../assets/media/ufcpp2000/sp/butterworth_amp.png)
-	<figcaption>3～9次のバターワースフィルタの周波数特性</figcaption>
+
+[![3～9次のバターワースフィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/butterworth_amp.png)](../../../../assets/media/ufcpp2000/sp/butterworth_amp.png)
+
+<figcaption>3～9次のバターワースフィルタの周波数特性</figcaption>
 </figure>
 
 
@@ -101,8 +105,10 @@ H<span class="paren" style="font-size:em;">(</span>s<span class="paren" style="f
 仕様を満たす最小の次数 <span class="math">N</span> を求める方法について説明します。
 
 <figure>
-	[![バターワースフィルタの設計仕様](../../../../assets/media/ufcpp2000/sp/butterworth_spec.png)](../../../../assets/media/ufcpp2000/sp/butterworth_spec.png)
-	<figcaption>バターワースフィルタの設計仕様</figcaption>
+
+[![バターワースフィルタの設計仕様](../../../../assets/media/ufcpp2000/sp/butterworth_spec.png)](../../../../assets/media/ufcpp2000/sp/butterworth_spec.png)
+
+<figcaption>バターワースフィルタの設計仕様</figcaption>
 </figure>
 
 

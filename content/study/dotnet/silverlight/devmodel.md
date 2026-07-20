@@ -99,14 +99,18 @@ xap は、実は単なる ZIP 形式書庫になっていて、
 xap の中には、dll など、いくつかのファイルが入っています。
 
 <figure>
-	[![xap の実態は ZIP 形式書庫](../../../../assets/media/ufcpp2000/dotnet/fig/xaptozip.png)](../../../../assets/media/ufcpp2000/dotnet/fig/xaptozip.png)
-	<figcaption>xap の実態は ZIP 形式書庫</figcaption>
+
+[![xap の実態は ZIP 形式書庫](../../../../assets/media/ufcpp2000/dotnet/fig/xaptozip.png)](../../../../assets/media/ufcpp2000/dotnet/fig/xaptozip.png)
+
+<figcaption>xap の実態は ZIP 形式書庫</figcaption>
 </figure>
 
 
 <figure>
-	[![xap の中身の例](../../../../assets/media/ufcpp2000/dotnet/fig/xapcontents.png)](../../../../assets/media/ufcpp2000/dotnet/fig/xapcontents.png)
-	<figcaption>xap の中身の例</figcaption>
+
+[![xap の中身の例](../../../../assets/media/ufcpp2000/dotnet/fig/xapcontents.png)](../../../../assets/media/ufcpp2000/dotnet/fig/xapcontents.png)
+
+<figcaption>xap の中身の例</figcaption>
 </figure>
 
 
@@ -117,8 +121,10 @@ XAML と C# で書いたアプリは、下図のような手順で dll 化され
 xap ファイル中に入っている dll はこのようにして作られたものです。
 
 <figure>
-	[![Silverlight のビルドの流れ](../../../../assets/media/ufcpp2000/dotnet/fig/xapcompile.png)](../../../../assets/media/ufcpp2000/dotnet/fig/xapcompile.png)
-	<figcaption>Silverlight のビルドの流れ</figcaption>
+
+[![Silverlight のビルドの流れ](../../../../assets/media/ufcpp2000/dotnet/fig/xapcompile.png)](../../../../assets/media/ufcpp2000/dotnet/fig/xapcompile.png)
+
+<figcaption>Silverlight のビルドの流れ</figcaption>
 </figure>
 
 
@@ -161,16 +167,20 @@ Silverlight でビューの作成に使える視覚要素（ボタンなどの�
 </Canvas>
 ```
 <figure>
-	[![視覚要素の階層構造](../../../../assets/media/ufcpp2000/dotnet/fig/hierarchy.png)](../../../../assets/media/ufcpp2000/dotnet/fig/hierarchy.png)
-	<figcaption>視覚要素の階層構造</figcaption>
+
+[![視覚要素の階層構造](../../../../assets/media/ufcpp2000/dotnet/fig/hierarchy.png)](../../../../assets/media/ufcpp2000/dotnet/fig/hierarchy.png)
+
+<figcaption>視覚要素の階層構造</figcaption>
 </figure>
 
 
 以下のような表示結果が得られます。
 
 <figure>
-	[![XAML の表示結果の例](../../../../assets/media/ufcpp2000/dotnet/fig/visualtree.png)](../../../../assets/media/ufcpp2000/dotnet/fig/visualtree.png)
-	<figcaption>XAML の表示結果の例</figcaption>
+
+[![XAML の表示結果の例](../../../../assets/media/ufcpp2000/dotnet/fig/visualtree.png)](../../../../assets/media/ufcpp2000/dotnet/fig/visualtree.png)
+
+<figcaption>XAML の表示結果の例</figcaption>
 </figure>
 
 
@@ -186,8 +196,10 @@ Silverlight でビューの作成に使える視覚要素（ボタンなどの�
 例えば、上記の例で、灰色の Canvas に15度の回転を書けると、以下のような表示結果になります。
 
 <figure>
-	[![灰色の Canvas を15度回転](../../../../assets/media/ufcpp2000/dotnet/fig/rotation.png)](../../../../assets/media/ufcpp2000/dotnet/fig/rotation.png)
-	<figcaption>灰色の Canvas を15度回転</figcaption>
+
+[![灰色の Canvas を15度回転](../../../../assets/media/ufcpp2000/dotnet/fig/rotation.png)](../../../../assets/media/ufcpp2000/dotnet/fig/rotation.png)
+
+<figcaption>灰色の Canvas を15度回転</figcaption>
 </figure>
 
 
@@ -195,8 +207,10 @@ Silverlight でビューの作成に使える視覚要素（ボタンなどの�
 ボタンの中に円を描画したりすることもできます。
 
 <figure>
-	[![ボタンの中に円を描画](../../../../assets/media/ufcpp2000/dotnet/fig/control.png)](../../../../assets/media/ufcpp2000/dotnet/fig/control.png)
-	<figcaption>ボタンの中に円を描画</figcaption>
+
+[![ボタンの中に円を描画](../../../../assets/media/ufcpp2000/dotnet/fig/control.png)](../../../../assets/media/ufcpp2000/dotnet/fig/control.png)
+
+<figcaption>ボタンの中に円を描画</figcaption>
 </figure>
 
 
@@ -210,8 +224,10 @@ Silverlight では、<strong id="binding" class="keyword">データバインデ�
 実際のデータは外部から与えます。
 
 <figure>
-	[![データバインディング](../../../../assets/media/ufcpp2000/dotnet/fig/binding.png)](../../../../assets/media/ufcpp2000/dotnet/fig/binding.png)
-	<figcaption>データバインディング</figcaption>
+
+[![データバインディング](../../../../assets/media/ufcpp2000/dotnet/fig/binding.png)](../../../../assets/media/ufcpp2000/dotnet/fig/binding.png)
+
+<figcaption>データバインディング</figcaption>
 </figure>
 
 
@@ -224,6 +240,8 @@ X の値はテキストボックスとスライダーコントロールで共有
 また、Y の値は 0 以上になるように検証を行っていて、もし検証に違反するようならエラーメッセージが表示されるようになっています。
 
 <figure>
-	[![データの変更通知と検証](../../../../assets/media/ufcpp2000/dotnet/fig/validation.png)](../../../../assets/media/ufcpp2000/dotnet/fig/validation.png)
-	<figcaption>データの変更通知と検証</figcaption>
+
+[![データの変更通知と検証](../../../../assets/media/ufcpp2000/dotnet/fig/validation.png)](../../../../assets/media/ufcpp2000/dotnet/fig/validation.png)
+
+<figcaption>データの変更通知と検証</figcaption>
 </figure>

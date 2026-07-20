@@ -79,14 +79,18 @@ aliases:
 （クリックで拡大。）
 
 <figure>
-	[![全体の流れ](../../../../assets/media/ufcpp2000/math/fig/gendai01.png)](../../../../assets/media/ufcpp2000/math/fig/gendai01.png)
-	<figcaption>全体の流れ</figcaption>
+
+[![全体の流れ](../../../../assets/media/ufcpp2000/math/fig/gendai01.png)](../../../../assets/media/ufcpp2000/math/fig/gendai01.png)
+
+<figcaption>全体の流れ</figcaption>
 </figure>
 
 
 <figure>
-	[![関連キーワード](../../../../assets/media/ufcpp2000/math/fig/gendai02.png)](../../../../assets/media/ufcpp2000/math/fig/gendai02.png)
-	<figcaption>関連キーワード</figcaption>
+
+[![関連キーワード](../../../../assets/media/ufcpp2000/math/fig/gendai02.png)](../../../../assets/media/ufcpp2000/math/fig/gendai02.png)
+
+<figcaption>関連キーワード</figcaption>
 </figure>
 
 
@@ -109,8 +113,10 @@ aliases:
 直接のつながりが出てくるのは右下辺り。
 
 <figure>
-	[![発展・物理学との関連](../../../../assets/media/ufcpp2000/math/fig/gendai03.png)](../../../../assets/media/ufcpp2000/math/fig/gendai03.png)
-	<figcaption>発展・物理学との関連</figcaption>
+
+[![発展・物理学との関連](../../../../assets/media/ufcpp2000/math/fig/gendai03.png)](../../../../assets/media/ufcpp2000/math/fig/gendai03.png)
+
+<figcaption>発展・物理学との関連</figcaption>
 </figure>
 
 

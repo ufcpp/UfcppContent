@@ -98,8 +98,10 @@ PCL（Portable Class Library）の実現方法。
 別ページ（「[実行基盤](fwinfrastructure.md)」 ）でも説明しているけども
 
 <figure>
-	[![いろいろな .NET](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png)
-	<figcaption>いろいろな .NET</figcaption>
+
+[![いろいろな .NET](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/dotnet2.png)
+
+<figcaption>いろいろな .NET</figcaption>
 </figure>
 
 
@@ -109,8 +111,10 @@ Clinet Profileってのができたのも。
 で、開発機と配布先でのプロファイルの差が問題に
 
 <figure>
-	[![プロファイルの差による問題](../../../../assets/media/ufcpp2000/csharp/fig/Framework/Profile.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/Profile.png)
-	<figcaption>プロファイルの差による問題</figcaption>
+
+[![プロファイルの差による問題](../../../../assets/media/ufcpp2000/csharp/fig/Framework/Profile.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/Profile.png)
+
+<figcaption>プロファイルの差による問題</figcaption>
 </figure>
 
 
@@ -125,8 +129,10 @@ Full .NETが入ってるマシンで Client Profile ターゲットの開発す�
 VS 上のはプロパティ ウィンドウで。
 
 <figure>
-	[![参照アセンブリの場所](../../../../assets/media/ufcpp2000/csharp/fig/Framework/ReferenceAssembly.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/ReferenceAssembly.png)
-	<figcaption>参照アセンブリの場所</figcaption>
+
+[![参照アセンブリの場所](../../../../assets/media/ufcpp2000/csharp/fig/Framework/ReferenceAssembly.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/ReferenceAssembly.png)
+
+<figcaption>参照アセンブリの場所</figcaption>
 </figure>
 
 
@@ -155,8 +161,10 @@ C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089
 Visual Studio から見ているアセンブリの中身をのぞくと
 
 <figure>
-	[![参照アセンブリの中身](../../../../assets/media/ufcpp2000/csharp/fig/Framework/InsideReferenceAssembly.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/InsideReferenceAssembly.png)
-	<figcaption>参照アセンブリの中身</figcaption>
+
+[![参照アセンブリの中身](../../../../assets/media/ufcpp2000/csharp/fig/Framework/InsideReferenceAssembly.png)](../../../../assets/media/ufcpp2000/csharp/fig/Framework/InsideReferenceAssembly.png)
+
+<figcaption>参照アセンブリの中身</figcaption>
 </figure>
 
 

@@ -38,24 +38,30 @@ List&lt;T&gt; やStack&lt;T&gt; で内部的にやってることはほぼこれ
 要は、配列と、実際に何個目まで要素が詰まっているかを表す変数countを持ちます（図1）。
 
 <figure>
-	[![配列リストのデータ構造。](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list1.png)
-	<figcaption>配列リストのデータ構造。</figcaption>
+
+[![配列リストのデータ構造。](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list1.png)
+
+<figcaption>配列リストのデータ構造。</figcaption>
 </figure>
 
 
 そして、要素を追加するたびに、count の値を増やします（図2）。
 
 <figure>
-	[![要素の追加。](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list2.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list2.png)
-	<figcaption>要素の追加。</figcaption>
+
+[![要素の追加。](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list2.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list2.png)
+
+<figcaption>要素の追加。</figcaption>
 </figure>
 
 
 もし配列がいっぱいになったら、新しい配列を確保して要素をコピーします（図3）。
 
 <figure>
-	[![配列の再確保。](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list3.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list3.png)
-	<figcaption>配列の再確保。</figcaption>
+
+[![配列の再確保。](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list3.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-array-list3.png)
+
+<figcaption>配列の再確保。</figcaption>
 </figure>
 
 
@@ -76,16 +82,20 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 要素数countの代わりに、どこから（first）どこまで（last）要素が入っているかを表す変数を持ちます（図4）。
 
 <figure>
-	[![循環バッファーのデータ構造。](../../../../assets/media/ufcpp2000/dotnet/fig/col-circular1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-circular1.png)
-	<figcaption>循環バッファーのデータ構造。</figcaption>
+
+[![循環バッファーのデータ構造。](../../../../assets/media/ufcpp2000/dotnet/fig/col-circular1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-circular1.png)
+
+<figcaption>循環バッファーのデータ構造。</figcaption>
 </figure>
 
 
 要素をインデックスで取り出す際には、dataの長さで剰余を取ることで、配列の両端をつないだかのように扱います（図5）。
 
 <figure>
-	[![インデックスの剰余を取ることで、バッファーの両端をつなぐ。](../../../../assets/media/ufcpp2000/dotnet/fig/col-circular2.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-circular2.png)
-	<figcaption>インデックスの剰余を取ることで、バッファーの両端をつなぐ。</figcaption>
+
+[![インデックスの剰余を取ることで、バッファーの両端をつなぐ。](../../../../assets/media/ufcpp2000/dotnet/fig/col-circular2.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-circular2.png)
+
+<figcaption>インデックスの剰余を取ることで、バッファーの両端をつなぐ。</figcaption>
 </figure>
 
 
@@ -101,8 +111,10 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 連結リストでは、ノード（node: 節）をつないでリストを作ります（図6）。
 
 <figure>
-	[![連結リスト。](../../../../assets/media/ufcpp2000/dotnet/fig/col-linked-list1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-linked-list1.png)
-	<figcaption>連結リスト。</figcaption>
+
+[![連結リスト。](../../../../assets/media/ufcpp2000/dotnet/fig/col-linked-list1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-linked-list1.png)
+
+<figcaption>連結リスト。</figcaption>
 </figure>
 
 
@@ -152,8 +164,10 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 
 
 <figure>
-	[![ハッシュ テーブルの原理。](../../../../assets/media/ufcpp2000/dotnet/fig/col-hash-table1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-hash-table1.png)
-	<figcaption>ハッシュ テーブルの原理。</figcaption>
+
+[![ハッシュ テーブルの原理。](../../../../assets/media/ufcpp2000/dotnet/fig/col-hash-table1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-hash-table1.png)
+
+<figcaption>ハッシュ テーブルの原理。</figcaption>
 </figure>
 
 
@@ -183,8 +197,10 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 ツリーは、連結リストと同じように、ノードを作ってつないで作ります。ただし、連結リストとは違って、図8のようなつなぎ方をします。
 
 <figure>
-	[![ツリー データ構造。](../../../../assets/media/ufcpp2000/dotnet/fig/col-tree.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-tree.png)
-	<figcaption>ツリー データ構造。</figcaption>
+
+[![ツリー データ構造。](../../../../assets/media/ufcpp2000/dotnet/fig/col-tree.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-tree.png)
+
+<figcaption>ツリー データ構造。</figcaption>
 </figure>
 
 
@@ -215,8 +231,10 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 すると、図9のような手順でツリーが構築されるはずです。
 
 <figure>
-	[![二分探索ツリーの構築例（理想的状況）。](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-tree1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-tree1.png)
-	<figcaption>二分探索ツリーの構築例（理想的状況）。</figcaption>
+
+[![二分探索ツリーの構築例（理想的状況）。](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-tree1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-tree1.png)
+
+<figcaption>二分探索ツリーの構築例（理想的状況）。</figcaption>
 </figure>
 
 
@@ -232,8 +250,10 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 たとえば、1, 2, 3, 4, 5の順で要素を挿入すると、図19に示すような偏りが生じて、ツリーの高さが <span class="math">n</span> になります。
 
 <figure>
-	[![二分探索ツリーの構築例（好ましくない状況）。](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-tree2.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-tree2.png)
-	<figcaption>二分探索ツリーの構築例（好ましくない状況）。</figcaption>
+
+[![二分探索ツリーの構築例（好ましくない状況）。](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-tree2.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-tree2.png)
+
+<figcaption>二分探索ツリーの構築例（好ましくない状況）。</figcaption>
 </figure>
 
 
@@ -263,8 +283,10 @@ Queue&lt;T&gt; （挿入は末尾、削除は先頭）の場合に性能が出�
 
 
 <figure>
-	[![二分探索の例。](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-search1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-search1.png)
-	<figcaption>二分探索の例。</figcaption>
+
+[![二分探索の例。](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-search1.png)](../../../../assets/media/ufcpp2000/dotnet/fig/col-binary-search1.png)
+
+<figcaption>二分探索の例。</figcaption>
 </figure>
 
 

@@ -45,8 +45,10 @@ C# 5.0を使えない状況下で非同期処理を書くことになった場�
 今回の例として使うのは、Figure 1に示すような、確認ダイアログ表示のフロー。
 
 <figure>
-	[![確認ダイアログを表示する例](../../../../assets/media/ufcpp2000/csharp/fig/asyncflow1.png)](../../../../assets/media/ufcpp2000/csharp/fig/asyncflow1.png)
-	<figcaption>確認ダイアログを表示する例</figcaption>
+
+[![確認ダイアログを表示する例](../../../../assets/media/ufcpp2000/csharp/fig/asyncflow1.png)](../../../../assets/media/ufcpp2000/csharp/fig/asyncflow1.png)
+
+<figcaption>確認ダイアログを表示する例</figcaption>
 </figure>
 
 

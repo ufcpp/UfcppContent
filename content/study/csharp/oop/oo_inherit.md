@@ -60,8 +60,10 @@ aliases:
 または「<em>サブクラス</em>（sub class）」と呼びます。
 
 <figure>
-	[![「人間」と「学生」の包含関係](../../../../assets/media/ufcpp2000/csharp/fig/inheritance.png)](../../../../assets/media/ufcpp2000/csharp/fig/inheritance.png)
-	<figcaption>「人間」と「学生」の包含関係</figcaption>
+
+[![「人間」と「学生」の包含関係](../../../../assets/media/ufcpp2000/csharp/fig/inheritance.png)](../../../../assets/media/ufcpp2000/csharp/fig/inheritance.png)
+
+<figcaption>「人間」と「学生」の包含関係</figcaption>
 </figure>
 
 

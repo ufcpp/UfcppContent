@@ -86,8 +86,10 @@ aliases:
 つまり、C# の<strong id="interface" class="keyword">インターフェース</strong>（interface）とは、抽象メソッドのみを持つ抽象クラスだと考えることが出来ます。
 
 <figure>
-	[![インターフェース](../../../../assets/media/ufcpp2000/csharp/fig/if0.png)](../../../../assets/media/ufcpp2000/csharp/fig/if0.png)
-	<figcaption>インターフェース</figcaption>
+
+[![インターフェース](../../../../assets/media/ufcpp2000/csharp/fig/if0.png)](../../../../assets/media/ufcpp2000/csharp/fig/if0.png)
+
+<figcaption>インターフェース</figcaption>
 </figure>
 
 

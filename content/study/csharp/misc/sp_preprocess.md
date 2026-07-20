@@ -331,8 +331,10 @@ class PreProcessTest
 これを Visual Studio で開くと以下のような見た目になります。
 
 <figure>
-	[![Visual Studio のアウトライン機能の例(展開時)](../../../../assets/media/ufcpp2000/csharp/fig/region1.png)](../../../../assets/media/ufcpp2000/csharp/fig/region1.png)
-	<figcaption>Visual Studio のアウトライン機能の例(展開時)</figcaption>
+
+[![Visual Studio のアウトライン機能の例(展開時)](../../../../assets/media/ufcpp2000/csharp/fig/region1.png)](../../../../assets/media/ufcpp2000/csharp/fig/region1.png)
+
+<figcaption>Visual Studio のアウトライン機能の例(展開時)</figcaption>
 </figure>
 
 
@@ -340,8 +342,10 @@ class PreProcessTest
 <code>#region</code> 命令で領域分けしたコードが折り畳まれ、以下のような見た目に変わります。
 
 <figure>
-	[![Visual Studio のアウトライン機能の例(折り畳み時)](../../../../assets/media/ufcpp2000/csharp/fig/region2.png)](../../../../assets/media/ufcpp2000/csharp/fig/region2.png)
-	<figcaption>Visual Studio のアウトライン機能の例(折り畳み時)</figcaption>
+
+[![Visual Studio のアウトライン機能の例(折り畳み時)](../../../../assets/media/ufcpp2000/csharp/fig/region2.png)](../../../../assets/media/ufcpp2000/csharp/fig/region2.png)
+
+<figcaption>Visual Studio のアウトライン機能の例(折り畳み時)</figcaption>
 </figure>
 
 

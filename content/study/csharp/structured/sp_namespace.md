@@ -880,8 +880,10 @@ csc /r:X=Ufcpp.dll Test.cs
 Visual Studio 上では、図1のように、参照しているライブラリのプロパティを開いて、エイリアス(aliases)の行を編集します。
 
 <figure>
-	[![Visual Studio 上での外部エイリアス設定。](../../../../assets/media/ufcpp2000/csharp/fig/ExternAliasInVs.png)](../../../../assets/media/ufcpp2000/csharp/fig/ExternAliasInVs.png)
-	<figcaption>Visual Studio 上での外部エイリアス設定。</figcaption>
+
+[![Visual Studio 上での外部エイリアス設定。](../../../../assets/media/ufcpp2000/csharp/fig/ExternAliasInVs.png)](../../../../assets/media/ufcpp2000/csharp/fig/ExternAliasInVs.png)
+
+<figcaption>Visual Studio 上での外部エイリアス設定。</figcaption>
 </figure>
 
 

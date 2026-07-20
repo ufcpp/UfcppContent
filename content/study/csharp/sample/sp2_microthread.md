@@ -264,8 +264,10 @@ manager.Run();
 メソッドの処理全部が終わってから呼び出し元に戻るような動作をします。
 
 <figure>
-	[![普通の処理の流れ](../../../../assets/media/ufcpp2000/csharp/fig/microthread1.png)](../../../../assets/media/ufcpp2000/csharp/fig/microthread1.png)
-	<figcaption>普通の処理の流れ</figcaption>
+
+[![普通の処理の流れ](../../../../assets/media/ufcpp2000/csharp/fig/microthread1.png)](../../../../assets/media/ufcpp2000/csharp/fig/microthread1.png)
+
+<figcaption>普通の処理の流れ</figcaption>
 </figure>
 
 
@@ -274,8 +276,10 @@ manager.Run();
 yield の行に到達するたびに、処理を中断して呼び出し元に戻ります。
 
 <figure>
-	[![マイクロスレッドの処理の流れ](../../../../assets/media/ufcpp2000/csharp/fig/microthread2.png)](../../../../assets/media/ufcpp2000/csharp/fig/microthread2.png)
-	<figcaption>マイクロスレッドの処理の流れ</figcaption>
+
+[![マイクロスレッドの処理の流れ](../../../../assets/media/ufcpp2000/csharp/fig/microthread2.png)](../../../../assets/media/ufcpp2000/csharp/fig/microthread2.png)
+
+<figcaption>マイクロスレッドの処理の流れ</figcaption>
 </figure>
 
 
@@ -389,8 +393,10 @@ return null みたいな余計な記述がちょっと増えてしまいます�
 [ソースファイル一式（zip 形式）](../../../../assets/source/MicroThread.zip)
 
 <figure>
-	[![弾幕風サンプルプログラム](../../../../assets/media/ufcpp2000/csharp/fig/microthreadsample.png)](../../../../assets/media/ufcpp2000/csharp/fig/microthreadsample.png)
-	<figcaption>弾幕風サンプルプログラム</figcaption>
+
+[![弾幕風サンプルプログラム](../../../../assets/media/ufcpp2000/csharp/fig/microthreadsample.png)](../../../../assets/media/ufcpp2000/csharp/fig/microthreadsample.png)
+
+<figcaption>弾幕風サンプルプログラム</figcaption>
 </figure>
 
 

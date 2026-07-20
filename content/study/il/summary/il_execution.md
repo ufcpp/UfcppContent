@@ -106,37 +106,43 @@ static int X(int x, int y)
 たとえば、引数として、x = 1, y = 3 を与えたとすると、以下のようになります。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-1.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-1.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-1.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-1.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-2.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-2.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-2.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-2.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-3.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-3.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-3.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-3.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-4.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-4.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-4.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-4.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-5.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-5.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-5.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-5.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-6.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-6.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample1-6.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample1-6.png)
 
 </figure>
 
@@ -232,42 +238,49 @@ static void Main()
 こちらも、スタックの状態込みで、IL 命令列がどう実行されていくかを見ていきましょう。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-1.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-1.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-1.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-1.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-2.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-2.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-2.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-2.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-3.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-3.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-3.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-3.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-4.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-4.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-4.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-4.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-5.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-5.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-5.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-5.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-6.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-6.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-6.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-6.png)
 
 </figure>
 
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-7.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-7.png)
+
+[![](../../../../assets/media/ufcpp2000/il/fig/il-sample2-7.png)](../../../../assets/media/ufcpp2000/il/fig/il-sample2-7.png)
 
 </figure>

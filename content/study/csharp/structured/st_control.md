@@ -35,8 +35,10 @@ C# では、if, switch（条件分岐）や while, for, foreach（反復）と�
 この処理の流れ（フロー）を図で書くと以下のような感じです。
 
 <figure>
-	[![n 個の整数の中から、正の数だけの和を求める処理](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol1.png)](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol1.png)
-	<figcaption>n 個の整数の中から、正の数だけの和を求める処理</figcaption>
+
+[![n 個の整数の中から、正の数だけの和を求める処理](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol1.png)](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol1.png)
+
+<figcaption>n 個の整数の中から、正の数だけの和を求める処理</figcaption>
 </figure>
 
 
@@ -65,8 +67,10 @@ if は条件分岐、while は反復処理、 a[i] は配列というもので�
 こういう処理を行うための制御構文として、for 文というものがあります。
 
 <figure>
-	[![n 個の整数の中から、正の数だけの和を求める処理（for 文を利用）](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol2.png)](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol2.png)
-	<figcaption>n 個の整数の中から、正の数だけの和を求める処理（for 文を利用）</figcaption>
+
+[![n 個の整数の中から、正の数だけの和を求める処理（for 文を利用）](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol2.png)](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol2.png)
+
+<figcaption>n 個の整数の中から、正の数だけの和を求める処理（for 文を利用）</figcaption>
 </figure>
 
 
@@ -87,8 +91,10 @@ for (int i = 0; i < N; ++i)
 「各要素に対する処理」のための構文が foreach です。
 
 <figure>
-	[![n 個の整数の中から、正の数だけの和を求める処理（foreach 文を利用）](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol3.png)](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol3.png)
-	<figcaption>n 個の整数の中から、正の数だけの和を求める処理（foreach 文を利用）</figcaption>
+
+[![n 個の整数の中から、正の数だけの和を求める処理（foreach 文を利用）](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol3.png)](../../../../assets/media/ufcpp2000/csharp/fig/flowcontrol3.png)
+
+<figcaption>n 個の整数の中から、正の数だけの和を求める処理（foreach 文を利用）</figcaption>
 </figure>
 
 

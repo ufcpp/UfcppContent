@@ -69,8 +69,10 @@ aliases:
 誘電体とは、電場をかけると分極を起こして分極電荷の現れる物質のことです。
 
 <figure>
-	[![分極](../../../../assets/media/ufcpp2000/physics/electro4.png)](../../../../assets/media/ufcpp2000/physics/electro4.png)
-	<figcaption>分極</figcaption>
+
+[![分極](../../../../assets/media/ufcpp2000/physics/electro4.png)](../../../../assets/media/ufcpp2000/physics/electro4.png)
+
+<figcaption>分極</figcaption>
 </figure>
 
 
@@ -164,20 +166,26 @@ aliases:
 <table class="layout" summary="レイアウト用テーブル">
 <tr><td>
 <figure>
-	[![電荷から生じる電束密度](../../../../assets/media/ufcpp2000/physics/electro1.png)](../../../../assets/media/ufcpp2000/physics/electro1.png)
-	<figcaption>電荷から生じる電束密度</figcaption>
+
+[![電荷から生じる電束密度](../../../../assets/media/ufcpp2000/physics/electro1.png)](../../../../assets/media/ufcpp2000/physics/electro1.png)
+
+<figcaption>電荷から生じる電束密度</figcaption>
 </figure>
 
 </td><td>
 <figure>
-	[![誘電体をはさんだ場合](../../../../assets/media/ufcpp2000/physics/electro2.png)](../../../../assets/media/ufcpp2000/physics/electro2.png)
-	<figcaption>誘電体をはさんだ場合</figcaption>
+
+[![誘電体をはさんだ場合](../../../../assets/media/ufcpp2000/physics/electro2.png)](../../../../assets/media/ufcpp2000/physics/electro2.png)
+
+<figcaption>誘電体をはさんだ場合</figcaption>
 </figure>
 
 </td><td>
 <figure>
-	[![同じく、電場](../../../../assets/media/ufcpp2000/physics/electro3.png)](../../../../assets/media/ufcpp2000/physics/electro3.png)
-	<figcaption>同じく、電場</figcaption>
+
+[![同じく、電場](../../../../assets/media/ufcpp2000/physics/electro3.png)](../../../../assets/media/ufcpp2000/physics/electro3.png)
+
+<figcaption>同じく、電場</figcaption>
 </figure>
 
 </td></tr></table>

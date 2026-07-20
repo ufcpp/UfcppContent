@@ -38,14 +38,18 @@ aliases:
 例えば、図1および2を見てください。
 
 <figure>
-	[![初期状態](../../../../assets/media/ufcpp2000/dotnet/fig/BindingControl1.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingControl1.jpg)
-	<figcaption>初期状態</figcaption>
+
+[![初期状態](../../../../assets/media/ufcpp2000/dotnet/fig/BindingControl1.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingControl1.jpg)
+
+<figcaption>初期状態</figcaption>
 </figure>
 
 
 <figure>
-	[![スライダーを動かすと・・・](../../../../assets/media/ufcpp2000/dotnet/fig/BindingControl2.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingControl2.jpg)
-	<figcaption>スライダーを動かすと・・・</figcaption>
+
+[![スライダーを動かすと・・・](../../../../assets/media/ufcpp2000/dotnet/fig/BindingControl2.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingControl2.jpg)
+
+<figcaption>スライダーを動かすと・・・</figcaption>
 </figure>
 
 
@@ -57,8 +61,10 @@ aliases:
 また、図3のように、同じデータを異なる複数の方法で表示するいうことも考えられます。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/dotnet/fig/BindingData.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingData.jpg)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/dotnet/fig/BindingData.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingData.jpg)
+
+<figcaption></figcaption>
 </figure>
 
 
@@ -460,8 +466,10 @@ FrameworkElement クラスの
 DataContext プロパティ
 
 <figure>
-	[![データとビュー](../../../../assets/media/ufcpp2000/dotnet/fig/BindingModelView.png)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingModelView.png)
-	<figcaption>データとビュー</figcaption>
+
+[![データとビュー](../../../../assets/media/ufcpp2000/dotnet/fig/BindingModelView.png)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingModelView.png)
+
+<figcaption>データとビュー</figcaption>
 </figure>
 
 

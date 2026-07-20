@@ -91,8 +91,10 @@ class Program
 （300×300ドットが標準みたい。）
 
 <figure>
-	[![Windows アプリケーション初期状態](../../../../assets/media/ufcpp2000/csharp/fig/graphics01.png)](../../../../assets/media/ufcpp2000/csharp/fig/graphics01.png)
-	<figcaption>Windows アプリケーション初期状態</figcaption>
+
+[![Windows アプリケーション初期状態](../../../../assets/media/ufcpp2000/csharp/fig/graphics01.png)](../../../../assets/media/ufcpp2000/csharp/fig/graphics01.png)
+
+<figcaption>Windows アプリケーション初期状態</figcaption>
 </figure>
 
 
@@ -135,8 +137,10 @@ class Program
 
 
 <figure>
-	[![幅・高さとタイトル文字を設定](../../../../assets/media/ufcpp2000/csharp/fig/forms01.png)](../../../../assets/media/ufcpp2000/csharp/fig/forms01.png)
-	<figcaption>幅・高さとタイトル文字を設定</figcaption>
+
+[![幅・高さとタイトル文字を設定](../../../../assets/media/ufcpp2000/csharp/fig/forms01.png)](../../../../assets/media/ufcpp2000/csharp/fig/forms01.png)
+
+<figcaption>幅・高さとタイトル文字を設定</figcaption>
 </figure>
 
 
@@ -245,8 +249,10 @@ class Form1 : Form
 これをコンパイル・実行すると図3のようなフォームが表示されるはずです。
 
 <figure>
-	[![ボタンを追加したフォーム](../../../../assets/media/ufcpp2000/csharp/fig/forms02.png)](../../../../assets/media/ufcpp2000/csharp/fig/forms02.png)
-	<figcaption>ボタンを追加したフォーム</figcaption>
+
+[![ボタンを追加したフォーム](../../../../assets/media/ufcpp2000/csharp/fig/forms02.png)](../../../../assets/media/ufcpp2000/csharp/fig/forms02.png)
+
+<figcaption>ボタンを追加したフォーム</figcaption>
 </figure>
 
 
@@ -335,8 +341,10 @@ System.Windows.Forms 名前空間以下には、さまざまなコントロー�
 
 
 <figure>
-	[![コントロールの追加](../../../../assets/media/ufcpp2000/csharp/fig/forms03.png)](../../../../assets/media/ufcpp2000/csharp/fig/forms03.png)
-	<figcaption>コントロールの追加</figcaption>
+
+[![コントロールの追加](../../../../assets/media/ufcpp2000/csharp/fig/forms03.png)](../../../../assets/media/ufcpp2000/csharp/fig/forms03.png)
+
+<figcaption>コントロールの追加</figcaption>
 </figure>
 
 

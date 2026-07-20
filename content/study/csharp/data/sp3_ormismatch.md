@@ -40,8 +40,10 @@ IEnumerable や XML、リレーショナルデータベースなど、
 すなわち、データ処理（読み出しや更新）と表示用の GUI 構築がプログラムの行う処理です。
 
 <figure>
-	[![データに対する操作と表示](../../../../assets/media/ufcpp2000/csharp/fig/data1.png)](../../../../assets/media/ufcpp2000/csharp/fig/data1.png)
-	<figcaption>データに対する操作と表示</figcaption>
+
+[![データに対する操作と表示](../../../../assets/media/ufcpp2000/csharp/fig/data1.png)](../../../../assets/media/ufcpp2000/csharp/fig/data1.png)
+
+<figcaption>データに対する操作と表示</figcaption>
 </figure>
 
 
@@ -66,8 +68,10 @@ C# 3.0 で導入された機能で、のような OOP を基本とするプロ�
 そういう状況を思い浮かべての比喩表現です。
 
 <figure>
-	[![異なる素材間の抵抗の不一致](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch.png)
-	<figcaption>異なる素材間の抵抗の不一致</figcaption>
+
+[![異なる素材間の抵抗の不一致](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch.png)
+
+<figcaption>異なる素材間の抵抗の不一致</figcaption>
 </figure>
 
 
@@ -85,8 +89,10 @@ C# 3.0 で導入された機能で、のような OOP を基本とするプロ�
 光（電磁波）や音の反射を軽減できたりもします。
 
 <figure>
-	[![インピーダンス ミスマッチの解消による反射の軽減](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch2.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch2.png)
-	<figcaption>インピーダンス ミスマッチの解消による反射の軽減</figcaption>
+
+[![インピーダンス ミスマッチの解消による反射の軽減](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch2.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch2.png)
+
+<figcaption>インピーダンス ミスマッチの解消による反射の軽減</figcaption>
 </figure>
 
 

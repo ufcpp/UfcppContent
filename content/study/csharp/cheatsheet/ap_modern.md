@@ -508,8 +508,10 @@ public int X
 （もっとも、図1のように、コード スニペットがあるので、そこまで面倒ではないですが。）
 
 <figure>
-	[![プロパティ生成用のコード スニペット。](../../../../assets/media/ufcpp2000/csharp/fig/propfull.png)](../../../../assets/media/ufcpp2000/csharp/fig/propfull.png)
-	<figcaption>プロパティ生成用のコード スニペット。</figcaption>
+
+[![プロパティ生成用のコード スニペット。](../../../../assets/media/ufcpp2000/csharp/fig/propfull.png)](../../../../assets/media/ufcpp2000/csharp/fig/propfull.png)
+
+<figcaption>プロパティ生成用のコード スニペット。</figcaption>
 </figure>
 
 
@@ -551,8 +553,10 @@ var の利用は、Visual Studio の補助が前提な面もあります。
 Visual Studio 上では、図2のように、型推論の結果がすぐに見えるので、多少読みにくいコードであっても、変数の型がわからなくなることはありません。
 
 <figure>
-	[![Visual Studio 上での、var の型推論結果の表示。](../../../../assets/media/ufcpp2000/csharp/fig/var-with-ide.png)](../../../../assets/media/ufcpp2000/csharp/fig/var-with-ide.png)
-	<figcaption>Visual Studio 上での、var の型推論結果の表示。</figcaption>
+
+[![Visual Studio 上での、var の型推論結果の表示。](../../../../assets/media/ufcpp2000/csharp/fig/var-with-ide.png)](../../../../assets/media/ufcpp2000/csharp/fig/var-with-ide.png)
+
+<figcaption>Visual Studio 上での、var の型推論結果の表示。</figcaption>
 </figure>
 
 

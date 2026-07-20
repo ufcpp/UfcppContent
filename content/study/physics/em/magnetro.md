@@ -74,8 +74,10 @@ aliases:
 磁性体とは、磁場をかけると磁化を起こして磁化電流の現れる物質のことです。
 
 <figure>
-	[![磁化](../../../../assets/media/ufcpp2000/physics/magnetro4.png)](../../../../assets/media/ufcpp2000/physics/magnetro4.png)
-	<figcaption>磁化</figcaption>
+
+[![磁化](../../../../assets/media/ufcpp2000/physics/magnetro4.png)](../../../../assets/media/ufcpp2000/physics/magnetro4.png)
+
+<figcaption>磁化</figcaption>
 </figure>
 
 
@@ -156,20 +158,26 @@ aliases:
 <table class="layout" summary="レイアウト用テーブル">
 <tr><td markdown="1">
 <figure>
-	[![ループ電流から生じる磁場](../../../../assets/media/ufcpp2000/physics/magnetro1.png)](../../../../assets/media/ufcpp2000/physics/magnetro1.png)
-	<figcaption>ループ電流から生じる磁場</figcaption>
+
+[![ループ電流から生じる磁場](../../../../assets/media/ufcpp2000/physics/magnetro1.png)](../../../../assets/media/ufcpp2000/physics/magnetro1.png)
+
+<figcaption>ループ電流から生じる磁場</figcaption>
 </figure>
 
 </td><td markdown="1">
 <figure>
-	[![磁性体をはさんだ場合](../../../../assets/media/ufcpp2000/physics/magnetro2.png)](../../../../assets/media/ufcpp2000/physics/magnetro2.png)
-	<figcaption>磁性体をはさんだ場合</figcaption>
+
+[![磁性体をはさんだ場合](../../../../assets/media/ufcpp2000/physics/magnetro2.png)](../../../../assets/media/ufcpp2000/physics/magnetro2.png)
+
+<figcaption>磁性体をはさんだ場合</figcaption>
 </figure>
 
 </td><td markdown="1">
 <figure>
-	[![同じく、磁束密度](../../../../assets/media/ufcpp2000/physics/magnetro3.png)](../../../../assets/media/ufcpp2000/physics/magnetro3.png)
-	<figcaption>同じく、磁束密度</figcaption>
+
+[![同じく、磁束密度](../../../../assets/media/ufcpp2000/physics/magnetro3.png)](../../../../assets/media/ufcpp2000/physics/magnetro3.png)
+
+<figcaption>同じく、磁束密度</figcaption>
 </figure>
 
 </td></tr></table>

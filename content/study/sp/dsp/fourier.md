@@ -342,8 +342,10 @@ q<sub>i</sub>
 重み<span class="math">q<sub>i</sub></span>を掛けた上で重ね合わせたものになっています。
 
 <figure>
-	[![関数の重ね合わせ](../../../../assets/media/ufcpp2000/sp/fourier01.png)](../../../../assets/media/ufcpp2000/sp/fourier01.png)
-	<figcaption>関数の重ね合わせ</figcaption>
+
+[![関数の重ね合わせ](../../../../assets/media/ufcpp2000/sp/fourier01.png)](../../../../assets/media/ufcpp2000/sp/fourier01.png)
+
+<figcaption>関数の重ね合わせ</figcaption>
 </figure>
 
 

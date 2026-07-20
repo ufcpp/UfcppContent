@@ -83,8 +83,10 @@ C# でもやってるんですけど（「[ラインアート](../../csharp/samp
 [ファイル一式（ZIP 圧縮）](../../../../assets/sample/ConvexClosure.zip)
 
 <figure>
-	[![画面コピー](../../../../assets/media/ufcpp2000/dotnet/fig/convex.png)](../../../../assets/media/ufcpp2000/dotnet/fig/convex.png)
-	<figcaption>画面コピー</figcaption>
+
+[![画面コピー](../../../../assets/media/ufcpp2000/dotnet/fig/convex.png)](../../../../assets/media/ufcpp2000/dotnet/fig/convex.png)
+
+<figcaption>画面コピー</figcaption>
 </figure>
 
 
@@ -161,8 +163,10 @@ n 本の回帰直線を求めるプログラム。
 [ファイル一式（ZIP 圧縮）](../../../../assets/sample/MultiLineFitting.zip)
 
 <figure>
-	[![画面コピー](../../../../assets/media/ufcpp2000/dotnet/fig/fitting.png)](../../../../assets/media/ufcpp2000/dotnet/fig/fitting.png)
-	<figcaption>画面コピー</figcaption>
+
+[![画面コピー](../../../../assets/media/ufcpp2000/dotnet/fig/fitting.png)](../../../../assets/media/ufcpp2000/dotnet/fig/fitting.png)
+
+<figcaption>画面コピー</figcaption>
 </figure>
 
 
@@ -280,8 +284,10 @@ Viewport3D（参考：「[3次元モデル](../wpf/wpf_uielement.md#Media3D)」�
 実例として、下図に示すようなプログラムを作りました。
 
 <figure>
-	[![実行画面](../../../../assets/media/ufcpp2000/dotnet/fig/Dynamics.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/Dynamics.jpg)
-	<figcaption>実行画面</figcaption>
+
+[![実行画面](../../../../assets/media/ufcpp2000/dotnet/fig/Dynamics.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/Dynamics.jpg)
+
+<figcaption>実行画面</figcaption>
 </figure>
 
 

@@ -364,8 +364,10 @@ C# の文法の話をする前に、ライブラリの互換性維持につい�
 シンプルな例ですが、図1に、ライブラリの開発体制としてありがちな状況を示します。
 
 <figure>
-	[![ライブラリの開発体制の例](../../../../assets/media/ufcpp2000/csharp/fig/compatibility-lib.png)](../../../../assets/media/ufcpp2000/csharp/fig/compatibility-lib.png)
-	<figcaption>ライブラリの開発体制の例</figcaption>
+
+[![ライブラリの開発体制の例](../../../../assets/media/ufcpp2000/csharp/fig/compatibility-lib.png)](../../../../assets/media/ufcpp2000/csharp/fig/compatibility-lib.png)
+
+<figcaption>ライブラリの開発体制の例</figcaption>
 </figure>
 
 

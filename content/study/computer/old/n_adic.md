@@ -100,14 +100,18 @@ low のとき上側にスイッチが入ります。
 （結果として、入力と出力で low / high が反転する。）
 
 <figure>
-	[![MOSFET による NOT 回路の模式図](../../../../assets/media/ufcpp2000/computer/fig/mosfet.png)](../../../../assets/media/ufcpp2000/computer/fig/mosfet.png)
-	<figcaption>MOSFET による NOT 回路の模式図</figcaption>
+
+[![MOSFET による NOT 回路の模式図](../../../../assets/media/ufcpp2000/computer/fig/mosfet.png)](../../../../assets/media/ufcpp2000/computer/fig/mosfet.png)
+
+<figcaption>MOSFET による NOT 回路の模式図</figcaption>
 </figure>
 
 
 <figure>
-	[![NOT 回路の動作概要](../../../../assets/media/ufcpp2000/computer/fig/switch.png)](../../../../assets/media/ufcpp2000/computer/fig/switch.png)
-	<figcaption>NOT 回路の動作概要</figcaption>
+
+[![NOT 回路の動作概要](../../../../assets/media/ufcpp2000/computer/fig/switch.png)](../../../../assets/media/ufcpp2000/computer/fig/switch.png)
+
+<figcaption>NOT 回路の動作概要</figcaption>
 </figure>
 
 

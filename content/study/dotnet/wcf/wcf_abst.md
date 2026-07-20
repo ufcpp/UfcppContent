@@ -108,14 +108,18 @@ WCF は Contract に注力できるように設計されています。
 1つのサーバが複数のエンドポイントを持てる。
 
 <figure>
-	[![エンドポイントの例1](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_endpoint1.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_endpoint1.jpg)
-	<figcaption>エンドポイントの例1</figcaption>
+
+[![エンドポイントの例1](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_endpoint1.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_endpoint1.jpg)
+
+<figcaption>エンドポイントの例1</figcaption>
 </figure>
 
 
 <figure>
-	[![エンドポイントの例2](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_endpoint2.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_endpoint2.jpg)
-	<figcaption>エンドポイントの例2</figcaption>
+
+[![エンドポイントの例2](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_endpoint2.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_endpoint2.jpg)
+
+<figcaption>エンドポイントの例2</figcaption>
 </figure>
 
 
@@ -168,8 +172,10 @@ public interface IGameCharacterCallback
 複数のクライアントで位置を共有。
 
 <figure>
-	[![サンプル（ゲームひな形）](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_gamesample.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_gamesample.png)
-	<figcaption>サンプル（ゲームひな形）</figcaption>
+
+[![サンプル（ゲームひな形）](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_gamesample.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wcf_gamesample.png)
+
+<figcaption>サンプル（ゲームひな形）</figcaption>
 </figure>
 
 

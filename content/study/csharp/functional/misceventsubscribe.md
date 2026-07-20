@@ -46,8 +46,10 @@ C# の event 構文の問題と、その解消方法について説明します�
 ↓こういうの。「発生側」と「受取側」を明確に分離するためのパターン。
 
 <figure>
-	[![イベントの概要](../../../../assets/media/1029/observableobserver.png)](../../../../assets/media/1029/observableobserver.png)
-	<figcaption>イベントの概要</figcaption>
+
+[![イベントの概要](../../../../assets/media/1029/observableobserver.png)](../../../../assets/media/1029/observableobserver.png)
+
+<figcaption>イベントの概要</figcaption>
 </figure>
 
 

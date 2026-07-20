@@ -33,8 +33,10 @@ aliases:
 
 
 <figure>
-	[![2分探索木](../../../../assets/media/ufcpp2000/algorithm/fig/col_tree0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_tree0.png)
-	<figcaption>2分探索木</figcaption>
+
+[![2分探索木](../../../../assets/media/ufcpp2000/algorithm/fig/col_tree0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_tree0.png)
+
+<figcaption>2分探索木</figcaption>
 </figure>
 
 
@@ -48,8 +50,10 @@ aliases:
 計算量は O(n) になります。
 
 <figure>
-	[![偏った2分探索木](../../../../assets/media/ufcpp2000/algorithm/fig/col_tree1.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_tree1.png)
-	<figcaption>偏った2分探索木</figcaption>
+
+[![偏った2分探索木](../../../../assets/media/ufcpp2000/algorithm/fig/col_tree1.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_tree1.png)
+
+<figcaption>偏った2分探索木</figcaption>
 </figure>
 
 

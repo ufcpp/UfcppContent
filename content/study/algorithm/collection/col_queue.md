@@ -25,8 +25,10 @@ aliases:
 first in first out の頭文字からとって、FIFO バッファと呼んだりもします。
 
 <figure>
-	[![待ち行列](../../../../assets/media/ufcpp2000/algorithm/fig/col_queue0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_queue0.png)
-	<figcaption>待ち行列</figcaption>
+
+[![待ち行列](../../../../assets/media/ufcpp2000/algorithm/fig/col_queue0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_queue0.png)
+
+<figcaption>待ち行列</figcaption>
 </figure>
 
 

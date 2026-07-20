@@ -203,8 +203,10 @@ Visual 言語というのは、ツール上で視覚的に見れて、ドラッ�
 
 
 <figure>
-	[![WPF におけるテキスト＋視覚化 DSL 開発](../../../../assets/media/ufcpp2000/dsl/fig/wpf.png)](../../../../assets/media/ufcpp2000/dsl/fig/wpf.png)
-	<figcaption>WPF におけるテキスト＋視覚化 DSL 開発</figcaption>
+
+[![WPF におけるテキスト＋視覚化 DSL 開発](../../../../assets/media/ufcpp2000/dsl/fig/wpf.png)](../../../../assets/media/ufcpp2000/dsl/fig/wpf.png)
+
+<figcaption>WPF におけるテキスト＋視覚化 DSL 開発</figcaption>
 </figure>
 
 

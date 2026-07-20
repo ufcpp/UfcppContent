@@ -201,16 +201,20 @@ var d2 = new DateTime();      // (2)
 まず、タイピング数に関しては、(1) の方は「DateTime d = new 」まで打てばインテリセンスで DateTime が出てくる（図1）のに対して、(2) の方は new の後ろをちゃんと打たないといけません。結局、インテリセンスに頼る限り、タイピング数に大差は生まれません。
 
 <figure>
-	[![Visual Studio のインテリセンス](../../../../assets/media/ufcpp2000/csharp/fig/var1.png)](../../../../assets/media/ufcpp2000/csharp/fig/var1.png)
-	<figcaption>Visual Studio のインテリセンス</figcaption>
+
+[![Visual Studio のインテリセンス](../../../../assets/media/ufcpp2000/csharp/fig/var1.png)](../../../../assets/media/ufcpp2000/csharp/fig/var1.png)
+
+<figcaption>Visual Studio のインテリセンス</figcaption>
 </figure>
 
 
 変数 d の型の判別のしやすさも、型を明記しようが var を使おうが、Visual Studio で変数 d にマウスカーソルを合わせれば型名が出てくるんで（図2）、型を明記するメリットはあんまり大きくもないです。
 
 <figure>
-	[![Visual Studio の型情報表示](../../../../assets/media/ufcpp2000/csharp/fig/var2.png)](../../../../assets/media/ufcpp2000/csharp/fig/var2.png)
-	<figcaption>Visual Studio の型情報表示</figcaption>
+
+[![Visual Studio の型情報表示](../../../../assets/media/ufcpp2000/csharp/fig/var2.png)](../../../../assets/media/ufcpp2000/csharp/fig/var2.png)
+
+<figcaption>Visual Studio の型情報表示</figcaption>
 </figure>
 
 

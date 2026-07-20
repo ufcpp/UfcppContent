@@ -45,8 +45,10 @@ aliases:
 フリップ・フロップはこれをうまく制御して、安定的に高電圧のまま、もしくは、低電圧のまま居続ける回路を作っています。）
 
 <figure>
-	[![順序回路の典型的な構成例](../../../../assets/media/ufcpp2000/computer/fig/Logical/SequenceLogic.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/SequenceLogic.png)
-	<figcaption>順序回路の典型的な構成例</figcaption>
+
+[![順序回路の典型的な構成例](../../../../assets/media/ufcpp2000/computer/fig/Logical/SequenceLogic.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/SequenceLogic.png)
+
+<figcaption>順序回路の典型的な構成例</figcaption>
 </figure>
 
 
@@ -61,8 +63,10 @@ CMOS回路を用いた記憶素子の実装として、最もよくつかわれ�
 フリップ・フロップは、図2に示すような、NAND回路に対してフィードバック構造を作ることで、値を定常的に保持します。
 
 <figure>
-	[![SRフリップ・フロップ](../../../../assets/media/ufcpp2000/computer/fig/Logical/SRFlipFlop.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/SRFlipFlop.png)
-	<figcaption>SRフリップ・フロップ</figcaption>
+
+[![SRフリップ・フロップ](../../../../assets/media/ufcpp2000/computer/fig/Logical/SRFlipFlop.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/SRFlipFlop.png)
+
+<figcaption>SRフリップ・フロップ</figcaption>
 </figure>
 
 
@@ -104,8 +108,10 @@ SRフリップ・フロップの入出力の関係を表1に示します。
 ただ、実際によくつかわれるのはもう少し複雑で図3に示すような回路構造を持つDフリップ・フロップと呼ばれるタイプのものです。
 
 <figure>
-	[![Dフリップ・フロップ](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlop.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlop.png)
-	<figcaption>Dフリップ・フロップ</figcaption>
+
+[![Dフリップ・フロップ](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlop.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlop.png)
+
+<figcaption>Dフリップ・フロップ</figcaption>
 </figure>
 
 
@@ -113,8 +119,10 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 入出力の変化の例を図4に示します。
 
 <figure>
-	[![Dフリップ・フロップの入出力の変化の例](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopClock.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopClock.png)
-	<figcaption>Dフリップ・フロップの入出力の変化の例</figcaption>
+
+[![Dフリップ・フロップの入出力の変化の例](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopClock.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopClock.png)
+
+<figcaption>Dフリップ・フロップの入出力の変化の例</figcaption>
 </figure>
 
 
@@ -135,8 +143,10 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 また、CLKと書いてクロック信号を表すことが多いです。
 
 <figure>
-	[![Dフリップ・フロップを表す記号](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopSymbol.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopSymbol.png)
-	<figcaption>Dフリップ・フロップを表す記号</figcaption>
+
+[![Dフリップ・フロップを表す記号](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopSymbol.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/DFlipFlopSymbol.png)
+
+<figcaption>Dフリップ・フロップを表す記号</figcaption>
 </figure>
 
 
@@ -163,8 +173,10 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 このような構成をパイプライン（pipeline）構成と呼びます。
 
 <figure>
-	[![順序回路のパイプライン構成](../../../../assets/media/ufcpp2000/computer/fig/Logical/Pipeline.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Pipeline.png)
-	<figcaption>順序回路のパイプライン構成</figcaption>
+
+[![順序回路のパイプライン構成](../../../../assets/media/ufcpp2000/computer/fig/Logical/Pipeline.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Pipeline.png)
+
+<figcaption>順序回路のパイプライン構成</figcaption>
 </figure>
 
 
@@ -335,8 +347,10 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 この論理式を組み合わせ回路に起こすと図7のような回路になります。
 
 <figure>
-	[![c',c' を求める組み合わせ回路](../../../../assets/media/ufcpp2000/computer/fig/Logical/Counter1.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Counter1.png)
-	<figcaption>c<sub>0</sub>',c<sub>1</sub>' を求める組み合わせ回路</figcaption>
+
+[![c',c' を求める組み合わせ回路](../../../../assets/media/ufcpp2000/computer/fig/Logical/Counter1.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Counter1.png)
+
+<figcaption>c<sub>0</sub>',c<sub>1</sub>' を求める組み合わせ回路</figcaption>
 </figure>
 
 
@@ -346,8 +360,10 @@ Dフリップ・フロップでは、入力Cの値が0から1に変化したと�
 最後に、前節で得た組み合わせ回路に記憶素子を接続することで、図8に示すような順序回路を得ます。
 
 <figure>
-	[![2ビット・カウンターの順序回路](../../../../assets/media/ufcpp2000/computer/fig/Logical/Counter2.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Counter2.png)
-	<figcaption>2ビット・カウンターの順序回路</figcaption>
+
+[![2ビット・カウンターの順序回路](../../../../assets/media/ufcpp2000/computer/fig/Logical/Counter2.png)](../../../../assets/media/ufcpp2000/computer/fig/Logical/Counter2.png)
+
+<figcaption>2ビット・カウンターの順序回路</figcaption>
 </figure>
 
 

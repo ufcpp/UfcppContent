@@ -69,8 +69,10 @@ aliases:
 これは、「問題１を質点モデルを使ってモデル化した」と考えることができます。
 
 <figure>
-	[![物体の運動を質点モデルでモデル化](../../../../assets/media/ufcpp2000/dsl/fig/pointmass.jpg)](../../../../assets/media/ufcpp2000/dsl/fig/pointmass.jpg)
-	<figcaption>物体の運動を質点モデルでモデル化</figcaption>
+
+[![物体の運動を質点モデルでモデル化](../../../../assets/media/ufcpp2000/dsl/fig/pointmass.jpg)](../../../../assets/media/ufcpp2000/dsl/fig/pointmass.jpg)
+
+<figcaption>物体の運動を質点モデルでモデル化</figcaption>
 </figure>
 
 
@@ -107,8 +109,10 @@ aliases:
 手続き型プログラミングモデルの表記方法の一種になります。
 
 <figure>
-	[![手続き型プログラミングモデル](../../../../assets/media/ufcpp2000/dsl/fig/mdd01.png)](../../../../assets/media/ufcpp2000/dsl/fig/mdd01.png)
-	<figcaption>手続き型プログラミングモデル</figcaption>
+
+[![手続き型プログラミングモデル](../../../../assets/media/ufcpp2000/dsl/fig/mdd01.png)](../../../../assets/media/ufcpp2000/dsl/fig/mdd01.png)
+
+<figcaption>手続き型プログラミングモデル</figcaption>
 </figure>
 
 
@@ -128,8 +132,10 @@ aliases:
 そして、C# や C++、Java などの言語はこのオブジェクト指向モデルに基づいたプログラミング言語です。
 
 <figure>
-	[![オブジェクト指向プログラミングモデル](../../../../assets/media/ufcpp2000/dsl/fig/mdd02.png)](../../../../assets/media/ufcpp2000/dsl/fig/mdd02.png)
-	<figcaption>オブジェクト指向プログラミングモデル</figcaption>
+
+[![オブジェクト指向プログラミングモデル](../../../../assets/media/ufcpp2000/dsl/fig/mdd02.png)](../../../../assets/media/ufcpp2000/dsl/fig/mdd02.png)
+
+<figcaption>オブジェクト指向プログラミングモデル</figcaption>
 </figure>
 
 

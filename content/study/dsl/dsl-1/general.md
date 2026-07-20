@@ -143,8 +143,10 @@ int sum = a.Where(x => x > 0).Sum();
 大まかにですが、プログラミングモデルの位置づけのようなものを見てみましょう。
 
 <figure>
-	[![プログラミングモデルの位置づけ](../../../../assets/media/ufcpp2000/dsl/fig/model1.png)](../../../../assets/media/ufcpp2000/dsl/fig/model1.png)
-	<figcaption>プログラミングモデルの位置づけ</figcaption>
+
+[![プログラミングモデルの位置づけ](../../../../assets/media/ufcpp2000/dsl/fig/model1.png)](../../../../assets/media/ufcpp2000/dsl/fig/model1.png)
+
+<figcaption>プログラミングモデルの位置づけ</figcaption>
 </figure>
 
 
@@ -160,8 +162,10 @@ int sum = a.Where(x => x > 0).Sum();
 前者のあまりよくない解釈（実際の CPU の構造から離れるほどすごい）を基に考えると下図の青い円の中心から離れれば離れるほど良いということになります。
 
 <figure>
-	[![CPU の構造から離れる](../../../../assets/media/ufcpp2000/dsl/fig/model2.png)](../../../../assets/media/ufcpp2000/dsl/fig/model2.png)
-	<figcaption>CPU の構造から離れる</figcaption>
+
+[![CPU の構造から離れる](../../../../assets/media/ufcpp2000/dsl/fig/model2.png)](../../../../assets/media/ufcpp2000/dsl/fig/model2.png)
+
+<figcaption>CPU の構造から離れる</figcaption>
 </figure>
 
 
@@ -171,8 +175,10 @@ int sum = a.Where(x => x > 0).Sum();
 下図の黄色っぽい2つの円の中心に近ければ近いほど良いということになります。
 
 <figure>
-	[![やりたいことに近づける](../../../../assets/media/ufcpp2000/dsl/fig/model3.png)](../../../../assets/media/ufcpp2000/dsl/fig/model3.png)
-	<figcaption>やりたいことに近づける</figcaption>
+
+[![やりたいことに近づける](../../../../assets/media/ufcpp2000/dsl/fig/model3.png)](../../../../assets/media/ufcpp2000/dsl/fig/model3.png)
+
+<figcaption>やりたいことに近づける</figcaption>
 </figure>
 
 

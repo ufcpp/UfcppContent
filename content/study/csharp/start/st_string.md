@@ -37,8 +37,10 @@ var formatted = string.Format("({0}, {1})", x, y);
 
 
 <figure>
-	[![string.Format メソッドの利用例](../../../../assets/media/ufcpp2000/csharp/fig/string-format.png)](../../../../assets/media/ufcpp2000/csharp/fig/string-format.png)
-	<figcaption>string.Format メソッドの利用例</figcaption>
+
+[![string.Format メソッドの利用例](../../../../assets/media/ufcpp2000/csharp/fig/string-format.png)](../../../../assets/media/ufcpp2000/csharp/fig/string-format.png)
+
+<figcaption>string.Format メソッドの利用例</figcaption>
 </figure>
 
 
@@ -364,8 +366,10 @@ static double Sqrt(double x)
 しかし、文字列にしてしまっている "" 内のメソッド名の部分はリファクタリングできず、元のまま残ります。
 
 <figure>
-	[![nameof 演算子をリファクタリングの対象にする](../../../../assets/media/ufcpp2000/csharp/fig/nameof-refactoring.png)](../../../../assets/media/ufcpp2000/csharp/fig/nameof-refactoring.png)
-	<figcaption>nameof 演算子をリファクタリングの対象にする</figcaption>
+
+[![nameof 演算子をリファクタリングの対象にする](../../../../assets/media/ufcpp2000/csharp/fig/nameof-refactoring.png)](../../../../assets/media/ufcpp2000/csharp/fig/nameof-refactoring.png)
+
+<figcaption>nameof 演算子をリファクタリングの対象にする</figcaption>
 </figure>
 
 nameof 演算子の目的はここにあります。識別子名を文字列化するだけなんですが、ソースコード解析の対象にできます。

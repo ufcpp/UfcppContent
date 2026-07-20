@@ -79,14 +79,18 @@ aliases:
 ## <a id="sec-generated-title-3"></a> <a id="result"></a>結果
 
 <figure>
-	[![テスト用の画像](../../../../assets/media/ufcpp2000/xml/test.png)](../../../../assets/media/ufcpp2000/xml/test.png)
-	<figcaption>テスト用の画像</figcaption>
+
+[![テスト用の画像](../../../../assets/media/ufcpp2000/xml/test.png)](../../../../assets/media/ufcpp2000/xml/test.png)
+
+<figcaption>テスト用の画像</figcaption>
 </figure>
 
 
 <figure>
-	[![←通し番号も付きます](../../../../assets/media/ufcpp2000/xml/test.png)](../../../../assets/media/ufcpp2000/xml/test.png)
-	<figcaption>←通し番号も付きます</figcaption>
+
+[![←通し番号も付きます](../../../../assets/media/ufcpp2000/xml/test.png)](../../../../assets/media/ufcpp2000/xml/test.png)
+
+<figcaption>←通し番号も付きます</figcaption>
 </figure>
 
 

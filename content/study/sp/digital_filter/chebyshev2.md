@@ -28,8 +28,10 @@ aliases:
 逆チェビシェフフィルタのことをチェビシェフII型フィルタと呼ぶこともあります。
 
 <figure>
-	[![阻止域に等リプル](../../../../assets/media/ufcpp2000/sp/chebyshev2_01.png)](../../../../assets/media/ufcpp2000/sp/chebyshev2_01.png)
-	<figcaption>阻止域に等リプル</figcaption>
+
+[![阻止域に等リプル](../../../../assets/media/ufcpp2000/sp/chebyshev2_01.png)](../../../../assets/media/ufcpp2000/sp/chebyshev2_01.png)
+
+<figcaption>阻止域に等リプル</figcaption>
 </figure>
 
 
@@ -131,8 +133,10 @@ aliases:
 この例では、リプル幅は 0.1 で設計しています。
 
 <figure>
-	[![3～9次のチェビシェフフィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/chebyshev2_amp.png)](../../../../assets/media/ufcpp2000/sp/chebyshev2_amp.png)
-	<figcaption>3～9次のチェビシェフフィルタの周波数特性</figcaption>
+
+[![3～9次のチェビシェフフィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/chebyshev2_amp.png)](../../../../assets/media/ufcpp2000/sp/chebyshev2_amp.png)
+
+<figcaption>3～9次のチェビシェフフィルタの周波数特性</figcaption>
 </figure>
 
 
@@ -217,8 +221,10 @@ t ＝ <span class="paren" style="font-size:2.5em;">(</span><table class="frac" s
 （<span class="math">ω<sub>s</sub></span> は 1 で固定。）
 
 <figure>
-	[![逆チェビシェフフィルタの設計仕様1](../../../../assets/media/ufcpp2000/sp/chebyshev2_spec.png)](../../../../assets/media/ufcpp2000/sp/chebyshev2_spec.png)
-	<figcaption>逆チェビシェフフィルタの設計仕様1</figcaption>
+
+[![逆チェビシェフフィルタの設計仕様1](../../../../assets/media/ufcpp2000/sp/chebyshev2_spec.png)](../../../../assets/media/ufcpp2000/sp/chebyshev2_spec.png)
+
+<figcaption>逆チェビシェフフィルタの設計仕様1</figcaption>
 </figure>
 
 
@@ -337,8 +343,10 @@ N
 （<span class="math">ω<sub>p</sub></span> は 1 で固定。）
 
 <figure>
-	[![逆チェビシェフフィルタの設計仕様2](../../../../assets/media/ufcpp2000/sp/chebyshev2s_spec.png)](../../../../assets/media/ufcpp2000/sp/chebyshev2s_spec.png)
-	<figcaption>逆チェビシェフフィルタの設計仕様2</figcaption>
+
+[![逆チェビシェフフィルタの設計仕様2](../../../../assets/media/ufcpp2000/sp/chebyshev2s_spec.png)](../../../../assets/media/ufcpp2000/sp/chebyshev2s_spec.png)
+
+<figcaption>逆チェビシェフフィルタの設計仕様2</figcaption>
 </figure>
 
 

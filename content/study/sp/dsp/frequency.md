@@ -65,8 +65,10 @@ A<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="
 の正弦波を幾重にも重ね合わせたものだと考えることが出来ます。
 
 <figure>
-	[![振幅と位相](../../../../assets/media/ufcpp2000/sp/freq01.png)](../../../../assets/media/ufcpp2000/sp/freq01.png)
-	<figcaption>振幅と位相</figcaption>
+
+[![振幅と位相](../../../../assets/media/ufcpp2000/sp/freq01.png)](../../../../assets/media/ufcpp2000/sp/freq01.png)
+
+<figcaption>振幅と位相</figcaption>
 </figure>
 
 
@@ -215,8 +217,10 @@ p<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="
 信号の一部分を切り出して解析することになります。
 
 <figure>
-	[![信号の切り出し](../../../../assets/media/ufcpp2000/sp/freq02.png)](../../../../assets/media/ufcpp2000/sp/freq02.png)
-	<figcaption>信号の切り出し</figcaption>
+
+[![信号の切り出し](../../../../assets/media/ufcpp2000/sp/freq02.png)](../../../../assets/media/ufcpp2000/sp/freq02.png)
+
+<figcaption>信号の切り出し</figcaption>
 </figure>
 
 
@@ -320,8 +324,10 @@ A <span class="normal">exp</span> j<span class="paren" style="font-size:em;">(</
 図3に示すように細切れにされた状態になります。
 
 <figure>
-	[![位相特性](../../../../assets/media/ufcpp2000/sp/freq03.png)](../../../../assets/media/ufcpp2000/sp/freq03.png)
-	<figcaption>位相特性</figcaption>
+
+[![位相特性](../../../../assets/media/ufcpp2000/sp/freq03.png)](../../../../assets/media/ufcpp2000/sp/freq03.png)
+
+<figcaption>位相特性</figcaption>
 </figure>
 
 
@@ -333,8 +339,10 @@ A <span class="normal">exp</span> j<span class="paren" style="font-size:em;">(</
 位相の<strong id="unwrap" class="keyword">アンラッピング</strong>（unwrapping）処理といいます。
 
 <figure>
-	[![位相特性](../../../../assets/media/ufcpp2000/sp/freq04.png)](../../../../assets/media/ufcpp2000/sp/freq04.png)
-	<figcaption>位相特性</figcaption>
+
+[![位相特性](../../../../assets/media/ufcpp2000/sp/freq04.png)](../../../../assets/media/ufcpp2000/sp/freq04.png)
+
+<figcaption>位相特性</figcaption>
 </figure>
 
 

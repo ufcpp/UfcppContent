@@ -525,8 +525,10 @@ class DelegateTest
 イメージ的には下図のような感じです。
 
 <figure>
-	[![述語としてのデリゲート](../../../../assets/media/ufcpp2000/csharp/fig/predicate1.png)](../../../../assets/media/ufcpp2000/csharp/fig/predicate1.png)
-	<figcaption>述語としてのデリゲート</figcaption>
+
+[![述語としてのデリゲート](../../../../assets/media/ufcpp2000/csharp/fig/predicate1.png)](../../../../assets/media/ufcpp2000/csharp/fig/predicate1.png)
+
+<figcaption>述語としてのデリゲート</figcaption>
 </figure>
 
 
@@ -534,8 +536,10 @@ class DelegateTest
 pred は「呼び出し側から渡されるはずの何らかの条件」ということで、図中では空欄にしてあります。
 
 <figure>
-	[![メソッドにデリゲートを渡す](../../../../assets/media/ufcpp2000/csharp/fig/predicate2.png)](../../../../assets/media/ufcpp2000/csharp/fig/predicate2.png)
-	<figcaption>メソッドにデリゲートを渡す</figcaption>
+
+[![メソッドにデリゲートを渡す](../../../../assets/media/ufcpp2000/csharp/fig/predicate2.png)](../../../../assets/media/ufcpp2000/csharp/fig/predicate2.png)
+
+<figcaption>メソッドにデリゲートを渡す</figcaption>
 </figure>
 
 

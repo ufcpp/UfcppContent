@@ -33,8 +33,10 @@ aliases:
 複素数には、図1に示すようないろいろな側面があります。
 
 <figure>
-	[![複素数](../../../../assets/media/ufcpp2000/math/fig/complex01.png)](../../../../assets/media/ufcpp2000/math/fig/complex01.png)
-	<figcaption>複素数</figcaption>
+
+[![複素数](../../../../assets/media/ufcpp2000/math/fig/complex01.png)](../../../../assets/media/ufcpp2000/math/fig/complex01.png)
+
+<figcaption>複素数</figcaption>
 </figure>
 
 

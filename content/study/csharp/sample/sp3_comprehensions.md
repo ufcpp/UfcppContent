@@ -375,24 +375,30 @@ WIDTH が表示可能な範囲の幅を表す定数です。
 法線が (1, 0, 0) みたいなのだと、投影結果もきれいに格子点になって、↓みたいな感じになります。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_0_0.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_0_0.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_0_0.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_0_0.png)
+
+<figcaption></figcaption>
 </figure>
 
 
 法線を (1, 1, 1) とかにすると、最密充填な感じの6角形状の点が得られます↓。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_1_1.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_1_1.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_1_1.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_1_1.png)
+
+<figcaption></figcaption>
 </figure>
 
 
 (1, 5, 7) みたいな多少妙な比率にしても、有理比である限りきれいな格子模様になります↓。（精度の問題でぼやけてるけど、理屈の上ではちゃんと点になる。）
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_5_7.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_5_7.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_5_7.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_5_7.png)
+
+<figcaption></figcaption>
 </figure>
 
 
@@ -409,8 +415,10 @@ WIDTH が表示可能な範囲の幅を表す定数です。
 みたいに無理数比にしてしまうと、周期性がなくなります↓。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t10.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t10.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t10.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t10.png)
+
+<figcaption></figcaption>
 </figure>
 
 
@@ -420,8 +428,10 @@ WIDTH が表示可能な範囲の幅を表す定数です。
 規則性があるようなないようなちょっと不思議な模様に。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t1.2.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t1.2.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t1.2.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/1_r2_r3_t1.2.png)
+
+<figcaption></figcaption>
 </figure>
 
 
@@ -442,8 +452,10 @@ WIDTH が表示可能な範囲の幅を表す定数です。
 （ある1方向には周期性がなくなって、別の1方向には周期性が残る）↓。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/2_1-r5_1+r5.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/2_1-r5_1+r5.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/projection/2_1-r5_1+r5.png)](../../../../assets/media/ufcpp2000/csharp/fig/projection/2_1-r5_1+r5.png)
+
+<figcaption></figcaption>
 </figure>
 
 

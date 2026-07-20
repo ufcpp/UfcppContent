@@ -34,8 +34,10 @@ aliases:
 ただ、あまり記号を増やしすぎると覚えきれなくなるので、9の次は「桁上げ」というものを使って10と書きます。
 
 <figure>
-	[![数字に使う記号と桁上げ](../../../../assets/media/ufcpp2000/computer/fig/Digits/Representation.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/Representation.png)
-	<figcaption>数字に使う記号と桁上げ</figcaption>
+
+[![数字に使う記号と桁上げ](../../../../assets/media/ufcpp2000/computer/fig/Digits/Representation.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/Representation.png)
+
+<figcaption>数字に使う記号と桁上げ</figcaption>
 </figure>
 
 
@@ -43,8 +45,10 @@ aliases:
 10進数の場合は9の次で桁上げして10になりますが、例えば、7の次で桁上げすれば8進数、1の次なら2進数になります。
 
 <figure>
-	[![桁上げ](../../../../assets/media/ufcpp2000/computer/fig/Digits/Carry.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/Carry.png)
-	<figcaption>桁上げ</figcaption>
+
+[![桁上げ](../../../../assets/media/ufcpp2000/computer/fig/Digits/Carry.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/Carry.png)
+
+<figcaption>桁上げ</figcaption>
 </figure>
 
 
@@ -66,8 +70,10 @@ aliases:
 科学で使われる補助単位のkilo, mega, giga, …なども同様に1千倍ずつになっています。
 
 <figure>
-	[![10進数と千進数・万進数の併用](../../../../assets/media/ufcpp2000/computer/fig/Digits/Scale.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/Scale.png)
-	<figcaption>10進数と千進数・万進数の併用</figcaption>
+
+[![10進数と千進数・万進数の併用](../../../../assets/media/ufcpp2000/computer/fig/Digits/Scale.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/Scale.png)
+
+<figcaption>10進数と千進数・万進数の併用</figcaption>
 </figure>
 
 
@@ -134,12 +140,16 @@ aliases:
 10進数の11を2進数に変換する例を図5にしめします。
 
 <figure>
-	[![8進数への変換](../../../../assets/media/ufcpp2000/computer/fig/Digits/DecToOct.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/DecToOct.png)
-	<figcaption>8進数への変換</figcaption>
+
+[![8進数への変換](../../../../assets/media/ufcpp2000/computer/fig/Digits/DecToOct.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/DecToOct.png)
+
+<figcaption>8進数への変換</figcaption>
 </figure>
 
 
 <figure>
-	[![2進数への変換](../../../../assets/media/ufcpp2000/computer/fig/Digits/DecToBin.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/DecToBin.png)
-	<figcaption>2進数への変換</figcaption>
+
+[![2進数への変換](../../../../assets/media/ufcpp2000/computer/fig/Digits/DecToBin.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/DecToBin.png)
+
+<figcaption>2進数への変換</figcaption>
 </figure>

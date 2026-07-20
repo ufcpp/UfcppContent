@@ -536,8 +536,10 @@ aliases:
 ちなみに、この式の導出の仕方ですが、下図のようになります。
 
 <figure>
-	[![3次元ベクトルの回転](../../../../assets/media/ufcpp2000/math/rotation3d.png)](../../../../assets/media/ufcpp2000/math/rotation3d.png)
-	<figcaption>3次元ベクトルの回転</figcaption>
+
+[![3次元ベクトルの回転](../../../../assets/media/ufcpp2000/math/rotation3d.png)](../../../../assets/media/ufcpp2000/math/rotation3d.png)
+
+<figcaption>3次元ベクトルの回転</figcaption>
 </figure>
 
 

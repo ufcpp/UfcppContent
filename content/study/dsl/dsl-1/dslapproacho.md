@@ -90,8 +90,10 @@ DSL 記述も修正しつつ、
 図1のように、実行ファイルから DSL を動的にローディングして使います。
 
 <figure>
-	[![動的ローディング](../../../../assets/media/ufcpp2000/dsl/fig/mixed01.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixed01.png)
-	<figcaption>動的ローディング</figcaption>
+
+[![動的ローディング](../../../../assets/media/ufcpp2000/dsl/fig/mixed01.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixed01.png)
+
+<figcaption>動的ローディング</figcaption>
 </figure>
 
 
@@ -115,8 +117,10 @@ XML のような標準的なライブラリで読める構文を利用します�
 図2みたいな感じ。
 
 <figure>
-	[![コンパイル](../../../../assets/media/ufcpp2000/dsl/fig/mixed02.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixed02.png)
-	<figcaption>コンパイル</figcaption>
+
+[![コンパイル](../../../../assets/media/ufcpp2000/dsl/fig/mixed02.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixed02.png)
+
+<figcaption>コンパイル</figcaption>
 </figure>
 
 
@@ -136,8 +140,10 @@ DLR（Dynamic Language Runtime）や C# 3.0 の「[式木](../../csharp/function
 DSL → 汎用言語へのコード変換です。
 
 <figure>
-	[![ソース変換](../../../../assets/media/ufcpp2000/dsl/fig/mixed03.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixed03.png)
-	<figcaption>ソース変換</figcaption>
+
+[![ソース変換](../../../../assets/media/ufcpp2000/dsl/fig/mixed03.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixed03.png)
+
+<figcaption>ソース変換</figcaption>
 </figure>
 
 
@@ -155,8 +161,10 @@ C++ 専用のコンパイラを作った方がコードの最適化がしやす�
 具体例としては、「[WPF](../../dotnet/wpf/wpf_abst.md#wpf0)」 が図4のような方式を取っています。
 
 <figure>
-	[![ソース変換＋動的ローディングの例（WPF、XAML）](../../../../assets/media/ufcpp2000/dsl/fig/mixedxaml.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixedxaml.png)
-	<figcaption>ソース変換＋動的ローディングの例（WPF、XAML）</figcaption>
+
+[![ソース変換＋動的ローディングの例（WPF、XAML）](../../../../assets/media/ufcpp2000/dsl/fig/mixedxaml.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixedxaml.png)
+
+<figcaption>ソース変換＋動的ローディングの例（WPF、XAML）</figcaption>
 </figure>
 
 
@@ -300,8 +308,10 @@ class $($xml.class.name)
 図5に示すような構成をとります。
 
 <figure>
-	[![電卓プログラムのソースファイル構成](../../../../assets/media/ufcpp2000/dsl/fig/mixedcalc.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixedcalc.png)
-	<figcaption>電卓プログラムのソースファイル構成</figcaption>
+
+[![電卓プログラムのソースファイル構成](../../../../assets/media/ufcpp2000/dsl/fig/mixedcalc.png)](../../../../assets/media/ufcpp2000/dsl/fig/mixedcalc.png)
+
+<figcaption>電卓プログラムのソースファイル構成</figcaption>
 </figure>
 
 

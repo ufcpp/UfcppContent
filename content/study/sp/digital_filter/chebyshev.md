@@ -25,8 +25,10 @@ aliases:
 リプルを許容することで急峻なカットオフ特性を得ることができます。
 
 <figure>
-	[![リプルの許容](../../../../assets/media/ufcpp2000/sp/chebyshev01.png)](../../../../assets/media/ufcpp2000/sp/chebyshev01.png)
-	<figcaption>リプルの許容</figcaption>
+
+[![リプルの許容](../../../../assets/media/ufcpp2000/sp/chebyshev01.png)](../../../../assets/media/ufcpp2000/sp/chebyshev01.png)
+
+<figcaption>リプルの許容</figcaption>
 </figure>
 
 
@@ -155,8 +157,10 @@ C<sub>7</sub><span class="paren" style="font-size:em;">(</span>x<span class="par
 64 x<sup>7</sup> － 112 x<sup>5</sup> ＋ 56 x<sup>3</sup> － 7 x
 </div>
 <figure>
-	[![チェビシェフ多項式のグラフ](../../../../assets/media/ufcpp2000/sp/chebyshev03.png)](../../../../assets/media/ufcpp2000/sp/chebyshev03.png)
-	<figcaption>チェビシェフ多項式のグラフ</figcaption>
+
+[![チェビシェフ多項式のグラフ](../../../../assets/media/ufcpp2000/sp/chebyshev03.png)](../../../../assets/media/ufcpp2000/sp/chebyshev03.png)
+
+<figcaption>チェビシェフ多項式のグラフ</figcaption>
 </figure>
 
 
@@ -194,8 +198,10 @@ C<sub>7</sub><span class="paren" style="font-size:em;">(</span>x<span class="par
 この例では、リプル幅は 0.1 で設計しています。
 
 <figure>
-	[![3～9次のチェビシェフフィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/chebyshev_amp.png)](../../../../assets/media/ufcpp2000/sp/chebyshev_amp.png)
-	<figcaption>3～9次のチェビシェフフィルタの周波数特性</figcaption>
+
+[![3～9次のチェビシェフフィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/chebyshev_amp.png)](../../../../assets/media/ufcpp2000/sp/chebyshev_amp.png)
+
+<figcaption>3～9次のチェビシェフフィルタの周波数特性</figcaption>
 </figure>
 
 
@@ -328,8 +334,10 @@ t ＝ <span class="paren" style="font-size:2.5em;">(</span><table class="frac" s
 （<span class="math">ω<sub>p</sub></span> は 1 で固定。）
 
 <figure>
-	[![チェビシェフフィルタの設計仕様](../../../../assets/media/ufcpp2000/sp/chebyshev_spec.png)](../../../../assets/media/ufcpp2000/sp/chebyshev_spec.png)
-	<figcaption>チェビシェフフィルタの設計仕様</figcaption>
+
+[![チェビシェフフィルタの設計仕様](../../../../assets/media/ufcpp2000/sp/chebyshev_spec.png)](../../../../assets/media/ufcpp2000/sp/chebyshev_spec.png)
+
+<figcaption>チェビシェフフィルタの設計仕様</figcaption>
 </figure>
 
 

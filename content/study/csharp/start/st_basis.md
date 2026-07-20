@@ -254,8 +254,10 @@ do
 
 
 <figure>
-	[![C# 3.0 WPF によるGUIプログラムの例](../../../../assets/media/ufcpp2000/csharp/fig/wpfwelcome.png)](../../../../assets/media/ufcpp2000/csharp/fig/wpfwelcome.png)
-	<figcaption>C# 3.0 WPF によるGUIプログラムの例</figcaption>
+
+[![C# 3.0 WPF によるGUIプログラムの例](../../../../assets/media/ufcpp2000/csharp/fig/wpfwelcome.png)](../../../../assets/media/ufcpp2000/csharp/fig/wpfwelcome.png)
+
+<figcaption>C# 3.0 WPF によるGUIプログラムの例</figcaption>
 </figure>
 
 
@@ -316,8 +318,10 @@ namespace CsharpSample
 
       
 <figure>
-	[![C#によるGUIプログラムの例](../../../../assets/media/ufcpp2000/csharp/fig/guiwelcome.png)](../../../../assets/media/ufcpp2000/csharp/fig/guiwelcome.png)
-	<figcaption>C#によるGUIプログラムの例</figcaption>
+
+[![C#によるGUIプログラムの例](../../../../assets/media/ufcpp2000/csharp/fig/guiwelcome.png)](../../../../assets/media/ufcpp2000/csharp/fig/guiwelcome.png)
+
+<figcaption>C#によるGUIプログラムの例</figcaption>
 </figure>
 
 

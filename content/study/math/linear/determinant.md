@@ -74,8 +74,10 @@ b
 
 
 <figure>
-	[![各行のスカラー倍と和](../../../../assets/media/ufcpp2000/math/det01.png)](../../../../assets/media/ufcpp2000/math/det01.png)
-	<figcaption>各行のスカラー倍と和</figcaption>
+
+[![各行のスカラー倍と和](../../../../assets/media/ufcpp2000/math/det01.png)](../../../../assets/media/ufcpp2000/math/det01.png)
+
+<figcaption>各行のスカラー倍と和</figcaption>
 </figure>
 
 
@@ -169,8 +171,10 @@ S<span class="paren" style="font-size:em;">(</span>x, y<span class="paren" style
 
 
 <figure>
-	[![n 次元体積の性質](../../../../assets/media/ufcpp2000/math/det02.png)](../../../../assets/media/ufcpp2000/math/det02.png)
-	<figcaption>n 次元体積の性質</figcaption>
+
+[![n 次元体積の性質](../../../../assets/media/ufcpp2000/math/det02.png)](../../../../assets/media/ufcpp2000/math/det02.png)
+
+<figcaption>n 次元体積の性質</figcaption>
 </figure>
 
 

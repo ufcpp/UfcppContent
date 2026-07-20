@@ -55,8 +55,10 @@ X
 ブロック図
 
 <figure>
-	[![FIRフィルタ](../../../../assets/media/ufcpp2000/sp/fir01.png)](../../../../assets/media/ufcpp2000/sp/fir01.png)
-	<figcaption>FIRフィルタ</figcaption>
+
+[![FIRフィルタ](../../../../assets/media/ufcpp2000/sp/fir01.png)](../../../../assets/media/ufcpp2000/sp/fir01.png)
+
+<figcaption>FIRフィルタ</figcaption>
 </figure>
 
 

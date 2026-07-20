@@ -35,8 +35,10 @@ aliases:
 特定の周波数の信号だけを取り出したりすることが出来ます。
 
 <figure>
-	[![ディジタルフィルタの概念図](../../../../assets/media/ufcpp2000/sp/filter01.png)](../../../../assets/media/ufcpp2000/sp/filter01.png)
-	<figcaption>ディジタルフィルタの概念図</figcaption>
+
+[![ディジタルフィルタの概念図](../../../../assets/media/ufcpp2000/sp/filter01.png)](../../../../assets/media/ufcpp2000/sp/filter01.png)
+
+<figcaption>ディジタルフィルタの概念図</figcaption>
 </figure>
 
 
@@ -49,14 +51,18 @@ aliases:
 下図に、画像に「ぼかし」「輪郭強調」フィルタを掛けた例を示します。
 
 <figure>
-	[![画像のぼかし](../../../../assets/media/ufcpp2000/sp/filter00.jpg)](../../../../assets/media/ufcpp2000/sp/filter00.jpg)
-	<figcaption>画像のぼかし</figcaption>
+
+[![画像のぼかし](../../../../assets/media/ufcpp2000/sp/filter00.jpg)](../../../../assets/media/ufcpp2000/sp/filter00.jpg)
+
+<figcaption>画像のぼかし</figcaption>
 </figure>
 
 
 <figure>
-	[![画像の輪郭強調](../../../../assets/media/ufcpp2000/sp/filter01.jpg)](../../../../assets/media/ufcpp2000/sp/filter01.jpg)
-	<figcaption>画像の輪郭強調</figcaption>
+
+[![画像の輪郭強調](../../../../assets/media/ufcpp2000/sp/filter01.jpg)](../../../../assets/media/ufcpp2000/sp/filter01.jpg)
+
+<figcaption>画像の輪郭強調</figcaption>
 </figure>
 
 
@@ -67,8 +73,10 @@ aliases:
 軽く「[信号処理](../index.md)」のおさらいをしておきましょう。
 
 <figure>
-	[![ディジタル信号](../../../../assets/media/ufcpp2000/sp/filter02.png)](../../../../assets/media/ufcpp2000/sp/filter02.png)
-	<figcaption>ディジタル信号</figcaption>
+
+[![ディジタル信号](../../../../assets/media/ufcpp2000/sp/filter02.png)](../../../../assets/media/ufcpp2000/sp/filter02.png)
+
+<figcaption>ディジタル信号</figcaption>
 </figure>
 
 ```text

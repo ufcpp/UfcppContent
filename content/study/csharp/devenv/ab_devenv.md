@@ -60,8 +60,10 @@ Windowsを開発機として使えるならば、第一に考えるべき選択�
 人件費と比べれば安いものです。
 
 <figure>
-	[![Visural Studio でプログラミング（画像は 2015 のもの）](../../../../assets/media/1060/vs2015.png)](../../../../assets/media/1060/vs2015.png)
-	<figcaption>Visural Studio でプログラミング（画像は 2015 のもの）</figcaption>
+
+[![Visural Studio でプログラミング（画像は 2015 のもの）](../../../../assets/media/1060/vs2015.png)](../../../../assets/media/1060/vs2015.png)
+
+<figcaption>Visural Studio でプログラミング（画像は 2015 のもの）</figcaption>
 </figure>
 
 Visual Studioには無償版もあります。
@@ -155,8 +157,10 @@ dotnetコマンドは、今のところ(2016年1月時点)、Windows、Ubuntu、
 Visual Studioに無償版がなかったころでも、やろうと思えば無償でC#プログラミングは可能でした。
 
 <figure>
-	[![メモ帳でプログラミング](../../../../assets/media/ufcpp2000/csharp/fig/devenv1.png)](../../../../assets/media/ufcpp2000/csharp/fig/devenv1.png)
-	<figcaption>メモ帳でプログラミング</figcaption>
+
+[![メモ帳でプログラミング](../../../../assets/media/ufcpp2000/csharp/fig/devenv1.png)](../../../../assets/media/ufcpp2000/csharp/fig/devenv1.png)
+
+<figcaption>メモ帳でプログラミング</figcaption>
 </figure>
 
 C#コンパイラーは、昔は.NET Framework（開発者向けの SDK ではなく、アプリケーション機能に必要なランタイムのみでも）に付属していました。`Windows`のシステム フォルダー直下に`Microsoft.NET`というフォルダーができているはずなので、その中をC#コンパイラーの実行ファイル名である`csc`で検索すれば見つかるでしょう。

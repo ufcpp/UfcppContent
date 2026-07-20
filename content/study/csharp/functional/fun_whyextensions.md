@@ -317,8 +317,10 @@ Console.WriteLine(norm);
 普通、別の人が作りたくなるもの
 
 <figure>
-	[![クラスの実装者と関数（メソッド）の実装者がわかれる例](../../../../assets/media/ufcpp2000/csharp/fig/WhyExtensions1.png)](../../../../assets/media/ufcpp2000/csharp/fig/WhyExtensions1.png)
-	<figcaption>クラスの実装者と関数（メソッド）の実装者がわかれる例</figcaption>
+
+[![クラスの実装者と関数（メソッド）の実装者がわかれる例](../../../../assets/media/ufcpp2000/csharp/fig/WhyExtensions1.png)](../../../../assets/media/ufcpp2000/csharp/fig/WhyExtensions1.png)
+
+<figcaption>クラスの実装者と関数（メソッド）の実装者がわかれる例</figcaption>
 </figure>
 
 

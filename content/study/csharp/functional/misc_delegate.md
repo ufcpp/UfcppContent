@@ -51,8 +51,10 @@ pred が「外から与える条件」です。
 絵にすると以下のような感じ。
 
 <figure>
-	[![条件を満たしたものの和を求める。](../../../../assets/media/ufcpp2000/csharp/fig/delegate1.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate1.png)
-	<figcaption>条件を満たしたものの和を求める。</figcaption>
+
+[![条件を満たしたものの和を求める。](../../../../assets/media/ufcpp2000/csharp/fig/delegate1.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate1.png)
+
+<figcaption>条件を満たしたものの和を求める。</figcaption>
 </figure>
 
 
@@ -70,8 +72,10 @@ var sum = Sum(
 これも絵にすると以下のような感じ。
 
 <figure>
-	[![条件「5よりも小さい」を与える。](../../../../assets/media/ufcpp2000/csharp/fig/delegate2.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate2.png)
-	<figcaption>条件「5よりも小さい」を与える。</figcaption>
+
+[![条件「5よりも小さい」を与える。](../../../../assets/media/ufcpp2000/csharp/fig/delegate2.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate2.png)
+
+<figcaption>条件「5よりも小さい」を与える。</figcaption>
 </figure>
 
 
@@ -140,16 +144,20 @@ BeginAsyncWork で、AsyncWork の非同期実行を開始しています。
 コールバックを渡して、AsyncWork の実行が終わったら呼び出してもらいます。
 
 <figure>
-	[![BeginAsyncWork](../../../../assets/media/ufcpp2000/csharp/fig/delegate3.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate3.png)
-	<figcaption>BeginAsyncWork</figcaption>
+
+[![BeginAsyncWork](../../../../assets/media/ufcpp2000/csharp/fig/delegate3.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate3.png)
+
+<figcaption>BeginAsyncWork</figcaption>
 </figure>
 
 
 今回の場合、コールバックとして、「終了！」という文字列を表示するメソッドを渡しています。
 
 <figure>
-	[![BeginAsyncWork に Callback を渡す。](../../../../assets/media/ufcpp2000/csharp/fig/delegate4.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate4.png)
-	<figcaption>BeginAsyncWork に Callback を渡す。</figcaption>
+
+[![BeginAsyncWork に Callback を渡す。](../../../../assets/media/ufcpp2000/csharp/fig/delegate4.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate4.png)
+
+<figcaption>BeginAsyncWork に Callback を渡す。</figcaption>
 </figure>
 
 
@@ -209,8 +217,10 @@ void ProcessMessage(Message msg)
 図にすると以下のような感じ。
 
 <figure>
-	[![メッセージループ。](../../../../assets/media/ufcpp2000/csharp/fig/delegate5.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate5.png)
-	<figcaption>メッセージループ。</figcaption>
+
+[![メッセージループ。](../../../../assets/media/ufcpp2000/csharp/fig/delegate5.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate5.png)
+
+<figcaption>メッセージループ。</figcaption>
 </figure>
 
 
@@ -226,6 +236,8 @@ form.Click += (sender, e) => { MessageBox.Show("Click!"); };
 その結果、メッセージループ内の Click のところで MessageBox.Show が呼び出されるようになります。
 
 <figure>
-	[![クリックイベントを処理。](../../../../assets/media/ufcpp2000/csharp/fig/delegate6.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate6.png)
-	<figcaption>クリックイベントを処理。</figcaption>
+
+[![クリックイベントを処理。](../../../../assets/media/ufcpp2000/csharp/fig/delegate6.png)](../../../../assets/media/ufcpp2000/csharp/fig/delegate6.png)
+
+<figcaption>クリックイベントを処理。</figcaption>
 </figure>

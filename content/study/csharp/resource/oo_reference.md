@@ -40,8 +40,10 @@ C#の型(組込み型、クラス、構造体、列挙型)には大きく分け�
 C#の型は以下のように分類されます。
 
 <figure>
-	[![C# の型の分類](../../../../assets/media/ufcpp2000/csharp/fig/TypeClassification.png)](../../../../assets/media/ufcpp2000/csharp/fig/TypeClassification.png)
-	<figcaption>C# の型の分類</figcaption>
+
+[![C# の型の分類](../../../../assets/media/ufcpp2000/csharp/fig/TypeClassification.png)](../../../../assets/media/ufcpp2000/csharp/fig/TypeClassification.png)
+
+<figcaption>C# の型の分類</figcaption>
 </figure>
 
 本項では、この青い四角で囲った分類、値型と参照型の違いについて説明していきます。
@@ -172,8 +174,10 @@ c: (0, 5)
 		<th>代入時</th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/refval1.png)](../../../../assets/media/ufcpp2000/csharp/fig/refval1.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/refval1.png)](../../../../assets/media/ufcpp2000/csharp/fig/refval1.png)
+
+<figcaption></figcaption>
 </figure>
 
 
@@ -181,8 +185,10 @@ c: (0, 5)
 </td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/refval3.png)](../../../../assets/media/ufcpp2000/csharp/fig/refval3.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/refval3.png)](../../../../assets/media/ufcpp2000/csharp/fig/refval3.png)
+
+<figcaption></figcaption>
 </figure>
 
 
@@ -194,8 +200,10 @@ c: (0, 5)
 		<th><code>b</code>の値変更時</th>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/refval2.png)](../../../../assets/media/ufcpp2000/csharp/fig/refval2.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/refval2.png)](../../../../assets/media/ufcpp2000/csharp/fig/refval2.png)
+
+<figcaption></figcaption>
 </figure>
 
 
@@ -203,8 +211,10 @@ c: (0, 5)
 </td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/refval4.png)](../../../../assets/media/ufcpp2000/csharp/fig/refval4.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/refval4.png)](../../../../assets/media/ufcpp2000/csharp/fig/refval4.png)
+
+<figcaption></figcaption>
 </figure>
 
 

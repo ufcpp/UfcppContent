@@ -42,8 +42,10 @@ aliases:
 この様子を図示したものと、サンプルコードを以下に示します。
 
 <figure>
-	[![クラスの継承階層の例](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_inheritance.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_inheritance.png)
-	<figcaption>クラスの継承階層の例</figcaption>
+
+[![クラスの継承階層の例](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_inheritance.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_inheritance.png)
+
+<figcaption>クラスの継承階層の例</figcaption>
 </figure>
 
 
@@ -91,8 +93,10 @@ public class Circle : Shape
 テーブルの各行がどの型かを判別するための列（discriminator: discriminate は「区別・識別する」）を作ります。
 
 <figure>
-	[![継承階層を共有テーブル化](../../../../assets/media/ufcpp2000/csharp/fig/TablePerHierarchy1.png)](../../../../assets/media/ufcpp2000/csharp/fig/TablePerHierarchy1.png)
-	<figcaption>継承階層を共有テーブル化</figcaption>
+
+[![継承階層を共有テーブル化](../../../../assets/media/ufcpp2000/csharp/fig/TablePerHierarchy1.png)](../../../../assets/media/ufcpp2000/csharp/fig/TablePerHierarchy1.png)
+
+<figcaption>継承階層を共有テーブル化</figcaption>
 </figure>
 
 
@@ -105,8 +109,10 @@ public class Circle : Shape
 （table per type と呼びます。）
 
 <figure>
-	[![継承階層を複数のテーブルに分割](../../../../assets/media/ufcpp2000/csharp/fig/TablePerType1.png)](../../../../assets/media/ufcpp2000/csharp/fig/TablePerType1.png)
-	<figcaption>継承階層を複数のテーブルに分割</figcaption>
+
+[![継承階層を複数のテーブルに分割](../../../../assets/media/ufcpp2000/csharp/fig/TablePerType1.png)](../../../../assets/media/ufcpp2000/csharp/fig/TablePerType1.png)
+
+<figcaption>継承階層を複数のテーブルに分割</figcaption>
 </figure>
 
 
@@ -190,8 +196,10 @@ private static void Create(System.Data.Entity.DbSet<Shape> shapes)
 TablePerHierarchyContext によって作られるデータベースは以下のようになります。
 
 <figure>
-	[![TablePerHierarchyContext によって作られるデータベース](../../../../assets/media/ufcpp2000/csharp/fig/TablePerHierarchy2.png)](../../../../assets/media/ufcpp2000/csharp/fig/TablePerHierarchy2.png)
-	<figcaption>TablePerHierarchyContext によって作られるデータベース</figcaption>
+
+[![TablePerHierarchyContext によって作られるデータベース](../../../../assets/media/ufcpp2000/csharp/fig/TablePerHierarchy2.png)](../../../../assets/media/ufcpp2000/csharp/fig/TablePerHierarchy2.png)
+
+<figcaption>TablePerHierarchyContext によって作られるデータベース</figcaption>
 </figure>
 
 
@@ -199,8 +207,10 @@ TablePerHierarchyContext によって作られるデータベースは以下の�
 TablePerTypeContext によって作られるデータベースは以下のようになります。
 
 <figure>
-	[![TablePerHierarchyContext によって作られるデータベース](../../../../assets/media/ufcpp2000/csharp/fig/TablePerType2.png)](../../../../assets/media/ufcpp2000/csharp/fig/TablePerType2.png)
-	<figcaption>TablePerHierarchyContext によって作られるデータベース</figcaption>
+
+[![TablePerHierarchyContext によって作られるデータベース](../../../../assets/media/ufcpp2000/csharp/fig/TablePerType2.png)](../../../../assets/media/ufcpp2000/csharp/fig/TablePerType2.png)
+
+<figcaption>TablePerHierarchyContext によって作られるデータベース</figcaption>
 </figure>
 
 
@@ -267,15 +277,19 @@ Rectangle: 180
 
         
 <figure>
-	[![継承構造をテーブル化(1)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_table1.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_table1.png)
-	<figcaption>継承構造をテーブル化(1)</figcaption>
+
+[![継承構造をテーブル化(1)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_table1.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_table1.png)
+
+<figcaption>継承構造をテーブル化(1)</figcaption>
 </figure>
 
 
         
 <figure>
-	[![継承構造をテーブル化(2)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_table2.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_table2.png)
-	<figcaption>継承構造をテーブル化(2)</figcaption>
+
+[![継承構造をテーブル化(2)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_table2.png)](../../../../assets/media/ufcpp2000/csharp/fig/ormismatch_table2.png)
+
+<figcaption>継承構造をテーブル化(2)</figcaption>
 </figure>
 
 

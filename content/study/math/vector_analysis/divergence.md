@@ -113,8 +113,10 @@ aliases:
 となります。
 
 <figure>
-	[![微小体積](../../../../assets/media/ufcpp2000/math/div1.png)](../../../../assets/media/ufcpp2000/math/div1.png)
-	<figcaption>微小体積</figcaption>
+
+[![微小体積](../../../../assets/media/ufcpp2000/math/div1.png)](../../../../assets/media/ufcpp2000/math/div1.png)
+
+<figcaption>微小体積</figcaption>
 </figure>
 
 

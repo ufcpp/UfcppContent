@@ -241,8 +241,10 @@ Nを変数として、 を最小にする値を数学的に求めると、N=e（
 言葉の使い方を図1にまとめましょう。
 
 <figure>
-	[![ビット、バイトと16進数](../../../../assets/media/ufcpp2000/computer/fig/Digits/BitSequence.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/BitSequence.png)
-	<figcaption>ビット、バイトと16進数</figcaption>
+
+[![ビット、バイトと16進数](../../../../assets/media/ufcpp2000/computer/fig/Digits/BitSequence.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/BitSequence.png)
+
+<figcaption>ビット、バイトと16進数</figcaption>
 </figure>
 
 

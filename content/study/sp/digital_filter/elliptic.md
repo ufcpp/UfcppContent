@@ -37,8 +37,10 @@ aliases:
 考案者の名前を取って、Cauerフィルタと呼ばれることもあります。
 
 <figure>
-	[![透過域と阻止域の両方にリプル](../../../../assets/media/ufcpp2000/sp/elliptic01.png)](../../../../assets/media/ufcpp2000/sp/elliptic01.png)
-	<figcaption>透過域と阻止域の両方にリプル</figcaption>
+
+[![透過域と阻止域の両方にリプル](../../../../assets/media/ufcpp2000/sp/elliptic01.png)](../../../../assets/media/ufcpp2000/sp/elliptic01.png)
+
+<figcaption>透過域と阻止域の両方にリプル</figcaption>
 </figure>
 
 
@@ -163,8 +165,10 @@ x
 この例では、リプル幅は 0.1 で設計しています。
 
 <figure>
-	[![3～9次の楕円フィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/elliptic_amp.png)](../../../../assets/media/ufcpp2000/sp/elliptic_amp.png)
-	<figcaption>3～9次の楕円フィルタの周波数特性</figcaption>
+
+[![3～9次の楕円フィルタの周波数特性](../../../../assets/media/ufcpp2000/sp/elliptic_amp.png)](../../../../assets/media/ufcpp2000/sp/elliptic_amp.png)
+
+<figcaption>3～9次の楕円フィルタの周波数特性</figcaption>
 </figure>
 
 
@@ -380,8 +384,10 @@ k'
 （<span class="math">ω<sub>p</sub></span> は 1 で固定。）
 
 <figure>
-	[![楕円フィルタの設計仕様](../../../../assets/media/ufcpp2000/sp/elliptic_spec.png)](../../../../assets/media/ufcpp2000/sp/elliptic_spec.png)
-	<figcaption>楕円フィルタの設計仕様</figcaption>
+
+[![楕円フィルタの設計仕様](../../../../assets/media/ufcpp2000/sp/elliptic_spec.png)](../../../../assets/media/ufcpp2000/sp/elliptic_spec.png)
+
+<figcaption>楕円フィルタの設計仕様</figcaption>
 </figure>
 
 

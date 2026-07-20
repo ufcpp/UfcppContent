@@ -81,8 +81,10 @@ System.Windows.Controls 名前空間内に、
 </Grid>
 ```
 <figure>
-	[![コントロールの例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_controls.png)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_controls.png)
-	<figcaption>コントロールの例</figcaption>
+
+[![コントロールの例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_controls.png)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_controls.png)
+
+<figcaption>コントロールの例</figcaption>
 </figure>
 
 
@@ -120,8 +122,10 @@ System.Windows.Shapes 名前空間内に、
 </Canvas>
 ```
 <figure>
-	[![図形の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_shapes.png)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_shapes.png)
-	<figcaption>図形の例</figcaption>
+
+[![図形の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_shapes.png)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_shapes.png)
+
+<figcaption>図形の例</figcaption>
 </figure>
 
 
@@ -185,8 +189,10 @@ System.Windows.Media 名前空間内には多彩な機能が用意されてい�
 </Canvas>
 ```
 <figure>
-	[![グラデーションの例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_gradation.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_gradation.jpg)
-	<figcaption>グラデーションの例</figcaption>
+
+[![グラデーションの例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_gradation.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_gradation.jpg)
+
+<figcaption>グラデーションの例</figcaption>
 </figure>
 
 
@@ -231,8 +237,10 @@ System.Windows.Media 名前空間内には多彩な機能が用意されてい�
 </Canvas>
 ```
 <figure>
-	[![回転・拡大・傾斜・平行移動の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_transform.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_transform.jpg)
-	<figcaption>回転・拡大・傾斜・平行移動の例</figcaption>
+
+[![回転・拡大・傾斜・平行移動の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_transform.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_transform.jpg)
+
+<figcaption>回転・拡大・傾斜・平行移動の例</figcaption>
 </figure>
 
 
@@ -307,8 +315,10 @@ System.Windows.Media.Media3D 名前空間内には、
 </Canvas>
 ```
 <figure>
-	[![3次元モデル表示の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_viewport3d.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_viewport3d.jpg)
-	<figcaption>3次元モデル表示の例</figcaption>
+
+[![3次元モデル表示の例](../../../../assets/media/ufcpp2000/dotnet/fig/ui_viewport3d.jpg)](../../../../assets/media/ufcpp2000/dotnet/fig/ui_viewport3d.jpg)
+
+<figcaption>3次元モデル表示の例</figcaption>
 </figure>
 
 

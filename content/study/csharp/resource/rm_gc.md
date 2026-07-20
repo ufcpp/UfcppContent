@@ -93,8 +93,10 @@ C# では、オブジェクトがガベージ コレクションで回収され�
 なので、ファイナライザーとは別に Finalize という名前のメソッドを書こうとすると、コンパイル エラーになります。
 
 <figure>
-	[![Finalize メソッドとファイナライザー](../../../../assets/media/ufcpp2000/csharp/fig/finalizer.png)](../../../../assets/media/ufcpp2000/csharp/fig/finalizer.png)
-	<figcaption>Finalize メソッドとファイナライザー</figcaption>
+
+[![Finalize メソッドとファイナライザー](../../../../assets/media/ufcpp2000/csharp/fig/finalizer.png)](../../../../assets/media/ufcpp2000/csharp/fig/finalizer.png)
+
+<figcaption>Finalize メソッドとファイナライザー</figcaption>
 </figure>
 
 

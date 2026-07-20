@@ -32,8 +32,10 @@ aliases:
 「とりあえずこうすれば入出力が行える」ということだけ覚えておいてもらうことになります。
 
 <figure>
-	[![値の入出力](../../../../assets/media/ufcpp2000/csharp/fig/io.png)](../../../../assets/media/ufcpp2000/csharp/fig/io.png)
-	<figcaption>値の入出力</figcaption>
+
+[![値の入出力](../../../../assets/media/ufcpp2000/csharp/fig/io.png)](../../../../assets/media/ufcpp2000/csharp/fig/io.png)
+
+<figcaption>値の入出力</figcaption>
 </figure>
 
 
@@ -318,8 +320,10 @@ A ～ E のテキストボックスに値を入力し、
 [実行] ボタンを押してプログラムを実行します。
 
 <figure>
-	[![GUI 雛形プログラム1](../../../../assets/media/ufcpp2000/csharp/fig/InputGui.png)](../../../../assets/media/ufcpp2000/csharp/fig/InputGui.png)
-	<figcaption>GUI 雛形プログラム1</figcaption>
+
+[![GUI 雛形プログラム1](../../../../assets/media/ufcpp2000/csharp/fig/InputGui.png)](../../../../assets/media/ufcpp2000/csharp/fig/InputGui.png)
+
+<figcaption>GUI 雛形プログラム1</figcaption>
 </figure>
 
 
@@ -338,8 +342,10 @@ A ～ E のテキストボックスに値を入力し、
 
       
 <figure>
-	[![GUI 雛形プログラム1](../../../../assets/media/ufcpp2000/csharp/fig/Form1.png)](../../../../assets/media/ufcpp2000/csharp/fig/Form1.png)
-	<figcaption>GUI 雛形プログラム1</figcaption>
+
+[![GUI 雛形プログラム1](../../../../assets/media/ufcpp2000/csharp/fig/Form1.png)](../../../../assets/media/ufcpp2000/csharp/fig/Form1.png)
+
+<figcaption>GUI 雛形プログラム1</figcaption>
 </figure>
 
 

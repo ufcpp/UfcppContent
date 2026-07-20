@@ -168,8 +168,10 @@ ASP.NET を使ったサイト構築の一例。
 このページを表示すると、以下のようになります。
 
 <figure>
-	[![マスタページの適用結果の例](../../../../assets/media/ufcpp2000/dotnet/resources/Default_aspx.jpg)](../../../../assets/media/ufcpp2000/dotnet/resources/Default_aspx.jpg)
-	<figcaption>マスタページの適用結果の例</figcaption>
+
+[![マスタページの適用結果の例](../../../../assets/media/ufcpp2000/dotnet/resources/Default_aspx.jpg)](../../../../assets/media/ufcpp2000/dotnet/resources/Default_aspx.jpg)
+
+<figcaption>マスタページの適用結果の例</figcaption>
 </figure>
 
 
@@ -303,6 +305,8 @@ namespace WebsiteSample
 これで、以下のようなページができあがるはずです。
 
 <figure>
-	[![メールフォームの例](../../../../assets/media/ufcpp2000/dotnet/resources/Mail_aspx.jpg)](../../../../assets/media/ufcpp2000/dotnet/resources/Mail_aspx.jpg)
-	<figcaption>メールフォームの例</figcaption>
+
+[![メールフォームの例](../../../../assets/media/ufcpp2000/dotnet/resources/Mail_aspx.jpg)](../../../../assets/media/ufcpp2000/dotnet/resources/Mail_aspx.jpg)
+
+<figcaption>メールフォームの例</figcaption>
 </figure>

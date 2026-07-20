@@ -25,8 +25,10 @@ aliases:
 first in last out の頭文字からとって、FILO バッファと読んだりもします。
 
 <figure>
-	[![スタック](../../../../assets/media/ufcpp2000/algorithm/fig/col_stack0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_stack0.png)
-	<figcaption>スタック</figcaption>
+
+[![スタック](../../../../assets/media/ufcpp2000/algorithm/fig/col_stack0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_stack0.png)
+
+<figcaption>スタック</figcaption>
 </figure>
 
 

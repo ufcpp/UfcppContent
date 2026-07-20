@@ -38,8 +38,10 @@ aliases:
 
 
 <figure>
-	[![リーマン球面](../../../../assets/media/ufcpp2000/math/riemann0.emf)](../../../../assets/media/ufcpp2000/math/riemann0.emf)
-	<figcaption>リーマン球面</figcaption>
+
+[![リーマン球面](../../../../assets/media/ufcpp2000/math/riemann0.emf)](../../../../assets/media/ufcpp2000/math/riemann0.emf)
+
+<figcaption>リーマン球面</figcaption>
 </figure>
 
 
@@ -80,8 +82,10 @@ aliases:
 を導入します。
 
 <figure>
-	[![リーマン球面上の座標 (φ, θ)](../../../../assets/media/ufcpp2000/math/riemann1.emf)](../../../../assets/media/ufcpp2000/math/riemann1.emf)
-	<figcaption>リーマン球面上の座標 (φ, θ)</figcaption>
+
+[![リーマン球面上の座標 (φ, θ)](../../../../assets/media/ufcpp2000/math/riemann1.emf)](../../../../assets/media/ufcpp2000/math/riemann1.emf)
+
+<figcaption>リーマン球面上の座標 (φ, θ)</figcaption>
 </figure>
 
 

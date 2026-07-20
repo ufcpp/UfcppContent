@@ -36,8 +36,10 @@ aliases:
 以下のような LCR 回路でローパスフィルタが作れます。
 
 <figure>
-	[![LCR 回路の例](../../../../assets/media/ufcpp2000/sp/biquad01.png)](../../../../assets/media/ufcpp2000/sp/biquad01.png)
-	<figcaption>LCR 回路の例</figcaption>
+
+[![LCR 回路の例](../../../../assets/media/ufcpp2000/sp/biquad01.png)](../../../../assets/media/ufcpp2000/sp/biquad01.png)
+
+<figcaption>LCR 回路の例</figcaption>
 </figure>
 
 
@@ -86,8 +88,10 @@ biquadratic は文字通り解釈すると、“2つの2次元”なわけです
 また、双2次フィルタの組み合わせ（直列に繋ぐ）によって、より複雑な特性を作り出すことも出来ます。
 
 <figure>
-	[![双2次元フィルタの特性いろいろ](../../../../assets/media/ufcpp2000/sp/biquad02.png)](../../../../assets/media/ufcpp2000/sp/biquad02.png)
-	<figcaption>双2次元フィルタの特性いろいろ</figcaption>
+
+[![双2次元フィルタの特性いろいろ](../../../../assets/media/ufcpp2000/sp/biquad02.png)](../../../../assets/media/ufcpp2000/sp/biquad02.png)
+
+<figcaption>双2次元フィルタの特性いろいろ</figcaption>
 </figure>
 
 

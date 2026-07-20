@@ -62,8 +62,10 @@ C# 5.0 で導入された非同期メソッド（「[非同期処理](sp5_async.
 フローチャートに書き起こすなら同じ構造のチャートになります。
 
 <figure>
-	[![同期の場合と非同期の場合の制御フロー](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation1.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation1.png)
-	<figcaption>同期の場合と非同期の場合の制御フロー</figcaption>
+
+[![同期の場合と非同期の場合の制御フロー](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation1.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation1.png)
+
+<figcaption>同期の場合と非同期の場合の制御フロー</figcaption>
 </figure>
 
 
@@ -124,8 +126,10 @@ var result = await obj.GetValueAsync(x);
 図2に、同期処理版と非同期処理版を並べて示します。
 
 <figure>
-	[![await 演算子を使った非同期処理](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation2.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation2.png)
-	<figcaption>await 演算子を使った非同期処理</figcaption>
+
+[![await 演算子を使った非同期処理](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation2.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation2.png)
+
+<figcaption>await 演算子を使った非同期処理</figcaption>
 </figure>
 
 
@@ -205,8 +209,10 @@ var result = source.AsParallel().Select(selector);
 図 3に示すように、データ処理には、並列化に向くものと向かないものがあり、不向きなものを並列化してもかえって性能を落とす場合が多いです。
 
 <figure>
-	[![並列化に向く処理と向かない処理](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation3.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation3.png)
-	<figcaption>並列化に向く処理と向かない処理</figcaption>
+
+[![並列化に向く処理と向かない処理](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation3.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation3.png)
+
+<figcaption>並列化に向く処理と向かない処理</figcaption>
 </figure>
 
 
@@ -222,8 +228,10 @@ var result = source.AsParallel().Select(selector);
 非同期なデータの受け渡しという意味では非同期データフロー（asynchronous dataflow）と呼ばれます。
 
 <figure>
-	[![非同期データフローによる並列処理](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation4.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation4.png)
-	<figcaption>非同期データフローによる並列処理</figcaption>
+
+[![非同期データフローによる並列処理](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation4.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation4.png)
+
+<figcaption>非同期データフローによる並列処理</figcaption>
 </figure>
 
 
@@ -239,8 +247,10 @@ TPL Dataflow は、.NET Framework 本体とは独立したリリース サイク
 非同期データフローを実現するために必要なのは、図5に示すような、データ受け渡しを仲介してデータをイベント駆動的に受け取れるバッファーです。
 
 <figure>
-	[![非同期にデータ受け渡しするためのバッファー](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation5.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation5.png)
-	<figcaption>非同期にデータ受け渡しするためのバッファー</figcaption>
+
+[![非同期にデータ受け渡しするためのバッファー](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation5.png)](../../../../assets/media/ufcpp2000/csharp/fig/AsyncVariation5.png)
+
+<figcaption>非同期にデータ受け渡しするためのバッファー</figcaption>
 </figure>
 
 

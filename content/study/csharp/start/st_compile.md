@@ -49,8 +49,10 @@ aliases:
 また、コンパイルを行うためのソフトウェアのことを<strong id="compiler" class="keyword">コンパイラ</strong>(compiler)と呼びます。
 
 <figure>
-	[![コンパイル](../../../../assets/media/ufcpp2000/csharp/fig/compile1.png)](../../../../assets/media/ufcpp2000/csharp/fig/compile1.png)
-	<figcaption>コンパイル</figcaption>
+
+[![コンパイル](../../../../assets/media/ufcpp2000/csharp/fig/compile1.png)](../../../../assets/media/ufcpp2000/csharp/fig/compile1.png)
+
+<figcaption>コンパイル</figcaption>
 </figure>
 
 
@@ -62,8 +64,10 @@ CPU 依存な命令（ネイティブ コード（native code）に直接コン�
 CPU 非依存な中間言語（intermediate language、略して IL）と呼ばれるものにコンパイルされます。
 
 <figure>
-	[![コンパイル](../../../../assets/media/ufcpp2000/csharp/fig/compile2.png)](../../../../assets/media/ufcpp2000/csharp/fig/compile2.png)
-	<figcaption>コンパイル</figcaption>
+
+[![コンパイル](../../../../assets/media/ufcpp2000/csharp/fig/compile2.png)](../../../../assets/media/ufcpp2000/csharp/fig/compile2.png)
+
+<figcaption>コンパイル</figcaption>
 </figure>
 
 
@@ -98,8 +102,10 @@ Visual Studio では [F6] キーまたは [Ctrl+Shift+B] というショート�
 また、テスト実行をしたい場合には [F5] キーを押せば作成したプログラムを実行してみることができます。
 
 <figure>
-	[![Visual Studio でのプログラムの作成（画像は 2010 β2 のもの）](../../../../assets/media/ufcpp2000/csharp/fig/VsBuild.png)](../../../../assets/media/ufcpp2000/csharp/fig/VsBuild.png)
-	<figcaption>Visual Studio でのプログラムの作成（画像は 2010 β2 のもの）</figcaption>
+
+[![Visual Studio でのプログラムの作成（画像は 2010 β2 のもの）](../../../../assets/media/ufcpp2000/csharp/fig/VsBuild.png)](../../../../assets/media/ufcpp2000/csharp/fig/VsBuild.png)
+
+<figcaption>Visual Studio でのプログラムの作成（画像は 2010 β2 のもの）</figcaption>
 </figure>
 
 

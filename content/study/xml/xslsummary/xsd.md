@@ -29,8 +29,10 @@ XML の IntelliSense が効くようになります。
 （ただし、XML 名前空間の設定が必須。）
 
 <figure>
-	[![Visual Studio で XML の編集](../../../../assets/media/ufcpp2000/xml/vsxml.jpg)](../../../../assets/media/ufcpp2000/xml/vsxml.jpg)
-	<figcaption>Visual Studio で XML の編集</figcaption>
+
+[![Visual Studio で XML の編集](../../../../assets/media/ufcpp2000/xml/vsxml.jpg)](../../../../assets/media/ufcpp2000/xml/vsxml.jpg)
+
+<figcaption>Visual Studio で XML の編集</figcaption>
 </figure>
 
 

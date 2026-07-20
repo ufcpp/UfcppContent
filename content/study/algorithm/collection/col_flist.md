@@ -35,8 +35,10 @@ aliases:
 次のノードへの参照（C/C++ 的にはポインター） <code>Next</code> を持っています。
 
 <figure>
-	[![片方向連結リスト](../../../../assets/media/ufcpp2000/algorithm/fig/col_flist0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_flist0.png)
-	<figcaption>片方向連結リスト</figcaption>
+
+[![片方向連結リスト](../../../../assets/media/ufcpp2000/algorithm/fig/col_flist0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_flist0.png)
+
+<figcaption>片方向連結リスト</figcaption>
 </figure>
 
 

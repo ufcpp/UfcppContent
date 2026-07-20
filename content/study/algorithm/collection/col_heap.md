@@ -26,8 +26,10 @@ aliases:
 挿入順序がどうであれ、優先度の高いものが必ず1番最初に取り出されます。
 
 <figure>
-	[![優先度付き待ち行列](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap0.png)
-	<figcaption>優先度付き待ち行列</figcaption>
+
+[![優先度付き待ち行列](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap0.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap0.png)
+
+<figcaption>優先度付き待ち行列</figcaption>
 </figure>
 
 
@@ -67,8 +69,10 @@ aliases:
 
 
 <figure>
-	[![ヒープの例](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap1.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap1.png)
-	<figcaption>ヒープの例</figcaption>
+
+[![ヒープの例](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap1.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap1.png)
+
+<figcaption>ヒープの例</figcaption>
 </figure>
 
 
@@ -83,8 +87,10 @@ aliases:
 
 
 <figure>
-	[![ヒープへの値の挿入](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap2.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap2.png)
-	<figcaption>ヒープへの値の挿入</figcaption>
+
+[![ヒープへの値の挿入](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap2.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap2.png)
+
+<figcaption>ヒープへの値の挿入</figcaption>
 </figure>
 
 
@@ -102,8 +108,10 @@ aliases:
 
 
 <figure>
-	[![ヒープからの値の削除](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap3.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap3.png)
-	<figcaption>ヒープからの値の削除</figcaption>
+
+[![ヒープからの値の削除](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap3.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap3.png)
+
+<figcaption>ヒープからの値の削除</figcaption>
 </figure>
 
 
@@ -125,8 +133,10 @@ aliases:
 その様子を図5に示します。
 
 <figure>
-	[![ヒープのノードに番号付け](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap4.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap4.png)
-	<figcaption>ヒープのノードに番号付け</figcaption>
+
+[![ヒープのノードに番号付け](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap4.png)](../../../../assets/media/ufcpp2000/algorithm/fig/col_heap4.png)
+
+<figcaption>ヒープのノードに番号付け</figcaption>
 </figure>
 
 

@@ -769,8 +769,10 @@ class Program
 標準の警告には警告番号が付いていて、この番号を指定することで特定の警告を無視します。
 
 <figure>
-	[![#pragma warning で警告を無視する。](../../../../assets/media/ufcpp2000/csharp/fig/pragma-warning.png)](../../../../assets/media/ufcpp2000/csharp/fig/pragma-warning.png)
-	<figcaption>#pragma warning で警告を無視する。</figcaption>
+
+[![#pragma warning で警告を無視する。](../../../../assets/media/ufcpp2000/csharp/fig/pragma-warning.png)](../../../../assets/media/ufcpp2000/csharp/fig/pragma-warning.png)
+
+<figcaption>#pragma warning で警告を無視する。</figcaption>
 </figure>
 
 
@@ -779,8 +781,10 @@ class Program
 これに対して、ユーザー定義の警告を無視できるように、#pragma warning プリプロセス命令も拡張されています。
 
 <figure>
-	[![.NET Compiler Platform で作ったユーザー定義の警告を無視する。](../../../../assets/media/ufcpp2000/csharp/fig/pragma-custom-warning.png)](../../../../assets/media/ufcpp2000/csharp/fig/pragma-custom-warning.png)
-	<figcaption>.NET Compiler Platform で作ったユーザー定義の警告を無視する。</figcaption>
+
+[![.NET Compiler Platform で作ったユーザー定義の警告を無視する。](../../../../assets/media/ufcpp2000/csharp/fig/pragma-custom-warning.png)](../../../../assets/media/ufcpp2000/csharp/fig/pragma-custom-warning.png)
+
+<figcaption>.NET Compiler Platform で作ったユーザー定義の警告を無視する。</figcaption>
 </figure>
 
 

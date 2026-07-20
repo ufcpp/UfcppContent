@@ -153,8 +153,10 @@ aliases:
 となります。
 
 <figure>
-	[![dS と du, dv の関係](../../../../assets/media/ufcpp2000/math/surfaceint1.png)](../../../../assets/media/ufcpp2000/math/surfaceint1.png)
-	<figcaption>dS と du, dv の関係</figcaption>
+
+[![dS と du, dv の関係](../../../../assets/media/ufcpp2000/math/surfaceint1.png)](../../../../assets/media/ufcpp2000/math/surfaceint1.png)
+
+<figcaption>dS と du, dv の関係</figcaption>
 </figure>
 
 

@@ -159,8 +159,10 @@ aliases:
 図1のように、座標軸にそって縦横にそれぞれ拡大するようなイメージのものになります。
 
 <figure>
-	[![縦横拡大： 対角行列](../../../../assets/media/ufcpp2000/math/eigen01.png)](../../../../assets/media/ufcpp2000/math/eigen01.png)
-	<figcaption>縦横拡大： 対角行列</figcaption>
+
+[![縦横拡大： 対角行列](../../../../assets/media/ufcpp2000/math/eigen01.png)](../../../../assets/media/ufcpp2000/math/eigen01.png)
+
+<figcaption>縦横拡大： 対角行列</figcaption>
 </figure>
 
 
@@ -168,8 +170,10 @@ aliases:
 図2のように、ある座標軸にそって斜めに押しつぶすようなイメージのものになります。
 
 <figure>
-	[![傾斜： 2重対角行列](../../../../assets/media/ufcpp2000/math/eigen02.png)](../../../../assets/media/ufcpp2000/math/eigen02.png)
-	<figcaption>傾斜： 2重対角行列</figcaption>
+
+[![傾斜： 2重対角行列](../../../../assets/media/ufcpp2000/math/eigen02.png)](../../../../assets/media/ufcpp2000/math/eigen02.png)
+
+<figcaption>傾斜： 2重対角行列</figcaption>
 </figure>
 
 
@@ -177,8 +181,10 @@ aliases:
 図3のように、原点を中心に回転するようなイメージのものになります。
 
 <figure>
-	[![回転： 回転行列](../../../../assets/media/ufcpp2000/math/eigen03.png)](../../../../assets/media/ufcpp2000/math/eigen03.png)
-	<figcaption>回転： 回転行列</figcaption>
+
+[![回転： 回転行列](../../../../assets/media/ufcpp2000/math/eigen03.png)](../../../../assets/media/ufcpp2000/math/eigen03.png)
+
+<figcaption>回転： 回転行列</figcaption>
 </figure>
 
 
@@ -402,8 +408,10 @@ r
 図4に示すような、対角、2重対角、回転が混在した行列に変形することになります。
 
 <figure>
-	[![Jordan 標準形](../../../../assets/media/ufcpp2000/math/eigen04.png)](../../../../assets/media/ufcpp2000/math/eigen04.png)
-	<figcaption>Jordan 標準形</figcaption>
+
+[![Jordan 標準形](../../../../assets/media/ufcpp2000/math/eigen04.png)](../../../../assets/media/ufcpp2000/math/eigen04.png)
+
+<figcaption>Jordan 標準形</figcaption>
 </figure>
 
 

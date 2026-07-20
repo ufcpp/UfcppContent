@@ -53,8 +53,10 @@ ALU中の演算回路の中で最も簡単なものは、ビットごとの論�
 例えばビットごとのAND演算なら図1に示すようになります。
 
 <figure>
-	[![ビットごとのAND演算回路](../../../../assets/media/ufcpp2000/computer/fig/General/BitLogic.png)](../../../../assets/media/ufcpp2000/computer/fig/General/BitLogic.png)
-	<figcaption>ビットごとのAND演算回路</figcaption>
+
+[![ビットごとのAND演算回路](../../../../assets/media/ufcpp2000/computer/fig/General/BitLogic.png)](../../../../assets/media/ufcpp2000/computer/fig/General/BitLogic.png)
+
+<figcaption>ビットごとのAND演算回路</figcaption>
 </figure>
 
 
@@ -243,8 +245,10 @@ ALU中の演算回路の中で最も簡単なものは、ビットごとの論�
 そして、複数桁の加算を行う場合には、図2に示すように、全加算器を多段に並べます。
 
 <figure>
-	[![4桁の加算回路](../../../../assets/media/ufcpp2000/computer/fig/General/FullAdder.png)](../../../../assets/media/ufcpp2000/computer/fig/General/FullAdder.png)
-	<figcaption>4桁の加算回路</figcaption>
+
+[![4桁の加算回路](../../../../assets/media/ufcpp2000/computer/fig/General/FullAdder.png)](../../../../assets/media/ufcpp2000/computer/fig/General/FullAdder.png)
+
+<figcaption>4桁の加算回路</figcaption>
 </figure>
 
 
@@ -372,8 +376,10 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 （4桁の）減算回路は図3に示すようになります。
 
 <figure>
-	[![4桁の減算回路](../../../../assets/media/ufcpp2000/computer/fig/General/Subtracter.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Subtracter.png)
-	<figcaption>4桁の減算回路</figcaption>
+
+[![4桁の減算回路](../../../../assets/media/ufcpp2000/computer/fig/General/Subtracter.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Subtracter.png)
+
+<figcaption>4桁の減算回路</figcaption>
 </figure>
 
 
@@ -388,8 +394,10 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 小学校などで始めて2桁以上の掛け算を習う際、図4に例を示すような図を使って手順を教わると思います。
 
 <figure>
-	[![10進数の乗算の手順の例](../../../../assets/media/ufcpp2000/computer/fig/General/Mul10.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Mul10.png)
-	<figcaption>10進数の乗算の手順の例</figcaption>
+
+[![10進数の乗算の手順の例](../../../../assets/media/ufcpp2000/computer/fig/General/Mul10.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Mul10.png)
+
+<figcaption>10進数の乗算の手順の例</figcaption>
 </figure>
 
 
@@ -397,8 +405,10 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 これと同じことを2進数でやってみましょう。図5に示すような手順になります。
 
 <figure>
-	[![2進数の乗算の手順の例](../../../../assets/media/ufcpp2000/computer/fig/General/Mul2.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Mul2.png)
-	<figcaption>2進数の乗算の手順の例</figcaption>
+
+[![2進数の乗算の手順の例](../../../../assets/media/ufcpp2000/computer/fig/General/Mul2.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Mul2.png)
+
+<figcaption>2進数の乗算の手順の例</figcaption>
 </figure>
 
 
@@ -425,8 +435,10 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 例えば、0110という2進数（10進数で6）を左シフトすると0011（10進数で3）に、右シフトすると1100（10進数で12）になります。
 
 <figure>
-	[![シフト演算](../../../../assets/media/ufcpp2000/computer/fig/General/Shift.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Shift.png)
-	<figcaption>シフト演算</figcaption>
+
+[![シフト演算](../../../../assets/media/ufcpp2000/computer/fig/General/Shift.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Shift.png)
+
+<figcaption>シフト演算</figcaption>
 </figure>
 
 
@@ -440,8 +452,10 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 例えば、同様に1110（10進数で -2）を考えてみると、1ビット右に算術シフトすると1111となり、10進数の -1になります。
 
 <figure>
-	[![算術右シフト演算](../../../../assets/media/ufcpp2000/computer/fig/General/ArithmeticShift.png)](../../../../assets/media/ufcpp2000/computer/fig/General/ArithmeticShift.png)
-	<figcaption>算術右シフト演算</figcaption>
+
+[![算術右シフト演算](../../../../assets/media/ufcpp2000/computer/fig/General/ArithmeticShift.png)](../../../../assets/media/ufcpp2000/computer/fig/General/ArithmeticShift.png)
+
+<figcaption>算術右シフト演算</figcaption>
 </figure>
 
 
@@ -453,8 +467,10 @@ b の2の補数を加算回路に与えるだけで減算を実現できます�
 こちらはローテート（rotate: 巡回）演算と呼びます。
 
 <figure>
-	[![ローテート演算](../../../../assets/media/ufcpp2000/computer/fig/General/Rotate.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Rotate.png)
-	<figcaption>ローテート演算</figcaption>
+
+[![ローテート演算](../../../../assets/media/ufcpp2000/computer/fig/General/Rotate.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Rotate.png)
+
+<figcaption>ローテート演算</figcaption>
 </figure>
 
 
@@ -477,8 +493,10 @@ CPUを作るためには、ALU内のどの演算回路を動かすかや、
 図9に4つのレジスターがある場合の選択回路の例を示します。
 
 <figure>
-	[![レジスターの選択回路](../../../../assets/media/ufcpp2000/computer/fig/General/Selector.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Selector.png)
-	<figcaption>レジスターの選択回路</figcaption>
+
+[![レジスターの選択回路](../../../../assets/media/ufcpp2000/computer/fig/General/Selector.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Selector.png)
+
+<figcaption>レジスターの選択回路</figcaption>
 </figure>
 
 
@@ -491,8 +509,10 @@ CPUを作るためには、ALU内のどの演算回路を動かすかや、
 例えば、入力が4つの場合には、選択信号は2ビットで表され、図10に示すような挙動をする回路になります。
 
 <figure>
-	[![4入力のマルチプレクサー](../../../../assets/media/ufcpp2000/computer/fig/General/Multiplexer.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Multiplexer.png)
-	<figcaption>4入力のマルチプレクサー</figcaption>
+
+[![4入力のマルチプレクサー](../../../../assets/media/ufcpp2000/computer/fig/General/Multiplexer.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Multiplexer.png)
+
+<figcaption>4入力のマルチプレクサー</figcaption>
 </figure>
 
 
@@ -527,8 +547,10 @@ CPUを作るためには、ALU内のどの演算回路を動かすかや、
 出力が4つの場合には、図11に示すような回路になります。
 
 <figure>
-	[![4出力のデマルチプレクサー](../../../../assets/media/ufcpp2000/computer/fig/General/Demultiplexer.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Demultiplexer.png)
-	<figcaption>4出力のデマルチプレクサー</figcaption>
+
+[![4出力のデマルチプレクサー](../../../../assets/media/ufcpp2000/computer/fig/General/Demultiplexer.png)](../../../../assets/media/ufcpp2000/computer/fig/General/Demultiplexer.png)
+
+<figcaption>4出力のデマルチプレクサー</figcaption>
 </figure>
 
 

@@ -38,8 +38,10 @@ aliases:
 そして、仮数部と指数部をそれぞれ2進数で記録します。
 
 <figure>
-	[![浮動小数点数の例](../../../../assets/media/ufcpp2000/computer/fig/Digits/FloatingPoint.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/FloatingPoint.png)
-	<figcaption>浮動小数点数の例</figcaption>
+
+[![浮動小数点数の例](../../../../assets/media/ufcpp2000/computer/fig/Digits/FloatingPoint.png)](../../../../assets/media/ufcpp2000/computer/fig/Digits/FloatingPoint.png)
+
+<figcaption>浮動小数点数の例</figcaption>
 </figure>
 
 

@@ -36,8 +36,10 @@ aliases:
 また、WPF や Silverlight のデータ バインディングでも、書式設定ができます。
 
 <figure>
-	[![データ バインディングにおける書式設定。](../../../../assets/media/ufcpp2000/dotnet/fig/BindingStringFormat.png)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingStringFormat.png)
-	<figcaption>データ バインディングにおける書式設定。</figcaption>
+
+[![データ バインディングにおける書式設定。](../../../../assets/media/ufcpp2000/dotnet/fig/BindingStringFormat.png)](../../../../assets/media/ufcpp2000/dotnet/fig/BindingStringFormat.png)
+
+<figcaption>データ バインディングにおける書式設定。</figcaption>
 </figure>
 
 

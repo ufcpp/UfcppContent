@@ -81,7 +81,8 @@ Word 2007 以降の数式エディターでは、<strong id="linear_format" clas
 		<td markdown="1">x=(-b±√(b^2-4ac))/2a</td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/office/fig/eq01.png)](../../../../assets/media/ufcpp2000/office/fig/eq01.png)
+
+[![](../../../../assets/media/ufcpp2000/office/fig/eq01.png)](../../../../assets/media/ufcpp2000/office/fig/eq01.png)
 
 </figure>
 
@@ -93,7 +94,8 @@ Word 2007 以降の数式エディターでは、<strong id="linear_format" clas
 		<td markdown="1">f(x)=∑_(n=1)^∞▒〖1/n! x^n 〗</td>
 		<td markdown="1">
 <figure>
-	[![](../../../../assets/media/ufcpp2000/office/fig/eq02.png)](../../../../assets/media/ufcpp2000/office/fig/eq02.png)
+
+[![](../../../../assets/media/ufcpp2000/office/fig/eq02.png)](../../../../assets/media/ufcpp2000/office/fig/eq02.png)
 
 </figure>
 

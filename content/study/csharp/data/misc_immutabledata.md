@@ -39,8 +39,10 @@ Immutable Collections は、連結リスト的なデータ構造で、
 例えば、図1のような、ゲームでよくある四角いマス目をつないだマップみたいなのを考えて
 
 <figure>
-	[![経路探索の対象の例](../../../../assets/media/ufcpp2000/csharp/fig/immutable-map.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-map.png)
-	<figcaption>経路探索の対象の例</figcaption>
+
+[![経路探索の対象の例](../../../../assets/media/ufcpp2000/csharp/fig/immutable-map.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-map.png)
+
+<figcaption>経路探索の対象の例</figcaption>
 </figure>
 
 
@@ -53,8 +55,10 @@ foreach (var node in path.Last().NextNodes)
         
 ```
 <figure>
-	[![配列を使った実装(mutable)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable.png)
-	<figcaption>配列を使った実装(mutable)</figcaption>
+
+[![配列を使った実装(mutable)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable.png)
+
+<figcaption>配列を使った実装(mutable)</figcaption>
 </figure>
 
 
@@ -79,8 +83,10 @@ foreach (var node in path.Last.NextNodes)
         
 ```
 <figure>
-	[![連結リストを使った実装(immutable)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link.png)
-	<figcaption>連結リストを使った実装(immutable)</figcaption>
+
+[![連結リストを使った実装(immutable)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link.png)
+
+<figcaption>連結リストを使った実装(immutable)</figcaption>
 </figure>
 
 
@@ -97,14 +103,18 @@ foreach (var node in path.Last.NextNodes)
 ただし、1部分だけ(1経路だけ)抜きだすと…
 
 <figure>
-	[![配列を使った実装(mutable)での1経路](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable1.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable1.png)
-	<figcaption>配列を使った実装(mutable)での1経路</figcaption>
+
+[![配列を使った実装(mutable)での1経路](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable1.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-mutable1.png)
+
+<figcaption>配列を使った実装(mutable)での1経路</figcaption>
 </figure>
 
 
 <figure>
-	[![連結リストを使った実装(mutable)での1経路](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link1.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link1.png)
-	<figcaption>連結リストを使った実装(mutable)での1経路</figcaption>
+
+[![連結リストを使った実装(mutable)での1経路](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link1.png)](../../../../assets/media/ufcpp2000/csharp/fig/immutable-link1.png)
+
+<figcaption>連結リストを使った実装(mutable)での1経路</figcaption>
 </figure>
 
 

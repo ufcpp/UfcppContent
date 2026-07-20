@@ -239,8 +239,10 @@ Visual Studio などの開発ツールが利用します。
 		<td markdown="1"><code>CategoryAttribute</code><br></br><code>DefaultValueAttribute</code><br></br><code>DescriptionAttribute</code><br></br><code>BrowsableAttribute</code><br></br></td>
 		<td markdown="1">コンポーネントクラス(簡単に言うと Windows アプリケーションのボタンやテキストボックス等のこと)のプロパティに対してこれらの属性を指定することで、 Visual Studio のプロパティ エディタで値を編集することが出来るようになります。
 <figure>
-	[![Visual Studio のプロパティ エディター](../../../../assets/media/ufcpp2000/csharp/fig/VsProperty.png)](../../../../assets/media/ufcpp2000/csharp/fig/VsProperty.png)
-	<figcaption>Visual Studio のプロパティ エディター</figcaption>
+
+[![Visual Studio のプロパティ エディター](../../../../assets/media/ufcpp2000/csharp/fig/VsProperty.png)](../../../../assets/media/ufcpp2000/csharp/fig/VsProperty.png)
+
+<figcaption>Visual Studio のプロパティ エディター</figcaption>
 </figure>
 
 </td>
@@ -388,8 +390,10 @@ explorer から参照することができます。
 以下のようになります。
 
 <figure>
-	[![実行ファイルのプロパティ](../../../../assets/media/ufcpp2000/csharp/fig/assembly0.png)](../../../../assets/media/ufcpp2000/csharp/fig/assembly0.png)
-	<figcaption>実行ファイルのプロパティ</figcaption>
+
+[![実行ファイルのプロパティ](../../../../assets/media/ufcpp2000/csharp/fig/assembly0.png)](../../../../assets/media/ufcpp2000/csharp/fig/assembly0.png)
+
+<figcaption>実行ファイルのプロパティ</figcaption>
 </figure>
 
 

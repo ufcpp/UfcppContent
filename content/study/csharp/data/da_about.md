@@ -55,8 +55,10 @@ RDB のテーブルなどに格納されたデータを一気に全部読み出�
 このような処理の仕方をストリーム（stream： 流れ、小川）処理と呼びます。
 
 <figure>
-	[![ストリーム処理](../../../../assets/media/ufcpp2000/csharp/fig/DataStream.png)](../../../../assets/media/ufcpp2000/csharp/fig/DataStream.png)
-	<figcaption>ストリーム処理</figcaption>
+
+[![ストリーム処理](../../../../assets/media/ufcpp2000/csharp/fig/DataStream.png)](../../../../assets/media/ufcpp2000/csharp/fig/DataStream.png)
+
+<figcaption>ストリーム処理</figcaption>
 </figure>
 
 
@@ -76,8 +78,10 @@ RDB のテーブルなどに格納されたデータを一気に全部読み出�
 データストリームに対する処理なので、1段目の条件選択が全要素に対して終わる前に、平行して2段目のデータ加工を進めていくことができます。
 
 <figure>
-	[![パイプライン処理](../../../../assets/media/ufcpp2000/csharp/fig/DataPipeline.png)](../../../../assets/media/ufcpp2000/csharp/fig/DataPipeline.png)
-	<figcaption>パイプライン処理</figcaption>
+
+[![パイプライン処理](../../../../assets/media/ufcpp2000/csharp/fig/DataPipeline.png)](../../../../assets/media/ufcpp2000/csharp/fig/DataPipeline.png)
+
+<figcaption>パイプライン処理</figcaption>
 </figure>
 
 
@@ -106,8 +110,10 @@ SQL でいうなら where、map-reduce でいうなら map の一部分です。
 条件を指定して、一部の要素だけを選択します。
 
 <figure>
-	[![データの選択処理](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce1.png)](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce1.png)
-	<figcaption>データの選択処理</figcaption>
+
+[![データの選択処理](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce1.png)](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce1.png)
+
+<figcaption>データの選択処理</figcaption>
 </figure>
 
 
@@ -133,8 +139,10 @@ SQL でいうなら select に相当します。
 科学計算の分野で写（map）や斜（morphism）と呼ばれる概念と同じ考え方です。
 
 <figure>
-	[![データの加工](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce2.png)](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce2.png)
-	<figcaption>データの加工</figcaption>
+
+[![データの加工](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce2.png)](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce2.png)
+
+<figcaption>データの加工</figcaption>
 </figure>
 
 
@@ -149,8 +157,10 @@ SQL でいうなら select に相当します。
 map-reduce でいうところの reduce に当たります。科学計算分野ではこの手の処理を縮約（reduction）と呼んだりします。
 
 <figure>
-	[![データの集計](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce3.png)](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce3.png)
-	<figcaption>データの集計</figcaption>
+
+[![データの集計](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce3.png)](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce3.png)
+
+<figcaption>データの集計</figcaption>
 </figure>
 
 
@@ -173,8 +183,10 @@ LINQ では、以下のような種類があります。
 例えば、上記の例を3つ繋いでみましょう（＋ もう1条件追加）。
 
 <figure>
-	[![パイプライン](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce4.png)](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce4.png)
-	<figcaption>パイプライン</figcaption>
+
+[![パイプライン](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce4.png)](../../../../assets/media/ufcpp2000/csharp/fig/mapreduce4.png)
+
+<figcaption>パイプライン</figcaption>
 </figure>
 
 

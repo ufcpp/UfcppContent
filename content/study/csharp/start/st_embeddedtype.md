@@ -37,8 +37,10 @@ aliases:
 C# の型は、以下のように分類されます。
 
 <figure>
-	[![C# の型の分類](../../../../assets/media/ufcpp2000/csharp/fig/TypeClassification.png)](../../../../assets/media/ufcpp2000/csharp/fig/TypeClassification.png)
-	<figcaption>C# の型の分類</figcaption>
+
+[![C# の型の分類](../../../../assets/media/ufcpp2000/csharp/fig/TypeClassification.png)](../../../../assets/media/ufcpp2000/csharp/fig/TypeClassification.png)
+
+<figcaption>C# の型の分類</figcaption>
 </figure>
 
 

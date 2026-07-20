@@ -42,8 +42,10 @@ C# では、ローカル変数はスタック上に値を置きます。
 一方、「[参照型](oo_reference.md#reftype)」の場合、実際の値はヒープ上に置かれ、そのヒープ上の場所への参照情報（「[ポインター](../../computer/general/memory.md#pointer)」 ）だけがスタック上に置かれます。
 
 <figure>
-	[![値型と参照型、スタックとヒープ](../../../../assets/media/ufcpp2000/csharp/fig/RmStackHeap.png)](../../../../assets/media/ufcpp2000/csharp/fig/RmStackHeap.png)
-	<figcaption>値型と参照型、スタックとヒープ</figcaption>
+
+[![値型と参照型、スタックとヒープ](../../../../assets/media/ufcpp2000/csharp/fig/RmStackHeap.png)](../../../../assets/media/ufcpp2000/csharp/fig/RmStackHeap.png)
+
+<figcaption>値型と参照型、スタックとヒープ</figcaption>
 </figure>
 
 
@@ -112,8 +114,10 @@ class Program
 この処理を<strong id="key-boxing" class="keyword">ボックス化</strong>(boxing: 箱詰め)と呼びます。
 
 <figure>
-	[![ボックス化(値型を参照型に変換)](../../../../assets/media/ufcpp2000/csharp/fig/RmBoxing.png)](../../../../assets/media/ufcpp2000/csharp/fig/RmBoxing.png)
-	<figcaption>ボックス化(値型を参照型に変換)</figcaption>
+
+[![ボックス化(値型を参照型に変換)](../../../../assets/media/ufcpp2000/csharp/fig/RmBoxing.png)](../../../../assets/media/ufcpp2000/csharp/fig/RmBoxing.png)
+
+<figcaption>ボックス化(値型を参照型に変換)</figcaption>
 </figure>
 
 
@@ -130,8 +134,10 @@ int z = (int)y; // object から元の型に。ボックス化解除。
 
 
 <figure>
-	[![ボックス化解除(object 化した値型を元に戻す)](../../../../assets/media/ufcpp2000/csharp/fig/RmUnboxing.png)](../../../../assets/media/ufcpp2000/csharp/fig/RmUnboxing.png)
-	<figcaption>ボックス化解除(object 化した値型を元に戻す)</figcaption>
+
+[![ボックス化解除(object 化した値型を元に戻す)](../../../../assets/media/ufcpp2000/csharp/fig/RmUnboxing.png)](../../../../assets/media/ufcpp2000/csharp/fig/RmUnboxing.png)
+
+<figcaption>ボックス化解除(object 化した値型を元に戻す)</figcaption>
 </figure>
 
 

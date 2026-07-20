@@ -59,8 +59,10 @@ explorer.exe
 (以下のものは Windows XP で実行した結果)
 
 <figure>
-	[![エクスプローラ オプション無し](../../../../assets/media/ufcpp2000/csharp/fig/explorer1.png)](../../../../assets/media/ufcpp2000/csharp/fig/explorer1.png)
-	<figcaption>エクスプローラ オプション無し</figcaption>
+
+[![エクスプローラ オプション無し](../../../../assets/media/ufcpp2000/csharp/fig/explorer1.png)](../../../../assets/media/ufcpp2000/csharp/fig/explorer1.png)
+
+<figcaption>エクスプローラ オプション無し</figcaption>
 </figure>
 
 
@@ -74,8 +76,10 @@ explorer.exe /e,/root,"C:\Program Files\Internet Explorer"
 以下のように、先ほどと内容の異なる形式でエクスプローラが起動します。
 
 <figure>
-	[![エクスプローラ オプションあり](../../../../assets/media/ufcpp2000/csharp/fig/explorer2.png)](../../../../assets/media/ufcpp2000/csharp/fig/explorer2.png)
-	<figcaption>エクスプローラ オプションあり</figcaption>
+
+[![エクスプローラ オプションあり](../../../../assets/media/ufcpp2000/csharp/fig/explorer2.png)](../../../../assets/media/ufcpp2000/csharp/fig/explorer2.png)
+
+<figcaption>エクスプローラ オプションあり</figcaption>
 </figure>
 
 

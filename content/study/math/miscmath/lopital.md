@@ -178,8 +178,10 @@ sin x/x の極限の話をするまえに、
 ですが、後述しますが、実はこの定義だと sin x/x の極限値を求めるときにちょっと苦労します。
 
 <figure>
-	[![弧長による孤度の定義](../../../../assets/media/ufcpp2000/math/fig/lopital00.png)](../../../../assets/media/ufcpp2000/math/fig/lopital00.png)
-	<figcaption>弧長による孤度の定義</figcaption>
+
+[![弧長による孤度の定義](../../../../assets/media/ufcpp2000/math/fig/lopital00.png)](../../../../assets/media/ufcpp2000/math/fig/lopital00.png)
+
+<figcaption>弧長による孤度の定義</figcaption>
 </figure>
 
 
@@ -189,8 +191,10 @@ sin x/x の極限の話をするまえに、
 それを言うと、弧長の定義から面積を求めるのも実は一苦労なので同じです。
 
 <figure>
-	[![扇の面積による孤度の定義](../../../../assets/media/ufcpp2000/math/fig/lopital01.png)](../../../../assets/media/ufcpp2000/math/fig/lopital01.png)
-	<figcaption>扇の面積による孤度の定義</figcaption>
+
+[![扇の面積による孤度の定義](../../../../assets/media/ufcpp2000/math/fig/lopital01.png)](../../../../assets/media/ufcpp2000/math/fig/lopital01.png)
+
+<figcaption>扇の面積による孤度の定義</figcaption>
 </figure>
 
 
@@ -261,8 +265,10 @@ sin x/x の極限値から孤度を定める方法では、
 内側と外側に三角形を描きます。
 
 <figure>
-	[![sin x、x、tan x](../../../../assets/media/ufcpp2000/math/fig/lopital02.png)](../../../../assets/media/ufcpp2000/math/fig/lopital02.png)
-	<figcaption>sin x、x、tan x</figcaption>
+
+[![sin x、x、tan x](../../../../assets/media/ufcpp2000/math/fig/lopital02.png)](../../../../assets/media/ufcpp2000/math/fig/lopital02.png)
+
+<figcaption>sin x、x、tan x</figcaption>
 </figure>
 
 
@@ -280,8 +286,10 @@ sin x/x の極限値から孤度を定める方法では、
 （図中の <span class="math">a</span> はある定数。）
 
 <figure>
-	[![弧上の点 p と半径の延長線上の点 q](../../../../assets/media/ufcpp2000/math/fig/lopital03.png)](../../../../assets/media/ufcpp2000/math/fig/lopital03.png)
-	<figcaption>弧上の点 p と半径の延長線上の点 q</figcaption>
+
+[![弧上の点 p と半径の延長線上の点 q](../../../../assets/media/ufcpp2000/math/fig/lopital03.png)](../../../../assets/media/ufcpp2000/math/fig/lopital03.png)
+
+<figcaption>弧上の点 p と半径の延長線上の点 q</figcaption>
 </figure>
 
 
@@ -398,8 +406,10 @@ sin x/x を計算するという目的からすると、
 内側と外側に三角形を描きます。
 
 <figure>
-	[![面積の関係](../../../../assets/media/ufcpp2000/math/fig/lopital04.png)](../../../../assets/media/ufcpp2000/math/fig/lopital04.png)
-	<figcaption>面積の関係</figcaption>
+
+[![面積の関係](../../../../assets/media/ufcpp2000/math/fig/lopital04.png)](../../../../assets/media/ufcpp2000/math/fig/lopital04.png)
+
+<figcaption>面積の関係</figcaption>
 </figure>
 
 

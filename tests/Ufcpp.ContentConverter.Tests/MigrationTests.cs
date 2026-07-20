@@ -221,6 +221,68 @@ public sealed class MigrationTests
     }
 
     [Fact]
+    public void MarkdownFigureImagesAreSeparatedFromRawHtml()
+    {
+        var input =
+            "<figure>\n" +
+            "\t[![IQueryable.Expression の例](image.png)](image.png)\n" +
+            "\t<figcaption><span>IQueryable.Expression</span>\n" +
+            "\tcontinued caption\n" +
+            "\t</figcaption>\n" +
+            "</figure>";
+        var expected =
+            "<figure>\n\n" +
+            "[![IQueryable.Expression の例](image.png)](image.png)\n\n" +
+            "<figcaption><span>IQueryable.Expression</span>\n" +
+            "\tcontinued caption\n" +
+            "\t</figcaption>\n" +
+            "</figure>";
+
+        var actual = TextUtilities.NormalizeMarkdownFigureImages(input);
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected, TextUtilities.NormalizeMarkdownFigureImages(actual));
+    }
+
+    [Fact]
+    public void CaptionlessMarkdownFigureImagesAreSeparatedFromRawHtml()
+    {
+        var input =
+            "<figure>\n" +
+            "\t[![](image.png)](image.png)\n\n" +
+            "</figure>";
+        var expected =
+            "<figure>\n\n" +
+            "[![](image.png)](image.png)\n\n" +
+            "</figure>";
+
+        var actual = TextUtilities.NormalizeMarkdownFigureImages(input);
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected, TextUtilities.NormalizeMarkdownFigureImages(actual));
+    }
+
+    [Fact]
+    public void MarkdownFigureNormalizationSkipsFencedAndHtmlImages()
+    {
+        var input = """
+            ```markdown
+            <figure>
+                [![example](image.png)](image.png)
+                <figcaption>example</figcaption>
+            </figure>
+            ```
+
+            <figure>
+                <a href="image.png"><img src="image.png" alt="example"></a>
+                <figcaption>example</figcaption>
+            </figure>
+            """;
+
+        Assert.Equal(input, TextUtilities.NormalizeMarkdownFigureImages(input));
+    }
+
+    [Fact]
     public void MarkdownHeadingSpacingIsNormalizedOutsideProtectedBlocks()
     {
         var input = """
@@ -726,6 +788,59 @@ public sealed class MigrationTests
                 File.ReadAllBytes(Path.Combine(first, file)),
                 File.ReadAllBytes(Path.Combine(second, file)));
         }
+    }
+
+    [Fact]
+    public void GenerationNormalizesMarkdownFigureImages()
+    {
+        using var workspace = new TestWorkspace();
+        var snapshot = workspace.Write(
+            "published.xml",
+            SnapshotXml(
+                """
+                <Article id="2" parentID="1" level="2" sortOrder="0" nodeName="figure" urlName="figure"
+                         createDate="2020-01-01T00:00:00" updateDate="2020-01-02T00:00:00"
+                         nodeTypeAlias="Article">
+                  <title>Figure</title>
+                  <bodyText><![CDATA[<figure>
+                    [![IQueryable.Expression の例](/media/iqueryable1.png)](/media/iqueryable1.png)
+                    <figcaption>IQueryable.Expression の例</figcaption>
+                </figure>]]></bodyText>
+                </Article>
+                """));
+        var sitemap = workspace.Write(
+            "sitemap.xml",
+            """
+            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+              <url><loc>https://ufcpp.net/</loc></url>
+              <url><loc>https://ufcpp.net/figure/</loc></url>
+            </urlset>
+            """);
+        var media = workspace.Directory("media");
+        workspace.WriteAt(media, "iqueryable1.png", "png");
+        var output = workspace.Directory("output");
+
+        new ContentMigration(
+            new MigrationOptions(
+                snapshot,
+                media,
+                sitemap,
+                workspace.Write("maps.config", RewriteMapsXml(string.Empty, string.Empty)),
+                workspace.Directory("legacy"),
+                output,
+                false)).Run();
+
+        var generated = File.ReadAllText(Path.Combine(output, "content", "figure.md"));
+        Assert.Contains(
+            """
+            <figure>
+
+            [![IQueryable.Expression の例](../assets/media/iqueryable1.png)](../assets/media/iqueryable1.png)
+
+            <figcaption>IQueryable.Expression の例</figcaption>
+            </figure>
+            """,
+            generated);
     }
 
     [Fact]

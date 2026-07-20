@@ -74,14 +74,18 @@ private void Button_Click(object sender, RoutedEventArgs e)
 そこで、図2に示すように、非同期通信版を使って、UI スレッドをブロッキングしないようにします。
 
 <figure>
-	[![同期実行によって UI スレッドがブロックされる](../../../../assets/media/ufcpp2000/csharp/fig/eventblocking.png)](../../../../assets/media/ufcpp2000/csharp/fig/eventblocking.png)
-	<figcaption>同期実行によって UI スレッドがブロックされる</figcaption>
+
+[![同期実行によって UI スレッドがブロックされる](../../../../assets/media/ufcpp2000/csharp/fig/eventblocking.png)](../../../../assets/media/ufcpp2000/csharp/fig/eventblocking.png)
+
+<figcaption>同期実行によって UI スレッドがブロックされる</figcaption>
 </figure>
 
 
 <figure>
-	[![非同期実行によって UI スレッドがブロックされないようにする](../../../../assets/media/ufcpp2000/csharp/fig/eventasync.png)](../../../../assets/media/ufcpp2000/csharp/fig/eventasync.png)
-	<figcaption>非同期実行によって UI スレッドがブロックされないようにする</figcaption>
+
+[![非同期実行によって UI スレッドがブロックされないようにする](../../../../assets/media/ufcpp2000/csharp/fig/eventasync.png)](../../../../assets/media/ufcpp2000/csharp/fig/eventasync.png)
+
+<figcaption>非同期実行によって UI スレッドがブロックされないようにする</figcaption>
 </figure>
 
 

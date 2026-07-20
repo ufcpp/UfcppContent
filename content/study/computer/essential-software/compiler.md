@@ -35,8 +35,10 @@ aliases:
 
 
 <figure>
-	[![字句解析と構文解析](../../../../assets/media/ufcpp2000/computer/fig/Essential/CompilationFlow.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/CompilationFlow.png)
-	<figcaption>字句解析と構文解析</figcaption>
+
+[![字句解析と構文解析](../../../../assets/media/ufcpp2000/computer/fig/Essential/CompilationFlow.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/CompilationFlow.png)
+
+<figcaption>字句解析と構文解析</figcaption>
 </figure>
 
 
@@ -315,8 +317,10 @@ sum = x + y;
 このコードを表3の構文規則にそって解析する過程は、図2に示すようになります。
 
 <figure>
-	[![構文解析の過程](../../../../assets/media/ufcpp2000/computer/fig/Essential/SyntacticAnalysis.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/SyntacticAnalysis.png)
-	<figcaption>構文解析の過程</figcaption>
+
+[![構文解析の過程](../../../../assets/media/ufcpp2000/computer/fig/Essential/SyntacticAnalysis.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/SyntacticAnalysis.png)
+
+<figcaption>構文解析の過程</figcaption>
 </figure>
 
 
@@ -324,8 +328,10 @@ sum = x + y;
 これを構文木（syntax tree）と呼びます。
 
 <figure>
-	[![構文木](../../../../assets/media/ufcpp2000/computer/fig/Essential/SyntaxTree.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/SyntaxTree.png)
-	<figcaption>構文木</figcaption>
+
+[![構文木](../../../../assets/media/ufcpp2000/computer/fig/Essential/SyntaxTree.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/SyntaxTree.png)
+
+<figcaption>構文木</figcaption>
 </figure>
 
 
@@ -335,8 +341,10 @@ sum = x + y;
 （「抽象」と付くのは、機械語生成に必要ない部分をそぎ落としていることを指します）。
 
 <figure>
-	[![抽象構文木](../../../../assets/media/ufcpp2000/computer/fig/Essential/AbstractSyntaxTree.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/AbstractSyntaxTree.png)
-	<figcaption>抽象構文木</figcaption>
+
+[![抽象構文木](../../../../assets/media/ufcpp2000/computer/fig/Essential/AbstractSyntaxTree.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/AbstractSyntaxTree.png)
+
+<figcaption>抽象構文木</figcaption>
 </figure>
 
 
@@ -389,8 +397,10 @@ sum = x + y;
 図4の例と同様に機械語の生成に特に必要のない部分を省略すると、図5に示す抽象構文木が得られるはずです。
 
 <figure>
-	[![2 * 3 + 4 * 5から得られる抽象構文木](../../../../assets/media/ufcpp2000/computer/fig/Essential/AST2x3_4x5.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/AST2x3_4x5.png)
-	<figcaption>2 * 3 + 4 * 5から得られる抽象構文木</figcaption>
+
+[![2 * 3 + 4 * 5から得られる抽象構文木](../../../../assets/media/ufcpp2000/computer/fig/Essential/AST2x3_4x5.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/AST2x3_4x5.png)
+
+<figcaption>2 * 3 + 4 * 5から得られる抽象構文木</figcaption>
 </figure>
 
 
@@ -406,8 +416,10 @@ sum = x + y;
 （逆に、レジスターを持つCPU構造をレジスター・マシン（register machine）と呼びます）。
 
 <figure>
-	[![スタック・マシン型のCPU構造](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackMachine.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackMachine.png)
-	<figcaption>スタック・マシン型のCPU構造</figcaption>
+
+[![スタック・マシン型のCPU構造](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackMachine.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackMachine.png)
+
+<figcaption>スタック・マシン型のCPU構造</figcaption>
 </figure>
 
 
@@ -443,8 +455,10 @@ sum = x + y;
 図7に示すように、3, 5という値を1つずつスタックに積んだ後、add命令によってその2つの値を消費し、加算結果の8をスタックに積みなおします。
 
 <figure>
-	[![スタック機械の動作例（3+5）](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackOperation1.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackOperation1.png)
-	<figcaption>スタック機械の動作例（3+5）</figcaption>
+
+[![スタック機械の動作例（3+5）](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackOperation1.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackOperation1.png)
+
+<figcaption>スタック機械の動作例（3+5）</figcaption>
 </figure>
 
 
@@ -472,8 +486,10 @@ sum = x + y;
 この例の場合、スタック・マシンの動作は図8に示すようになります。
 
 <figure>
-	[![スタック機械の動作例（2×3+4×5）](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackOperation2.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackOperation2.png)
-	<figcaption>スタック機械の動作例（2×3+4×5）</figcaption>
+
+[![スタック機械の動作例（2×3+4×5）](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackOperation2.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/StackOperation2.png)
+
+<figcaption>スタック機械の動作例（2×3+4×5）</figcaption>
 </figure>
 
 
@@ -485,6 +501,8 @@ sum = x + y;
 この性質から、図9に示すように、木構造を子要素側から逐次機械語化していけば、最終的に抽象構文木全体を機械語化できます。
 
 <figure>
-	[![抽象構文木からの機械語生成](../../../../assets/media/ufcpp2000/computer/fig/Essential/EmitMachineLanguage.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/EmitMachineLanguage.png)
-	<figcaption>抽象構文木からの機械語生成</figcaption>
+
+[![抽象構文木からの機械語生成](../../../../assets/media/ufcpp2000/computer/fig/Essential/EmitMachineLanguage.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/EmitMachineLanguage.png)
+
+<figcaption>抽象構文木からの機械語生成</figcaption>
 </figure>

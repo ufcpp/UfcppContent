@@ -63,8 +63,10 @@ C言語などの既存のプログラミング言語との相互運用性や、
 そして、アドレスを格納するために用いるのが<em>ポインター</em>(アドレスを指し示す変数という意味)です。
 
 <figure>
-	[![アドレス](../../../../assets/media/ufcpp2000/csharp/fig/pointer1.png)](../../../../assets/media/ufcpp2000/csharp/fig/pointer1.png)
-	<figcaption>アドレス</figcaption>
+
+[![アドレス](../../../../assets/media/ufcpp2000/csharp/fig/pointer1.png)](../../../../assets/media/ufcpp2000/csharp/fig/pointer1.png)
+
+<figcaption>アドレス</figcaption>
 </figure>
 
 

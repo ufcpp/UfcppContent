@@ -120,22 +120,28 @@ class ByValueTest
 
 
 <figure>
-	[![値型の値渡し](../../../../assets/media/ufcpp2000/csharp/fig/ref1.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref1.png)
-	<figcaption>値型の値渡し</figcaption>
+
+[![値型の値渡し](../../../../assets/media/ufcpp2000/csharp/fig/ref1.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref1.png)
+
+<figcaption>値型の値渡し</figcaption>
 </figure>
 
 
 同様に、参照型の変数を値渡しする場合、図2, 3に示すように、参照情報をコピーして渡すことになります。
 
 <figure>
-	[![参照型の値渡し(参照情報の書き換え)](../../../../assets/media/ufcpp2000/csharp/fig/ref2.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref2.png)
-	<figcaption>参照型の値渡し(参照情報の書き換え)</figcaption>
+
+[![参照型の値渡し(参照情報の書き換え)](../../../../assets/media/ufcpp2000/csharp/fig/ref2.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref2.png)
+
+<figcaption>参照型の値渡し(参照情報の書き換え)</figcaption>
 </figure>
 
 
 <figure>
-	[![参照型の値渡し(参照先の書き換え)](../../../../assets/media/ufcpp2000/csharp/fig/ref3.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref3.png)
-	<figcaption>参照型の値渡し(参照先の書き換え)</figcaption>
+
+[![参照型の値渡し(参照先の書き換え)](../../../../assets/media/ufcpp2000/csharp/fig/ref3.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref3.png)
+
+<figcaption>参照型の値渡し(参照先の書き換え)</figcaption>
 </figure>
 
 ## <a id="sec-generated-title-5"></a> <a id="sec-byref-param"></a>参照渡しの引数
@@ -182,16 +188,20 @@ class ByReferenceTest
 
 
 <figure>
-	[![値型の参照渡し](../../../../assets/media/ufcpp2000/csharp/fig/ref4.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref4.png)
-	<figcaption>値型の参照渡し</figcaption>
+
+[![値型の参照渡し](../../../../assets/media/ufcpp2000/csharp/fig/ref4.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref4.png)
+
+<figcaption>値型の参照渡し</figcaption>
 </figure>
 
 
 同様に、参照型の変数を値渡しする場合、図5に示すように、参照情報をさらに参照することになります。
 
 <figure>
-	[![参照型の参照渡し](../../../../assets/media/ufcpp2000/csharp/fig/ref5.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref5.png)
-	<figcaption>参照型の参照渡し</figcaption>
+
+[![参照型の参照渡し](../../../../assets/media/ufcpp2000/csharp/fig/ref5.png)](../../../../assets/media/ufcpp2000/csharp/fig/ref5.png)
+
+<figcaption>参照型の参照渡し</figcaption>
 </figure>
 
 

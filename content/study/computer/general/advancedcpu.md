@@ -51,14 +51,18 @@ CPUの回路は、例えば、以下のような段階に分割されます。
 このように、パイプライン構成を取るCPUでは、1サイクルの時間を短くする（クロック周波数を上げる）ことが可能で、処理速度が速くなります。
 
 <figure>
-	[![パイプライン構成を取らないCPU](../../../../assets/media/ufcpp2000/computer/fig/General/NoPipelineCpu.png)](../../../../assets/media/ufcpp2000/computer/fig/General/NoPipelineCpu.png)
-	<figcaption>パイプライン構成を取らないCPU</figcaption>
+
+[![パイプライン構成を取らないCPU](../../../../assets/media/ufcpp2000/computer/fig/General/NoPipelineCpu.png)](../../../../assets/media/ufcpp2000/computer/fig/General/NoPipelineCpu.png)
+
+<figcaption>パイプライン構成を取らないCPU</figcaption>
 </figure>
 
 
 <figure>
-	[![パイプライン構成のCPU](../../../../assets/media/ufcpp2000/computer/fig/General/PipelineCpu.png)](../../../../assets/media/ufcpp2000/computer/fig/General/PipelineCpu.png)
-	<figcaption>パイプライン構成のCPU</figcaption>
+
+[![パイプライン構成のCPU](../../../../assets/media/ufcpp2000/computer/fig/General/PipelineCpu.png)](../../../../assets/media/ufcpp2000/computer/fig/General/PipelineCpu.png)
+
+<figcaption>パイプライン構成のCPU</figcaption>
 </figure>
 
 
@@ -78,8 +82,10 @@ CPUによってはもっと細かく段階を分ける場合もあり、パイ�
 このような現象をパイプライン・ストール（pipeline stall: パイプライン詰まり）と呼びます。
 
 <figure>
-	[![条件分岐命令実行時のパイプライン・ストール](../../../../assets/media/ufcpp2000/computer/fig/General/PipelineStall.png)](../../../../assets/media/ufcpp2000/computer/fig/General/PipelineStall.png)
-	<figcaption>条件分岐命令実行時のパイプライン・ストール</figcaption>
+
+[![条件分岐命令実行時のパイプライン・ストール](../../../../assets/media/ufcpp2000/computer/fig/General/PipelineStall.png)](../../../../assets/media/ufcpp2000/computer/fig/General/PipelineStall.png)
+
+<figcaption>条件分岐命令実行時のパイプライン・ストール</figcaption>
 </figure>
 
 
@@ -112,8 +118,10 @@ CPUによってはもっと細かく段階を分ける場合もあり、パイ�
 このマイクロ命令を使ってCPUを駆動します。
 
 <figure>
-	[![マイクロ命令](../../../../assets/media/ufcpp2000/computer/fig/General/MicroInstruction.png)](../../../../assets/media/ufcpp2000/computer/fig/General/MicroInstruction.png)
-	<figcaption>マイクロ命令</figcaption>
+
+[![マイクロ命令](../../../../assets/media/ufcpp2000/computer/fig/General/MicroInstruction.png)](../../../../assets/media/ufcpp2000/computer/fig/General/MicroInstruction.png)
+
+<figcaption>マイクロ命令</figcaption>
 </figure>
 
 
@@ -126,8 +134,10 @@ CPUによってはもっと細かく段階を分ける場合もあり、パイ�
 図5に示すように、間に容量・速度ともに中間くらいの記憶素子を挟むという手法がよく使われます。
 
 <figure>
-	[![キャッシュ・メモリ](../../../../assets/media/ufcpp2000/computer/fig/General/CacheMemory.png)](../../../../assets/media/ufcpp2000/computer/fig/General/CacheMemory.png)
-	<figcaption>キャッシュ・メモリ</figcaption>
+
+[![キャッシュ・メモリ](../../../../assets/media/ufcpp2000/computer/fig/General/CacheMemory.png)](../../../../assets/media/ufcpp2000/computer/fig/General/CacheMemory.png)
+
+<figcaption>キャッシュ・メモリ</figcaption>
 </figure>
 
 
@@ -141,8 +151,10 @@ CPUによってはもっと細かく段階を分ける場合もあり、パイ�
 メイン・メモリからキャッシュ・メモリへのデータの読み込みは、図6に示すように、ある程度まとまったサイズのブロック単位で行われます。
 
 <figure>
-	[![キャッシュ・メモリへのデータの読み込み](../../../../assets/media/ufcpp2000/computer/fig/General/CacheMemoryBlock.png)](../../../../assets/media/ufcpp2000/computer/fig/General/CacheMemoryBlock.png)
-	<figcaption>キャッシュ・メモリへのデータの読み込み</figcaption>
+
+[![キャッシュ・メモリへのデータの読み込み](../../../../assets/media/ufcpp2000/computer/fig/General/CacheMemoryBlock.png)](../../../../assets/media/ufcpp2000/computer/fig/General/CacheMemoryBlock.png)
+
+<figcaption>キャッシュ・メモリへのデータの読み込み</figcaption>
 </figure>
 
 

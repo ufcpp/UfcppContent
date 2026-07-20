@@ -408,8 +408,10 @@ PowerShell をインストールすると、スタートメニューに
 標準だと、確か紺色。）
 
 <figure>
-	[![PowerShell の対話型ホスト](../../../../assets/media/ufcpp2000/powershell/fig/host.jpg)](../../../../assets/media/ufcpp2000/powershell/fig/host.jpg)
-	<figcaption>PowerShell の対話型ホスト</figcaption>
+
+[![PowerShell の対話型ホスト](../../../../assets/media/ufcpp2000/powershell/fig/host.jpg)](../../../../assets/media/ufcpp2000/powershell/fig/host.jpg)
+
+<figcaption>PowerShell の対話型ホスト</figcaption>
 </figure>
 
 

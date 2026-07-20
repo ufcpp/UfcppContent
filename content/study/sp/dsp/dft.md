@@ -155,22 +155,28 @@ F<span class="paren" style="font-size:em;">(</span>ω<span class="paren" style="
 
 
 <figure>
-	[![周期関数のフーリエ変換](../../../../assets/media/ufcpp2000/sp/dft01.png)](../../../../assets/media/ufcpp2000/sp/dft01.png)
-	<figcaption>周期関数のフーリエ変換</figcaption>
+
+[![周期関数のフーリエ変換](../../../../assets/media/ufcpp2000/sp/dft01.png)](../../../../assets/media/ufcpp2000/sp/dft01.png)
+
+<figcaption>周期関数のフーリエ変換</figcaption>
 </figure>
 
 
 
 <figure>
-	[![離散関数のフーリエ変換](../../../../assets/media/ufcpp2000/sp/dft02.png)](../../../../assets/media/ufcpp2000/sp/dft02.png)
-	<figcaption>離散関数のフーリエ変換</figcaption>
+
+[![離散関数のフーリエ変換](../../../../assets/media/ufcpp2000/sp/dft02.png)](../../../../assets/media/ufcpp2000/sp/dft02.png)
+
+<figcaption>離散関数のフーリエ変換</figcaption>
 </figure>
 
 
 
 <figure>
-	[![周期離散関数のフーリエ変換](../../../../assets/media/ufcpp2000/sp/dft03.png)](../../../../assets/media/ufcpp2000/sp/dft03.png)
-	<figcaption>周期離散関数のフーリエ変換</figcaption>
+
+[![周期離散関数のフーリエ変換](../../../../assets/media/ufcpp2000/sp/dft03.png)](../../../../assets/media/ufcpp2000/sp/dft03.png)
+
+<figcaption>周期離散関数のフーリエ変換</figcaption>
 </figure>
 
 
@@ -370,8 +376,10 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 このことはすなわち、「標本化とは、「[インパルス列](appendix.md#i-series)」を掛け合わせることに相当する」とみなすことができます。
 
 <figure>
-	[![標本化](../../../../assets/media/ufcpp2000/sp/dft04.png)](../../../../assets/media/ufcpp2000/sp/dft04.png)
-	<figcaption>標本化</figcaption>
+
+[![標本化](../../../../assets/media/ufcpp2000/sp/dft04.png)](../../../../assets/media/ufcpp2000/sp/dft04.png)
+
+<figcaption>標本化</figcaption>
 </figure>
 
 
@@ -408,8 +416,10 @@ F<span class="paren" style="font-size:em;">(</span>ω － nω<sub>s</sub><span c
 したがって、低周波数成分のみを通過させるようなフィルタ（ローパスフィルタ）を通すことで、元の連続関数を完全に再現することができます。
 
 <figure>
-	[![標本化関数のフーリエ変換（低周波）](../../../../assets/media/ufcpp2000/sp/dft05.png)](../../../../assets/media/ufcpp2000/sp/dft05.png)
-	<figcaption>標本化関数のフーリエ変換（低周波）</figcaption>
+
+[![標本化関数のフーリエ変換（低周波）](../../../../assets/media/ufcpp2000/sp/dft05.png)](../../../../assets/media/ufcpp2000/sp/dft05.png)
+
+<figcaption>標本化関数のフーリエ変換（低周波）</figcaption>
 </figure>
 
 
@@ -419,8 +429,10 @@ F<span class="paren" style="font-size:em;">(</span>ω － nω<sub>s</sub><span c
 このような関数形の歪みを<strong id="d20e1654" class="keyword">エイリアシング</strong>（aliasing）と呼びます。
 
 <figure>
-	[![標本化関数のフーリエ変換（高周波）](../../../../assets/media/ufcpp2000/sp/dft06.png)](../../../../assets/media/ufcpp2000/sp/dft06.png)
-	<figcaption>標本化関数のフーリエ変換（高周波）</figcaption>
+
+[![標本化関数のフーリエ変換（高周波）](../../../../assets/media/ufcpp2000/sp/dft06.png)](../../../../assets/media/ufcpp2000/sp/dft06.png)
+
+<figcaption>標本化関数のフーリエ変換（高周波）</figcaption>
 </figure>
 
 
@@ -431,8 +443,10 @@ F<span class="paren" style="font-size:em;">(</span>ω － nω<sub>s</sub><span c
 
 
 <figure>
-	[![高周波数の関数を標本化すると](../../../../assets/media/ufcpp2000/sp/dft07.png)](../../../../assets/media/ufcpp2000/sp/dft07.png)
-	<figcaption>高周波数の関数を標本化すると</figcaption>
+
+[![高周波数の関数を標本化すると](../../../../assets/media/ufcpp2000/sp/dft07.png)](../../../../assets/media/ufcpp2000/sp/dft07.png)
+
+<figcaption>高周波数の関数を標本化すると</figcaption>
 </figure>
 
 

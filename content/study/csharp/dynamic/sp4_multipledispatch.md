@@ -44,8 +44,10 @@ dynamic の用途の1つとして、多重ディスパッチというものを�
 例えば、下図のようなクラスを考えてみましょう。
 
 <figure>
-	[![仮想メソッド持ちのクラス](../../../../assets/media/ufcpp2000/csharp/fig/VirtualMethod.png)](../../../../assets/media/ufcpp2000/csharp/fig/VirtualMethod.png)
-	<figcaption>仮想メソッド持ちのクラス</figcaption>
+
+[![仮想メソッド持ちのクラス](../../../../assets/media/ufcpp2000/csharp/fig/VirtualMethod.png)](../../../../assets/media/ufcpp2000/csharp/fig/VirtualMethod.png)
+
+<figcaption>仮想メソッド持ちのクラス</figcaption>
 </figure>
 
 

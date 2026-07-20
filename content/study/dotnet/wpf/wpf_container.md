@@ -65,8 +65,10 @@ Canvas の左上からの相対座標を直接指定して子要素を配置し�
 </Canvas>
 ```
 <figure>
-	[![Canvas の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_canvas.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_canvas.png)
-	<figcaption>Canvas の例</figcaption>
+
+[![Canvas の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_canvas.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_canvas.png)
+
+<figcaption>Canvas の例</figcaption>
 </figure>
 
 
@@ -95,8 +97,10 @@ StackPanel による配置はいたってシンプルで、
 </StackPanel>
 ```
 <figure>
-	[![StackPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanel.png)
-	<figcaption>StackPanel の例</figcaption>
+
+[![StackPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanel.png)
+
+<figcaption>StackPanel の例</figcaption>
 </figure>
 
 
@@ -122,8 +126,10 @@ StackPanel による配置はいたってシンプルで、
 </StackPanel>
 ```
 <figure>
-	[![StackPanel（左から右） の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanelh.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanelh.png)
-	<figcaption>StackPanel（左から右） の例</figcaption>
+
+[![StackPanel（左から右） の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanelh.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_stackpanelh.png)
+
+<figcaption>StackPanel（左から右） の例</figcaption>
 </figure>
 
 
@@ -161,8 +167,10 @@ WrapPanel がリサイズされた場合、
 </WrapPanel>
 ```
 <figure>
-	[![WrapPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_wrappanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_wrappanel.png)
-	<figcaption>WrapPanel の例</figcaption>
+
+[![WrapPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_wrappanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_wrappanel.png)
+
+<figcaption>WrapPanel の例</figcaption>
 </figure>
 
 
@@ -197,8 +205,10 @@ DockPanel がリサイズされた場合、
 </DockPanel>
 ```
 <figure>
-	[![DockPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_dockpanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_dockpanel.png)
-	<figcaption>DockPanel の例</figcaption>
+
+[![DockPanel の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_dockpanel.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_dockpanel.png)
+
+<figcaption>DockPanel の例</figcaption>
 </figure>
 
 
@@ -248,8 +258,10 @@ Grid を使うと、
 </Grid>
 ```
 <figure>
-	[![Grid の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_grid.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_grid.png)
-	<figcaption>Grid の例</figcaption>
+
+[![Grid の例](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_grid.png)](../../../../assets/media/ufcpp2000/dotnet/fig/wpf_grid.png)
+
+<figcaption>Grid の例</figcaption>
 </figure>
 
 

@@ -212,8 +212,10 @@ f(t＋2π) ＝ f(t)
 この周期関数で表されるような信号は（周期πの）矩形波と呼ばれ、下図のような波形を示します。
 
 <figure>
-	[![矩形波の波形](../../../../assets/media/ufcpp2000/sp/fourier02.png)](../../../../assets/media/ufcpp2000/sp/fourier02.png)
-	<figcaption>矩形波の波形</figcaption>
+
+[![矩形波の波形](../../../../assets/media/ufcpp2000/sp/fourier02.png)](../../../../assets/media/ufcpp2000/sp/fourier02.png)
+
+<figcaption>矩形波の波形</figcaption>
 </figure>
 
 
@@ -251,8 +253,10 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 以下に<span class="math">K ＝ 0, 1, 3, 7, 15</span>の場合のフーリエ級数近似の1周期分のグラフを示します。
 
 <figure>
-	[![矩形波のフーリエ級数近似](../../../../assets/media/ufcpp2000/sp/fourier03.png)](../../../../assets/media/ufcpp2000/sp/fourier03.png)
-	<figcaption>矩形波のフーリエ級数近似</figcaption>
+
+[![矩形波のフーリエ級数近似](../../../../assets/media/ufcpp2000/sp/fourier03.png)](../../../../assets/media/ufcpp2000/sp/fourier03.png)
+
+<figcaption>矩形波のフーリエ級数近似</figcaption>
 </figure>
 
 
@@ -267,8 +271,10 @@ t,
 f(t＋2π) ＝ f(t)
 </div>
 <figure>
-	[![鋸波の波形](../../../../assets/media/ufcpp2000/sp/fourier04.png)](../../../../assets/media/ufcpp2000/sp/fourier04.png)
-	<figcaption>鋸波の波形</figcaption>
+
+[![鋸波の波形](../../../../assets/media/ufcpp2000/sp/fourier04.png)](../../../../assets/media/ufcpp2000/sp/fourier04.png)
+
+<figcaption>鋸波の波形</figcaption>
 </figure>
 
 
@@ -302,8 +308,10 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 以下に<span class="math">N ＝ 1, 3, 7, 15, 31</span>の場合のフーリエ級数近似の1周期分のグラフを示します。
 
 <figure>
-	[![矩形波のフーリエ級数近似](../../../../assets/media/ufcpp2000/sp/fourier05.png)](../../../../assets/media/ufcpp2000/sp/fourier05.png)
-	<figcaption>矩形波のフーリエ級数近似</figcaption>
+
+[![矩形波のフーリエ級数近似](../../../../assets/media/ufcpp2000/sp/fourier05.png)](../../../../assets/media/ufcpp2000/sp/fourier05.png)
+
+<figcaption>矩形波のフーリエ級数近似</figcaption>
 </figure>
 
 
@@ -318,8 +326,10 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 f(t＋2π) ＝ f(t)
 </div>
 <figure>
-	[![インパルス列](../../../../assets/media/ufcpp2000/sp/fourier06.png)](../../../../assets/media/ufcpp2000/sp/fourier06.png)
-	<figcaption>インパルス列</figcaption>
+
+[![インパルス列](../../../../assets/media/ufcpp2000/sp/fourier06.png)](../../../../assets/media/ufcpp2000/sp/fourier06.png)
+
+<figcaption>インパルス列</figcaption>
 </figure>
 
 
@@ -336,8 +346,10 @@ f<span class="paren" style="font-size:em;">(</span>t<span class="paren" style="f
 以下に<span class="math">N ＝ 1, 3, 7, 15, 31</span>の場合のフーリエ級数近似の1周期分のグラフを示します。
 
 <figure>
-	[![矩形波のフーリエ級数近似](../../../../assets/media/ufcpp2000/sp/fourier07.png)](../../../../assets/media/ufcpp2000/sp/fourier07.png)
-	<figcaption>矩形波のフーリエ級数近似</figcaption>
+
+[![矩形波のフーリエ級数近似](../../../../assets/media/ufcpp2000/sp/fourier07.png)](../../../../assets/media/ufcpp2000/sp/fourier07.png)
+
+<figcaption>矩形波のフーリエ級数近似</figcaption>
 </figure>
 
 

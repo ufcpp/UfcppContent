@@ -117,7 +117,8 @@ Visual Studio をインストールしたはいいけど、テンプレートと
 （画像は 2008 バージョンのもの。他のバージョンでも、見た目はだいぶ変わりますが、大まかな流れは同じです）
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/ProjectTemplate.png)](../../../../assets/media/ufcpp2000/csharp/fig/ProjectTemplate.png)
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/ProjectTemplate.png)](../../../../assets/media/ufcpp2000/csharp/fig/ProjectTemplate.png)
 
 </figure>
 

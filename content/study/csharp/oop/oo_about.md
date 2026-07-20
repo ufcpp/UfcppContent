@@ -59,8 +59,10 @@ C#に限らず、最近のプログラミング言語のほとんどがオブジ
 また、学生一覧を管理するための名簿データ構造が必要になります。
 
 <figure>
-	[![データ構造の例](../../../../assets/media/ufcpp2000/csharp/fig/oop1.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop1.png)
-	<figcaption>データ構造の例</figcaption>
+
+[![データ構造の例](../../../../assets/media/ufcpp2000/csharp/fig/oop1.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop1.png)
+
+<figcaption>データ構造の例</figcaption>
 </figure>
 
 
@@ -68,8 +70,10 @@ C#に限らず、最近のプログラミング言語のほとんどがオブジ
 そのデータに対してどういう手続きを踏むかが決まります。
 
 <figure>
-	[![手続きの例](../../../../assets/media/ufcpp2000/csharp/fig/oop2.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop2.png)
-	<figcaption>手続きの例</figcaption>
+
+[![手続きの例](../../../../assets/media/ufcpp2000/csharp/fig/oop2.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop2.png)
+
+<figcaption>手続きの例</figcaption>
 </figure>
 
 
@@ -104,8 +108,10 @@ C#に限らず、最近のプログラミング言語のほとんどがオブジ
 しかし、利用者はテレビの中に何が入ってるのか、またテレビがどのようにして組み立てられたのかには興味はなく、自分の操作に対して所望の動作をしてくれればそれでいいわけです。
 
 <figure>
-	[![オブジェクトと実装の隠蔽の例](../../../../assets/media/ufcpp2000/csharp/fig/oop3.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop3.png)
-	<figcaption>オブジェクトと実装の隠蔽の例</figcaption>
+
+[![オブジェクトと実装の隠蔽の例](../../../../assets/media/ufcpp2000/csharp/fig/oop3.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop3.png)
+
+<figcaption>オブジェクトと実装の隠蔽の例</figcaption>
 </figure>
 
 
@@ -121,8 +127,10 @@ C#に限らず、最近のプログラミング言語のほとんどがオブジ
 このような時、「学生は人を継承する(inherit)」とか「学生は人から導出される(derived)」といいます。
 
 <figure>
-	[![継承関係の例](../../../../assets/media/ufcpp2000/csharp/fig/oop4.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop4.png)
-	<figcaption>継承関係の例</figcaption>
+
+[![継承関係の例](../../../../assets/media/ufcpp2000/csharp/fig/oop4.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop4.png)
+
+<figcaption>継承関係の例</figcaption>
 </figure>
 
 
@@ -134,8 +142,10 @@ C#に限らず、最近のプログラミング言語のほとんどがオブジ
 この2つのオブジェクトでは、面積の計算方法（振る舞い）が異なります。
 
 <figure>
-	[![多態性の例](../../../../assets/media/ufcpp2000/csharp/fig/oop5.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop5.png)
-	<figcaption>多態性の例</figcaption>
+
+[![多態性の例](../../../../assets/media/ufcpp2000/csharp/fig/oop5.png)](../../../../assets/media/ufcpp2000/csharp/fig/oop5.png)
+
+<figcaption>多態性の例</figcaption>
 </figure>
 
 

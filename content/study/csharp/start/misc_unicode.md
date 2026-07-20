@@ -148,8 +148,10 @@ C# だけでなく、1990年代後半以降にできたプログラミング言�
 (ちなみに、Microsoft Word で Unicode を16進数で打った後、Alt+X を押すと変換できたりします。この場合はそれぞれ 2000, 2001, 2002, 2003 の後に Alt+X。)
 
 <figure>
-	[![m 字幅スペースと n 字幅スペース](../../../../assets/media/ufcpp2000/csharp/fig/em-space.png)](../../../../assets/media/ufcpp2000/csharp/fig/em-space.png)
-	<figcaption>m 字幅スペースと n 字幅スペース</figcaption>
+
+[![m 字幅スペースと n 字幅スペース](../../../../assets/media/ufcpp2000/csharp/fig/em-space.png)](../../../../assets/media/ufcpp2000/csharp/fig/em-space.png)
+
+<figcaption>m 字幅スペースと n 字幅スペース</figcaption>
 </figure>
 
 
@@ -158,8 +160,10 @@ C# だけでなく、1990年代後半以降にできたプログラミング言�
 「プログラマに全角スペースを見せると発狂する」なんてネタもありますが、ソースコードを Unicode で保存する限り、全角スペースが入っていてもどうということはありません。
 
 <figure>
-	[![C# は全角スペースを空白文字として受け付けます(Visual Studio のスクリーン キャプチャ画像)](../../../../assets/media/ufcpp2000/csharp/fig/WhiteSpace.png)](../../../../assets/media/ufcpp2000/csharp/fig/WhiteSpace.png)
-	<figcaption>C# は全角スペースを空白文字として受け付けます(Visual Studio のスクリーン キャプチャ画像)</figcaption>
+
+[![C# は全角スペースを空白文字として受け付けます(Visual Studio のスクリーン キャプチャ画像)](../../../../assets/media/ufcpp2000/csharp/fig/WhiteSpace.png)](../../../../assets/media/ufcpp2000/csharp/fig/WhiteSpace.png)
+
+<figcaption>C# は全角スペースを空白文字として受け付けます(Visual Studio のスクリーン キャプチャ画像)</figcaption>
 </figure>
 
 

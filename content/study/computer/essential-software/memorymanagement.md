@@ -37,8 +37,10 @@ aliases:
 図中に示すように、一般に、スコープは入れ子になっていて、内側のスコープで使うデータ領域は後から確保して、先に開放されることになります。
 
 <figure>
-	[![スタック方式によるメモリ管理の例](../../../../assets/media/ufcpp2000/computer/fig/Essential/Stack.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Stack.png)
-	<figcaption>スタック方式によるメモリ管理の例</figcaption>
+
+[![スタック方式によるメモリ管理の例](../../../../assets/media/ufcpp2000/computer/fig/Essential/Stack.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Stack.png)
+
+<figcaption>スタック方式によるメモリ管理の例</figcaption>
 </figure>
 
 
@@ -74,8 +76,10 @@ aliases:
 この際、未使用領域が並んだ場合は、領域を1つにまとめる処理なども行います。
 
 <figure>
-	[![ヒープの管理方法の例](../../../../assets/media/ufcpp2000/computer/fig/Essential/Heap.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Heap.png)
-	<figcaption>ヒープの管理方法の例</figcaption>
+
+[![ヒープの管理方法の例](../../../../assets/media/ufcpp2000/computer/fig/Essential/Heap.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Heap.png)
+
+<figcaption>ヒープの管理方法の例</figcaption>
 </figure>
 
 
@@ -119,8 +123,10 @@ aliases:
 コンパクションについては後程改めて説明します。
 
 <figure>
-	[![ガベージ・コレクションの例](../../../../assets/media/ufcpp2000/computer/fig/Essential/GC.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/GC.png)
-	<figcaption>ガベージ・コレクションの例</figcaption>
+
+[![ガベージ・コレクションの例](../../../../assets/media/ufcpp2000/computer/fig/Essential/GC.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/GC.png)
+
+<figcaption>ガベージ・コレクションの例</figcaption>
 </figure>
 
 
@@ -144,8 +150,10 @@ aliases:
 ヒープの空き領域はとびとびになっていて、この隙間の中から、新たにメモリを確保できる場所を探す必要があります。
 
 <figure>
-	[![断面化したヒープ](../../../../assets/media/ufcpp2000/computer/fig/Essential/Fragmented.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Fragmented.png)
-	<figcaption>断面化したヒープ</figcaption>
+
+[![断面化したヒープ](../../../../assets/media/ufcpp2000/computer/fig/Essential/Fragmented.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Fragmented.png)
+
+<figcaption>断面化したヒープ</figcaption>
 </figure>
 
 
@@ -153,8 +161,10 @@ aliases:
 新たにメモリを確保したいときには、現在使用中のヒープの末尾を見ればよく、ヒープの管理が楽になります。
 
 <figure>
-	[![コンパクションで断片化を解消したヒープ](../../../../assets/media/ufcpp2000/computer/fig/Essential/Defragmented.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Defragmented.png)
-	<figcaption>コンパクションで断片化を解消したヒープ</figcaption>
+
+[![コンパクションで断片化を解消したヒープ](../../../../assets/media/ufcpp2000/computer/fig/Essential/Defragmented.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/Defragmented.png)
+
+<figcaption>コンパクションで断片化を解消したヒープ</figcaption>
 </figure>
 
 
@@ -172,8 +182,10 @@ aliases:
 したがって、コピー方式のガベージ・コレクションは、メイン・メモリに余裕のある環境で使われます。
 
 <figure>
-	[![コピー方式ガベージ・コレクションの動作例](../../../../assets/media/ufcpp2000/computer/fig/Essential/CopyingGC.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/CopyingGC.png)
-	<figcaption>コピー方式ガベージ・コレクションの動作例</figcaption>
+
+[![コピー方式ガベージ・コレクションの動作例](../../../../assets/media/ufcpp2000/computer/fig/Essential/CopyingGC.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/CopyingGC.png)
+
+<figcaption>コピー方式ガベージ・コレクションの動作例</figcaption>
 </figure>
 
 
@@ -196,8 +208,10 @@ aliases:
 世代の管理の方法はいろいろありますが、例えば、図7に示すように、ある世代（図中ではgen0）をコンパクションした結果の領域を次世代（同、gen1）扱いするといった方法があります。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/computer/fig/Essential/genGC.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/genGC.png)
-	<figcaption></figcaption>
+
+[![](../../../../assets/media/ufcpp2000/computer/fig/Essential/genGC.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/genGC.png)
+
+<figcaption></figcaption>
 </figure>
 
 

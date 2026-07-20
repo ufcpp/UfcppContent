@@ -99,8 +99,10 @@ var sum = data.Sum();
 このhowとwhatの違いを図1に並べてみましょう。
 
 <figure>
-	[![アセンブリ言語と高級言語、how と what](../../../../assets/media/ufcpp2000/computer/fig/Essential/HowOrWhat.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/HowOrWhat.png)
-	<figcaption>アセンブリ言語と高級言語、how と what</figcaption>
+
+[![アセンブリ言語と高級言語、how と what](../../../../assets/media/ufcpp2000/computer/fig/Essential/HowOrWhat.png)](../../../../assets/media/ufcpp2000/computer/fig/Essential/HowOrWhat.png)
+
+<figcaption>アセンブリ言語と高級言語、how と what</figcaption>
 </figure>
 
 

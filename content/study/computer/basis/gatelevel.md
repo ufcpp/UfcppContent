@@ -52,8 +52,10 @@ aliases:
 MOSFETを用いたディジタル回路では、図1に示すように、電位の高い面と電位の低い面を作り、そのどちらとつながっているかによって0, 1という2つの値を表現します。
 
 <figure>
-	[![電位の高低で0、1を表現](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/HighLow.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/HighLow.png)
-	<figcaption>電位の高低で0、1を表現</figcaption>
+
+[![電位の高低で0、1を表現](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/HighLow.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/HighLow.png)
+
+<figcaption>電位の高低で0、1を表現</figcaption>
 </figure>
 
 
@@ -72,8 +74,10 @@ MOSFETでは、0、1を表現するために、電圧の高低を使います。
 MOSFETにはN型とP型の2タイプ（Negative/Positiveの頭文字を取ったもの）があり、図2のような回路記号で記述します。
 
 <figure>
-	[![MOSFETの回路記号](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/Mosfet.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/Mosfet.png)
-	<figcaption>MOSFETの回路記号</figcaption>
+
+[![MOSFETの回路記号](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/Mosfet.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/Mosfet.png)
+
+<figcaption>MOSFETの回路記号</figcaption>
 </figure>
 
 
@@ -82,8 +86,10 @@ MOSFETの詳細については別途調べてもらう、例えば[Wikipedia](ht
 N型の場合、gateの部分に電圧をかけるとsource-drain間の電気抵抗が下がり、掛けないと電気抵抗がかかります。P型の場合にはその逆の挙動になります。
 
 <figure>
-	[![MOSFETの性質](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/MosfetCharacter.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/MosfetCharacter.png)
-	<figcaption>MOSFETの性質</figcaption>
+
+[![MOSFETの性質](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/MosfetCharacter.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/MosfetCharacter.png)
+
+<figcaption>MOSFETの性質</figcaption>
 </figure>
 
 
@@ -97,8 +103,10 @@ MOSFETを使ったゲートの作り方にもいくつか手法があるんで�
 例えば、0、1を反転させるための回路（NOT ゲートと呼ばれます）をCMOSで作ると、図4のようになります。
 
 <figure>
-	[![CMOS型のNOTゲート](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/CmosNot.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/CmosNot.png)
-	<figcaption>CMOS型のNOTゲート</figcaption>
+
+[![CMOS型のNOTゲート](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/CmosNot.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/CmosNot.png)
+
+<figcaption>CMOS型のNOTゲート</figcaption>
 </figure>
 
 
@@ -106,8 +114,10 @@ MOSFETを使ったゲートの作り方にもいくつか手法があるんで�
 逆に、入力が0ならP型の側の電気抵抗が下がることで、高電位面と出力がつながります。結果として、入力と出力の0, 1が反転することになります。
 
 <figure>
-	[![CMOS型のNOTゲートの挙動](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/CmosNotCharacter.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/CmosNotCharacter.png)
-	<figcaption>CMOS型のNOTゲートの挙動</figcaption>
+
+[![CMOS型のNOTゲートの挙動](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/CmosNotCharacter.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/CmosNotCharacter.png)
+
+<figcaption>CMOS型のNOTゲートの挙動</figcaption>
 </figure>
 
 
@@ -128,14 +138,18 @@ CMOS回路は、生産効率、正確さ、故障しにくさ、動作速度、�
 MOSFETのP型、N型と同様に、水圧で開くタイプと閉まるタイプの2種類があり（図7）、この組み合わせでさまざまなディジタル回路が作れます。
 
 <figure>
-	[![水圧ゲート（水流回路の基本素子）。](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/WaterGate.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/WaterGate.png)
-	<figcaption>水圧ゲート（水流回路の基本素子）。</figcaption>
+
+[![水圧ゲート（水流回路の基本素子）。](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/WaterGate.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/WaterGate.png)
+
+<figcaption>水圧ゲート（水流回路の基本素子）。</figcaption>
 </figure>
 
 
 <figure>
-	[![2種類の水圧ゲート。](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/WaterGateNP.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/WaterGateNP.png)
-	<figcaption>2種類の水圧ゲート。</figcaption>
+
+[![2種類の水圧ゲート。](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/WaterGateNP.png)](../../../../assets/media/ufcpp2000/computer/fig/GateLevel/WaterGateNP.png)
+
+<figcaption>2種類の水圧ゲート。</figcaption>
 </figure>
 
 

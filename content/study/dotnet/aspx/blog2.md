@@ -330,6 +330,8 @@ namespace WebsiteSample
 以下のような感じで、選択した日付の記事が表示されるはずです。
 
 <figure>
-	[![ドロップダウンリストなどで日付を選択](../../../../assets/media/ufcpp2000/dotnet/resources/BlogSelect.png)](../../../../assets/media/ufcpp2000/dotnet/resources/BlogSelect.png)
-	<figcaption>ドロップダウンリストなどで日付を選択</figcaption>
+
+[![ドロップダウンリストなどで日付を選択](../../../../assets/media/ufcpp2000/dotnet/resources/BlogSelect.png)](../../../../assets/media/ufcpp2000/dotnet/resources/BlogSelect.png)
+
+<figcaption>ドロップダウンリストなどで日付を選択</figcaption>
 </figure>

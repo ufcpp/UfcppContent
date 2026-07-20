@@ -172,8 +172,10 @@ namespace ConsoleApplication1
 型引数 T の前に + や - が付いていることを確認できます。
 
 <figure>
-	[![in/out 付きインターフェースのコンパイル結果](../../../../assets/media/ufcpp2000/csharp/fig/variance.png)](../../../../assets/media/ufcpp2000/csharp/fig/variance.png)
-	<figcaption>in/out 付きインターフェースのコンパイル結果</figcaption>
+
+[![in/out 付きインターフェースのコンパイル結果](../../../../assets/media/ufcpp2000/csharp/fig/variance.png)](../../../../assets/media/ufcpp2000/csharp/fig/variance.png)
+
+<figcaption>in/out 付きインターフェースのコンパイル結果</figcaption>
 </figure>
 
 

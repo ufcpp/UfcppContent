@@ -23,7 +23,8 @@ aliases:
 下のスクリーンショットを見ての通り。
 
 <figure>
-	[![](../../../../assets/media/ufcpp2000/csharp/fig/LinqTreeView.png)](../../../../assets/media/ufcpp2000/csharp/fig/LinqTreeView.png)
+
+[![](../../../../assets/media/ufcpp2000/csharp/fig/LinqTreeView.png)](../../../../assets/media/ufcpp2000/csharp/fig/LinqTreeView.png)
 
 </figure>
 

@@ -71,8 +71,10 @@ PowerPoint 発表にも慣れてくると、
 例えば、下図のような感じ。
 
 <figure>
-	[![キーワードの強調](../../../../assets/media/ufcpp2000/office/fig/ppt0-01.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-01.png)
-	<figcaption>キーワードの強調</figcaption>
+
+[![キーワードの強調](../../../../assets/media/ufcpp2000/office/fig/ppt0-01.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-01.png)
+
+<figcaption>キーワードの強調</figcaption>
 </figure>
 
 
@@ -87,8 +89,10 @@ PowerPoint 発表にも慣れてくると、
 議論の<em>帰結・結果の部分</em>を四角で囲うやり方（下図）。
 
 <figure>
-	[![四角で強調](../../../../assets/media/ufcpp2000/office/fig/ppt0-02.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-02.png)
-	<figcaption>四角で強調</figcaption>
+
+[![四角で強調](../../../../assets/media/ufcpp2000/office/fig/ppt0-02.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-02.png)
+
+<figcaption>四角で強調</figcaption>
 </figure>
 
 
@@ -115,8 +119,10 @@ PowerPoint 発表にも慣れてくると、
 例えば、下図のような感じ。
 
 <figure>
-	[![左に図、右に説明](../../../../assets/media/ufcpp2000/office/fig/ppt0-03.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-03.png)
-	<figcaption>左に図、右に説明</figcaption>
+
+[![左に図、右に説明](../../../../assets/media/ufcpp2000/office/fig/ppt0-03.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-03.png)
+
+<figcaption>左に図、右に説明</figcaption>
 </figure>
 
 
@@ -132,8 +138,10 @@ PowerPoint 発表にも慣れてくると、
 もう1つ、図に説明を入れるときによく使うのは、<em>ふきだし</em>（下図）。
 
 <figure>
-	[![ふきだしで説明](../../../../assets/media/ufcpp2000/office/fig/ppt0-04.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-04.png)
-	<figcaption>ふきだしで説明</figcaption>
+
+[![ふきだしで説明](../../../../assets/media/ufcpp2000/office/fig/ppt0-04.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-04.png)
+
+<figcaption>ふきだしで説明</figcaption>
 </figure>
 
 
@@ -154,8 +162,10 @@ PowerPoint 発表にも慣れてくると、
 （赤色の文字は手書きで入れる部分。）
 
 <figure>
-	[![手書きで台詞を追加](../../../../assets/media/ufcpp2000/office/fig/ppt0-05.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-05.png)
-	<figcaption>手書きで台詞を追加</figcaption>
+
+[![手書きで台詞を追加](../../../../assets/media/ufcpp2000/office/fig/ppt0-05.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-05.png)
+
+<figcaption>手書きで台詞を追加</figcaption>
 </figure>
 
 
@@ -183,8 +193,10 @@ l と r の違いとか b と v の違いを気をつけるよりも、
 それを見ながら練習。
 
 <figure>
-	[![アクセントを書き込んでおく](../../../../assets/media/ufcpp2000/office/fig/ppt0-06.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-06.png)
-	<figcaption>アクセントを書き込んでおく</figcaption>
+
+[![アクセントを書き込んでおく](../../../../assets/media/ufcpp2000/office/fig/ppt0-06.png)](../../../../assets/media/ufcpp2000/office/fig/ppt0-06.png)
+
+<figcaption>アクセントを書き込んでおく</figcaption>
 </figure>
 
 

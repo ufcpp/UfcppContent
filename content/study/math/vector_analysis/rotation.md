@@ -111,8 +111,10 @@ aliases:
 となります。
 
 <figure>
-	[![積分経路](../../../../assets/media/ufcpp2000/math/rot1.png)](../../../../assets/media/ufcpp2000/math/rot1.png)
-	<figcaption>積分経路</figcaption>
+
+[![積分経路](../../../../assets/media/ufcpp2000/math/rot1.png)](../../../../assets/media/ufcpp2000/math/rot1.png)
+
+<figcaption>積分経路</figcaption>
 </figure>
 
 
