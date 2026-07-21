@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-21T17:06:04+09:00",
+  "title": "Design System: ++C++; // 未確認飛行 C",
+  "extensions": {
+    "colorMeta": {
+      "brand-lavender": {
+        "role": "primary",
+        "displayName": "Masthead Lavender",
+        "canonical": "#ccccff",
+        "tonalRamp": ["#202043", "#35356b", "#515196", "#7373bd", "#9696d6", "#b8b8e8", "#dadaf5", "#f4f4ff"]
+      },
+      "brand-navy": {
+        "role": "primary",
+        "displayName": "Navigation Navy",
+        "canonical": "#2a3869",
+        "tonalRamp": ["#0f1426", "#18203b", "#222d55", "#2a3869", "#455282", "#707ba5", "#a8aec5", "#eef0f7"]
+      },
+      "content-link": {
+        "role": "secondary",
+        "displayName": "Reference Link Brown",
+        "canonical": "#a35951",
+        "tonalRamp": ["#301a18", "#512b27", "#733f39", "#a35951", "#bd776f", "#d39b95", "#e8c4c0", "#faeeee"]
+      },
+      "page-bg": {
+        "role": "neutral",
+        "displayName": "Archive Gray",
+        "canonical": "#f3f3f3",
+        "tonalRamp": ["#252525", "#424242", "#616161", "#818181", "#a2a2a2", "#c3c3c3", "#e2e2e2", "#f3f3f3"]
+      },
+      "content-bg": {
+        "role": "neutral",
+        "displayName": "Reading White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#262626", "#454545", "#656565", "#858585", "#a6a6a6", "#c7c7c7", "#e6e6e6", "#ffffff"]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Technical Ink",
+        "canonical": "#4c4c4c",
+        "tonalRamp": ["#171717", "#292929", "#3c3c3c", "#4c4c4c", "#727272", "#9b9b9b", "#c8c8c8", "#f1f1f1"]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Page Headline",
+        "purpose": "Compact page titles on navy plaques."
+      },
+      "body": {
+        "displayName": "Reference Body",
+        "purpose": "Dense Japanese technical prose."
+      },
+      "code": {
+        "displayName": "Technical Code",
+        "purpose": "Source listings and inline tokens."
+      }
+    },
+    "shadows": [
+      {
+        "name": "header-rule",
+        "value": "0 1px 1px #dddddd",
+        "purpose": "Separates the masthead from the page."
+      },
+      {
+        "name": "footer-rule",
+        "value": "0 -1px 1px #dddddd",
+        "purpose": "Separates the desktop footer from the page."
+      }
+    ],
+    "motion": [],
+    "breakpoints": [
+      { "name": "stack", "value": "1024px" },
+      { "name": "compact-header", "value": "700px" },
+      { "name": "mobile", "value": "640px" },
+      { "name": "small-logo", "value": "450px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Masthead",
+      "kind": "custom",
+      "refersTo": "masthead",
+      "description": "Original logo on the canonical lavender field.",
+      "html": "<header class=\"ds-masthead\"><img src=\"/assets/images/sitelogo_l.jpg\" alt=\"++C++; // 未確認飛行 C\"></header>",
+      "css": ".ds-masthead { min-height: 100px; display: flex; align-items: center; padding: 0 48px; background: var(--color-brand-lavender, #ccccff); } .ds-masthead img { width: 450px; height: 65px; max-width: 100%; }"
+    },
+    {
+      "name": "Primary Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Compact, high-contrast site navigation.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">C#</a><a href=\"#\">.NET</a><a href=\"#\">情報工学</a></nav>",
+      "css": ".ds-nav { min-height: 50px; display: flex; justify-content: center; border-top: 5px solid #484a44; background: var(--color-brand-navy, #2a3869); } .ds-nav a { padding: 0 1.4em; color: #fff; font: 18px/50px sans-serif; text-decoration: none; } .ds-nav a:hover, .ds-nav a:focus-visible { background: #455282; } .ds-nav a:focus-visible { outline: 3px solid #66ccdd; outline-offset: -3px; }"
+    },
+    {
+      "name": "Search Link",
+      "kind": "input",
+      "refersTo": "search-link",
+      "description": "Static-site search affordance shaped like the live search field.",
+      "html": "<a class=\"ds-search\" href=\"#\">⌕ <span>サイト内検索</span></a>",
+      "css": ".ds-search { min-width: 12rem; display: flex; justify-content: space-between; padding: .35rem .85rem; border: 1px solid rgba(128,128,128,.2); border-radius: 10px; background: #fff; color: #4c4c4c; text-decoration: none; } .ds-search:hover { background: #fafafa; text-decoration: underline; } .ds-search:focus-visible { outline: 3px solid #66ccdd; outline-offset: 3px; }"
+    },
+    {
+      "name": "Content Panel",
+      "kind": "custom",
+      "refersTo": "content-panel",
+      "description": "White technical reading surface on archive gray.",
+      "html": "<article class=\"ds-content\"><h1>ページ タイトル</h1><p>技術資料の本文です。</p></article>",
+      "css": ".ds-content { padding: 16px; border: 1px solid rgba(192,192,192,.35); background: #fff; color: #4c4c4c; font: 16px/1.5 sans-serif; } .ds-content h1 { width: fit-content; margin: 0 0 20px; padding: 6px 8px; border-radius: .2em; background: #2a3869; color: #f3f3f3; font-size: 28px; font-weight: 400; }"
+    },
+    {
+      "name": "Section Heading",
+      "kind": "custom",
+      "refersTo": "section-heading",
+      "description": "Compact heading with the recognizable navy marker.",
+      "html": "<h2 class=\"ds-section-heading\">セクション</h2>",
+      "css": ".ds-section-heading { position: relative; margin: 20px 0; padding: 4px 4px 4px 24px; color: #483949; font: 400 22px/1.25 sans-serif; } .ds-section-heading::before { content: ''; position: absolute; inset: 2px auto 2px 0; width: 8px; background: #2a3869; }"
+    },
+    {
+      "name": "Source Code",
+      "kind": "custom",
+      "refersTo": "source-code",
+      "description": "Compact source listing with lavender framing.",
+      "html": "<pre class=\"ds-code\"><code><span>using</span> System;</code></pre>",
+      "css": ".ds-code { max-width: 100%; margin: 1em 0; padding: .4em; overflow: auto; border: 2px solid #ccccff; background: #fff; color: #000; font: 14px/1.3 Consolas, monospace; } .ds-code code { border: 0; } .ds-code span { color: #0000e1; font-weight: 700; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Technical Reference Room",
+    "overview": "This system should feel like a well-used technical reference room: practical, approachable, and dense with useful information. The live ufcpp.net identity is the source of truth, so the lavender masthead, navy navigation, original logo, pale gray page, and white reading surfaces remain immediately recognizable.\n\nModernization is structural rather than cosmetic. Semantic landmarks, keyboard focus, and responsive stacking improve the experience without turning the archive into a generic SaaS landing page, a dark-mode-first developer tool, or a sparse editorial redesign.",
+    "keyCharacteristics": [
+      "Original ufcpp.net logo on a pale lavender masthead.",
+      "Compact navy navigation with high-contrast white labels.",
+      "Information-dense white reading panels on a pale gray page.",
+      "Restrained borders and shadows that separate surfaces without decoration.",
+      "Code, tables, formulas, and related navigation treated as first-class content."
+    ],
+    "rules": [
+      {
+        "name": "The Recognition Rule",
+        "body": "Lavender and navy must appear together in the masthead and navigation; using either as a generic accent elsewhere weakens the identity.",
+        "section": "colors"
+      },
+      {
+        "name": "The White Reading Surface Rule",
+        "body": "Long-form content always sits on white against archive gray. Never put technical prose directly on the lavender or navy brand fields.",
+        "section": "colors"
+      },
+      {
+        "name": "The Reference Density Rule",
+        "body": "Use the established compact scale; oversized display typography is prohibited because it reduces useful information per viewport.",
+        "section": "typography"
+      },
+      {
+        "name": "The Archive Flatness Rule",
+        "body": "Surfaces never float. If a panel resembles a modern dashboard card, its shadow is too strong or its corner treatment is too decorative.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the original archived ufcpp.net logo and the canonical #ccccff / #2a3869 pairing.",
+      "Do keep articles white on #f3f3f3 and retain compact 16px technical prose.",
+      "Do preserve semantic DOM order even when the desktop sidebar is visually placed first.",
+      "Do stack the main article before related navigation at tablet and mobile widths.",
+      "Do keep code and wide tables horizontally scrollable."
+    ],
+    "donts": [
+      "Don't create generic SaaS landing pages with oversized hero copy, card grids, gradients, or glass effects.",
+      "Don't introduce a dark-mode-first developer-tool redesign that replaces the established ufcpp.net palette.",
+      "Don't create a minimal editorial redesign that sacrifices navigation density or the site's familiar logo.",
+      "Don't apply decorative modernization that makes historical technical content feel detached from ufcpp.net.",
+      "Don't add floating cards, large radii, animated entrances, or decorative motion."
+    ]
+  }
+}

@@ -20,7 +20,7 @@ aliases:
 
 ## <a id="sec-generated-title-1"></a> <a id="demo"></a>デモ
 
-<div class="silverlightControlHost" style="margin:1em;height:600;"><object data="data:application/x-silverlight-2," type="application/x-silverlight-2" width="800" height="600"><param name="source" value="/media/ufcpp2000/dsl/ClientBin/StackMachine.xap"></param><param name="onerror" value="onSilverlightError"></param><param name="background" value="white"></param><param name="minRuntimeVersion" value="2.0"></param><param name="autoUpgrade" value="false"></param><a href="http://go.microsoft.com/fwlink/?LinkID=124807" style="text-decoration: none;"><img src="http://go.microsoft.com/fwlink/?LinkId=108181" alt="Microsoft Silverlight プラグインを入れてね" style="border-style: none"></img></a></object><iframe style="visibility:hidden;height:0;width:0;border:0px"></iframe></div>
+<div class="silverlightControlHost" style="margin:1em;height:600;"><object data="data:application/x-silverlight-2," type="application/x-silverlight-2" width="800" height="600"><param name="source" value="/media/ufcpp2000/csharp/ClientBin/StackMachine.xap"></param><param name="onerror" value="onSilverlightError"></param><param name="background" value="white"></param><param name="minRuntimeVersion" value="2.0"></param><param name="autoUpgrade" value="false"></param><a href="http://go.microsoft.com/fwlink/?LinkID=124807" style="text-decoration: none;"><img src="http://go.microsoft.com/fwlink/?LinkId=108181" alt="Microsoft Silverlight プラグインを入れてね" style="border-style: none"></img></a></object><iframe style="visibility:hidden;height:0;width:0;border:0px"></iframe></div>
 
 ##### <a id="sec-generated-title-2"></a>このデモでやっていること
 

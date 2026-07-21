@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ufcpp.ContentConverter.Tests/Ufcpp.ContentConverter.Tests.csproj" />
+    <Project Path="tests/Ufcpp.SiteGenerator.Tests/Ufcpp.SiteGenerator.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Ufcpp.ContentConverter/Ufcpp.ContentConverter.csproj" />
+    <Project Path="tools/Ufcpp.SiteGenerator/Ufcpp.SiteGenerator.csproj" />
+  </Folder>
+</Solution>

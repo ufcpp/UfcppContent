@@ -11,8 +11,6 @@ sort_order: 0
 aliases:
   - "/index"
   - "/index.html"
-  - "/study/index"
-  - "/study/index.html"
 ---
 
 # ++C++; // 未確認飛行 C

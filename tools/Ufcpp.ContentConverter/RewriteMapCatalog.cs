@@ -217,7 +217,6 @@ public sealed class RewriteMapCatalog
             AddEither(pair.Key, pair.Value);
         }
 
-        AddOptional("/", "study/index.html");
         AddOptional("/study/csharp/", "csharp", "csharp/");
         AddOptional("/study/stl/", "stydy/stl", "stydy/stl/");
         AddOptional("/study/xml/", "study/testxsl", "study/testxsl/");

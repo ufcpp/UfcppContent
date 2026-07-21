@@ -22,6 +22,10 @@ public static class CodeBlockNormalizer
         @"</?(?:code|span|em|reserved|comment|attvalue|type|inactive|coe|a)\b[^>]*>",
         RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
 
+    private static readonly Regex RenderableAnchorRegex = new(
+        @"<[A-Za-z][\w:.-]*\b[^>]*\bid\s*=\s*(?<quote>[""'])(?<id>.*?)\k<quote>[^>]*>",
+        RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+
     private static readonly Regex FenceLineRegex = new(
         @"^(?<indent> {0,3})(?<marker>`{3,}|~{3,})(?<remainder>.*)$",
         RegexOptions.Compiled);
@@ -161,6 +165,10 @@ public static class CodeBlockNormalizer
             : body;
         code = WebUtility.HtmlDecode(code);
         code = TextUtilities.NormalizeNewlines(code).Trim('\n');
+        var anchorPrefix = BuildAnchorPrefix(
+            insideHtmlTable
+                ? body
+                : $"<pre{match.Groups["attributes"].Value}>" + body);
         var language = DetectLanguage(
             code,
             attributes.GetValueOrDefault("title") ?? string.Empty,
@@ -171,7 +179,8 @@ public static class CodeBlockNormalizer
         if (insideHtmlTable)
         {
             var encodedCode = WebUtility.HtmlEncode(code);
-            return $"<pre{match.Groups["attributes"].Value}>" +
+            return anchorPrefix +
+                   $"<pre{match.Groups["attributes"].Value}>" +
                    $"<code class=\"language-{language}\">{encodedCode}</code></pre>" +
                    match.Groups["following"].Value.TrimEnd();
         }
@@ -183,7 +192,23 @@ public static class CodeBlockNormalizer
         var suffix = following.Length != 0
             ? "\n" + following.TrimEnd()
             : endIndex != source.Length && source[endIndex] != '\n' ? "\n" : string.Empty;
-        return $"{prefix}{fence}{language}\n{code}\n{fence}{suffix}";
+        return $"{prefix}{anchorPrefix}{fence}{language}\n{code}\n{fence}{suffix}";
+    }
+
+    private static string BuildAnchorPrefix(string value)
+    {
+        var ids = RenderableAnchorRegex.Matches(value)
+            .Select(match => WebUtility.HtmlDecode(match.Groups["id"].Value))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+        if (ids.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        return string.Concat(
+                   ids.Select(id => $"<a id=\"{WebUtility.HtmlEncode(id)}\"></a>\n"))
+               + "\n";
     }
 
     private static bool IsInsideHtmlTable(string value, int index)

@@ -672,6 +672,8 @@ Y<sup>3</sup> ＋ Y<sup>2</sup> ＋ 1
 
 ## <a id="sec-generated-title-10"></a> <a id="plan"></a>執筆予定
 
+<a id="completed"></a>
+
 ```text
 ・<strong id="completed" class="keyword">完備拡大</strong>（completed extension）
 	完備化（completion）するとも言う。

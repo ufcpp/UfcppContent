@@ -19,9 +19,9 @@ trees do not belong in this repository.
 ## Local validation
 
 ```powershell
-dotnet restore .\UfcppContent.sln
-dotnet build .\UfcppContent.sln --no-restore
-dotnet test .\UfcppContent.sln --no-build
+dotnet restore .\UfcppContent.slnx
+dotnet build .\UfcppContent.slnx --no-restore
+dotnet test .\UfcppContent.slnx --no-build
 ```
 
 Regeneration requires the locally acquired inputs outside this repository:

@@ -4,6 +4,7 @@
 **/test-work/
 .validation-output/
 .nuget.offline.config
+.impeccable/hook.cache.json
 
 *.user
 *.suo

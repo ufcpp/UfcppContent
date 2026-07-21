@@ -12,6 +12,13 @@ public sealed record AssetRecord(
 
 public sealed class AssetManager
 {
+    private static readonly IReadOnlyDictionary<string, string> LegacyUrlCorrections =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["/media/ufcpp2000/dsl/ClientBin/StackMachine.xap"] =
+                "/media/ufcpp2000/csharp/ClientBin/StackMachine.xap",
+        };
+
     private readonly string _mediaRoot;
     private readonly string _legacyRoot;
     private readonly string _outputRoot;
@@ -221,6 +228,6 @@ public sealed class AssetManager
             path = "/" + path;
         }
 
-        return path;
+        return LegacyUrlCorrections.GetValueOrDefault(path, path);
     }
 }

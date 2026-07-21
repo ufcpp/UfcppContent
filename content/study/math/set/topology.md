@@ -34,6 +34,9 @@ aliases:
 
 ## <a id="sec-generated-title-2"></a> <a id="plan"></a>執筆予定
 
+<a id="topology"></a>
+<a id="homeomorphism"></a>
+
 ```text
 ・位相
 「距離が定義できる」というのは実はかなり厳しい条件。

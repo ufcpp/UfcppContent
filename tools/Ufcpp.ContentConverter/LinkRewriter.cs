@@ -36,6 +36,10 @@ public sealed class LinkRewriter
         @"(?<prefix>\burl\(\s*)(?<quote>[""']?)(?<url>[^)""']+)(\k<quote>)(?<suffix>\s*\))",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    private static readonly Regex SourceParamRegex = new(
+        @"(?<prefix><param\b(?=[^>]{0,2048}\bname\s*=\s*(?<nq>[""'])source\k<nq>)[^>]{0,2048}?\bvalue\s*=\s*)(?<quote>[""'])(?<url>[^""'\r\n]{0,2048})\k<quote>",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     private static readonly Regex MalformedLinkRegex = new(
         @"\]\(\((?<url>(?:https?://|/)[^\s)]+)\){1,2}",
         RegexOptions.Compiled);
@@ -107,6 +111,7 @@ public sealed class LinkRewriter
         }
 
         markdown = HtmlAttributeRegex.Replace(markdown, Replace);
+        markdown = SourceParamRegex.Replace(markdown, Replace);
         markdown = MarkdownDestinationRegex.Replace(markdown, Replace);
         markdown = ReferenceLinkRegex.Replace(markdown, Replace);
         markdown = AutolinkRegex.Replace(markdown, Replace);

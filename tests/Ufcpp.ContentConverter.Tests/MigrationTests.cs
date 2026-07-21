@@ -87,6 +87,46 @@ public sealed class MigrationTests
     }
 
     [Fact]
+    public void LegacyCodeBlocksHoistRenderableAnchorsBeforeMarkdownFence()
+    {
+        const string input = """
+            <pre>
+            ・<strong id="completed" class="keyword">完備</strong>である
+            ・<a id="topology"></a>位相を持つ
+            </pre>
+            """;
+
+        var actual = CodeBlockNormalizer.Normalize(input, "/study/math/example/");
+
+        Assert.StartsWith(
+            """
+            <a id="completed"></a>
+            <a id="topology"></a>
+
+            ```text
+            """,
+            actual);
+        Assert.Contains("<strong id=\"completed\" class=\"keyword\">完備</strong>", actual);
+        Assert.Contains("<a id=\"topology\"></a>位相を持つ", actual);
+        Assert.EndsWith("\n```", actual);
+    }
+
+    [Fact]
+    public void LegacyCodeBlockHoistsIdFromPreElementBeforeMarkdownFence()
+    {
+        const string input = """
+            <pre id="pre-anchor" class="source">
+            <code>var value = 1;</code>
+            </pre>
+            """;
+
+        var actual = CodeBlockNormalizer.Normalize(input, "/study/csharp/example/");
+
+        Assert.StartsWith("<a id=\"pre-anchor\"></a>\n\n```csharp\n", actual);
+        Assert.DoesNotContain("<pre", actual);
+    }
+
+    [Fact]
     public void MissingFenceLanguagesAreInferredWithoutClosingOnNestedFences()
     {
         var input = """
@@ -756,6 +796,59 @@ public sealed class MigrationTests
         Assert.True(File.Exists(Path.Combine(output, "assets", "media", "100", "image.png")));
         Assert.True(File.Exists(Path.Combine(output, "assets", "images", "logo.jpg")));
         Assert.Throws<FileNotFoundException>(() => manager.ResolveAndCopy("/media/missing.bin"));
+    }
+
+    [Fact]
+    public void AssetManagerCorrectsKnownMisplacedStackMachineUrl()
+    {
+        using var workspace = new TestWorkspace();
+        var media = workspace.Directory("media");
+        var legacy = workspace.Directory("legacy");
+        var output = workspace.Directory("output");
+        workspace.WriteAt(
+            media,
+            "ufcpp2000/csharp/ClientBin/StackMachine.xap",
+            "application");
+        var manager = new AssetManager(media, legacy, output);
+
+        var outputPath = manager.ResolveAndCopy(
+            "/media/ufcpp2000/dsl/ClientBin/StackMachine.xap");
+        var record = Assert.Single(manager.Records);
+
+        Assert.Equal(
+            "assets/media/ufcpp2000/csharp/ClientBin/StackMachine.xap",
+            outputPath);
+        Assert.Equal(
+            "/media/ufcpp2000/csharp/ClientBin/StackMachine.xap",
+            record.OriginalUrl);
+        Assert.True(File.Exists(Path.Combine(output, outputPath)));
+    }
+
+    [Fact]
+    public void LinkRewriterRoutesSilverlightSourceParamThroughAssetManager()
+    {
+        using var fixture = LinkFixture.Create();
+        var assetPath = Path.Combine(
+            fixture.MediaRoot,
+            "ufcpp2000",
+            "csharp",
+            "ClientBin",
+            "StackMachine.xap");
+        Directory.CreateDirectory(Path.GetDirectoryName(assetPath)!);
+        File.WriteAllText(assetPath, "application");
+
+        var output = fixture.Rewriter.Rewrite(
+            """
+            <object data="data:application/x-silverlight-2,">
+              <param name="source" value="/media/ufcpp2000/dsl/ClientBin/StackMachine.xap">
+            </object>
+            """,
+            fixture.Current);
+
+        Assert.Contains(
+            "value=\"../assets/media/ufcpp2000/csharp/ClientBin/StackMachine.xap\"",
+            output);
+        Assert.Single(fixture.Assets.Records);
     }
 
     [Fact]

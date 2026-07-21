@@ -38,8 +38,8 @@ or required accounting differences.
 ## Validate
 
 ```powershell
-dotnet build .\UfcppContent.sln --no-restore
-dotnet test .\UfcppContent.sln --no-build
+dotnet build .\UfcppContent.slnx --no-restore
+dotnet test .\UfcppContent.slnx --no-build
 ```
 
 For a deterministic comparison, generate once to the repository and once to a local
