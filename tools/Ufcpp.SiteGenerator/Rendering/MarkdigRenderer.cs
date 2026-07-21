@@ -30,6 +30,7 @@ public sealed class MarkdigRenderer
         .UseDiagrams()
         .UseAutoLinks()
         .UseGenericAttributes()
+        .Use(new SyntaxHighlightingExtension())
         .Build();
 
     // Matches href/src in raw HTML attributes - bounded, no catastrophic backtracking

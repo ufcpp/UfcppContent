@@ -132,6 +132,20 @@ public sealed class SiteBuilderIntegrationTests
             @"@media\s*\(\s*max-width\s*:\s*640px\s*\)[^{]*\{[\s\S]*?"
             + @"\.site-body\s*\{[^}]*width\s*:\s*auto\s*;",
             css);
+        Assert.Matches(
+            @"\.content pre code \.keyword\s*\{[^}]*color\s*:\s*#0000e1\s*;"
+            + @"[^}]*background\s*:\s*transparent\s*;",
+            css);
+        Assert.Matches(
+            @"\.content pre code \.xmlName\s*\{[^}]*color\s*:\s*#a31515\s*;",
+            css);
+        Assert.Matches(
+            @"\.content pre code \.powershellCommand\s*\{[^}]*color\s*:\s*#000080\s*;",
+            css);
+        Assert.Matches(
+            @"@media print\s*\{[\s\S]*?\.content pre code span\s*\{"
+            + @"[^}]*color\s*:\s*#000000(?:\s*!important)?\s*;",
+            css);
     }
 
     [Fact]

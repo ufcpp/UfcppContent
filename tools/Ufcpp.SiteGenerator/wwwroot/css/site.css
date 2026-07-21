@@ -398,6 +398,72 @@ pre.console code {
   color: #ffffff;
 }
 
+.content pre code .keyword {
+  padding: 0;
+  color: #0000e1;
+  background: transparent;
+  font-weight: 700;
+}
+
+.content pre code .controlKeyword,
+.content pre code .preprocessorKeyword,
+.content pre code .htmlTagDelimiter,
+.content pre code .htmlOperator,
+.content pre code .xmlDelimiter {
+  color: #0000e1;
+}
+
+.content pre code .comment,
+.content pre code .htmlComment,
+.content pre code .xmlDocComment,
+.content pre code .xmlComment {
+  color: #008000;
+}
+
+.content pre code .string,
+.content pre code .stringCSharpVerbatim,
+.content pre code .htmlElementName {
+  color: #a31515;
+}
+
+.content pre code .xmlName {
+  color: #a31515;
+}
+
+.content pre code .type,
+.content pre code .powershellType,
+.content pre code .className {
+  color: #2b7185;
+}
+
+.content pre code .htmlAttributeName,
+.content pre code .xmlAttribute,
+.content pre code .cssPropertyName {
+  color: #c00000;
+}
+
+.content pre code .htmlAttributeValue,
+.content pre code .xmlAttributeValue,
+.content pre code .cssPropertyValue {
+  color: #0000e1;
+}
+
+.content pre code .jsonKey {
+  color: #a04b00;
+}
+
+.content pre code .jsonString {
+  color: #007070;
+}
+
+.content pre code .powershellVariable {
+  color: #c43b00;
+}
+
+.content pre code .powershellCommand {
+  color: #000080;
+}
+
 .reserved,
 .language-csharp .reserved {
   color: #0000e1;
@@ -707,5 +773,9 @@ math {
   a {
     color: inherit;
     text-decoration: underline;
+  }
+
+  .content pre code span {
+    color: #000000 !important;
   }
 }

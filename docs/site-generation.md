@@ -156,6 +156,29 @@ inside `blockquote`, `div`, `th`, and `td` elements is rendered recursively, inc
 nested raw tables. This keeps indented table rows as table markup instead of turning
 them into Markdown code blocks.
 
+### Syntax highlighting
+
+Fenced code blocks are highlighted at build time with ColorCode. Build-time
+highlighting keeps generated pages deterministic and self-contained; unlike
+browser-side highlighting, it requires no JavaScript or CDN request.
+
+The renderer supports these canonical language names:
+
+- `csharp`, `xml`, `html`, `css`, `powershell`, `cpp`
+- `vbnet`, `fsharp`, `json`, `sql`, `java`, `python`
+- `javascript`, `typescript`
+
+Common aliases are normalized (`cs`/`c#`, `ps1`, `c++`, `vb`, `fs`, `py`, `js`,
+and `ts`). Case is ignored. The frequently used `console`, `text`, `cil`, and
+`shell` blocks intentionally remain plain text. A block with no language, an
+unknown language, or a highlighting failure is also emitted as escaped plain
+code so its contents cannot be interpreted as HTML or be lost.
+
+To add a language, add its canonical name and aliases to `LanguagesByName` in
+`Rendering/SyntaxHighlightingExtension.cs`, add scoped token colors to
+`wwwroot/css/site.css` when its token classes are new, and add a representative
+case to `MarkdigRendererTests`.
+
 ### Link rewriting
 
 Internal links are rewritten at the Markdig AST level (before HTML rendering):

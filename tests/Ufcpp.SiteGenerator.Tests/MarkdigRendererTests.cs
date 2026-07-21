@@ -53,6 +53,45 @@ public sealed class MarkdigRendererTests
     }
 
     [Theory]
+    [InlineData("cs", "public string Value = \"<tag>\";", "csharp", "keyword")]
+    [InlineData("XML", "<root attr=\"value\" />", "xml", "xmlName")]
+    [InlineData("ps1", "$value = Get-Item \"path\"", "powershell", "powershellCommand")]
+    public void Render_SupportedFencedCode_NormalizesAndHighlights(
+        string language,
+        string code,
+        string normalizedLanguage,
+        string tokenClass)
+    {
+        var html = Render($"```{language}\n{code}\n```");
+
+        Assert.Contains(
+            $"<pre><code class=\"language-{normalizedLanguage}\">",
+            html);
+        Assert.Contains($"<span class=\"{tokenClass}\">", html);
+        Assert.DoesNotContain("<tag>", html);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("unknown-language")]
+    public void Render_UnsupportedFencedCode_FallsBackToEscapedPlainCode(
+        string language)
+    {
+        var html = Render($"```{language}\n<tag attr=\"value\">& text</tag>\n```");
+
+        Assert.Contains("&lt;tag attr=&quot;value&quot;&gt;&amp; text&lt;/tag&gt;", html);
+        Assert.DoesNotContain("<span", html);
+    }
+
+    [Fact]
+    public void Render_SupportedFencedCode_IsDeterministic()
+    {
+        const string Markdown = "```csharp\nvar answer = 42;\n```";
+
+        Assert.Equal(Render(Markdown), Render(Markdown));
+    }
+
+    [Theory]
     [MemberData(nameof(RawHtmlCases))]
     public void Render_RawHtml_PreservesMarkupUnescaped(
         string rawHtml,
